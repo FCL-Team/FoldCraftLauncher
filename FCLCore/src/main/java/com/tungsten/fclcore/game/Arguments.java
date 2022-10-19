@@ -47,10 +47,7 @@ public final class Arguments {
     }
 
     public Arguments addGameArguments(List<String> gameArguments) {
-        List<Argument> list = new ArrayList<>();
-        for (String arg : gameArguments) {
-            list.add(new StringArgument(arg));
-        }
+        List<Argument> list = gameArguments.stream().map(StringArgument::new).collect(Collectors.toList());
         return new Arguments(Lang.merge(getGame(), list), getJvm());
     }
 
@@ -59,10 +56,7 @@ public final class Arguments {
     }
 
     public Arguments addJVMArguments(List<String> jvmArguments) {
-        List<Argument> list = new ArrayList<>();
-        for (String arg : jvmArguments) {
-            list.add(new StringArgument(arg));
-        }
+        List<Argument> list = jvmArguments.stream().map(StringArgument::new).collect(Collectors.toList());
         return new Arguments(getGame(), Lang.merge(getJvm(), list));
     }
 
@@ -78,11 +72,7 @@ public final class Arguments {
     }
 
     public static List<String> parseStringArguments(List<String> arguments, Map<String, String> keys) {
-        List<String> list = new ArrayList<>();
-        for (String arg : arguments) {
-            list.addAll(new StringArgument(arg).toString(keys, Collections.emptyMap()));
-        }
-        return list;
+        return arguments.stream().filter(Objects::nonNull).flatMap(str -> new StringArgument(str).toString(keys, Collections.emptyMap()).stream()).collect(Collectors.toList());
     }
 
     public static List<String> parseArguments(List<Argument> arguments, Map<String, String> keys) {
@@ -90,11 +80,7 @@ public final class Arguments {
     }
 
     public static List<String> parseArguments(List<Argument> arguments, Map<String, String> keys, Map<String, Boolean> features) {
-        List<String> list = new ArrayList<>();
-        for (Argument arg : arguments) {
-            list.addAll(arg.toString(keys, Collections.emptyMap()));
-        }
-        return list;
+        return arguments.stream().filter(Objects::nonNull).flatMap(arg -> arg.toString(keys, features).stream()).collect(Collectors.toList());
     }
 
     public static final List<Argument> DEFAULT_JVM_ARGUMENTS;

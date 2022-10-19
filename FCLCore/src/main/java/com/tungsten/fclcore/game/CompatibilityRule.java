@@ -22,16 +22,16 @@ public final class CompatibilityRule {
         this.features = features;
     }
 
-    public Action getAppliedAction(Map<String, Boolean> supportedFeatures) {
+    public Optional<Action> getAppliedAction(Map<String, Boolean> supportedFeatures) {
         if (os != null && !os.allow())
-            return null;
+            return Optional.empty();
 
         if (features != null)
             for (Map.Entry<String, Boolean> entry : features.entrySet())
                 if (!Objects.equals(supportedFeatures.get(entry.getKey()), entry.getValue()))
-                    return null;
+                    return Optional.empty();
 
-        return action;
+        return Optional.ofNullable(action);
     }
 
     public static boolean appliesToCurrentEnvironment(Collection<CompatibilityRule> rules) {
@@ -44,9 +44,9 @@ public final class CompatibilityRule {
 
         Action action = Action.DISALLOW;
         for (CompatibilityRule rule : rules) {
-            Action thisAction = rule.getAppliedAction(features);
-            if (thisAction != null)
-                action = thisAction;
+            Optional<Action> thisAction = rule.getAppliedAction(features);
+            if (thisAction.isPresent())
+                action = thisAction.get();
         }
 
         return action == Action.ALLOW;

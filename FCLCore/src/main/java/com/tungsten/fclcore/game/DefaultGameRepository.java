@@ -4,6 +4,8 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.download.MaintainTask;
+import com.tungsten.fclcore.download.game.VersionJsonSaveTask;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.GameJsonParseFailedEvent;
@@ -15,6 +17,7 @@ import com.tungsten.fclcore.event.RenameVersionEvent;
 import com.tungsten.fclcore.game.tlauncher.TLauncherVersion;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -26,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -40,12 +44,11 @@ import java.util.stream.Stream;
 /**
  * An implementation of classic Minecraft game repository.
  */
-// Todo : fix
 public class DefaultGameRepository implements GameRepository {
 
     private File baseDirectory;
     protected Map<String, Version> versions;
-    private ConcurrentHashMap<File, String> gameVersions = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<File, Optional<String>> gameVersions = new ConcurrentHashMap<>();
 
     public DefaultGameRepository(File baseDirectory) {
         this.baseDirectory = baseDirectory;
@@ -94,8 +97,8 @@ public class DefaultGameRepository implements GameRepository {
             return new File(getLibrariesDirectory(version), lib.getPath());
     }
 
-    public String getArtifactFile(Version version, Artifact artifact) {
-        return artifact.getPath(getBaseDirectory() + "/libraries");
+    public Path getArtifactFile(Version version, Artifact artifact) {
+        return artifact.getPath(getBaseDirectory().toPath().resolve("libraries"));
     }
 
     public GameDirectoryType getGameDirectoryType(String id) {
@@ -119,7 +122,7 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
-    public String getGameVersion(Version version) {
+    public Optional<String> getGameVersion(Version version) {
         // This implementation may cause multiple flows against the same version entering
         // this function, which is accepted because GameVersion::minecraftVersion should
         // be consistent.
@@ -127,9 +130,9 @@ public class DefaultGameRepository implements GameRepository {
         if (gameVersions.containsKey(versionJar)) {
             return gameVersions.get(versionJar);
         } else {
-            String gameVersion = GameVersion.minecraftVersion(versionJar);
+            Optional<String> gameVersion = GameVersion.minecraftVersion(versionJar);
 
-            if (gameVersion == null) {
+            if (!gameVersion.isPresent()) {
                 LOG.warning("Cannot find out game version of " + version.getId() + ", primary jar: " + versionJar.toString() + ", jar exists: " + versionJar.exists());
             }
 
@@ -220,7 +223,7 @@ public class DefaultGameRepository implements GameRepository {
         if (EventBus.EVENT_BUS.fireEvent(new RemoveVersionEvent(this, id)) == Event.Result.DENY)
             return false;
         if (!versions.containsKey(id))
-            return FileUtils.deleteDirectoryQuietly(getVersionRoot(id).getAbsolutePath());
+            return FileUtils.deleteDirectoryQuietly(getVersionRoot(id));
         File file = getVersionRoot(id);
         if (!file.exists())
             return true;
@@ -232,15 +235,15 @@ public class DefaultGameRepository implements GameRepository {
         try {
             versions.remove(id);
 
-            // remove json files first to ensure FCL will not recognize this folder as a valid version.
-            List<File> jsons = FileUtils.listFilesByExtension(removedFile.getAbsolutePath(), "json");
-            for (File json : jsons) {
-                if (!json.delete())
-                    LOG.warning("Unable to delete file " + json);
-            }
+            // remove json files first to ensure HMCL will not recognize this folder as a valid version.
+            List<File> jsons = FileUtils.listFilesByExtension(removedFile, "json");
+            jsons.forEach(f -> {
+                if (!f.delete())
+                    LOG.warning("Unable to delete file " + f);
+            });
             // remove the version from version list regardless of whether the directory was removed successfully or not.
             try {
-                FileUtils.deleteDirectory(removedFile.getAbsolutePath());
+                FileUtils.deleteDirectory(removedFile);
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "Unable to remove version folder: " + file, e);
             }
@@ -306,20 +309,33 @@ public class DefaultGameRepository implements GameRepository {
                 }
 
                 if (!id.equals(version.getId())) {
-                    String from = id;
-                    String to = version.getId();
-                    String fromDir = getVersionRoot(from).getAbsolutePath();
-                    String toDir = getVersionRoot(to).getAbsolutePath();
-                    FileUtils.rename(fromDir, to);
+                    try {
+                        String from = id;
+                        String to = version.getId();
+                        Path fromDir = getVersionRoot(from).toPath();
+                        Path toDir = getVersionRoot(to).toPath();
+                        Files.move(fromDir, toDir);
 
-                    String fromJson = toDir + "/" + from + ".json";
-                    String fromJar = toDir + "/" + from + ".jar";
-                    String toJsonName = to + ".json";
-                    String toJarName = to + ".jar";
+                        Path fromJson = toDir.resolve(from + ".json");
+                        Path fromJar = toDir.resolve(from + ".jar");
+                        Path toJson = toDir.resolve(to + ".json");
+                        Path toJar = toDir.resolve(to + ".jar");
 
-                    FileUtils.rename(fromJson, toJsonName);
-                    if (new File(fromJar).exists())
-                        FileUtils.rename(fromJar, toJarName);
+                        try {
+                            Files.move(fromJson, toJson);
+                            if (Files.exists(fromJar))
+                                Files.move(fromJar, toJar);
+                        } catch (IOException e) {
+                            // recovery
+                            Lang.ignoringException(() -> Files.move(toJson, fromJson));
+                            Lang.ignoringException(() -> Files.move(toJar, fromJar));
+                            Lang.ignoringException(() -> Files.move(toDir, fromDir));
+                            throw e;
+                        }
+                    } catch (IOException e) {
+                        LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because version id does not match folder name " + id + ", and we cannot correct it.", e);
+                        return Stream.empty();
+                    }
                 }
 
                 return Stream.of(version);
@@ -360,7 +376,7 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
-    public String getActualAssetDirectory(String version, String assetId) {
+    public Path getActualAssetDirectory(String version, String assetId) {
         try {
             return reconstructAssets(version, assetId);
         } catch (IOException | JsonParseException e) {
@@ -370,16 +386,16 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
-    public String getAssetDirectory(String version, String assetId) {
-        return getBaseDirectory() + "/assets";
+    public Path getAssetDirectory(String version, String assetId) {
+        return getBaseDirectory().toPath().resolve("assets");
     }
 
     @Override
-    public String getAssetObject(String version, String assetId, String name) throws IOException {
+    public Optional<Path> getAssetObject(String version, String assetId, String name) throws IOException {
         try {
             AssetObject assetObject = getAssetIndex(version, assetId).getObjects().get(name);
-            if (assetObject == null) return null;
-            return getAssetObject(version, assetId, assetObject);
+            if (assetObject == null) return Optional.empty();
+            return Optional.of(getAssetObject(version, assetId, assetObject));
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
@@ -388,21 +404,25 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
-    public String getAssetObject(String version, String assetId, AssetObject obj) {
-        return getAssetDirectory(version, assetId) + "/objects/" + obj.getLocation();
+    public Path getAssetObject(String version, String assetId, AssetObject obj) {
+        return getAssetObject(version, getAssetDirectory(version, assetId), obj);
+    }
+
+    public Path getAssetObject(String version, Path assetDir, AssetObject obj) {
+        return assetDir.resolve("objects").resolve(obj.getLocation());
     }
 
     @Override
-    public String getIndexFile(String version, String assetId) {
-        return getAssetDirectory(version, assetId) + "/indexes/" + assetId + ".json";
+    public Path getIndexFile(String version, String assetId) {
+        return getAssetDirectory(version, assetId).resolve("indexes").resolve(assetId + ".json");
     }
 
     @Override
-    public String getLoggingObject(String version, String assetId, LoggingInfo loggingInfo) {
-        return getAssetDirectory(version, assetId) + "/log_configs/" + loggingInfo.getFile().getId();
+    public Path getLoggingObject(String version, String assetId, LoggingInfo loggingInfo) {
+        return getAssetDirectory(version, assetId).resolve("log_configs").resolve(loggingInfo.getFile().getId());
     }
 
-    protected String reconstructAssets(String version, String assetId) throws IOException, JsonParseException {
+    protected Path reconstructAssets(String version, String assetId) throws IOException, JsonParseException {
         Path assetsDir = getAssetDirectory(version, assetId);
         Path indexFile = getIndexFile(version, assetId);
         Path virtualRoot = assetsDir.resolve("virtual").resolve(assetId);
@@ -437,6 +457,15 @@ public class DefaultGameRepository implements GameRepository {
         }
 
         return assetsDir;
+    }
+
+    public Task<Version> saveAsync(Version version) {
+        this.gameVersions.remove(getVersionJar(version));
+        if (version.isResolvedPreservingPatches()) {
+            return new VersionJsonSaveTask(this, MaintainTask.maintainPreservingPatches(this, version));
+        } else {
+            return new VersionJsonSaveTask(this, version);
+        }
     }
 
     public boolean isLoaded() {

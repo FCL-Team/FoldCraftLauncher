@@ -11,6 +11,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 
 import java.lang.reflect.Type;
+import java.nio.file.Path;
 
 @JsonAdapter(Artifact.Serializer.class)
 public final class Artifact {
@@ -100,8 +101,8 @@ public final class Artifact {
 
     public String getPath() { return path; }
 
-    public String getPath(String root) {
-        return root + "/" + path;
+    public Path getPath(Path root) {
+        return root.resolve(path);
     }
 
     @Override

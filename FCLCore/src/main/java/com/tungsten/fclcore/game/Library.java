@@ -13,7 +13,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
+/**
+ * A class that describes a Minecraft dependency.
+ */
 public class Library implements Comparable<Library>, Validation {
 
     @SerializedName("name")
@@ -108,15 +112,8 @@ public class Library implements Comparable<Library>, Validation {
     public LibraryDownloadInfo getDownload() {
         LibraryDownloadInfo temp = getRawDownloadInfo();
         String path = getPath();
-        String finalUrl = UrlConstants.DEFAULT_LIBRARY_URL + path;
-        if (temp != null) {
-            finalUrl = temp.getUrl();
-        }
-        else if (url != null) {
-            finalUrl = url + path;
-        }
         return new LibraryDownloadInfo(path,
-                finalUrl,
+                Optional.ofNullable(temp).map(LibraryDownloadInfo::getUrl).orElse(Optional.ofNullable(url).orElse(UrlConstants.DEFAULT_LIBRARY_URL) + path),
                 temp != null ? temp.getSha1() : null,
                 temp != null ? temp.getSize() : 0
         );

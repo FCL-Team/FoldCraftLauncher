@@ -23,12 +23,7 @@ public final class ExtractRules {
     }
 
     public boolean shouldExtract(String path) {
-        for (String s : exclude) {
-            if (path.startsWith(s)) {
-                return false;
-            }
-        }
-        return true;
+        return exclude.stream().noneMatch(path::startsWith);
     }
 
 }

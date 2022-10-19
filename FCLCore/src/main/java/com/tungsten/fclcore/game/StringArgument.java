@@ -10,7 +10,6 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +33,7 @@ public final class StringArgument implements Argument {
         Matcher m = pattern.matcher(argument);
         while (m.find()) {
             String entry = m.group();
-            res = res.replace(entry, keys.get(entry) == null ? entry : Objects.requireNonNull(keys.get(entry)));
+            res = res.replace(entry, keys.getOrDefault(entry, entry));
         }
         return Collections.singletonList(res);
     }

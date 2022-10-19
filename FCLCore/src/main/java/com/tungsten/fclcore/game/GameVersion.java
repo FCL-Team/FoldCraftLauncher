@@ -1,5 +1,6 @@
 package com.tungsten.fclcore.game;
 
+import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
@@ -23,18 +24,17 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-// Todo : fix
 public final class GameVersion {
     private GameVersion() {
     }
 
-    private static String getVersionFromJson(File versionJson) {
+    private static Optional<String> getVersionFromJson(Path versionJson) {
         try {
             Map<?, ?> version = JsonUtils.fromNonNullJson(FileUtils.readText(versionJson), Map.class);
-            return (String) version.get("name");
+            return tryCast(version.get("name"), String.class);
         } catch (IOException | JsonParseException e) {
             LOG.log(Level.WARNING, "Failed to parse version.json", e);
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -70,9 +70,9 @@ public final class GameVersion {
         return Optional.empty();
     }
 
-    public static String minecraftVersion(File file) {
+    public static Optional<String> minecraftVersion(File file) {
         if (file == null || !file.exists() || !file.isFile() || !file.canRead())
-            return null;
+            return Optional.empty();
 
         try (FileSystem gameJar = CompressingUtils.createReadOnlyZipFileSystem(file.toPath())) {
             Path versionJson = gameJar.getPath("version.json");

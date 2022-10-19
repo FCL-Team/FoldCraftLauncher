@@ -41,14 +41,12 @@ public class RuledArgument implements Argument {
 
     @Override
     public List<String> toString(Map<String, String> keys, Map<String, Boolean> features) {
-        if (CompatibilityRule.appliesToCurrentEnvironment(rules, features) && value != null) {
-            List<String> list = new ArrayList<>();
-            for (String v : value) {
-                StringArgument stringArgument = new StringArgument(v);
-                list.add(stringArgument.toString(keys, features).get(0));
-            }
-            return list;
-        }
+        if (CompatibilityRule.appliesToCurrentEnvironment(rules, features) && value != null)
+            return value.stream()
+                    .filter(Objects::nonNull)
+                    .map(StringArgument::new)
+                    .map(str -> str.toString(keys, features).get(0))
+                    .collect(Collectors.toList());
         return Collections.emptyList();
     }
 

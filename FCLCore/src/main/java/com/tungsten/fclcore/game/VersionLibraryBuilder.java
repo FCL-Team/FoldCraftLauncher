@@ -4,8 +4,10 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class VersionLibraryBuilder {
     private final Version version;
@@ -19,9 +21,9 @@ public final class VersionLibraryBuilder {
     public VersionLibraryBuilder(Version version) {
         this.version = version;
         this.libraries = new ArrayList<>(version.getLibraries());
-        this.mcArgs = version.getMinecraftArguments() != null ? StringUtils.tokenize(version.getMinecraftArguments()) : null;
-        this.game = new ArrayList<>(version.getArguments().getGame() != null ? version.getArguments().getGame() : Arguments.DEFAULT_GAME_ARGUMENTS);
-        this.jvm = new ArrayList<>(version.getArguments().getJvm() != null ? version.getArguments().getJvm() : Arguments.DEFAULT_JVM_ARGUMENTS);
+        this.mcArgs = version.getMinecraftArguments().map(StringUtils::tokenize).map(ArrayList::new).orElse(null);
+        this.game = version.getArguments().map(Arguments::getGame).map(ArrayList::new).orElseGet(ArrayList::new);
+        this.jvm = new ArrayList<>(version.getArguments().map(Arguments::getJvm).orElse(Arguments.DEFAULT_JVM_ARGUMENTS));
         this.useMcArgs = mcArgs != null;
     }
 
@@ -30,38 +32,22 @@ public final class VersionLibraryBuilder {
         if (useMcArgs) {
             // The official launcher will not parse the "arguments" property when it detects the presence of "mcArgs".
             // The "arguments" property with the "rule" is simply ignored here.
-            for (Argument arg : this.game) {
-                List<String> argStr = arg.toString(new HashMap<>(), new HashMap<>());
-                this.mcArgs.addAll(argStr);
-            }
+            this.mcArgs.addAll(this.game.stream().map(arg -> arg.toString(new HashMap<>(), new HashMap<>())).flatMap(Collection::stream).collect(Collectors.toList()));
             ret = ret.setArguments(null);
 
             // Since $ will be escaped in linux, and our maintain of minecraftArgument will not cause escaping,
             // so we regenerate the minecraftArgument without escaping.
             ret = ret.setMinecraftArguments(new CommandBuilder().addAllWithoutParsing(mcArgs).toString());
         } else {
-            if (ret.getArguments() != null) {
-                ret = ret.setArguments(ret.getArguments().withGame(game));
-                if (jvmChanged) {
-                    ret = ret.setArguments(ret.getArguments().withJvm(jvm));
-                }
-            }
-            else {
-                ret = ret.setArguments(new Arguments(game, jvmChanged ? jvm : null));
-            }
+            ret = ret.setArguments(ret.getArguments()
+                    .map(args -> args.withGame(game))
+                    .map(args -> jvmChanged ? args.withJvm(jvm) : args).orElse(new Arguments(game, jvmChanged ? jvm : null)));
         }
         return ret.setLibraries(libraries);
     }
 
     public boolean hasTweakClass(String tweakClass) {
-        boolean match = false;
-        for (Argument argument : game) {
-            if (argument.toString().equals(tweakClass)) {
-                match = true;
-                break;
-            }
-        }
-        return useMcArgs && mcArgs.contains(tweakClass) || match;
+        return useMcArgs && mcArgs.contains(tweakClass) || game.stream().anyMatch(arg -> arg.toString().equals(tweakClass));
     }
 
     public void removeTweakClass(String target) {

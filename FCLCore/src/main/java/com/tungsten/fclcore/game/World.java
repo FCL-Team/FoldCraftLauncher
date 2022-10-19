@@ -1,17 +1,6 @@
 package com.tungsten.fclcore.game;
 
-import com.github.steveice10.opennbt.NBTIO;
-import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.LongTag;
-import com.github.steveice10.opennbt.tag.builtin.StringTag;
-import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fclcore.util.io.FileUtils;
-
-import org.jackhuang.hmcl.util.*;
-import org.jackhuang.hmcl.util.io.CompressingUtils;
-import org.jackhuang.hmcl.util.io.FileUtils;
-import org.jackhuang.hmcl.util.io.Unzipper;
-import org.jackhuang.hmcl.util.io.Zipper;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -6,11 +6,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// Todo : fix
 public final class CrashReportAnalyzer {
 
     private CrashReportAnalyzer() {
@@ -142,7 +142,7 @@ public final class CrashReportAnalyzer {
     public static String findCrashReport(String log) throws IOException, InvalidPathException {
         Matcher matcher = CRASH_REPORT_LOCATION_PATTERN.matcher(log);
         if (matcher.find()) {
-            return FileUtils.readText(matcher.group("location"));
+            return FileUtils.readText(Paths.get(matcher.group("location")));
         } else {
             return null;
         }

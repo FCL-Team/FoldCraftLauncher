@@ -11,7 +11,6 @@ import com.tungsten.fclcore.util.gson.Validation;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -98,12 +98,12 @@ public class Version implements Comparable<Version>, Validation {
         this.patches = Lang.copyList(patches);
     }
 
-    public String getMinecraftArguments() {
-        return minecraftArguments;
+    public Optional<String> getMinecraftArguments() {
+        return Optional.ofNullable(minecraftArguments);
     }
 
-    public Arguments getArguments() {
-        return arguments;
+    public Optional<Arguments> getArguments() {
+        return Optional.ofNullable(arguments);
     }
 
     public String getMainClass() {
@@ -161,11 +161,11 @@ public class Version implements Comparable<Version>, Validation {
     }
 
     public boolean isHidden() {
-        return hidden;
+        return hidden == null ? false : hidden;
     }
 
     public boolean isRoot() {
-        return root;
+        return root == null ? false : root;
     }
 
     public boolean isResolved() {
@@ -246,7 +246,7 @@ public class Version implements Comparable<Version>, Validation {
                 type == null ? parent.type : type,
                 time == null ? parent.time : time,
                 releaseTime == null ? parent.releaseTime : releaseTime,
-                Math.max(minimumLauncherVersion, parent.minimumLauncherVersion),
+                Lang.merge(minimumLauncherVersion, parent.minimumLauncherVersion, Math::max),
                 hidden,
                 true,
                 isPatch ? parent.patches : Lang.merge(Lang.merge(parent.patches, Collections.singleton(toPatch())), patches));
@@ -381,22 +381,8 @@ public class Version implements Comparable<Version>, Validation {
     }
 
     public Version addPatches(@Nullable List<Version> additional) {
-        Set<String> patchIds = new HashSet<>();
-        if (additional != null) {
-            for (Version v : additional) {
-                patchIds.add(v.getId());
-            }
-        }
-        List<Version> oldPatches = null;
-        if (this.patches != null) {
-            oldPatches = new ArrayList<>();
-            for (Version v : this.patches) {
-                if (!patchIds.contains(v.getId())) {
-                    oldPatches.add(v);
-                }
-            }
-        }
-        List<Version> patches = Lang.merge(oldPatches, additional);
+        Set<String> patchIds = additional == null ? Collections.emptySet() : additional.stream().map(Version::getId).collect(Collectors.toSet());
+        List<Version> patches = Lang.merge(this.patches == null ? null : this.patches.stream().filter(patch -> !patchIds.contains(patch.getId())).collect(Collectors.toList()), additional);
         return new Version(resolved, id, version, priority, minecraftArguments, arguments, mainClass, inheritsFrom, jar, assetIndex, assets, complianceLevel, javaVersion, libraries, compatibilityRules, downloads, logging, type, time, releaseTime, minimumLauncherVersion, hidden, root, patches);
     }
 
@@ -405,29 +391,12 @@ public class Version implements Comparable<Version>, Validation {
     }
 
     public Version removePatchById(String patchId) {
-        List<Version> newPatches = null;
-        if (patches != null) {
-            newPatches = new ArrayList<>();
-            for (Version p : patches) {
-                if (!patchId.equals(p.getId())) {
-                    newPatches.add(p);
-                }
-            }
-        }
-        return new Version(resolved, id, version, priority, minecraftArguments, arguments, mainClass, inheritsFrom, jar, assetIndex, assets, complianceLevel, javaVersion, libraries, compatibilityRules, downloads, logging, type, time, releaseTime, minimumLauncherVersion, hidden, root, newPatches);
+        return new Version(resolved, id, version, priority, minecraftArguments, arguments, mainClass, inheritsFrom, jar, assetIndex, assets, complianceLevel, javaVersion, libraries, compatibilityRules, downloads, logging, type, time, releaseTime, minimumLauncherVersion, hidden, root,
+                patches == null ? null : patches.stream().filter(patch -> !patchId.equals(patch.getId())).collect(Collectors.toList()));
     }
 
     public boolean hasPatch(String patchId) {
-        boolean has = false;
-        if (patches != null) {
-            for (Version patch : patches) {
-                if (patch.getId().equals(patchId)) {
-                    has = true;
-                    break;
-                }
-            }
-        }
-        return has;
+        return patches != null && patches.stream().anyMatch(patch -> patchId.equals(patch.getId()));
     }
 
     @Override

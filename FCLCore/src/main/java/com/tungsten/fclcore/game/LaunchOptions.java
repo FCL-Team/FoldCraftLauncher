@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// Todo : add and delete some options
 public class LaunchOptions implements Serializable {
 
     private File gameDir;
@@ -34,7 +33,7 @@ public class LaunchOptions implements Serializable {
     private boolean noGeneratedJVMArgs;
     private String preLaunchCommand;
     private String postExitCommand;
-    private ProcessPriority processPriority = ProcessPriority.HIGH;
+    private ProcessPriority processPriority = ProcessPriority.NORMAL;
     private boolean daemon;
 
     /**

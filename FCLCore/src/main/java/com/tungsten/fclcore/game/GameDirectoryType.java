@@ -1,5 +1,8 @@
 package com.tungsten.fclcore.game;
 
+/**
+ * Determines where game runs in and game files such as mods.
+ */
 public enum GameDirectoryType {
     /**
      * .minecraft
