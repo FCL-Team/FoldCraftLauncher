@@ -13,7 +13,6 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
-
 rootProject.name = "Fold Craft Launcher"
 include ':FCL'
 include ':FCLCore'
