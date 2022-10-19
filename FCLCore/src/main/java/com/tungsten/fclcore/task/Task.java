@@ -17,6 +17,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Disposable task.
@@ -311,11 +312,11 @@ public abstract class Task<T> {
     }
 
     protected void updateProgressImmediately(double progress) {
-        // Todo : update progress
+
     }
 
     protected final void updateMessage(String newMessage) {
-        // Todo : update msg
+
     }
 
     public final T run() throws Exception {
@@ -895,11 +896,7 @@ public abstract class Task<T> {
 
             @Override
             public void execute() {
-                List<Object> result = new ArrayList<>();
-                for (Task<?> task : tasks) {
-                    result.add(task.getResult());
-                }
-                setResult(result);
+                setResult(tasks.stream().map(Task::getResult).collect(Collectors.toList()));
             }
 
             @Override
@@ -968,7 +965,7 @@ public abstract class Task<T> {
     }
 
     private static String getCaller() {
-        return ReflectionHelper.getCaller("com.tungsten.fclcore.task").toString();
+        return ReflectionHelper.getCaller(packageName -> !"org.jackhuang.hmcl.task".equals(packageName)).toString();
     }
 
     private static final class SimpleTask<T> extends Task<T> {
@@ -1005,6 +1002,8 @@ public abstract class Task<T> {
 
     /**
      * A task that combines two tasks and make sure [pred] runs before succ.
+     *
+     * @author huangyuhui
      */
     private final class UniCompose<U> extends Task<U> {
 

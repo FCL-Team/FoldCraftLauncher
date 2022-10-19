@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+// Todo : fix
 public class World {
 
     private final Path file;

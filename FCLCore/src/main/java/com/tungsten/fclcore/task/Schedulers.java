@@ -2,6 +2,8 @@ package com.tungsten.fclcore.task;
 
 import static com.tungsten.fclcore.util.Lang.threadPool;
 
+import android.app.Activity;
+
 import com.tungsten.fclcore.util.Logging;
 
 import java.util.concurrent.*;
@@ -32,6 +34,10 @@ public final class Schedulers {
         }
 
         return IO_EXECUTOR;
+    }
+
+    public static Executor androidUIThread(Activity activity) {
+        return activity::runOnUiThread;
     }
 
     public static Executor defaultScheduler() {
