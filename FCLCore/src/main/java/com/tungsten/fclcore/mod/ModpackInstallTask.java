@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Predicate;
 
+// Todo : fix
 public class ModpackInstallTask<T> extends Task<Void> {
 
     private final File modpackFile;

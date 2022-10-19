@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Remove class digital verification file in game jar
  */
+// Todo : fix
 public final class GameVerificationFixTask extends Task<Void> {
     private final DefaultDependencyManager dependencyManager;
     private final String gameVersion;

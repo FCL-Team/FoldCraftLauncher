@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.download.forge;
 
+import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Lang.wrap;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
@@ -169,7 +171,6 @@ public final class ForgeBMCLVersionList extends VersionList<ForgeRemoteVersion> 
                 throw new JsonParseException("ForgeVersion mcversion cannot be null");
         }
 
-        @Immutable
         public static final class File {
             private final String format;
             private final String category;

@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.download.quilt;
 
+import static com.tungsten.fclcore.util.Lang.wrap;
+
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.VersionList;

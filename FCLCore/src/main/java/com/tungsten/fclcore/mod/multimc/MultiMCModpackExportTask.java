@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * Export the game to a mod pack file.
  */
+// Todo : fix
 public class MultiMCModpackExportTask extends Task<Void> {
     private final DefaultGameRepository repository;
     private final String versionId;

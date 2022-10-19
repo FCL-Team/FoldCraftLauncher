@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+// Todo : fix
 public final class LocalModFile implements Comparable<LocalModFile> {
 
     private Path file;

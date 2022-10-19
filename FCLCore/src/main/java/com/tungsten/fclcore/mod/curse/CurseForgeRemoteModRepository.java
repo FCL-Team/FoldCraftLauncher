@@ -7,7 +7,9 @@ import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
+import com.tungsten.fclcore.util.MurmurHash2;
 import com.tungsten.fclcore.util.io.HttpRequest;
+import com.tungsten.fclcore.util.io.JarUtils;
 
 import org.jetbrains.annotations.Nullable;
 

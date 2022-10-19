@@ -8,6 +8,9 @@ import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.FileUtils;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

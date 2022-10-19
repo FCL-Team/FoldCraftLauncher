@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-// Todo : fix
 public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMark> {
     private Version version;
     private final Map<String, Pair<Library, String>> libraries;
@@ -25,16 +24,16 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
         this.libraries = libraries;
     }
 
-    public String getVersion(LibraryType type) {
+    public Optional<String> getVersion(LibraryType type) {
         return getVersion(type.getPatchId());
     }
 
-    public String getVersion(String type) {
-        return Objects.requireNonNull(libraries.get(type)).getValue();
+    public Optional<String> getVersion(String type) {
+        return Optional.ofNullable(libraries.get(type)).map(Pair::getValue);
     }
 
-    public Library getLibrary(LibraryType type) {
-        return Objects.requireNonNull(libraries.get(type.getPatchId())).getKey();
+    public Optional<Library> getLibrary(LibraryType type) {
+        return Optional.ofNullable(libraries.get(type.getPatchId())).map(Pair::getKey);
     }
 
     @NotNull
@@ -65,36 +64,19 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     }
 
     public boolean hasModLoader() {
-        for (String s : libraries.keySet()) {
-            if (Objects.requireNonNull(LibraryType.fromPatchId(s)).isModLoader()) {
-                return true;
-            }
-        }
-        return false;
+        return libraries.keySet().stream().map(LibraryType::fromPatchId)
+                .filter(Objects::nonNull)
+                .anyMatch(LibraryType::isModLoader);
     }
 
     public boolean hasModLauncher() {
         final String modLauncher = "cpw.mods.modlauncher.Launcher";
-        boolean has = false;
-        for (Version patch : version.getPatches()) {
-            if (version.getMainClass().equals(modLauncher)) {
-                has = true;
-                break;
-            }
-        }
-        return modLauncher.equals(version.getMainClass()) || has;
+        return modLauncher.equals(version.getMainClass()) || version.getPatches().stream().anyMatch(patch -> modLauncher.equals(patch.getMainClass()));
     }
 
     public boolean hasBootstrapLauncher() {
         final String bootstrapLauncher = "cpw.mods.bootstraplauncher.BootstrapLauncher";
-        boolean has = false;
-        for (Version patch : version.getPatches()) {
-            if (version.getMainClass().equals(bootstrapLauncher)) {
-                has = true;
-                break;
-            }
-        }
-        return bootstrapLauncher.equals(version.getMainClass()) || has;
+        return bootstrapLauncher.equals(version.getMainClass()) || version.getPatches().stream().anyMatch(patch -> bootstrapLauncher.equals(patch.getMainClass()));
     }
 
     private Version removingMatchedLibrary(Version version, String libraryId) {
@@ -119,12 +101,11 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
      */
     public LibraryAnalyzer removeLibrary(String libraryId) {
         if (!has(libraryId)) return this;
-        List<Version> newPatches = new ArrayList<>();
-        for (Version p : version.getPatches()) {
-            removingMatchedLibrary(p, libraryId);
-            newPatches.add(p);
-        }
-        version = removingMatchedLibrary(version, libraryId).setPatches(newPatches);
+        version = removingMatchedLibrary(version, libraryId)
+                .setPatches(version.getPatches().stream()
+                        .filter(patch -> !libraryId.equals(patch.getId()))
+                        .map(patch -> removingMatchedLibrary(patch, libraryId))
+                        .collect(Collectors.toList()));
         return this;
     }
 

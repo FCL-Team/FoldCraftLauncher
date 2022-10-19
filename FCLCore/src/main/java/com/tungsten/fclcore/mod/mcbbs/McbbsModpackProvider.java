@@ -13,11 +13,13 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.zip.ZipFile;
 
 public final class McbbsModpackProvider implements ModpackProvider {
     public static final McbbsModpackProvider INSTANCE = new McbbsModpackProvider();

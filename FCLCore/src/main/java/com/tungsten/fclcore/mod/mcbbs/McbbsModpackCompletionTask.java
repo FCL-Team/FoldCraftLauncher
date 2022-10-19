@@ -2,6 +2,8 @@ package com.tungsten.fclcore.mod.mcbbs;
 
 import static com.tungsten.fclcore.util.DigestUtils.digest;
 import static com.tungsten.fclcore.util.Hex.encodeHex;
+import static com.tungsten.fclcore.util.Lang.wrap;
+import static com.tungsten.fclcore.util.Lang.wrapConsumer;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;

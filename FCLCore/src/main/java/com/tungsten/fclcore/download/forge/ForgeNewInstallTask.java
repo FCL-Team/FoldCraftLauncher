@@ -42,6 +42,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
+// Todo : fix
 public class ForgeNewInstallTask extends Task<Version> {
 
     private class ProcessorTask extends Task<Void> {

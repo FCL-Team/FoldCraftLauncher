@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.download.fabric;
 
+import static com.tungsten.fclcore.util.Lang.wrap;
+
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.mod.RemoteMod;

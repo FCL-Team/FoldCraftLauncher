@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Todo : fix
 public final class FabricModMetadata {
     private final String id;
     private final String name;

@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.download.game;
 
+import static com.tungsten.fclcore.util.Logging.LOG;
+
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.download.AbstractDependencyManager;
 import com.tungsten.fclcore.game.AssetIndex;

@@ -151,7 +151,6 @@ public class ForgeNewInstallProfile implements Validation {
          * {MINECRAFT_JAR}: path of the Minecraft jar.
          * {SIDE}: values other than "client" will be ignored.
          * @return arguments to pass to the processor jar.
-         * @see ForgeNewInstallTask#parseLiteral(String, Map, ExceptionalFunction)
          */
         public List<String> getArgs() {
             return args == null ? Collections.emptyList() : args;
@@ -163,7 +162,6 @@ public class ForgeNewInstallProfile implements Validation {
          * Keys can be in one of [artifact] or {entry}. Should be file path.
          * Values can be in one of {entry} or 'literal'. Should be SHA-1 checksum.
          * @return files output from this processor.
-         * @see ForgeNewInstallTask#parseLiteral(String, Map, ExceptionalFunction)
          */
         public Map<String, String> getOutputs() {
             return outputs == null ? Collections.emptyMap() : outputs;

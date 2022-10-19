@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.IOException;
 import java.util.List;
 

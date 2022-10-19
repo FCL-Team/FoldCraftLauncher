@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 
 /**
  * Complete the CurseForge version.
- *
- * @author huangyuhui
  */
 public final class CurseCompletionTask extends Task<Void> {
 

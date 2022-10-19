@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// Todo : fix
 public class PackMcMeta implements Validation {
 
     @SerializedName("pack")

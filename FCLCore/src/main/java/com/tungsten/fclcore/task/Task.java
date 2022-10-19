@@ -965,7 +965,7 @@ public abstract class Task<T> {
     }
 
     private static String getCaller() {
-        return ReflectionHelper.getCaller(packageName -> !"org.jackhuang.hmcl.task".equals(packageName)).toString();
+        return ReflectionHelper.getCaller(packageName -> !"com.tungsten.fclcore.task".equals(packageName)).toString();
     }
 
     private static final class SimpleTask<T> extends Task<T> {
@@ -1002,8 +1002,6 @@ public abstract class Task<T> {
 
     /**
      * A task that combines two tasks and make sure [pred] runs before succ.
-     *
-     * @author huangyuhui
      */
     private final class UniCompose<U> extends Task<U> {
 

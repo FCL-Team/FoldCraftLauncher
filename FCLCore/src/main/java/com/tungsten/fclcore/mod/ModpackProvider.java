@@ -5,6 +5,8 @@ import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.task.Task;
 
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;

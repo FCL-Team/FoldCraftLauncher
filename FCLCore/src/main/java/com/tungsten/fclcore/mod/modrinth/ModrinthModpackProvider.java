@@ -9,11 +9,14 @@ import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
+// Todo : fix
 public final class ModrinthModpackProvider implements ModpackProvider {
     public static final ModrinthModpackProvider INSTANCE = new ModrinthModpackProvider();
 

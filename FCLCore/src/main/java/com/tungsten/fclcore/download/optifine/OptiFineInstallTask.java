@@ -35,6 +35,7 @@ import java.util.*;
 /**
  * <b>Note</b>: OptiFine should be installed in the end.
  */
+// Todo : fix
 public final class OptiFineInstallTask extends Task<Version> {
 
     private final DefaultGameRepository gameRepository;

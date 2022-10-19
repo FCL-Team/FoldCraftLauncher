@@ -24,6 +24,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 /**
  * A task that can download a file online.
  */
+// Todo : fix
 public class FileDownloadTask extends FetchTask<Void> {
 
     public static class IntegrityCheck {

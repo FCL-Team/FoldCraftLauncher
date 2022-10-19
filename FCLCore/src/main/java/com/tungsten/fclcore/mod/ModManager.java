@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
 
+// Todo : fix
 public final class ModManager {
     private final GameRepository repository;
     private final String id;
