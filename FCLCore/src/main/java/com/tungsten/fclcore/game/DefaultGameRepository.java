@@ -1,0 +1,481 @@
+package com.tungsten.fclcore.game;
+
+import static com.tungsten.fclcore.util.Logging.LOG;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.event.Event;
+import com.tungsten.fclcore.event.EventBus;
+import com.tungsten.fclcore.event.GameJsonParseFailedEvent;
+import com.tungsten.fclcore.event.LoadedOneVersionEvent;
+import com.tungsten.fclcore.event.RefreshedVersionsEvent;
+import com.tungsten.fclcore.event.RefreshingVersionsEvent;
+import com.tungsten.fclcore.event.RemoveVersionEvent;
+import com.tungsten.fclcore.event.RenameVersionEvent;
+import com.tungsten.fclcore.game.tlauncher.TLauncherVersion;
+import com.tungsten.fclcore.mod.ModManager;
+import com.tungsten.fclcore.mod.ModpackConfiguration;
+import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.ToStringBuilder;
+import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.FileUtils;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.stream.Stream;
+
+/**
+ * An implementation of classic Minecraft game repository.
+ */
+// Todo : fix
+public class DefaultGameRepository implements GameRepository {
+
+    private File baseDirectory;
+    protected Map<String, Version> versions;
+    private ConcurrentHashMap<File, String> gameVersions = new ConcurrentHashMap<>();
+
+    public DefaultGameRepository(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
+    public File getBaseDirectory() {
+        return baseDirectory;
+    }
+
+    public void setBaseDirectory(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
+
+    @Override
+    public boolean hasVersion(String id) {
+        return id != null && versions.containsKey(id);
+    }
+
+    @Override
+    public Version getVersion(String id) {
+        if (!hasVersion(id))
+            throw new VersionNotFoundException("Version '" + id + "' does not exist in " + versions.keySet() + ".");
+        return versions.get(id);
+    }
+
+    @Override
+    public int getVersionCount() {
+        return versions.size();
+    }
+
+    @Override
+    public Collection<Version> getVersions() {
+        return versions.values();
+    }
+
+    @Override
+    public File getLibrariesDirectory(Version version) {
+        return new File(getBaseDirectory(), "libraries");
+    }
+
+    @Override
+    public File getLibraryFile(Version version, Library lib) {
+        if ("local".equals(lib.getHint()) && lib.getFileName() != null)
+            return new File(getVersionRoot(version.getId()), "libraries/" + lib.getFileName());
+        else
+            return new File(getLibrariesDirectory(version), lib.getPath());
+    }
+
+    public String getArtifactFile(Version version, Artifact artifact) {
+        return artifact.getPath(getBaseDirectory() + "/libraries");
+    }
+
+    public GameDirectoryType getGameDirectoryType(String id) {
+        return GameDirectoryType.ROOT_FOLDER;
+    }
+
+    @Override
+    public File getRunDirectory(String id) {
+        switch (getGameDirectoryType(id)) {
+            case VERSION_FOLDER: return getVersionRoot(id);
+            case ROOT_FOLDER: return getBaseDirectory();
+            default: throw new IllegalStateException();
+        }
+    }
+
+    @Override
+    public File getVersionJar(Version version) {
+        Version v = version.resolve(this);
+        String id = Optional.ofNullable(v.getJar()).orElse(v.getId());
+        return new File(getVersionRoot(id), id + ".jar");
+    }
+
+    @Override
+    public String getGameVersion(Version version) {
+        // This implementation may cause multiple flows against the same version entering
+        // this function, which is accepted because GameVersion::minecraftVersion should
+        // be consistent.
+        File versionJar = getVersionJar(version);
+        if (gameVersions.containsKey(versionJar)) {
+            return gameVersions.get(versionJar);
+        } else {
+            String gameVersion = GameVersion.minecraftVersion(versionJar);
+
+            if (gameVersion == null) {
+                LOG.warning("Cannot find out game version of " + version.getId() + ", primary jar: " + versionJar.toString() + ", jar exists: " + versionJar.exists());
+            }
+
+            gameVersions.put(versionJar, gameVersion);
+            return gameVersion;
+        }
+    }
+
+    @Override
+    public File getVersionRoot(String id) {
+        return new File(getBaseDirectory(), "versions/" + id);
+    }
+
+    public File getVersionJson(String id) {
+        return new File(getVersionRoot(id), id + ".json");
+    }
+
+    public Version readVersionJson(String id) throws IOException, JsonParseException {
+        return readVersionJson(getVersionJson(id));
+    }
+
+    public Version readVersionJson(File file) throws IOException, JsonParseException {
+        String jsonText = FileUtils.readText(file);
+        try {
+            // Try TLauncher version json format
+            return JsonUtils.fromNonNullJson(jsonText, TLauncherVersion.class).toVersion();
+        } catch (JsonParseException ignored) {
+        }
+
+        try {
+            // Try official version json format
+            return JsonUtils.fromNonNullJson(jsonText, Version.class);
+        } catch (JsonParseException ignored) {
+        }
+
+        LOG.warning("Cannot parse version json + " + file.toString() + "\n" + jsonText);
+        throw new JsonParseException("Version json incorrect");
+    }
+
+    @Override
+    public boolean renameVersion(String from, String to) {
+        if (EventBus.EVENT_BUS.fireEvent(new RenameVersionEvent(this, from, to)) == Event.Result.DENY)
+            return false;
+
+        try {
+            Version fromVersion = getVersion(from);
+            Path fromDir = getVersionRoot(from).toPath();
+            Path toDir = getVersionRoot(to).toPath();
+            Files.move(fromDir, toDir);
+
+            Path fromJson = toDir.resolve(from + ".json");
+            Path fromJar = toDir.resolve(from + ".jar");
+            Path toJson = toDir.resolve(to + ".json");
+            Path toJar = toDir.resolve(to + ".jar");
+
+            boolean hasJarFile = Files.exists(fromJar);
+
+            try {
+                Files.move(fromJson, toJson);
+                if (hasJarFile) Files.move(fromJar, toJar);
+            } catch (IOException e) {
+                // recovery
+                Lang.ignoringException(() -> Files.move(toJson, fromJson));
+                if (hasJarFile) Lang.ignoringException(() -> Files.move(toJar, fromJar));
+                Lang.ignoringException(() -> Files.move(toDir, fromDir));
+                throw e;
+            }
+
+            if (fromVersion.getId().equals(fromVersion.getJar()))
+                fromVersion = fromVersion.setJar(null);
+            FileUtils.writeText(toJson.toFile(), JsonUtils.GSON.toJson(fromVersion.setId(to)));
+
+            // fix inheritsFrom of versions that inherits from version [from].
+            for (Version version : getVersions()) {
+                if (from.equals(version.getInheritsFrom())) {
+                    File json = getVersionJson(version.getId()).getAbsoluteFile();
+                    FileUtils.writeText(json, JsonUtils.GSON.toJson(version.setInheritsFrom(to)));
+                }
+            }
+            return true;
+        } catch (IOException | JsonParseException | VersionNotFoundException | InvalidPathException e) {
+            LOG.log(Level.WARNING, "Unable to rename version " + from + " to " + to, e);
+            return false;
+        }
+    }
+
+    public boolean removeVersionFromDisk(String id) {
+        if (EventBus.EVENT_BUS.fireEvent(new RemoveVersionEvent(this, id)) == Event.Result.DENY)
+            return false;
+        if (!versions.containsKey(id))
+            return FileUtils.deleteDirectoryQuietly(getVersionRoot(id).getAbsolutePath());
+        File file = getVersionRoot(id);
+        if (!file.exists())
+            return true;
+        // test if no file in this version directory is occupied.
+        File removedFile = new File(file.getAbsoluteFile().getParentFile(), file.getName() + "_removed");
+        if (!file.renameTo(removedFile))
+            return false;
+
+        try {
+            versions.remove(id);
+
+            // remove json files first to ensure FCL will not recognize this folder as a valid version.
+            List<File> jsons = FileUtils.listFilesByExtension(removedFile.getAbsolutePath(), "json");
+            for (File json : jsons) {
+                if (!json.delete())
+                    LOG.warning("Unable to delete file " + json);
+            }
+            // remove the version from version list regardless of whether the directory was removed successfully or not.
+            try {
+                FileUtils.deleteDirectory(removedFile.getAbsolutePath());
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, "Unable to remove version folder: " + file, e);
+            }
+            return true;
+        } finally {
+            refreshVersionsAsync().start();
+        }
+    }
+
+    protected void refreshVersionsImpl() {
+        Map<String, Version> versions = new TreeMap<>();
+
+        if (ClassicVersion.hasClassicVersion(getBaseDirectory())) {
+            Version version = new ClassicVersion();
+            versions.put(version.getId(), version);
+        }
+
+        SimpleVersionProvider provider = new SimpleVersionProvider();
+
+        File[] files = new File(getBaseDirectory(), "versions").listFiles();
+        if (files != null)
+            Arrays.stream(files).parallel().filter(File::isDirectory).flatMap(dir -> {
+                String id = dir.getName();
+                File json = new File(dir, id + ".json");
+
+                // If user renamed the json file by mistake or created the json file in a wrong name,
+                // we will find the only json and rename it to correct name.
+                if (!json.exists()) {
+                    List<File> jsons = FileUtils.listFilesByExtension(dir, "json");
+                    if (jsons.size() == 1) {
+                        LOG.info("Renaming json file " + jsons.get(0) + " to " + json);
+                        if (!jsons.get(0).renameTo(json)) {
+                            LOG.warning("Cannot rename json file, ignoring version " + id);
+                            return Stream.empty();
+                        }
+
+                        File jar = new File(dir, FileUtils.getNameWithoutExtension(jsons.get(0)) + ".jar");
+                        if (jar.exists() && !jar.renameTo(new File(dir, id + ".jar"))) {
+                            LOG.warning("Cannot rename jar file, ignoring version " + id);
+                            return Stream.empty();
+                        }
+                    } else {
+                        LOG.info("No available json file found, ignoring version " + id);
+                        return Stream.empty();
+                    }
+                }
+
+                Version version;
+                try {
+                    version = readVersionJson(json);
+                } catch (Exception e) {
+                    LOG.log(Level.WARNING, "Malformed version json " + id, e);
+                    // JsonSyntaxException or IOException or NullPointerException(!!)
+                    if (EventBus.EVENT_BUS.fireEvent(new GameJsonParseFailedEvent(this, json, id)) != Event.Result.ALLOW)
+                        return Stream.empty();
+
+                    try {
+                        version = readVersionJson(json);
+                    } catch (Exception e2) {
+                        LOG.log(Level.SEVERE, "User corrected version json is still malformed", e2);
+                        return Stream.empty();
+                    }
+                }
+
+                if (!id.equals(version.getId())) {
+                    String from = id;
+                    String to = version.getId();
+                    String fromDir = getVersionRoot(from).getAbsolutePath();
+                    String toDir = getVersionRoot(to).getAbsolutePath();
+                    FileUtils.rename(fromDir, to);
+
+                    String fromJson = toDir + "/" + from + ".json";
+                    String fromJar = toDir + "/" + from + ".jar";
+                    String toJsonName = to + ".json";
+                    String toJarName = to + ".jar";
+
+                    FileUtils.rename(fromJson, toJsonName);
+                    if (new File(fromJar).exists())
+                        FileUtils.rename(fromJar, toJarName);
+                }
+
+                return Stream.of(version);
+            }).forEachOrdered(provider::addVersion);
+
+        for (Version version : provider.getVersionMap().values()) {
+            try {
+                Version resolved = version.resolve(provider);
+
+                if (resolved.appliesToCurrentEnvironment() &&
+                        EventBus.EVENT_BUS.fireEvent(new LoadedOneVersionEvent(this, resolved)) != Event.Result.DENY)
+                    versions.put(version.getId(), version);
+            } catch (VersionNotFoundException e) {
+                LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because it inherits from a nonexistent version.");
+            }
+        }
+
+        this.gameVersions.clear();
+        this.versions = versions;
+    }
+
+    @Override
+    public void refreshVersions() {
+        if (EventBus.EVENT_BUS.fireEvent(new RefreshingVersionsEvent(this)) == Event.Result.DENY)
+            return;
+
+        refreshVersionsImpl();
+        EventBus.EVENT_BUS.fireEvent(new RefreshedVersionsEvent(this));
+    }
+
+    @Override
+    public AssetIndex getAssetIndex(String version, String assetId) throws IOException {
+        try {
+            return Objects.requireNonNull(JsonUtils.GSON.fromJson(FileUtils.readText(getIndexFile(version, assetId)), AssetIndex.class));
+        } catch (JsonParseException | NullPointerException e) {
+            throw new IOException("Asset index file malformed", e);
+        }
+    }
+
+    @Override
+    public String getActualAssetDirectory(String version, String assetId) {
+        try {
+            return reconstructAssets(version, assetId);
+        } catch (IOException | JsonParseException e) {
+            LOG.log(Level.SEVERE, "Unable to reconstruct asset directory", e);
+            return getAssetDirectory(version, assetId);
+        }
+    }
+
+    @Override
+    public String getAssetDirectory(String version, String assetId) {
+        return getBaseDirectory() + "/assets";
+    }
+
+    @Override
+    public String getAssetObject(String version, String assetId, String name) throws IOException {
+        try {
+            AssetObject assetObject = getAssetIndex(version, assetId).getObjects().get(name);
+            if (assetObject == null) return null;
+            return getAssetObject(version, assetId, assetObject);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException("Unrecognized asset object " + name + " in asset " + assetId + " of version " + version, e);
+        }
+    }
+
+    @Override
+    public String getAssetObject(String version, String assetId, AssetObject obj) {
+        return getAssetDirectory(version, assetId) + "/objects/" + obj.getLocation();
+    }
+
+    @Override
+    public String getIndexFile(String version, String assetId) {
+        return getAssetDirectory(version, assetId) + "/indexes/" + assetId + ".json";
+    }
+
+    @Override
+    public String getLoggingObject(String version, String assetId, LoggingInfo loggingInfo) {
+        return getAssetDirectory(version, assetId) + "/log_configs/" + loggingInfo.getFile().getId();
+    }
+
+    protected String reconstructAssets(String version, String assetId) throws IOException, JsonParseException {
+        Path assetsDir = getAssetDirectory(version, assetId);
+        Path indexFile = getIndexFile(version, assetId);
+        Path virtualRoot = assetsDir.resolve("virtual").resolve(assetId);
+
+        if (!Files.isRegularFile(indexFile))
+            return assetsDir;
+
+        String assetIndexContent = FileUtils.readText(indexFile);
+        AssetIndex index = JsonUtils.GSON.fromJson(assetIndexContent, AssetIndex.class);
+
+        if (index == null)
+            return assetsDir;
+
+        if (index.isVirtual()) {
+            int cnt = 0;
+            int tot = index.getObjects().entrySet().size();
+            for (Map.Entry<String, AssetObject> entry : index.getObjects().entrySet()) {
+                Path target = virtualRoot.resolve(entry.getKey());
+                Path original = getAssetObject(version, assetsDir, entry.getValue());
+                if (Files.exists(original)) {
+                    cnt++;
+                    if (!Files.isRegularFile(target))
+                        FileUtils.copyFile(original, target);
+                }
+            }
+
+            // If the scale new format existent file is lower then 0.1, use the old format.
+            if (cnt * 10 < tot)
+                return assetsDir;
+            else
+                return virtualRoot;
+        }
+
+        return assetsDir;
+    }
+
+    public boolean isLoaded() {
+        return versions != null;
+    }
+
+    public File getModpackConfiguration(String version) {
+        return new File(getVersionRoot(version), "modpack.json");
+    }
+
+    /**
+     * read modpack configuration for a version.
+     * @param version version installed as modpack
+     * @param <M> manifest type of ModpackConfiguration
+     * @return modpack configuration object, or null if this version is not a modpack.
+     * @throws VersionNotFoundException if version does not exist.
+     * @throws IOException if an i/o error occurs.
+     */
+    @Nullable
+    public <M> ModpackConfiguration<M> readModpackConfiguration(String version) throws IOException, VersionNotFoundException {
+        if (!hasVersion(version)) throw new VersionNotFoundException(version);
+        File file = getModpackConfiguration(version);
+        if (!file.exists()) return null;
+        return JsonUtils.GSON.fromJson(FileUtils.readText(file), new TypeToken<ModpackConfiguration<M>>(){}.getType());
+    }
+
+    public boolean isModpack(String version) {
+        return getModpackConfiguration(version).exists();
+    }
+
+    public ModManager getModManager(String version) {
+        return new ModManager(this, version);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("versions", versions == null ? null : versions.keySet())
+                .append("baseDirectory", baseDirectory)
+                .toString();
+    }
+}

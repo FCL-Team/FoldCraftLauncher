@@ -1,0 +1,116 @@
+package com.tungsten.fclcore.game;
+
+import com.google.gson.annotations.SerializedName;
+import com.tungsten.fclcore.util.Lang;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public final class Arguments {
+
+    @SerializedName("game")
+    private final List<Argument> game;
+    @SerializedName("jvm")
+    private final List<Argument> jvm;
+
+    public Arguments() {
+        this(null, null);
+    }
+
+    public Arguments(List<Argument> game, List<Argument> jvm) {
+        this.game = game;
+        this.jvm = jvm;
+    }
+
+    @Nullable
+    public List<Argument> getGame() {
+        return game == null ? null : Collections.unmodifiableList(game);
+    }
+
+    public Arguments withGame(List<Argument> game) {
+        return new Arguments(game, jvm);
+    }
+
+    @Nullable
+    public List<Argument> getJvm() {
+        return jvm == null ? null : Collections.unmodifiableList(jvm);
+    }
+
+    public Arguments withJvm(List<Argument> jvm) {
+        return new Arguments(game, jvm);
+    }
+
+    public Arguments addGameArguments(String... gameArguments) {
+        return addGameArguments(Arrays.asList(gameArguments));
+    }
+
+    public Arguments addGameArguments(List<String> gameArguments) {
+        List<Argument> list = new ArrayList<>();
+        for (String arg : gameArguments) {
+            list.add(new StringArgument(arg));
+        }
+        return new Arguments(Lang.merge(getGame(), list), getJvm());
+    }
+
+    public Arguments addJVMArguments(String... jvmArguments) {
+        return addJVMArguments(Arrays.asList(jvmArguments));
+    }
+
+    public Arguments addJVMArguments(List<String> jvmArguments) {
+        List<Argument> list = new ArrayList<>();
+        for (String arg : jvmArguments) {
+            list.add(new StringArgument(arg));
+        }
+        return new Arguments(getGame(), Lang.merge(getJvm(), list));
+    }
+
+    public static Arguments merge(Arguments a, Arguments b) {
+        if (a == null)
+            return b;
+        else if (b == null)
+            return a;
+        else
+            return new Arguments(
+                    a.game == null && b.game == null ? null : Lang.merge(a.game, b.game),
+                    a.jvm == null && b.jvm == null ? null : Lang.merge(a.jvm, b.jvm));
+    }
+
+    public static List<String> parseStringArguments(List<String> arguments, Map<String, String> keys) {
+        List<String> list = new ArrayList<>();
+        for (String arg : arguments) {
+            list.addAll(new StringArgument(arg).toString(keys, Collections.emptyMap()));
+        }
+        return list;
+    }
+
+    public static List<String> parseArguments(List<Argument> arguments, Map<String, String> keys) {
+        return parseArguments(arguments, keys, Collections.emptyMap());
+    }
+
+    public static List<String> parseArguments(List<Argument> arguments, Map<String, String> keys, Map<String, Boolean> features) {
+        List<String> list = new ArrayList<>();
+        for (Argument arg : arguments) {
+            list.addAll(arg.toString(keys, Collections.emptyMap()));
+        }
+        return list;
+    }
+
+    public static final List<Argument> DEFAULT_JVM_ARGUMENTS;
+    public static final List<Argument> DEFAULT_GAME_ARGUMENTS;
+
+    static {
+        List<Argument> jvm = new ArrayList<>(6);
+        jvm.add(new StringArgument("-Djava.library.path=${natives_directory}"));
+        jvm.add(new StringArgument("-Dminecraft.launcher.brand=${launcher_name}"));
+        jvm.add(new StringArgument("-Dminecraft.launcher.version=${launcher_version}"));
+        jvm.add(new StringArgument("-cp"));
+        jvm.add(new StringArgument("${classpath}"));
+        DEFAULT_JVM_ARGUMENTS = Collections.unmodifiableList(jvm);
+
+        List<Argument> game = new ArrayList<>(1);
+        game.add(new RuledArgument(Collections.singletonList(new CompatibilityRule(CompatibilityRule.Action.ALLOW, null, Collections.singletonMap("has_custom_resolution", true))), Arrays.asList("--width", "${resolution_width}", "--height", "${resolution_height}")));
+        DEFAULT_GAME_ARGUMENTS = Collections.unmodifiableList(game);
+    }
+}

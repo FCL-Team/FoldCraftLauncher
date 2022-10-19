@@ -1,0 +1,261 @@
+package com.tungsten.fclcore.util;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Pattern;
+
+public final class StringUtils {
+
+    private StringUtils() {
+    }
+
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter(512);
+        try (PrintWriter printWriter = new PrintWriter(stringWriter)) {
+            throwable.printStackTrace(printWriter);
+        }
+        return stringWriter.toString();
+    }
+
+    public static boolean isBlank(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    public static boolean isNotBlank(String str) {
+        return !isBlank(str);
+    }
+
+    public static String substringBeforeLast(String str, char delimiter) {
+        return substringBeforeLast(str, delimiter, str);
+    }
+
+    public static String substringBeforeLast(String str, char delimiter, String missingDelimiterValue) {
+        int index = str.lastIndexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(0, index);
+    }
+
+    public static String substringBeforeLast(String str, String delimiter) {
+        return substringBeforeLast(str, delimiter, str);
+    }
+
+    public static String substringBeforeLast(String str, String delimiter, String missingDelimiterValue) {
+        int index = str.lastIndexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(0, index);
+    }
+
+    public static String substringBefore(String str, char delimiter) {
+        return substringBefore(str, delimiter, str);
+    }
+
+    public static String substringBefore(String str, char delimiter, String missingDelimiterValue) {
+        int index = str.indexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(0, index);
+    }
+
+    public static String substringBefore(String str, String delimiter) {
+        return substringBefore(str, delimiter, str);
+    }
+
+    public static String substringBefore(String str, String delimiter, String missingDelimiterValue) {
+        int index = str.indexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(0, index);
+    }
+
+    public static String substringAfterLast(String str, char delimiter) {
+        return substringAfterLast(str, delimiter, "");
+    }
+
+    public static String substringAfterLast(String str, char delimiter, String missingDelimiterValue) {
+        int index = str.lastIndexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(index + 1);
+    }
+
+    public static String substringAfterLast(String str, String delimiter) {
+        return substringAfterLast(str, delimiter, "");
+    }
+
+    public static String substringAfterLast(String str, String delimiter, String missingDelimiterValue) {
+        int index = str.lastIndexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(index + delimiter.length());
+    }
+
+    public static String substringAfter(String str, char delimiter) {
+        return substringAfter(str, delimiter, "");
+    }
+
+    public static String substringAfter(String str, char delimiter, String missingDelimiterValue) {
+        int index = str.indexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(index + 1);
+    }
+
+    public static String substringAfter(String str, String delimiter) {
+        return substringAfter(str, delimiter, "");
+    }
+
+    public static String substringAfter(String str, String delimiter, String missingDelimiterValue) {
+        int index = str.indexOf(delimiter);
+        return index == -1 ? missingDelimiterValue : str.substring(index + delimiter.length());
+    }
+
+    public static boolean isSurrounded(String str, String prefix, String suffix) {
+        return str.startsWith(prefix) && str.endsWith(suffix);
+    }
+
+    public static String removeSurrounding(String str, String delimiter) {
+        return removeSurrounding(str, delimiter, delimiter);
+    }
+
+    public static String removeSurrounding(String str, String prefix, String suffix) {
+        if ((str.length() >= prefix.length() + suffix.length()) && str.startsWith(prefix) && str.endsWith(suffix))
+            return str.substring(prefix.length(), str.length() - suffix.length());
+        else
+            return str;
+    }
+
+    public static String addPrefix(String str, String prefix) {
+        if (str.startsWith(prefix))
+            return str;
+        else
+            return prefix + str;
+    }
+
+    public static String addSuffix(String str, String suffix) {
+        if (str.endsWith(suffix))
+            return str;
+        else
+            return str + suffix;
+    }
+
+    public static String removePrefix(String str, String... prefixes) {
+        for (String prefix : prefixes)
+            if (str.startsWith(prefix))
+                return str.substring(prefix.length());
+        return str;
+    }
+
+    /**
+     * Remove one suffix of the suffixes of the string.
+     */
+    public static String removeSuffix(String str, String... suffixes) {
+        for (String suffix : suffixes)
+            if (str.endsWith(suffix))
+                return str.substring(0, str.length() - suffix.length());
+        return str;
+    }
+
+    public static boolean containsOne(Collection<String> patterns, String... targets) {
+        for (String pattern : patterns)
+            for (String target : targets)
+                if (pattern.toLowerCase().contains(target.toLowerCase()))
+                    return true;
+        return false;
+    }
+
+    public static boolean containsOne(String pattern, String... targets) {
+        for (String target : targets)
+            if (pattern.toLowerCase().contains(target.toLowerCase()))
+                return true;
+        return false;
+    }
+
+    public static boolean containsOne(String pattern, char... targets) {
+        for (char target : targets)
+            if (pattern.toLowerCase().indexOf(Character.toLowerCase(target)) >= 0)
+                return true;
+        return false;
+    }
+
+    public static List<String> tokenize(String str) {
+        if (str == null)
+            return new ArrayList<>();
+        else
+            return tokenize(str, " \t\n\r\f");
+    }
+
+    public static List<String> tokenize(String str, String delim) {
+        ArrayList<String> result = new ArrayList<>();
+        StringTokenizer tokenizer = new StringTokenizer(str, delim);
+        while (tokenizer.hasMoreTokens()) {
+            delim = tokenizer.nextToken();
+            result.add(delim);
+        }
+
+        return result;
+    }
+
+    public static String parseColorEscapes(String original) {
+        return original.replaceAll("\u00A7\\d", "");
+    }
+
+    public static String parseEscapeSequence(String str) {
+        StringBuilder builder = new StringBuilder();
+        boolean inEscape = false;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == '\033') {
+                inEscape = true;
+            }
+            if (!inEscape) {
+                builder.append(ch);
+            }
+            if (inEscape && ch == 'm') {
+                inEscape = false;
+            }
+        }
+        return builder.toString();
+    }
+
+    public static String repeats(char ch, int repeat) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < repeat; i++) {
+            result.append(ch);
+        }
+        return result.toString();
+    }
+
+    public static boolean isASCII(CharSequence cs) {
+        return US_ASCII_ENCODER.canEncode(cs);
+    }
+
+    /**
+     * Class for computing the longest common subsequence between strings.
+     */
+    public static class LongestCommonSubsequence {
+        // We reuse dynamic programming storage array here to reduce allocations.
+        private final int[][] f;
+        private final int maxLengthA;
+        private final int maxLengthB;
+
+        public LongestCommonSubsequence(int maxLengthA, int maxLengthB) {
+            this.maxLengthA = maxLengthA;
+            this.maxLengthB = maxLengthB;
+            f = new int[maxLengthA + 1][];
+            for (int i = 0; i <= maxLengthA; i++) {
+                f[i] = new int[maxLengthB + 1];
+            }
+        }
+
+        public int calc(CharSequence a, CharSequence b) {
+            if (a.length() > maxLengthA || b.length() > maxLengthB) {
+                throw new IllegalArgumentException("Too large length");
+            }
+            for (int i = 1; i <= a.length(); i++) {
+                for (int j = 1; j <= b.length(); j++) {
+                    if (a.charAt(i - 1) == b.charAt(j - 1)) {
+                        f[i][j] = 1 + f[i - 1][j - 1];
+                    } else {
+                        f[i][j] = Math.max(f[i - 1][j], f[i][j - 1]);
+                    }
+                }
+            }
+            return f[a.length()][b.length()];
+        }
+    }
+
+    public static final Pattern CHINESE_PATTERN = Pattern.compile("[\\u4e00-\\u9fa5]");
+
+    public static final CharsetEncoder US_ASCII_ENCODER = StandardCharsets.US_ASCII.newEncoder();
+}

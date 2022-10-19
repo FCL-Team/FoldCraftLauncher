@@ -1,0 +1,5 @@
+JAVA_VERSION="1.8.0"
+OS_NAME="Linux"
+OS_VERSION="2.6"
+OS_ARCH="aarch64"
+SOURCE=""

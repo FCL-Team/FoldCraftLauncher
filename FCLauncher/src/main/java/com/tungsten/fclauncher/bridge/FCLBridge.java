@@ -1,0 +1,110 @@
+package com.tungsten.fclauncher.bridge;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.view.Surface;
+
+public class FCLBridge {
+
+    public static final int KeyPress              = 2;
+    public static final int KeyRelease            = 3;
+    public static final int ButtonPress           = 4;
+    public static final int ButtonRelease         = 5;
+    public static final int MotionNotify          = 6;
+    public static final int ConfigureNotify       = 22;
+    public static final int FCLMessage           = 37;
+
+    public static final int Button1               = 1;
+    public static final int Button2               = 2;
+    public static final int Button3               = 3;
+    public static final int Button4               = 4;
+    public static final int Button5               = 5;
+    public static final int Button6               = 6;
+    public static final int Button7               = 7;
+
+    public static final int CursorEnabled         = 1;
+    public static final int CursorDisabled        = 0;
+
+    public static final int ShiftMask             = 1 << 0;
+    public static final int LockMask              = 1 << 1;
+    public static final int ControlMask           = 1 << 2;
+    public static final int Mod1Mask              = 1 << 3;
+    public static final int Mod2Mask              = 1 << 4;
+    public static final int Mod3Mask              = 1 << 5;
+    public static final int Mod4Mask              = 1 << 6;
+    public static final int Mod5Mask              = 1 << 7;
+
+    public static final int CloseRequest          = 0;
+
+    public final Context context;
+    public final FCLBridgeCallback callback;
+
+    static {
+        System.loadLibrary("xhook");
+        System.loadLibrary("fcl");
+        System.loadLibrary("glfw");
+    }
+
+    public FCLBridge(Context context, FCLBridgeCallback callback) {
+        this.context = context;
+        this.callback = callback;
+    }
+
+    public native void setFCLNativeWindow(Surface surface);
+    public native void redirectStdio(String path);
+    public native int chdir(String path);
+    public native void setenv(String key, String value);
+    public native int dlopen(String path);
+    public native void setupExitTrap(FCLBridge bridge);
+    public native void setEventPipe();
+    public native void pushEvent(long time, int type, int keycode, int keyChar);
+    public native void setupJLI();
+    public native int jliLaunch(String[] args);
+
+    public void pushEventMouseButton(int button, boolean press) {
+        pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button, 0);
+    }
+
+    public void pushEventPointer(int x, int y) {
+        pushEvent(System.nanoTime(), MotionNotify, x, y);
+    }
+
+    public void pushEventKey(int keyCode, int keyChar, boolean press) {
+        pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
+    }
+
+    public void pushEventWindow(int width, int height) {
+        pushEvent(System.nanoTime(), ConfigureNotify, width, height);
+    }
+
+    public void pushEventMessage(int msg) {
+        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
+    }
+
+    // Loader function
+    public void exit(int code) {
+        callback.onExit(code);
+    }
+
+    // FCLBridge callbacks
+    public void setCursorMode(int mode) {
+        callback.onCursorModeChange(mode);
+    }
+
+    public void setPrimaryClipString(String string) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("FCL Clipboard", string);
+        clipboard.setPrimaryClip(clip);
+    }
+
+    public String getPrimaryClipString() {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (!clipboard.hasPrimaryClip()) {
+            return null;
+        }
+        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+        return item.getText().toString();
+    }
+
+}
