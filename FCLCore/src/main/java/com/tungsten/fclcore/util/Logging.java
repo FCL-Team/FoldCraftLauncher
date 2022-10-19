@@ -4,6 +4,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -37,7 +38,7 @@ public final class Logging {
         return message;
     }
 
-    public static void start(String logFolder) {
+    public static void start(File logFolder) {
         LOG.setLevel(Level.ALL);
         LOG.setUseParentHandlers(false);
         LOG.setFilter(record -> {

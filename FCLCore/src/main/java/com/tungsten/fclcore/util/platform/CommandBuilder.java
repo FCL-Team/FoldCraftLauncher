@@ -4,9 +4,18 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.tungsten.fclcore.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class CommandBuilder {
+    private static final Pattern UNSTABLE_OPTION_PATTERN = Pattern.compile("-XX:(?<key>[a-zA-Z0-9]+)=(?<value>.*)");
+    private static final Pattern UNSTABLE_BOOLEAN_OPTION_PATTERN = Pattern.compile("-XX:(?<value>[+\\-])(?<key>[a-zA-Z0-9]+)");
 
     private final List<Item> raw = new ArrayList<>();
 
@@ -69,24 +78,53 @@ public final class CommandBuilder {
         return null;
     }
 
+    public String addUnstableDefault(String opt, boolean value) {
+        for (Item item : raw) {
+            final Matcher matcher = UNSTABLE_BOOLEAN_OPTION_PATTERN.matcher(item.arg);
+            if (matcher.matches()) {
+                if (matcher.group("key").equals(opt)) {
+                    return item.arg;
+                }
+            }
+        }
+
+        if (value) {
+            raw.add(new Item("-XX:+" + opt, true));
+        } else {
+            raw.add(new Item("-XX:-" + opt, true));
+        }
+        return null;
+    }
+
+    public String addUnstableDefault(String opt, String value) {
+        for (Item item : raw) {
+            final Matcher matcher = UNSTABLE_OPTION_PATTERN.matcher(item.arg);
+            if (matcher.matches()) {
+                if (matcher.group("key").equals(opt)) {
+                    return item.arg;
+                }
+            }
+        }
+
+        raw.add(new Item("-XX:" + opt + "=" + value, true));
+        return null;
+    }
+
+    public boolean removeIf(Predicate<String> pred) {
+        return raw.removeIf(i -> pred.test(i.arg));
+    }
+
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < raw.size(); i++) {
-            if (i != 0) {
-                stringBuilder.append(" ");
-            }
-            stringBuilder.append(raw.get(i).parse ? parse(raw.get(i).arg) : raw.get(i).arg);
-        }
-        return stringBuilder.toString();
+        return raw.stream().map(i -> i.parse ? parse(i.arg) : i.arg).collect(Collectors.joining(" "));
     }
 
     public List<String> asList() {
-        List<String> list = new ArrayList<>();
-        for (Item item : raw) {
-            list.add(item.arg);
-        }
-        return list;
+        return raw.stream().map(i -> i.arg).collect(Collectors.toList());
+    }
+
+    public List<String> asMutableList() {
+        return raw.stream().map(i -> i.arg).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private static class Item {

@@ -24,14 +24,8 @@ public class VersionNumber implements Comparable<VersionNumber> {
     }
 
     public static boolean isIntVersionNumber(String version) {
-        boolean bool = true;
-        for (int i = 0; i < version.length(); i++) {
-            if (version.charAt(i) != '.' && (version.charAt(i) < '0' || version.charAt(i) > '9')) {
-                bool = false;
-                break;
-            }
-        }
-        if (bool && !version.contains("..") && StringUtils.isNotBlank(version)) {
+        if (version.chars().noneMatch(ch -> ch != '.' && (ch < '0' || ch > '9'))
+                && !version.contains("..") && StringUtils.isNotBlank(version)) {
             String[] arr = version.split("\\.");
             for (String str : arr)
                 if (str.length() > 9)
@@ -315,14 +309,7 @@ public class VersionNumber implements Comparable<VersionNumber> {
     }
 
     private static Item parseItem(String buf) {
-        boolean bool = true;
-        for (int i = 0; i < buf.length(); i++) {
-            if (!Character.isDigit(buf.charAt(i))) {
-                bool = false;
-                break;
-            }
-        }
-        return bool ? new IntegerItem(buf) : new StringItem(buf);
+        return buf.chars().allMatch(Character::isDigit) ? new IntegerItem(buf) : new StringItem(buf);
     }
 
     @Override
@@ -349,9 +336,5 @@ public class VersionNumber implements Comparable<VersionNumber> {
         return canonical.hashCode();
     }
 
-    public static final Comparator<String> VERSION_COMPARATOR = (s, t1) -> {
-        VersionNumber v = VersionNumber.asVersion(s);
-        VersionNumber v1 = VersionNumber.asVersion(t1);
-        return v.compareTo(v1);
-    };
+    public static final Comparator<String> VERSION_COMPARATOR = Comparator.comparing(VersionNumber::asVersion);
 }

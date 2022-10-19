@@ -1,19 +1,56 @@
 package com.tungsten.fclcore.util.io;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 
 public final class FileUtils {
 
     private FileUtils() {
+    }
+
+    public static boolean canCreateDirectory(String path) {
+        try {
+            return canCreateDirectory(Paths.get(path));
+        } catch (InvalidPathException e) {
+            return false;
+        }
+    }
+
+    public static boolean canCreateDirectory(Path path) {
+        if (Files.isDirectory(path)) return true;
+        else if (Files.exists(path)) return false;
+        else {
+            Path lastPath = path; // always not exist
+            path = path.getParent();
+            // find existent ancestor
+            while (path != null && !Files.exists(path)) {
+                lastPath = path;
+                path = path.getParent();
+            }
+            if (path == null) return false; // all ancestors are nonexistent
+            if (!Files.isDirectory(path)) return false; // ancestor is file
+            try {
+                Files.createDirectory(lastPath); // check permission
+                Files.delete(lastPath); // safely delete empty directory
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }
     }
 
     public static String getNameWithoutExtension(String fileName) {
@@ -24,20 +61,33 @@ public final class FileUtils {
         return StringUtils.substringBeforeLast(file.getName(), '.');
     }
 
+    public static String getNameWithoutExtension(Path file) {
+        return StringUtils.substringBeforeLast(getName(file), '.');
+    }
+
     public static String getExtension(File file) {
         return StringUtils.substringAfterLast(file.getName(), '.');
     }
 
+    public static String getExtension(Path file) {
+        return StringUtils.substringAfterLast(getName(file), '.');
+    }
+
+    /**
+     * This method is for normalizing ZipPath since Path.normalize of ZipFileSystem does not work properly.
+     */
     public static String normalizePath(String path) {
         return StringUtils.addPrefix(StringUtils.removeSuffix(path, "/", "\\"), "/");
     }
 
-    public static String getName(String path) {
-        return StringUtils.removeSuffix(new File(path).getName(), "/", "\\");
+    public static String getName(Path path) {
+        if (path.getFileName() == null) return "";
+        return StringUtils.removeSuffix(path.getFileName().toString(), "/", "\\");
     }
 
-    public static String readText(String file) throws IOException {
-        return readText(new File(file), UTF_8);
+    public static String getName(Path path, String candidate) {
+        if (path.getFileName() == null) return candidate;
+        else return getName(path);
     }
 
     public static String readText(File file) throws IOException {
@@ -45,44 +95,122 @@ public final class FileUtils {
     }
 
     public static String readText(File file, Charset charset) throws IOException {
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] bytes = new byte [inputStream.available()];
-        inputStream.read(bytes);
-        inputStream.close();
-        return new String(bytes, charset);
+        return new String(Files.readAllBytes(file.toPath()), charset);
     }
 
-    public static void writeText(String file, String text) throws IOException {
-        writeBytes(new File(file), text);
+    public static String readText(Path file) throws IOException {
+        return readText(file, UTF_8);
     }
 
+    public static String readText(Path file, Charset charset) throws IOException {
+        return new String(Files.readAllBytes(file), charset);
+    }
+
+    /**
+     * Write plain text to file. Characters are encoded into bytes using UTF-8.
+     * <p>
+     * We don't care about platform difference of line separator. Because readText accept all possibilities of line separator.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All characters in text will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file the path to the file
+     * @param text the text being written to file
+     * @throws IOException if an I/O error occurs
+     */
     public static void writeText(File file, String text) throws IOException {
-        writeBytes(file, text);
+        writeText(file, text, UTF_8);
     }
 
-    public static void writeBytes(File file, String text) throws IOException {
-        String parent = file.getParent();
-        makeDirectory(parent);
-        makeFile(file.getAbsolutePath());
-        FileWriter fileWriter = new FileWriter(file.getAbsolutePath());
-        fileWriter.write(text);
-        fileWriter.close();
+    /**
+     * Write plain text to file. Characters are encoded into bytes using UTF-8.
+     * <p>
+     * We don't care about platform difference of line separator. Because readText accept all possibilities of line separator.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All characters in text will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file the path to the file
+     * @param text the text being written to file
+     * @throws IOException if an I/O error occurs
+     */
+    public static void writeText(Path file, String text) throws IOException {
+        writeText(file, text, UTF_8);
     }
 
-    public static void deleteDirectory(String directory) throws IOException {
-        if (!new File(directory).exists())
+    /**
+     * Write plain text to file.
+     * <p>
+     * We don't care about platform difference of line separator. Because readText accept all possibilities of line separator.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All characters in text will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file    the path to the file
+     * @param text    the text being written to file
+     * @param charset the charset to use for encoding
+     * @throws IOException if an I/O error occurs
+     */
+    public static void writeText(File file, String text, Charset charset) throws IOException {
+        writeBytes(file, text.getBytes(charset));
+    }
+
+    /**
+     * Write plain text to file.
+     * <p>
+     * We don't care about platform difference of line separator. Because readText accept all possibilities of line separator.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All characters in text will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file    the path to the file
+     * @param text    the text being written to file
+     * @param charset the charset to use for encoding
+     * @throws IOException if an I/O error occurs
+     */
+    public static void writeText(Path file, String text, Charset charset) throws IOException {
+        writeBytes(file, text.getBytes(charset));
+    }
+
+    /**
+     * Write byte array to file.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All bytes in byte array will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file  the path to the file
+     * @param data the data being written to file
+     * @throws IOException if an I/O error occurs
+     */
+    public static void writeBytes(File file, byte[] data) throws IOException {
+        writeBytes(file.toPath(), data);
+    }
+
+    /**
+     * Write byte array to file.
+     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
+     * All bytes in byte array will be written into the file in binary format. Existing data will be erased.
+     *
+     * @param file  the path to the file
+     * @param data the data being written to file
+     * @throws IOException if an I/O error occurs
+     */
+    public static void writeBytes(Path file, byte[] data) throws IOException {
+        Files.createDirectories(file.getParent());
+        Files.write(file, data);
+    }
+
+    public static void deleteDirectory(File directory)
+            throws IOException {
+        if (!directory.exists())
             return;
 
-        cleanDirectory(directory);
+        if (!isSymlink(directory))
+            cleanDirectory(directory);
 
-        if (!new File(directory).delete()) {
+        if (!directory.delete()) {
             String message = "Unable to delete directory " + directory + ".";
 
             throw new IOException(message);
         }
     }
 
-    public static boolean deleteDirectoryQuietly(String directory) {
+    public static boolean deleteDirectoryQuietly(File directory) {
         try {
             deleteDirectory(directory);
             return true;
@@ -91,64 +219,65 @@ public final class FileUtils {
         }
     }
 
-    public static boolean copyDirectory(String src, String dest) throws IOException {
-        File srcDir = new File(src);
-        File destDir = new File(dest);
-        if (!srcDir.isDirectory()) {
-            return false;
-        }
-        if (!destDir.isDirectory() && !destDir.mkdirs()) {
-            return false;
-        }
-        File[] files = srcDir.listFiles();
-        if (files == null) {
-            return true;
-        }
-        for (File file : files) {
-            File destFile = new File(destDir, file.getName());
-            if (file.isFile()) {
-                if (!copyFile(file.getAbsolutePath(), destFile.getAbsolutePath())) {
-                    return false;
-                }
-            }
-            else if (file.isDirectory()) {
-                if (!copyDirectory(file.getAbsolutePath(), destFile.getAbsolutePath())) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    /**
+     * Copy directory.
+     * Paths of all files relative to source directory will be the same as the ones relative to destination directory.
+     *
+     * @param src  the source directory.
+     * @param dest the destination directory, which will be created if not existing.
+     * @throws IOException if an I/O error occurs.
+     */
+    public static void copyDirectory(Path src, Path dest) throws IOException {
+        copyDirectory(src, dest, path -> true);
     }
 
-    public static boolean copyDirectoryQuietly(String src, String dest) {
-        try {
-            copyDirectory(src, dest);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+    public static void copyDirectory(Path src, Path dest, Predicate<String> filePredicate) throws IOException {
+        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if (!filePredicate.test(src.relativize(file).toString())) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                Path destFile = dest.resolve(src.relativize(file).toString());
+                Files.copy(file, destFile, StandardCopyOption.REPLACE_EXISTING);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                if (!filePredicate.test(src.relativize(dir).toString())) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                Path destDir = dest.resolve(src.relativize(dir).toString());
+                Files.createDirectories(destDir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
-    public static void cleanDirectory(String directory) throws IOException {
-        if (!new File(directory).exists()) {
+    public static void cleanDirectory(File directory)
+            throws IOException {
+        if (!directory.exists()) {
             if (!makeDirectory(directory))
                 throw new IOException("Failed to create directory: " + directory);
             return;
         }
 
-        if (!new File(directory).isDirectory()) {
+        if (!directory.isDirectory()) {
             String message = directory + " is not a directory";
             throw new IllegalArgumentException(message);
         }
 
-        File[] files = new File(directory).listFiles();
+        File[] files = directory.listFiles();
         if (files == null)
             throw new IOException("Failed to list contents of " + directory);
 
         IOException exception = null;
         for (File file : files)
             try {
-                forceDelete(file.getAbsolutePath());
+                forceDelete(file);
             } catch (IOException ioe) {
                 exception = ioe;
             }
@@ -157,7 +286,7 @@ public final class FileUtils {
             throw exception;
     }
 
-    public static boolean cleanDirectoryQuietly(String directory) {
+    public static boolean cleanDirectoryQuietly(File directory) {
         try {
             cleanDirectory(directory);
             return true;
@@ -166,12 +295,13 @@ public final class FileUtils {
         }
     }
 
-    public static void forceDelete(String file) throws IOException {
-        if (new File(file).isDirectory()) {
+    public static void forceDelete(File file)
+            throws IOException {
+        if (file.isDirectory()) {
             deleteDirectory(file);
         } else {
-            boolean filePresent = new File(file).exists();
-            if (!new File(file).delete()) {
+            boolean filePresent = file.exists();
+            if (!file.delete()) {
                 if (!filePresent)
                     throw new FileNotFoundException("File does not exist: " + file);
                 throw new IOException("Unable to delete file: " + file);
@@ -179,62 +309,139 @@ public final class FileUtils {
         }
     }
 
-    public static boolean copyFile(String srcFile, String destFile) throws IOException {
+    public static boolean isSymlink(File file)
+            throws IOException {
+        Objects.requireNonNull(file, "File must not be null");
+        if (File.separatorChar == '\\')
+            return false;
+        File fileInCanonicalDir;
+        if (file.getParent() == null)
+            fileInCanonicalDir = file;
+        else {
+            File canonicalDir = file.getParentFile().getCanonicalFile();
+            fileInCanonicalDir = new File(canonicalDir, file.getName());
+        }
+
+        return !fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile());
+    }
+
+    public static void copyFile(File srcFile, File destFile)
+            throws IOException {
         Objects.requireNonNull(srcFile, "Source must not be null");
         Objects.requireNonNull(destFile, "Destination must not be null");
-        File src = new File(srcFile);
-        File dest = new File(destFile);
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(src));
-        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(dest));
-        byte[] flush = new byte[1024];
-        int len;
-        while ((len = inputStream.read(flush)) != -1) {
-            outputStream.write(flush,0,len);
-        }
-        outputStream.flush();
-        outputStream.close();
-        inputStream.close();
-        return true;
+        if (!srcFile.exists())
+            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+        if (srcFile.isDirectory())
+            throw new IOException("Source '" + srcFile + "' exists but is a directory");
+        if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
+            throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
+        File parentFile = destFile.getParentFile();
+        if (parentFile != null && !FileUtils.makeDirectory(parentFile))
+            throw new IOException("Destination '" + parentFile + "' directory cannot be created");
+        if (destFile.exists() && !destFile.canWrite())
+            throw new IOException("Destination '" + destFile + "' exists but is read-only");
+
+        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public static boolean copyFileQuietly(String srcFile, String destFile) {
-        try {
-            copyFile(srcFile, destFile);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+    public static void copyFile(Path srcFile, Path destFile)
+            throws IOException {
+        Objects.requireNonNull(srcFile, "Source must not be null");
+        Objects.requireNonNull(destFile, "Destination must not be null");
+        if (!Files.exists(srcFile))
+            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+        if (Files.isDirectory(srcFile))
+            throw new IOException("Source '" + srcFile + "' exists but is a directory");
+        Path parentFile = destFile.getParent();
+        Files.createDirectories(parentFile);
+        if (Files.exists(destFile) && !Files.isWritable(destFile))
+            throw new IOException("Destination '" + destFile + "' exists but is read-only");
+
+        Files.copy(srcFile, destFile, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public static boolean moveFile(String srcFile, String destFile) throws IOException {
-        boolean copy = copyFile(srcFile, destFile);
-        boolean delete = new File(srcFile).delete();
-        return copy && delete;
+    public static void moveFile(File srcFile, File destFile) throws IOException {
+        copyFile(srcFile, destFile);
+        srcFile.delete();
     }
 
-    public static boolean makeDirectory(String directory) {
-        new File(directory).mkdirs();
-        return new File(directory).isDirectory();
+    public static boolean makeDirectory(File directory) {
+        directory.mkdirs();
+        return directory.isDirectory();
     }
 
-    public static boolean makeFile(String file) {
-        return makeDirectory(new File(file).getParent()) && (new File(file).exists() || Lang.test(new File(file)::createNewFile));
+    public static boolean makeFile(File file) {
+        return makeDirectory(file.getAbsoluteFile().getParentFile()) && (file.exists() || Lang.test(file::createNewFile));
     }
 
-    public static boolean rename(String path, String newName) {
-        File file = new File(path);
-        String newPath = path.substring(0, path.lastIndexOf("/") + 1) + newName;
-        File newFile = new File(newPath);
-        return file.renameTo(newFile);
-    }
-
-    public static List<File> listFilesByExtension(String file, String extension) {
+    public static List<File> listFilesByExtension(File file, String extension) {
         List<File> result = new ArrayList<>();
-        File[] files = new File(file).listFiles();
+        File[] files = file.listFiles();
         if (files != null)
             for (File it : files)
                 if (extension.equals(getExtension(it)))
                     result.add(it);
         return result;
+    }
+
+    /**
+     * Tests whether the file is convertible to [java.nio.file.Path] or not.
+     *
+     * @param file the file to be tested
+     * @return true if the file is convertible to Path.
+     */
+    public static boolean isValidPath(File file) {
+        try {
+            file.toPath();
+            return true;
+        } catch (InvalidPathException ignored) {
+            return false;
+        }
+    }
+
+    public static Optional<Path> tryGetPath(String first, String... more) {
+        if (first == null) return Optional.empty();
+        try {
+            return Optional.of(Paths.get(first, more));
+        } catch (InvalidPathException e) {
+            return Optional.empty();
+        }
+    }
+
+    public static Path tmpSaveFile(Path file) {
+        return file.toAbsolutePath().resolveSibling("." + file.getFileName().toString() + ".tmp");
+    }
+
+    public static void saveSafely(Path file, String content) throws IOException {
+        Path tmpFile = tmpSaveFile(file);
+        try (BufferedWriter writer = Files.newBufferedWriter(tmpFile, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+            writer.write(content);
+        }
+
+        try {
+            if (Files.exists(file) && Files.getAttribute(file, "dos:hidden") == Boolean.TRUE) {
+                Files.setAttribute(tmpFile, "dos:hidden", true);
+            }
+        } catch (Throwable ignored) {
+        }
+
+        Files.move(tmpFile, file, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public static void saveSafely(Path file, ExceptionalConsumer<? super OutputStream, IOException> action) throws IOException {
+        Path tmpFile = tmpSaveFile(file);
+
+        try (OutputStream os = Files.newOutputStream(tmpFile, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+            action.accept(os);
+        }
+
+        try {
+            if (Files.exists(file) && Files.getAttribute(file, "dos:hidden") == Boolean.TRUE) {
+                Files.setAttribute(tmpFile, "dos:hidden", true);
+            }
+        } catch (Throwable ignored) {
+        }
+
+        Files.move(tmpFile, file, StandardCopyOption.REPLACE_EXISTING);
     }
 }

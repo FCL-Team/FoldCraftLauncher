@@ -91,8 +91,29 @@ public final class Lang {
         }
     }
 
+    /**
+     * Cast {@code obj} to V dynamically.
+     * @param obj the object reference to be cast.
+     * @param clazz the class reference of {@code V}.
+     * @param <V> the type that {@code obj} is being cast to.
+     * @return {@code obj} in the type of {@code V}.
+     */
+    public static <V> Optional<V> tryCast(Object obj, Class<V> clazz) {
+        if (clazz.isInstance(obj)) {
+            return Optional.of(clazz.cast(obj));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     public static <T> T getOrDefault(List<T> a, int index, T defaultValue) {
         return index < 0 || index >= a.size() ? defaultValue : a.get(index);
+    }
+
+    public static <T> T merge(T a, T b, BinaryOperator<T> operator) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return operator.apply(a, b);
     }
 
     public static <T> List<T> removingDuplicates(List<T> list) {
@@ -218,6 +239,89 @@ public final class Lang {
         return null;
     }
 
+    public static <T> T apply(T t, Consumer<T> consumer) {
+        consumer.accept(t);
+        return t;
+    }
+
+    public static void rethrow(Throwable e) {
+        if (e == null)
+            return;
+        if (e instanceof ExecutionException || e instanceof CompletionException) { // including UncheckedException and UncheckedThrowable
+            rethrow(e.getCause());
+        } else if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+        } else {
+            throw new CompletionException(e);
+        }
+    }
+
+    public static Runnable wrap(ExceptionalRunnable<?> runnable) {
+        return () -> {
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                rethrow(e);
+            }
+        };
+    }
+
+    public static <T> Supplier<T> wrap(ExceptionalSupplier<T, ?> supplier) {
+        return () -> {
+            try {
+                return supplier.get();
+            } catch (Exception e) {
+                rethrow(e);
+                throw new InternalError("Unreachable code");
+            }
+        };
+    }
+
+    public static <T, R> Function<T, R> wrap(ExceptionalFunction<T, R, ?> fn) {
+        return t -> {
+            try {
+                return fn.apply(t);
+            } catch (Exception e) {
+                rethrow(e);
+                throw new InternalError("Unreachable code");
+            }
+        };
+    }
+
+    public static <T> Consumer<T> wrapConsumer(ExceptionalConsumer<T, ?> fn) {
+        return t -> {
+            try {
+                fn.accept(t);
+            } catch (Exception e) {
+                rethrow(e);
+            }
+        };
+    }
+
+    public static <T, E> BiConsumer<T, E> wrap(ExceptionalBiConsumer<T, E, ?> fn) {
+        return (t, e) -> {
+            try {
+                fn.accept(t, e);
+            } catch (Exception ex) {
+                rethrow(ex);
+            }
+        };
+    }
+
+    @SafeVarargs
+    public static <T> Consumer<T> compose(Consumer<T>... consumers) {
+        return t -> {
+            for (Consumer<T> consumer : consumers) {
+                consumer.accept(t);
+            }
+        };
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static <T> Stream<T> toStream(Optional<T> optional) {
+        return optional.map(Stream::of).orElseGet(Stream::empty);
+    }
+
     public static <T> Iterable<T> toIterable(Enumeration<T> enumeration) {
         if (enumeration == null) {
             throw new NullPointerException();
@@ -235,6 +339,10 @@ public final class Lang {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public static <T> Iterable<T> toIterable(Stream<T> stream) {
+        return stream::iterator;
     }
 
     public static <T> Iterable<T> toIterable(Iterator<T> iterator) {
@@ -259,6 +367,13 @@ public final class Lang {
         };
         getTimer().schedule(task, delayMs);
         return task;
+    }
+
+    public static Throwable resolveException(Throwable e) {
+        if (e instanceof ExecutionException || e instanceof CompletionException)
+            return resolveException(e.getCause());
+        else
+            return e;
     }
 
     /**

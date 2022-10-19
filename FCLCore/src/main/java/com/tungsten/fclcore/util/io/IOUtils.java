@@ -3,6 +3,9 @@ package com.tungsten.fclcore.util.io;
 import java.io.*;
 import java.nio.charset.Charset;
 
+/**
+ * This utility class consists of some util methods operating on InputStream/OutputStream.
+ */
 public final class IOUtils {
 
     private IOUtils() {

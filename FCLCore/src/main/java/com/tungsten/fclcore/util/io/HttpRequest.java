@@ -1,6 +1,7 @@
 package com.tungsten.fclcore.util.io;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Lang.wrap;
 import static com.tungsten.fclcore.util.gson.JsonUtils.GSON;
 import static com.tungsten.fclcore.util.io.NetworkUtils.createHttpConnection;
 import static com.tungsten.fclcore.util.io.NetworkUtils.resolveConnection;
