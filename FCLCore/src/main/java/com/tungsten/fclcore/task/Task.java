@@ -312,11 +312,11 @@ public abstract class Task<T> {
     }
 
     protected void updateProgressImmediately(double progress) {
-
+        // TODO: update progress
     }
 
     protected final void updateMessage(String newMessage) {
-
+        // TODO: update message
     }
 
     public final T run() throws Exception {
