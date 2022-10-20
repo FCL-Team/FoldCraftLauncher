@@ -15,10 +15,13 @@ import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.curse.CurseManifest;
+import com.tungsten.fclcore.mod.curse.CurseManifestMinecraft;
 import com.tungsten.fclcore.mod.curse.CurseManifestModLoader;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.Zipper;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// Todo : fix
 public class McbbsModpackExportTask extends Task<Void> {
     private final DefaultGameRepository repository;
     private final String version;

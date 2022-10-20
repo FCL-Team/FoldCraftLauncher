@@ -8,6 +8,7 @@ import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-// Todo : fix
 public final class CurseModpackProvider implements ModpackProvider {
     public static final CurseModpackProvider INSTANCE = new CurseModpackProvider();
 

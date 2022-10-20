@@ -2,6 +2,7 @@ package com.tungsten.fclcore.mod;
 
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
 
-// Todo : fix
 public final class ModManager {
     private final GameRepository repository;
     private final String id;

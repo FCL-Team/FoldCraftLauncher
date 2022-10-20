@@ -3,6 +3,7 @@ package com.tungsten.fclcore.mod;
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// Todo : fix
 public final class FabricModMetadata {
     private final String id;
     private final String name;

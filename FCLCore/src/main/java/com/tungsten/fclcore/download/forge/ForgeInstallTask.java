@@ -13,6 +13,7 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
@@ -25,7 +26,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-// Todo : fix
 public final class ForgeInstallTask extends Task<Version> {
 
     private final DefaultDependencyManager dependencyManager;

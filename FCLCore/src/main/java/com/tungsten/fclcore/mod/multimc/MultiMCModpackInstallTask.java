@@ -13,6 +13,7 @@ import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
@@ -26,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-// Todo : fix
 public final class MultiMCModpackInstallTask extends Task<Void> {
 
     private final File zipFile;

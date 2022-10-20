@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Hex.encodeHex;
 
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.Unzipper;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Predicate;
 
-// Todo : fix
 public class ModpackInstallTask<T> extends Task<Void> {
 
     private final File modpackFile;

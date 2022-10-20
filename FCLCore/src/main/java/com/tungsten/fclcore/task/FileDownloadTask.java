@@ -19,12 +19,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.ChecksumMismatchException;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 /**
  * A task that can download a file online.
  */
-// Todo : fix
 public class FileDownloadTask extends FetchTask<Void> {
 
     public static class IntegrityCheck {

@@ -1,6 +1,15 @@
 package com.tungsten.fclcore.game;
 
+import com.github.steveice10.opennbt.NBTIO;
+import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.LongTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
+import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.Unzipper;
+import com.tungsten.fclcore.util.io.Zipper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +22,6 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-// Todo : fix
 public class World {
 
     private final Path file;

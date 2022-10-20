@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import org.jenkinsci.constant_pool_scanner.ConstantPool;
@@ -24,7 +25,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-// Todo : fix
 public final class GameVersion {
     private GameVersion() {
     }

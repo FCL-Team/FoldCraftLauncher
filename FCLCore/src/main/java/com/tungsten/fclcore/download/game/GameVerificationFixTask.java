@@ -4,6 +4,7 @@ import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.io.File;
@@ -18,7 +19,6 @@ import java.util.List;
 /**
  * Remove class digital verification file in game jar
  */
-// Todo : fix
 public final class GameVerificationFixTask extends Task<Void> {
     private final DefaultDependencyManager dependencyManager;
     private final String gameVersion;

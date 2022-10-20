@@ -7,10 +7,12 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOAD
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.DefaultGameRepository;
 import com.tungsten.fclcore.mod.ModAdviser;
+import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.Zipper;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +23,6 @@ import java.util.List;
 /**
  * Export the game to a mod pack file.
  */
-// Todo : fix
 public class MultiMCModpackExportTask extends Task<Void> {
     private final DefaultGameRepository repository;
     private final String versionId;

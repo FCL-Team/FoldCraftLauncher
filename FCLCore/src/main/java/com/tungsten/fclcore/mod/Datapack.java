@@ -3,6 +3,7 @@ package com.tungsten.fclcore.mod;
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;

@@ -99,7 +99,6 @@ public class McbbsModpackLocalInstallTask extends Task<Void> {
             dependencies.add(repository.saveAsync(version.addPatch(patch)));
         } else {
             // This mcbbs modpack was installed by other launchers.
-            // TODO: maintain libraries.
         }
 
         dependencies.add(new McbbsModpackCompletionTask(dependencyManager, name, instanceTask.getResult()));

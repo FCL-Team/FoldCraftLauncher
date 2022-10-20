@@ -4,6 +4,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
 import com.moandjiezana.toml.Toml;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;
@@ -16,7 +17,6 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-// Todo : fix
 public final class ForgeNewModMetadata {
 
     private final String modLoader;

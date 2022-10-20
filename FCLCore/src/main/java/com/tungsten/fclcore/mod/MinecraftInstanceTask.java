@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Hex.encodeHex;
 
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Todo : fix
 public final class MinecraftInstanceTask<T> extends Task<ModpackConfiguration<T>> {
 
     private final File zipFile;
