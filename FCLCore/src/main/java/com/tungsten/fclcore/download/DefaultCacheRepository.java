@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.download;
 
+import android.content.Context;
+
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.download.game.LibraryDownloadTask;
 import com.tungsten.fclcore.game.Library;
@@ -15,6 +17,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,18 +28,17 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-// Todo : fix
 public class DefaultCacheRepository extends CacheRepository {
     private Path librariesDir;
     private Path indexFile;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private Index index = null;
 
-    public DefaultCacheRepository() {
-        this(OperatingSystem.getWorkingDirectory("minecraft"));
+    public DefaultCacheRepository(Context context) {
+        this(context, new File(context.getCacheDir() + "/fclauncher").toPath());
     }
 
-    public DefaultCacheRepository(Path commonDirectory) {
+    public DefaultCacheRepository(Context context, Path commonDirectory) {
         changeDirectory(commonDirectory);
     }
 
