@@ -4,6 +4,7 @@ import static com.tungsten.fclcore.util.DigestUtils.digest;
 import static com.tungsten.fclcore.util.Hex.encodeHex;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.download.AbstractDependencyManager;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultCacheRepository;
@@ -11,9 +12,12 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.task.DownloadException;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.Pack200Utils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+
+import org.tukaani.xz.XZInputStream;
 
 import java.io.*;
 import java.net.URL;
@@ -27,7 +31,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 
-// Todo : fix
 public class LibraryDownloadTask extends Task<Void> {
     private FileDownloadTask task;
     protected final File jar;
@@ -108,7 +111,7 @@ public class LibraryDownloadTask extends Task<Void> {
             }
         }
 
-        if (Pack200Utils.isSupported() && testURLExistence(url)) {
+        if (testURLExistence(url)) {
             List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(url + ".pack.xz");
             task = new FileDownloadTask(urls, xzFile, null);
             task.setCacheRepository(cacheRepository);
@@ -243,7 +246,7 @@ public class LibraryDownloadTask extends Task<Void> {
         }
 
         try (FileOutputStream jarBytes = new FileOutputStream(dest); JarOutputStream jos = new JarOutputStream(jarBytes)) {
-            Pack200Utils.unpack(temp.toFile(), jos);
+            Pack200Utils.unpack(FCLPath.NATIVE_LIB_DIR, temp.toAbsolutePath().toString(), dest.getAbsolutePath());
 
             JarEntry checksumsFile = new JarEntry("checksums.sha1");
             checksumsFile.setTime(0L);
