@@ -8,6 +8,7 @@ import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 
 import org.apache.commons.compress.archivers.zip.ZipFile;
 

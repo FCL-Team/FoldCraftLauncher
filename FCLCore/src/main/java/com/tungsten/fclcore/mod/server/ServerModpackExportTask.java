@@ -16,7 +16,9 @@ import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.Zipper;
 
 import java.io.File;
 import java.io.IOException;
