@@ -26,13 +26,10 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private boolean fullscreen;
     private String serverIp;
-    private String wrapper;
     private Proxy proxy;
     private String proxyUser;
     private String proxyPass;
     private boolean noGeneratedJVMArgs;
-    private String preLaunchCommand;
-    private String postExitCommand;
     private ProcessPriority processPriority = ProcessPriority.NORMAL;
     private boolean daemon;
 
@@ -146,13 +143,6 @@ public class LaunchOptions implements Serializable {
     }
 
     /**
-     * i.e. optirun
-     */
-    public String getWrapper() {
-        return wrapper;
-    }
-
-    /**
      * Proxy settings
      */
     public Proxy getProxy() {
@@ -178,20 +168,6 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isNoGeneratedJVMArgs() {
         return noGeneratedJVMArgs;
-    }
-
-    /**
-     * Command called before game launches.
-     */
-    public String getPreLaunchCommand() {
-        return preLaunchCommand;
-    }
-
-    /**
-     * Command called after game exits.
-     */
-    public String getPostExitCommand() {
-        return postExitCommand;
     }
 
     /**
@@ -323,13 +299,6 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
-         * i.e. optirun
-         */
-        public String getWrapper() {
-            return options.wrapper;
-        }
-
-        /**
          * Proxy settings
          */
         public Proxy getProxy() {
@@ -355,13 +324,6 @@ public class LaunchOptions implements Serializable {
          */
         public boolean isNoGeneratedJVMArgs() {
             return options.noGeneratedJVMArgs;
-        }
-
-        /**
-         * Called command line before launching the game.
-         */
-        public String getPreLaunchCommand() {
-            return options.preLaunchCommand;
         }
 
         public boolean isDaemon() {
@@ -446,11 +408,6 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setWrapper(String wrapper) {
-            options.wrapper = wrapper;
-            return this;
-        }
-
         public Builder setProxy(Proxy proxy) {
             options.proxy = proxy;
             return this;
@@ -468,16 +425,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setNoGeneratedJVMArgs(boolean noGeneratedJVMArgs) {
             options.noGeneratedJVMArgs = noGeneratedJVMArgs;
-            return this;
-        }
-
-        public Builder setPreLaunchCommand(String preLaunchCommand) {
-            options.preLaunchCommand = preLaunchCommand;
-            return this;
-        }
-
-        public Builder setPostExitCommand(String postExitCommand) {
-            options.postExitCommand = postExitCommand;
             return this;
         }
 

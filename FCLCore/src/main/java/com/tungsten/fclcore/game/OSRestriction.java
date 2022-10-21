@@ -39,7 +39,7 @@ public final class OSRestriction {
     }
 
     public boolean allow() {
-        return true;
+        return false;
     }
 
 }
