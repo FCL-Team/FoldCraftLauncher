@@ -1,4 +1,4 @@
-package com.tungsten.fclcore.util.fakefx.fx;
+package com.tungsten.fclcore.fakefx;
 
 public interface Binding<T> extends ObservableValue<T> {
 

@@ -2,20 +2,23 @@ package com.tungsten.fclcore.mod;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.fakefx.BooleanProperty;
+import com.tungsten.fclcore.fakefx.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.Unzipper;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.Level;
 
-// Todo : fix
 public class Datapack {
     private boolean isMultiple;
     private final Path path;
-    private final ObservableList<Pack> info = FXCollections.observableArrayList();
+    private final ArrayList<Pack> info = new ArrayList<>();
 
     public Datapack(Path path) {
         this.path = path;
@@ -25,7 +28,7 @@ public class Datapack {
         return path;
     }
 
-    public ObservableList<Pack> getInfo() {
+    public ArrayList<Pack> getInfo() {
         return info;
     }
 
@@ -49,12 +52,9 @@ public class Datapack {
         if (isMultiple) {
             new Unzipper(path, worldPath)
                     .setReplaceExistentFile(true)
-                    .setFilter(new Unzipper.FileFilter() {
-                        @Override
-                        public boolean accept(Path destPath, boolean isDirectory, Path zipEntry, String entryPath) {
-                            // We will merge resources.zip instead of replacement.
-                            return !entryPath.equals("resources.zip");
-                        }
+                    .setFilter((destPath, isDirectory, zipEntry, entryPath) -> {
+                        // We will merge resources.zip instead of replacement.
+                        return !entryPath.equals("resources.zip");
                     })
                     .unzip();
 
@@ -93,7 +93,7 @@ public class Datapack {
         else if (Files.isRegularFile(subPath))
             Files.delete(subPath);
 
-        Platform.runLater(() -> info.removeIf(p -> p.getId().equals(pack.getId())));
+        info.removeIf(p -> p.getId().equals(pack.getId()));
     }
 
     public void loadFromZip() throws IOException {
@@ -107,7 +107,7 @@ public class Datapack {
                 isMultiple = false;
                 try {
                     PackMcMeta pack = JsonUtils.fromNonNullJson(FileUtils.readText(mcmeta), PackMcMeta.class);
-                    Platform.runLater(() -> info.add(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.getPackInfo().getDescription(), this)));
+                    info.add(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.getPackInfo().getDescription(), this));
                 } catch (IOException | JsonParseException e) {
                     Logging.LOG.log(Level.WARNING, "Failed to read datapack " + path, e);
                 }
@@ -172,7 +172,7 @@ public class Datapack {
             }
         }
 
-        Platform.runLater(() -> this.info.setAll(info));
+        this.info.addAll(info);
     }
 
     public static class Pack {

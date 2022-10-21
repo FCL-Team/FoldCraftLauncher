@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.util.fakefx;
 
-import com.tungsten.fclcore.util.fakefx.fx.InvalidationListener;
-import com.tungsten.fclcore.util.fakefx.fx.Observable;
+import com.tungsten.fclcore.fakefx.InvalidationListener;
+import com.tungsten.fclcore.fakefx.Observable;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

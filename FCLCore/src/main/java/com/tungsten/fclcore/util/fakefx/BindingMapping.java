@@ -9,10 +9,10 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
-import com.tungsten.fclcore.util.fakefx.fx.Bindings;
-import com.tungsten.fclcore.util.fakefx.fx.ObjectBinding;
-import com.tungsten.fclcore.util.fakefx.fx.Observable;
-import com.tungsten.fclcore.util.fakefx.fx.ObservableValue;
+import com.tungsten.fclcore.fakefx.Bindings;
+import com.tungsten.fclcore.fakefx.ObjectBinding;
+import com.tungsten.fclcore.fakefx.Observable;
+import com.tungsten.fclcore.fakefx.ObservableValue;
 
 public abstract class BindingMapping<T, U> extends ObjectBinding<U> {
 

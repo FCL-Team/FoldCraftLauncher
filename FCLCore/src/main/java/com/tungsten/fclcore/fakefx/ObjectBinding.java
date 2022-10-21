@@ -1,4 +1,4 @@
-package com.tungsten.fclcore.util.fakefx.fx;
+package com.tungsten.fclcore.fakefx;
 
 public abstract class ObjectBinding<T> extends ObjectExpression<T> implements Binding<T> {
 

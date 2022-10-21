@@ -1,6 +1,8 @@
 package com.tungsten.fclcore.mod;
 
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.fakefx.BooleanProperty;
+import com.tungsten.fclcore.fakefx.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;
@@ -9,7 +11,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-// Todo : fix
 public final class LocalModFile implements Comparable<LocalModFile> {
 
     private Path file;

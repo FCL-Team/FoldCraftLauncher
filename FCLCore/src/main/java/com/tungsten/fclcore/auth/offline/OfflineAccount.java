@@ -26,7 +26,7 @@ import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.fakefx.fx.ObjectBinding;
+import com.tungsten.fclcore.fakefx.ObjectBinding;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 
 public class OfflineAccount extends Account {
