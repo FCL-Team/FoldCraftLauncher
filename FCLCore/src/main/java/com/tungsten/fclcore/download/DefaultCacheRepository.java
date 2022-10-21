@@ -1,8 +1,7 @@
 package com.tungsten.fclcore.download;
 
-import android.content.Context;
-
 import com.google.gson.JsonParseException;
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.download.game.LibraryDownloadTask;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.LibraryDownloadInfo;
@@ -34,11 +33,11 @@ public class DefaultCacheRepository extends CacheRepository {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private Index index = null;
 
-    public DefaultCacheRepository(Context context) {
-        this(context, new File(context.getCacheDir() + "/fclauncher").toPath());
+    public DefaultCacheRepository() {
+        this(new File(FCLPath.CACHE_DIR).toPath());
     }
 
-    public DefaultCacheRepository(Context context, Path commonDirectory) {
+    public DefaultCacheRepository(Path commonDirectory) {
         changeDirectory(commonDirectory);
     }
 

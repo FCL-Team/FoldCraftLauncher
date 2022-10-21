@@ -114,7 +114,8 @@ public class FCLauncher {
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {
         ArrayList<String> argList = new ArrayList<>(Arrays.asList(config.getArgs()));
-        argList.add(1, "-Djava.library.path=" + getLibraryPath(config.getContext(), config.getJavaPath()));
+        argList.add(0, "-Djava.library.path=" + getLibraryPath(config.getContext(), config.getJavaPath()));
+        argList.add(0, config.getJavaPath() + "/bin/java");
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             args[i] = argList.get(i).replace("${glLibName}", config.getRenderer().getGlLibName());

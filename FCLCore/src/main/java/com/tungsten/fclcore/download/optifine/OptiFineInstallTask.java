@@ -2,8 +2,13 @@ package com.tungsten.fclcore.download.optifine;
 
 import static com.tungsten.fclcore.util.Lang.getOrDefault;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.download.ProcessService;
 import com.tungsten.fclcore.download.UnsupportedInstallationException;
 import com.tungsten.fclcore.download.VersionMismatchException;
 import com.tungsten.fclcore.game.Arguments;
@@ -15,12 +20,12 @@ import com.tungsten.fclcore.game.LibraryDownloadInfo;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.jenkinsci.constant_pool_scanner.ConstantPool;
 import org.jenkinsci.constant_pool_scanner.ConstantPoolScanner;
 import org.jenkinsci.constant_pool_scanner.ConstantType;
@@ -36,7 +41,6 @@ import java.util.*;
 /**
  * <b>Note</b>: OptiFine should be installed in the end.
  */
-// Todo : fix
 public final class OptiFineInstallTask extends Task<Version> {
 
     private final DefaultGameRepository gameRepository;
@@ -129,7 +133,6 @@ public final class OptiFineInstallTask extends Task<Version> {
         try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(dest)) {
             if (Files.exists(fs.getPath("optifine/Patcher.class"))) {
                 String[] command = {
-                        JavaVersion.fromCurrentEnvironment().getBinary().toString(),
                         "-cp",
                         dest.toString(),
                         "optifine.Patcher",
@@ -137,7 +140,18 @@ public final class OptiFineInstallTask extends Task<Version> {
                         dest.toString(),
                         gameRepository.getLibraryFile(version, optiFineLibrary).toString()
                 };
-                int exitCode = SystemUtils.callExternalProcess(command);
+                int exitCode = 0;
+                SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
+                    server1.setResult(msg);
+                    server1.stop();
+                });
+                Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("commands", command);
+                service.putExtras(bundle);
+                FCLPath.CONTEXT.startService(service);
+                server.start();
+                exitCode = (int) server.getResult();
                 if (exitCode != 0)
                     throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
             } else {
