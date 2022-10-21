@@ -140,7 +140,7 @@ public final class OptiFineInstallTask extends Task<Version> {
                         dest.toString(),
                         gameRepository.getLibraryFile(version, optiFineLibrary).toString()
                 };
-                int exitCode = 0;
+                int exitCode;
                 SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
                     server1.setResult(msg);
                     server1.stop();

@@ -5,9 +5,14 @@ import static com.tungsten.fclcore.util.Hex.encodeHex;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.download.ProcessService;
 import com.tungsten.fclcore.download.game.GameLibrariesTask;
 import com.tungsten.fclcore.download.game.VersionJsonDownloadTask;
 import com.tungsten.fclcore.game.Artifact;
@@ -19,11 +24,14 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalFunction;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.ChecksumMismatchException;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.platform.CommandBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,10 +55,10 @@ public class ForgeNewInstallTask extends Task<Version> {
 
     private class ProcessorTask extends Task<Void> {
 
-        private Processor processor;
+        private ForgeNewInstallProfile.Processor processor;
         private Map<String, String> vars;
 
-        public ProcessorTask(@NotNull Processor processor, @NotNull Map<String, String> vars) {
+        public ProcessorTask(@NotNull ForgeNewInstallProfile.Processor processor, @NotNull Map<String, String> vars) {
             this.processor = processor;
             this.vars = vars;
             setSignificance(TaskSignificance.MODERATE);
@@ -109,7 +117,6 @@ public class ForgeNewInstallTask extends Task<Version> {
                 throw new Exception("Game processor jar does not have main class " + jar);
 
             List<String> command = new ArrayList<>();
-            command.add(JavaVersion.fromCurrentEnvironment().getBinary().toString());
             command.add("-cp");
 
             List<String> classpath = new ArrayList<>(processor.getClasspath().size() + 1);
@@ -120,7 +127,7 @@ public class ForgeNewInstallTask extends Task<Version> {
                 classpath.add(file.toString());
             }
             classpath.add(jar.toString());
-            command.add(String.join(OperatingSystem.PATH_SEPARATOR, classpath));
+            command.add(String.join(File.pathSeparator, classpath));
 
             command.add(mainClass);
 
@@ -135,7 +142,18 @@ public class ForgeNewInstallTask extends Task<Version> {
             command.addAll(args);
 
             LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
-            int exitCode = SystemUtils.callExternalProcess(command);
+            int exitCode;
+            SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
+                server1.setResult(msg);
+                server1.stop();
+            });
+            Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+            Bundle bundle = new Bundle();
+            bundle.putStringArray("commands", command.toArray(new String[0]));
+            service.putExtras(bundle);
+            FCLPath.CONTEXT.startService(service);
+            server.start();
+            exitCode = (int) server.getResult();
             if (exitCode != 0)
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
 
@@ -165,7 +183,7 @@ public class ForgeNewInstallTask extends Task<Version> {
     private final List<Task<?>> dependencies = new ArrayList<>(1);
 
     private ForgeNewInstallProfile profile;
-    private List<Processor> processors;
+    private List<ForgeNewInstallProfile.Processor> processors;
     private Version forgeVersion;
     private final String selfVersion;
 
@@ -309,7 +327,7 @@ public class ForgeNewInstallTask extends Task<Version> {
         return options;
     }
 
-    private Task<?> patchDownloadMojangMappingsTask(Processor processor, Map<String, String> vars) {
+    private Task<?> patchDownloadMojangMappingsTask(ForgeNewInstallProfile.Processor processor, Map<String, String> vars) {
         Map<String, String> options = parseOptions(processor.getArgs(), vars);
         if (!"DOWNLOAD_MOJMAPS".equals(options.get("task")) || !"client".equals(options.get("side")))
             return null;
@@ -339,7 +357,7 @@ public class ForgeNewInstallTask extends Task<Version> {
                 });
     }
 
-    private Task<?> createProcessorTask(Processor processor, Map<String, String> vars) {
+    private Task<?> createProcessorTask(ForgeNewInstallProfile.Processor processor, Map<String, String> vars) {
         Task<?> task = patchDownloadMojangMappingsTask(processor, vars);
         if (task == null) {
             task = new ProcessorTask(processor, vars);
