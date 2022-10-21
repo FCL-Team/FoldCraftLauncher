@@ -1,0 +1,83 @@
+package com.tungsten.fclcore.auth;
+
+import com.tungsten.fclcore.auth.yggdrasil.Texture;
+import com.tungsten.fclcore.auth.yggdrasil.TextureType;
+import com.tungsten.fclcore.util.ToStringBuilder;
+import com.tungsten.fclcore.util.fakefx.fx.Bindings;
+import com.tungsten.fclcore.util.fakefx.fx.InvalidationListener;
+import com.tungsten.fclcore.util.fakefx.fx.ObjectBinding;
+import com.tungsten.fclcore.util.fakefx.fx.Observable;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+public abstract class Account implements Observable {
+
+    /**
+     * @return the name of the account who owns the character
+     */
+    public abstract String getUsername();
+
+    /**
+     * @return the character name
+     */
+    public abstract String getCharacter();
+
+    /**
+     * @return the character UUID
+     */
+    public abstract UUID getUUID();
+
+    /**
+     * Login with stored credentials.
+     *
+     * @throws CredentialExpiredException when the stored credentials has expired, in which case a password login will be performed
+     */
+    public abstract AuthInfo logIn() throws AuthenticationException;
+
+    /**
+     * Play offline.
+     * @return the specific offline player's info.
+     */
+    public abstract AuthInfo playOffline() throws AuthenticationException;
+
+    public abstract Map<Object, Object> toStorage();
+
+    public void clearCache() {
+    }
+
+    private ObservableHelper helper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        helper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        helper.removeListener(listener);
+    }
+
+    /**
+     * Called when the account has changed.
+     * This method can be called from any thread.
+     */
+    protected void invalidate() {
+        helper.invalidate();
+    }
+
+    public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
+        return Bindings.createObjectBinding(Optional::empty);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("username", getUsername())
+                .append("character", getCharacter())
+                .append("uuid", getUUID())
+                .toString();
+    }
+}
