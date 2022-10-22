@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.game;
 
+import com.tungsten.fclauncher.FCLConfig;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -26,12 +28,9 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private boolean fullscreen;
     private String serverIp;
-    private Proxy proxy;
-    private String proxyUser;
-    private String proxyPass;
     private boolean noGeneratedJVMArgs;
     private ProcessPriority processPriority = ProcessPriority.NORMAL;
-    private boolean daemon;
+    private FCLConfig.Renderer renderer;
 
     /**
      * The game directory
@@ -143,27 +142,6 @@ public class LaunchOptions implements Serializable {
     }
 
     /**
-     * Proxy settings
-     */
-    public Proxy getProxy() {
-        return proxy;
-    }
-
-    /**
-     * The user name of the proxy, optional.
-     */
-    public String getProxyUser() {
-        return proxyUser;
-    }
-
-    /**
-     * The password of the proxy, optional
-     */
-    public String getProxyPass() {
-        return proxyPass;
-    }
-
-    /**
      * Prevent game launcher from generating default JVM arguments like max memory.
      */
     public boolean isNoGeneratedJVMArgs() {
@@ -178,10 +156,10 @@ public class LaunchOptions implements Serializable {
     }
 
     /**
-     * Will launcher keeps alive after game launched or not.
+     * Renderer
      */
-    public boolean isDaemon() {
-        return daemon;
+    public FCLConfig.Renderer getRenderer() {
+        return renderer;
     }
 
     public static class Builder {
@@ -299,35 +277,24 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
-         * Proxy settings
-         */
-        public Proxy getProxy() {
-            return options.proxy;
-        }
-
-        /**
-         * The user name of the proxy, optional.
-         */
-        public String getProxyUser() {
-            return options.proxyUser;
-        }
-
-        /**
-         * The password of the proxy, optional
-         */
-        public String getProxyPass() {
-            return options.proxyPass;
-        }
-
-        /**
          * Prevent game launcher from generating default JVM arguments like max memory.
          */
         public boolean isNoGeneratedJVMArgs() {
             return options.noGeneratedJVMArgs;
         }
 
-        public boolean isDaemon() {
-            return options.daemon;
+        /**
+         * Process priority
+         */
+        public ProcessPriority getProcessPriority() {
+            return options.processPriority;
+        }
+
+        /**
+         * Renderer
+         */
+        public FCLConfig.Renderer getRenderer() {
+            return options.renderer;
         }
 
         public Builder setGameDir(File gameDir) {
@@ -408,21 +375,6 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setProxy(Proxy proxy) {
-            options.proxy = proxy;
-            return this;
-        }
-
-        public Builder setProxyUser(String proxyUser) {
-            options.proxyUser = proxyUser;
-            return this;
-        }
-
-        public Builder setProxyPass(String proxyPass) {
-            options.proxyPass = proxyPass;
-            return this;
-        }
-
         public Builder setNoGeneratedJVMArgs(boolean noGeneratedJVMArgs) {
             options.noGeneratedJVMArgs = noGeneratedJVMArgs;
             return this;
@@ -433,8 +385,8 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setDaemon(boolean daemon) {
-            options.daemon = daemon;
+        public Builder setRenderer(FCLConfig.Renderer renderer) {
+            options.renderer = renderer;
             return this;
         }
 

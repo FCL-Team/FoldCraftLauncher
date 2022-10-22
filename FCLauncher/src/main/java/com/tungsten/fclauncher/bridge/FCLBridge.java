@@ -84,12 +84,16 @@ public class FCLBridge {
 
     // Loader function
     public void exit(int code) {
-        callback.onExit(code);
+        if (callback != null) {
+            callback.onExit(code);
+        }
     }
 
     // FCLBridge callbacks
     public void setCursorMode(int mode) {
-        callback.onCursorModeChange(mode);
+        if (callback != null) {
+            callback.onCursorModeChange(mode);
+        }
     }
 
     public void setPrimaryClipString(String string) {

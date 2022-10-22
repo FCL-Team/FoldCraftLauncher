@@ -4,10 +4,15 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.content.Context;
+import android.view.Surface;
 
+import com.tungsten.fclauncher.FCLConfig;
+import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.auth.AuthInfo;
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.game.Argument;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.GameRepository;
@@ -21,20 +26,18 @@ import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class DefaultLauncher extends Launcher {
 
-    public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
-        this(context, repository, version, authInfo, options, true);
+    public DefaultLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
+        super(context, surface, repository, version, authInfo, options);
     }
 
-    public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options, boolean daemon) {
-        super(context, repository, version, authInfo, options, daemon);
+    public DefaultLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options, FCLBridgeCallback callback) {
+        super(context, surface, repository, version, authInfo, options, callback);
     }
 
     private CommandBuilder generateCommandLine() throws IOException {
@@ -117,24 +120,6 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dlwjgl.platform=", "FCL");
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
 
-        Proxy proxy = options.getProxy();
-        if (proxy != null && StringUtils.isBlank(options.getProxyUser()) && StringUtils.isBlank(options.getProxyPass())) {
-            InetSocketAddress address = (InetSocketAddress) options.getProxy().address();
-            if (address != null) {
-                String host = address.getHostString();
-                int port = address.getPort();
-                if (proxy.type() == Proxy.Type.HTTP) {
-                    res.addDefault("-Dhttp.proxyHost=", host);
-                    res.addDefault("-Dhttp.proxyPort=", String.valueOf(port));
-                    res.addDefault("-Dhttps.proxyHost=", host);
-                    res.addDefault("-Dhttps.proxyPort=", String.valueOf(port));
-                } else if (proxy.type() == Proxy.Type.SOCKS) {
-                    res.addDefault("-DsocksProxyHost=", host);
-                    res.addDefault("-DsocksProxyPort=", String.valueOf(port));
-                }
-            }
-        }
-
         List<String> classpath = repository.getClasspath(version);
 
         File jar = repository.getVersionJar(version);
@@ -181,22 +166,6 @@ public class DefaultLauncher extends Launcher {
 
         if (options.isFullscreen())
             res.add("--fullscreen");
-
-        if (options.getProxy() != null && options.getProxy().type() == Proxy.Type.SOCKS) {
-            InetSocketAddress address = (InetSocketAddress) options.getProxy().address();
-            if (address != null) {
-                res.add("--proxyHost");
-                res.add(address.getHostString());
-                res.add("--proxyPort");
-                res.add(String.valueOf(address.getPort()));
-                if (StringUtils.isNotBlank(options.getProxyUser()) && StringUtils.isNotBlank(options.getProxyPass())) {
-                    res.add("--proxyUser");
-                    res.add(options.getProxyUser());
-                    res.add("--proxyPass");
-                    res.add(options.getProxyPass());
-                }
-            }
-        }
 
         res.addAllWithoutParsing(Arguments.parseStringArguments(options.getGameArguments(), configuration));
 
@@ -300,7 +269,17 @@ public class DefaultLauncher extends Launcher {
         if (isUsingLog4j()) {
             extractLog4jConfigurationFile();
         }
-        
-        return null;
+
+        String[] finalArgs = rawCommandLine.toArray(new String[0]);
+
+        FCLConfig config = new FCLConfig(context,
+                surface,
+                FCLPath.LOG_DIR,
+                options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
+                repository.getRunDirectory(version.getId()).getAbsolutePath(),
+                options.getRenderer(),
+                finalArgs,
+                callback);
+        return FCLauncher.launchMinecraft(config);
     }
 }
