@@ -14,6 +14,8 @@ public class FCLPath {
     public static String RUNTIME_DIR;
     public static String JAVA_8_PATH;
     public static String JAVA_17_PATH;
+    public static String LWJGL2_DIR;
+    public static String LWJGL3_DIR;
 
     public static void loadPaths(Context context) {
         CONTEXT = context;
@@ -26,6 +28,8 @@ public class FCLPath {
         RUNTIME_DIR = context.getDir("runtime", 0).getAbsolutePath();
         JAVA_8_PATH = RUNTIME_DIR + "/java/jre8";
         JAVA_17_PATH = RUNTIME_DIR + "/java/jre17";
+        LWJGL2_DIR = RUNTIME_DIR + "/lwjgl2";
+        LWJGL3_DIR = RUNTIME_DIR + "/lwjgl3";
     }
 
 }

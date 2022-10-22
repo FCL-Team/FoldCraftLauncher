@@ -1,5 +1,6 @@
 package com.tungsten.fclcore.game;
 
+import com.tungsten.fclcore.constant.FCLPath;
 import com.tungsten.fclcore.task.Task;
 
 import java.io.File;
@@ -218,6 +219,19 @@ public interface GameRepository extends VersionProvider {
 
     default List<String> getClasspath(Version version) {
         List<String> classpath = new ArrayList<>();
+        if (version.getMinimumLauncherVersion() >= 21) {
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-glfw.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-jemalloc.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-openal.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-opengl.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-stb.jar");
+            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-tinyfd.jar");
+        }
+        else {
+            classpath.add(FCLPath.LWJGL2_DIR + "/lwjgl.jar");
+            classpath.add(FCLPath.LWJGL2_DIR + "/lwjgl_util.jar");
+        }
         for (Library library : version.getLibraries())
             if (library.appliesToCurrentEnvironment() && !library.isNative()) {
                 File f = getLibraryFile(version, library);
