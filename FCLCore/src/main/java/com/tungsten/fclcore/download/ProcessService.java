@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
-import com.tungsten.fclcore.constant.FCLPath;
+import com.tungsten.fclauncher.FCLPath;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

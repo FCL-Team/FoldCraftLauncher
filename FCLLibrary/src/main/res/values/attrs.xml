@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FCLButton">
+        <attr name="shape" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="FCLImageButton">
+        <attr name="auto_tint" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="FCLTextView">
+        <attr name="auto_text_tint" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="FCLTitleView">
+        <attr name="title" format="string" localization="suggested" />
+    </declare-styleable>
+</resources>

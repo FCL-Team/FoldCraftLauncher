@@ -4,7 +4,7 @@ import static com.tungsten.fclcore.util.DigestUtils.digest;
 import static com.tungsten.fclcore.util.Hex.encodeHex;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-import com.tungsten.fclcore.constant.FCLPath;
+import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.download.AbstractDependencyManager;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultCacheRepository;

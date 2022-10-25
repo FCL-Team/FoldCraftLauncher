@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource">
+    <external-path
+        name="external_files"
+        path="."/>
+    <cache-path
+        name="cache_path"
+        path="."/>
+</paths>

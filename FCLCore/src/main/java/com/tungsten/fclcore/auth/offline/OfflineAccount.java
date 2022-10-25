@@ -131,7 +131,6 @@ public class OfflineAccount extends Account {
 
         @Override
         public Arguments getLaunchArguments(LaunchOptions options) throws IOException {
-            if (!options.isDaemon()) return null;
 
             server = new YggdrasilServer(0);
             server.start();
