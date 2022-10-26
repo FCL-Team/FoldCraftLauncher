@@ -13,6 +13,9 @@
     <string name="color_picker_title">Color Picker</string>
     <string name="color_picker_arrow" translatable="false">→</string>
     <string name="color_picker_toast">Unknown color!</string>
-    <string name="color_picker_positive">OK</string>
-    <string name="color_picker_negative">Cancel</string>
+
+    <string name="dialog_alert">Alert</string>
+    <string name="dialog_info">Info</string>
+    <string name="dialog_positive">OK</string>
+    <string name="dialog_negative">Cancel</string>
 </resources>

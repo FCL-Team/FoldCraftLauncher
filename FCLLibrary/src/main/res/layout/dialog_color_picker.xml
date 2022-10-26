@@ -7,6 +7,7 @@
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
+        android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintHorizontal_bias="0.5"
@@ -73,7 +74,7 @@
         android:id="@+id/color_picker_positive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/color_picker_positive" />
+        android:text="@string/dialog_positive" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         app:layout_constraintBottom_toBottomOf="parent"
@@ -83,6 +84,6 @@
         android:id="@+id/color_picker_negative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/color_picker_negative" />
+        android:text="@string/dialog_negative" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
