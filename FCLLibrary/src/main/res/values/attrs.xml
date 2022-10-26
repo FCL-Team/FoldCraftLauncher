@@ -12,4 +12,11 @@
     <declare-styleable name="FCLTitleView">
         <attr name="title" format="string" localization="suggested" />
     </declare-styleable>
+
+    <declare-styleable name="ColorPickerView" parent="ColorPanelView">
+        <attr format="boolean|reference" name="cpv_alphaChannelVisible"/>
+        <attr format="string|reference" name="cpv_alphaChannelText"/>
+        <attr format="color|reference" name="cpv_sliderColor"/>
+        <attr format="color|reference" name="cpv_borderColor"/>
+    </declare-styleable>
 </resources>

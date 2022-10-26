@@ -9,4 +9,10 @@
     <string name="crash_reporter_copy">Copy</string>
     <string name="crash_reporter_share">Share</string>
     <string name="crash_reporter_toast">Copy successfully!</string>
+
+    <string name="color_picker_title">Color Picker</string>
+    <string name="color_picker_arrow" translatable="false">→</string>
+    <string name="color_picker_toast">Unknown color!</string>
+    <string name="color_picker_positive">OK</string>
+    <string name="color_picker_negative">Cancel</string>
 </resources>

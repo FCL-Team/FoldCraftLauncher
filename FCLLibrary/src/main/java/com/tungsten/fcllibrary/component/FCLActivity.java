@@ -49,7 +49,7 @@ public class FCLActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        ThemeEngine.getInstance().applyFullscreen(this, ThemeEngine.getInstance().getTheme().isFullscreen());
+        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
     }
 
 }

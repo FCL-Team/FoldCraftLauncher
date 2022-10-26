@@ -7,6 +7,7 @@
     tools:context=".activity.MainActivity">
 
     <com.tungsten.fcllibrary.component.view.FCLTitleView
+        app:title="@string/app_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHorizontal_bias="0.5"

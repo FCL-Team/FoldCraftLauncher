@@ -61,15 +61,7 @@ public class ThemeEngine {
         }
     }
 
-    public void applyFullscreen(Object object, boolean fullscreen) {
-        theme.setFullscreen(fullscreen);
-        Window window = null;
-        if (object instanceof Activity) {
-            window = ((Activity) object).getWindow();
-        }
-        if (object instanceof Dialog) {
-            window = ((Dialog) object).getWindow();
-        }
+    public void applyFullscreen(Window window, boolean fullscreen) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && window != null) {
             if (fullscreen) {
                 window.getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -85,14 +77,14 @@ public class ThemeEngine {
         Theme.saveTheme(context, theme);
     }
 
-    public void applyAndSave(Context context, Object object, boolean fullscreen) {
-        applyFullscreen(object, fullscreen);
+    public void applyAndSave(Context context, Window window, boolean fullscreen) {
+        applyFullscreen(window, fullscreen);
         Theme.saveTheme(context, theme);
     }
 
-    public void applyAndSave(Context context, Object object, Theme theme) {
+    public void applyAndSave(Context context, Window window, Theme theme) {
         applyColor(theme.getColor());
-        applyFullscreen(object, theme.isFullscreen());
+        applyFullscreen(window, theme.isFullscreen());
         Theme.saveTheme(context, theme);
     }
 

@@ -11,7 +11,7 @@ public class FCLDialog extends AppCompatDialog {
 
     public FCLDialog(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().applyFullscreen(this, ThemeEngine.getInstance().getTheme().isFullscreen());
+        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
     }
 
 }
