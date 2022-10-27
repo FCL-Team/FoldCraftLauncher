@@ -1,6 +1,7 @@
 package com.tungsten.fcllibrary.component;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
@@ -46,4 +47,9 @@ public class FCLActivity extends AppCompatActivity {
         ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ResultListener.onActivityResult(requestCode, resultCode, data);
+    }
 }

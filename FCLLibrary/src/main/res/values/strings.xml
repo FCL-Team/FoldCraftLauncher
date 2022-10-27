@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="file_browser_provider" translatable="false">com.tungsten.fcl.provider</string>
+    <string name="file_browser_title">File Browser</string>
+    <string name="file_browser_share_title">Share the file</string>
+    <string name="file_browser_share_message">Are you sure to share this file?</string>
 
-    <string name="crash_reporter_title">Crash Reporter</string>
+    <string name="crash_reporter_title">Crash Report</string>
     <string name="crash_reporter_hint">Fold Craft Launcher has encountered an unresolvable error, please seek help from the developer or others.</string>
     <string name="crash_reporter_restart">Restart</string>
     <string name="crash_reporter_close">Close</string>
