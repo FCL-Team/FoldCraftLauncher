@@ -8,9 +8,9 @@
     <string name="file_browser_private">Private directory</string>
     <string name="file_browser_private_alert">Cannot access to private directory, please check the permission.</string>
     <string name="file_browser_mode">Mode:</string>
-    <string name="file_browser_mode_browse">File Browser</string>
-    <string name="file_browser_mode_file">File Picker</string>
-    <string name="file_browser_mode_folder">Folder Picker</string>
+    <string name="file_browser_mode_browse">Browse File</string>
+    <string name="file_browser_mode_file">Pick File</string>
+    <string name="file_browser_mode_folder">Pick Folder</string>
     <string name="file_browser_selection">Type:</string>
     <string name="file_browser_selection_simple">Single Selection</string>
     <string name="file_browser_selection_multiple">Multiple Selection</string>
@@ -22,7 +22,7 @@
     <string name="crash_reporter_title">Crash Report</string>
     <string name="crash_reporter_hint">Fold Craft Launcher has encountered an unresolvable error, please seek help from the developer or others.</string>
     <string name="crash_reporter_restart">Restart</string>
-    <string name="crash_reporter_close">Close</string>
+    <string name="crash_reporter_close">Exit</string>
     <string name="crash_reporter_copy">Copy</string>
     <string name="crash_reporter_share">Share</string>
     <string name="crash_reporter_toast">Copy successfully!</string>

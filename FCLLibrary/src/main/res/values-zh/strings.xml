@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="file_browser_title">文件浏览器</string>
+    <string name="file_browser_back">返回</string>
+    <string name="file_browser_close">退出</string>
+    <string name="file_browser_shared">共有目录</string>
+    <string name="file_browser_private">私有目录</string>
+    <string name="file_browser_private_alert">无法进入私有目录，请检查应用权限</string>
+    <string name="file_browser_mode">模式：</string>
+    <string name="file_browser_mode_browse">浏览文件</string>
+    <string name="file_browser_mode_file">选择文件</string>
+    <string name="file_browser_mode_folder">选择文件夹</string>
+    <string name="file_browser_selection">类型：</string>
+    <string name="file_browser_selection_simple">单选</string>
+    <string name="file_browser_selection_multiple">多选</string>
+    <string name="file_browser_positive">确认</string>
+    <string name="file_browser_positive_alert">未选择文件/文件夹</string>
+    <string name="file_browser_share_title">分享文件</string>
+    <string name="file_browser_share_message">你确定要分享此文件吗？</string>
+
+    <string name="crash_reporter_title">崩溃报告</string>
+    <string name="crash_reporter_hint">Fold Craft Launcher 遇到了无法解决的错误，请向开发者或他人求助。</string>
+    <string name="crash_reporter_restart">重启软件</string>
+    <string name="crash_reporter_close">退出软件</string>
+    <string name="crash_reporter_copy">复制日志</string>
+    <string name="crash_reporter_share">分享日志</string>
+    <string name="crash_reporter_toast">复制成功！</string>
+
+    <string name="color_picker_title">选择颜色</string>
+    <string name="color_picker_toast">未知颜色！</string>
+
+    <string name="dialog_alert">警告</string>
+    <string name="dialog_info">提示</string>
+    <string name="dialog_positive">确认</string>
+    <string name="dialog_negative">取消</string>
+</resources>
