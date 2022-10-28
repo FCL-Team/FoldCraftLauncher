@@ -35,6 +35,7 @@ public class FCLTitleView extends View {
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextSize(56);
         textPaint.setColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+        textPaint.setTextAlign(Paint.Align.CENTER);
         invalidate();
     };
 
@@ -61,7 +62,7 @@ public class FCLTitleView extends View {
     public FCLTitleView(Context context) {
         super(context);
         init("");
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs) {
@@ -73,7 +74,7 @@ public class FCLTitleView extends View {
         }
         init(title);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -85,7 +86,7 @@ public class FCLTitleView extends View {
         }
         init(title);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     @Override
@@ -101,7 +102,7 @@ public class FCLTitleView extends View {
         outlinePath.lineTo(width + ConvertUtils.dip2px(getContext(), 1.5f), 0);
         canvas.drawPath(outlinePath, insidePaint);
         canvas.drawPath(outlinePath, outlinePaint);
-        canvas.drawText(title, (int) (getWidth() / 2), (int) (getHeight() / 2), textPaint);
+        canvas.drawText(title, (int) (getWidth() / 2), (int) (getHeight() / 2) + 14, textPaint);
     }
 
     public void setTitle(String title) {

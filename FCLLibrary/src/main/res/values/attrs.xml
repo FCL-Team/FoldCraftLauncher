@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="FCLButton">
         <attr name="shape" format="integer"/>
+        <attr name="auto_padding" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="FCLImageButton">
         <attr name="auto_tint" format="boolean"/>

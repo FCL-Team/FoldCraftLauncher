@@ -37,12 +37,12 @@ public class ThemeEngine {
         }
     }
 
-    public void registerView(View view, Runnable runnable) {
+    public void registerEvent(View view, Runnable runnable) {
         runnables.put(view, runnable);
         handler.post(runnable);
     }
 
-    public void unregisterView(View view) {
+    public void unregisterEvent(View view) {
         runnables.remove(view);
     }
 

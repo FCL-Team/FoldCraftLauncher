@@ -3,21 +3,31 @@ package com.tungsten.fcllibrary.browser;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
 import com.tungsten.fcllibrary.R;
-import com.tungsten.fcllibrary.browser.options.FilterOption;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ResultListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class FileBrowser implements Serializable {
 
-    private FilterOption filterOption = FilterOption.ALL;
+    public static final String SELECTED_FILES = "SELECTED_FILES";
+
+    public static ArrayList<String> getSelectedFiles(Intent data) {
+        if (data == null) {
+            return null;
+        }
+        ArrayList<Uri> selectedFiles  = data.getParcelableArrayListExtra(SELECTED_FILES);
+        return (ArrayList<String>) selectedFiles.stream().map(Uri::toString).collect(Collectors.toList());
+    }
+
     private LibMode libMode = LibMode.FILE_BROWSER;
     private SelectionMode selectionMode = SelectionMode.SINGLE_SELECTION;
     private String initDir = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -26,10 +36,6 @@ public class FileBrowser implements Serializable {
 
     public FileBrowser(String title) {
         this.title = title;
-    }
-
-    public FilterOption getFilterOption() {
-        return filterOption;
     }
 
     public LibMode getLibMode() {
@@ -72,11 +78,6 @@ public class FileBrowser implements Serializable {
             return fileBrowser;
         }
 
-        public Builder setFilterOption(FilterOption filterOption) {
-            fileBrowser.filterOption = filterOption;
-            return this;
-        }
-
         public Builder setLibMode(LibMode libMode) {
             fileBrowser.libMode = libMode;
             return this;
@@ -100,10 +101,6 @@ public class FileBrowser implements Serializable {
         public Builder setTitle(String title) {
             fileBrowser.title = title;
             return this;
-        }
-
-        public FilterOption getFilterOption() {
-            return fileBrowser.filterOption;
         }
 
         public LibMode getLibMode() {

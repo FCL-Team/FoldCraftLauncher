@@ -24,7 +24,7 @@ public class FCLTextView extends AppCompatTextView {
 
     public FCLTextView(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -32,7 +32,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -40,7 +40,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public void alert() {

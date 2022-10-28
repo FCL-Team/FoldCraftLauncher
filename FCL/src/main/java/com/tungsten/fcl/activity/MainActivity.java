@@ -3,7 +3,6 @@ package com.tungsten.fcl.activity;
 import android.os.Bundle;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 public class MainActivity extends FCLActivity {
@@ -13,10 +12,6 @@ public class MainActivity extends FCLActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FileBrowser.Builder builder = new FileBrowser.Builder(this);
-        builder.create().browse(this, 1, (requestCode, resultCode, data) -> {
-
-        });
     }
 
 }

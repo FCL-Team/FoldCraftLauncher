@@ -3,6 +3,7 @@ package com.tungsten.fcllibrary.browser.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.core.content.FileProvider;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.FileOperator;
+import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,16 +40,27 @@ public class FileBrowserAdapter extends FCLAdapter {
     private final FileBrowserListener listener;
     private final List<File> list;
 
-    private DateFormat formatter;
+    private ArrayList<String> selectedFiles;
+
+    private final DateFormat formatter;
 
     @SuppressLint("SimpleDateFormat")
-    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, FileBrowserListener listener) {
+    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, FileBrowserListener listener) {
         super(context);
         this.fileBrowser = fileBrowser;
+        this.selectedFiles = selectedFiles;
         this.listener = listener;
         this.list = FileOperator.getFileList(path, fileBrowser);
 
         this.formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    }
+
+    public void setSelectedFiles(ArrayList<String> selectedFiles) {
+        this.selectedFiles = selectedFiles;
+    }
+
+    public ArrayList<String> getSelectedFiles() {
+        return selectedFiles;
     }
 
     private static class ViewHolder {
@@ -71,6 +85,7 @@ public class FileBrowserAdapter extends FCLAdapter {
         return 0;
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
@@ -109,9 +124,18 @@ public class FileBrowserAdapter extends FCLAdapter {
         viewHolder.icon.setImageDrawable(drawable);
         viewHolder.name.setText(file.getName());
         viewHolder.description.setText(description);
+        if (selectedFiles.contains(file.getAbsolutePath()) && file.isFile()) {
+            viewHolder.parent.setBackgroundColor(Color.GRAY);
+        }
+        else {
+            viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.clickable_parent));
+        }
         viewHolder.parent.setOnClickListener(view1 -> {
             if (file.isDirectory()) {
                 listener.onEnterDir(file.getAbsolutePath());
+            }
+            if (fileBrowser.getLibMode() != LibMode.FILE_BROWSER && !(fileBrowser.getLibMode() == LibMode.FILE_CHOOSER && file.isDirectory()) && !(fileBrowser.getLibMode() == LibMode.FOLDER_CHOOSER && file.isFile())) {
+                listener.onSelect(this, file.getAbsolutePath());
             }
         });
         viewHolder.parent.setOnLongClickListener(view12 -> {

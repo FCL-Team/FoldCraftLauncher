@@ -2,6 +2,20 @@
 <resources>
     <string name="file_browser_provider" translatable="false">com.tungsten.fcl.provider</string>
     <string name="file_browser_title">File Browser</string>
+    <string name="file_browser_back">Back</string>
+    <string name="file_browser_close">Exit</string>
+    <string name="file_browser_shared">Shared directory</string>
+    <string name="file_browser_private">Private directory</string>
+    <string name="file_browser_private_alert">Cannot access to private directory, please check the permission.</string>
+    <string name="file_browser_mode">Mode:</string>
+    <string name="file_browser_mode_browse">File Browser</string>
+    <string name="file_browser_mode_file">File Picker</string>
+    <string name="file_browser_mode_folder">Folder Picker</string>
+    <string name="file_browser_selection">Type:</string>
+    <string name="file_browser_selection_simple">Single Selection</string>
+    <string name="file_browser_selection_multiple">Multiple Selection</string>
+    <string name="file_browser_positive">Confirm</string>
+    <string name="file_browser_positive_alert">No file/directory selected!</string>
     <string name="file_browser_share_title">Share the file</string>
     <string name="file_browser_share_message">Are you sure to share this file?</string>
 

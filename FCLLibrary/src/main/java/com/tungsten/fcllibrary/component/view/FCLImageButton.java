@@ -66,7 +66,7 @@ public class FCLImageButton extends AppCompatImageButton {
     public FCLImageButton(@NonNull Context context) {
         super(context);
         init();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -75,7 +75,7 @@ public class FCLImageButton extends AppCompatImageButton {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
         typedArray.recycle();
         init();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -84,7 +84,7 @@ public class FCLImageButton extends AppCompatImageButton {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
         typedArray.recycle();
         init();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     @Override

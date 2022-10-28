@@ -36,7 +36,7 @@ public class FCLButton extends AppCompatButton {
         }
     };
 
-    private void init(int shape) {
+    private void init(int shape, boolean autoPadding) {
         setSingleLine(true);
         setAllCaps(false);
         setGravity(Gravity.CENTER);
@@ -44,12 +44,14 @@ public class FCLButton extends AppCompatButton {
         setMinHeight(0);
         setMinimumWidth(0);
         setMinimumHeight(0);
-        setPadding(
-                ConvertUtils.dip2px(getContext(), shape == GradientDrawable.RECTANGLE ? 16f : 10f),
-                ConvertUtils.dip2px(getContext(), 10f),
-                ConvertUtils.dip2px(getContext(), shape == GradientDrawable.RECTANGLE ? 16f : 10f),
-                ConvertUtils.dip2px(getContext(), 10f)
-        );
+        if (autoPadding) {
+            setPadding(
+                    ConvertUtils.dip2px(getContext(), shape == GradientDrawable.RECTANGLE ? 16f : 10f),
+                    ConvertUtils.dip2px(getContext(), 10f),
+                    ConvertUtils.dip2px(getContext(), shape == GradientDrawable.RECTANGLE ? 16f : 10f),
+                    ConvertUtils.dip2px(getContext(), 10f)
+            );
+        }
         drawableNormal = new GradientDrawable();
         drawablePress = new GradientDrawable();
         drawableNormal.setShape(shape);
@@ -64,26 +66,28 @@ public class FCLButton extends AppCompatButton {
 
     public FCLButton(@NonNull Context context) {
         super(context);
-        init(GradientDrawable.RECTANGLE);
-        ThemeEngine.getInstance().registerView(this, runnable);
+        init(GradientDrawable.RECTANGLE, true);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
-        init(shape);
+        boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
+        init(shape, autoPadding);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
-        init(shape);
+        boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
+        init(shape, autoPadding);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     @Override

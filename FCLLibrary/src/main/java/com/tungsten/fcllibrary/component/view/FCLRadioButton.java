@@ -30,17 +30,17 @@ public class FCLRadioButton extends AppCompatRadioButton {
 
     public FCLRadioButton(Context context) {
         super(context);
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerView(this, runnable);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
 }

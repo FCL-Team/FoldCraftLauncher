@@ -1,6 +1,6 @@
 package com.tungsten.fcllibrary.browser;
 
-import com.tungsten.fcllibrary.browser.options.FilterOption;
+import com.tungsten.fcllibrary.browser.options.LibMode;
 
 import org.apache.commons.io.comparator.DirectoryFileComparator;
 import org.apache.commons.io.comparator.NameFileComparator;
@@ -49,7 +49,7 @@ public class FileOperator {
         else {
             filterList.addAll(rawList);
         }
-        if (fileBrowser.getFilterOption() == FilterOption.FOLDER) {
+        if (fileBrowser.getLibMode() == LibMode.FOLDER_CHOOSER) {
             for (File file : rawList) {
                 if (file.isDirectory()) {
                     list.add(file);
