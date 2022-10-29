@@ -14,7 +14,7 @@ public class Pack200Utils {
      * @param nativeLibraryDir The native lib path, required to execute the unpack200 binary
      * @param dir The path of the directory which contains .pack file
      */
-    private static void unpack(String nativeLibraryDir, String dir) {
+    public static void unpack(String nativeLibraryDir, String dir) {
         File basePath = new File(dir);
         Collection<File> files = listFiles(basePath, new String[] { "pack" }, true);
 

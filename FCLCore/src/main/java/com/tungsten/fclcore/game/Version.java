@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.game;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclcore.constant.UrlConstants;
+import com.tungsten.fclcore.util.Constants;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
@@ -200,14 +200,14 @@ public class Version implements Comparable<Version>, Validation {
         DownloadInfo client = downloads == null ? null : downloads.get(DownloadType.CLIENT);
         String jarName = jar == null ? id : jar;
         if (client == null)
-            return new DownloadInfo(String.format("%s%s/%s.jar", UrlConstants.DEFAULT_VERSION_DOWNLOAD_URL, jarName, jarName));
+            return new DownloadInfo(String.format("%s%s/%s.jar", Constants.DEFAULT_VERSION_DOWNLOAD_URL, jarName, jarName));
         else
             return client;
     }
 
     public AssetIndexInfo getAssetIndex() {
         String assetsId = assets == null ? "legacy" : assets;
-        return assetIndex == null ? new AssetIndexInfo(assetsId, UrlConstants.DEFAULT_INDEX_URL + assetsId + ".json") : assetIndex;
+        return assetIndex == null ? new AssetIndexInfo(assetsId, Constants.DEFAULT_INDEX_URL + assetsId + ".json") : assetIndex;
     }
 
     public boolean appliesToCurrentEnvironment() {

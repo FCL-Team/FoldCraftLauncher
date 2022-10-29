@@ -2,7 +2,7 @@ package com.tungsten.fclcore.download.game;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
-import com.tungsten.fclcore.constant.UrlConstants;
+import com.tungsten.fclcore.util.Constants;
 import com.tungsten.fclcore.game.ReleaseType;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.Validation;
@@ -31,7 +31,7 @@ public final class GameRemoteVersionInfo implements Validation {
     }
 
     public GameRemoteVersionInfo(String gameVersion, Date time, Date releaseTime, ReleaseType type) {
-        this(gameVersion, time, releaseTime, type, UrlConstants.DEFAULT_LIBRARY_URL + gameVersion + "/" + gameVersion + ".json");
+        this(gameVersion, time, releaseTime, type, Constants.DEFAULT_LIBRARY_URL + gameVersion + "/" + gameVersion + ".json");
     }
 
     public GameRemoteVersionInfo(String gameVersion, Date time, Date releaseTime, ReleaseType type, String url) {

@@ -2,7 +2,7 @@ package com.tungsten.fclcore.game;
 
 import com.google.gson.*;
 import com.google.gson.annotations.SerializedName;
-import com.tungsten.fclcore.constant.UrlConstants;
+import com.tungsten.fclcore.util.Constants;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
 import com.tungsten.fclcore.util.gson.Validation;
@@ -113,7 +113,7 @@ public class Library implements Comparable<Library>, Validation {
         LibraryDownloadInfo temp = getRawDownloadInfo();
         String path = getPath();
         return new LibraryDownloadInfo(path,
-                Optional.ofNullable(temp).map(LibraryDownloadInfo::getUrl).orElse(Optional.ofNullable(url).orElse(UrlConstants.DEFAULT_LIBRARY_URL) + path),
+                Optional.ofNullable(temp).map(LibraryDownloadInfo::getUrl).orElse(Optional.ofNullable(url).orElse(Constants.DEFAULT_LIBRARY_URL) + path),
                 temp != null ? temp.getSha1() : null,
                 temp != null ? temp.getSize() : 0
         );

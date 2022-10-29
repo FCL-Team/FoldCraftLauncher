@@ -7,6 +7,9 @@
     <declare-styleable name="FCLImageButton">
         <attr name="auto_tint" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="FCLImageView">
+        <attr name="auto_src_tint" format="boolean"/>
+    </declare-styleable>
     <declare-styleable name="FCLTextView">
         <attr name="auto_text_tint" format="boolean"/>
     </declare-styleable>

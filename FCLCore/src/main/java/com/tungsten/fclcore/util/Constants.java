@@ -1,6 +1,6 @@
-package com.tungsten.fclcore.constant;
+package com.tungsten.fclcore.util;
 
-public class UrlConstants {
+public class Constants {
 
     public static final String DEFAULT_LIBRARY_URL = "https://libraries.minecraft.net/";
     public static final String DEFAULT_VERSION_DOWNLOAD_URL = "https://s3.amazonaws.com/Minecraft.Download/versions/";

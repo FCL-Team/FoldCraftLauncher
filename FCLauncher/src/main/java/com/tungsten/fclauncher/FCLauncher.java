@@ -50,7 +50,7 @@ public class FCLauncher {
         return jreReleaseMap;
     }
 
-    private static String getJreLibDir(String javaPath) throws IOException {
+    public static String getJreLibDir(String javaPath) throws IOException {
         String jreArchitecture = readJREReleaseProperties(javaPath).get("OS_ARCH");
         if (Architecture.archAsInt(jreArchitecture) == ARCH_X86) {
             jreArchitecture = "i386/i486/i586";

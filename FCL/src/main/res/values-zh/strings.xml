@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
+    <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
+    <string name="splash_eula_next">同意并继续</string>
+    <string name="splash_runtime_title">安装或更新运行环境</string>
+    <string name="splash_runtime_install">安装 / 更新</string>
 </resources>

@@ -16,6 +16,8 @@ public class FCLPath {
     public static String JAVA_17_PATH;
     public static String LWJGL2_DIR;
     public static String LWJGL3_DIR;
+    public static String CACIOCAVALLO_8_DIR;
+    public static String CACIOCAVALLO_17_DIR;
 
     public static void loadPaths(Context context) {
         CONTEXT = context;
@@ -30,6 +32,8 @@ public class FCLPath {
         JAVA_17_PATH = RUNTIME_DIR + "/java/jre17";
         LWJGL2_DIR = RUNTIME_DIR + "/lwjgl2";
         LWJGL3_DIR = RUNTIME_DIR + "/lwjgl3";
+        CACIOCAVALLO_8_DIR = RUNTIME_DIR + "/caciocavallo";
+        CACIOCAVALLO_17_DIR = RUNTIME_DIR + "/caciocavallo17";
     }
 
 }
