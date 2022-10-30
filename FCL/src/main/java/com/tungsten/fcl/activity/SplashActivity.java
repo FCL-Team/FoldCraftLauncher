@@ -8,8 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.fragment.splash.EulaFragment;
-import com.tungsten.fcl.fragment.splash.RuntimeFragment;
+import com.tungsten.fcl.fragment.EulaFragment;
+import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 @SuppressLint("CustomSplashScreen")

@@ -1,4 +1,4 @@
-package com.tungsten.fcl.fragment.splash;
+package com.tungsten.fcl.fragment;
 
 import static android.content.Context.MODE_PRIVATE;
 

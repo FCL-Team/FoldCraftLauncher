@@ -1,4 +1,4 @@
-package com.tungsten.fcl.fragment.splash;
+package com.tungsten.fcl.fragment;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;

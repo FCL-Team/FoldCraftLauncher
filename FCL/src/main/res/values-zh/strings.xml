@@ -5,4 +5,11 @@
     <string name="splash_eula_next">同意并继续</string>
     <string name="splash_runtime_title">安装或更新运行环境</string>
     <string name="splash_runtime_install">安装 / 更新</string>
+
+    <string name="account">账户管理</string>
+    <string name="version">版本列表</string>
+    <string name="install">安装版本</string>
+    <string name="download">下载资源</string>
+    <string name="multiplayer">多人联机</string>
+    <string name="setting">全局设置</string>
 </resources>

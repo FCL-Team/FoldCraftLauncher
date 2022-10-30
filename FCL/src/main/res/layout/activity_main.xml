@@ -7,18 +7,72 @@
     tools:context=".activity.MainActivity">
 
     <com.tungsten.fcllibrary.component.view.FCLTitleView
+        android:id="@+id/title"
         app:title="@string/app_name"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintVertical_bias="0"
-        app:layout_constraintWidth_percent="0.5"
+        app:layout_constraintWidth_percent="0.75"
         app:layout_constraintHeight_percent="0.10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <View
+        android:id="@+id/bottom_split"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/tab_layout"
+        android:background="@android:color/darker_gray"/>
 
+    <com.tungsten.fcllibrary.component.view.FCLTabLayout
+        android:id="@+id/tab_layout"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_account_circle_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_list_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_videogame_asset_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_home_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_cloud_download_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_wifi_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

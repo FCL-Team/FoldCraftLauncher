@@ -11,4 +11,11 @@
     <string name="splash_runtime_java8" translatable="false">JRE 8</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_install">Install / Update</string>
+
+    <string name="account">Account</string>
+    <string name="version">Version</string>
+    <string name="install">Install</string>
+    <string name="download">Download</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="setting">Setting</string>
 </resources>
