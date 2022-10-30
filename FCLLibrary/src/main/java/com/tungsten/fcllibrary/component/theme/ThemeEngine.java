@@ -1,6 +1,8 @@
 package com.tungsten.fcllibrary.component.theme;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.view.View;
@@ -60,6 +62,7 @@ public class ThemeEngine {
     }
 
     public void applyFullscreen(Window window, boolean fullscreen) {
+        theme.setFullscreen(fullscreen);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && window != null) {
             if (fullscreen) {
                 window.getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -77,6 +80,13 @@ public class ThemeEngine {
         }
     }
 
+    public void applyBackground(Context context, View view, BitmapDrawable lt, BitmapDrawable dk) {
+        theme.setBackgroundLt(lt);
+        theme.setBackgroundDk(dk);
+        boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        view.setBackground(isNightMode ? dk : lt);
+    }
+
     public void applyAndSave(Context context, int color) {
         applyColor(color);
         Theme.saveTheme(context, theme);
@@ -84,6 +94,11 @@ public class ThemeEngine {
 
     public void applyAndSave(Context context, Window window, boolean fullscreen) {
         applyFullscreen(window, fullscreen);
+        Theme.saveTheme(context, theme);
+    }
+
+    public void applyAndSave(Context context, View view, BitmapDrawable lt, BitmapDrawable dk) {
+        applyBackground(context, view, lt, dk);
         Theme.saveTheme(context, theme);
     }
 

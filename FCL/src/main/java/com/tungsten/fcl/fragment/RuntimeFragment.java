@@ -1,6 +1,7 @@
 package com.tungsten.fcl.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -114,6 +115,9 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         if (getContext() != null) {
             @SuppressLint("UseCompatLoadingForDrawables") Drawable stateUpdate = getContext().getDrawable(R.drawable.ic_baseline_update_24);
             @SuppressLint("UseCompatLoadingForDrawables") Drawable stateDone = getContext().getDrawable(R.drawable.ic_baseline_done_24);
+
+            stateUpdate.setTint(Color.GRAY);
+            stateDone.setTint(Color.GRAY);
 
             lwjgl2State.setBackgroundDrawable(lwjgl2 ? stateDone : stateUpdate);
             lwjgl3State.setBackgroundDrawable(lwjgl3 ? stateDone : stateUpdate);

@@ -50,7 +50,7 @@ public class FCLTitleView extends View {
         outlinePaint.setStyle(Paint.Style.STROKE);
         outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
         insidePaint.setAntiAlias(true);
-        insidePaint.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
+        insidePaint.setColor(ThemeEngine.getInstance().getTheme().getColor());
         insidePaint.setStyle(Paint.Style.FILL);
         textPaint.setAntiAlias(true);
         textPaint.setStyle(Paint.Style.FILL);

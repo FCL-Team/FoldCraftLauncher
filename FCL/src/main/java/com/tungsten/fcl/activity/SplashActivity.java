@@ -6,14 +6,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends FCLActivity {
+
+    public ConstraintLayout background;
 
     private EulaFragment eulaFragment;
     private RuntimeFragment runtimeFragment;
@@ -22,6 +26,9 @@ public class SplashActivity extends FCLActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        background = findViewById(R.id.background);
+        background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
 
         initFragments();
 

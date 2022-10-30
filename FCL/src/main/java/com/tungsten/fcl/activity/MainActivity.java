@@ -2,13 +2,17 @@ package com.tungsten.fcl.activity;
 
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLTitleView;
 
 public class MainActivity extends FCLActivity implements TabLayout.OnTabSelectedListener {
 
+    public ConstraintLayout background;
     private FCLTitleView titleView;
 
     private TabLayout tabLayout;
@@ -18,10 +22,16 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        background = findViewById(R.id.background);
+        background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+
         titleView = findViewById(R.id.title);
         tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addOnTabSelectedListener(this);
         tabLayout.selectTab(tabLayout.getTabAt(3));
+        ThemeEngine.getInstance().registerEvent(tabLayout, () -> {
+            tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
+        });
     }
 
     @Override

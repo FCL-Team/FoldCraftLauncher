@@ -59,7 +59,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:tint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/lwjgl2_state"
@@ -99,7 +100,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:tint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/lwjgl3_state"
@@ -139,7 +141,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:tint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cacio_state"
@@ -179,7 +182,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:tint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cacio17_state"
@@ -219,7 +223,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:tint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/java8_state"
@@ -259,7 +264,8 @@
                     android:layout_marginStart="10dp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
-                    app:auto_src_tint="true"
+                    app:auto_src_tint="false"
+                    android:backgroundTint="@android:color/darker_gray"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/java17_state"
