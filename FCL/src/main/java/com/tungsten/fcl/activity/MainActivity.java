@@ -1,5 +1,6 @@
 package com.tungsten.fcl.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -18,7 +19,7 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
     private FCLDynamicIsland titleView;
 
     private UIManager uiManager;
-    private FCLUILayout uiLayout;
+    public FCLUILayout uiLayout;
 
     private TabLayout tabLayout;
 
@@ -91,10 +92,13 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
     @Override
     public void onBackPressed() {
         if (uiManager.getCurrentUI() == uiManager.getMainUI()) {
-            super.onBackPressed();
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addCategory(Intent.CATEGORY_HOME);
+            startActivity(i);
         }
         else {
-            uiManager.switchUI(uiManager.getMainUI());
+            tabLayout.selectTab(tabLayout.getTabAt(3));
         }
     }
 }

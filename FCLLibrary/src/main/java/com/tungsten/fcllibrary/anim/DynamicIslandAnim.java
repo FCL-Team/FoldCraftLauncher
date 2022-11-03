@@ -48,10 +48,10 @@ public class DynamicIslandAnim {
         if (shrinkAdjustAnimatorY != null && shrinkAdjustAnimatorY.isRunning()) {
             shrinkAdjustAnimatorY.cancel();
         }
-        expandScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", scale, 0.95f).setDuration(200);
-        shrinkScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, scale).setDuration(200);
-        expandScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.95f).setDuration(200);
-        shrinkScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.95f).setDuration(200);
+        expandScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", scale, 0.95f).setDuration(300);
+        shrinkScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, scale).setDuration(300);
+        expandScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.95f).setDuration(300);
+        shrinkScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.95f).setDuration(300);
         expandAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, 1f).setDuration(200);
         shrinkAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.95f).setDuration(200);
         expandAdjustAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 1f).setDuration(200);
