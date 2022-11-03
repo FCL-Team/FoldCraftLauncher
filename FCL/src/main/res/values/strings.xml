@@ -53,6 +53,10 @@
     <string name="install_failed_downloading_timeout">Download timeout</string>
     <string name="install_failed_downloading_detail">Unable to download</string>
 
+    <string name="launch_error_java">Wrong Java Version</string>
+    <string name="launch_error_java_auto">Auto select</string>
+    <string name="launch_error_java_continue">Continue</string>
+
     <string name="launch_state_dependencies">Resolving dependencies</string>
     <string name="launch_state_modpack">Downloading dependencies</string>
     <string name="launch_state_java">Checking Java version</string>

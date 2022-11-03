@@ -45,6 +45,10 @@
     <string name="install_failed_downloading_timeout">下载超时</string>
     <string name="install_failed_downloading_detail">无法下载</string>
 
+    <string name="launch_error_java">错误的 Java 版本</string>
+    <string name="launch_error_java_auto">自动选择</string>
+    <string name="launch_error_java_continue">继续</string>
+
     <string name="launch_state_dependencies">检查依赖</string>
     <string name="launch_state_modpack">下载依赖</string>
     <string name="launch_state_java">检查 Java</string>
