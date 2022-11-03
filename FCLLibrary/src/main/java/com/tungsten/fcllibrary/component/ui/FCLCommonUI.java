@@ -18,6 +18,7 @@ public abstract class FCLCommonUI extends FCLBaseUI {
         super(context);
         setContentView(id);
         this.parent = parent;
+        onCreate();
     }
 
     @Override

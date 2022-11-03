@@ -7,16 +7,19 @@
     android:id="@+id/background"
     tools:context=".activity.MainActivity">
 
-    <com.tungsten.fcllibrary.component.view.FCLTitleView
-        android:id="@+id/title"
-        app:title="@string/app_name"
-        android:layout_width="0dp"
+    <com.tungsten.fcllibrary.component.view.FCLUILayout
+        android:id="@+id/ui_layout"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_split"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLDynamicIsland
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintWidth_percent="0.75"
-        app:layout_constraintHeight_percent="0.10"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

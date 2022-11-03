@@ -6,14 +6,20 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
 import com.tungsten.fcllibrary.component.view.FCLTitleView;
+import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public class MainActivity extends FCLActivity implements TabLayout.OnTabSelectedListener {
 
     public ConstraintLayout background;
-    private FCLTitleView titleView;
+    private FCLDynamicIsland titleView;
+
+    private UIManager uiManager;
+    private FCLUILayout uiLayout;
 
     private TabLayout tabLayout;
 
@@ -26,6 +32,11 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
 
         titleView = findViewById(R.id.title);
+
+        uiLayout = findViewById(R.id.ui_layout);
+        uiManager = new UIManager(this, uiLayout);
+        uiManager.init();
+
         tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addOnTabSelectedListener(this);
         tabLayout.selectTab(tabLayout.getTabAt(3));
@@ -38,25 +49,26 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
     public void onTabSelected(TabLayout.Tab tab) {
         switch (tab.getPosition()) {
             case 0:
-                titleView.setTitle(getString(R.string.account));
+                titleView.setTextWithAnim(getString(R.string.account));
                 break;
             case 1:
-                titleView.setTitle(getString(R.string.version));
+                titleView.setTextWithAnim(getString(R.string.version));
                 break;
             case 2:
-                titleView.setTitle(getString(R.string.install));
+                titleView.setTextWithAnim(getString(R.string.install));
                 break;
             case 4:
-                titleView.setTitle(getString(R.string.download));
+                titleView.setTextWithAnim(getString(R.string.download));
                 break;
             case 5:
-                titleView.setTitle(getString(R.string.multiplayer));
+                titleView.setTextWithAnim(getString(R.string.multiplayer));
                 break;
             case 6:
-                titleView.setTitle(getString(R.string.setting));
+                titleView.setTextWithAnim(getString(R.string.setting));
                 break;
             default:
-                titleView.setTitle(getString(R.string.app_name));
+                titleView.setTextWithAnim(getString(R.string.app_name));
+                uiManager.switchUI(uiManager.getMainUI());
                 break;
         }
     }
