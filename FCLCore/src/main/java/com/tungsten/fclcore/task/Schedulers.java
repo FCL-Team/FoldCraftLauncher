@@ -3,6 +3,8 @@ package com.tungsten.fclcore.task;
 import static com.tungsten.fclcore.util.Lang.threadPool;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.tungsten.fclcore.util.Logging;
 
@@ -36,8 +38,9 @@ public final class Schedulers {
         return IO_EXECUTOR;
     }
 
-    public static Executor androidUIThread(Activity activity) {
-        return activity::runOnUiThread;
+    public static Executor androidUIThread() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        return handler::post;
     }
 
     public static Executor defaultScheduler() {

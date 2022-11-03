@@ -28,8 +28,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
-import com.tungsten.fclcore.fakefx.InvalidationListener;
-import com.tungsten.fclcore.fakefx.Observable;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 @JsonAdapter(AuthlibInjectorServer.Deserializer.class)

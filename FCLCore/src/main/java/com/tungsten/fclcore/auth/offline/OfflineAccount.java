@@ -22,11 +22,11 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadExceptio
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
+import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.fakefx.ObjectBinding;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 
 public class OfflineAccount extends Account {

@@ -11,9 +11,5 @@ public enum GameDirectoryType {
     /**
      * .minecraft/versions/&lt;version name&gt;
      */
-    VERSION_FOLDER,
-    /**
-     * user customized directory.
-     */
-    CUSTOM
+    VERSION_FOLDER
 }

@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_version" translatable="false">1_0_0</string>
+
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
-    <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
+    <string name="splash_eula_error">Cannot get EULA, please check the network_</string>
     <string name="splash_eula_next">Agree and Continue</string>
     <string name="splash_runtime_title">Install or update app runtime</string>
     <string name="splash_runtime_lwjgl2" translatable="false">LWJGL 2</string>
@@ -18,4 +20,48 @@
     <string name="download">Download</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
+
+    <string name="account_methods_offline">Offline Account</string>
+    <string name="account_methods_yggdrasil">Mojang Account</string>
+    <string name="account_methods_authlib_injector">External Account</string>
+    <string name="account_methods_microsoft">Microsoft Account</string>
+    <string name="account_failed_no_character">There are no characters linked to this account.</string>
+    <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
+    <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
+    <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
+    <string name="account_failed_invalid_token">Please try to re-login again.</string>
+    <string name="account_failed_invalid_password">Invalid password</string>
+    <string name="account_failed_migration">Your account needs to be migrated to a Microsoft account. If you already did, you should re-login to your migrated Microsoft account instead.</string>
+    <string name="account_failed_injector_download_failure">Unable to download authlib-injector. Please check your network, or try switching to a different download mirror.</string>
+    <string name="account_failed_character_deleted">The character has already been deleted.</string>
+    <string name="account_failed_wrong_account">You have logged in to the wrong account.</string>
+    <string name="account_skin_invalid_skin">Invalid skin file</string>
+    <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live is not available in your current country/region.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">Your Microsoft account does not have a linked Xbox account yet. Please create one before continuing.</string>
+    <string name="account_methods_microsoft_error_unknown">Failed to log in</string>
+    <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
+    <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
+    <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
+
+    <string name="download_code_404">File not found</string>
+
+    <string name="exception_access_denied">Unable to access the file.</string>
+    <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
+    <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
+    
+    <string name="install_failed_downloading_timeout">Download timeout</string>
+    <string name="install_failed_downloading_detail">Unable to download</string>
+
+    <string name="launch_state_dependencies">Resolving dependencies</string>
+    <string name="launch_state_modpack">Downloading dependencies</string>
+    <string name="launch_state_java">Checking Java version</string>
+    <string name="launch_state_logging_in">Logging in</string>
+    <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
+    <string name="launch_state_done">Completing launch</string>
+    
+    <string name="message_cancelled">Operation was cancelled</string>
+
+    <string name="profile_shared">Shared Directory</string>
+    <string name="profile_private">Private Directory</string>
 </resources>

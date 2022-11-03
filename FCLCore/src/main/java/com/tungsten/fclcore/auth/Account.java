@@ -2,11 +2,11 @@ package com.tungsten.fclcore.auth;
 
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.fakefx.Bindings;
-import com.tungsten.fclcore.fakefx.InvalidationListener;
-import com.tungsten.fclcore.fakefx.ObjectBinding;
-import com.tungsten.fclcore.fakefx.Observable;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.util.Map;

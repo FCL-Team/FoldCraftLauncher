@@ -24,10 +24,6 @@ public class Theme {
     private BitmapDrawable backgroundLt;
     private BitmapDrawable backgroundDk;
 
-    public Theme() {
-        this(Color.parseColor("#9EFF4A"), false, null, null);
-    }
-
     public Theme(int color, boolean fullscreen, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
@@ -109,7 +105,7 @@ public class Theme {
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
-        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#9EFF4A"));
+        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
         Bitmap lt = ConvertUtils.stringToBitmap(sharedPreferences.getString("background_light", null)) == null ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : ConvertUtils.stringToBitmap(sharedPreferences.getString("background_light", null));
         BitmapDrawable backgroundLt = new BitmapDrawable(lt);

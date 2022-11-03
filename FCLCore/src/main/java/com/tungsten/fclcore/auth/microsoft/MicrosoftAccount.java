@@ -18,8 +18,8 @@ import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
+import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
-import com.tungsten.fclcore.fakefx.ObjectBinding;
 
 public class MicrosoftAccount extends OAuthAccount {
 

@@ -1,10 +1,12 @@
 package com.tungsten.fclcore.mod;
 
 import com.google.gson.JsonParseException;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.fakefx.BooleanProperty;
-import com.tungsten.fclcore.fakefx.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -18,7 +20,7 @@ import java.util.logging.Level;
 public class Datapack {
     private boolean isMultiple;
     private final Path path;
-    private final ArrayList<Pack> info = new ArrayList<>();
+    private final ObservableList<Pack> info = FXCollections.observableArrayList();
 
     public Datapack(Path path) {
         this.path = path;
@@ -28,7 +30,7 @@ public class Datapack {
         return path;
     }
 
-    public ArrayList<Pack> getInfo() {
+    public ObservableList<Pack> getInfo() {
         return info;
     }
 
@@ -52,9 +54,12 @@ public class Datapack {
         if (isMultiple) {
             new Unzipper(path, worldPath)
                     .setReplaceExistentFile(true)
-                    .setFilter((destPath, isDirectory, zipEntry, entryPath) -> {
-                        // We will merge resources.zip instead of replacement.
-                        return !entryPath.equals("resources.zip");
+                    .setFilter(new Unzipper.FileFilter() {
+                        @Override
+                        public boolean accept(Path destPath, boolean isDirectory, Path zipEntry, String entryPath) {
+                            // We will merge resources.zip instead of replacement.
+                            return !entryPath.equals("resources.zip");
+                        }
                     })
                     .unzip();
 
@@ -172,7 +177,7 @@ public class Datapack {
             }
         }
 
-        this.info.addAll(info);
+        this.info.setAll(info);
     }
 
     public static class Pack {

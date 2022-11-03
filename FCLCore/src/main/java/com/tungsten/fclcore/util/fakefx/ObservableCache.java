@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.util.fakefx;
 
-import com.tungsten.fclcore.fakefx.Bindings;
-import com.tungsten.fclcore.fakefx.ObjectBinding;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.util.function.ExceptionalFunction;
 
 import java.util.HashMap;

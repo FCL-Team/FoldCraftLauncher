@@ -1,6 +1,7 @@
 package com.tungsten.fclauncher;
 
 import android.content.Context;
+import android.os.Environment;
 
 public class FCLPath {
 
@@ -19,6 +20,13 @@ public class FCLPath {
     public static String CACIOCAVALLO_8_DIR;
     public static String CACIOCAVALLO_17_DIR;
 
+    public static String FILES_DIR;
+
+    public static String AUTHLIB_INJECTOR_PATH;
+
+    public static String PRIVATE_COMMON_DIR;
+    public static String SHARED_COMMON_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/.minecraft";
+
     public static void loadPaths(Context context) {
         CONTEXT = context;
 
@@ -34,6 +42,11 @@ public class FCLPath {
         LWJGL3_DIR = RUNTIME_DIR + "/lwjgl3";
         CACIOCAVALLO_8_DIR = RUNTIME_DIR + "/caciocavallo";
         CACIOCAVALLO_17_DIR = RUNTIME_DIR + "/caciocavallo17";
+
+        FILES_DIR = context.getFilesDir().getAbsolutePath();
+        AUTHLIB_INJECTOR_PATH = FILES_DIR + "/plugins/authlib-injector.jar";
+
+        SHARED_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
     }
 
 }

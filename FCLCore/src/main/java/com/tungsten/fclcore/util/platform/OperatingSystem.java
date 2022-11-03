@@ -59,4 +59,17 @@ public enum OperatingSystem {
         NATIVE_CHARSET = nativeCharset;
     }
 
+    public static boolean isNameValid(String name) {
+        // empty filename is not allowed
+        if (name.isEmpty())
+            return false;
+        // . and .. have special meaning on all platforms
+        if (name.equals("."))
+            return false;
+        // \0 and / are forbidden on all platforms
+        if (name.indexOf('/') != -1 || name.indexOf('\0') != -1)
+            return false;
+
+        return true;
+    }
 }

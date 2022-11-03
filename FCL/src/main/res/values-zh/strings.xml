@@ -12,4 +12,48 @@
     <string name="download">下载资源</string>
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
+
+    <string name="account_methods_offline">离线账户</string>
+    <string name="account_methods_yggdrasil">Mojang 账户</string>
+    <string name="account_methods_authlib_injector">外置账户</string>
+    <string name="account_methods_microsoft">微软账户</string>
+    <string name="account_failed_no_character">该账户中无角色。</string>
+    <string name="account_failed_connect_authentication_server">无法连接认证服务器，请检查网络。</string>
+    <string name="account_failed_server_response_malformed">无效的返回码，该认证服务器可能失效。</string>
+    <string name="account_failed_invalid_credentials">不正确的密码或被限速，请稍后再试。</string>
+    <string name="account_failed_invalid_token">请尝试重新登录。</string>
+    <string name="account_failed_invalid_password">无效的密码</string>
+    <string name="account_failed_migration">你的账户需要迁移至微软账户，如果已经迁移，请尝试重新登录。</string>
+    <string name="account_failed_injector_download_failure">无法下载 authlib-injector。 请检查网络，或修改下载源。</string>
+    <string name="account_failed_character_deleted">该角色已被删除。</string>
+    <string name="account_failed_wrong_account">登录了错误的账户。</string>
+    <string name="account_skin_invalid_skin">无效的皮肤文件</string>
+    <string name="account_methods_microsoft_error_add_family">你尚未满 18 岁，需要一位成年将你加入至家庭中。</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
+    <string name="account_methods_microsoft_error_unknown">登录失败</string>
+    <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
+    <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
+    <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
+
+    <string name="download_code_404">未找到文件</string>
+
+    <string name="exception_access_denied">无法获取文件。</string>
+    <string name="exception_artifact_malformed">无法校验文件。</string>
+    <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
+
+    <string name="install_failed_downloading_timeout">下载超时</string>
+    <string name="install_failed_downloading_detail">无法下载</string>
+
+    <string name="launch_state_dependencies">检查依赖</string>
+    <string name="launch_state_modpack">下载依赖</string>
+    <string name="launch_state_java">检查 Java</string>
+    <string name="launch_state_logging_in">登录</string>
+    <string name="launch_state_waiting_launching">等待游戏启动</string>
+    <string name="launch_state_done">完成</string>
+
+    <string name="message_cancelled">操作已取消</string>
+
+    <string name="profile_shared">共有目录</string>
+    <string name="profile_private">私有目录</string>
 </resources>

@@ -1,0 +1,402 @@
+package com.tungsten.fcl.setting;
+
+import static com.tungsten.fcl.setting.ConfigHolder.config;
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
+import static com.tungsten.fclcore.util.Lang.immutableListOf;
+import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Logging.LOG;
+import static com.tungsten.fclcore.util.Pair.pair;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+
+import static java.util.stream.Collectors.toList;
+
+import android.content.Context;
+
+import com.tungsten.fcl.R;
+import com.tungsten.fcl.game.OAuthServer;
+import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.AccountFactory;
+import com.tungsten.fclcore.auth.AuthenticationException;
+import com.tungsten.fclcore.auth.CharacterDeletedException;
+import com.tungsten.fclcore.auth.NoCharacterException;
+import com.tungsten.fclcore.auth.OAuthAccount;
+import com.tungsten.fclcore.auth.ServerDisconnectException;
+import com.tungsten.fclcore.auth.ServerResponseMalformedException;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccountFactory;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactInfo;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactProvider;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloader;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
+import com.tungsten.fclcore.auth.authlibinjector.BoundAuthlibInjectorAccountFactory;
+import com.tungsten.fclcore.auth.authlibinjector.SimpleAuthlibInjectorArtifactProvider;
+import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
+import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory;
+import com.tungsten.fclcore.auth.microsoft.MicrosoftService;
+import com.tungsten.fclcore.auth.offline.OfflineAccount;
+import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
+import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
+import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
+import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccountFactory;
+import com.tungsten.fclcore.fakefx.beans.Observable;
+import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.skin.InvalidSkinException;
+
+public final class Accounts {
+    private Accounts() {}
+
+    private static final AuthlibInjectorArtifactProvider AUTHLIB_INJECTOR_DOWNLOADER = createAuthlibInjectorArtifactProvider();
+    private static void triggerAuthlibInjectorUpdateCheck() {
+        if (AUTHLIB_INJECTOR_DOWNLOADER instanceof AuthlibInjectorDownloader) {
+            Schedulers.io().execute(() -> {
+                try {
+                    ((AuthlibInjectorDownloader) AUTHLIB_INJECTOR_DOWNLOADER).checkUpdate();
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, "Failed to check update for authlib-injector", e);
+                }
+            });
+        }
+    }
+
+    public static final OAuthServer.Factory OAUTH_CALLBACK = new OAuthServer.Factory();
+
+    public static final OfflineAccountFactory FACTORY_OFFLINE = new OfflineAccountFactory(AUTHLIB_INJECTOR_DOWNLOADER);
+    public static final YggdrasilAccountFactory FACTORY_MOJANG = YggdrasilAccountFactory.MOJANG;
+    public static final AuthlibInjectorAccountFactory FACTORY_AUTHLIB_INJECTOR = new AuthlibInjectorAccountFactory(AUTHLIB_INJECTOR_DOWNLOADER, Accounts::getOrCreateAuthlibInjectorServer);
+    public static final MicrosoftAccountFactory FACTORY_MICROSOFT = new MicrosoftAccountFactory(new MicrosoftService(OAUTH_CALLBACK));
+    public static final BoundAuthlibInjectorAccountFactory FACTORY_LITTLE_SKIN = getAccountFactoryByAuthlibInjectorServer(new AuthlibInjectorServer("https://littleskin.cn/api/yggdrasil/"));
+    public static final List<AccountFactory<?>> FACTORIES = immutableListOf(FACTORY_OFFLINE, FACTORY_MOJANG, FACTORY_MICROSOFT, FACTORY_AUTHLIB_INJECTOR);
+
+    // ==== login type / account factory mapping ====
+    private static final Map<String, AccountFactory<?>> type2factory = new HashMap<>();
+    private static final Map<AccountFactory<?>, String> factory2type = new HashMap<>();
+    static {
+        type2factory.put("offline", FACTORY_OFFLINE);
+        type2factory.put("yggdrasil", FACTORY_MOJANG);
+        type2factory.put("authlibInjector", FACTORY_AUTHLIB_INJECTOR);
+        type2factory.put("microsoft", FACTORY_MICROSOFT);
+
+        type2factory.forEach((type, factory) -> factory2type.put(factory, type));
+    }
+
+    public static String getLoginType(AccountFactory<?> factory) {
+        String type = factory2type.get(factory);
+        if (type != null) return type;
+
+        if (factory instanceof BoundAuthlibInjectorAccountFactory) {
+            return factory2type.get(FACTORY_AUTHLIB_INJECTOR);
+        }
+
+        throw new IllegalArgumentException("Unrecognized account factory");
+    }
+
+    public static AccountFactory<?> getAccountFactory(String loginType) {
+        return Optional.ofNullable(type2factory.get(loginType))
+                .orElseThrow(() -> new IllegalArgumentException("Unrecognized login type"));
+    }
+
+    public static BoundAuthlibInjectorAccountFactory getAccountFactoryByAuthlibInjectorServer(AuthlibInjectorServer server) {
+        return new BoundAuthlibInjectorAccountFactory(AUTHLIB_INJECTOR_DOWNLOADER, server);
+    }
+    // ====
+
+    public static AccountFactory<?> getAccountFactory(Account account) {
+        if (account instanceof OfflineAccount)
+            return FACTORY_OFFLINE;
+        else if (account instanceof AuthlibInjectorAccount)
+            return FACTORY_AUTHLIB_INJECTOR;
+        else if (account instanceof YggdrasilAccount)
+            return FACTORY_MOJANG;
+        else if (account instanceof MicrosoftAccount)
+            return FACTORY_MICROSOFT;
+        else
+            throw new IllegalArgumentException("Failed to determine account type: " + account);
+    }
+
+    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[] { account });
+    private static final ReadOnlyListWrapper<Account> accountsWrapper = new ReadOnlyListWrapper<>(Accounts.class, "accounts", accounts);
+
+    private static final ObjectProperty<Account> selectedAccount = new SimpleObjectProperty<Account>(Accounts.class, "selectedAccount") {
+        {
+            accounts.addListener(onInvalidating(this::invalidated));
+        }
+
+        @Override
+        protected void invalidated() {
+            // this methods first checks whether the current selection is valid
+            // if it's valid, the underlying storage will be updated
+            // otherwise, the first account will be selected as an alternative(or null if accounts is empty)
+            Account selected = get();
+            if (accounts.isEmpty()) {
+                if (selected == null) {
+                    // valid
+                } else {
+                    // the previously selected account is gone, we can only set it to null here
+                    set(null);
+                    return;
+                }
+            } else {
+                if (accounts.contains(selected)) {
+                    // valid
+                } else {
+                    // the previously selected account is gone
+                    set(accounts.get(0));
+                    return;
+                }
+            }
+            // selection is valid, store it
+            if (!initialized)
+                return;
+            updateAccountStorages();
+        }
+    };
+
+    /**
+     * True if {@link #init()} hasn't been called.
+     */
+    private static boolean initialized = false;
+
+    static {
+        accounts.addListener(onInvalidating(Accounts::updateAccountStorages));
+    }
+
+    private static Map<Object, Object> getAccountStorage(Account account) {
+        Map<Object, Object> storage = account.toStorage();
+        storage.put("type", getLoginType(getAccountFactory(account)));
+        if (account == selectedAccount.get()) {
+            storage.put("selected", true);
+        }
+        return storage;
+    }
+
+    private static void updateAccountStorages() {
+        // don't update the underlying storage before data loading is completed
+        // otherwise it might cause data loss
+        if (!initialized)
+            return;
+        // update storage
+        config().getAccountStorages().setAll(accounts.stream().map(Accounts::getAccountStorage).collect(toList()));
+    }
+
+    /**
+     * Called when it's ready to load accounts from {@link ConfigHolder#config()}.
+     */
+    static void init() {
+        if (initialized)
+            throw new IllegalStateException("Already initialized");
+
+        // load accounts
+        config().getAccountStorages().forEach(storage -> {
+            AccountFactory<?> factory = type2factory.get(storage.get("type"));
+            if (factory == null) {
+                LOG.warning("Unrecognized account type: " + storage);
+                return;
+            }
+            Account account;
+            try {
+                account = factory.fromStorage(storage);
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to load account: " + storage, e);
+                return;
+            }
+            accounts.add(account);
+
+            if (Boolean.TRUE.equals(storage.get("selected"))) {
+                selectedAccount.set(account);
+            }
+        });
+
+        initialized = true;
+
+        config().getAuthlibInjectorServers().addListener(onInvalidating(Accounts::removeDanglingAuthlibInjectorAccounts));
+
+        Account selected = selectedAccount.get();
+        if (selected != null) {
+            Schedulers.io().execute(() -> {
+                try {
+                    selected.logIn();
+                } catch (AuthenticationException e) {
+                    LOG.log(Level.WARNING, "Failed to log " + selected + " in", e);
+                }
+            });
+        }
+
+        if (!config().getAuthlibInjectorServers().isEmpty()) {
+            triggerAuthlibInjectorUpdateCheck();
+        }
+
+        Schedulers.io().execute(() -> {
+            try {
+                FACTORY_LITTLE_SKIN.getServer().fetchMetadataResponse();
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, "Failed to fetch authlib-injector server metdata: " + FACTORY_LITTLE_SKIN.getServer(), e);
+            }
+        });
+
+        for (AuthlibInjectorServer server : config().getAuthlibInjectorServers()) {
+            if (selected instanceof AuthlibInjectorAccount && ((AuthlibInjectorAccount) selected).getServer() == server)
+                continue;
+            Schedulers.io().execute(() -> {
+                try {
+                    server.fetchMetadataResponse();
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, "Failed to fetch authlib-injector server metdata: " + server, e);
+                }
+            });
+        }
+    }
+
+    public static ObservableList<Account> getAccounts() {
+        return accounts;
+    }
+
+    public static ReadOnlyListProperty<Account> accountsProperty() {
+        return accountsWrapper.getReadOnlyProperty();
+    }
+
+    public static Account getSelectedAccount() {
+        return selectedAccount.get();
+    }
+
+    public static void setSelectedAccount(Account selectedAccount) {
+        Accounts.selectedAccount.set(selectedAccount);
+    }
+
+    public static ObjectProperty<Account> selectedAccountProperty() {
+        return selectedAccount;
+    }
+
+    // ==== authlib-injector ====
+    private static AuthlibInjectorArtifactProvider createAuthlibInjectorArtifactProvider() {
+        String authlibinjectorLocation = FCLPath.AUTHLIB_INJECTOR_PATH;
+        if (authlibinjectorLocation == null) {
+            return new AuthlibInjectorDownloader(
+                    new File(FCLPath.AUTHLIB_INJECTOR_PATH).toPath(),
+                    DownloadProviders::getDownloadProvider) {
+                @Override
+                public Optional<AuthlibInjectorArtifactInfo> getArtifactInfoImmediately() {
+                    Optional<AuthlibInjectorArtifactInfo> local = super.getArtifactInfoImmediately();
+                    if (local.isPresent()) {
+                        return local;
+                    }
+                    // search authlib-injector.jar in current directory, it's used as a fallback
+                    return parseArtifact(Paths.get("authlib-injector.jar"));
+                }
+            };
+        } else {
+            LOG.info("Using specified authlib-injector: " + authlibinjectorLocation);
+            return new SimpleAuthlibInjectorArtifactProvider(Paths.get(authlibinjectorLocation));
+        }
+    }
+
+    private static AuthlibInjectorServer getOrCreateAuthlibInjectorServer(String url) {
+        return config().getAuthlibInjectorServers().stream()
+                .filter(server -> url.equals(server.getUrl()))
+                .findFirst()
+                .orElseGet(() -> {
+                    AuthlibInjectorServer server = new AuthlibInjectorServer(url);
+                    config().getAuthlibInjectorServers().add(server);
+                    return server;
+                });
+    }
+
+    /**
+     * After an {@link AuthlibInjectorServer} is removed, the associated accounts should also be removed.
+     * This method performs a check and removes the dangling accounts.
+     */
+    private static void removeDanglingAuthlibInjectorAccounts() {
+        accounts.stream()
+                .filter(AuthlibInjectorAccount.class::isInstance)
+                .map(AuthlibInjectorAccount.class::cast)
+                .filter(it -> !config().getAuthlibInjectorServers().contains(it.getServer()))
+                .collect(toList())
+                .forEach(accounts::remove);
+    }
+    // ====
+
+    // ==== Login type name i18n ===
+    private static final Map<AccountFactory<?>, Integer> unlocalizedLoginTypeNames = mapOf(
+            pair(Accounts.FACTORY_OFFLINE, R.string.account_methods_offline),
+            pair(Accounts.FACTORY_MOJANG, R.string.account_methods_yggdrasil),
+            pair(Accounts.FACTORY_AUTHLIB_INJECTOR, R.string.account_methods_authlib_injector),
+            pair(Accounts.FACTORY_MICROSOFT, R.string.account_methods_microsoft));
+
+    public static String getLocalizedLoginTypeName(Context context, AccountFactory<?> factory) {
+        return context.getString(unlocalizedLoginTypeNames.get(factory));
+    }
+    // ====
+
+    public static String localizeErrorMessage(Context context, Exception exception) {
+        if (exception instanceof NoCharacterException) {
+            return context.getString(R.string.account_failed_no_character);
+        } else if (exception instanceof ServerDisconnectException) {
+            return context.getString(R.string.account_failed_connect_authentication_server);
+        } else if (exception instanceof ServerResponseMalformedException) {
+            return context.getString(R.string.account_failed_server_response_malformed);
+        } else if (exception instanceof RemoteAuthenticationException) {
+            RemoteAuthenticationException remoteException = (RemoteAuthenticationException) exception;
+            String remoteMessage = remoteException.getRemoteMessage();
+            if ("ForbiddenOperationException".equals(remoteException.getRemoteName()) && remoteMessage != null) {
+                if (remoteMessage.contains("Invalid credentials")) {
+                    return context.getString(R.string.account_failed_invalid_credentials);
+                } else if (remoteMessage.contains("Invalid token")) {
+                    return context.getString(R.string.account_failed_invalid_token);
+                } else if (remoteMessage.contains("Invalid username or password")) {
+                    return context.getString(R.string.account_failed_invalid_password);
+                } else {
+                    return remoteMessage;
+                }
+            } else if ("ResourceException".equals(remoteException.getRemoteName()) && remoteMessage != null) {
+                if (remoteMessage.contains("The requested resource is no longer available")) {
+                    return context.getString(R.string.account_failed_migration);
+                } else {
+                    return remoteMessage;
+                }
+            }
+            return exception.getMessage();
+        } else if (exception instanceof AuthlibInjectorDownloadException) {
+            return context.getString(R.string.account_failed_injector_download_failure);
+        } else if (exception instanceof CharacterDeletedException) {
+            return context.getString(R.string.account_failed_character_deleted);
+        } else if (exception instanceof InvalidSkinException) {
+            return context.getString(R.string.account_skin_invalid_skin);
+        } else if (exception instanceof MicrosoftService.XboxAuthorizationException) {
+            long errorCode = ((MicrosoftService.XboxAuthorizationException) exception).getErrorCode();
+            if (errorCode == MicrosoftService.XboxAuthorizationException.ADD_FAMILY) {
+                return context.getString(R.string.account_methods_microsoft_error_add_family);
+            } else if (errorCode == MicrosoftService.XboxAuthorizationException.COUNTRY_UNAVAILABLE) {
+                return context.getString(R.string.account_methods_microsoft_error_country_unavailable);
+            } else if (errorCode == MicrosoftService.XboxAuthorizationException.MISSING_XBOX_ACCOUNT) {
+                return context.getString(R.string.account_methods_microsoft_error_missing_xbox_account);
+            } else {
+                return context.getString(R.string.account_methods_microsoft_error_unknown);
+            }
+        } else if (exception instanceof MicrosoftService.NoMinecraftJavaEditionProfileException) {
+            return context.getString(R.string.account_methods_microsoft_error_no_character);
+        } else if (exception instanceof MicrosoftService.NoXuiException) {
+            return context.getString(R.string.account_methods_microsoft_error_add_family_probably);
+        } else if (exception instanceof OAuthAccount.WrongAccountException) {
+            return context.getString(R.string.account_failed_wrong_account);
+        } else if (exception.getClass() == AuthenticationException.class) {
+            return exception.getLocalizedMessage();
+        } else {
+            return exception.getClass().getName() + ": " + exception.getLocalizedMessage();
+        }
+    }
+}
