@@ -3,7 +3,13 @@ package com.tungsten.fcl.ui;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.ui.account.AccountUI;
+import com.tungsten.fcl.ui.download.DownloadUI;
+import com.tungsten.fcl.ui.install.InstallUI;
 import com.tungsten.fcl.ui.main.MainUI;
+import com.tungsten.fcl.ui.multiplayer.MultiplayerUI;
+import com.tungsten.fcl.ui.setting.SettingUI;
+import com.tungsten.fcl.ui.version.VersionUI;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.ui.FCLBaseUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -25,6 +31,12 @@ public class UIManager {
     private final FCLUILayout parent;
 
     private MainUI mainUI;
+    private AccountUI accountUI;
+    private VersionUI versionUI;
+    private InstallUI installUI;
+    private DownloadUI downloadUI;
+    private MultiplayerUI multiplayerUI;
+    private SettingUI settingUI;
 
     private FCLBaseUI[] allUIs;
     private FCLBaseUI currentUI;
@@ -42,9 +54,21 @@ public class UIManager {
         instance = this;
 
         mainUI = new MainUI(context, parent, R.layout.ui_main);
+        accountUI = new AccountUI(context, parent, R.layout.ui_account);
+        versionUI = new VersionUI(context, parent, R.layout.ui_version);
+        installUI = new InstallUI(context, parent, R.layout.ui_install);
+        downloadUI = new DownloadUI(context, parent, R.layout.ui_download);
+        multiplayerUI = new MultiplayerUI(context, parent, R.layout.ui_multiplayer);
+        settingUI = new SettingUI(context, parent, R.layout.ui_setting);
 
         allUIs = new FCLBaseUI[] {
-                mainUI
+                mainUI,
+                accountUI,
+                versionUI,
+                installUI,
+                downloadUI,
+                multiplayerUI,
+                settingUI
         };
     }
 
@@ -58,6 +82,30 @@ public class UIManager {
 
     public MainUI getMainUI() {
         return mainUI;
+    }
+
+    public AccountUI getAccountUI() {
+        return accountUI;
+    }
+
+    public VersionUI getVersionUI() {
+        return versionUI;
+    }
+
+    public InstallUI getInstallUI() {
+        return installUI;
+    }
+
+    public DownloadUI getDownloadUI() {
+        return downloadUI;
+    }
+
+    public MultiplayerUI getMultiplayerUI() {
+        return multiplayerUI;
+    }
+
+    public SettingUI getSettingUI() {
+        return settingUI;
     }
 
     public FCLBaseUI getCurrentUI() {

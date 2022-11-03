@@ -10,7 +10,6 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
-import com.tungsten.fcllibrary.component.view.FCLTitleView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public class MainActivity extends FCLActivity implements TabLayout.OnTabSelectedListener {
@@ -50,21 +49,27 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         switch (tab.getPosition()) {
             case 0:
                 titleView.setTextWithAnim(getString(R.string.account));
+                uiManager.switchUI(uiManager.getAccountUI());
                 break;
             case 1:
                 titleView.setTextWithAnim(getString(R.string.version));
+                uiManager.switchUI(uiManager.getVersionUI());
                 break;
             case 2:
                 titleView.setTextWithAnim(getString(R.string.install));
+                uiManager.switchUI(uiManager.getInstallUI());
                 break;
             case 4:
                 titleView.setTextWithAnim(getString(R.string.download));
+                uiManager.switchUI(uiManager.getDownloadUI());
                 break;
             case 5:
                 titleView.setTextWithAnim(getString(R.string.multiplayer));
+                uiManager.switchUI(uiManager.getMultiplayerUI());
                 break;
             case 6:
                 titleView.setTextWithAnim(getString(R.string.setting));
+                uiManager.switchUI(uiManager.getSettingUI());
                 break;
             default:
                 titleView.setTextWithAnim(getString(R.string.app_name));
@@ -81,5 +86,15 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
         // Ignore
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (uiManager.getCurrentUI() == uiManager.getMainUI()) {
+            super.onBackPressed();
+        }
+        else {
+            uiManager.switchUI(uiManager.getMainUI());
+        }
     }
 }
