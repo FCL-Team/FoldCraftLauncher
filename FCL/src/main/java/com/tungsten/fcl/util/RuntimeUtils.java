@@ -2,7 +2,6 @@ package com.tungsten.fcl.util;
 
 import android.content.Context;
 import android.system.Os;
-import android.util.Log;
 
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -97,8 +96,7 @@ public class RuntimeUtils {
             if (tarEntry.isSymbolicLink()) {
                 Objects.requireNonNull(destPath.getParentFile()).mkdirs();
                 try {
-//                    Os.symlink(tarEntry.getName(), tarEntry.getLinkName());
-                    Os.symlink(tarEntry.getLinkName().replace("..",dest.getAbsolutePath()), new File(dest,tarEntry.getName()).getAbsolutePath());
+                    Os.symlink(tarEntry.getLinkName().replace("..", dest.getAbsolutePath()), new File(dest, tarEntry.getName()).getAbsolutePath());
                 } catch (Throwable e) {
                     Logging.LOG.log(Level.WARNING, e.getMessage());
                 }
