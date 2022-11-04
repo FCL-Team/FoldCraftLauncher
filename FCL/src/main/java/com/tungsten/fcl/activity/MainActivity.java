@@ -13,6 +13,7 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
+import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
     private UIManager uiManager;
     public FCLUILayout uiLayout;
 
-    private TabLayout tabLayout;
+    private FCLTabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +40,16 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         titleView = findViewById(R.id.title);
 
         uiLayout = findViewById(R.id.ui_layout);
-        uiManager = new UIManager(this, uiLayout);
-        uiManager.init();
+        uiLayout.post(() -> {
+            uiManager = new UIManager(this, uiLayout);
+            uiManager.init();
 
-        tabLayout = findViewById(R.id.tab_layout);
-        tabLayout.addOnTabSelectedListener(this);
-        tabLayout.selectTab(tabLayout.getTabAt(3));
-        ThemeEngine.getInstance().registerEvent(tabLayout, () -> {
-            tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
+            tabLayout = findViewById(R.id.tab_layout);
+            tabLayout.addOnTabSelectedListener(this);
+            tabLayout.selectTab(tabLayout.getTabAt(3));
+            ThemeEngine.getInstance().registerEvent(tabLayout, () -> {
+                tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
+            });
         });
 
         try {
@@ -110,6 +113,22 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         }
         else {
             tabLayout.selectTab(tabLayout.getTabAt(3));
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (uiManager != null) {
+            uiManager.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (uiManager != null) {
+            uiManager.onResume();
         }
     }
 }

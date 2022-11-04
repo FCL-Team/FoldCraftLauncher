@@ -26,7 +26,7 @@ public class FCLTabLayout extends TabLayout {
                 ThemeEngine.getInstance().getTheme().getDkColor(),
                 Color.GRAY
         };
-        setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getColor());
+        setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
         setTabTextColors(new ColorStateList(state, color));
         setTabIconTint(new ColorStateList(state, color));
     };

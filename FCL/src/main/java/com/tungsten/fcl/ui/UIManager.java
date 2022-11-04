@@ -124,4 +124,16 @@ public class UIManager {
             }
         }
     }
+
+    public void onPause() {
+        for (FCLBaseUI baseUI : allUIs) {
+            baseUI.onPause();
+        }
+    }
+
+    public void onResume() {
+        for (FCLBaseUI baseUI : allUIs) {
+            baseUI.onResume();
+        }
+    }
 }

@@ -56,6 +56,7 @@
         tools:targetApi="32">
         <activity
             android:name=".activity.SplashActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"
             android:exported="true">
             <intent-filter>
@@ -66,12 +67,15 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
         <activity
             android:name="com.tungsten.fcllibrary.browser.FileBrowserActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
         <activity
             android:name="com.tungsten.fcllibrary.crash.CrashReportActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
