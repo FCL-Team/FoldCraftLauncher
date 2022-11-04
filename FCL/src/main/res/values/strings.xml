@@ -2,6 +2,8 @@
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
     <string name="app_version" translatable="false">1_0_0</string>
 
+    <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
+
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network_</string>
     <string name="splash_eula_next">Agree and Continue</string>

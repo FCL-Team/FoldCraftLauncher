@@ -3,6 +3,8 @@ package com.tungsten.fclauncher;
 import android.content.Context;
 import android.os.Environment;
 
+import java.io.File;
+
 public class FCLPath {
 
     public static Context CONTEXT;
@@ -46,7 +48,28 @@ public class FCLPath {
         FILES_DIR = context.getFilesDir().getAbsolutePath();
         AUTHLIB_INJECTOR_PATH = FILES_DIR + "/plugins/authlib-injector.jar";
 
-        SHARED_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
+        PRIVATE_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
+
+        init(LOG_DIR);
+        init(CACHE_DIR);
+        init(RUNTIME_DIR);
+        init(JAVA_8_PATH);
+        init(JAVA_17_PATH);
+        init(LWJGL2_DIR);
+        init(LWJGL3_DIR);
+        init(CACIOCAVALLO_8_DIR);
+        init(CACIOCAVALLO_17_DIR);
+        init(FILES_DIR);
+        init(FILES_DIR + "/plugins");
+        init(PRIVATE_COMMON_DIR);
+        init(SHARED_COMMON_DIR);
+    }
+
+    private static boolean init(String path) {
+        if (!new File(path).exists()) {
+            return new File(path).mkdirs();
+        }
+        return true;
     }
 
 }

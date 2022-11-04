@@ -7,11 +7,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.ConfigHolder;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class MainActivity extends FCLActivity implements TabLayout.OnTabSelectedListener {
 
@@ -43,6 +48,12 @@ public class MainActivity extends FCLActivity implements TabLayout.OnTabSelected
         ThemeEngine.getInstance().registerEvent(tabLayout, () -> {
             tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
         });
+
+        try {
+            ConfigHolder.init();
+        } catch (IOException e) {
+            Logging.LOG.log(Level.WARNING, e.getMessage());
+        }
     }
 
     @Override
