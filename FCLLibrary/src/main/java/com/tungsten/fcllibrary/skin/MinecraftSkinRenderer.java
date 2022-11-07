@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.SystemClock;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -69,6 +70,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onDrawFrame(final GL10 gl10) {
+        // Log.i("draw", "start");
         if (this.changeSkinImage) {
             this.changeSkinImage = false;
         }

@@ -17,6 +17,7 @@ public class TextureHelper {
     }
     
     public static int[] loadGLTextureFromBitmap(final Bitmap skin, final Bitmap cape, final GL10 gl10) {
+        // Log.i("loadTex", "start");
         final int[] array = { 0 , 0 };
         gl10.glGenTextures(2, array, 0);
         gl10.glBindTexture(3553, array[0]);
@@ -33,7 +34,7 @@ public class TextureHelper {
             throw new RuntimeException("Error loading texture.");
         }
         else {
-            Log.e("loadTex","success");
+            Log.i("loadTex", "success");
         }
         return array;
     }

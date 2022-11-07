@@ -4,14 +4,18 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
+
+import android.graphics.BitmapFactory;
 
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -22,9 +26,11 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadExceptio
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
@@ -174,7 +180,22 @@ public class OfflineAccount extends Account {
 
     @Override
     public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        return super.getTextures();
+        try {
+            Skin.LoadedSkin loadedSkin = skin.load(username).run();
+            Map<TextureType, Texture> map = new HashMap<>();
+            if (loadedSkin != null) {
+                map.put(TextureType.SKIN, new Texture(null, null, BitmapFactory.decodeStream(loadedSkin.getSkin().getInputStream())));
+                if (loadedSkin.getCape() != null) {
+                    map.put(TextureType.CAPE, new Texture(null, null, BitmapFactory.decodeStream(loadedSkin.getCape().getInputStream())));
+                }
+            } else {
+                map.put(TextureType.SKIN, new Texture(null, null, BitmapFactory.decodeStream(OfflineAccount.class.getResourceAsStream(TextureModel.detectUUID(uuid) == TextureModel.ALEX ? "/assets/img/alex.img" : "/assets/img/steve.png"))));
+            }
+            return Bindings.createObjectBinding(() -> Optional.of(map));
+        } catch (Exception e) {
+            Logging.LOG.log(Level.WARNING, "Failed to load offline account skin, error: " + e);
+            return super.getTextures();
+        }
     }
 
     @Override

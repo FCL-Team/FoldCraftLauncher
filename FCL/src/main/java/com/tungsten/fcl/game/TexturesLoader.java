@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.tungsten.fcl.util.ResourceNotFoundError;
@@ -33,6 +34,7 @@ import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
+import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
@@ -85,7 +87,14 @@ public final class TexturesLoader {
 
     public static LoadedTexture loadTexture(Texture texture) throws IOException {
         if (StringUtils.isBlank(texture.getUrl())) {
-            throw new IOException("Texture url is empty");
+            if (texture.getImg() == null)
+                throw new IOException("Texture url is empty");
+
+            Map<String, String> metadata = texture.getMetadata();
+            if (metadata == null) {
+                metadata = emptyMap();
+            }
+            return new LoadedTexture(texture.getImg(), metadata);
         }
 
         Path file = getTexturePath(texture);
@@ -114,6 +123,34 @@ public final class TexturesLoader {
         }
         return new LoadedTexture(img, metadata);
     }
+
+    private static Bitmap loadCape(Texture texture) throws IOException {
+        if (StringUtils.isBlank(texture.getUrl())) {
+            return texture.getImg();
+        } else {
+            Path file = getTexturePath(texture);
+            if (!Files.isRegularFile(file)) {
+                // download it
+                try {
+                    new FileDownloadTask(new URL(texture.getUrl()), file.toFile()).run();
+                    LOG.info("Texture downloaded: " + texture.getUrl());
+                } catch (Exception e) {
+                    if (Files.isRegularFile(file)) {
+                        // concurrency conflict?
+                        LOG.log(Level.WARNING, "Failed to download texture " + texture.getUrl() + ", but the file is available", e);
+                    } else {
+                        throw new IOException("Failed to download texture " + texture.getUrl());
+                    }
+                }
+            }
+
+            Bitmap img = BitmapFactory.decodeStream(Files.newInputStream(file));
+            if (img == null)
+                throw new IOException("Texture is malformed");
+
+            return img;
+        }
+    }
     // ====
 
     // ==== Skins ====
@@ -128,7 +165,7 @@ public final class TexturesLoader {
         try (InputStream in = ResourceNotFoundError.getResourceAsStream(path)) {
             DEFAULT_SKINS.put(model, new LoadedTexture(BitmapFactory.decodeStream(in), singletonMap("model", model.modelName)));
         } catch (Throwable e) {
-            throw new ResourceNotFoundError("Cannoot load default skin from " + path, e);
+            throw new ResourceNotFoundError("Cannot load default skin from " + path, e);
         }
     }
 
@@ -190,6 +227,28 @@ public final class TexturesLoader {
                 }, uuidFallback);
     }
 
+    public static ObjectBinding<Bitmap> capeBinding(Account account) {
+        return BindingMapping.of(account.getTextures())
+                .map(textures -> textures
+                        .flatMap(it -> Optional.ofNullable(it.get(TextureType.CAPE)))
+                        .filter(it -> StringUtils.isNotBlank(it.getUrl())))
+                .asyncMap(it -> {
+                    if (it.isPresent()) {
+                        Texture texture = it.get();
+                        return CompletableFuture.supplyAsync(() -> {
+                            try {
+                                return loadCape(texture);
+                            } catch (IOException e) {
+                                LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using null", e);
+                                return null;
+                            }
+                        }, POOL);
+                    } else {
+                        return CompletableFuture.completedFuture(null);
+                    }
+                }, null);
+    }
+
     // ====
 
     // ==== Avatar ====
@@ -208,25 +267,25 @@ public final class TexturesLoader {
         matrix = new Matrix();
         matrix.postScale(hatScale, hatScale);
         Bitmap newHatBitmap = Bitmap.createBitmap(hatBitmap, 0, 0, 8, 8, matrix, false);
-        canvas.drawBitmap(newFaceBitmap, faceOffset, faceOffset, null);
-        canvas.drawBitmap(newHatBitmap, 0, 0, null);
+        canvas.drawBitmap(newFaceBitmap, faceOffset, faceOffset, new Paint(Paint.ANTI_ALIAS_FLAG));
+        canvas.drawBitmap(newHatBitmap, 0, 0, new Paint(Paint.ANTI_ALIAS_FLAG));
         return avatar;
     }
 
-    public static ObjectBinding<BitmapDrawable> fxAvatarBinding(YggdrasilService service, UUID uuid, int size) {
+    public static ObjectBinding<BitmapDrawable> avatarBinding(YggdrasilService service, UUID uuid, int size) {
         return BindingMapping.of(skinBinding(service, uuid))
                 .map(it -> toAvatar(it.image, size))
                 .map(BitmapDrawable::new);
     }
 
-    public static ObjectBinding<BitmapDrawable> fxAvatarBinding(Account account, int size) {
-        if (account instanceof YggdrasilAccount || account instanceof MicrosoftAccount) {
+    public static ObjectBinding<BitmapDrawable> avatarBinding(Account account, int size) {
+        if (account instanceof YggdrasilAccount || account instanceof MicrosoftAccount || account instanceof OfflineAccount) {
             return BindingMapping.of(skinBinding(account))
                     .map(it -> toAvatar(it.image, size))
                     .map(BitmapDrawable::new);
         } else {
             return Bindings.createObjectBinding(
-                    () -> new BitmapDrawable(toAvatar(getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image, size)));
+                    () -> new BitmapDrawable(toAvatar(getDefaultSkin(account == null ? TextureModel.ALEX : TextureModel.detectUUID(account.getUUID())).image, size)));
         }
     }
     // ====

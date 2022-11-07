@@ -15,6 +15,18 @@
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
 
+    <string name="account_create">创建账户</string>
+    <string name="account_create_offline">创建离线账户</string>
+    <string name="account_create_microsoft">创建微软账户</string>
+    <string name="account_create_external">创建外置账户</string>
+    <string name="account_create_username">用户名</string>
+    <string name="account_create_password">密码</string>
+    <string name="account_create_server">认证服务器</string>
+    <string name="account_create_home">主页</string>
+    <string name="account_create_register">注册</string>
+    <string name="account_create_alert">请先提供足够的账户信息！</string>
+    <string name="account_injector_server">认证服务器</string>
+    <string name="account_login">登录</string>
     <string name="account_methods_offline">离线账户</string>
     <string name="account_methods_yggdrasil">Mojang 账户</string>
     <string name="account_methods_authlib_injector">外置账户</string>
@@ -37,6 +49,8 @@
     <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
+    <string name="account_select_character">选择角色</string>
+    <string name="account_state_no_account">没有账户</string>
 
     <string name="download_code_404">未找到文件</string>
 

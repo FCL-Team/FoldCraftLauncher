@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 import com.tungsten.fcllibrary.component.FCLActivity;
 
@@ -36,8 +37,9 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
         return contentView;
     }
 
+    @NonNull
     public final <T extends View> T findViewById(int id) {
-        return contentView == null ? null : contentView.findViewById(id);
+        return contentView.findViewById(id);
     }
 
     public abstract boolean isShowing();

@@ -23,6 +23,18 @@
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
 
+    <string name="account_create">Create Offline Account</string>
+    <string name="account_create_offline">Create Offline Account</string>
+    <string name="account_create_microsoft">Create Microsoft Account</string>
+    <string name="account_create_external">Create External Account</string>
+    <string name="account_create_username">Username</string>
+    <string name="account_create_password">Password</string>
+    <string name="account_create_server">Authentication server</string>
+    <string name="account_create_home">Home</string>
+    <string name="account_create_register">Register</string>
+    <string name="account_create_alert">Please provide enough account info first!</string>
+    <string name="account_injector_server">Authentication Server</string>
+    <string name="account_login">Login</string>
     <string name="account_methods_offline">Offline Account</string>
     <string name="account_methods_yggdrasil">Mojang Account</string>
     <string name="account_methods_authlib_injector">External Account</string>
@@ -45,6 +57,8 @@
     <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
     <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
+    <string name="account_select_character">Select character</string>
+    <string name="account_state_no_account">No account</string>
 
     <string name="download_code_404">File not found</string>
 
