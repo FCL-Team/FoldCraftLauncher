@@ -158,7 +158,7 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
             accountListAdapter.notifyDataSetChanged();
         }
         name.setText(Accounts.getSelectedAccount() == null ? getContext().getString(R.string.account_state_no_account) : Accounts.getSelectedAccount().getUsername());
-        description.setVisibility(Accounts.getSelectedAccount() == null ? View.GONE : View.VISIBLE);
+        description.setVisibility(Accounts.getSelectedAccount() == null ? View.INVISIBLE : View.VISIBLE);
         if (Accounts.getSelectedAccount() != null) {
             String loginTypeName = Accounts.getLocalizedLoginTypeName(getContext(), Accounts.getAccountFactory(Accounts.getSelectedAccount()));
             StringProperty subtitle = new SimpleStringProperty();

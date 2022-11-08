@@ -75,6 +75,6 @@
 
     <string name="message_cancelled">操作已取消</string>
 
-    <string name="profile_shared">共有目录</string>
+    <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
 </resources>
