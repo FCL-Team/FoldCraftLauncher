@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:paddingTop="10dp"
@@ -10,7 +11,100 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/account_create_server"
+                android:layout_gravity="center"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_marginStart="5dp"
+                android:id="@+id/server_name"
+                android:singleLine="true"
+                android:layout_width="115dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLImageButton
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_home_24"
+                app:auto_tint="true"
+                android:id="@+id/home"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLImageButton
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_person_add_24"
+                app:auto_tint="true"
+                android:id="@+id/register"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLImageButton
+                android:layout_marginStart="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_settings_24"
+                app:auto_tint="true"
+                android:id="@+id/setting"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/account_create_username"
+                android:layout_gravity="center"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLEditText
+                android:singleLine="true"
+                android:id="@+id/username"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/account_create_password"
+                android:layout_gravity="center"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLEditText
+                android:singleLine="true"
+                android:inputType="textPassword"
+                android:id="@+id/password"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

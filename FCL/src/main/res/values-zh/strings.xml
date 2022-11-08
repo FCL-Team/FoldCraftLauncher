@@ -26,6 +26,7 @@
     <string name="account_create_register">注册</string>
     <string name="account_create_alert">请先提供足够的账户信息！</string>
     <string name="account_injector_server">认证服务器</string>
+    <string name="account_create_server_not_select">没有认证服务器</string>
     <string name="account_login">登录</string>
     <string name="account_methods_offline">离线账户</string>
     <string name="account_methods_yggdrasil">Mojang 账户</string>

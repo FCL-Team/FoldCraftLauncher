@@ -118,6 +118,27 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         refresh();
+        skinGLSurfaceView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        skinGLSurfaceView.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isShowing()) {
+            skinGLSurfaceView.onResume();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        skinGLSurfaceView.onPause();
     }
 
     @Override

@@ -37,6 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:textSize="16sp"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintWidth_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,12 +50,12 @@
         android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="50dp"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintWidth_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/refresh"/>
+        app:layout_constraintBottom_toTopOf="@+id/bar"/>
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/refresh"
@@ -71,8 +72,8 @@
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/refresh_progress"
         android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintHorizontal_bias="0.44"
         app:layout_constraintBottom_toTopOf="@+id/bar"
@@ -94,8 +95,8 @@
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/skin_progress"
         android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintHorizontal_bias="0.56"
         app:layout_constraintBottom_toTopOf="@+id/bar"

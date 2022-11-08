@@ -3,6 +3,8 @@ package com.tungsten.fcl.ui.account;
 import static com.tungsten.fcl.setting.ConfigHolder.config;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.CharacterSelector;
 import com.tungsten.fclcore.auth.NoSelectedCharacterException;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccountFactory;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory;
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile;
@@ -35,10 +38,12 @@ import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
+import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 public class CreateAccountDialog extends FCLDialog implements View.OnClickListener {
@@ -235,9 +240,11 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
     private static class MicrosoftDetails implements Details {
 
         private final Context context;
+        private final View view;
 
         public MicrosoftDetails(Context context) {
             this.context = context;
+            this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_microsoft, null);
         }
 
         @Override
@@ -257,26 +264,86 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         @Override
         public View getView() throws IllegalStateException {
-            return null;
+            return view;
         }
     }
 
-    private static class ExternalDetails implements Details {
+    private static class ExternalDetails implements Details, View.OnClickListener {
+
+        private static final String[] ALLOWED_LINKS = { "homepage", "register" };
 
         private final Context context;
+        private final View view;
+
+        private FCLTextView serverName;
+        private FCLImageButton home;
+        private FCLImageButton register;
+        private FCLImageButton setting;
+        private final FCLEditText username;
+        private final FCLEditText password;
 
         public ExternalDetails(Context context) {
             this.context = context;
+            this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_external, null);
+
+            serverName = view.findViewById(R.id.server_name);
+            home = view.findViewById(R.id.home);
+            register = view.findViewById(R.id.register);
+            setting = view.findViewById(R.id.setting);
+            username = view.findViewById(R.id.username);
+            password = view.findViewById(R.id.password);
+
+            setting.setOnClickListener(this);
+
+            refreshAuthenticateServer(config().getAuthlibInjectorServers().size() == 0 ? null : config().getAuthlibInjectorServers().get(0));
+        }
+
+        private void refreshAuthenticateServer(AuthlibInjectorServer authlibInjectorServer) {
+            if (authlibInjectorServer == null) {
+                serverName.setText(context.getString(R.string.account_create_server_not_select));
+                home.setVisibility(View.GONE);
+                register.setVisibility(View.GONE);
+            }
+            else {
+                serverName.setText(authlibInjectorServer.getName());
+                Map<String, String> links = authlibInjectorServer.getLinks();
+                if (links.get("homepage") != null) {
+                    home.setVisibility(View.VISIBLE);
+                    home.setOnClickListener(view -> {
+                        Uri uri = Uri.parse(links.get("homepage"));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        context.startActivity(intent);
+                    });
+                } else {
+                    home.setVisibility(View.GONE);
+                }
+                if (links.get("register") != null) {
+                    register.setVisibility(View.VISIBLE);
+                    register.setOnClickListener(view -> {
+                        Uri uri = Uri.parse(links.get("register"));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        context.startActivity(intent);
+                    });
+                } else {
+                    register.setVisibility(View.GONE);
+                }
+            }
         }
 
         @Override
         public String getUsername() throws IllegalStateException {
-            return null;
+            if (StringUtils.isBlank(username.getText().toString())) {
+                throw new IllegalStateException(context.getString(R.string.account_create_alert));
+            }
+            return username.getText().toString();
         }
 
         @Override
         public String getPassword() throws IllegalStateException {
-            return null;
+            if (StringUtils.isBlank(password.getText().toString())) {
+                throw new IllegalStateException(context.getString(R.string.account_create_alert));
+            }
+            return password.getText().toString();
         }
 
         @Override
@@ -286,7 +353,14 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         @Override
         public View getView() throws IllegalStateException {
-            return null;
+            return view;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (view == setting) {
+
+            }
         }
     }
 

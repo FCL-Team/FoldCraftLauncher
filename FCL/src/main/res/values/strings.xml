@@ -30,6 +30,7 @@
     <string name="account_create_username">Username</string>
     <string name="account_create_password">Password</string>
     <string name="account_create_server">Authentication server</string>
+    <string name="account_create_server_not_select">No Authentication Server</string>
     <string name="account_create_home">Home</string>
     <string name="account_create_register">Register</string>
     <string name="account_create_alert">Please provide enough account info first!</string>

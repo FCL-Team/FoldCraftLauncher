@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_weight="1"
                 android:singleLine="true"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/account_create_username"
                 android:layout_gravity="center"/>
 
             <com.tungsten.fcllibrary.component.view.FCLEditText
+                android:singleLine="true"
                 android:id="@+id/username"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"/>
+                android:layout_gravity="center"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
