@@ -59,6 +59,7 @@
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
 
+    <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_failed_downloading_timeout">下载超时</string>
     <string name="install_failed_downloading_detail">无法下载</string>
 
@@ -73,8 +74,21 @@
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
 
+    <string name="message_refresh">刷新</string>
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_unknown">未知</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
+    <string name="profile_name">名称</string>
+    <string name="profile_path">路径</string>
+    <string name="profile_select">选择目录</string>
+    <string name="profile_add_alert">请先填写名称与路径！</string>
+
+    <string name="version_manage_remove_confirm">你确定要删除 %s 吗？ 该操作无法撤回！</string>
+    <string name="version_manage_remove_confirm_independent">该版本启用了版本隔离，删除该版本将会一并删除存档及其他数据。你仍要删除 %s 吗?</string>
+    <string name="version_manage_rename_message">重命名版本</string>
+    <string name="version_manage_rename_new">新名称</string>
+    <string name="version_manage_rename_fail">重命名失败</string>
+    <string name="version_new_profile">新建目录</string>
 </resources>

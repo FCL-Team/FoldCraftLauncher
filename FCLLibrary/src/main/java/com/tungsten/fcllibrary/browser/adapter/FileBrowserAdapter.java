@@ -134,7 +134,7 @@ public class FileBrowserAdapter extends FCLAdapter {
             if (file.isDirectory()) {
                 listener.onEnterDir(file.getAbsolutePath());
             }
-            if (fileBrowser.getLibMode() != LibMode.FILE_BROWSER && !(fileBrowser.getLibMode() == LibMode.FILE_CHOOSER && file.isDirectory()) && !(fileBrowser.getLibMode() == LibMode.FOLDER_CHOOSER && file.isFile())) {
+            if (fileBrowser.getLibMode() != LibMode.FILE_BROWSER && fileBrowser.getLibMode() != LibMode.FOLDER_CHOOSER && !(fileBrowser.getLibMode() == LibMode.FILE_CHOOSER)) {
                 listener.onSelect(this, file.getAbsolutePath());
             }
         });

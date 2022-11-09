@@ -258,8 +258,6 @@ public class FCLGameRepository extends DefaultGameRepository {
         if (id == null || !isLoaded())
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);
 
-        VersionSetting vs = getLocalVersionSettingOrCreate(id);
-
         Version version = getVersion(id).resolve(this);
         File iconFile = getVersionIconFile(id);
         if (iconFile.exists())

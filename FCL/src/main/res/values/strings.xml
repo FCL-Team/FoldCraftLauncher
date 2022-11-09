@@ -66,7 +66,16 @@
     <string name="exception_access_denied">Unable to access the file.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
-    
+
+    <string name="install_installer_fabric" translatable="false">Fabric</string>
+    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
+    <string name="install_installer_forge" translatable="false">Forge</string>
+    <string name="install_installer_game" translatable="false">Minecraft</string>
+    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
+    <string name="install_installer_optifine" translatable="false">OptiFine</string>
+    <string name="install_installer_quilt" translatable="false">Quilt</string>
+    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_new_game_malformed">Invalid Name</string>
     <string name="install_failed_downloading_timeout">Download timeout</string>
     <string name="install_failed_downloading_detail">Unable to download</string>
 
@@ -80,9 +89,22 @@
     <string name="launch_state_logging_in">Logging in</string>
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
-    
+
+    <string name="message_refresh">Refresh</string>
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_unknown">Unknown</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_path">Path</string>
+    <string name="profile_select">Select Directory</string>
+    <string name="profile_add_alert">Please fill the name and path first!</string>
+
+    <string name="version_manage_remove_confirm">Are you sure you want to permanently remove the version %s? This action cannot be undone!</string>
+    <string name="version_manage_remove_confirm_independent">Since this instance is stored in an isolated directory, deleting it will also delete its saves and other data. Do you still want to delete instance %s?</string>
+    <string name="version_manage_rename_message">Rename version</string>
+    <string name="version_manage_rename_new">New name</string>
+    <string name="version_manage_rename_fail">Rename failed</string>
+    <string name="version_new_profile">New Directory</string>
 </resources>

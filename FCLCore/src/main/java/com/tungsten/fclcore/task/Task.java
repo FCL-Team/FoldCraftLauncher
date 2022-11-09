@@ -1,6 +1,11 @@
 package com.tungsten.fclcore.task;
 
 import com.tungsten.fclcore.event.EventManager;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyDoubleProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyDoubleWrapper;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper;
+import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ReflectionHelper;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
@@ -296,6 +301,12 @@ public abstract class Task<T> {
     }
 
     private long lastTime = Long.MIN_VALUE;
+    private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper(this, "progress", -1);
+    private final InvocationDispatcher<Double> progressUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), progress::set);
+
+    public ReadOnlyDoubleProperty progressProperty() {
+        return progress.getReadOnlyProperty();
+    }
 
     protected void updateProgress(long progress, long total) {
         updateProgress(1.0 * progress / total);
@@ -312,11 +323,18 @@ public abstract class Task<T> {
     }
 
     protected void updateProgressImmediately(double progress) {
-        // TODO: update progress
+        progressUpdate.accept(progress);
+    }
+
+    private final ReadOnlyStringWrapper message = new ReadOnlyStringWrapper(this, "message", null);
+    private final InvocationDispatcher<String> messageUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), message::set);
+
+    public final ReadOnlyStringProperty messageProperty() {
+        return message.getReadOnlyProperty();
     }
 
     protected final void updateMessage(String newMessage) {
-        // TODO: update message
+        messageUpdate.accept(newMessage);
     }
 
     public final T run() throws Exception {
@@ -334,7 +352,11 @@ public abstract class Task<T> {
     }
 
     private void doSubTask(Task<?> task) throws Exception {
+        message.bind(task.message);
+        progress.bind(task.progress);
         task.run();
+        message.unbind();
+        progress.unbind();
     }
 
     public final TaskExecutor executor() {

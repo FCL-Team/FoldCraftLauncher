@@ -120,16 +120,18 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
                     selectedFiles.remove(path);
                 }
                 else {
-                    if (fileBrowser.getLibMode() == LibMode.FOLDER_CHOOSER || fileBrowser.getSelectionMode() == SelectionMode.SINGLE_SELECTION) {
+                    if (fileBrowser.getSelectionMode() == SelectionMode.SINGLE_SELECTION) {
                         selectedFiles = new ArrayList<>();
                     }
                     selectedFiles.add(path);
                 }
                 adapter1.setSelectedFiles(selectedFiles);
                 adapter1.notifyDataSetChanged();
+                System.out.println(selectedFiles);
             }
         });
         listView.setAdapter(adapter);
+        System.out.println(selectedFiles);
     }
 
     @Override

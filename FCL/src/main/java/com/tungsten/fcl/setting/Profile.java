@@ -7,6 +7,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fcl.game.FCLCacheRepository;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.util.WeakListenerHolder;
+import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.event.EventBus;
@@ -86,7 +87,7 @@ public final class Profile implements Observable {
     }
 
     public Profile(String name) {
-        this(name, new File(".minecraft"));
+        this(name, new File(FCLPath.SHARED_COMMON_DIR));
     }
 
     public Profile(String name, File initialGameDir) {
