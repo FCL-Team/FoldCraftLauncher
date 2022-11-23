@@ -79,7 +79,7 @@ public class GameCharacter {
         this.mRLegVisible = true;
         this.mCapeVisible = true;
         this.mRotate = new float[] { 0.0f, 0.0f, 0.0f };
-        this.rotate_step = new float[] { 5.0f, 5.0f, 5.0f };
+        this.rotate_step = new float[] { 2.0f, 2.0f, 2.0f };
         this.mHead = new Head(scale);
         this.mHat = new Hat(scale);
         this.mBody = new Body(scale);
@@ -112,7 +112,7 @@ public class GameCharacter {
         this.mRLegVisible = true;
         this.mCapeVisible = true;
         this.mRotate = new float[] { 0.0f, 0.0f, 0.0f };
-        this.rotate_step = new float[] { 5.0f, 5.0f, 5.0f };
+        this.rotate_step = new float[] { 2.0f, 2.0f, 2.0f };
         GameCharacter.selected_resource = selected_resource;
         this.mHead = new Head(scale);
         this.mHat = new Hat(scale);
@@ -146,7 +146,7 @@ public class GameCharacter {
         this.mRLegVisible = true;
         this.mCapeVisible = true;
         this.mRotate = new float[] { 0.0f, 0.0f, 0.0f };
-        this.rotate_step = new float[] { 5.0f, 5.0f, 5.0f };
+        this.rotate_step = new float[] { 2.0f, 2.0f, 2.0f };
         if (!(this.mCheckAlexOrSteve = mCheckAlexOrSteve)) {
             this.mHead = new Head(scale);
             this.mHat = new Hat(scale);
@@ -195,7 +195,7 @@ public class GameCharacter {
         this.mRLegVisible = true;
         this.mCapeVisible = true;
         this.mRotate = new float[] { 0.0f, 0.0f, 0.0f };
-        this.rotate_step = new float[] { 5.0f, 5.0f, 5.0f };
+        this.rotate_step = new float[] { 2.0f, 2.0f, 2.0f };
         this.mCheckAlexOrSteve = mCheckAlexOrSteve;
         GameCharacter.selected_resource = selected_resource;
         if (!mCheckAlexOrSteve) {
@@ -292,20 +292,20 @@ public class GameCharacter {
         this.mCape = new Cape(scale);
     }
     
-    public void SetRotate(final float n, final float n2, final float n3) {
+    public void setRotate(final float n, final float n2, final float n3) {
         this.mRotate[0] = n;
         this.mRotate[1] = n2;
         this.mRotate[2] = n3;
     }
     
-    public void SetRotateStep(final float n, final float n2) {
+    public void setRotateStep(final float n, final float n2) {
         if (Math.abs(n) >= 1.0f) {
             final float[] mRotate = this.mRotate;
-            mRotate[1] += this.rotate_step[1] * Math.signum(n) * 2.0f;
+            mRotate[1] += this.rotate_step[1] * n;
         }
         if (Math.abs(n2) >= 1.0f) {
             final float[] mRotate2 = this.mRotate;
-            mRotate2[0] += this.rotate_step[0] * Math.signum(n2) * 2.0f;
+            mRotate2[0] += this.rotate_step[0] * n2;
         }
     }
     
