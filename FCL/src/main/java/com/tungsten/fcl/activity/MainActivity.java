@@ -45,6 +45,7 @@ import java.util.logging.Level;
 public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectListener, View.OnClickListener {
 
     private static MainActivity instance;
+    private boolean ready;
 
     public ConstraintLayout background;
     private FCLDynamicIsland titleView;
@@ -117,6 +118,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             version.setOnClickListener(this);
             launch.setOnClickListener(this);
 
+            ready = true;
             refresh();
         });
 
@@ -153,6 +155,9 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         super.onResume();
         if (uiManager != null) {
             uiManager.onResume();
+        }
+        if (ready) {
+            refresh();
         }
     }
 
