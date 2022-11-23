@@ -18,9 +18,13 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.game.OAuthServer;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.CharacterSelector;
 import com.tungsten.fclcore.auth.NoSelectedCharacterException;
@@ -30,6 +34,8 @@ import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory;
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
+import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -48,6 +54,8 @@ import java.util.concurrent.CountDownLatch;
 
 public class CreateAccountDialog extends FCLDialog implements View.OnClickListener {
 
+    private static CreateAccountDialog instance;
+
     private FCLTextView title;
     private FCLTabLayout tabLayout;
     private RelativeLayout detailsContainer;
@@ -58,9 +66,15 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
     private AccountFactory<?> factory;
     private TaskExecutor loginTask;
     private Details details;
+    private final ObjectProperty<OAuthServer.GrantDeviceCodeEvent> deviceCode = new SimpleObjectProperty<>();
+
+    public static CreateAccountDialog getInstance() {
+        return instance;
+    }
 
     public CreateAccountDialog(@NonNull Context context, AccountFactory<?> factory) {
         super(context);
+        instance = this;
         setContentView(R.layout.dialog_create_account);
         setCancelable(false);
         title = findViewById(R.id.title);
@@ -140,9 +154,9 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         /*
         logging.set(true);
-        deviceCode.set(null);
 
          */
+        deviceCode.set(null);
 
         CharacterSelector selector = new DialogCharacterSelector(getContext());
         loginTask = Task.supplyAsync(() -> factory.create(selector, username, password, null, additionalData))
@@ -242,9 +256,36 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
         private final Context context;
         private final View view;
 
+        private final WeakListenerHolder holder = new WeakListenerHolder();
+
         public MicrosoftDetails(Context context) {
             this.context = context;
             this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_microsoft, null);
+
+            Handler handler = new Handler();
+            FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> {
+                // Todo: fix
+                handler.post(() -> {
+                    if (deviceCode != null) {
+                        AndroidUtils.copyText(context, deviceCode.getUserCode());
+                        //hintPane.setSegment(i18n("account.methods.microsoft.manual", deviceCode.getUserCode(), deviceCode.getVerificationUri()));
+                    } else {
+                        //hintPane.setSegment(i18n("account.methods.microsoft.hint"));
+                    }
+                });
+            });
+            /*
+            hintPane.setOnMouseClicked(e -> {
+                if (deviceCode.get() != null) {
+                    FXUtils.copyText(deviceCode.get().getUserCode());
+                }
+            });
+
+             */
+
+            holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(value -> {
+                CreateAccountDialog.getInstance().deviceCode.set(value);
+            }));
         }
 
         @Override

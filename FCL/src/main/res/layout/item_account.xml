@@ -5,13 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent"
         android:layout_marginTop="8dp"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_item">
+        android:background="@drawable/bg_container_white">
 
         <com.tungsten.fcllibrary.component.view.FCLRadioButton
             android:id="@+id/radio"
@@ -37,19 +38,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="130dp"
             app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintEnd_toStartOf="@+id/delete"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5">
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                app:auto_text_tint="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:id="@+id/name"/>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                app:auto_text_tint="true"
                 android:textSize="11sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,11 +62,56 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:visibility="gone"
+            android:id="@+id/skin_progress"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="88dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/skin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_hanger_24"
+            app:auto_tint="true"
+            android:layout_marginEnd="80dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:visibility="gone"
+            android:id="@+id/refresh_progress"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_refresh_24"
+            app:auto_tint="true"
+            android:layout_marginEnd="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
         <com.tungsten.fcllibrary.component.view.FCLImageButton
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
             android:src="@drawable/ic_baseline_delete_24"
             app:auto_tint="true"
             app:layout_constraintEnd_toEndOf="parent"

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -75,6 +76,7 @@ public class VersionListAdapter extends FCLAdapter {
         viewHolder.subtitle.setText(versionListItem.getLibraries());
         viewHolder.radioButton.setOnClickListener(view1 -> {
             versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion());
+            MainActivity.getInstance().refresh();
             notifyDataSetChanged();
         });
         viewHolder.rename.setOnClickListener(view1 -> {

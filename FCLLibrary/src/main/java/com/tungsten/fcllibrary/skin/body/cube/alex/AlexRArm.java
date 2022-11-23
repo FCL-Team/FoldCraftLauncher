@@ -7,7 +7,7 @@ public class AlexRArm extends LimbCube {
     protected float[] rarm_texcoords;
     
     public AlexRArm(float scale) {
-        super(3.0f * scale, 12.0f * scale, 4.0f * scale, -5.5f * scale, 2.0f * scale, 0.0f * scale, 1.5f, 1.0f, 0.0f, 0.0f, 10.0f, -10.0f, -1.0f, 20.0f, -20.0f, true, -1.0f);
+        super(3.0f * scale, 12.0f * scale, 4.0f * scale, -5.5f * scale, 2.0f * scale, 0.0f * scale, 0.5f, 1.0f, 0.0f, 0.0f, 10.0f, -10.0f, -0.333f, 20.0f, -20.0f, true, -1.0f);
         this.rarm_texcoords = new float[] {
                 0.6875f, 0.5f, 0.6875f, 0.40625f, 0.734375f, 0.40625f, 0.734375f, 0.5f,
                 0.6875f, 0.40625f, 0.6875f, 0.3125f, 0.734375f, 0.3125f, 0.734375f, 0.40625f,

@@ -4,6 +4,7 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Lang.thread;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.OAuth;
@@ -12,7 +13,6 @@ import com.tungsten.fclcore.event.EventManager;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
-import com.tungsten.fclcore.util.io.JarUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -134,26 +134,21 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
         }
 
         @Override
-        public void openBrowser(String url) throws IOException {
+        public void openBrowser(String url) {
             lastlyOpenedURL = url;
-            // TODO: fix
-            //FXUtils.openLink(url);
+            AndroidUtils.openLink(FCLPath.CONTEXT, url);
 
             onOpenBrowser.fireEvent(new OpenBrowserEvent(this, url));
         }
 
-        // TODO: fix
         @Override
         public String getClientId() {
-            return System.getProperty("hmcl.microsoft.auth.id",
-                    JarUtils.thisJar().flatMap(JarUtils::getManifest).map(manifest -> manifest.getMainAttributes().getValue("Microsoft-Auth-Id")).orElse(""));
+            return "d903cc0e-c3b4-4a3c-b347-06c2e6269be0";
         }
 
-        // TODO: fix
         @Override
         public String getClientSecret() {
-            return System.getProperty("hmcl.microsoft.auth.secret",
-                    JarUtils.thisJar().flatMap(JarUtils::getManifest).map(manifest -> manifest.getMainAttributes().getValue("Microsoft-Auth-Secret")).orElse(""));
+            return null;
         }
 
         @Override

@@ -1,6 +1,8 @@
 package com.tungsten.fcllibrary.component.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -18,25 +20,41 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class FCLButton extends AppCompatButton {
 
+    private boolean ripple;
     private boolean isDown;
 
     private GradientDrawable drawableNormal;
     private GradientDrawable drawablePress;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private final Runnable runnable = () -> {
         drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawableNormal.setColor(Color.TRANSPARENT);
         drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
         drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
-        if (isDown) {
-            setBackgroundDrawable(drawablePress);
-        }
-        else {
-            setBackgroundDrawable(drawableNormal);
+        if (!ripple) {
+            if (isDown) {
+                setBackgroundDrawable(drawablePress);
+            }
+            else {
+                setBackgroundDrawable(drawableNormal);
+            }
+        } else {
+            setBackgroundDrawable(getContext().getDrawable(R.drawable.fcl_button));
+            int[][] state = {
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getColor()
+            };
+            setBackgroundTintList(new ColorStateList(state, color));
         }
     };
 
-    private void init(int shape, boolean autoPadding) {
+    private void init(boolean ripple, int shape, boolean autoPadding) {
+        this.ripple = ripple;
         setSingleLine(true);
         setAllCaps(false);
         setGravity(Gravity.CENTER);
@@ -66,16 +84,17 @@ public class FCLButton extends AppCompatButton {
 
     public FCLButton(@NonNull Context context) {
         super(context);
-        init(GradientDrawable.RECTANGLE, true);
+        init(false, GradientDrawable.RECTANGLE, true);
         ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
+        boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
         boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-        init(shape, autoPadding);
+        init(ripple, shape, autoPadding);
         typedArray.recycle();
         ThemeEngine.getInstance().registerEvent(this, runnable);
     }
@@ -83,24 +102,46 @@ public class FCLButton extends AppCompatButton {
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
+        boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
         boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-        init(shape, autoPadding);
+        init(ripple, shape, autoPadding);
         typedArray.recycle();
         ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            isDown = true;
-            setBackgroundDrawable(drawablePress);
-        }
-        if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-            isDown = false;
-            setBackgroundDrawable(drawableNormal);
+        if (!ripple) {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                isDown = true;
+                setBackgroundDrawable(drawablePress);
+            }
+            if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                isDown = false;
+                setBackgroundDrawable(drawableNormal);
+            }
         }
         return super.onTouchEvent(event);
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void setRipple(boolean ripple) {
+        this.ripple = ripple;
+        setBackgroundDrawable(getContext().getDrawable(R.drawable.fcl_button));
+        int[][] state = {
+                {
+
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getColor()
+        };
+        setBackgroundTintList(new ColorStateList(state, color));
+    }
+
+    public boolean isRipple() {
+        return ripple;
     }
 
     public void setShape(int shape) {

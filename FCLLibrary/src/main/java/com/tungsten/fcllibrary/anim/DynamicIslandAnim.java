@@ -12,6 +12,7 @@ public class DynamicIslandAnim {
 
     private final FCLDynamicIsland view;
 
+    private int mark;
     private Thread thread;
     private Handler handler;
     private ObjectAnimator expandScaleAnimatorX;
@@ -30,6 +31,7 @@ public class DynamicIslandAnim {
     }
 
     public void refresh(float scale) {
+        mark++;
         if (thread != null) {
             thread.interrupt();
         }
@@ -72,6 +74,7 @@ public class DynamicIslandAnim {
     }
 
     public void run(String text) {
+        final int i = mark;
         view.setVisibility(View.VISIBLE);
         view.setAlpha(1f);
         shrinkScaleAnimatorX.addListener(new AnimatorListenerAdapter() {
@@ -94,8 +97,10 @@ public class DynamicIslandAnim {
                                             super.onAnimationEnd(animation);
                                             thread = new Thread(() -> {
                                                 try {
-                                                    Thread.sleep(2000);
-                                                    if (!thread.isInterrupted()) {
+                                                    if (i == mark) {
+                                                        Thread.sleep(2000);
+                                                    }
+                                                    if (!thread.isInterrupted() && i == mark) {
                                                         handler.post(() -> {
                                                             hideAnimator.addListener(new AnimatorListenerAdapter() {
                                                                 @Override

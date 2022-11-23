@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
 
@@ -30,7 +29,6 @@ import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
-import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
@@ -193,7 +191,6 @@ public class OfflineAccount extends Account {
             }
             return Bindings.createObjectBinding(() -> Optional.of(map));
         } catch (Exception e) {
-            Logging.LOG.log(Level.WARNING, "Failed to load offline account skin, error: " + e);
             return super.getTextures();
         }
     }

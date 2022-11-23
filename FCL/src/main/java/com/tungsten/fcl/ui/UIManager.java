@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.account.AccountUI;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.tungsten.fcl.ui.install.InstallUI;
+import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.main.MainUI;
 import com.tungsten.fcl.ui.multiplayer.MultiplayerUI;
 import com.tungsten.fcl.ui.setting.SettingUI;
@@ -33,7 +33,7 @@ public class UIManager {
     private MainUI mainUI;
     private AccountUI accountUI;
     private VersionUI versionUI;
-    private InstallUI installUI;
+    private ManageUI manageUI;
     private DownloadUI downloadUI;
     private MultiplayerUI multiplayerUI;
     private SettingUI settingUI;
@@ -56,7 +56,7 @@ public class UIManager {
         mainUI = new MainUI(context, parent, R.layout.ui_main);
         accountUI = new AccountUI(context, parent, R.layout.ui_account);
         versionUI = new VersionUI(context, parent, R.layout.ui_version);
-        installUI = new InstallUI(context, parent, R.layout.ui_install);
+        manageUI = new ManageUI(context, parent, R.layout.ui_manage);
         downloadUI = new DownloadUI(context, parent, R.layout.ui_download);
         multiplayerUI = new MultiplayerUI(context, parent, R.layout.ui_multiplayer);
         settingUI = new SettingUI(context, parent, R.layout.ui_setting);
@@ -65,7 +65,7 @@ public class UIManager {
                 mainUI,
                 accountUI,
                 versionUI,
-                installUI,
+                manageUI,
                 downloadUI,
                 multiplayerUI,
                 settingUI
@@ -92,8 +92,8 @@ public class UIManager {
         return versionUI;
     }
 
-    public InstallUI getInstallUI() {
-        return installUI;
+    public ManageUI getManageUI() {
+        return manageUI;
     }
 
     public DownloadUI getDownloadUI() {

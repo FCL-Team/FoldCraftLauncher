@@ -1,38 +1,51 @@
 package com.tungsten.fcl.ui.account;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.game.TexturesLoader;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
+import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class AccountListAdapter extends FCLAdapter {
 
-    private final ObservableList<Account> list;
+    private final ObservableList<AccountListItem> list;
 
-    public AccountListAdapter(Context context, ObservableList<Account> list) {
+    public AccountListAdapter(Context context, ObservableList<AccountListItem> list) {
         super(context);
         this.list = list;
     }
 
     static class ViewHolder {
+        ConstraintLayout parent;
         FCLRadioButton radioButton;
         AppCompatImageView avatar;
         FCLTextView name;
         FCLTextView type;
+        FCLProgressBar refreshProgress;
+        FCLProgressBar skinProgress;
+        FCLImageButton refresh;
+        FCLImageButton skin;
         FCLImageButton delete;
     }
 
@@ -52,27 +65,72 @@ public class AccountListAdapter extends FCLAdapter {
         if (view == null) {
             viewHolder = new ViewHolder();
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_account, null);
+            viewHolder.parent = view.findViewById(R.id.parent);
             viewHolder.radioButton = view.findViewById(R.id.radio);
             viewHolder.avatar = view.findViewById(R.id.avatar);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.type = view.findViewById(R.id.type);
+            viewHolder.refreshProgress = view.findViewById(R.id.refresh_progress);
+            viewHolder.skinProgress = view.findViewById(R.id.skin_progress);
+            viewHolder.refresh = view.findViewById(R.id.refresh);
+            viewHolder.skin = view.findViewById(R.id.skin);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        Account account = list.get(i);
-        viewHolder.radioButton.setChecked(account == Accounts.getSelectedAccount());
-        viewHolder.avatar.setBackground(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(getContext(), 30f)).get());
-        viewHolder.name.setText(account.getUsername());
-        viewHolder.type.setText(Accounts.getLocalizedLoginTypeName(getContext(), Accounts.getAccountFactory(account)));
+        AccountListItem account = list.get(i);
+        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
+        viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
+        viewHolder.avatar.setBackground(account.getImage());
+        account.imageProperty().addListener((observable, oldValue, newValue) -> MainActivity.getInstance().runOnUiThread(() -> viewHolder.avatar.setBackground(newValue)));
+        viewHolder.name.setText(account.getTitle());
+        viewHolder.type.setText(account.getSubtitle());
+        viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(view1 -> {
-            Accounts.setSelectedAccount(account);
+            Accounts.setSelectedAccount(account.getAccount());
             UIManager.getInstance().getAccountUI().refresh();
         });
+        viewHolder.refresh.setOnClickListener(view1 -> {
+            viewHolder.refresh.setVisibility(View.GONE);
+            viewHolder.refreshProgress.setVisibility(View.VISIBLE);
+            account.refreshAsync()
+                    .whenComplete(Schedulers.androidUIThread(), ex -> {
+                        viewHolder.refresh.setVisibility(View.VISIBLE);
+                        viewHolder.refreshProgress.setVisibility(View.GONE);
+
+                        if (ex != null) {
+                            FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
+                            builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                            builder1.setMessage(Accounts.localizeErrorMessage(getContext(), ex));
+                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder1.create().show();
+                        }
+
+                        UIManager.getInstance().getAccountUI().refresh();
+                    })
+                    .start();
+        });
+        viewHolder.skin.setOnClickListener(view1 -> {
+            try {
+                Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
+                if (uploadTask != null) {
+                    viewHolder.skin.setVisibility(View.GONE);
+                    viewHolder.skinProgress.setVisibility(View.VISIBLE);
+                    uploadTask
+                            .whenComplete(Schedulers.androidUIThread(), ex -> {
+                                viewHolder.skin.setVisibility(View.VISIBLE);
+                                viewHolder.skinProgress.setVisibility(View.GONE);
+                            })
+                            .start();
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         viewHolder.delete.setOnClickListener(view1 -> {
-            Accounts.getAccounts().remove(account);
+            account.remove();
             UIManager.getInstance().getAccountUI().refresh();
         });
         return view;

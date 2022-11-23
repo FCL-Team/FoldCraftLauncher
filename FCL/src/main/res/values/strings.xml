@@ -18,12 +18,12 @@
 
     <string name="account">Account</string>
     <string name="version">Version</string>
-    <string name="install">Install</string>
+    <string name="manage">Manage</string>
     <string name="download">Download</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
 
-    <string name="account_create">Create Offline Account</string>
+    <string name="account_create">Create Account</string>
     <string name="account_create_offline">Create Offline Account</string>
     <string name="account_create_microsoft">Create Microsoft Account</string>
     <string name="account_create_external">Create External Account</string>
@@ -59,7 +59,9 @@
     <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
     <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
     <string name="account_select_character">Select character</string>
+    <string name="account_skin_upload">Select skin file</string>
     <string name="account_state_no_account">No account</string>
+    <string name="account_state_add">Click to add</string>
 
     <string name="download_code_404">File not found</string>
 
@@ -79,6 +81,7 @@
     <string name="install_failed_downloading_timeout">Download timeout</string>
     <string name="install_failed_downloading_detail">Unable to download</string>
 
+    <string name="launch">Launch</string>
     <string name="launch_error_java">Wrong Java Version</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
@@ -93,6 +96,7 @@
     <string name="message_refresh">Refresh</string>
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_unknown">Unknown</string>
+    <string name="message_copy">Copy successfully!</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
@@ -101,6 +105,8 @@
     <string name="profile_select">Select Directory</string>
     <string name="profile_add_alert">Please fill the name and path first!</string>
 
+    <string name="version_no_version">No version</string>
+    <string name="version_manage">Click to manage</string>
     <string name="version_manage_remove_confirm">Are you sure you want to permanently remove the version %s? This action cannot be undone!</string>
     <string name="version_manage_remove_confirm_independent">Since this instance is stored in an isolated directory, deleting it will also delete its saves and other data. Do you still want to delete instance %s?</string>
     <string name="version_manage_rename_message">Rename version</string>

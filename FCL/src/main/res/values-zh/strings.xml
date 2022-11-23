@@ -10,7 +10,7 @@
 
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
-    <string name="install">安装版本</string>
+    <string name="manage">管理版本</string>
     <string name="download">下载资源</string>
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
@@ -51,7 +51,9 @@
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
     <string name="account_select_character">选择角色</string>
+    <string name="account_skin_upload">选择皮肤文件</string>
     <string name="account_state_no_account">没有账户</string>
+    <string name="account_state_add">点击添加账户</string>
 
     <string name="download_code_404">未找到文件</string>
 
@@ -63,6 +65,7 @@
     <string name="install_failed_downloading_timeout">下载超时</string>
     <string name="install_failed_downloading_detail">无法下载</string>
 
+    <string name="launch">启动游戏</string>
     <string name="launch_error_java">错误的 Java 版本</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
@@ -77,6 +80,7 @@
     <string name="message_refresh">刷新</string>
     <string name="message_cancelled">操作已取消</string>
     <string name="message_unknown">未知</string>
+    <string name="message_copy">复制成功！</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
@@ -85,6 +89,8 @@
     <string name="profile_select">选择目录</string>
     <string name="profile_add_alert">请先填写名称与路径！</string>
 
+    <string name="version_no_version">没有版本</string>
+    <string name="version_manage">点击管理</string>
     <string name="version_manage_remove_confirm">你确定要删除 %s 吗？ 该操作无法撤回！</string>
     <string name="version_manage_remove_confirm_independent">该版本启用了版本隔离，删除该版本将会一并删除存档及其他数据。你仍要删除 %s 吗?</string>
     <string name="version_manage_rename_message">重命名版本</string>

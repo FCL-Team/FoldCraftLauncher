@@ -222,7 +222,7 @@ public class OAuth {
          *
          * @param url OAuth url.
          */
-        void openBrowser(String url) throws IOException;
+        void openBrowser(String url);
 
         String getClientId();
 

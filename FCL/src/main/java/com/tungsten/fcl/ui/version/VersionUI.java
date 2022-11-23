@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
@@ -76,6 +77,7 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
             refresh.setEnabled(true);
             versionListView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
+            MainActivity.getInstance().refresh();
         }).start();
     }
 

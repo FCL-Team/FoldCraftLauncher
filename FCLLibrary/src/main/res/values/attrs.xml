@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="FCLButton">
+        <attr name="ripple" format="boolean"/>
         <attr name="shape" format="integer"/>
         <attr name="auto_padding" format="boolean"/>
     </declare-styleable>

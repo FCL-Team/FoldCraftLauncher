@@ -309,7 +309,7 @@ public class GameCharacter {
         }
     }
     
-    public void SetRunning(final boolean isRunning) {
+    public void setRunning(final boolean isRunning) {
         this.isRunning = isRunning;
     }
     
