@@ -58,6 +58,9 @@
     <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
     <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
+    <string name="account_methods_microsoft_hint">Please click on the "Login" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
+    <string name="account_login_refresh">Re-login</string>
+    <string name="account.login.refresh.microsoft.hint">Because the account authorization is invalid, you need to re-add your Microsoft account\nPlease click on the "OK" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
     <string name="account_select_character">Select character</string>
     <string name="account_skin_upload">Select skin file</string>
     <string name="account_state_no_account">No account</string>

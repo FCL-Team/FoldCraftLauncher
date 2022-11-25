@@ -88,14 +88,17 @@ public class MainUI extends FCLCommonUI {
                     Bitmap bitmap = BitmapFactory.decodeStream(AccountUI.class.getResourceAsStream("/assets/img/alex.png"));
                     NormalizedSkin normalizedSkin = new NormalizedSkin(bitmap);
                     renderer.character = new GameCharacter(normalizedSkin.isSlim());
-                    renderer.character.setRunning(true);
                     renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
                 } else {
                     ObjectProperty<Bitmap> skinProperty = new SimpleObjectProperty<>();
                     skinProperty.bind(TexturesLoader.skinBitmapBinding(Accounts.getSelectedAccount()));
                     ObjectProperty<Bitmap> capeProperty = new SimpleObjectProperty<>();
                     capeProperty.bind(TexturesLoader.capeBinding(Accounts.getSelectedAccount()));
-                    renderer.bindTexture(skinProperty, capeProperty);
+                    if (renderer.getSkinProperty() == null || renderer.getCapeProperty() == null) {
+                        renderer.bindTexture(skinProperty, capeProperty);
+                    } else if (param[0] != null) {
+                        renderer.bindTexture((ObjectProperty<Bitmap>) param[0], (ObjectProperty<Bitmap>) param[1] == null ? capeProperty : (ObjectProperty<Bitmap>) param[1]);
+                    }
                 }
             } catch (InvalidSkinException e) {
                 e.printStackTrace();

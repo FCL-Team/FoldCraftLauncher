@@ -264,25 +264,12 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
             Handler handler = new Handler();
             FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> {
-                // Todo: fix
                 handler.post(() -> {
                     if (deviceCode != null) {
                         AndroidUtils.copyText(context, deviceCode.getUserCode());
-                        //hintPane.setSegment(i18n("account.methods.microsoft.manual", deviceCode.getUserCode(), deviceCode.getVerificationUri()));
-                    } else {
-                        //hintPane.setSegment(i18n("account.methods.microsoft.hint"));
                     }
                 });
             });
-            /*
-            hintPane.setOnMouseClicked(e -> {
-                if (deviceCode.get() != null) {
-                    FXUtils.copyText(deviceCode.get().getUserCode());
-                }
-            });
-
-             */
-
             holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(value -> {
                 CreateAccountDialog.getInstance().deviceCode.set(value);
             }));

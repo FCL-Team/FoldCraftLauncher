@@ -88,6 +88,12 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
         titleView = findViewById(R.id.title);
 
+        try {
+            ConfigHolder.init();
+        } catch (IOException e) {
+            Logging.LOG.log(Level.WARNING, e.getMessage());
+        }
+
         uiLayout = findViewById(R.id.ui_layout);
         uiLayout.post(() -> {
             leftMenu = findViewById(R.id.left_menu);
@@ -107,29 +113,23 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             launch.setOnClickListener(this);
 
             uiManager = new UIManager(this, uiLayout);
-            uiManager.init();
+            uiManager.init(() -> {
+                home = findViewById(R.id.home);
+                manage = findViewById(R.id.manage);
+                download = findViewById(R.id.download);
+                multiplayer = findViewById(R.id.multiplayer);
+                setting = findViewById(R.id.setting);
+                home.setOnSelectListener(this);
+                manage.setOnSelectListener(this);
+                download.setOnSelectListener(this);
+                multiplayer.setOnSelectListener(this);
+                setting.setOnSelectListener(this);
+                home.setSelected(true);
 
-            home = findViewById(R.id.home);
-            manage = findViewById(R.id.manage);
-            download = findViewById(R.id.download);
-            multiplayer = findViewById(R.id.multiplayer);
-            setting = findViewById(R.id.setting);
-            home.setOnSelectListener(this);
-            manage.setOnSelectListener(this);
-            download.setOnSelectListener(this);
-            multiplayer.setOnSelectListener(this);
-            setting.setOnSelectListener(this);
-            home.setSelected(true);
-
-            ready = true;
-            refresh(null).start();
+                ready = true;
+                refresh(null).start();
+            });
         });
-
-        try {
-            ConfigHolder.init();
-        } catch (IOException e) {
-            Logging.LOG.log(Level.WARNING, e.getMessage());
-        }
     }
 
     @Override

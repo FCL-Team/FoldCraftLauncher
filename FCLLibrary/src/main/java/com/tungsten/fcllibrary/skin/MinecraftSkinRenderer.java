@@ -22,6 +22,8 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     public String path;
     public float[] plane_texcoords;
     protected float[] plane_vertices;
+    public ObjectProperty<Bitmap> skinProperty;
+    public ObjectProperty<Bitmap> capeProperty;
     public Bitmap skin;
     public Bitmap cape;
     boolean superRun;
@@ -140,8 +142,18 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     }
 
     public void bindTexture(ObjectProperty<Bitmap> skin, ObjectProperty<Bitmap> cape) {
+        this.skinProperty = skin;
+        this.capeProperty = cape;
         updateTexture(skin.get(), cape.get());
         skin.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(newValue, cape.get())));
         cape.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(skin.get(), newValue)));
+    }
+
+    public ObjectProperty<Bitmap> getSkinProperty() {
+        return skinProperty;
+    }
+
+    public ObjectProperty<Bitmap> getCapeProperty() {
+        return capeProperty;
     }
 }

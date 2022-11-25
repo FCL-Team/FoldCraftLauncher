@@ -12,6 +12,7 @@ import com.tungsten.fcl.ui.setting.SettingUI;
 import com.tungsten.fcl.ui.version.VersionUI;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.ui.FCLBaseUI;
+import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.logging.Level;
@@ -41,12 +42,14 @@ public class UIManager {
     private FCLBaseUI[] allUIs;
     private FCLBaseUI currentUI;
 
+    private int loadedUI = 0;
+
     public UIManager(Context context, FCLUILayout parent) {
         this.context = context;
         this.parent = parent;
     }
 
-    public void init() {
+    public void init(Listener listener) {
         if (instance != null) {
             Logging.LOG.log(Level.WARNING, "UIManager already initialized!");
             return;
@@ -70,6 +73,15 @@ public class UIManager {
                 multiplayerUI,
                 settingUI
         };
+
+        for (FCLBaseUI ui : allUIs) {
+            ((FCLCommonUI) ui).addLoadingCallback(() -> {
+                loadedUI++;
+                if (loadedUI == allUIs.length) {
+                    listener.onLoad();
+                }
+            });
+        }
     }
 
     public Context getContext() {
@@ -135,5 +147,9 @@ public class UIManager {
         for (FCLBaseUI baseUI : allUIs) {
             baseUI.onResume();
         }
+    }
+
+    public interface Listener {
+        void onLoad();
     }
 }

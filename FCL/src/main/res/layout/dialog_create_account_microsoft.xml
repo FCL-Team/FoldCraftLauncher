@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:paddingTop="10dp"
@@ -10,7 +10,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/account_methods_microsoft_hint"
+            android:textSize="13sp"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

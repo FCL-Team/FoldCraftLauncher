@@ -6,7 +6,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.function.ExceptionalRunnable;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.anim.DisplayAnimUtils;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -15,11 +17,16 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     private final FCLUILayout parent;
 
+    private UILoadingCallback callback;
+
     public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
         super(context);
-        setContentView(id);
         this.parent = parent;
-        onCreate();
+        setContentView(id).thenRunAsync(Schedulers.androidUIThread(), (ExceptionalRunnable<Exception>) this::onCreate).thenRunAsync(Schedulers.androidUIThread(), (ExceptionalRunnable<Exception>) () -> {
+            if (callback != null) {
+                callback.onLoad();
+            }
+        }).start();
     }
 
     @Override
@@ -63,5 +70,13 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     public void onDestroy() {
         super.onDestroy();
         parent.removeView(getContentView());
+    }
+
+    public void addLoadingCallback(UILoadingCallback callback) {
+        this.callback = callback;
+    }
+
+    public interface UILoadingCallback {
+        void onLoad();
     }
 }

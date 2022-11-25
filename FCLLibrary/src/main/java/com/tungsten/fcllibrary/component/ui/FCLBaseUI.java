@@ -30,8 +30,8 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
         return activity;
     }
 
-    public void setContentView(@LayoutRes int id) {
-        contentView = LayoutInflater.from(getContext()).inflate(id, null);
+    public Task<?> setContentView(@LayoutRes int id) {
+        return Task.runAsync(() -> contentView = LayoutInflater.from(getContext()).inflate(id, null));
     }
 
     public View getContentView() {
