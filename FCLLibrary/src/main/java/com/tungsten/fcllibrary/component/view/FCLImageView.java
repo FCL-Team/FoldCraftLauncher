@@ -37,23 +37,27 @@ public class FCLImageView extends AppCompatImageView {
 
     public FCLImageView(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
-        autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
+            autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
-        autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
+            autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public void setAutoTint(boolean autoTint) {

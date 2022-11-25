@@ -10,6 +10,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -61,32 +62,38 @@ public class FCLTitleView extends View {
 
     public FCLTitleView(Context context) {
         super(context);
-        init("");
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            init("");
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTitleView);
-        String title = typedArray.getString(R.styleable.FCLTitleView_title);
-        if (title == null) {
-            title = "";
-        }
-        init(title);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTitleView);
+            String title = typedArray.getString(R.styleable.FCLTitleView_title);
+            if (title == null) {
+                title = "";
+            }
+            init(title);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTitleView);
-        String title = typedArray.getString(R.styleable.FCLTitleView_title);
-        if (title == null) {
-            title = "";
-        }
-        init(title);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTitleView);
+            String title = typedArray.getString(R.styleable.FCLTitleView_title);
+            if (title == null) {
+                title = "";
+            }
+            init(title);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     @Override

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.anim.DynamicIslandAnim;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -68,20 +69,26 @@ public class FCLDynamicIsland extends AppCompatTextView {
 
     public FCLDynamicIsland(@NonNull Context context) {
         super(context);
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     @SuppressLint("DrawAllocation")

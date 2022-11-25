@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -50,26 +51,32 @@ public class FCLImageButton extends AppCompatImageButton {
 
     public FCLImageButton(@NonNull Context context) {
         super(context);
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
-        autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
-        typedArray.recycle();
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
+            autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
+            typedArray.recycle();
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
-        autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
-        typedArray.recycle();
-        init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
+            autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
+            typedArray.recycle();
+            init();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public void setAutoTint(boolean autoTint) {

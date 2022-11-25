@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
@@ -24,23 +25,27 @@ public class FCLTextView extends AppCompatTextView {
 
     public FCLTextView(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
-        autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
+            autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
-        autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
-        typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        Schedulers.androidUIThread().execute(() -> {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
+            autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
+            typedArray.recycle();
+            ThemeEngine.getInstance().registerEvent(this, runnable);
+        });
     }
 
     public void alert() {
