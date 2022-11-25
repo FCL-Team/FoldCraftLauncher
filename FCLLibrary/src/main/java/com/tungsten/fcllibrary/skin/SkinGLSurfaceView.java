@@ -24,7 +24,7 @@ public class SkinGLSurfaceView extends GLSurfaceView {
             final float x = motionEvent.getX();
             final float y = motionEvent.getY();
             if (motionEvent.getAction() == 2 && this.mRenderer != null) {
-                this.mRenderer.mCharacter.setRotateStep((x - this.mPreviousX) / (this.mDensity), (y - this.mPreviousY) / (this.mDensity));
+                this.mRenderer.character.setRotateStep((x - this.mPreviousX) / (this.mDensity), (y - this.mPreviousY) / (this.mDensity));
             }
             this.mPreviousX = x;
             this.mPreviousY = y;
@@ -39,7 +39,7 @@ public class SkinGLSurfaceView extends GLSurfaceView {
                     float deltaX = motionEvent.getX(motionEvent.findPointerIndex(priId)) - motionEvent.getX(motionEvent.findPointerIndex(secId));
                     float deltaY = motionEvent.getY(motionEvent.findPointerIndex(priId)) - motionEvent.getY(motionEvent.findPointerIndex(secId));
                     initDist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                    initScale = mRenderer.mCharacter.scale;
+                    initScale = mRenderer.character.scale;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     float dX = motionEvent.getX(motionEvent.findPointerIndex(priId)) - motionEvent.getX(motionEvent.findPointerIndex(secId));
@@ -48,7 +48,7 @@ public class SkinGLSurfaceView extends GLSurfaceView {
                     double delta = dist - initDist;
                     if (initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))) <= 2 && initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))) >= 0.7) {
                         float scale = (float) (initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))));
-                        mRenderer.mCharacter.setScale(scale);
+                        mRenderer.character.setScale(scale);
                     }
                     break;
             }

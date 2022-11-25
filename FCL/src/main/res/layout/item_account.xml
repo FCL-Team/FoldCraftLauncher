@@ -24,7 +24,7 @@
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/avatar"
             android:layout_width="30dp"
             android:layout_height="30dp"

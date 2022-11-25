@@ -176,7 +176,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
                     login.setEnabled(true);
                     cancel.setEnabled(true);
-                    UIManager.getInstance().getAccountUI().refresh();
+                    UIManager.getInstance().getAccountUI().refresh().start();
                     dismiss();
                 }, exception -> {
                     if (exception instanceof NoSelectedCharacterException) {

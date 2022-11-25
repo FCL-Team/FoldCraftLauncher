@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.multiplayer;
 
 import android.content.Context;
 
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -11,7 +12,7 @@ public class MultiplayerUI extends FCLCommonUI {
     }
 
     @Override
-    public void refresh() {
-
+    public Task<?> refresh(Object... param) {
+        return null;
     }
 }

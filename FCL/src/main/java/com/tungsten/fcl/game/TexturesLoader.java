@@ -227,6 +227,29 @@ public final class TexturesLoader {
                 }, uuidFallback);
     }
 
+    public static ObjectBinding<Bitmap> skinBitmapBinding(Account account) {
+        Bitmap fallback = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+        return BindingMapping.of(account.getTextures())
+                .map(textures -> textures
+                        .flatMap(it -> Optional.ofNullable(it.get(TextureType.SKIN)))
+                        .filter(it -> StringUtils.isNotBlank(it.getUrl())))
+                .asyncMap(it -> {
+                    if (it.isPresent()) {
+                        Texture texture = it.get();
+                        return CompletableFuture.supplyAsync(() -> {
+                            try {
+                                return loadTexture(texture).getImage();
+                            } catch (IOException e) {
+                                LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using fallback texture", e);
+                                return fallback;
+                            }
+                        }, POOL);
+                    } else {
+                        return CompletableFuture.completedFuture(fallback);
+                    }
+                }, fallback);
+    }
+
     public static ObjectBinding<Bitmap> capeBinding(Account account) {
         return BindingMapping.of(account.getTextures())
                 .map(textures -> textures

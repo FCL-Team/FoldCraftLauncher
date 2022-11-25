@@ -101,7 +101,7 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
@@ -169,7 +169,7 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"

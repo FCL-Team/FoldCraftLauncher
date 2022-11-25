@@ -12,6 +12,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.fakefx.collections.ObservableListBase;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -45,11 +46,11 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        refresh();
+        refresh().start();
     }
 
     @Override
-    public void refresh() {
+    public Task<?> refresh(Object... param) {
         if (accountListAdapter == null) {
             ObservableList<AccountListItem> list = new ObservableListBase<AccountListItem>() {
                 @Override
@@ -67,8 +68,10 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         } else {
             accountListAdapter.notifyDataSetChanged();
         }
-        UIManager.getInstance().getMainUI().refresh();
-        MainActivity.getInstance().refresh();
+        return Task.runAsync(() -> {
+            UIManager.getInstance().getMainUI().refresh().start();
+            MainActivity.getInstance().refresh(accountListAdapter.getSelectedItem() == null ? null : accountListAdapter.getSelectedItem().imageProperty()).start();
+        });
     }
 
     @Override

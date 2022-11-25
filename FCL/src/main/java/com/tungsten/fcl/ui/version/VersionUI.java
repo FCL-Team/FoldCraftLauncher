@@ -11,6 +11,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -43,16 +44,16 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
         refresh.setOnClickListener(this);
         newProfile.setOnClickListener(this);
 
-        refresh();
+        refresh().start();
     }
 
     @Override
-    public void refresh() {
+    public Task<?> refresh(Object... param) {
         refresh.setEnabled(false);
         versionListView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         refreshProfile();
-        Profiles.getSelectedProfile().getRepository().refreshVersionsAsync().whenComplete(Schedulers.androidUIThread(), exception -> {
+        return Profiles.getSelectedProfile().getRepository().refreshVersionsAsync().whenComplete(Schedulers.androidUIThread(), exception -> {
             ArrayList<VersionListItem> children = (ArrayList<VersionListItem>) Profiles.getSelectedProfile().getRepository().getDisplayVersions()
                     .map(version -> {
                         String game = Profiles.getSelectedProfile().getRepository().getGameVersion(version.getId()).orElse(getContext().getString(R.string.message_unknown));
@@ -77,8 +78,8 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
             refresh.setEnabled(true);
             versionListView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-            MainActivity.getInstance().refresh();
-        }).start();
+            MainActivity.getInstance().refresh(null).start();
+        });
     }
 
     public void refreshProfile() {
@@ -89,7 +90,7 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view == refresh) {
-            refresh();
+            refresh().start();
         }
         if (view == newProfile) {
             AddProfileDialog dialog = new AddProfileDialog(getContext());

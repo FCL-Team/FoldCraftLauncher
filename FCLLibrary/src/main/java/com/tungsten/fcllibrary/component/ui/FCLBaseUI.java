@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
@@ -44,7 +45,7 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
 
     public abstract boolean isShowing();
 
-    public abstract void refresh();
+    public abstract Task<?> refresh(Object... param);
 
     @Override
     public void onCreate() {

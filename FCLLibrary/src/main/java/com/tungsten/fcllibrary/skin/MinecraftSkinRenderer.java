@@ -6,7 +6,9 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.os.SystemClock;
-import android.util.Log;
+
+import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
+import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -14,9 +16,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     public static float[] light0Position;
     public boolean changeSkinImage;
-    public GameCharacter mCharacter;
-    private int[] mCharacterTexData;
-    private Context mContext;
+    public GameCharacter character;
+    private int[] characterTexData;
+    private final Context context;
     public String path;
     public float[] plane_texcoords;
     protected float[] plane_vertices;
@@ -29,14 +31,14 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         MinecraftSkinRenderer.light0Position = new float[]{0.0f, 0.0f, 5100.0f, 0.0f};
     }
 
-    public MinecraftSkinRenderer(final Context mContext) {
+    public MinecraftSkinRenderer(final Context context) {
         this.changeSkinImage = false;
         this.plane_texcoords = new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
         this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.mContext = mContext;
-        this.mCharacter = new GameCharacter();
+        this.context = context;
+        this.character = new GameCharacter();
     }
 
     public MinecraftSkinRenderer(final Context mContext, final int n) {
@@ -45,8 +47,8 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.mContext = mContext;
-        this.mCharacter = new GameCharacter(n);
+        this.context = mContext;
+        this.character = new GameCharacter(n);
     }
 
     public MinecraftSkinRenderer(final Context mContext, final int n, final boolean b) {
@@ -55,8 +57,8 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.mContext = mContext;
-        this.mCharacter = new GameCharacter(b, n);
+        this.context = mContext;
+        this.character = new GameCharacter(b, n);
     }
 
     public MinecraftSkinRenderer(final Context mContext, final boolean b) {
@@ -65,8 +67,8 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.mContext = mContext;
-        this.mCharacter = new GameCharacter(b);
+        this.context = mContext;
+        this.character = new GameCharacter(b);
     }
 
     public void onDrawFrame(final GL10 gl10) {
@@ -75,7 +77,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
             this.changeSkinImage = false;
         }
         if (this.updateBitmapSkin) {
-            mCharacterTexData = TextureHelper.loadGLTextureFromBitmap(this.skin, this.cape, gl10);
+            characterTexData = TextureHelper.loadGLTextureFromBitmap(this.skin, this.cape, gl10);
             this.updateBitmapSkin = false;
         }
         gl10.glClear(16640);
@@ -84,18 +86,18 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         gl10.glColor4f(0.63671875f, 0.76953125f, 0.22265625f, 1.0f);
         gl10.glTranslatef(0.0f, 0.0f, -60.0f);
         gl10.glPushMatrix();
-        gl10.glBindTexture(3553, mCharacterTexData[0]);
-        this.mCharacter.drawBody(gl10);
+        gl10.glBindTexture(3553, characterTexData[0]);
+        this.character.drawBody(gl10);
         if (cape != null && cape.getWidth() == 64 && cape.getHeight() == 32) {
-            gl10.glBindTexture(3553, mCharacterTexData[1]);
-            this.mCharacter.drawCape(gl10);
+            gl10.glBindTexture(3553, characterTexData[1]);
+            this.character.drawCape(gl10);
         }
         gl10.glPopMatrix();
         gl10.glLoadIdentity();
         if (this.superRun) {
             GLU.gluLookAt(gl10, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             gl10.glRotatef(0.09f * (int) (SystemClock.uptimeMillis() % 4000L), 0.0f, 0.0f, 1.0f);
-            this.mCharacter.drawBody(gl10);
+            this.character.drawBody(gl10);
         }
     }
 
@@ -116,7 +118,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        this.mCharacterTexData = TextureHelper.loadTexture(BitmapFactory.decodeStream(MinecraftSkinRenderer.class.getResourceAsStream("/assets/img/alex.png")));
+        this.characterTexData = TextureHelper.loadTexture(BitmapFactory.decodeStream(MinecraftSkinRenderer.class.getResourceAsStream("/assets/img/alex.png")));
         gl10.glEnable(3042);
         gl10.glCullFace(1028);
         gl10.glShadeModel(7425);
@@ -131,9 +133,15 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.superRun = superRun;
     }
 
-    public void updateTexture(final Bitmap skin, Bitmap cape) {
+    public void updateTexture(Bitmap skin, Bitmap cape) {
         this.skin = skin;
         this.cape = cape;
         this.updateBitmapSkin = true;
+    }
+
+    public void bindTexture(ObjectProperty<Bitmap> skin, ObjectProperty<Bitmap> cape) {
+        updateTexture(skin.get(), cape.get());
+        skin.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(newValue, cape.get())));
+        cape.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(skin.get(), newValue)));
     }
 }

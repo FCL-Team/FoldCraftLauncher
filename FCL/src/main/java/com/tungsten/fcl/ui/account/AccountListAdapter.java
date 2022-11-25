@@ -6,11 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -20,6 +18,7 @@ import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -39,7 +38,7 @@ public class AccountListAdapter extends FCLAdapter {
     static class ViewHolder {
         ConstraintLayout parent;
         FCLRadioButton radioButton;
-        AppCompatImageView avatar;
+        FCLImageView avatar;
         FCLTextView name;
         FCLTextView type;
         FCLProgressBar refreshProgress;
@@ -57,6 +56,15 @@ public class AccountListAdapter extends FCLAdapter {
     @Override
     public Object getItem(int i) {
         return list.get(i);
+    }
+
+    public AccountListItem getSelectedItem() {
+        for (AccountListItem item : list) {
+            if (item.getAccount() == Accounts.getSelectedAccount()) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -83,14 +91,13 @@ public class AccountListAdapter extends FCLAdapter {
         AccountListItem account = list.get(i);
         ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
         viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
-        viewHolder.avatar.setBackground(account.getImage());
-        account.imageProperty().addListener((observable, oldValue, newValue) -> MainActivity.getInstance().runOnUiThread(() -> viewHolder.avatar.setBackground(newValue)));
+        viewHolder.avatar.bind(account.imageProperty());
         viewHolder.name.setText(account.getTitle());
         viewHolder.type.setText(account.getSubtitle());
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(view1 -> {
             Accounts.setSelectedAccount(account.getAccount());
-            UIManager.getInstance().getAccountUI().refresh();
+            UIManager.getInstance().getAccountUI().refresh().start();
         });
         viewHolder.refresh.setOnClickListener(view1 -> {
             viewHolder.refresh.setVisibility(View.GONE);
@@ -108,7 +115,7 @@ public class AccountListAdapter extends FCLAdapter {
                             builder1.create().show();
                         }
 
-                        UIManager.getInstance().getAccountUI().refresh();
+                        UIManager.getInstance().getAccountUI().refresh().start();
                     })
                     .start();
         });
@@ -131,7 +138,7 @@ public class AccountListAdapter extends FCLAdapter {
         });
         viewHolder.delete.setOnClickListener(view1 -> {
             account.remove();
-            UIManager.getInstance().getAccountUI().refresh();
+            UIManager.getInstance().getAccountUI().refresh().start();
         });
         return view;
     }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.anim.DisplayAnimUtils;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -27,7 +28,7 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     }
 
     @Override
-    public abstract void refresh();
+    public abstract Task<?> refresh(Object... param);
 
     @Override
     public void onCreate() {

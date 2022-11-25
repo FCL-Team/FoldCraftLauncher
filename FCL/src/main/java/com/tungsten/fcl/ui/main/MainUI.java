@@ -14,6 +14,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.account.AccountUI;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
@@ -36,7 +37,7 @@ public class MainUI extends FCLCommonUI {
         super.onCreate();
 
         renderer = new MinecraftSkinRenderer(getContext(), true);
-        renderer.mCharacter.setRunning(true);
+        renderer.character.setRunning(true);
         skinGLSurfaceView = findViewById(R.id.skin_view);
         ViewGroup.LayoutParams layoutParamsSkin = skinGLSurfaceView.getLayoutParams();
         layoutParamsSkin.width = (int) (((View) skinGLSurfaceView.getParent().getParent()).getMeasuredWidth() * 0.5f);
@@ -55,7 +56,7 @@ public class MainUI extends FCLCommonUI {
     @Override
     public void onStart() {
         super.onStart();
-        refresh();
+        refresh().start();
         skinGLSurfaceView.onResume();
     }
 
@@ -80,33 +81,25 @@ public class MainUI extends FCLCommonUI {
     }
 
     @Override
-    public void refresh() {
-        try {
-            Bitmap bitmap;
-            if (Accounts.getSelectedAccount() == null) {
-                bitmap = BitmapFactory.decodeStream(AccountUI.class.getResourceAsStream("/assets/img/alex.png"));
-            } else {
-                bitmap = TexturesLoader.skinBinding(Accounts.getSelectedAccount()).get().getImage();
-                ObjectProperty<TexturesLoader.LoadedTexture> loadedTexture = new SimpleObjectProperty<>();
-                loadedTexture.bind(TexturesLoader.skinBinding(Accounts.getSelectedAccount()));
-                loadedTexture.addListener((observable, oldValue, newValue) -> {
-                    Bitmap newBitmap = newValue.getImage();
-                    try {
-                        NormalizedSkin normalizedSkin = new NormalizedSkin(newBitmap);
-                        renderer.mCharacter = new GameCharacter(normalizedSkin.isSlim());
-                        renderer.mCharacter.setRunning(true);
-                        renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
-                    } catch (InvalidSkinException e) {
-                        e.printStackTrace();
-                    }
-                });
+    public Task<?> refresh(Object... param) {
+        return Task.runAsync(() -> {
+            try {
+                if (Accounts.getSelectedAccount() == null) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(AccountUI.class.getResourceAsStream("/assets/img/alex.png"));
+                    NormalizedSkin normalizedSkin = new NormalizedSkin(bitmap);
+                    renderer.character = new GameCharacter(normalizedSkin.isSlim());
+                    renderer.character.setRunning(true);
+                    renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
+                } else {
+                    ObjectProperty<Bitmap> skinProperty = new SimpleObjectProperty<>();
+                    skinProperty.bind(TexturesLoader.skinBitmapBinding(Accounts.getSelectedAccount()));
+                    ObjectProperty<Bitmap> capeProperty = new SimpleObjectProperty<>();
+                    capeProperty.bind(TexturesLoader.capeBinding(Accounts.getSelectedAccount()));
+                    renderer.bindTexture(skinProperty, capeProperty);
+                }
+            } catch (InvalidSkinException e) {
+                e.printStackTrace();
             }
-            NormalizedSkin normalizedSkin = new NormalizedSkin(bitmap);
-            renderer.mCharacter = new GameCharacter(normalizedSkin.isSlim());
-            renderer.mCharacter.setRunning(true);
-            renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
-        } catch (InvalidSkinException e) {
-            e.printStackTrace();
-        }
+        });
     }
 }

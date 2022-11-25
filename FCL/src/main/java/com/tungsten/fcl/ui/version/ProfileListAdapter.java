@@ -63,11 +63,11 @@ public class ProfileListAdapter extends FCLAdapter {
         viewHolder.radioButton.setOnClickListener(view1 -> {
             Profiles.setSelectedProfile(profile);
             notifyDataSetChanged();
-            UIManager.getInstance().getVersionUI().refresh();
+            UIManager.getInstance().getVersionUI().refresh().start();
         });
         viewHolder.delete.setOnClickListener(view1 -> {
             Profiles.getProfiles().remove(profile);
-            UIManager.getInstance().getVersionUI().refresh();
+            UIManager.getInstance().getVersionUI().refresh().start();
             UIManager.getInstance().getVersionUI().refreshProfile();
         });
         return view;

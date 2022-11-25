@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -30,16 +29,19 @@ import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLMenuView;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectListener, View.OnClickListener {
@@ -61,11 +63,11 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private FCLMenuView setting;
 
     private LinearLayoutCompat account;
-    private AppCompatImageView avatar;
+    private FCLImageView avatar;
     private FCLTextView accountName;
     private FCLTextView accountHint;
     private LinearLayoutCompat version;
-    private AppCompatImageView icon;
+    private FCLImageView icon;
     private FCLTextView versionName;
     private FCLTextView versionHint;
     private FCLButton launch;
@@ -88,22 +90,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
         uiLayout = findViewById(R.id.ui_layout);
         uiLayout.post(() -> {
-            uiManager = new UIManager(this, uiLayout);
-            uiManager.init();
-
             leftMenu = findViewById(R.id.left_menu);
             ThemeEngine.getInstance().registerEvent(leftMenu, () -> leftMenu.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
-            home = findViewById(R.id.home);
-            manage = findViewById(R.id.manage);
-            download = findViewById(R.id.download);
-            multiplayer = findViewById(R.id.multiplayer);
-            setting = findViewById(R.id.setting);
-            home.setOnSelectListener(this);
-            manage.setOnSelectListener(this);
-            download.setOnSelectListener(this);
-            multiplayer.setOnSelectListener(this);
-            setting.setOnSelectListener(this);
-            home.setSelected(true);
 
             account = findViewById(R.id.account);
             avatar = findViewById(R.id.avatar);
@@ -118,8 +106,23 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             version.setOnClickListener(this);
             launch.setOnClickListener(this);
 
+            uiManager = new UIManager(this, uiLayout);
+            uiManager.init();
+
+            home = findViewById(R.id.home);
+            manage = findViewById(R.id.manage);
+            download = findViewById(R.id.download);
+            multiplayer = findViewById(R.id.multiplayer);
+            setting = findViewById(R.id.setting);
+            home.setOnSelectListener(this);
+            manage.setOnSelectListener(this);
+            download.setOnSelectListener(this);
+            multiplayer.setOnSelectListener(this);
+            setting.setOnSelectListener(this);
+            home.setSelected(true);
+
             ready = true;
-            refresh();
+            refresh(null).start();
         });
 
         try {
@@ -157,7 +160,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             uiManager.onResume();
         }
         if (ready) {
-            refresh();
+            refresh(null).start();
         }
     }
 
@@ -219,27 +222,31 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void refresh() {
-        String nameStr = getString(R.string.account_state_no_account);
-        if (Accounts.getSelectedAccount() != null) {
-            StringProperty name = new SimpleStringProperty();
-            StringBinding characterName = Bindings.createStringBinding(Accounts.getSelectedAccount()::getCharacter, Accounts.getSelectedAccount());
-            if (Accounts.getSelectedAccount() instanceof OfflineAccount) {
-                name.bind(characterName);
-            } else {
-                name.bind(
-                        Accounts.getSelectedAccount().getUsername().isEmpty() ? characterName :
-                                Bindings.concat(Accounts.getSelectedAccount().getUsername(), " - ", characterName));
+    public Task<?> refresh(ObjectProperty<Drawable> avatarProperty) {
+        return Task.runAsync(Schedulers.androidUIThread(), () -> {
+            if (avatar.getDrawableObjectProperty() == null) {
+                avatar.setBackground(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(MainActivity.this, 30)).get());
             }
-            nameStr = name.get();
-        }
-        ObjectProperty<Drawable> image = new SimpleObjectProperty<>();
-        image.bind(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(this, 30f)));
-        avatar.setBackground(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(this, 30)).get());
-        image.addListener((observable, oldValue, newValue) -> runOnUiThread(() -> avatar.setBackground(newValue)));
-        accountName.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_no_account) : nameStr);
-        accountHint.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_add) : Accounts.getLocalizedLoginTypeName(this, Accounts.getAccountFactory(Accounts.getSelectedAccount())));
-        Task.supplyAsync(() -> {
+            accountHint.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_add) : Accounts.getLocalizedLoginTypeName(this, Accounts.getAccountFactory(Accounts.getSelectedAccount())));
+        }).thenSupplyAsync(() -> {
+            // refresh username and avatar
+            String nameStr = getString(R.string.account_state_no_account);
+            if (Accounts.getSelectedAccount() != null) {
+                StringProperty name = new SimpleStringProperty();
+                StringBinding characterName = Bindings.createStringBinding(Accounts.getSelectedAccount()::getCharacter, Accounts.getSelectedAccount());
+                if (Accounts.getSelectedAccount() instanceof OfflineAccount) {
+                    name.bind(characterName);
+                } else {
+                    name.bind(
+                            Accounts.getSelectedAccount().getUsername().isEmpty() ? characterName :
+                                    Bindings.concat(Accounts.getSelectedAccount().getUsername(), " - ", characterName));
+                }
+                nameStr = name.get();
+            }
+            ObjectProperty<Drawable> image = new SimpleObjectProperty<>();
+            image.bind(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(this, 30f)));
+
+            // refresh version icon, name and libraries
             if (Profiles.getSelectedVersion() == null) {
                 return null;
             }
@@ -257,11 +264,23 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                         libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
                 }
             }
-            return new VersionListItem(Profiles.getSelectedProfile(), Profiles.getSelectedVersion(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(Profiles.getSelectedVersion()));
-        }).thenAcceptAsync(Schedulers.androidUIThread(), versionListItem -> {
+            ArrayList<Object> results = new ArrayList<>();
+            results.add(image);
+            results.add(nameStr);
+            results.add(new VersionListItem(Profiles.getSelectedProfile(), Profiles.getSelectedVersion(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(Profiles.getSelectedVersion())));
+            return results;
+        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<ArrayList<Object>, Exception>) results -> {
+            if (avatar.getDrawableObjectProperty() == null) {
+                avatar.bind((ObjectProperty<Drawable>) results.get(0));
+            } else if (avatarProperty != null) {
+                avatar.bind(avatarProperty);
+            }
+            accountName.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_no_account) : (String) results.get(1));
+
+            VersionListItem versionListItem = (VersionListItem) results.get(2);
             icon.setBackground(versionListItem == null ? getDrawable(R.drawable.img_grass) : versionListItem.getDrawable());
             versionName.setText(versionListItem == null ? getString(R.string.version_no_version) : versionListItem.getVersion());
             versionHint.setText(versionListItem == null ? getString(R.string.version_manage) : versionListItem.getLibraries());
-        }).start();
+        });
     }
 }
