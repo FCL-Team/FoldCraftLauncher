@@ -127,6 +127,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 home.setSelected(true);
 
                 ready = true;
+                refresh(null).start();
             });
         });
     }

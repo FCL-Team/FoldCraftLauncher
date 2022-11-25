@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLSwitch extends SwitchCompat {
@@ -37,16 +36,16 @@ public class FCLSwitch extends SwitchCompat {
 
     public FCLSwitch(@NonNull Context context) {
         super(context);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 }

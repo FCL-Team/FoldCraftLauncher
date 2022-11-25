@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLProgressBar extends ProgressBar {
@@ -25,21 +24,21 @@ public class FCLProgressBar extends ProgressBar {
 
     public FCLProgressBar(Context context) {
         super(context);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 }

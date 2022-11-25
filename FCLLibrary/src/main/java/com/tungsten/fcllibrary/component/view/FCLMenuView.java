@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -83,26 +82,20 @@ public class FCLMenuView extends AppCompatImageButton {
 
     public FCLMenuView(@NonNull Context context) {
         super(context);
-        Schedulers.androidUIThread().execute(() -> {
-            init();
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        init();
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        Schedulers.androidUIThread().execute(() -> {
-            init();
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        init();
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Schedulers.androidUIThread().execute(() -> {
-            init();
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        init();
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public interface OnSelectListener {

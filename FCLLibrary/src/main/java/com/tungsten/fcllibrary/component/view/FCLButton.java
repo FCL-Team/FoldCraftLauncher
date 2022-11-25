@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -85,36 +84,30 @@ public class FCLButton extends AppCompatButton {
 
     public FCLButton(@NonNull Context context) {
         super(context);
-        Schedulers.androidUIThread().execute(() -> {
-            init(false, GradientDrawable.RECTANGLE, true);
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        init(false, GradientDrawable.RECTANGLE, true);
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        Schedulers.androidUIThread().execute(() -> {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
-            boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
-            int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
-            boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-            init(ripple, shape, autoPadding);
-            typedArray.recycle();
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
+        boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
+        int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
+        boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
+        init(ripple, shape, autoPadding);
+        typedArray.recycle();
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Schedulers.androidUIThread().execute(() -> {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
-            boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
-            int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
-            boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-            init(ripple, shape, autoPadding);
-            typedArray.recycle();
-            ThemeEngine.getInstance().registerEvent(this, runnable);
-        });
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLButton);
+        boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
+        int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
+        boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
+        init(ripple, shape, autoPadding);
+        typedArray.recycle();
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     @Override

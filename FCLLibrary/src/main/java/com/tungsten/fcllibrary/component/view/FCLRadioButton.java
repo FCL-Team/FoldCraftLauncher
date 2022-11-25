@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLRadioButton extends AppCompatRadioButton {
@@ -31,17 +30,17 @@ public class FCLRadioButton extends AppCompatRadioButton {
 
     public FCLRadioButton(Context context) {
         super(context);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().registerEvent(this, runnable));
+        ThemeEngine.getInstance().registerEvent(this, runnable);
     }
 
 }
