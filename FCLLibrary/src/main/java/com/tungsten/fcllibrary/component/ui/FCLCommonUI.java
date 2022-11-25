@@ -6,9 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fclcore.util.function.ExceptionalRunnable;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.anim.DisplayAnimUtils;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -22,11 +20,12 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
         super(context);
         this.parent = parent;
-        setContentView(id).thenRunAsync(Schedulers.androidUIThread(), (ExceptionalRunnable<Exception>) this::onCreate).thenRunAsync(Schedulers.androidUIThread(), (ExceptionalRunnable<Exception>) () -> {
+        setContentView(id, () -> {
+            onCreate();
             if (callback != null) {
                 callback.onLoad();
             }
-        }).start();
+        });
     }
 
     @Override
