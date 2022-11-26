@@ -68,10 +68,7 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         } else {
             accountListAdapter.notifyDataSetChanged();
         }
-        return Task.runAsync(() -> {
-            UIManager.getInstance().getMainUI().refresh(accountListAdapter.getSelectedItem() == null ? null : accountListAdapter.getSelectedItem().skinProperty(), accountListAdapter.getSelectedItem() == null ? null : accountListAdapter.getSelectedItem().capeProperty()).start();
-            MainActivity.getInstance().refresh(accountListAdapter.getSelectedItem() == null ? null : accountListAdapter.getSelectedItem().imageProperty()).start();
-        });
+        return Task.runAsync(() -> MainActivity.getInstance().refresh().start());
     }
 
     @Override

@@ -8,7 +8,8 @@ import android.opengl.GLU;
 import android.os.SystemClock;
 
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
+import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;
 
@@ -24,8 +25,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     public String path;
     public float[] plane_texcoords;
     protected float[] plane_vertices;
-    public ObjectProperty<Bitmap> skinProperty;
-    public ObjectProperty<Bitmap> capeProperty;
+    private ObjectProperty<Bitmap[]> textureProperty;
     public Bitmap skin;
     public Bitmap cape;
     boolean superRun;
@@ -143,35 +143,42 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.updateBitmapSkin = true;
     }
 
-    public void bindTexture(ObjectProperty<Bitmap> skin, ObjectProperty<Bitmap> cape) {
-        this.skinProperty = skin;
-        this.capeProperty = cape;
-        try {
-            NormalizedSkin normalizedSkin = new NormalizedSkin(skin.get());
-            character = new GameCharacter(normalizedSkin.isSlim());
-            character.setRunning(true);
-            updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), cape.get());
-        } catch (InvalidSkinException e) {
-            e.printStackTrace();
+    public final void setTexture(Bitmap skin, Bitmap cape) {
+        this.textureProperty().set(new Bitmap[] { skin, cape });
+    }
+
+    public final Bitmap[] getTexture() {
+        return textureProperty == null ? null : textureProperty.get();
+    }
+
+    public final ObjectProperty<Bitmap[]> textureProperty() {
+        if (textureProperty == null) {
+            textureProperty = new ObjectPropertyBase<Bitmap[]>() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        Bitmap[] texture = get();
+                        try {
+                            NormalizedSkin normalizedSkin = new NormalizedSkin(texture[0]);
+                            character = new GameCharacter(normalizedSkin.isSlim());
+                            character.setRunning(true);
+                            updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), texture[1]);
+                        } catch (InvalidSkinException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "image";
+                }
+            };
         }
-        skin.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
-            try {
-                NormalizedSkin normalizedSkin = new NormalizedSkin(newValue);
-                character = new GameCharacter(normalizedSkin.isSlim());
-                character.setRunning(true);
-                updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), cape.get());
-            } catch (InvalidSkinException e) {
-                e.printStackTrace();
-            }
-        }));
-        cape.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(skin.get(), newValue)));
-    }
 
-    public ObjectProperty<Bitmap> getSkinProperty() {
-        return skinProperty;
-    }
-
-    public ObjectProperty<Bitmap> getCapeProperty() {
-        return capeProperty;
+        return textureProperty;
     }
 }

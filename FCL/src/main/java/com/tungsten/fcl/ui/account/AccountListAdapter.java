@@ -91,9 +91,9 @@ public class AccountListAdapter extends FCLAdapter {
         AccountListItem account = list.get(i);
         ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
         viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
-        viewHolder.avatar.bind(account.imageProperty());
-        viewHolder.name.setText(account.getTitle());
-        viewHolder.type.setText(account.getSubtitle());
+        viewHolder.avatar.imageProperty().bind(account.imageProperty());
+        viewHolder.name.stringProperty().bind(account.titleProperty());
+        viewHolder.type.stringProperty().bind(account.subtitleProperty());
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(view1 -> {
             Accounts.setSelectedAccount(account.getAccount());

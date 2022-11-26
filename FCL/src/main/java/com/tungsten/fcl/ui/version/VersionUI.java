@@ -78,7 +78,7 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
             refresh.setEnabled(true);
             versionListView.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-            MainActivity.getInstance().refresh(null).start();
+            MainActivity.getInstance().refresh().start();
         });
     }
 

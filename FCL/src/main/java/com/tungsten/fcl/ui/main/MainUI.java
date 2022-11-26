@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.main;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
@@ -11,15 +10,12 @@ import android.view.ViewGroup;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
-import com.tungsten.fcl.ui.account.AccountUI;
+import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fclcore.util.skin.InvalidSkinException;
-import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-import com.tungsten.fcllibrary.skin.GameCharacter;
 import com.tungsten.fcllibrary.skin.MinecraftSkinRenderer;
 import com.tungsten.fcllibrary.skin.SkinGLSurfaceView;
 
@@ -27,6 +23,8 @@ public class MainUI extends FCLCommonUI {
 
     private SkinGLSurfaceView skinGLSurfaceView;
     private MinecraftSkinRenderer renderer;
+
+    private ObjectProperty<Account> currentAccount;
 
     public MainUI(Context context, FCLUILayout parent, int id) {
         super(context, parent, id);
@@ -51,12 +49,13 @@ public class MainUI extends FCLCommonUI {
         skinGLSurfaceView.setRenderer(renderer, 5f);
         skinGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         skinGLSurfaceView.setPreserveEGLContextOnPause(true);
+
+        setupSkinDisplay();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        refresh().start();
         skinGLSurfaceView.onResume();
     }
 
@@ -83,27 +82,24 @@ public class MainUI extends FCLCommonUI {
     @Override
     public Task<?> refresh(Object... param) {
         return Task.runAsync(() -> {
-            try {
-                if (Accounts.getSelectedAccount() == null) {
-                    Bitmap bitmap = BitmapFactory.decodeStream(AccountUI.class.getResourceAsStream("/assets/img/alex.png"));
-                    NormalizedSkin normalizedSkin = new NormalizedSkin(bitmap);
-                    renderer.character = new GameCharacter(normalizedSkin.isSlim());
-                    renderer.character.setRunning(true);
-                    renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
-                } else {
-                    ObjectProperty<Bitmap> skinProperty = new SimpleObjectProperty<>();
-                    skinProperty.bind(TexturesLoader.skinBitmapBinding(Accounts.getSelectedAccount()));
-                    ObjectProperty<Bitmap> capeProperty = new SimpleObjectProperty<>();
-                    capeProperty.bind(TexturesLoader.capeBinding(Accounts.getSelectedAccount()));
-                    if (renderer.getSkinProperty() == null || renderer.getCapeProperty() == null) {
-                        renderer.bindTexture(skinProperty, capeProperty);
-                    } else if (param[0] != null) {
-                        renderer.bindTexture((ObjectProperty<Bitmap>) param[0], (ObjectProperty<Bitmap>) param[1] == null ? capeProperty : (ObjectProperty<Bitmap>) param[1]);
-                    }
-                }
-            } catch (InvalidSkinException e) {
-                e.printStackTrace();
-            }
+
         });
+    }
+
+    private void setupSkinDisplay() {
+        currentAccount = new SimpleObjectProperty<Account>() {
+
+            @Override
+            protected void invalidated() {
+                Account account = get();
+                if (account == null) {
+                    renderer.textureProperty().unbind();
+                    renderer.updateTexture(BitmapFactory.decodeStream(MainUI.class.getResourceAsStream("/assets/img/alex.png")), null);
+                } else {
+                    renderer.textureProperty().bind(TexturesLoader.textureBinding(account));
+                }
+            }
+        };
+        currentAccount.bind(Accounts.selectedAccountProperty());
     }
 }

@@ -76,7 +76,7 @@ public class VersionListAdapter extends FCLAdapter {
         viewHolder.subtitle.setText(versionListItem.getLibraries());
         viewHolder.radioButton.setOnClickListener(view1 -> {
             versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion());
-            MainActivity.getInstance().refresh(null).start();
+            MainActivity.getInstance().refresh().start();
             notifyDataSetChanged();
         });
         viewHolder.rename.setOnClickListener(view1 -> {

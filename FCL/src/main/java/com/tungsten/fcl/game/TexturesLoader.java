@@ -272,6 +272,36 @@ public final class TexturesLoader {
                 }, null);
     }
 
+    public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
+        Bitmap[] fallback = new Bitmap[] { getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage(), null };
+        return BindingMapping.of(account.getTextures())
+                .asyncMap(it -> {
+                    if (it.isPresent()) {
+                        Texture skin = it.get().get(TextureType.SKIN);
+                        Texture cape = it.get().get(TextureType.CAPE);
+                        boolean loadSkin = skin != null && StringUtils.isNotBlank(skin.getUrl());
+                        boolean loadCape = cape != null && StringUtils.isNotBlank(cape.getUrl());
+                        return CompletableFuture.supplyAsync(() -> {
+                            Bitmap finalSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+                            Bitmap finalCape = null;
+                            try {
+                                if (loadSkin) {
+                                    finalSkin = loadTexture(skin).getImage();
+                                }
+                                if (loadCape) {
+                                    finalCape = loadCape(cape);
+                                }
+                            } catch (IOException e) {
+                                LOG.log(Level.WARNING, "Failed to load texture, using default", e);
+                            }
+                            return new Bitmap[] { finalSkin, finalCape};
+                        }, POOL);
+                    } else {
+                        return CompletableFuture.completedFuture(fallback);
+                    }
+                }, fallback);
+    }
+
     // ====
 
     // ==== Avatar ====

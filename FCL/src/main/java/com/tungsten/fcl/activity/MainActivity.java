@@ -1,9 +1,13 @@
 package com.tungsten.fcl.activity;
 
+import static com.tungsten.fcl.setting.Accounts.getAccountFactory;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.MINECRAFT;
+import static com.tungsten.fclcore.fakefx.beans.binding.Bindings.createStringBinding;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -18,17 +22,18 @@ import com.tungsten.fcl.setting.ConfigHolder;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.version.VersionListItem;
-import com.tungsten.fclcore.auth.offline.OfflineAccount;
+import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
+import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.StringBinding;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.fakefx.BindingMapping;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -41,7 +46,6 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectListener, View.OnClickListener {
@@ -71,6 +75,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private FCLTextView versionName;
     private FCLTextView versionHint;
     private FCLButton launch;
+
+    private ObjectProperty<Account> currentAccount;
 
     public static MainActivity getInstance() {
         return instance;
@@ -127,7 +133,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 home.setSelected(true);
 
                 ready = true;
-                refresh(null).start();
+
+                setupAccountDisplay();
             });
         });
     }
@@ -160,7 +167,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             uiManager.onResume();
         }
         if (ready) {
-            refresh(null).start();
+            refresh().start();
         }
     }
 
@@ -222,30 +229,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public Task<?> refresh(ObjectProperty<Drawable> avatarProperty) {
-        return Task.runAsync(Schedulers.androidUIThread(), () -> {
-            if (avatar.getDrawableObjectProperty() == null) {
-                avatar.setBackground(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(MainActivity.this, 30)).get());
-            }
-            accountHint.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_add) : Accounts.getLocalizedLoginTypeName(this, Accounts.getAccountFactory(Accounts.getSelectedAccount())));
-        }).thenSupplyAsync(() -> {
-            // refresh username and avatar
-            String nameStr = getString(R.string.account_state_no_account);
-            if (Accounts.getSelectedAccount() != null) {
-                StringProperty name = new SimpleStringProperty();
-                StringBinding characterName = Bindings.createStringBinding(Accounts.getSelectedAccount()::getCharacter, Accounts.getSelectedAccount());
-                if (Accounts.getSelectedAccount() instanceof OfflineAccount) {
-                    name.bind(characterName);
-                } else {
-                    name.bind(
-                            Accounts.getSelectedAccount().getUsername().isEmpty() ? characterName :
-                                    Bindings.concat(Accounts.getSelectedAccount().getUsername(), " - ", characterName));
-                }
-                nameStr = name.get();
-            }
-            ObjectProperty<Drawable> image = new SimpleObjectProperty<>();
-            image.bind(TexturesLoader.avatarBinding(Accounts.getSelectedAccount(), ConvertUtils.dip2px(this, 30f)));
-
+    public Task<?> refresh() {
+        return Task.supplyAsync(() -> {
             // refresh version icon, name and libraries
             if (Profiles.getSelectedVersion() == null) {
                 return null;
@@ -264,23 +249,42 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                         libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
                 }
             }
-            ArrayList<Object> results = new ArrayList<>();
-            results.add(image);
-            results.add(nameStr);
-            results.add(new VersionListItem(Profiles.getSelectedProfile(), Profiles.getSelectedVersion(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(Profiles.getSelectedVersion())));
-            return results;
-        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<ArrayList<Object>, Exception>) results -> {
-            if (avatar.getDrawableObjectProperty() == null) {
-                avatar.bind((ObjectProperty<Drawable>) results.get(0));
-            } else if (avatarProperty != null) {
-                avatar.bind(avatarProperty);
-            }
-            accountName.setText(Accounts.getSelectedAccount() == null ? getString(R.string.account_state_no_account) : (String) results.get(1));
-
-            VersionListItem versionListItem = (VersionListItem) results.get(2);
+            return new VersionListItem(Profiles.getSelectedProfile(), Profiles.getSelectedVersion(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(Profiles.getSelectedVersion()));
+        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<VersionListItem, Exception>) versionListItem -> {
             icon.setBackground(versionListItem == null ? getDrawable(R.drawable.img_grass) : versionListItem.getDrawable());
             versionName.setText(versionListItem == null ? getString(R.string.version_no_version) : versionListItem.getVersion());
             versionHint.setText(versionListItem == null ? getString(R.string.version_manage) : versionListItem.getLibraries());
         });
+    }
+
+    private static ObservableValue<String> accountSubtitle(Context context, Account account) {
+        if (account instanceof AuthlibInjectorAccount) {
+            return BindingMapping.of(((AuthlibInjectorAccount) account).getServer(), AuthlibInjectorServer::getName);
+        } else {
+            return createStringBinding(() -> Accounts.getLocalizedLoginTypeName(context, getAccountFactory(account)));
+        }
+    }
+
+    private void setupAccountDisplay() {
+        currentAccount = new SimpleObjectProperty<Account>() {
+
+            @Override
+            protected void invalidated() {
+                Account account = get();
+                if (account == null) {
+                    accountName.stringProperty().unbind();
+                    accountHint.stringProperty().unbind();
+                    avatar.imageProperty().unbind();
+                    accountName.setText(getString(R.string.account_state_no_account));
+                    accountHint.setText(getString(R.string.account_state_add));
+                    avatar.setBackgroundDrawable(new BitmapDrawable(TexturesLoader.toAvatar(TexturesLoader.getDefaultSkin(TextureModel.ALEX).getImage(), ConvertUtils.dip2px(MainActivity.this, 30))));
+                } else {
+                    accountName.stringProperty().bind(BindingMapping.of(account, Account::getCharacter));
+                    accountHint.stringProperty().bind(accountSubtitle(MainActivity.this, account));
+                    avatar.imageProperty().bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(MainActivity.this, 30)));
+                }
+            }
+        };
+        currentAccount.bind(Accounts.selectedAccountProperty());
     }
 }
