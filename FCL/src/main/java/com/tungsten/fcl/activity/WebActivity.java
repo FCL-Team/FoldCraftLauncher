@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 public class WebActivity extends FCLActivity {
@@ -44,5 +45,11 @@ public class WebActivity extends FCLActivity {
         public void onPageFinished(WebView view, String url) {
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AndroidUtils.clearWebViewCache(this);
     }
 }
