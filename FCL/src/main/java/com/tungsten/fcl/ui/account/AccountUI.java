@@ -7,9 +7,7 @@ import android.widget.ListView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
-import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.fakefx.collections.ObservableListBase;
 import com.tungsten.fclcore.task.Task;
@@ -68,7 +66,9 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         } else {
             accountListAdapter.notifyDataSetChanged();
         }
-        return Task.runAsync(() -> MainActivity.getInstance().refresh().start());
+        return Task.runAsync(() -> {
+
+        });
     }
 
     @Override

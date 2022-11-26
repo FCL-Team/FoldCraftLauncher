@@ -54,9 +54,7 @@ public class FCLMenuView extends AppCompatImageButton {
     }
 
     public void setSelected(boolean selected) {
-        if (!isSelected && selected && onSelectListener != null) {
-            onSelectListener.onSelect(this);
-        }
+        final boolean oldSelect = isSelected;
         isSelected = selected;
         int[][] state = {
                 {
@@ -70,6 +68,9 @@ public class FCLMenuView extends AppCompatImageButton {
                 ThemeEngine.getInstance().getTheme().getDkColor()
         };
         setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
+        if (!oldSelect && selected && onSelectListener != null) {
+            onSelectListener.onSelect(this);
+        }
     }
 
     public boolean isSelected() {

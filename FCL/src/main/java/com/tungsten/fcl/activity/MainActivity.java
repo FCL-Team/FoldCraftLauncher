@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
@@ -19,22 +18,22 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.ConfigHolder;
+import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.version.VersionListItem;
+import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
-import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
-import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -46,12 +45,12 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectListener, View.OnClickListener {
 
     private static MainActivity instance;
-    private boolean ready;
 
     public ConstraintLayout background;
     private FCLDynamicIsland titleView;
@@ -77,6 +76,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private FCLButton launch;
 
     private ObjectProperty<Account> currentAccount;
+    private final WeakListenerHolder holder = new WeakListenerHolder();
+    private Profile profile;
 
     public static MainActivity getInstance() {
         return instance;
@@ -132,9 +133,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 setting.setOnSelectListener(this);
                 home.setSelected(true);
 
-                ready = true;
-
                 setupAccountDisplay();
+                setupVersionDisplay();
             });
         });
     }
@@ -166,9 +166,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         if (uiManager != null) {
             uiManager.onResume();
         }
-        if (ready) {
-            refresh().start();
-        }
     }
 
     @Override
@@ -179,8 +176,15 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             uiManager.switchUI(uiManager.getMainUI());
         }
         if (view == manage) {
-            titleView.setTextWithAnim(getString(R.string.manage));
-            uiManager.switchUI(uiManager.getManageUI());
+            String version = Profiles.getSelectedVersion();
+            if (version == null) {
+                refreshMenuView(null);
+                titleView.setTextWithAnim(getString(R.string.version));
+                uiManager.switchUI(uiManager.getVersionUI());
+            } else {
+                titleView.setTextWithAnim(getString(R.string.manage));
+                uiManager.switchUI(uiManager.getManageUI());
+            }
         }
         if (view == download) {
             titleView.setTextWithAnim(getString(R.string.download));
@@ -228,35 +232,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    public Task<?> refresh() {
-        return Task.supplyAsync(() -> {
-            // refresh version icon, name and libraries
-            if (Profiles.getSelectedVersion() == null) {
-                return null;
-            }
-            String game = Profiles.getSelectedProfile().getRepository().getGameVersion(Profiles.getSelectedVersion()).orElse(getString(R.string.message_unknown));
-            StringBuilder libraries = new StringBuilder(game);
-            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(Profiles.getSelectedProfile().getRepository().getResolvedPreservingPatchesVersion(Profiles.getSelectedVersion()));
-            for (LibraryAnalyzer.LibraryMark mark : analyzer) {
-                String libraryId = mark.getLibraryId();
-                String libraryVersion = mark.getLibraryVersion();
-                if (libraryId.equals(MINECRAFT.getPatchId())) continue;
-                int resId = getResources().getIdentifier("install_installer_" + libraryId.replace("-", "_"), "string", getPackageName());
-                if (resId != 0 && getString(resId) != null) {
-                    libraries.append(", ").append(getString(resId));
-                    if (libraryVersion != null)
-                        libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
-                }
-            }
-            return new VersionListItem(Profiles.getSelectedProfile(), Profiles.getSelectedVersion(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(Profiles.getSelectedVersion()));
-        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<VersionListItem, Exception>) versionListItem -> {
-            icon.setBackground(versionListItem == null ? getDrawable(R.drawable.img_grass) : versionListItem.getDrawable());
-            versionName.setText(versionListItem == null ? getString(R.string.version_no_version) : versionListItem.getVersion());
-            versionHint.setText(versionListItem == null ? getString(R.string.version_manage) : versionListItem.getLibraries());
-        });
-    }
-
     private static ObservableValue<String> accountSubtitle(Context context, Account account) {
         if (account instanceof AuthlibInjectorAccount) {
             return BindingMapping.of(((AuthlibInjectorAccount) account).getServer(), AuthlibInjectorServer::getName);
@@ -286,5 +261,44 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             }
         };
         currentAccount.bind(Accounts.selectedAccountProperty());
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void loadVersion(String version) {
+        if (Profiles.getSelectedProfile() != profile) {
+            profile = Profiles.getSelectedProfile();
+            if (profile != null) {
+                Consumer<Event> onVersionIconChangedListener = profile.getRepository().onVersionIconChanged.registerWeak(event -> {
+                    this.loadVersion(Profiles.getSelectedVersion());
+                });
+            }
+        }
+        if (version != null && Profiles.getSelectedProfile() != null && Profiles.getSelectedProfile().getRepository().hasVersion(version)) {
+            String game = Profiles.getSelectedProfile().getRepository().getGameVersion(version).orElse(getString(R.string.message_unknown));
+            StringBuilder libraries = new StringBuilder(game);
+            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(Profiles.getSelectedProfile().getRepository().getResolvedPreservingPatchesVersion(version));
+            for (LibraryAnalyzer.LibraryMark mark : analyzer) {
+                String libraryId = mark.getLibraryId();
+                String libraryVersion = mark.getLibraryVersion();
+                if (libraryId.equals(MINECRAFT.getPatchId())) continue;
+                int resId = getResources().getIdentifier("install_installer_" + libraryId.replace("-", "_"), "string", getPackageName());
+                if (resId != 0 && getString(resId) != null) {
+                    libraries.append(", ").append(getString(resId));
+                    if (libraryVersion != null)
+                        libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
+                }
+            }
+            versionName.setText(version);
+            versionHint.setText(libraries.toString());
+            icon.setBackgroundDrawable(Profiles.getSelectedProfile().getRepository().getVersionIconImage(version));
+        } else {
+            versionName.setText(getString(R.string.version_no_version));
+            versionHint.setText(getString(R.string.version_manage));
+            icon.setBackgroundDrawable(getDrawable(R.drawable.img_grass));
+        }
+    }
+
+    private void setupVersionDisplay() {
+        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty(), this::loadVersion));
     }
 }
