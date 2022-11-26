@@ -9,6 +9,8 @@ import android.os.SystemClock;
 
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
+import com.tungsten.fclcore.util.skin.InvalidSkinException;
+import com.tungsten.fclcore.util.skin.NormalizedSkin;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -144,8 +146,24 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     public void bindTexture(ObjectProperty<Bitmap> skin, ObjectProperty<Bitmap> cape) {
         this.skinProperty = skin;
         this.capeProperty = cape;
-        updateTexture(skin.get(), cape.get());
-        skin.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(newValue, cape.get())));
+        try {
+            NormalizedSkin normalizedSkin = new NormalizedSkin(skin.get());
+            character = new GameCharacter(normalizedSkin.isSlim());
+            character.setRunning(true);
+            updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), cape.get());
+        } catch (InvalidSkinException e) {
+            e.printStackTrace();
+        }
+        skin.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
+            try {
+                NormalizedSkin normalizedSkin = new NormalizedSkin(newValue);
+                character = new GameCharacter(normalizedSkin.isSlim());
+                character.setRunning(true);
+                updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), cape.get());
+            } catch (InvalidSkinException e) {
+                e.printStackTrace();
+            }
+        }));
         cape.addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> updateTexture(skin.get(), newValue)));
     }
 

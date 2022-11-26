@@ -88,6 +88,7 @@ public class MainUI extends FCLCommonUI {
                     Bitmap bitmap = BitmapFactory.decodeStream(AccountUI.class.getResourceAsStream("/assets/img/alex.png"));
                     NormalizedSkin normalizedSkin = new NormalizedSkin(bitmap);
                     renderer.character = new GameCharacter(normalizedSkin.isSlim());
+                    renderer.character.setRunning(true);
                     renderer.updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), Accounts.getSelectedAccount() == null ? null : TexturesLoader.capeBinding(Accounts.getSelectedAccount()).get());
                 } else {
                     ObjectProperty<Bitmap> skinProperty = new SimpleObjectProperty<>();
