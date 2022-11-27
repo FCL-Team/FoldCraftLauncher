@@ -36,6 +36,7 @@
         android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
+        android:name=".FCLApplication"
         android:allowBackup="true"
         android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"

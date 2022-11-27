@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -53,27 +53,26 @@ public class VersionUI extends FCLCommonUI implements View.OnClickListener {
         versionListView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         refreshProfile();
-        return Profiles.getSelectedProfile().getRepository().refreshVersionsAsync().whenComplete(Schedulers.androidUIThread(), exception -> {
-            ArrayList<VersionListItem> children = (ArrayList<VersionListItem>) Profiles.getSelectedProfile().getRepository().getDisplayVersions()
-                    .map(version -> {
-                        String game = Profiles.getSelectedProfile().getRepository().getGameVersion(version.getId()).orElse(getContext().getString(R.string.message_unknown));
-                        StringBuilder libraries = new StringBuilder(game);
-                        LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(Profiles.getSelectedProfile().getRepository().getResolvedPreservingPatchesVersion(version.getId()));
-                        for (LibraryAnalyzer.LibraryMark mark : analyzer) {
-                            String libraryId = mark.getLibraryId();
-                            String libraryVersion = mark.getLibraryVersion();
-                            if (libraryId.equals(MINECRAFT.getPatchId())) continue;
-                            int resId = getContext().getResources().getIdentifier("install_installer_" + libraryId.replace("-", "_"), "string", getContext().getPackageName());
-                            if (resId != 0 && getContext().getString(resId) != null) {
-                                libraries.append(", ").append(getContext().getString(resId));
-                                if (libraryVersion != null)
-                                    libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
-                            }
+        return Profiles.getSelectedProfile().getRepository().refreshVersionsAsync().thenSupplyAsync(() -> (ArrayList<VersionListItem>) Profiles.getSelectedProfile().getRepository().getDisplayVersions()
+                .map(version -> {
+                    String game = Profiles.getSelectedProfile().getRepository().getGameVersion(version.getId()).orElse(getContext().getString(R.string.message_unknown));
+                    StringBuilder libraries = new StringBuilder(game);
+                    LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(Profiles.getSelectedProfile().getRepository().getResolvedPreservingPatchesVersion(version.getId()));
+                    for (LibraryAnalyzer.LibraryMark mark : analyzer) {
+                        String libraryId = mark.getLibraryId();
+                        String libraryVersion = mark.getLibraryVersion();
+                        if (libraryId.equals(MINECRAFT.getPatchId())) continue;
+                        int resId = getContext().getResources().getIdentifier("install_installer_" + libraryId.replace("-", "_"), "string", getContext().getPackageName());
+                        if (resId != 0 && getContext().getString(resId) != null) {
+                            libraries.append(", ").append(getContext().getString(resId));
+                            if (libraryVersion != null)
+                                libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
                         }
-                        return new VersionListItem(Profiles.getSelectedProfile(), version.getId(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(version.getId()));
-                    })
-                    .collect(Collectors.toList());
-            VersionListAdapter adapter = new VersionListAdapter(getContext(), children);
+                    }
+                    return new VersionListItem(Profiles.getSelectedProfile(), version.getId(), libraries.toString(), Profiles.getSelectedProfile().getRepository().getVersionIconImage(version.getId()));
+                })
+                .collect(Collectors.toList())).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<ArrayList<VersionListItem>, Exception>) versionListItems -> {
+            VersionListAdapter adapter = new VersionListAdapter(getContext(), versionListItems);
             versionListView.setAdapter(adapter);
             refresh.setEnabled(true);
             versionListView.setVisibility(View.VISIBLE);
