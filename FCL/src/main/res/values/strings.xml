@@ -62,6 +62,7 @@
     <string name="account_login_refresh">Re-login</string>
     <string name="account_login_refresh_microsoft_hint">Because the account authorization is invalid, you need to re-add your Microsoft account\nPlease click on the "OK" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
     <string name="account_select_character">Select character</string>
+    <string name="account_skin">Skin</string>
     <string name="account_skin_upload">Select skin file</string>
     <string name="account_state_no_account">No account</string>
     <string name="account_state_add">Click to add</string>

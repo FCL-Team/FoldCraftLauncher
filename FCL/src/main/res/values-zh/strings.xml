@@ -54,6 +54,7 @@
     <string name="account_login_refresh">重新登录</string>
     <string name="account_login_refresh_microsoft_hint">由于账号授权无效，需要重新登录您的微软账号\n请点击“确认”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
     <string name="account_select_character">选择角色</string>
+    <string name="account_skin">皮肤</string>
     <string name="account_skin_upload">选择皮肤文件</string>
     <string name="account_state_no_account">没有账户</string>
     <string name="account_state_add">点击添加账户</string>

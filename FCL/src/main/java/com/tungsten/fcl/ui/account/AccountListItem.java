@@ -146,8 +146,8 @@ public class AccountListItem {
     public CompletableFuture<Task<?>> uploadSkin() {
         CompletableFuture<Task<?>> completableFuture = new CompletableFuture<>();
         if (account instanceof OfflineAccount) {
-            // Todo: fix
-            //Controllers.dialog(new OfflineAccountSkinPane((OfflineAccount) account));
+            OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(context, this);
+            dialog.show();
             completableFuture.complete(null);
             return completableFuture;
         }
