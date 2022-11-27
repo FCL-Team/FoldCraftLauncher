@@ -45,6 +45,7 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
         this.failed = failed;
 
         setContentView(R.layout.dialog_relogin_oauth);
+        setCancelable(false);
 
         FXUtils.onChangeAndOperate(deviceCode, deviceCode -> Schedulers.androidUIThread().execute(() -> {
             if (deviceCode != null) {
