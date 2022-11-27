@@ -78,6 +78,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private ObjectProperty<Account> currentAccount;
     private final WeakListenerHolder holder = new WeakListenerHolder();
     private Profile profile;
+    private Consumer<Event> onVersionIconChangedListener;
 
     public static MainActivity getInstance() {
         return instance;
@@ -268,9 +269,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         if (Profiles.getSelectedProfile() != profile) {
             profile = Profiles.getSelectedProfile();
             if (profile != null) {
-                Consumer<Event> onVersionIconChangedListener = profile.getRepository().onVersionIconChanged.registerWeak(event -> {
-                    this.loadVersion(Profiles.getSelectedVersion());
-                });
+                onVersionIconChangedListener = profile.getRepository().onVersionIconChanged.registerWeak(event -> this.loadVersion(Profiles.getSelectedVersion()));
             }
         }
         if (version != null && Profiles.getSelectedProfile() != null && Profiles.getSelectedProfile().getRepository().hasVersion(version)) {
