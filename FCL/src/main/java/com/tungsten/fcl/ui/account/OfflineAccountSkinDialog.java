@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.account;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -33,7 +32,6 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
     private FCLButton positive;
     private FCLButton negative;
 
-    @SuppressLint("CutPasteId")
     public OfflineAccountSkinDialog(@NonNull Context context, AccountListItem accountListItem) {
         super(context);
         this.accountListItem = accountListItem;
