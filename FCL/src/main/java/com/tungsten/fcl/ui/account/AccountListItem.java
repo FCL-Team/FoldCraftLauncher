@@ -68,8 +68,7 @@ public class AccountListItem {
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty subtitle = new SimpleStringProperty();
     private final ObjectProperty<Drawable> image = new SimpleObjectProperty<>();
-    private final ObjectProperty<Bitmap> skin = new SimpleObjectProperty<>();
-    private final ObjectProperty<Bitmap> cape = new SimpleObjectProperty<>();
+    private final ObjectProperty<Bitmap[]> texture = new SimpleObjectProperty<>();
 
     public AccountListItem(Context context, Account account) {
         this.context = context;
@@ -95,8 +94,7 @@ public class AccountListItem {
         }
 
         image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
-        skin.bind(TexturesLoader.skinBitmapBinding(account));
-        cape.bind(TexturesLoader.capeBinding(account));
+        texture.bind(TexturesLoader.textureBinding(account));
     }
 
     public Task<?> refreshAsync() {
@@ -281,27 +279,15 @@ public class AccountListItem {
         return image;
     }
 
-    public Bitmap getSkin() {
-        return skin.get();
+    public Bitmap[] getTexture() {
+        return texture.get();
     }
 
-    public void setSkin(Bitmap skin) {
-        this.skin.set(skin);
+    public void setTexture(Bitmap[] texture) {
+        this.texture.set(texture);
     }
 
-    public ObjectProperty<Bitmap> skinProperty() {
-        return skin;
-    }
-
-    public Bitmap getCape() {
-        return cape.get();
-    }
-
-    public void setCape(Bitmap cape) {
-        this.cape.set(cape);
-    }
-
-    public ObjectProperty<Bitmap> capeProperty() {
-        return cape;
+    public ObjectProperty<Bitmap[]> textureProperty() {
+        return texture;
     }
 }
