@@ -214,21 +214,25 @@ public class AccountListItem {
         if (account instanceof ClassicAccount) {
             CountDownLatch latch = new CountDownLatch(1);
             AtomicReference<AuthInfo> res = new AtomicReference<>(null);
-            ClassicAccountLoginDialog dialog = new ClassicAccountLoginDialog(FCLPath.CONTEXT, (ClassicAccount) account, it -> {
-                res.set(it);
-                latch.countDown();
-            }, latch::countDown);
-            dialog.show();
+            Schedulers.androidUIThread().execute(() -> {
+                ClassicAccountLoginDialog dialog = new ClassicAccountLoginDialog(FCLPath.CONTEXT, (ClassicAccount) account, it -> {
+                    res.set(it);
+                    latch.countDown();
+                }, latch::countDown);
+                dialog.show();
+            });
             latch.await();
             return Optional.ofNullable(res.get()).orElseThrow(CancellationException::new);
         } else if (account instanceof OAuthAccount) {
             CountDownLatch latch = new CountDownLatch(1);
             AtomicReference<AuthInfo> res = new AtomicReference<>(null);
-            OAuthAccountLoginDialog dialog = new OAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, it -> {
-                res.set(it);
-                latch.countDown();
-            }, latch::countDown);
-            dialog.show();
+            Schedulers.androidUIThread().execute(() -> {
+                OAuthAccountLoginDialog dialog = new OAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, it -> {
+                    res.set(it);
+                    latch.countDown();
+                }, latch::countDown);
+                dialog.show();
+            });
             latch.await();
             return Optional.ofNullable(res.get()).orElseThrow(CancellationException::new);
         }

@@ -41,6 +41,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -182,7 +183,12 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                     if (exception instanceof NoSelectedCharacterException) {
                         dismiss();
                     } else {
-                        Toast.makeText(getContext(), Accounts.localizeErrorMessage(getContext(), exception), Toast.LENGTH_SHORT).show();
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder.setMessage(Accounts.localizeErrorMessage(getContext(), exception));
+                        builder.setCancelable(false);
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.create().show();
                     }
                     login.setEnabled(true);
                     cancel.setEnabled(true);
@@ -263,16 +269,12 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_microsoft, null);
 
             Handler handler = new Handler();
-            FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> {
-                handler.post(() -> {
-                    if (deviceCode != null) {
-                        AndroidUtils.copyText(context, deviceCode.getUserCode());
-                    }
-                });
-            });
-            holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(value -> {
-                CreateAccountDialog.getInstance().deviceCode.set(value);
+            FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> handler.post(() -> {
+                if (deviceCode != null) {
+                    AndroidUtils.copyText(context, deviceCode.getUserCode());
+                }
             }));
+            holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(value -> CreateAccountDialog.getInstance().deviceCode.set(value)));
         }
 
         @Override
