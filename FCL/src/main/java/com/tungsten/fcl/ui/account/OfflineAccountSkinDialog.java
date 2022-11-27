@@ -21,7 +21,6 @@ import com.tungsten.fcllibrary.skin.MinecraftSkinRenderer;
 import com.tungsten.fcllibrary.skin.SkinGLSurfaceView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
-@SuppressWarnings("SuspiciousNameCombination")
 public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickListener {
 
     private final AccountListItem accountListItem;
