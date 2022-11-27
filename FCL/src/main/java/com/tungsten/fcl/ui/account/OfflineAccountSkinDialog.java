@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.opengl.GLSurfaceView;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -15,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.skin.MinecraftSkinRenderer;
 import com.tungsten.fcllibrary.skin.SkinGLSurfaceView;
@@ -32,17 +32,22 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
     private FCLButton positive;
     private FCLButton negative;
 
+    private FCLRadioButton defaultSkin;
+    private FCLRadioButton steve;
+    private FCLRadioButton alex;
+    private FCLRadioButton local;
+    private FCLRadioButton csl;
+
     public OfflineAccountSkinDialog(@NonNull Context context, AccountListItem accountListItem) {
         super(context);
         this.accountListItem = accountListItem;
 
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
+        getWindow().setBackgroundDrawable(null);
+        WindowManager wm = getWindow().getWindowManager();
         Point point = new Point();
         wm.getDefaultDisplay().getSize(point);
         int maxHeight = point.y - ConvertUtils.dip2px(getContext(), 30);
-        getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, maxHeight);
+        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, maxHeight);
 
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
@@ -61,6 +66,13 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
 
         root = findViewById(R.id.root);
         title = findViewById(R.id.title);
+
+        defaultSkin = findViewById(R.id.default_skin);
+        steve = findViewById(R.id.steve);
+        alex = findViewById(R.id.alex);
+        local = findViewById(R.id.local);
+        csl = findViewById(R.id.csl);
+
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
         negative.post(() -> {

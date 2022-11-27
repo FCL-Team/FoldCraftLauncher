@@ -15,6 +15,7 @@
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
 
+    <string name="account_cape">披风</string>
     <string name="account_create">创建账户</string>
     <string name="account_create_offline">创建离线账户</string>
     <string name="account_create_microsoft">创建微软账户</string>
@@ -55,6 +56,11 @@
     <string name="account_login_refresh_microsoft_hint">由于账号授权无效，需要重新登录您的微软账号\n请点击“确认”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
     <string name="account_select_character">选择角色</string>
     <string name="account_skin">皮肤</string>
+    <string name="account_skin_type_default">默认</string>
+    <string name="account_skin_type_csl_api_location">服务器地址</string>
+    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI 地址</string>
+    <string name="account_skin_type_csl_api_hint">你需要在皮肤站中创建并使用和该离线账户角色同名角色，此时离线账户皮肤将为皮肤站上角色所设定的皮肤。</string>
+    <string name="account_skin_type_local_file">本地文件</string>
     <string name="account_skin_upload">选择皮肤文件</string>
     <string name="account_state_no_account">没有账户</string>
     <string name="account_state_add">点击添加账户</string>

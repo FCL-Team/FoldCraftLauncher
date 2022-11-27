@@ -23,6 +23,7 @@
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
 
+    <string name="account_cape">Cape</string>
     <string name="account_create">Create Account</string>
     <string name="account_create_offline">Create Offline Account</string>
     <string name="account_create_microsoft">Create Microsoft Account</string>
@@ -63,6 +64,14 @@
     <string name="account_login_refresh_microsoft_hint">Because the account authorization is invalid, you need to re-add your Microsoft account\nPlease click on the "OK" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
     <string name="account_select_character">Select character</string>
     <string name="account_skin">Skin</string>
+    <string name="account_skin_type_default">Default</string>
+    <string name="account_skin_type_steve" translatable="false">Steve</string>
+    <string name="account_skin_type_alex" translatable="false">Alex</string>
+    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
+    <string name="account_skin_type_csl_api_location">Address</string>
+    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
+    <string name="account_skin_type_csl_api_hint">You need to create a character with the same name as your offline account on your skin provider website. Your skin will then be your uploaded skin to that site.</string>
+    <string name="account_skin_type_local_file">Local Skin File</string>
     <string name="account_skin_upload">Select skin file</string>
     <string name="account_state_no_account">No account</string>
     <string name="account_state_add">Click to add</string>

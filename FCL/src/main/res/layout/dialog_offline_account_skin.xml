@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:padding="10dp"
     android:id="@+id/root"
+    android:layout_gravity="center"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -17,19 +18,66 @@
         app:layout_constraintHorizontal_bias="0.5"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/positive"
         app:layout_constraintTop_toBottomOf="@+id/title">
 
         <com.tungsten.fcllibrary.skin.SkinGLSurfaceView
             android:id="@+id/skin_view"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            app:layout_constraintStart_toEndOf="@+id/skin_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/default_skin"
+                    android:text="@string/account_skin_type_default"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/steve"
+                    android:text="@string/account_skin_type_steve"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/alex"
+                    android:text="@string/account_skin_type_alex"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/local"
+                    android:text="@string/account_skin_type_local_file"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/csl"
+                    android:text="@string/account_skin_type_csl_api"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
