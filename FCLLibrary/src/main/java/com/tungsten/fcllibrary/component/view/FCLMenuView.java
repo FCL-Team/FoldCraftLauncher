@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -17,25 +19,40 @@ public class FCLMenuView extends AppCompatImageButton {
     private boolean isSelected;
     private OnSelectListener onSelectListener;
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] colorNormal = {
-                ThemeEngine.getInstance().getTheme().getAutoTint()
-        };
-        int[] colorSelected = {
-                ThemeEngine.getInstance().getTheme().getDkColor()
-        };
-        int[] colorRipple = {
-                ThemeEngine.getInstance().getTheme().getLtColor()
-        };
-        setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
-        RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
-        drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
-        setBackgroundDrawable(drawable);
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+
+                    }
+            };
+            int[] colorNormal = {
+                    ThemeEngine.getInstance().getTheme().getAutoTint()
+            };
+            int[] colorSelected = {
+                    ThemeEngine.getInstance().getTheme().getDkColor()
+            };
+            int[] colorRipple = {
+                    ThemeEngine.getInstance().getTheme().getLtColor()
+            };
+            setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
+            RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
+            drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
+            setBackgroundDrawable(drawable);
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     private void init() {
@@ -84,19 +101,19 @@ public class FCLMenuView extends AppCompatImageButton {
     public FCLMenuView(@NonNull Context context) {
         super(context);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public interface OnSelectListener {

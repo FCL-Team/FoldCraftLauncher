@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.game.LauncherHelper;
+import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
@@ -17,6 +22,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class Versions {
@@ -114,6 +120,61 @@ public class Versions {
             profile.getRepository().clean(id);
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to clean game directory", e);
+        }
+    }
+
+    public static void launch(Context context, Profile profile) {
+        launch(context, profile, profile.getSelectedVersion());
+    }
+
+    public static void launch(Context context, Profile profile, String id) {
+        launch(context, profile, id, null);
+    }
+
+    public static void launch(Context context, Profile profile, String id, Consumer<LauncherHelper> injector) {
+        if (!checkVersionForLaunching(context, profile, id))
+            return;
+        ensureSelectedAccount(context, account -> {
+            LauncherHelper launcherHelper = new LauncherHelper(context, profile, account, id);
+            if (injector != null)
+                injector.accept(launcherHelper);
+            launcherHelper.launch();
+        });
+    }
+
+    private static boolean checkVersionForLaunching(Context context, Profile profile, String id) {
+        if (id == null || !profile.getRepository().isLoaded() || !profile.getRepository().hasVersion(id)) {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setCancelable(false);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setTitle(context.getString(R.string.launch_failed));
+            builder.setMessage(context.getString(R.string.version_empty_launch));
+            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                MainActivity.getInstance().refreshMenuView(null);
+                MainActivity.getInstance().download.setSelected(true);
+            });
+            builder.create().show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private static void ensureSelectedAccount(Context context, Consumer<Account> action) {
+        Account account = Accounts.getSelectedAccount();
+        if (account == null) {
+            CreateAccountDialog dialog = new CreateAccountDialog(context, null);
+            dialog.setOnDismissListener(dialogInterface -> {
+                Account newAccount = Accounts.getSelectedAccount();
+                if (newAccount == null) {
+                    // user cancelled operation
+                } else {
+                    action.accept(newAccount);
+                }
+            });
+            dialog.show();
+        } else {
+            action.accept(account);
         }
     }
 

@@ -1,5 +1,8 @@
 package com.tungsten.fcl.ui.account;
 
+import static com.tungsten.fcl.setting.Accounts.FACTORY_AUTHLIB_INJECTOR;
+import static com.tungsten.fcl.setting.Accounts.FACTORY_MICROSOFT;
+import static com.tungsten.fcl.setting.Accounts.FACTORY_OFFLINE;
 import static com.tungsten.fcl.setting.ConfigHolder.config;
 
 import android.content.Context;
@@ -17,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.OAuthServer;
 import com.tungsten.fcl.game.TexturesLoader;
@@ -53,7 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class CreateAccountDialog extends FCLDialog implements View.OnClickListener {
+public class CreateAccountDialog extends FCLDialog implements View.OnClickListener, TabLayout.OnTabSelectedListener {
 
     private static CreateAccountDialog instance;
 
@@ -95,7 +99,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             try {
                 factory = Accounts.getAccountFactory(preferred);
             } catch (IllegalArgumentException e) {
-                factory = Accounts.FACTORY_OFFLINE;
+                factory = FACTORY_OFFLINE;
             }
         } else {
             showMethodSwitcher = false;
@@ -117,6 +121,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
         }
         title.setText(getContext().getString(titleId));
         tabLayout.setVisibility(showMethodSwitcher ? View.VISIBLE : View.GONE);
+        tabLayout.addOnTabSelectedListener(this);
 
         initDetails();
     }
@@ -153,10 +158,6 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             return;
         }
 
-        /*
-        logging.set(true);
-
-         */
         deviceCode.set(null);
 
         CharacterSelector selector = new DialogCharacterSelector(getContext());
@@ -212,6 +213,30 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        AccountFactory<?> newMethod = FACTORY_OFFLINE;
+        if (tab.getPosition() == 1) {
+            newMethod = FACTORY_MICROSOFT;
+        }
+        if (tab.getPosition() == 2) {
+            newMethod = FACTORY_AUTHLIB_INJECTOR;
+        }
+        config().setPreferredLoginType(Accounts.getLoginType(newMethod));
+        this.factory = newMethod;
+        initDetails();
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
     // details panel
     private interface Details {
         String getUsername();
@@ -229,7 +254,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         public OfflineDetails(Context context) {
             this.context = context;
-            this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_offline, null);
+            this.view = LayoutInflater.from(context).inflate(R.layout.view_create_account_offline, null);
             username = view.findViewById(R.id.username);
         }
 
@@ -266,7 +291,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         public MicrosoftDetails(Context context) {
             this.context = context;
-            this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_microsoft, null);
+            this.view = LayoutInflater.from(context).inflate(R.layout.view_create_account_microsoft, null);
 
             Handler handler = new Handler();
             FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> handler.post(() -> {
@@ -314,7 +339,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
         public ExternalDetails(Context context) {
             this.context = context;
-            this.view = LayoutInflater.from(context).inflate(R.layout.dialog_create_account_external, null);
+            this.view = LayoutInflater.from(context).inflate(R.layout.view_create_account_external, null);
 
             serverName = view.findViewById(R.id.server_name);
             home = view.findViewById(R.id.home);

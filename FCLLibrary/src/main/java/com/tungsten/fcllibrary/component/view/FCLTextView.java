@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -20,15 +22,30 @@ public class FCLTextView extends AppCompatTextView {
     private boolean autoTint;
     private StringProperty string;
 
-    private final Runnable runnable = () -> {
-        if (autoTint) {
-            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+    private final IntegerProperty theme = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            if (autoTint) {
+                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
         }
     };
 
     public FCLTextView(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -36,7 +53,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -44,7 +61,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public void alert() {
@@ -68,7 +85,7 @@ public class FCLTextView extends AppCompatTextView {
     }
 
     public final void setString(String string) {
-        this.stringProperty().set(string);
+        stringProperty().set(string);
     }
 
     public final String getString() {

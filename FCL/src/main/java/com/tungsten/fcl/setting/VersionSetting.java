@@ -2,6 +2,7 @@ package com.tungsten.fcl.setting;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
+import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -45,7 +46,7 @@ public final class VersionSetting implements Cloneable {
     }
 
     /**
-     * HMCL Version Settings have been divided into 2 parts.
+     * FCL Version Settings have been divided into 2 parts.
      * 1. Global settings.
      * 2. Version settings.
      * If a version claims that it uses global settings, its version setting will be disabled.
@@ -187,7 +188,7 @@ public final class VersionSetting implements Cloneable {
     }
 
     /**
-     * True if HMCL does not check JVM validity.
+     * True if FCL does not check JVM validity.
      */
     public boolean isNotCheckJVM() {
         return notCheckJVMProperty.get();
@@ -204,7 +205,7 @@ public final class VersionSetting implements Cloneable {
     }
 
     /**
-     * True if HMCL does not check game's completeness.
+     * True if FCL does not check game's completeness.
      */
     public boolean isNotCheckGame() {
         return notCheckGameProperty.get();
@@ -328,6 +329,20 @@ public final class VersionSetting implements Cloneable {
         processPriorityProperty.set(processPriority);
     }
 
+    private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_GL4ES);
+
+    public ObjectProperty<FCLConfig.Renderer> renderProperty() {
+        return rendererProperty;
+    }
+
+    public FCLConfig.Renderer getRender() {
+        return rendererProperty.get();
+    }
+
+    public void setRenderer(FCLConfig.Renderer renderer) {
+        rendererProperty.set(renderer);
+    }
+
     // launcher settings
 
     public Task<JavaVersion> getJavaVersion(Version version) {
@@ -362,6 +377,7 @@ public final class VersionSetting implements Cloneable {
         heightProperty.addListener(listener);
         gameDirTypeProperty.addListener(listener);
         processPriorityProperty.addListener(listener);
+        rendererProperty.addListener(listener);
     }
 
     @Override
@@ -383,6 +399,7 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setHeight(getHeight());
         versionSetting.setGameDirType(getGameDirType());
         versionSetting.setProcessPriority(getProcessPriority());
+        versionSetting.setRenderer(getRender());
         return versionSetting;
     }
 
@@ -407,6 +424,7 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("notCheckGame", src.isNotCheckGame());
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
             obj.addProperty("processPriority", src.getProcessPriority().ordinal());
+            obj.addProperty("renderer", src.getRender().ordinal());
             obj.addProperty("gameDirType", src.getGameDirType().ordinal());
 
             return obj;
@@ -438,6 +456,7 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setProcessPriority(ProcessPriority.values()[Optional.ofNullable(obj.get("processPriority")).map(JsonElement::getAsInt).orElse(ProcessPriority.NORMAL.ordinal())]);
+            vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setGameDirType(GameDirectoryType.values()[Optional.ofNullable(obj.get("gameDirType")).map(JsonElement::getAsInt).orElse(GameDirectoryType.ROOT_FOLDER.ordinal())]);
 
             return vs;

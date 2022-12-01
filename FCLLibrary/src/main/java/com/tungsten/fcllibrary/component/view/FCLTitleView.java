@@ -10,6 +10,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -23,20 +25,35 @@ public class FCLTitleView extends View {
 
     private String title;
 
-    private final Runnable runnable = () -> {
-        outlinePaint.setAntiAlias(true);
-        outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
-        outlinePaint.setStyle(Paint.Style.STROKE);
-        outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
-        insidePaint.setAntiAlias(true);
-        insidePaint.setColor(ThemeEngine.getInstance().getTheme().getColor());
-        insidePaint.setStyle(Paint.Style.FILL);
-        textPaint.setAntiAlias(true);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setTextSize(56);
-        textPaint.setColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        invalidate();
+    private final IntegerProperty theme = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            outlinePaint.setAntiAlias(true);
+            outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
+            outlinePaint.setStyle(Paint.Style.STROKE);
+            outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
+            insidePaint.setAntiAlias(true);
+            insidePaint.setColor(ThemeEngine.getInstance().getTheme().getColor());
+            insidePaint.setStyle(Paint.Style.FILL);
+            textPaint.setAntiAlias(true);
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setTextSize(56);
+            textPaint.setColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            invalidate();
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     private void init(String title) {
@@ -62,7 +79,7 @@ public class FCLTitleView extends View {
     public FCLTitleView(Context context) {
         super(context);
         init("");
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs) {
@@ -74,7 +91,7 @@ public class FCLTitleView extends View {
         }
         init(title);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTitleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -86,7 +103,7 @@ public class FCLTitleView extends View {
         }
         init(title);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     @Override
@@ -102,7 +119,7 @@ public class FCLTitleView extends View {
         outlinePath.lineTo(width + ConvertUtils.dip2px(getContext(), 1.5f), 0);
         canvas.drawPath(outlinePath, insidePaint);
         canvas.drawPath(outlinePath, outlinePaint);
-        canvas.drawText(title, (int) (getWidth() / 2), (int) (getHeight() / 2) + 14, textPaint);
+        canvas.drawText(title, getWidth() / 2f, getHeight() / 2f + 14, textPaint);
     }
 
     public void setTitle(String title) {

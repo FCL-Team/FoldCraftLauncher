@@ -8,35 +8,52 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLSeekBar extends AppCompatSeekBar {
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] color = {
-                ThemeEngine.getInstance().getTheme().getDkColor()
-        };
-        setThumbTintList(new ColorStateList(state, color));
-        setProgressTintList(new ColorStateList(state, color));
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getDkColor()
+            };
+            setThumbTintList(new ColorStateList(state, color));
+            setProgressTintList(new ColorStateList(state, color));
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     public FCLSeekBar(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLSeekBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLSeekBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 }

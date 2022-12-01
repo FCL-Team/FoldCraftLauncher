@@ -23,11 +23,15 @@ public class FCLPath {
     public static String CACIOCAVALLO_17_DIR;
 
     public static String FILES_DIR;
-
-    public static String AUTHLIB_INJECTOR_PATH;
+    public static String PLUGIN_DIR;
+    public static String BACKGROUND_DIR;
 
     public static String PRIVATE_COMMON_DIR;
     public static String SHARED_COMMON_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/.minecraft";
+
+    public static String AUTHLIB_INJECTOR_PATH;
+    public static String LT_BACKGROUND_PATH;
+    public static String DK_BACKGROUND_PATH;
 
     public static void loadPaths(Context context) {
         CONTEXT = context;
@@ -46,9 +50,14 @@ public class FCLPath {
         CACIOCAVALLO_17_DIR = RUNTIME_DIR + "/caciocavallo17";
 
         FILES_DIR = context.getFilesDir().getAbsolutePath();
-        AUTHLIB_INJECTOR_PATH = FILES_DIR + "/plugins/authlib-injector.jar";
+        PLUGIN_DIR = FILES_DIR + "/plugins";
+        BACKGROUND_DIR = FILES_DIR + "/background";
 
         PRIVATE_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
+
+        AUTHLIB_INJECTOR_PATH = PLUGIN_DIR + "/authlib-injector.jar";
+        LT_BACKGROUND_PATH = BACKGROUND_DIR + "/lt.png";
+        DK_BACKGROUND_PATH = BACKGROUND_DIR + "/dk.png";
 
         init(LOG_DIR);
         init(CACHE_DIR);
@@ -60,7 +69,8 @@ public class FCLPath {
         init(CACIOCAVALLO_8_DIR);
         init(CACIOCAVALLO_17_DIR);
         init(FILES_DIR);
-        init(FILES_DIR + "/plugins");
+        init(PLUGIN_DIR);
+        init(BACKGROUND_DIR);
         init(PRIVATE_COMMON_DIR);
         init(SHARED_COMMON_DIR);
     }

@@ -12,34 +12,54 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.anim.DynamicIslandAnim;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class FCLDynamicIsland extends AppCompatTextView {
 
-    DynamicIslandAnim anim;
+    private DynamicIslandAnim anim;
 
     private Path outlinePath;
     private Paint outlinePaint;
     private Paint insidePaint;
     private Paint textPaint;
 
-    private final Runnable runnable = () -> {
-        outlinePaint.setAntiAlias(true);
-        outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
-        outlinePaint.setStyle(Paint.Style.STROKE);
-        outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
-        insidePaint.setAntiAlias(true);
-        insidePaint.setColor(ThemeEngine.getInstance().getTheme().getColor());
-        insidePaint.setStyle(Paint.Style.FILL);
-        textPaint.setAntiAlias(true);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setTextSize(56);
-        textPaint.setColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        invalidate();
-        setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+    private final IntegerProperty theme = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            outlinePaint = new Paint();
+            insidePaint = new Paint();
+            textPaint = new Paint();
+            outlinePaint.setAntiAlias(true);
+            outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
+            outlinePaint.setStyle(Paint.Style.STROKE);
+            outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
+            insidePaint.setAntiAlias(true);
+            insidePaint.setColor(ThemeEngine.getInstance().getTheme().getColor());
+            insidePaint.setStyle(Paint.Style.FILL);
+            textPaint.setAntiAlias(true);
+            textPaint.setStyle(Paint.Style.FILL);
+            textPaint.setTextSize(56);
+            textPaint.setColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            textPaint.setTextAlign(Paint.Align.CENTER);
+            invalidate();
+            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     private void init() {
@@ -69,19 +89,19 @@ public class FCLDynamicIsland extends AppCompatTextView {
     public FCLDynamicIsland(@NonNull Context context) {
         super(context);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     @SuppressLint("DrawAllocation")
@@ -99,7 +119,7 @@ public class FCLDynamicIsland extends AppCompatTextView {
         outlinePath.lineTo(offset + (height / 2), offset);
         canvas.drawPath(outlinePath, insidePaint);
         canvas.drawPath(outlinePath, outlinePaint);
-        canvas.drawText(getText().toString(), (int) (getWidth() / 2), (int) (getHeight() / 2) + 21, textPaint);
+        canvas.drawText(getText().toString(), getWidth() / 2f, (getHeight() / 2f) + 21, textPaint);
     }
 
     public void refresh(String text) {

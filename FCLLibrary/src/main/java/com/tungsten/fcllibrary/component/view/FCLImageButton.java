@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -18,24 +20,39 @@ public class FCLImageButton extends AppCompatImageButton {
 
     private boolean autoTint;
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] colorSrc = {
-                ThemeEngine.getInstance().getTheme().getAutoTint()
-        };
-        int[] colorRipple = {
-                ThemeEngine.getInstance().getTheme().getLtColor()
-        };
-        if (autoTint) {
-            setImageTintList(new ColorStateList(state, colorSrc));
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+
+                    }
+            };
+            int[] colorSrc = {
+                    ThemeEngine.getInstance().getTheme().getAutoTint()
+            };
+            int[] colorRipple = {
+                    ThemeEngine.getInstance().getTheme().getLtColor()
+            };
+            if (autoTint) {
+                setImageTintList(new ColorStateList(state, colorSrc));
+            }
+            RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
+            drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
+            setBackgroundDrawable(drawable);
         }
-        RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
-        drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
-        setBackgroundDrawable(drawable);
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     private void init() {
@@ -51,7 +68,7 @@ public class FCLImageButton extends AppCompatImageButton {
     public FCLImageButton(@NonNull Context context) {
         super(context);
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -60,7 +77,7 @@ public class FCLImageButton extends AppCompatImageButton {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
         typedArray.recycle();
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -69,7 +86,7 @@ public class FCLImageButton extends AppCompatImageButton {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
         typedArray.recycle();
         init();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public void setAutoTint(boolean autoTint) {

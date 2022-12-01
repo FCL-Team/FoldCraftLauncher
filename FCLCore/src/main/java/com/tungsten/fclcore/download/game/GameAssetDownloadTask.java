@@ -45,7 +45,7 @@ public final class GameAssetDownloadTask extends Task<Void> {
         this.assetIndexFile = dependencyManager.getGameRepository().getIndexFile(version.getId(), assetIndexInfo.getId());
         this.integrityCheck = integrityCheck;
 
-        setStage("hmcl.install.assets");
+        setStage("fcl.install.assets");
         dependents.add(new GameAssetIndexDownloadTask(dependencyManager, this.version, forceDownloadingIndex));
     }
 
@@ -90,7 +90,7 @@ public final class GameAssetDownloadTask extends Task<Void> {
                         .resolve("assets").resolve("objects").resolve(assetObject.getLocation()));
                 task.setCacheRepository(dependencyManager.getCacheRepository());
                 task.setCaching(true);
-                dependencies.add(task.withCounter("hmcl.install.assets"));
+                dependencies.add(task.withCounter("fcl.install.assets"));
             } else {
                 dependencyManager.getCacheRepository().tryCacheFile(file, CacheRepository.SHA1, assetObject.getHash());
             }

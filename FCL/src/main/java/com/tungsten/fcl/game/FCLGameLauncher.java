@@ -1,12 +1,10 @@
 package com.tungsten.fcl.game;
 
 import android.content.Context;
-import android.view.Surface;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.game.LaunchOptions;
@@ -24,12 +22,8 @@ import java.util.logging.Level;
 
 public final class FCLGameLauncher extends DefaultLauncher {
 
-    public FCLGameLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
-        super(context, surface, repository, version, authInfo, options);
-    }
-
-    public FCLGameLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options, FCLBridgeCallback callback) {
-        super(context, surface, repository, version, authInfo, options, callback);
+    public FCLGameLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
+        super(context, repository, version, authInfo, options);
     }
 
     @Override

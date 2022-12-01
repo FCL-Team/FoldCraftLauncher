@@ -8,6 +8,7 @@
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
         android:text="@string/account_login_refresh"
+        android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"

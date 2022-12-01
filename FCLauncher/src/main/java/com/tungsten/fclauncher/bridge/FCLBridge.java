@@ -5,7 +5,11 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.Surface;
 
-public class FCLBridge {
+import com.tungsten.fclauncher.FCLPath;
+
+import java.io.Serializable;
+
+public class FCLBridge implements Serializable {
 
     public static final int KeyPress              = 2;
     public static final int KeyRelease            = 3;
@@ -13,7 +17,7 @@ public class FCLBridge {
     public static final int ButtonRelease         = 5;
     public static final int MotionNotify          = 6;
     public static final int ConfigureNotify       = 22;
-    public static final int FCLMessage           = 37;
+    public static final int FCLMessage            = 37;
 
     public static final int Button1               = 1;
     public static final int Button2               = 2;
@@ -37,8 +41,7 @@ public class FCLBridge {
 
     public static final int CloseRequest          = 0;
 
-    public final Context context;
-    public final FCLBridgeCallback callback;
+    public FCLBridgeCallback callback;
 
     static {
         System.loadLibrary("xhook");
@@ -46,8 +49,9 @@ public class FCLBridge {
         System.loadLibrary("glfw");
     }
 
-    public FCLBridge(Context context, FCLBridgeCallback callback) {
-        this.context = context;
+    private Thread thread;
+
+    public FCLBridge(FCLBridgeCallback callback) {
         this.callback = callback;
     }
 
@@ -61,6 +65,27 @@ public class FCLBridge {
     public native void pushEvent(long time, int type, int keycode, int keyChar);
     public native void setupJLI();
     public native int jliLaunch(String[] args);
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void execute(Surface surface, FCLBridgeCallback callback) {
+        this.callback = callback;
+
+        // set graphic output and event pipe
+        setFCLNativeWindow(surface);
+        setEventPipe();
+
+        // start
+        if (thread != null) {
+            thread.start();
+        }
+    }
 
     public void pushEventMouseButton(int button, boolean press) {
         pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button, 0);
@@ -97,13 +122,13 @@ public class FCLBridge {
     }
 
     public void setPrimaryClipString(String string) {
-        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("FCL Clipboard", string);
         clipboard.setPrimaryClip(clip);
     }
 
     public String getPrimaryClipString() {
-        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
         if (!clipboard.hasPrimaryClip()) {
             return null;
         }

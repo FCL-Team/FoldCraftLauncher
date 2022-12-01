@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="11sp"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        android:indeterminateDrawable="@drawable/bg_progress_indeterminate"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/state"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textSize="11sp"
+        app:layout_constraintTop_toBottomOf="@+id/progress"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

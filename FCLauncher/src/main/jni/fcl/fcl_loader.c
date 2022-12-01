@@ -91,6 +91,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTr
     jclass exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
     exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "exit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
+    // xhook_enable_debug(1);
     xhook_register(".*\\.so$", "exit", custom_exit, (void **) &old_exit);
     xhook_refresh(1);
 }

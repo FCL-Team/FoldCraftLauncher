@@ -153,11 +153,11 @@ public class MaintainTask extends Task<Version> {
                 builder.addJvmArgument("-Dhmcl.transformer.candidates=${library_directory}/" + library.getPath());
                 if (!libraryExisting) builder.addLibrary(hmclTransformerDiscoveryService);
                 Path libraryPath = repository.getLibraryFile(version, hmclTransformerDiscoveryService).toPath();
-                try (InputStream input = MaintainTask.class.getResourceAsStream("/assets/game/FCLTransformerDiscoveryService-1.0.jar")) {
+                try (InputStream input = MaintainTask.class.getResourceAsStream("/assets/game/HMCLTransformerDiscoveryService-1.0.jar")) {
                     Files.createDirectories(libraryPath.getParent());
                     Files.copy(input, libraryPath, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    Logging.LOG.log(Level.WARNING, "Unable to unpack FCLTransformerDiscoveryService", e);
+                    Logging.LOG.log(Level.WARNING, "Unable to unpack HMCLTransformerDiscoveryService", e);
                 }
             });
         }

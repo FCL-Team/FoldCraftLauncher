@@ -36,22 +36,17 @@ public enum OperatingSystem {
 
     static {
         String nativeEncoding = System.getProperty("native.encoding");
-        String hmclNativeEncoding = System.getProperty("fcl.native.encoding");
         Charset nativeCharset = Charset.defaultCharset();
 
         try {
-            if (hmclNativeEncoding != null) {
-                nativeCharset = Charset.forName(hmclNativeEncoding);
-            } else {
-                if (nativeEncoding != null && !nativeEncoding.equalsIgnoreCase(nativeCharset.name())) {
-                    nativeCharset = Charset.forName(nativeEncoding);
-                }
+            if (nativeEncoding != null && !nativeEncoding.equalsIgnoreCase(nativeCharset.name())) {
+                nativeCharset = Charset.forName(nativeEncoding);
+            }
 
-                if (nativeCharset == StandardCharsets.UTF_8 || nativeCharset == StandardCharsets.US_ASCII) {
-                    nativeCharset = StandardCharsets.UTF_8;
-                } else if ("GBK".equalsIgnoreCase(nativeCharset.name()) || "GB2312".equalsIgnoreCase(nativeCharset.name())) {
-                    nativeCharset = Charset.forName("GB18030");
-                }
+            if (nativeCharset == StandardCharsets.UTF_8 || nativeCharset == StandardCharsets.US_ASCII) {
+                nativeCharset = StandardCharsets.UTF_8;
+            } else if ("GBK".equalsIgnoreCase(nativeCharset.name()) || "GB2312".equalsIgnoreCase(nativeCharset.name())) {
+                nativeCharset = Charset.forName("GB18030");
             }
         } catch (UnsupportedCharsetException e) {
             e.printStackTrace();

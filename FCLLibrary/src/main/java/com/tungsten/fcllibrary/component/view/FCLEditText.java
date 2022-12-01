@@ -10,41 +10,58 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLEditText extends AppCompatEditText {
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
-                        android.R.attr.state_focused
-                },
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] color = {
-                ThemeEngine.getInstance().getTheme().getColor(),
-                Color.GRAY
-        };
-        setBackgroundTintList(new ColorStateList(state, color));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getTextCursorDrawable().setTint(ThemeEngine.getInstance().getTheme().getColor());
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+                            android.R.attr.state_focused
+                    },
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getColor(),
+                    Color.GRAY
+            };
+            setBackgroundTintList(new ColorStateList(state, color));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                getTextCursorDrawable().setTint(ThemeEngine.getInstance().getTheme().getColor());
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
         }
     };
 
     public FCLEditText(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLEditText(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLEditText(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 }

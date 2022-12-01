@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android" >
+    <objectAnimator
+        android:duration="2000"
+        android:propertyXName="translateX"
+        android:pathData="M -522.59998,0 c 48.89972,0 166.02656,0 301.21729,0 c 197.58128,0 420.9827,0 420.9827,0 "
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:repeatCount="infinite" />
+    <objectAnimator
+        android:duration="2000"
+        android:propertyYName="scaleX"
+        android:pathData="M 0 0.1 L 1 0.826849212646 L 2 0.1"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:repeatCount="infinite" />
+</set>

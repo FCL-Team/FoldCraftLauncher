@@ -7,6 +7,9 @@ import android.util.Base64;
 import android.util.TypedValue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class ConvertUtils {
 
@@ -41,5 +44,21 @@ public class ConvertUtils {
         options.inTargetDensity = value.density;
         options.inScaled = false;
         return BitmapFactory.decodeResource(context.getResources(), id, options);
+    }
+
+    public static void saveBitmap(Bitmap bitmap, String path) throws IOException {
+        File file = new File(path);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+        fileOutputStream.flush();
+        fileOutputStream.close();
+    }
+
+    public static void saveBitmapSilently(Bitmap bitmap, String path) {
+        try {
+            saveBitmap(bitmap, path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

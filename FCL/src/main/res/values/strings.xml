@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
-    <string name="app_version" translatable="false">1_0_0</string>
+    <string name="app_version" translatable="false">1.0.0</string>
 
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
 
@@ -41,8 +41,10 @@
     <string name="account_methods_yggdrasil">Mojang Account</string>
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
+    <string name="account_failed">Account refresh failed</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>
     <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
+    <string name="account_failed_server_disconnected">Cannot access authentication server. You can log in offline or try to re-login.</string>
     <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
     <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
     <string name="account_failed_invalid_token">Please try to re-login again.</string>
@@ -76,6 +78,10 @@
     <string name="account_state_no_account">No account</string>
     <string name="account_state_add">Click to add</string>
 
+    <string name="action_refresh">Refresh</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_skip">Skip</string>
+
     <string name="download_code_404">File not found</string>
 
     <string name="exception_access_denied">Unable to access the file.</string>
@@ -98,6 +104,7 @@
     <string name="launch_error_java">Wrong Java Version</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
+    <string name="launch_failed">Unable to launch</string>
 
     <string name="launch_state_dependencies">Resolving dependencies</string>
     <string name="launch_state_modpack">Downloading dependencies</string>
@@ -106,7 +113,6 @@
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
 
-    <string name="message_refresh">Refresh</string>
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>
@@ -118,6 +124,8 @@
     <string name="profile_select">Select Directory</string>
     <string name="profile_add_alert">Please fill the name and path first!</string>
 
+    <string name="version_empty_launch">No instances, please install one before launch.</string>
+    <string name="version_launch">Launch Game</string>
     <string name="version_no_version">No version</string>
     <string name="version_manage">Click to manage</string>
     <string name="version_manage_remove_confirm">Are you sure you want to permanently remove the version %s? This action cannot be undone!</string>

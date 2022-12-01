@@ -8,6 +8,7 @@ import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.utils.Architecture;
 
 import java.io.BufferedReader;
@@ -117,8 +118,7 @@ public class FCLauncher {
         argList.add(0, config.getJavaPath() + "/bin/java");
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
-            args[i] = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath()));
-            args[i] = argList.get(i).replace("${gl_lib_name}", config.getRenderer().getGlLibName());
+            args[i] = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath())).replace("${gl_lib_name}", config.getRenderer().getGlLibName());
         }
         return args;
     }
@@ -209,7 +209,7 @@ public class FCLauncher {
     public static FCLBridge launchMinecraft(FCLConfig config) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(config.getContext(), config.getCallback());
+        FCLBridge bridge = new FCLBridge(null);
 
         Thread gameThread = new Thread(() -> {
             try {
@@ -217,10 +217,6 @@ public class FCLauncher {
                 bridge.redirectStdio(config.getLogDir() + "/latest_game.log");
 
                 logStartInfo("Minecraft");
-
-                // set graphic output and event pipe
-                bridge.setFCLNativeWindow(config.getSurface());
-                bridge.setEventPipe();
 
                 // env
                 setEnv(config, bridge, true);
@@ -246,7 +242,7 @@ public class FCLauncher {
         });
 
         gameThread.setPriority(Thread.MAX_PRIORITY);
-        gameThread.start();
+        bridge.setThread(gameThread);
 
         return bridge;
     }
@@ -254,7 +250,7 @@ public class FCLauncher {
     public static FCLBridge launchJavaGUI(FCLConfig config) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(config.getContext(), config.getCallback());
+        FCLBridge bridge = new FCLBridge(null);
 
         Thread javaGUIThread = new Thread(() -> {
             try {
@@ -262,10 +258,6 @@ public class FCLauncher {
                 bridge.redirectStdio(config.getLogDir() + "/latest_java_gui.log");
 
                 logStartInfo("Java GUI");
-
-                // set graphic output and event pipe
-                bridge.setFCLNativeWindow(config.getSurface());
-                bridge.setEventPipe();
 
                 // env
                 setEnv(config, bridge, true);
@@ -290,15 +282,15 @@ public class FCLauncher {
             }
         });
 
-        javaGUIThread.start();
+        bridge.setThread(javaGUIThread);
 
         return bridge;
     }
 
-    public static void launchAPIInstaller(FCLConfig config) {
+    public static void launchAPIInstaller(FCLConfig config, FCLBridgeCallback callback) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(config.getContext(), config.getCallback());
+        FCLBridge bridge = new FCLBridge(callback);
 
         Thread apiInstallerThread = new Thread(() -> {
             try {

@@ -33,8 +33,10 @@
     <string name="account_methods_yggdrasil">Mojang 账户</string>
     <string name="account_methods_authlib_injector">外置账户</string>
     <string name="account_methods_microsoft">微软账户</string>
+    <string name="account_failed">账户刷新失败</string>
     <string name="account_failed_no_character">该账户中无角色。</string>
     <string name="account_failed_connect_authentication_server">无法连接认证服务器，请检查网络。</string>
+    <string name="account_failed_server_disconnected">无法连接认证服务器。你可以暂时离线游戏或尝试重新登录。</string>
     <string name="account_failed_server_response_malformed">无效的返回码，该认证服务器可能失效。</string>
     <string name="account_failed_invalid_credentials">不正确的密码或被限速，请稍后再试。</string>
     <string name="account_failed_invalid_token">请尝试重新登录。</string>
@@ -65,6 +67,10 @@
     <string name="account_state_no_account">没有账户</string>
     <string name="account_state_add">点击添加账户</string>
 
+    <string name="action_refresh">刷新</string>
+    <string name="action_retry">重试</string>
+    <string name="action_skip">跳过</string>
+
     <string name="download_code_404">未找到文件</string>
 
     <string name="exception_access_denied">无法获取文件。</string>
@@ -79,6 +85,7 @@
     <string name="launch_error_java">错误的 Java 版本</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
+    <string name="launch_failed">无法启动</string>
 
     <string name="launch_state_dependencies">检查依赖</string>
     <string name="launch_state_modpack">下载依赖</string>
@@ -87,7 +94,6 @@
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
 
-    <string name="message_refresh">刷新</string>
     <string name="message_cancelled">操作已取消</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
@@ -99,6 +105,8 @@
     <string name="profile_select">选择目录</string>
     <string name="profile_add_alert">请先填写名称与路径！</string>
 
+    <string name="version_empty_launch">没有版本，请先安装一个版本。</string>
+    <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
     <string name="version_manage_remove_confirm">你确定要删除 %s 吗？ 该操作无法撤回！</string>

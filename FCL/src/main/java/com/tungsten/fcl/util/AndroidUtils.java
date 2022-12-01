@@ -46,4 +46,22 @@ public class AndroidUtils {
         CookieManager.getInstance().removeAllCookies(null);
     }
 
+    public static String getLocalizedText(Context context, String key, Object... formatArgs) {
+        return String.format(getLocalizedText(context, key), formatArgs);
+    }
+
+    public static String getLocalizedText(Context context, String key) {
+        int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
+        if (resId != 0 && context.getString(resId) != null) {
+            return context.getString(resId);
+        } else {
+            return key;
+        }
+    }
+
+    public static boolean hasStringId(Context context, String key) {
+        int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
+        return resId != 0 && context.getString(resId) != null;
+    }
+
 }

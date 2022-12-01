@@ -4,12 +4,10 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.content.Context;
-import android.view.Surface;
 
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclauncher.FCLPath;
@@ -32,12 +30,8 @@ import java.util.function.Supplier;
 
 public class DefaultLauncher extends Launcher {
 
-    public DefaultLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
-        super(context, surface, repository, version, authInfo, options);
-    }
-
-    public DefaultLauncher(Context context, Surface surface, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options, FCLBridgeCallback callback) {
-        super(context, surface, repository, version, authInfo, options, callback);
+    public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
+        super(context, repository, version, authInfo, options);
     }
 
     private CommandBuilder generateCommandLine() throws IOException {
@@ -273,13 +267,11 @@ public class DefaultLauncher extends Launcher {
         String[] finalArgs = rawCommandLine.toArray(new String[0]);
 
         FCLConfig config = new FCLConfig(context,
-                surface,
                 FCLPath.LOG_DIR,
                 options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
                 repository.getRunDirectory(version.getId()).getAbsolutePath(),
                 options.getRenderer(),
-                finalArgs,
-                callback);
+                finalArgs);
         return FCLauncher.launchMinecraft(config);
     }
 }

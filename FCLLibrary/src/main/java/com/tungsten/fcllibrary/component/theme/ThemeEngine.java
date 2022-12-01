@@ -2,6 +2,8 @@ package com.tungsten.fcllibrary.component.theme;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -9,6 +11,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fcllibrary.R;
+import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class ThemeEngine {
@@ -79,7 +88,21 @@ public class ThemeEngine {
         }
     }
 
-    public void applyBackground(Context context, View view, BitmapDrawable lt, BitmapDrawable dk) {
+    private void applyBackground(Context context, View view, String ltPath, String dkPath) {
+        try {
+            if (ltPath != null && new File(ltPath).exists()) {
+                FileUtils.copyFile(new File(ltPath), new File(FCLPath.LT_BACKGROUND_PATH));
+            }
+            if (dkPath != null && new File(dkPath).exists()) {
+                FileUtils.copyFile(new File(dkPath), new File(FCLPath.DK_BACKGROUND_PATH));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Bitmap ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
+        Bitmap dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
+        BitmapDrawable lt = new BitmapDrawable(ltBitmap);
+        BitmapDrawable dk = new BitmapDrawable(dkBitmap);
         theme.setBackgroundLt(lt);
         theme.setBackgroundDk(dk);
         boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
@@ -96,7 +119,7 @@ public class ThemeEngine {
         Theme.saveTheme(context, theme);
     }
 
-    public void applyAndSave(Context context, View view, BitmapDrawable lt, BitmapDrawable dk) {
+    public void applyAndSave(Context context, View view, String lt, String dk) {
         applyBackground(context, view, lt, dk);
         Theme.saveTheme(context, theme);
     }

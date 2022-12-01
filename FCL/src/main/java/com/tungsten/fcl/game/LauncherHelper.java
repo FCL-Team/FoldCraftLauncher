@@ -1,12 +1,23 @@
 package com.tungsten.fcl.game;
 
+import static com.tungsten.fcl.util.AndroidUtils.getLocalizedText;
+import static com.tungsten.fcl.util.AndroidUtils.hasStringId;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.JVMActivity;
+import com.tungsten.fcl.control.ControllerType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fclauncher.FCLPath;
-import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.account.AccountListItem;
+import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;
@@ -32,8 +43,9 @@ import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
-import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.dialog.FCLDialog;
+import com.tungsten.fcllibrary.component.view.FCLButton;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,34 +55,32 @@ import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public final class LauncherHelper {
 
-    /*
-
+    private final Context context;
     private final Profile profile;
     private final Account account;
     private final String selectedVersion;
     private final VersionSetting setting;
-    private boolean showLogs;
+    private final TaskDialog launchingStepsPane;
 
-    public LauncherHelper(Profile profile, Account account, String selectedVersion) {
+    public LauncherHelper(Context context, Profile profile, Account account, String selectedVersion) {
+        this.context = Objects.requireNonNull(context);
         this.profile = Objects.requireNonNull(profile);
         this.account = Objects.requireNonNull(account);
         this.selectedVersion = Objects.requireNonNull(selectedVersion);
         this.setting = profile.getVersionSetting(selectedVersion);
-        this.launchingStepsPane.setTitle(i18n("version.launch"));
+        this.launchingStepsPane = new TaskDialog(context, TaskCancellationAction.NORMAL);
+        this.launchingStepsPane.setTitle(context.getString(R.string.version_launch));
     }
-
-    private final TaskExecutorDialogPane launchingStepsPane = new TaskExecutorDialogPane(TaskCancellationAction.NORMAL);
 
     public void launch() {
         LOG.info("Launching game version: " + selectedVersion);
 
-        Controllers.dialog(launchingStepsPane);
+        launchingStepsPane.show();
         launch0();
     }
 
@@ -80,12 +90,11 @@ public final class LauncherHelper {
         AtomicReference<Version> version = new AtomicReference<>(MaintainTask.maintain(repository, repository.getResolvedVersion(selectedVersion)));
         Optional<String> gameVersion = repository.getGameVersion(version.get());
         boolean integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion);
-        CountDownLatch launchingLatch = new CountDownLatch(1);
         List<String> javaAgents = new ArrayList<>(0);
 
         AtomicReference<JavaVersion> javaVersionRef = new AtomicReference<>();
 
-        TaskExecutor executor = checkGameState(profile, setting, version.get())
+        TaskExecutor executor = checkGameState(context, setting, version.get())
                 .thenComposeAsync(javaVersion -> {
                     javaVersionRef.set(Objects.requireNonNull(javaVersion));
                     version.set(version.get());
@@ -106,41 +115,25 @@ public final class LauncherHelper {
                             Task.composeAsync(() -> null)
                     );
                 }).withStage("launch.state.dependencies")
-                .thenComposeAsync(() -> {
-                    return gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null);
-                })
-                .thenComposeAsync(() -> logIn(account).withStage("launch.state.logging_in"))
+                .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
+                .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
-                    LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), javaAgents, scriptFile != null);
+                    LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), javaAgents);
                     return new FCLGameLauncher(
-                            FCLPath.CONTEXT,
+                            context,
                             repository,
                             version.get(),
                             authInfo,
-                            launchOptions,
-                            new FCLProcessListener()
+                            launchOptions
                     );
                 }).thenComposeAsync(launcher -> { // launcher is prev task's result
                     return Task.supplyAsync(launcher::launch);
-                }).thenAcceptAsync(fclBridge -> { // process is LaunchTask's result
-                    if (scriptFile == null) {
-                        PROCESSES.add(process);
-                        if (launcherVisibility == LauncherVisibility.CLOSE)
-                            Launcher.stopApplication();
-                        else
-                            launchingStepsPane.setCancel(new TaskCancellationAction(it -> {
-                                process.stop();
-                                it.fireEvent(new DialogCloseEvent());
-                            }));
-                    } else {
-                        Platform.runLater(() -> {
-                            launchingStepsPane.fireEvent(new DialogCloseEvent());
-                            Controllers.dialog(i18n("version.launch_script.success", scriptFile.getAbsolutePath()));
-                        });
-                    }
-                }).thenRunAsync(() -> {
-                    launchingLatch.await();
-                }).withStage("launch.state.waiting_launching"))
+                }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                    Intent intent = new Intent(context, JVMActivity.class);
+                    JVMActivity.setFClBridge(fclBridge, ControllerType.GAME);
+                    LOG.log(Level.INFO, "Start JVMActivity!");
+                    context.startActivity(intent);
+                })).withStage("launch.state.waiting_launching"))
                 .withStagesHint(Lang.immutableListOf(
                         "launch.state.java",
                         "launch.state.dependencies",
@@ -152,88 +145,76 @@ public final class LauncherHelper {
 
             @Override
             public void onStop(boolean success, TaskExecutor executor) {
-                launchingStepsPane.fireEvent(new DialogCloseEvent());
+                launchingStepsPane.dismiss();
                 if (!success) {
                     Exception ex = executor.getException();
                     if (!(ex instanceof CancellationException)) {
-                        String message;
-                        if (ex instanceof ModpackCompletionException) {
-                            if (ex.getCause() instanceof FileNotFoundException)
-                                message = i18n("modpack.type.curse.not_found");
-                            else
-                                message = i18n("modpack.type.curse.error");
-                        } else if (ex instanceof PermissionException) {
-                            message = i18n("launch.failed.executable_permission");
-                        } else if (ex instanceof ProcessCreationException) {
-                            message = i18n("launch.failed.creating_process") + ex.getLocalizedMessage();
-                        } else if (ex instanceof NotDecompressingNativesException) {
-                            message = i18n("launch.failed.decompressing_natives") + ex.getLocalizedMessage();
-                        } else if (ex instanceof LibraryDownloadException) {
-                            message = i18n("launch.failed.download_library", ((LibraryDownloadException) ex).getLibrary().getName()) + "\n";
-                            if (ex.getCause() instanceof ResponseCodeException) {
-                                ResponseCodeException rce = (ResponseCodeException) ex.getCause();
+                        Schedulers.androidUIThread().execute(() -> {
+                            String message;
+                            if (ex instanceof ModpackCompletionException) {
+                                if (ex.getCause() instanceof FileNotFoundException)
+                                    message = getLocalizedText(context, "modpack_type_curse_not_found");
+                                else
+                                    message = getLocalizedText(context, "modpack_type_curse_error");
+                            } else if (ex instanceof LibraryDownloadException) {
+                                message = getLocalizedText(context, "launch_failed_download_library", ((LibraryDownloadException) ex).getLibrary().getName()) + "\n";
+                                if (ex.getCause() instanceof ResponseCodeException) {
+                                    ResponseCodeException rce = (ResponseCodeException) ex.getCause();
+                                    int responseCode = rce.getResponseCode();
+                                    URL url = rce.getUrl();
+                                    if (responseCode == 404)
+                                        message += getLocalizedText(context, "download_code_404", url);
+                                    else
+                                        message += getLocalizedText(context, "download_failed", url, responseCode);
+                                } else {
+                                    message += StringUtils.getStackTrace(ex.getCause());
+                                }
+                            } else if (ex instanceof DownloadException) {
+                                URL url = ((DownloadException) ex).getUrl();
+                                if (ex.getCause() instanceof SocketTimeoutException) {
+                                    message = getLocalizedText(context, "install_failed_downloading_timeout", url);
+                                } else if (ex.getCause() instanceof ResponseCodeException) {
+                                    ResponseCodeException responseCodeException = (ResponseCodeException) ex.getCause();
+                                    if (hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
+                                        message = getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
+                                    } else {
+                                        message = getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(ex.getCause());
+                                    }
+                                } else {
+                                    message = getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(ex.getCause());
+                                }
+                            } else if (ex instanceof GameAssetIndexDownloadTask.GameAssetIndexMalformedException) {
+                                message = getLocalizedText(context, "assets_index_malformed");
+                            } else if (ex instanceof AuthlibInjectorDownloadException) {
+                                message = getLocalizedText(context, "account_failed_injector_download_failure");
+                            } else if (ex instanceof CharacterDeletedException) {
+                                message = getLocalizedText(context, "account_failed_character_deleted");
+                            } else if (ex instanceof ResponseCodeException) {
+                                ResponseCodeException rce = (ResponseCodeException) ex;
                                 int responseCode = rce.getResponseCode();
                                 URL url = rce.getUrl();
                                 if (responseCode == 404)
-                                    message += i18n("download.code.404", url);
+                                    message = getLocalizedText(context, "download_code_404", url);
                                 else
-                                    message += i18n("download.failed", url, responseCode);
+                                    message = getLocalizedText(context, "download_failed", url, responseCode);
+                            } else if (ex instanceof AccessDeniedException) {
+                                message = getLocalizedText(context, "exception_access_denied", ((AccessDeniedException) ex).getFile());
                             } else {
-                                message += StringUtils.getStackTrace(ex.getCause());
-                            }
-                        } else if (ex instanceof DownloadException) {
-                            URL url = ((DownloadException) ex).getUrl();
-                            if (ex.getCause() instanceof SocketTimeoutException) {
-                                message = i18n("install.failed.downloading.timeout", url);
-                            } else if (ex.getCause() instanceof ResponseCodeException) {
-                                ResponseCodeException responseCodeException = (ResponseCodeException) ex.getCause();
-                                if (I18n.hasKey("download.code." + responseCodeException.getResponseCode())) {
-                                    message = i18n("download.code." + responseCodeException.getResponseCode(), url);
+                                if (ex == null) {
+                                    message = "Task failed without exception!";
                                 } else {
-                                    message = i18n("install.failed.downloading.detail", url) + "\n" + StringUtils.getStackTrace(ex.getCause());
+                                    message = StringUtils.getStackTrace(ex);
                                 }
-                            } else {
-                                message = i18n("install.failed.downloading.detail", url) + "\n" + StringUtils.getStackTrace(ex.getCause());
                             }
-                        } else if (ex instanceof GameAssetIndexDownloadTask.GameAssetIndexMalformedException) {
-                            message = i18n("assets.index.malformed");
-                        } else if (ex instanceof AuthlibInjectorDownloadException) {
-                            message = i18n("account.failed.injector_download_failure");
-                        } else if (ex instanceof CharacterDeletedException) {
-                            message = i18n("account.failed.character_deleted");
-                        } else if (ex instanceof ResponseCodeException) {
-                            ResponseCodeException rce = (ResponseCodeException) ex;
-                            int responseCode = rce.getResponseCode();
-                            URL url = rce.getUrl();
-                            if (responseCode == 404)
-                                message = i18n("download.code.404", url);
-                            else
-                                message = i18n("download.failed", url, responseCode);
-                        } else if (ex instanceof CommandTooLongException) {
-                            message = i18n("launch.failed.command_too_long");
-                        } else if (ex instanceof ExecutionPolicyLimitException) {
-                            Controllers.prompt(new PromptDialogPane.Builder(i18n("launch.failed.execution_policy"),
-                                    (result, resolve, reject) -> {
-                                        if (CommandBuilder.setExecutionPolicy()) {
-                                            LOG.info("Set the ExecutionPolicy for the scope 'CurrentUser' to 'RemoteSigned'");
-                                            resolve.run();
-                                        } else {
-                                            LOG.warning("Failed to set ExecutionPolicy");
-                                            reject.accept(i18n("launch.failed.execution_policy.failed_to_set"));
-                                        }
-                                    })
-                                    .addQuestion(new PromptDialogPane.Builder.HintQuestion(i18n("launch.failed.execution_policy.hint")))
-                            );
 
-                            return;
-                        } else if (ex instanceof AccessDeniedException) {
-                            message = i18n("exception.access_denied", ((AccessDeniedException) ex).getFile());
-                        } else {
-                            message = StringUtils.getStackTrace(ex);
-                        }
-                        Controllers.dialog(message,
-                                scriptFile == null ? i18n("launch.failed") : i18n("version.launch_script.failed"),
-                                MessageType.ERROR);
+                            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                            builder.setCancelable(false);
+                            builder.setTitle(context.getString(R.string.launch_failed));
+                            builder.setMessage(message);
+                            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.create().show();
+                        });
                     }
                 }
             }
@@ -242,7 +223,7 @@ public final class LauncherHelper {
         executor.start();
     }
 
-    private static Task<JavaVersion> checkGameState(Profile profile, VersionSetting setting, Version version) {
+    private static Task<JavaVersion> checkGameState(Context context, VersionSetting setting, Version version) {
         if (setting.isNotCheckJVM()) {
             return Task.composeAsync(() -> setting.getJavaVersion(version))
                     .withStage("launch.state.java");
@@ -259,75 +240,81 @@ public final class LauncherHelper {
 
             CompletableFuture<JavaVersion> future = new CompletableFuture<>();
             Runnable continueAction = () -> future.complete(javaVersion);
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(FCLPath.CONTEXT);
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
             builder.setCancelable(false);
-            builder.setMessage(FCLPath.CONTEXT.getString(R.string.launch_error_java));
-            builder.setPositiveButton(FCLPath.CONTEXT.getString(R.string.launch_error_java_auto), () -> {
+            builder.setMessage(context.getString(R.string.launch_error_java));
+            builder.setPositiveButton(context.getString(R.string.launch_error_java_auto), () -> {
                 setting.setJava(0);
                 future.complete(suggestedJavaVersion);
             });
-            builder.setPositiveButton(FCLPath.CONTEXT.getString(R.string.launch_error_java_continue), continueAction::run);
+            builder.setPositiveButton(context.getString(R.string.launch_error_java_continue), continueAction::run);
             builder.create().show();
             return Task.fromCompletableFuture(future);
         }).withStage("launch.state.java");
     }
 
-    private static Task<AuthInfo> logIn(Account account) {
+    private static Task<AuthInfo> logIn(Context context, Account account) {
         return Task.composeAsync(() -> {
             try {
                 return Task.completed(account.logIn());
             } catch (CredentialExpiredException e) {
                 LOG.log(Level.INFO, "Credential has expired", e);
 
-                return Task.completed(DialogController.logIn(account));
+                return Task.completed(AccountListItem.logIn(account));
             } catch (AuthenticationException e) {
                 LOG.log(Level.WARNING, "Authentication failed, try skipping refresh", e);
 
                 CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
-                runInFX(() -> {
-                    JFXButton loginOfflineButton = new JFXButton(i18n("account.login.skip"));
-                    loginOfflineButton.setOnAction(event -> {
-                        try {
-                            future.complete(Task.completed(account.playOffline()));
-                        } catch (AuthenticationException e2) {
-                            future.completeExceptionally(e2);
-                        }
-                    });
-                    JFXButton retryButton = new JFXButton(i18n("account.login.retry"));
-                    retryButton.setOnAction(event -> {
-                        future.complete(logIn(account));
-                    });
-                    Controllers.dialog(new MessageDialogPane.Builder(i18n("account.failed.server_disconnected"), i18n("account.failed"), MessageType.ERROR)
-                            .addAction(loginOfflineButton)
-                            .addAction(retryButton)
-                            .addCancel(() ->
-                                    future.completeExceptionally(new CancellationException()))
-                            .build());
+                Schedulers.androidUIThread().execute(() -> {
+                    SkipLoginDialog dialog = new SkipLoginDialog(context, account, future);
+                    dialog.show();
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             }
         });
     }
 
-    class FCLProcessListener implements FCLBridgeCallback {
+    static class SkipLoginDialog extends FCLDialog implements View.OnClickListener {
 
-        @Override
-        public void onCursorModeChange(int mode) {
-            // TODO: Handle mouse event
+        private final Account account;
+        private final CompletableFuture<Task<AuthInfo>> future;
+
+        private FCLButton retry;
+        private FCLButton skip;
+        private FCLButton cancel;
+
+        public SkipLoginDialog(@NonNull Context context, Account account, CompletableFuture<Task<AuthInfo>> future) {
+            super(context);
+            this.account = account;
+            this.future = future;
+            setContentView(R.layout.dialog_skip_login);
+            setCancelable(false);
+
+            retry = findViewById(R.id.retry);
+            skip = findViewById(R.id.skip);
+            cancel = findViewById(R.id.cancel);
+            retry.setOnClickListener(this);
+            skip.setOnClickListener(this);
+            cancel.setOnClickListener(this);
         }
 
         @Override
-        public void onExit(int code) {
-            if (code != 0) {
-                // TODO: Show GameCrashWindow here
+        public void onClick(View view) {
+            if (view == retry) {
+                future.complete(logIn(getContext(), account));
             }
+            if (view == skip) {
+                try {
+                    future.complete(Task.completed(account.playOffline()));
+                } catch (AuthenticationException e2) {
+                    future.completeExceptionally(e2);
+                }
+            }
+            if (view == cancel) {
+                future.completeExceptionally(new CancellationException());
+            }
+            dismiss();
         }
     }
 
-    public static void stopManagedProcesses() {
-        while (!PROCESSES.isEmpty())
-            Optional.ofNullable(PROCESSES.poll()).ifPresent(ManagedProcess::stop);
-    }
-
-     */
 }

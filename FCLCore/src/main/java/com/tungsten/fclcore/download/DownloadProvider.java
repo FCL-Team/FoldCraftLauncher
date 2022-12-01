@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 /**
  * The service provider that provides Minecraft online file downloads.
- *
- * @author huangyuhui
  */
 public interface DownloadProvider {
 

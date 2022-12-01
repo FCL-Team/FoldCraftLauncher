@@ -8,39 +8,56 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLRadioButton extends AppCompatRadioButton {
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
-                    android.R.attr.state_checked
-                },
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] color = {
-                ThemeEngine.getInstance().getTheme().getDkColor(),
-                Color.GRAY
-        };
-        setButtonTintList(new ColorStateList(state, color));
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+                            android.R.attr.state_checked
+                    },
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getDkColor(),
+                    Color.GRAY
+            };
+            setButtonTintList(new ColorStateList(state, color));
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     public FCLRadioButton(Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
 }

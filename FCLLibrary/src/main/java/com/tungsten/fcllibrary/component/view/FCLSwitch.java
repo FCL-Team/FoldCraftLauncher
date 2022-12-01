@@ -9,43 +9,60 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLSwitch extends SwitchCompat {
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
-                        android.R.attr.state_checked
-                },
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] color = {
-                ThemeEngine.getInstance().getTheme().getDkColor(),
-                Color.LTGRAY
-        };
-        int[] subColor = {
-                ThemeEngine.getInstance().getTheme().getLtColor(),
-                Color.GRAY
-        };
-        setThumbTintList(new ColorStateList(state, color));
-        setTrackTintList(new ColorStateList(state, subColor));
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+                            android.R.attr.state_checked
+                    },
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getDkColor(),
+                    Color.LTGRAY
+            };
+            int[] subColor = {
+                    ThemeEngine.getInstance().getTheme().getLtColor(),
+                    Color.GRAY
+            };
+            setThumbTintList(new ColorStateList(state, color));
+            setTrackTintList(new ColorStateList(state, subColor));
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     public FCLSwitch(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 }

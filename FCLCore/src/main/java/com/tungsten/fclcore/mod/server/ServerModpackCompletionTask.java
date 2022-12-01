@@ -61,7 +61,7 @@ public class ServerModpackCompletionTask extends Task<Void> {
             this.manifest = manifest;
         }
 
-        setStage("hmcl.modpack.download");
+        setStage("fcl.modpack.download");
     }
 
     @Override
@@ -143,7 +143,7 @@ public class ServerModpackCompletionTask extends Task<Void> {
                         new URL(remoteManifest.getFileApi() + "/overrides/" + NetworkUtils.encodeLocation(file.getPath())),
                         actualPath.toFile(),
                         new FileDownloadTask.IntegrityCheck("SHA-1", file.getHash()))
-                        .withCounter("hmcl.modpack.download"));
+                        .withCounter("fcl.modpack.download"));
             }
         }
 

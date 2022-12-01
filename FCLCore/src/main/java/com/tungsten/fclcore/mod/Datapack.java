@@ -67,7 +67,7 @@ public class Datapack {
                  FileSystem zip = CompressingUtils.createReadOnlyZipFileSystem(path)) {
                 Path resourcesZip = zip.getPath("resources.zip");
                 if (Files.isRegularFile(resourcesZip)) {
-                    Path temp = Files.createTempFile("hmcl", ".zip");
+                    Path temp = Files.createTempFile("fcl", ".zip");
                     Files.copy(resourcesZip, temp, StandardCopyOption.REPLACE_EXISTING);
                     try (FileSystem resources = CompressingUtils.createReadOnlyZipFileSystem(temp)) {
                         FileUtils.copyDirectory(resources.getPath("/"), dest.getPath("/"));
@@ -77,7 +77,7 @@ public class Datapack {
                 Files.write(packMcMeta, Arrays.asList("{",
                         "\t\"pack\": {",
                         "\t\t\"pack_format\": 4,",
-                        "\t\t\"description\": \"Modified by HMCL.\"",
+                        "\t\t\"description\": \"Modified by FCL.\"",
                         "\t}",
                         "}"), StandardOpenOption.CREATE);
 

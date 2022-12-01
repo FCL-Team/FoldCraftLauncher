@@ -21,6 +21,7 @@ import com.tungsten.fcl.setting.ConfigHolder;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.Account;
@@ -53,17 +54,17 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private static MainActivity instance;
 
     public ConstraintLayout background;
-    private FCLDynamicIsland titleView;
+    public FCLDynamicIsland titleView;
 
     private UIManager uiManager;
     public FCLUILayout uiLayout;
 
     private LinearLayoutCompat leftMenu;
-    private FCLMenuView home;
-    private FCLMenuView manage;
-    private FCLMenuView download;
-    private FCLMenuView multiplayer;
-    private FCLMenuView setting;
+    public FCLMenuView home;
+    public FCLMenuView manage;
+    public FCLMenuView download;
+    public FCLMenuView multiplayer;
+    public FCLMenuView setting;
 
     private LinearLayoutCompat account;
     private FCLImageView avatar;
@@ -201,7 +202,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         }
     }
 
-    private void refreshMenuView(FCLMenuView view) {
+    public void refreshMenuView(FCLMenuView view) {
         FCLMenuView[] views = {
                 home,
                 manage,
@@ -229,7 +230,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             uiManager.switchUI(uiManager.getVersionUI());
         }
         if (view == launch) {
-
+            Versions.launch(this, Profiles.getSelectedProfile());
         }
     }
 

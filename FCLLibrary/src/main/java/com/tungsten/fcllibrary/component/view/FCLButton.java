@@ -14,47 +14,55 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class FCLButton extends AppCompatButton {
 
-    private boolean ripple;
+    private final boolean ripple;
     private boolean isDown;
 
     private GradientDrawable drawableNormal;
     private GradientDrawable drawablePress;
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private final Runnable runnable = () -> {
-        drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
-        drawableNormal.setColor(Color.TRANSPARENT);
-        drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
-        drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
-        if (!ripple) {
-            if (isDown) {
-                setBackgroundDrawable(drawablePress);
-            }
-            else {
-                setBackgroundDrawable(drawableNormal);
-            }
-        } else {
-            setBackgroundDrawable(getContext().getDrawable(R.drawable.fcl_button));
-            int[][] state = {
-                    {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getColor()
-            };
-            setBackgroundTintList(new ColorStateList(state, color));
+        @Override
+        protected void invalidated() {
+            get();
+            drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
+            drawableNormal.setColor(Color.TRANSPARENT);
+            drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
+            drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
+            if (!ripple) {
+                if (isDown) {
+                    setBackgroundDrawable(drawablePress);
+                    setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                }
+                else {
+                    setBackgroundDrawable(drawableNormal);
+                    setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                }
+            } else {
+                setRipple();
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
         }
     };
 
-    private void init(boolean ripple, int shape, boolean autoPadding) {
-        this.ripple = ripple;
+    private void init(int shape, boolean autoPadding) {
         setSingleLine(true);
         setAllCaps(false);
         setGravity(Gravity.CENTER);
@@ -84,8 +92,9 @@ public class FCLButton extends AppCompatButton {
 
     public FCLButton(@NonNull Context context) {
         super(context);
-        init(false, GradientDrawable.RECTANGLE, true);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        this.ripple = false;
+        init(GradientDrawable.RECTANGLE, true);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -94,9 +103,10 @@ public class FCLButton extends AppCompatButton {
         boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
         boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-        init(ripple, shape, autoPadding);
+        this.ripple = ripple;
+        init(shape, autoPadding);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -105,9 +115,10 @@ public class FCLButton extends AppCompatButton {
         boolean ripple = typedArray.getBoolean(R.styleable.FCLButton_ripple, false);
         int shape = typedArray.getInteger(R.styleable.FCLButton_shape, GradientDrawable.RECTANGLE);
         boolean autoPadding = typedArray.getBoolean(R.styleable.FCLButton_auto_padding, true);
-        init(ripple, shape, autoPadding);
+        this.ripple = ripple;
+        init(shape, autoPadding);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     @Override
@@ -116,18 +127,19 @@ public class FCLButton extends AppCompatButton {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 isDown = true;
                 setBackgroundDrawable(drawablePress);
+                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
             }
             if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                 isDown = false;
                 setBackgroundDrawable(drawableNormal);
+                setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
             }
         }
         return super.onTouchEvent(event);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void setRipple(boolean ripple) {
-        this.ripple = ripple;
+    public void setRipple() {
         setBackgroundDrawable(getContext().getDrawable(R.drawable.fcl_button));
         int[][] state = {
                 {
@@ -138,6 +150,7 @@ public class FCLButton extends AppCompatButton {
                 ThemeEngine.getInstance().getTheme().getColor()
         };
         setBackgroundTintList(new ColorStateList(state, color));
+        setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
     }
 
     public boolean isRipple() {

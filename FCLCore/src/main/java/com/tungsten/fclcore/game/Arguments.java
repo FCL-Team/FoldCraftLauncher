@@ -87,7 +87,7 @@ public final class Arguments {
     public static final List<Argument> DEFAULT_GAME_ARGUMENTS;
 
     static {
-        List<Argument> jvm = new ArrayList<>(6);
+        List<Argument> jvm = new ArrayList<>(5);
         jvm.add(new StringArgument("-Djava.library.path=${natives_directory}"));
         jvm.add(new StringArgument("-Dminecraft.launcher.brand=${launcher_name}"));
         jvm.add(new StringArgument("-Dminecraft.launcher.version=${launcher_version}"));

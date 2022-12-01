@@ -58,14 +58,12 @@ public class ProcessService extends Service {
         };
         FCLConfig config = new FCLConfig(
                 context,
-                null,
                 FCLPath.LOG_DIR,
                 FCLPath.JAVA_8_PATH,
                 FCLPath.CACHE_DIR,
                 null,
-                args,
-                callback);
-        FCLauncher.launchAPIInstaller(config);
+                args);
+        FCLauncher.launchAPIInstaller(config, callback);
     }
 
     @Override

@@ -71,9 +71,9 @@ public class McbbsModpackLocalInstallTask extends Task<Void> {
             }
         } catch (JsonParseException | IOException ignore) {
         }
-        dependents.add(new ModpackInstallTask<>(zipFile, run, modpack.getEncoding(), Collections.singletonList("/overrides"), any -> true, config).withStage("hmcl.modpack"));
+        dependents.add(new ModpackInstallTask<>(zipFile, run, modpack.getEncoding(), Collections.singletonList("/overrides"), any -> true, config).withStage("fcl.modpack"));
         instanceTask = new MinecraftInstanceTask<>(zipFile, modpack.getEncoding(), Collections.singletonList("/overrides"), manifest, McbbsModpackProvider.INSTANCE, modpack.getName(), modpack.getVersion(), repository.getModpackConfiguration(name));
-        dependents.add(instanceTask.withStage("hmcl.modpack"));
+        dependents.add(instanceTask.withStage("fcl.modpack"));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class McbbsModpackLocalInstallTask extends Task<Void> {
             Version patch = new Version(PATCH_NAME).setLibraries(manifest.getLibraries());
             dependencies.add(repository.saveAsync(version.addPatch(patch)));
         } else if (mcbbsPatch.isPresent()) {
-            // This mcbbs modpack was installed by HMCL.
+            // This mcbbs modpack was installed by FCL.
             Version patch = mcbbsPatch.get().setLibraries(manifest.getLibraries());
             dependencies.add(repository.saveAsync(version.addPatch(patch)));
         } else {

@@ -29,7 +29,7 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/message_refresh"/>
+            android:text="@string/action_refresh"/>
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/new_profile"

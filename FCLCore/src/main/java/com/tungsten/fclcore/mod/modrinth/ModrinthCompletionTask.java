@@ -64,7 +64,7 @@ public class ModrinthCompletionTask extends Task<Void> {
                 Logging.LOG.log(Level.WARNING, "Unable to read Modrinth modpack manifest.json", e);
             }
 
-        setStage("hmcl.modpack.download");
+        setStage("fcl.modpack.download");
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ModrinthCompletionTask extends Task<Void> {
                 FileDownloadTask task = new FileDownloadTask(file.getDownloads().get(0), filePath.toFile());
                 task.setCacheRepository(dependency.getCacheRepository());
                 task.setCaching(true);
-                dependencies.add(task.withCounter("hmcl.modpack.download"));
+                dependencies.add(task.withCounter("fcl.modpack.download"));
             }
         }
 

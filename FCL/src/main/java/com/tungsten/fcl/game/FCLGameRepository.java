@@ -107,7 +107,6 @@ public class FCLGameRepository extends DefaultGameRepository {
             LOG.log(Level.WARNING, "Unable to create launcher_profiles.json, Forge/LiteLoader installer will not work.", ex);
         }
 
-        // https://github.com/huanghongxun/HMCL/issues/938
         System.gc();
     }
 
@@ -161,7 +160,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 "regex:(.*?)\\.log",
                 "usernamecache.json", "usercache.json", // Minecraft
                 "launcher_profiles.json", "launcher.pack.lzma", // Minecraft Launcher
-                "backup", "pack.json", "launcher.jar", "cache", // HMCL
+                "backup", "pack.json", "launcher.jar", "cache", // FCL
                 ".curseclient", // Curse
                 ".fabric", ".mixin.out", // Fabric
                 "jars", "logs", "versions", "assets", "libraries", "crash-reports", "NVIDIA", "AMD", "screenshots", "natives", "native", "$native", "server-resource-packs", // Minecraft
@@ -178,7 +177,7 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     private File getLocalVersionSettingFile(String id) {
-        return new File(getVersionRoot(id), "hmclversion.cfg");
+        return new File(getVersionRoot(id), "fclversion.cfg");
     }
 
     private void loadLocalVersionSetting(String id) {
@@ -313,7 +312,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             vs.setUsesGlobal(true);
     }
 
-    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, List<String> javaAgents, boolean makeLaunchScript) {
+    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, List<String> javaAgents) {
         VersionSetting vs = getVersionSetting(version);
 
         LaunchOptions.Builder builder = new LaunchOptions.Builder()
@@ -336,7 +335,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setFullscreen(vs.isFullscreen())
                 .setServerIp(vs.getServerIp())
                 .setProcessPriority(vs.getProcessPriority())
-                .setJavaAgents(javaAgents);
+                .setJavaAgents(javaAgents)
+                .setRenderer(vs.getRender());
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {
@@ -407,7 +407,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     public static long getAllocatedMemory(long minimum, long available, boolean auto) {
         if (auto) {
-            available -= 256 * 1024 * 1024; // Reserve 256MB memory for off-heap memory and HMCL itself
+            available -= 256 * 1024 * 1024;
             if (available <= 0) {
                 return minimum;
             }

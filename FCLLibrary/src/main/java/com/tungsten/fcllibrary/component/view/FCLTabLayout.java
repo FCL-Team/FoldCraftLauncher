@@ -9,40 +9,57 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.tabs.TabLayout;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLTabLayout extends TabLayout {
 
-    private final Runnable runnable = () -> {
-        int[][] state = {
-                {
-                        android.R.attr.state_selected
-                },
-                {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                }
-        };
-        int[] color = {
-                ThemeEngine.getInstance().getTheme().getDkColor(),
-                Color.GRAY
-        };
-        setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
-        setTabTextColors(new ColorStateList(state, color));
-        setTabIconTint(new ColorStateList(state, color));
+        @Override
+        protected void invalidated() {
+            get();
+            int[][] state = {
+                    {
+                            android.R.attr.state_selected
+                    },
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getDkColor(),
+                    Color.GRAY
+            };
+            setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
+            setTabTextColors(new ColorStateList(state, color));
+            setTabIconTint(new ColorStateList(state, color));
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
+        }
     };
 
     public FCLTabLayout(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 }

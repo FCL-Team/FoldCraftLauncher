@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -21,23 +23,38 @@ public class FCLImageView extends AppCompatImageView {
     private ObjectProperty<Drawable> image;
     private boolean autoTint;
 
-    private final Runnable runnable = () -> {
-        if (autoTint) {
-            int[][] state = {
-                    {
+    private final IntegerProperty theme = new IntegerPropertyBase() {
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getAutoTint()
-            };
-            setImageTintList(new ColorStateList(state, color));
+        @Override
+        protected void invalidated() {
+            get();
+            if (autoTint) {
+                int[][] state = {
+                        {
+
+                        }
+                };
+                int[] color = {
+                        ThemeEngine.getInstance().getTheme().getAutoTint()
+                };
+                setImageTintList(new ColorStateList(state, color));
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme";
         }
     };
 
     public FCLImageView(@NonNull Context context) {
         super(context);
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -45,7 +62,7 @@ public class FCLImageView extends AppCompatImageView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -53,7 +70,7 @@ public class FCLImageView extends AppCompatImageView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         typedArray.recycle();
-        ThemeEngine.getInstance().registerEvent(this, runnable);
+        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public void setAutoTint(boolean autoTint) {
@@ -65,11 +82,11 @@ public class FCLImageView extends AppCompatImageView {
     }
 
     public final void setImage(Drawable drawable) {
-        this.imageProperty().set(drawable);
+        imageProperty().set(drawable);
     }
 
     public final Drawable getImage() {
-        return this.image == null ? null : this.image.get();
+        return image == null ? null : image.get();
     }
 
     public final ObjectProperty<Drawable> imageProperty() {
