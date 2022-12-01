@@ -2,7 +2,9 @@ package com.tungsten.fcllibrary.component.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Point;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
@@ -10,6 +12,7 @@ import androidx.constraintlayout.utils.widget.ImageFilterView;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
@@ -27,7 +30,21 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     @SuppressLint("UseCompatLoadingForDrawables")
     public FCLAlertDialog(@NonNull Context context) {
         super(context);
+
         setContentView(R.layout.dialog_alert);
+
+        View parent = findViewById(R.id.parent);
+        parent.post(() -> {
+            WindowManager wm = getWindow().getWindowManager();
+            Point point = new Point();
+            wm.getDefaultDisplay().getSize(point);
+            int maxHeight = point.y - ConvertUtils.dip2px(getContext(), 30);
+            if (parent.getMeasuredHeight() < maxHeight) {
+                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            } else {
+                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, maxHeight);
+            }
+        });
 
         icon = findViewById(R.id.image);
         title = findViewById(R.id.title);
