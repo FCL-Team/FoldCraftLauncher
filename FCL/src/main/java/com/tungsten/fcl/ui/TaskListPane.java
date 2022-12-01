@@ -43,6 +43,7 @@ import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,9 +144,9 @@ public final class TaskListPane extends FCLAdapter {
                 }
 
                 Schedulers.androidUIThread().execute(() -> {
-                    ProgressListNode node = new ProgressListNode(getContext(), task);
-                    nodes.put(task, node);
                     StageNode stageNode = stageNodes.stream().filter(x -> x.stage.equals(task.getInheritedStage())).findAny().orElse(null);
+                    ProgressListNode node = new ProgressListNode(getContext(), stageNode != null && stageNodes.contains(stageNode), task);
+                    nodes.put(task, node);
                     listBox.add(stageNode == null || !stageNodes.contains(stageNode) ? 0 : listBox.indexOf(stageNode.getView()) + 1, node.getView());
                     notifyDataSetChanged();
                 });
@@ -170,9 +171,7 @@ public final class TaskListPane extends FCLAdapter {
             @Override
             public void onFailed(Task<?> task, Throwable throwable) {
                 if (task.getStage() != null) {
-                    Schedulers.androidUIThread().execute(() -> {
-                        stageNodes.stream().filter(x -> x.stage.equals(task.getStage())).findAny().ifPresent(StageNode::fail);
-                    });
+                    Schedulers.androidUIThread().execute(() -> stageNodes.stream().filter(x -> x.stage.equals(task.getStage())).findAny().ifPresent(StageNode::fail));
                 }
                 ProgressListNode node = nodes.remove(task);
                 if (node == null)
@@ -292,8 +291,11 @@ public final class TaskListPane extends FCLAdapter {
         private final FCLTextView title;
         private final FCLTextView state;
 
-        public ProgressListNode(Context context, Task<?> task) {
+        public ProgressListNode(Context context, boolean padding, Task<?> task) {
             parent = LayoutInflater.from(context).inflate(R.layout.item_task_progress, null);
+            if (padding) {
+                parent.setPadding(ConvertUtils.dip2px(context, 31), 0, 0, ConvertUtils.dip2px(context, 8));
+            }
 
             bar = parent.findViewById(R.id.progress);
             title = parent.findViewById(R.id.name);
