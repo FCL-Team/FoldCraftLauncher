@@ -2,6 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="10dp"
     android:orientation="horizontal">
 
     <com.tungsten.fcllibrary.component.view.FCLImageView
@@ -11,7 +12,7 @@
         android:layout_gravity="center"/>
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:singleLine="true"
         android:id="@+id/title"
         android:layout_width="match_parent"

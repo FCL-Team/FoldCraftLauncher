@@ -19,8 +19,6 @@ import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameInstallTask;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderInstallTask;
 import com.tungsten.fclcore.download.optifine.OptiFineInstallTask;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.mod.MinecraftInstanceTask;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
 import com.tungsten.fclcore.mod.ModpackUpdateTask;
@@ -57,45 +55,27 @@ public final class TaskListPane extends FCLAdapter {
     private final TaskExecutor executor;
     private final Map<Task<?>, ProgressListNode> nodes = new HashMap<>();
     private final List<StageNode> stageNodes = new ArrayList<>();
-    private final ObjectProperty<ArrayList<View>> listBox = new ObjectPropertyBase<ArrayList<View>>() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            TaskListPane.this.notifyDataSetChanged();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "list";
-        }
-    };
+    private final ArrayList<View> listBox = new ArrayList<>();
 
     public TaskListPane(Context context, TaskExecutor taskExecutor) {
         super(context);
-        this.listBox.set(new ArrayList<>());
         this.executor = taskExecutor;
         setExecutor(taskExecutor);
     }
 
     @Override
     public int getCount() {
-        return listBox.get().size();
+        return listBox.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return listBox.get().get(i);
+        return listBox.get(i);
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = listBox.get().get(i);
+        view = listBox.get(i);
         return view;
     }
 
@@ -107,6 +87,10 @@ public final class TaskListPane extends FCLAdapter {
                 Schedulers.androidUIThread().execute(() -> {
                     stageNodes.clear();
                     stageNodes.addAll(stages.stream().map(it -> new StageNode(getContext(), it)).collect(Collectors.toList()));
+                    for (StageNode stageNode : stageNodes) {
+                        listBox.add(stageNode.getView());
+                    }
+                    notifyDataSetChanged();
                 });
             }
 
@@ -162,7 +146,8 @@ public final class TaskListPane extends FCLAdapter {
                     ProgressListNode node = new ProgressListNode(getContext(), task);
                     nodes.put(task, node);
                     StageNode stageNode = stageNodes.stream().filter(x -> x.stage.equals(task.getInheritedStage())).findAny().orElse(null);
-                    listBox.get().add(stageNode == null || !stageNodes.contains(stageNode) ? 0 : listBox.get().indexOf(stageNode.getView()) + 1, node.getView());
+                    listBox.add(stageNode == null || !stageNodes.contains(stageNode) ? 0 : listBox.indexOf(stageNode.getView()) + 1, node.getView());
+                    notifyDataSetChanged();
                 });
             }
 
@@ -177,7 +162,8 @@ public final class TaskListPane extends FCLAdapter {
                     if (node == null)
                         return;
                     node.unbind();
-                    listBox.get().remove(node.getView());
+                    listBox.remove(node.getView());
+                    notifyDataSetChanged();
                 });
             }
 
