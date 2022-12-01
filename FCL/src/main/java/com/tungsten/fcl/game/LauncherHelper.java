@@ -41,6 +41,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -97,7 +98,7 @@ public final class LauncherHelper {
         TaskExecutor executor = checkGameState(context, setting, version.get())
                 .thenComposeAsync(javaVersion -> {
                     javaVersionRef.set(Objects.requireNonNull(javaVersion));
-                    version.set(version.get());
+                    version.set(LibFilter.filter(version.get()));
                     if (setting.isNotCheckGame())
                         return null;
                     return Task.allOf(
