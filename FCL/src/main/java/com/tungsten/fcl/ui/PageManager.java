@@ -99,6 +99,10 @@ public abstract class PageManager {
         currentTempPage = fclTempPage;
     }
 
+    public boolean canReturn() {
+        return currentTempPage != null;
+    }
+
     public void dismissCurrentTempPage() {
         if (currentTempPage != null) {
             currentTempPage.dismiss();
