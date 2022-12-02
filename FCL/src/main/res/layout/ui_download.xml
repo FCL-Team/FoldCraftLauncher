@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tab_layout"
         app:tabGravity="fill"
+        app:follow_theme="true"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:layout_constraintTop_toTopOf="parent">
 

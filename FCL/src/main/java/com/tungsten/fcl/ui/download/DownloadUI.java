@@ -7,7 +7,6 @@ import android.content.Context;
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
@@ -34,7 +33,6 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
 
-        ThemeEngine.getInstance().registerEvent(tabLayout, () -> tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
         tabLayout.addOnTabSelectedListener(this);
         container.post(this::initPages);
     }

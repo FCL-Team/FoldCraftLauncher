@@ -17,6 +17,9 @@
     <declare-styleable name="FCLTitleView">
         <attr name="title" format="string" localization="suggested" />
     </declare-styleable>
+    <declare-styleable name="FCLTabLayout">
+        <attr name="follow_theme" format="boolean"/>
+    </declare-styleable>
 
     <declare-styleable name="ColorPickerView" parent="ColorPanelView">
         <attr format="boolean|reference" name="cpv_alphaChannelVisible"/>
