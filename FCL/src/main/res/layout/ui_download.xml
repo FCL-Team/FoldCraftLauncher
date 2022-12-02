@@ -39,11 +39,18 @@
 
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
+    <View
+        android:background="@android:color/darker_gray"
+        android:id="@+id/split"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout"/>
+
     <com.tungsten.fcllibrary.component.view.FCLUILayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/tab_layout"
+        app:layout_constraintTop_toBottomOf="@+id/split"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,14 @@
 
     <View
         android:background="@android:color/darker_gray"
-        android:id="@+id/split"
+        android:id="@+id/split_left"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toEndOf="@id/left_menu"/>
+
+    <View
+        android:background="@android:color/darker_gray"
+        android:id="@+id/split_right"
         android:layout_width="1dp"
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@id/right_menu"/>
@@ -226,8 +233,8 @@
         android:id="@+id/ui_layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        app:layout_constraintStart_toEndOf="@+id/left_menu"
-        app:layout_constraintEnd_toStartOf="@id/split"/>
+        app:layout_constraintStart_toEndOf="@+id/split_left"
+        app:layout_constraintEnd_toStartOf="@id/split_right"/>
 
     <com.tungsten.fcllibrary.component.view.FCLDynamicIsland
         android:stateListAnimator="@null"

@@ -34,7 +34,7 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
 
-        ThemeEngine.getInstance().registerEvent(tabLayout, () -> tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getLtColor()));
+        ThemeEngine.getInstance().registerEvent(tabLayout, () -> tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
         tabLayout.addOnTabSelectedListener(this);
         container.post(this::initPages);
     }
