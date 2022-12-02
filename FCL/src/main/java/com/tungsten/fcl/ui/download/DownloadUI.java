@@ -1,18 +1,28 @@
 package com.tungsten.fcl.ui.download;
 
+import static com.tungsten.fclcore.util.Lang.tryCast;
+
 import android.content.Context;
 
+import com.google.android.material.tabs.TabLayout;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
-import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class DownloadUI extends FCLMultiPageUI {
+public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
 
     private DownloadPageManager pageManager;
+
+    private FCLTabLayout tabLayout;
+    private FCLUILayout container;
 
     public DownloadUI(Context context, FCLUILayout parent, int id) {
         super(context, parent, id);
@@ -21,6 +31,12 @@ public class DownloadUI extends FCLMultiPageUI {
     @Override
     public void onCreate() {
         super.onCreate();
+        tabLayout = findViewById(R.id.tab_layout);
+        container = findViewById(R.id.container);
+
+        ThemeEngine.getInstance().registerEvent(tabLayout, () -> tabLayout.setBackgroundColor(ThemeEngine.getInstance().getTheme().getLtColor()));
+        tabLayout.addOnTabSelectedListener(this);
+        container.post(this::initPages);
     }
 
     @Override
@@ -55,21 +71,54 @@ public class DownloadUI extends FCLMultiPageUI {
 
     @Override
     public void initPages() {
-
+        pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME, null);
     }
 
     @Override
     public ArrayList<FCLBasePage> getAllPages() {
-        return null;
+        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
 
     @Override
     public FCLBasePage getPage(int id) {
-        return null;
+        return pageManager == null ? null : pageManager.getPageById(id);
     }
 
     @Override
     public Task<?> refresh(Object... param) {
         return null;
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        if (pageManager != null) {
+            switch (tab.getPosition()) {
+                case 1:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK);
+                    break;
+                case 2:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
+                    break;
+                case 3:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK);
+                    break;
+                case 4:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_WORLD);
+                    break;
+                default:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }

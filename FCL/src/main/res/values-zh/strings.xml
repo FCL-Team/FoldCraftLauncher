@@ -98,6 +98,10 @@
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
 
+    <string name="mods">模组</string>
+
+    <string name="modpack">整合包</string>
+
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
     <string name="profile_name">名称</string>
@@ -105,6 +109,9 @@
     <string name="profile_select">选择目录</string>
     <string name="profile_add_alert">请先填写名称与路径！</string>
 
+    <string name="resourcepack">资源包</string>
+
+    <string name="version_game">游戏</string>
     <string name="version_empty_launch">没有版本，请先安装一个版本。</string>
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
@@ -115,4 +122,6 @@
     <string name="version_manage_rename_new">新名称</string>
     <string name="version_manage_rename_fail">重命名失败</string>
     <string name="version_new_profile">新建目录</string>
+
+    <string name="world">世界</string>
 </resources>

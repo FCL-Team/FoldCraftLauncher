@@ -1,5 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
+import static com.tungsten.fclcore.util.Lang.tryCast;
+
 import android.content.Context;
 
 import com.tungsten.fclcore.task.Task;
@@ -8,6 +10,8 @@ import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ManageUI extends FCLMultiPageUI {
 
@@ -59,12 +63,12 @@ public class ManageUI extends FCLMultiPageUI {
 
     @Override
     public ArrayList<FCLBasePage> getAllPages() {
-        return null;
+        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
 
     @Override
     public FCLBasePage getPage(int id) {
-        return null;
+        return pageManager == null ? null : pageManager.getPageById(id);
     }
 
     @Override

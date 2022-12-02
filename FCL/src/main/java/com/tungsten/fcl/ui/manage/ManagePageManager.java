@@ -27,6 +27,7 @@ public class ManagePageManager extends PageManager {
 
     public ManagePageManager(Context context, FCLUILayout parent, int defaultPageId, UIListener listener) {
         super(context, parent, defaultPageId, listener);
+        instance = this;
     }
 
     @Override

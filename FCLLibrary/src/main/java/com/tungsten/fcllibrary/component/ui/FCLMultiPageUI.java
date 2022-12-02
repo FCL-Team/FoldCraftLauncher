@@ -36,7 +36,6 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
     @Override
     public void onCreate() {
         super.onCreate();
-        initPages();
     }
 
     @Override

@@ -15,17 +15,11 @@ public abstract class FCLCommonPage extends FCLBasePage {
 
     private final FCLUILayout parent;
 
-    private UILoadingCallback callback;
-
     public FCLCommonPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
         super(context, id);
         this.parent = parent;
-        setContentView(resId, () -> {
-            onCreate();
-            if (callback != null) {
-                callback.onLoad();
-            }
-        });
+        setContentView(resId, null);
+        onCreate();
     }
 
     @Override
@@ -76,7 +70,4 @@ public abstract class FCLCommonPage extends FCLBasePage {
         parent.removeView(getContentView());
     }
 
-    public void addLoadingCallback(UILoadingCallback callback) {
-        this.callback = callback;
-    }
 }

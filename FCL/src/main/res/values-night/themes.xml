@@ -21,5 +21,6 @@
     <style name="TabTextAppearance">
         <item name="android:textSize">12sp</item>
         <item name="android:textAllCaps">false</item>
+        <item name="singleLine">true</item>
     </style>
 </resources>

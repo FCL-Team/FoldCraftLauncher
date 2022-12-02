@@ -117,6 +117,10 @@
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>
 
+    <string name="mods">Mods</string>
+    
+    <string name="modpack">Modpack</string>
+
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
     <string name="profile_name">Name</string>
@@ -124,6 +128,9 @@
     <string name="profile_select">Select Directory</string>
     <string name="profile_add_alert">Please fill the name and path first!</string>
 
+    <string name="resourcepack">Resource Packs</string>
+
+    <string name="version_game">Games</string>
     <string name="version_empty_launch">No instances, please install one before launch.</string>
     <string name="version_launch">Launch Game</string>
     <string name="version_no_version">No version</string>
@@ -134,4 +141,6 @@
     <string name="version_manage_rename_new">New name</string>
     <string name="version_manage_rename_fail">Rename failed</string>
     <string name="version_new_profile">New Directory</string>
+
+    <string name="world">Worlds</string>
 </resources>

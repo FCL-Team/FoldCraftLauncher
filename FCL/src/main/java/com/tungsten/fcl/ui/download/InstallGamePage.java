@@ -8,7 +8,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public class InstallGamePage extends FCLCommonPage {
 
-    public InstallGamePage(Context context, int id, boolean canReturn, FCLUILayout parent, int resId) {
+    public InstallGamePage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
     }
 

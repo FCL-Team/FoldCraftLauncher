@@ -2,11 +2,13 @@ package com.tungsten.fcl.ui;
 
 import android.content.Context;
 
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public abstract class PageManager {
 
@@ -84,6 +86,8 @@ public abstract class PageManager {
             }
             targetPage.onStart();
             currentPage = targetPage;
+        } else {
+            Logging.LOG.log(Level.WARNING, "No page!");
         }
     }
 
