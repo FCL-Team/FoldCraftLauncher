@@ -11,16 +11,16 @@ import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.anim.DisplayAnimUtils;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public abstract class FCLCommonUI extends FCLBaseUI {
+public abstract class FCLCommonPage extends FCLBasePage {
 
     private final FCLUILayout parent;
 
     private UILoadingCallback callback;
 
-    public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
-        super(context);
+    public FCLCommonPage(Context context, int id, boolean canReturn, FCLUILayout parent, @LayoutRes int resId) {
+        super(context, id, canReturn);
         this.parent = parent;
-        setContentView(id, () -> {
+        setContentView(resId, () -> {
             onCreate();
             if (callback != null) {
                 callback.onLoad();
@@ -46,18 +46,13 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     @Override
     public void onStart() {
         super.onStart();
-        DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.ui_show);
+        DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.page_show);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        DisplayAnimUtils.hideViewWithAnim(getContentView(), R.anim.ui_hide);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+        DisplayAnimUtils.hideViewWithAnim(getContentView(), R.anim.page_hide);
     }
 
     @Override

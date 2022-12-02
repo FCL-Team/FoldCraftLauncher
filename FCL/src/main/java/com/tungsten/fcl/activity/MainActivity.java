@@ -122,6 +122,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             launch.setOnClickListener(this);
 
             uiManager = new UIManager(this, uiLayout);
+            uiManager.registerDefaultBackEvent(backToMainUI);
             uiManager.init(() -> {
                 home = findViewById(R.id.home);
                 manage = findViewById(R.id.manage);
@@ -141,8 +142,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         });
     }
 
-    @Override
-    public void onBackPressed() {
+    public Runnable backToMainUI = () -> {
         if (uiManager.getCurrentUI() == uiManager.getMainUI()) {
             Intent i = new Intent(Intent.ACTION_MAIN);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -151,6 +151,13 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         }
         else {
             home.setSelected(true);
+        }
+    };
+
+    @Override
+    public void onBackPressed() {
+        if (uiManager != null) {
+            uiManager.onBackPressed();
         }
     }
 

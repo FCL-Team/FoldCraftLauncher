@@ -7,26 +7,23 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
-public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
-
-    private static Runnable defaultBackEvent;
+public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
 
     private final Context context;
     private final FCLActivity activity;
+    private final int id;
+    private final boolean canReturn;
 
     private View contentView;
 
-    public FCLBaseUI(Context context) {
+    public FCLBasePage(Context context, int id, boolean canReturn) {
         this.context = context;
         this.activity = (FCLActivity) context;
-    }
-
-    public static void setDefaultBackEvent(Runnable defaultBackEvent) {
-        FCLBaseUI.defaultBackEvent = defaultBackEvent;
+        this.id = id;
+        this.canReturn = canReturn;
     }
 
     public Context getContext() {
@@ -37,8 +34,16 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
         return activity;
     }
 
-    public void setContentView(@LayoutRes int id, OnInflateFinishedListener listener) {
-        new AsyncLayoutInflater(context).inflate(id, null, (view, resid, parent) -> {
+    public int getId() {
+        return id;
+    }
+
+    public boolean isCanReturn() {
+        return canReturn;
+    }
+
+    public void setContentView(@LayoutRes int resId, OnInflateFinishedListener listener) {
+        new AsyncLayoutInflater(context).inflate(resId, null, (view, resid, parent) -> {
             contentView = view;
             listener.onFinish();
         });
@@ -70,13 +75,6 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
     @Override
     public void onStop() {
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (defaultBackEvent != null && isShowing()) {
-            Schedulers.androidUIThread().execute(defaultBackEvent);
-        }
     }
 
     @Override

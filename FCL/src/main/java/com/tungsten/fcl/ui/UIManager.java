@@ -49,7 +49,7 @@ public class UIManager {
         this.parent = parent;
     }
 
-    public void init(Listener listener) {
+    public void init(UIListener listener) {
         if (instance != null) {
             Logging.LOG.log(Level.WARNING, "UIManager already initialized!");
             return;
@@ -137,6 +137,16 @@ public class UIManager {
         }
     }
 
+    public void registerDefaultBackEvent(Runnable runnable) {
+        FCLBaseUI.setDefaultBackEvent(runnable);
+    }
+
+    public void onBackPressed() {
+        if (currentUI != null) {
+            currentUI.onBackPressed();
+        }
+    }
+
     public void onPause() {
         for (FCLBaseUI baseUI : allUIs) {
             baseUI.onPause();
@@ -147,9 +157,5 @@ public class UIManager {
         for (FCLBaseUI baseUI : allUIs) {
             baseUI.onResume();
         }
-    }
-
-    public interface Listener {
-        void onLoad();
     }
 }

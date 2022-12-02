@@ -8,6 +8,8 @@ public interface FCLUILifecycleCallbacks {
 
     void onStop();
 
+    void onBackPressed();
+
     void onPause();
 
     void onResume();
