@@ -20,7 +20,7 @@ public class DownloadPageManager extends PageManager {
 
     private static DownloadPageManager instance;
 
-    private InstallGamePage installGamePage;
+    private InstallVersionPage installVersionPage;
     private DownloadPage downloadModpackPage;
     private DownloadPage downloadModPage;
     private DownloadPage downloadResourcePackPage;
@@ -40,7 +40,7 @@ public class DownloadPageManager extends PageManager {
 
     @Override
     public void init(UIListener listener) {
-        installGamePage = new InstallGamePage(getContext(), PAGE_ID_DOWNLOAD_GAME, getParent(), R.layout.page_install_game);
+        installVersionPage = new InstallVersionPage(getContext(), PAGE_ID_DOWNLOAD_GAME, getParent(), R.layout.page_install_version);
         downloadModpackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, getParent(), R.layout.page_download);
         downloadModPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, getParent(), R.layout.page_download);
         downloadResourcePackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, getParent(), R.layout.page_download);
@@ -54,7 +54,7 @@ public class DownloadPageManager extends PageManager {
     @Override
     public ArrayList<FCLCommonPage> getAllPages() {
         ArrayList<FCLCommonPage> pages = new ArrayList<>();
-        pages.add(installGamePage);
+        pages.add(installVersionPage);
         pages.add(downloadModpackPage);
         pages.add(downloadModPage);
         pages.add(downloadResourcePackPage);

@@ -11,15 +11,32 @@ import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.anim.DisplayAnimUtils;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import java.util.ArrayList;
+
 public abstract class FCLCommonPage extends FCLBasePage {
 
     private final FCLUILayout parent;
+
+    private final ArrayList<FCLTempPage> allTempPages = new ArrayList<>();
+    private FCLTempPage currentTempPage;
 
     public FCLCommonPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
         super(context, id);
         this.parent = parent;
         setContentView(resId, null);
         onCreate();
+    }
+
+    public ArrayList<FCLTempPage> getAllTempPages() {
+        return allTempPages;
+    }
+
+    public void setCurrentTempPage(FCLTempPage currentTempPage) {
+        this.currentTempPage = currentTempPage;
+    }
+
+    public FCLTempPage getCurrentTempPage() {
+        return currentTempPage;
     }
 
     @Override

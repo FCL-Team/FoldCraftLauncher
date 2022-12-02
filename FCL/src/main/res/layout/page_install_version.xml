@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ui_bg_color"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/release"
+            android:layout_gravity="center"
+            android:text="@string/version_game_release"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/snapshot"
+            android:layout_gravity="center"
+            android:text="@string/version_game_snapshot"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/old"
+            android:layout_gravity="center"
+            android:text="@string/version_game_old"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_refresh_24"
+            android:layout_gravity="center"
+            android:id="@+id/refresh"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/bar"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/list"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/progress"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_baseline_refresh_24"
+            android:id="@+id/failed_refresh"/>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

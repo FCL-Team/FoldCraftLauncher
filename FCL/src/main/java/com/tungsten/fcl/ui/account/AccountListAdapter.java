@@ -58,15 +58,6 @@ public class AccountListAdapter extends FCLAdapter {
         return list.get(i);
     }
 
-    public AccountListItem getSelectedItem() {
-        for (AccountListItem item : list) {
-            if (item.getAccount() == Accounts.getSelectedAccount()) {
-                return item;
-            }
-        }
-        return null;
-    }
-
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;

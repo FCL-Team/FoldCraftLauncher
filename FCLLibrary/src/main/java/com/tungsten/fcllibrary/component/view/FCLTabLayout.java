@@ -40,7 +40,7 @@ public class FCLTabLayout extends TabLayout {
             setTabTextColors(new ColorStateList(state, color));
             setTabIconTint(new ColorStateList(state, color));
             if (followTheme) {
-                setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
+                setBackgroundColor(ThemeEngine.getInstance().getTheme().getLtColor());
             }
         }
 

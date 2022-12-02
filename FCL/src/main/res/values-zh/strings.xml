@@ -112,6 +112,11 @@
     <string name="resourcepack">资源包</string>
 
     <string name="version_game">游戏</string>
+    <string name="version_game_old">远古版</string>
+    <string name="version_game_release">正式版</string>
+    <string name="version_game_releases">正式版</string>
+    <string name="version_game_snapshot">测试版</string>
+    <string name="version_game_snapshots">测试版</string>
     <string name="version_empty_launch">没有版本，请先安装一个版本。</string>
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
@@ -124,4 +129,5 @@
     <string name="version_new_profile">新建目录</string>
 
     <string name="world">世界</string>
+    <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
 </resources>

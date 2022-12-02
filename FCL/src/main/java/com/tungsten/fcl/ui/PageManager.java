@@ -19,9 +19,6 @@ public abstract class PageManager {
     private final ArrayList<FCLCommonPage> allPages;
     private FCLCommonPage currentPage;
 
-    private final ArrayList<FCLTempPage> allTempPages = new ArrayList<>();
-    private FCLTempPage currentTempPage;
-
     public PageManager (Context context, FCLUILayout parent, int defaultPageId, UIListener listener) {
         this.context = context;
         this.parent = parent;
@@ -50,14 +47,6 @@ public abstract class PageManager {
         return currentPage;
     }
 
-    public ArrayList<FCLTempPage> getAllTempPages() {
-        return allTempPages;
-    }
-
-    public FCLTempPage getCurrentTempPage() {
-        return currentTempPage;
-    }
-
     public abstract void init(UIListener listener);
 
     public abstract ArrayList<FCLCommonPage> getAllPages();
@@ -77,14 +66,19 @@ public abstract class PageManager {
             if (targetPage == null) {
                 throw new IllegalStateException("Wrong page id, this should not happen!");
             }
-            if (currentTempPage != null) {
-                currentTempPage.onStop();
+            if (currentPage != null && currentPage != targetPage) {
+                if (currentPage.isShowing()) {
+                    currentPage.onStop();
+                }
+                if (currentPage.getCurrentTempPage() != null && currentPage.getCurrentTempPage().isShowing()) {
+                    currentPage.getCurrentTempPage().onStop();
+                }
             }
-            allTempPages.clear();
-            if (currentPage != null && currentPage != targetPage && currentPage.isShowing()) {
-                currentPage.onStop();
+            if (targetPage.getCurrentTempPage() != null) {
+                targetPage.getCurrentTempPage().onRestart();
+            } else {
+                targetPage.onStart();
             }
-            targetPage.onStart();
             currentPage = targetPage;
         } else {
             Logging.LOG.log(Level.WARNING, "No page!");
@@ -92,33 +86,35 @@ public abstract class PageManager {
     }
 
     public void showTempPage(FCLTempPage fclTempPage) {
-        if (currentPage != null && currentPage.isShowing()) {
-            currentPage.onStop();
+        if (currentPage != null) {
+            if (currentPage.isShowing()) {
+                currentPage.onStop();
+            }
+            if (currentPage.getAllTempPages().size() > 0 &&
+                    currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1) != null &&
+                    currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).isShowing()) {
+                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).onStop();
+            }
+            fclTempPage.onStart();
+            currentPage.getAllTempPages().add(fclTempPage);
+            currentPage.setCurrentTempPage(fclTempPage);
         }
-        if (allTempPages.size() > 0 && allTempPages.get(allTempPages.size() - 1) != null && allTempPages.get(allTempPages.size() - 1).isShowing()) {
-            allTempPages.get(allTempPages.size() - 1).onStop();
-        }
-        fclTempPage.onStart();
-        allTempPages.add(fclTempPage);
-        currentTempPage = fclTempPage;
     }
 
     public boolean canReturn() {
-        return currentTempPage != null;
+        return currentPage.getCurrentTempPage() != null;
     }
 
     public void dismissCurrentTempPage() {
-        if (currentTempPage != null) {
-            currentTempPage.dismiss();
-            allTempPages.remove(allTempPages.size() - 1);
-            if (allTempPages.size() > 0) {
-                allTempPages.get(allTempPages.size() - 1).onRestart();
-                currentTempPage = allTempPages.get(allTempPages.size() - 1);
+        if (currentPage != null && currentPage.getCurrentTempPage() != null) {
+            currentPage.getCurrentTempPage().dismiss();
+            currentPage.getAllTempPages().remove(currentPage.getAllTempPages().size() - 1);
+            if (currentPage.getAllTempPages().size() > 0) {
+                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).onRestart();
+                currentPage.setCurrentTempPage(currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1));
             } else {
-                if (currentPage != null && !currentPage.isShowing()) {
-                    currentPage.onStart();
-                }
-                currentTempPage = null;
+                currentPage.onStart();
+                currentPage.setCurrentTempPage(null);
             }
         }
     }
@@ -126,18 +122,18 @@ public abstract class PageManager {
     public void onPause() {
         for (FCLCommonPage page : allPages) {
             page.onPause();
-        }
-        for (FCLTempPage page : allTempPages) {
-            page.onPause();
+            for (FCLTempPage tempPage : page.getAllTempPages()) {
+                tempPage.onPause();
+            }
         }
     }
 
     public void onResume() {
         for (FCLCommonPage page : allPages) {
             page.onResume();
-        }
-        for (FCLTempPage page : allTempPages) {
-            page.onResume();
+            for (FCLTempPage tempPage : page.getAllTempPages()) {
+                tempPage.onResume();
+            }
         }
     }
 

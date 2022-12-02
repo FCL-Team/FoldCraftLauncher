@@ -131,6 +131,11 @@
     <string name="resourcepack">Resource Packs</string>
 
     <string name="version_game">Games</string>
+    <string name="version_game_old">Historical</string>
+    <string name="version_game_release">Release</string>
+    <string name="version_game_releases">Releases</string>
+    <string name="version_game_snapshot">Snapshot</string>
+    <string name="version_game_snapshots">Snapshots</string>
     <string name="version_empty_launch">No instances, please install one before launch.</string>
     <string name="version_launch">Launch Game</string>
     <string name="version_no_version">No version</string>
@@ -143,4 +148,5 @@
     <string name="version_new_profile">New Directory</string>
 
     <string name="world">Worlds</string>
+    <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 </resources>
