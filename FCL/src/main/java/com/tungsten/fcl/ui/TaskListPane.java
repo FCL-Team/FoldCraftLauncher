@@ -76,8 +76,7 @@ public final class TaskListPane extends FCLAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = listBox.get(i);
-        return view;
+        return listBox.get(i);
     }
 
     private void setExecutor(TaskExecutor executor) {
