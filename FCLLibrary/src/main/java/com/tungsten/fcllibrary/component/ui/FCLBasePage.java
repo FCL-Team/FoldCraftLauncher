@@ -15,15 +15,13 @@ public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
     private final Context context;
     private final FCLActivity activity;
     private final int id;
-    private final boolean canReturn;
 
     private View contentView;
 
-    public FCLBasePage(Context context, int id, boolean canReturn) {
+    public FCLBasePage(Context context, int id) {
         this.context = context;
         this.activity = (FCLActivity) context;
         this.id = id;
-        this.canReturn = canReturn;
     }
 
     public Context getContext() {
@@ -36,10 +34,6 @@ public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
 
     public int getId() {
         return id;
-    }
-
-    public boolean isCanReturn() {
-        return canReturn;
     }
 
     public void setContentView(@LayoutRes int resId, OnInflateFinishedListener listener) {
@@ -74,6 +68,11 @@ public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
 
     @Override
     public void onStop() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
 
     }
 

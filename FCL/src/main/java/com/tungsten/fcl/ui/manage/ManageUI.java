@@ -3,10 +3,13 @@ package com.tungsten.fcl.ui.manage;
 import android.content.Context;
 
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
+import com.tungsten.fcllibrary.component.ui.FCLBasePage;
+import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public class ManageUI extends FCLCommonUI {
+import java.util.ArrayList;
+
+public class ManageUI extends FCLMultiPageUI {
 
     private ManagePageManager pageManager;
 
@@ -25,6 +28,15 @@ public class ManageUI extends FCLCommonUI {
     }
 
     @Override
+    public void onBackPressed() {
+        if (pageManager != null && pageManager.canReturn()) {
+            pageManager.dismissCurrentTempPage();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (pageManager != null) {
@@ -38,6 +50,21 @@ public class ManageUI extends FCLCommonUI {
         if (pageManager != null) {
             pageManager.onResume();
         }
+    }
+
+    @Override
+    public void initPages() {
+
+    }
+
+    @Override
+    public ArrayList<FCLBasePage> getAllPages() {
+        return null;
+    }
+
+    @Override
+    public FCLBasePage getPage(int id) {
+        return null;
     }
 
     @Override

@@ -17,8 +17,8 @@ public abstract class FCLCommonPage extends FCLBasePage {
 
     private UILoadingCallback callback;
 
-    public FCLCommonPage(Context context, int id, boolean canReturn, FCLUILayout parent, @LayoutRes int resId) {
-        super(context, id, canReturn);
+    public FCLCommonPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
+        super(context, id);
         this.parent = parent;
         setContentView(resId, () -> {
             onCreate();
@@ -53,6 +53,11 @@ public abstract class FCLCommonPage extends FCLBasePage {
     public void onStop() {
         super.onStop();
         DisplayAnimUtils.hideViewWithAnim(getContentView(), R.anim.page_hide);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

@@ -3,10 +3,14 @@ package com.tungsten.fcl.ui.download;
 import android.content.Context;
 
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
+import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public class DownloadUI extends FCLCommonUI {
+import java.util.ArrayList;
+
+public class DownloadUI extends FCLMultiPageUI {
 
     private DownloadPageManager pageManager;
 
@@ -26,7 +30,11 @@ public class DownloadUI extends FCLCommonUI {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (pageManager != null && pageManager.canReturn()) {
+            pageManager.dismissCurrentTempPage();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -43,6 +51,21 @@ public class DownloadUI extends FCLCommonUI {
         if (pageManager != null) {
             pageManager.onResume();
         }
+    }
+
+    @Override
+    public void initPages() {
+
+    }
+
+    @Override
+    public ArrayList<FCLBasePage> getAllPages() {
+        return null;
+    }
+
+    @Override
+    public FCLBasePage getPage(int id) {
+        return null;
     }
 
     @Override

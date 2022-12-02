@@ -16,8 +16,8 @@ public abstract class FCLTempPage extends FCLBasePage {
 
     private final FCLUILayout parent;
 
-    public FCLTempPage(Context context, int id, boolean canReturn, FCLUILayout parent, @LayoutRes int resId) {
-        super(context, id, canReturn);
+    public FCLTempPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
+        super(context, id);
         this.parent = parent;
         setContentView(resId, this::onCreate);
     }
