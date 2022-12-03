@@ -19,7 +19,12 @@ public abstract class FCLTempPage extends FCLBasePage {
     public FCLTempPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
         super(context, id);
         this.parent = parent;
-        setContentView(resId, this::onCreate);
+        setContentView(resId, null);
+        onCreate();
+    }
+
+    public FCLUILayout getParent() {
+        return parent;
     }
 
     @Override
@@ -63,6 +68,10 @@ public abstract class FCLTempPage extends FCLBasePage {
     public void onDestroy() {
         super.onDestroy();
         parent.removeView(getContentView());
+    }
+
+    public void restart() {
+        DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.page_show);
     }
 
     public abstract void onRestart();

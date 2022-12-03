@@ -14,13 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class FCLButton extends AppCompatButton {
+
+    private BooleanProperty visibilityProperty;
 
     private final boolean ripple;
     private boolean isDown;
@@ -164,5 +169,37 @@ public class FCLButton extends AppCompatButton {
 
     public int getShape() {
         return ((GradientDrawable) getBackground()).getShape();
+    }
+
+    public final void setVisibilityValue(boolean visibility) {
+        visibilityProperty().set(visibility);
+    }
+
+    public final boolean getVisibilityValue() {
+        return visibilityProperty == null || visibilityProperty.get();
+    }
+
+    public final BooleanProperty visibilityProperty() {
+        if (visibilityProperty == null) {
+            visibilityProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean visible = get();
+                        setVisibility(visible ? VISIBLE : GONE);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "visibility";
+                }
+            };
+        }
+
+        return visibilityProperty;
     }
 }

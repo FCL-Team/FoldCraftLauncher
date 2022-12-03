@@ -71,15 +71,40 @@
     <string name="action_retry">重试</string>
     <string name="action_skip">跳过</string>
 
+    <string name="archive_author">作者</string>
+    <string name="archive_date">发布时间</string>
+    <string name="archive_game_version">游戏版本</string>
+    <string name="archive_name">名称</string>
+    <string name="archive_version">版本</string>
+
     <string name="download_code_404">未找到文件</string>
+    <string name="download_failed_empty">没有可供选择的版本</string>
 
     <string name="exception_access_denied">无法获取文件。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
 
-    <string name="install_new_game_malformed">无效的名称</string>
-    <string name="install_failed_downloading_timeout">下载超时</string>
+    <string name="install_change_version">更改版本</string>
+    <string name="install_change_version_confirm">你确定将 %s 版本从 %s 改为 %s 吗?</string>
+    <string name="install_failed">安装失败</string>
+    <string name="install_failed_downloading">无法下载一些所需文件。</string>
     <string name="install_failed_downloading_detail">无法下载</string>
+    <string name="install_failed_downloading_timeout">下载超时</string>
+    <string name="install_failed_install_online">无法识别该文件。如果你需要添加模组，请前往模组管理页面。</string>
+    <string name="install_failed_malformed">文件下载中断，你可以切换下载源以尝试修复此问题。</string>
+    <string name="install_failed_optifine_conflict">在 Minecraft 1.13 及更新的版本中无法同时安装 Forge，OptiFine 和 Fabric。</string>
+    <string name="install_failed_optifine_forge_1.17">对于 Minecraft 1.17.1 或更旧的版本，Forge 仅支持 OptiFine H1 Pre2 或更新的版本。</string>
+    <string name="install_failed_version_mismatch">该软件需要游戏版本 %s，但当前版本为 %s。</string>
+    <string name="install_installer_change_version">版本 %s 与当前游戏版本不兼容。点击更改版本或移除版本。</string>
+    <string name="install_installer_choose">选择 %s 版本</string>
+    <string name="install_installer_depend">需要 %s</string>
+    <string name="install_installer_fabric_api_warning">Fabric API 是一个模组, 并且将被安装至当前版本的模组文件夹。请不要修改此版本的版本隔离/游戏运行路径设置。如果你在之后修改了相关设置，Fabric API 需要被重新安装！</string>
+    <string name="install_installer_incompatible">与 %s 不兼容</string>
+    <string name="install_installer_install">安装 %s</string>
+    <string name="install_installer_install_offline">从本地文件安装/升级</string>
+    <string name="install_installer_install_offline_extension">Forge/OptiFine 安装器</string>
+    <string name="install_installer_not_installed">不安装</string>
+    <string name="install_new_game_malformed">无效的名称</string>
 
     <string name="launch">启动游戏</string>
     <string name="launch_error_java">错误的 Java 版本</string>

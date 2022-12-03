@@ -5,6 +5,8 @@ import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -13,6 +15,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLProgressBar extends ProgressBar {
 
     private IntegerProperty progress;
+    private BooleanProperty visibilityProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -88,5 +91,37 @@ public class FCLProgressBar extends ProgressBar {
         }
 
         return progress;
+    }
+
+    public final void setVisibilityValue(boolean visibility) {
+        visibilityProperty().set(visibility);
+    }
+
+    public final boolean getVisibilityValue() {
+        return visibilityProperty == null || visibilityProperty.get();
+    }
+
+    public final BooleanProperty visibilityProperty() {
+        if (visibilityProperty == null) {
+            visibilityProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean visible = get();
+                        setVisibility(visible ? VISIBLE : GONE);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "visibility";
+                }
+            };
+        }
+
+        return visibilityProperty;
     }
 }

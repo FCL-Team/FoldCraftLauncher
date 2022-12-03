@@ -82,23 +82,48 @@
     <string name="action_retry">Retry</string>
     <string name="action_skip">Skip</string>
 
+    <string name="archive_author">Author(s)</string>
+    <string name="archive_date">Publish Date</string>
+    <string name="archive_game_version">Game Version</string>
+    <string name="archive_name">Filename</string>
+    <string name="archive_version">Version</string>
+
     <string name="download_code_404">File not found</string>
+    <string name="download_failed_empty">No versions are available</string>
 
     <string name="exception_access_denied">Unable to access the file.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
 
+    <string name="install_change_version">Change Version</string>
+    <string name="install_change_version_confirm">Are you sure you want to switch %s from version %s to %s?</string>
+    <string name="install_failed">Installation Failed</string>
+    <string name="install_failed_downloading">We are unable to download some of the required files.</string>
+    <string name="install_failed_downloading_detail">Unable to download file</string>
+    <string name="install_failed_downloading_timeout">Download timeout when fetching</string>
+    <string name="install_failed_install_online">Unable to identify the provided file. If you are installing a mod, go to the Mods page.</string>
+    <string name="install_failed_malformed">The downloaded files are corrupted. You can try to fix this issue by switching to another download mirror.</string>
+    <string name="install_failed_optifine_conflict">Cannot install both Fabric, OptiFine, and Forge on Minecraft 1.13 or above.</string>
+    <string name="install_failed_optifine_forge_1.17">For Minecraft version 1.17.1 or lower, Forge only supports OptiFine H1 Pre2 or newer. You can install them under the snapshot versions tab.</string>
+    <string name="install_failed_version_mismatch">This library requires the game version %s, but the installed one is %s.</string>
+    <string name="install_installer_change_version">Version %s is not compatible with the current game version. Click here to replace it with another version or delete it.</string>
+    <string name="install_installer_choose">Choose Your %s Version</string>
+    <string name="install_installer_depend">Requires %s</string>
     <string name="install_installer_fabric" translatable="false">Fabric</string>
     <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
+    <string name="install_installer_fabric_api_warning">Warning: Fabric API is a mod, and will be installed into the mod directory of the game instance. Please do not change the working directory of the game, or the Fabric API will not work. If you do want to change these settings, you should reinstall it.</string>
     <string name="install_installer_forge" translatable="false">Forge</string>
     <string name="install_installer_game" translatable="false">Minecraft</string>
+    <string name="install_installer_incompatible">Incompatible with %s</string>
+    <string name="install_installer_install">Install %s</string>
+    <string name="install_installer_install_offline">Install/Update from Local File</string>
+    <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
     <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
+    <string name="install_installer_not_installed">Not Selected</string>
     <string name="install_installer_optifine" translatable="false">OptiFine</string>
     <string name="install_installer_quilt" translatable="false">Quilt</string>
     <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
     <string name="install_new_game_malformed">Invalid Name</string>
-    <string name="install_failed_downloading_timeout">Download timeout</string>
-    <string name="install_failed_downloading_detail">Unable to download</string>
 
     <string name="launch">Launch</string>
     <string name="launch_error_java">Wrong Java Version</string>

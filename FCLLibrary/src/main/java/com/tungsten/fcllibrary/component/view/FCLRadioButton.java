@@ -8,11 +8,16 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLRadioButton extends AppCompatRadioButton {
+
+    private BooleanProperty visibilityProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -58,6 +63,38 @@ public class FCLRadioButton extends AppCompatRadioButton {
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+    }
+
+    public final void setVisibilityValue(boolean visibility) {
+        visibilityProperty().set(visibility);
+    }
+
+    public final boolean getVisibilityValue() {
+        return visibilityProperty == null || visibilityProperty.get();
+    }
+
+    public final BooleanProperty visibilityProperty() {
+        if (visibilityProperty == null) {
+            visibilityProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean visible = get();
+                        setVisibility(visible ? VISIBLE : GONE);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "visibility";
+                }
+            };
+        }
+
+        return visibilityProperty;
     }
 
 }

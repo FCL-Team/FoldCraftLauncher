@@ -12,6 +12,8 @@ import java.util.logging.Level;
 
 public abstract class PageManager {
 
+    public static final int PAGE_ID_TEMP = -10000;
+
     private final Context context;
     private final FCLUILayout parent;
     private final int defaultPageId;
@@ -75,6 +77,7 @@ public abstract class PageManager {
                 }
             }
             if (targetPage.getCurrentTempPage() != null) {
+                targetPage.getCurrentTempPage().restart();
                 targetPage.getCurrentTempPage().onRestart();
             } else {
                 targetPage.onStart();
@@ -110,6 +113,7 @@ public abstract class PageManager {
             currentPage.getCurrentTempPage().dismiss();
             currentPage.getAllTempPages().remove(currentPage.getAllTempPages().size() - 1);
             if (currentPage.getAllTempPages().size() > 0) {
+                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).restart();
                 currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).onRestart();
                 currentPage.setCurrentTempPage(currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1));
             } else {

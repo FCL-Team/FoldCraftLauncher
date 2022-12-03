@@ -27,6 +27,10 @@ public abstract class FCLCommonPage extends FCLBasePage {
         onCreate();
     }
 
+    public FCLUILayout getParent() {
+        return parent;
+    }
+
     public ArrayList<FCLTempPage> getAllTempPages() {
         return allTempPages;
     }
