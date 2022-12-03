@@ -8,6 +8,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.download.AdaptedDownloadProvider;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
@@ -131,24 +132,24 @@ public final class DownloadProviders {
         if (exception instanceof DownloadException) {
             URL url = ((DownloadException) exception).getUrl();
             if (exception.getCause() instanceof SocketTimeoutException) {
-                return context.getString(R.string.install_failed_downloading_timeout);
+                return AndroidUtils.getLocalizedText(context, "install_failed_downloading_timeout", url);
             } else if (exception.getCause() instanceof ResponseCodeException) {
                 ResponseCodeException responseCodeException = (ResponseCodeException) exception.getCause();
-                if (responseCodeException.getResponseCode() == 404) {
-                    return context.getString(R.string.download_code_404);
+                if (AndroidUtils.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
+                    return AndroidUtils.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
                 } else {
-                    return context.getString(R.string.install_failed_downloading_detail) + "\n" + StringUtils.getStackTrace(exception.getCause());
+                    return AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(exception.getCause());
                 }
             } else if (exception.getCause() instanceof FileNotFoundException) {
-                return context.getString(R.string.download_code_404);
+                return AndroidUtils.getLocalizedText(context, "download_code_404", url);
             } else if (exception.getCause() instanceof AccessDeniedException) {
-                return context.getString(R.string.install_failed_downloading_detail) + "\n" + context.getString(R.string.exception_access_denied);
+                return AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + AndroidUtils.getLocalizedText(context, "exception_access_denied", ((AccessDeniedException) exception.getCause()).getFile());
             } else if (exception.getCause() instanceof ArtifactMalformedException) {
-                return context.getString(R.string.install_failed_downloading_detail) + "\n" + context.getString(R.string.exception_artifact_malformed);
+                return AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + context.getString(R.string.exception_artifact_malformed);
             } else if (exception.getCause() instanceof SSLHandshakeException) {
-                return context.getString(R.string.install_failed_downloading_detail) + "\n" + context.getString(R.string.exception_ssl_handshake);
+                return AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + context.getString(R.string.exception_ssl_handshake);
             } else {
-                return context.getString(R.string.install_failed_downloading_detail) + "\n" + StringUtils.getStackTrace(exception.getCause());
+                return AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(exception.getCause());
             }
         } else if (exception instanceof ArtifactMalformedException) {
             return context.getString(R.string.exception_artifact_malformed);

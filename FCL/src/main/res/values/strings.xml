@@ -88,19 +88,25 @@
     <string name="archive_name">Filename</string>
     <string name="archive_version">Version</string>
 
-    <string name="download_code_404">File not found</string>
+    <string name="assets_download">Downloading Assets</string>
+    <string name="assets_download_all">Validating assets integrity</string>
+    <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
+
+    <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed_empty">No versions are available</string>
 
-    <string name="exception_access_denied">Unable to access the file.</string>
+    <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
+
+    <string name="input_not_empty">Fill the required input box first.</string>
 
     <string name="install_change_version">Change Version</string>
     <string name="install_change_version_confirm">Are you sure you want to switch %s from version %s to %s?</string>
     <string name="install_failed">Installation Failed</string>
     <string name="install_failed_downloading">We are unable to download some of the required files.</string>
-    <string name="install_failed_downloading_detail">Unable to download file</string>
-    <string name="install_failed_downloading_timeout">Download timeout when fetching</string>
+    <string name="install_failed_downloading_detail">Unable to download file: %s</string>
+    <string name="install_failed_downloading_timeout">Download timeout when fetching: %s</string>
     <string name="install_failed_install_online">Unable to identify the provided file. If you are installing a mod, go to the Mods page.</string>
     <string name="install_failed_malformed">The downloaded files are corrupted. You can try to fix this issue by switching to another download mirror.</string>
     <string name="install_failed_optifine_conflict">Cannot install both Fabric, OptiFine, and Forge on Minecraft 1.13 or above.</string>
@@ -123,13 +129,17 @@
     <string name="install_installer_optifine" translatable="false">OptiFine</string>
     <string name="install_installer_quilt" translatable="false">Quilt</string>
     <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_new_game">Add a New Instance</string>
+    <string name="install_new_game_already_exists">This instance already exists. Please use another name.</string>
     <string name="install_new_game_malformed">Invalid Name</string>
+    <string name="install_success">Installed successfully.</string>
 
     <string name="launch">Launch</string>
     <string name="launch_error_java">Wrong Java Version</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
     <string name="launch_failed">Unable to launch</string>
+    <string name="launch_failed_download_library">Unable to download library %s.</string>
 
     <string name="launch_state_dependencies">Resolving dependencies</string>
     <string name="launch_state_modpack">Downloading dependencies</string>

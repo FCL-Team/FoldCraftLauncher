@@ -77,12 +77,18 @@
     <string name="archive_name">名称</string>
     <string name="archive_version">版本</string>
 
-    <string name="download_code_404">未找到文件</string>
+    <string name="assets_download">下载资源</string>
+    <string name="assets_download_all">检查资源文件完整性</string>
+    <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
+
+    <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
 
-    <string name="exception_access_denied">无法获取文件。</string>
+    <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
+
+    <string name="input_not_empty">请先填写必要的输入框。</string>
 
     <string name="install_change_version">更改版本</string>
     <string name="install_change_version_confirm">你确定将 %s 版本从 %s 改为 %s 吗?</string>
@@ -104,13 +110,17 @@
     <string name="install_installer_install_offline">从本地文件安装/升级</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine 安装器</string>
     <string name="install_installer_not_installed">不安装</string>
+    <string name="install_new_game">安装新游戏版本</string>
+    <string name="install_new_game_already_exists">当前版本已存在，请换一个名称。</string>
     <string name="install_new_game_malformed">无效的名称</string>
+    <string name="install_success">安装成功</string>
 
     <string name="launch">启动游戏</string>
     <string name="launch_error_java">错误的 Java 版本</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
     <string name="launch_failed">无法启动</string>
+    <string name="launch_failed_download_library">未能下载游戏依赖 %s</string>
 
     <string name="launch_state_dependencies">检查依赖</string>
     <string name="launch_state_modpack">下载依赖</string>
