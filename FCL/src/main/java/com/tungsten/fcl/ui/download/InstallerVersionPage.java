@@ -34,7 +34,6 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
     private final Callback callback;
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
 
-    private LinearLayoutCompat checkBar;
     private FCLCheckBox checkRelease;
     private FCLCheckBox checkSnapShot;
     private FCLCheckBox checkOld;
@@ -52,7 +51,9 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
     }
 
     public void create() {
-        checkBar = findViewById(R.id.bar);
+        LinearLayoutCompat checkBar = findViewById(R.id.bar);
+        checkBar.setVisibility(DownloadProviders.getDownloadProvider().getVersionListById(libraryId).hasType() ? View.VISIBLE : View.GONE);
+
         checkRelease = findViewById(R.id.release);
         checkSnapShot = findViewById(R.id.snapshot);
         checkOld = findViewById(R.id.old);
