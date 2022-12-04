@@ -118,7 +118,8 @@ public class FCLauncher {
         argList.add(0, config.getJavaPath() + "/bin/java");
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
-            args[i] = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath())).replace("${gl_lib_name}", config.getRenderer().getGlLibName());
+            String a = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath()));
+            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer().getGlLibName());
         }
         return args;
     }
@@ -179,6 +180,24 @@ public class FCLauncher {
         bridge.dlopen(jreLibDir + "/libfontmanager.so");
         bridge.dlopen(jreLibDir + "/libtinyiconv.so");
         bridge.dlopen(jreLibDir + "/libinstrument.so");
+        for(File file : locateLibs(new File(config.getJavaPath()))) {
+            bridge.dlopen(file.getAbsolutePath());
+        }
+    }
+
+    public static ArrayList<File> locateLibs(File path) {
+        ArrayList<File> returnValue = new ArrayList<>();
+        File[] list = path.listFiles();
+        if (list != null) {
+            for (File f : list) {
+                if (f.isFile() && f.getName().endsWith(".so")) {
+                    returnValue.add(f);
+                } else if(f.isDirectory()) {
+                    returnValue.addAll(locateLibs(f));
+                }
+            }
+        }
+        return returnValue;
     }
 
     private static void setupGraphicAndSoundEngine(FCLConfig config, FCLBridge bridge) {
@@ -203,6 +222,8 @@ public class FCLauncher {
             System.out.println(task + " argument: " + arg);
         }
         bridge.setupJLI();
+        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
+        System.out.println("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
         System.out.println("OpenJDK exited with code : " + bridge.jliLaunch(args));
     }
 
@@ -226,9 +247,6 @@ public class FCLauncher {
 
                 // setup graphic and sound engine
                 setupGraphicAndSoundEngine(config, bridge);
-
-                // hook exit
-                bridge.setupExitTrap(bridge);
 
                 // set working directory
                 System.out.println("Working directory: " + config.getWorkingDir());
@@ -268,9 +286,6 @@ public class FCLauncher {
                 // setup graphic and sound engine
                 setupGraphicAndSoundEngine(config, bridge);
 
-                // hook exit
-                bridge.setupExitTrap(bridge);
-
                 // set working directory
                 System.out.println("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
@@ -304,9 +319,6 @@ public class FCLauncher {
 
                 // setup java runtime
                 setUpJavaRuntime(config, bridge);
-
-                // hook exit
-                bridge.setupExitTrap(bridge);
 
                 // set working directory
                 System.out.println("Working directory: " + config.getWorkingDir());

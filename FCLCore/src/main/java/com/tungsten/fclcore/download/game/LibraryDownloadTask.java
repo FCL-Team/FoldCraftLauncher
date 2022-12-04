@@ -87,7 +87,7 @@ public class LibraryDownloadTask extends Task<Void> {
             else
                 throw new LibraryDownloadException(library, t);
         } else {
-            if (xz) unpackLibrary(jar, Files.readAllBytes(xzFile.toPath()));
+            // if (xz) unpackLibrary(jar, Files.readAllBytes(xzFile.toPath()));
         }
     }
 
@@ -255,6 +255,8 @@ public class LibraryDownloadTask extends Task<Void> {
             jos.closeEntry();
         }
 
-        Files.delete(temp);
+        if (temp.toFile().exists()) {
+            Files.delete(temp);
+        }
     }
 }

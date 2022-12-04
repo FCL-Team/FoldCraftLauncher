@@ -33,6 +33,7 @@ import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -306,6 +307,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     }
 
     private void setupVersionDisplay() {
-        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty(), this::loadVersion));
+        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty(), s -> Schedulers.androidUIThread().execute(() -> loadVersion(s))));
     }
 }

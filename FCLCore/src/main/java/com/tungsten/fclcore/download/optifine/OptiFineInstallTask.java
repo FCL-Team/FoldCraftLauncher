@@ -37,6 +37,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * <b>Note</b>: OptiFine should be installed in the end.
@@ -141,16 +142,19 @@ public final class OptiFineInstallTask extends Task<Version> {
                         gameRepository.getLibraryFile(version, optiFineLibrary).toString()
                 };
                 int exitCode;
+                CountDownLatch latch = new CountDownLatch(1);
                 SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
                     server1.setResult(msg);
                     server1.stop();
+                    latch.countDown();
                 });
                 Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
                 Bundle bundle = new Bundle();
-                bundle.putStringArray("commands", command);
+                bundle.putStringArray("command", command);
                 service.putExtras(bundle);
                 FCLPath.CONTEXT.startService(service);
                 server.start();
+                latch.await();
                 exitCode = (int) server.getResult();
                 if (exitCode != 0)
                     throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));

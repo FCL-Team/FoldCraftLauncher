@@ -306,14 +306,10 @@ static void xh_core_refresh_impl()
     char                     line[512];
     FILE                    *fp;
     uintptr_t                base_addr;
-    uintptr_t                prev_base_addr = 0;
     char                     perm[5];
-    char                     prev_perm[5] = "---p";
     unsigned long            offset;
-    unsigned long            prev_offset = 0;
     int                      pathname_pos;
     char                    *pathname;
-    char                     prev_pathname[512] = {0};
     size_t                   pathname_len;
     xh_core_map_info_t      *mi, *mi_tmp;
     xh_core_map_info_t       mi_key;
@@ -332,12 +328,16 @@ static void xh_core_refresh_impl()
     {
         if(sscanf(line, "%"PRIxPTR"-%*lx %4s %lx %*x:%*x %*d%n", &base_addr, perm, &offset, &pathname_pos) != 3) continue;
 
-         // do not touch the shared memory
-        if (perm[3] != 'p') continue;
+        //check permission
+        if(perm[0] != 'r') continue;
+        if(perm[3] != 'p') continue; //do not touch the shared memory
 
-        // Ignore permission PROT_NONE maps
-        if (perm[0] == '-' && perm[1] == '-' && perm[2] == '-')
-            continue;
+        //check offset
+        //
+        //We are trying to find ELF header in memory.
+        //It can only be found at the beginning of a mapped memory regions
+        //whose offset is 0.
+        if(0 != offset) continue;
 
         //get pathname
         while(isspace(line[pathname_pos]) && pathname_pos < (int)(sizeof(line) - 1))
@@ -353,26 +353,6 @@ static void xh_core_refresh_impl()
         }
         if(0 == pathname_len) continue;
         if('[' == pathname[0]) continue;
-
-        // Find non-executable map, we need record it. Because so maps can begin with
-        // an non-executable map.
-        if (perm[2] != 'x') {
-            prev_offset = offset;
-            prev_base_addr = base_addr;
-            memcpy(prev_perm, perm, sizeof(prev_perm));
-            strcpy(prev_pathname, pathname);
-            continue;
-        }
-
-        // Find executable map if offset == 0, it OK,
-        // or we need check previous map for base address.
-        if (offset != 0) {
-            if (strcmp(prev_pathname, pathname) || prev_offset != 0 || prev_perm[0] != 'r') {
-                continue;
-            }
-            // The previous map is real begin map
-            base_addr = prev_base_addr;
-        }
 
         //check pathname
         //if we need to hook this elf?

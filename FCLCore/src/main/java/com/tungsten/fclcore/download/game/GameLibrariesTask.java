@@ -6,6 +6,7 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 
@@ -46,9 +47,9 @@ public final class GameLibrariesTask extends Task<Void> {
      */
     public GameLibrariesTask(AbstractDependencyManager dependencyManager, Version version, boolean integrityCheck, List<Library> libraries) {
         this.dependencyManager = dependencyManager;
-        this.version = version;
+        this.version = LibFilter.filter(version);
         this.integrityCheck = integrityCheck;
-        this.libraries = libraries;
+        this.libraries = LibFilter.filterLibs(libraries);
 
         setSignificance(TaskSignificance.MODERATE);
     }

@@ -100,7 +100,11 @@
             android:screenOrientation="sensorLandscape"/>
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
-            android:process=":processService" />
+            android:process=":processService"
+            android:launchMode="standard"
+            android:multiprocess="true"
+            android:alwaysRetainTaskState="true"
+            android:enabled="true"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_browser_provider"

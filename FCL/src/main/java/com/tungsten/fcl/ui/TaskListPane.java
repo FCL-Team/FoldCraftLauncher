@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Lang.tryCast;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -224,6 +226,16 @@ public final class TaskListPane extends FCLAdapter {
             parent = LayoutInflater.from(context).inflate(R.layout.item_task_stage, null);
             title = parent.findViewById(R.id.title);
             icon = parent.findViewById(R.id.icon);
+
+            int[][] state = {
+                    {
+
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getSystemAutoTint(context)
+            };
+            icon.setImageTintList(new ColorStateList(state, color));
 
             String stageKey = StringUtils.substringBefore(stage, ':');
             String stageValue = StringUtils.substringAfter(stage, ':');

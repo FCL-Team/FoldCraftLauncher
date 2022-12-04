@@ -43,6 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -140,9 +141,11 @@ public class ForgeNewInstallTask extends Task<Version> {
 
             LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
             int exitCode;
+            CountDownLatch latch = new CountDownLatch(1);
             SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
                 server1.setResult(msg);
                 server1.stop();
+                latch.countDown();
             });
             Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
             Bundle bundle = new Bundle();
@@ -150,6 +153,7 @@ public class ForgeNewInstallTask extends Task<Version> {
             service.putExtras(bundle);
             FCLPath.CONTEXT.startService(service);
             server.start();
+            latch.await();
             exitCode = (int) server.getResult();
             if (exitCode != 0)
                 throw new IOException("Game processor exited abnormally with code " + exitCode);

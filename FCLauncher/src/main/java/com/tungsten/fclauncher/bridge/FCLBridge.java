@@ -60,7 +60,8 @@ public class FCLBridge implements Serializable {
     public native int chdir(String path);
     public native void setenv(String key, String value);
     public native int dlopen(String path);
-    public native void setupExitTrap(FCLBridge bridge);
+    public native void setLdLibraryPath(String path);
+    public native int setupExitTrap(FCLBridge bridge);
     public native void setEventPipe();
     public native void pushEvent(long time, int type, int keycode, int keyChar);
     public native void setupJLI();
@@ -108,7 +109,7 @@ public class FCLBridge implements Serializable {
     }
 
     // Loader function
-    public void exit(int code) {
+    public void onExit(int code) {
         if (callback != null) {
             callback.onExit(code);
         }

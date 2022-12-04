@@ -2,9 +2,11 @@ package com.tungsten.fclauncher;
 
 import android.content.Context;
 
-public class FCLConfig {
+import java.io.Serializable;
 
-    public enum Renderer {
+public class FCLConfig implements Serializable {
+
+    public enum Renderer implements Serializable {
         RENDERER_GL4ES("libgl4es.so:libgl4es_egl.so"),
         RENDERER_ZINK("libGL.so:libEGL.so");
 

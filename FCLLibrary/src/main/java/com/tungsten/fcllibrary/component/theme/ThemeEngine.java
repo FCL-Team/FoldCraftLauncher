@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -59,6 +60,14 @@ public class ThemeEngine {
 
     public Theme getTheme() {
         return theme;
+    }
+
+    public static boolean isNightMode(Context context) {
+        return (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    public static int getSystemAutoTint(Context context) {
+        return isNightMode(context) ? Color.WHITE : Color.BLACK;
     }
 
     public void applyColor(int color) {

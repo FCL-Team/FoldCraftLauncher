@@ -23,21 +23,12 @@ static const jboolean const_cpwildcard = JNI_TRUE;
 static const jboolean const_javaw = JNI_FALSE;
 static const jint const_ergo_class = 0;    //DEFAULT_POLICY
 
+typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
 static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
 
-void (*old_exit)(int code);
-void custom_exit(int code) {
-    JNIEnv *env;
-    (*exitTrap_jvm)->AttachCurrentThread(exitTrap_jvm, &env, NULL);
-    (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
-    (*env)->DeleteGlobalRef(env, exitTrap_bridge);
-    (*exitTrap_jvm)->DetachCurrentThread(exitTrap_jvm);
-    old_exit(code);
-}
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jclass clazz, jstring path) {
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
     char const* file = (*env)->GetStringUTFChars(env, path, 0);
 
     int fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
@@ -47,7 +38,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
     (*env)->ReleaseStringUTFChars(env, path, file);
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_chdir(JNIEnv* env, jclass clazz, jstring path) {
+JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_chdir(JNIEnv* env, jobject jobject, jstring path) {
     char const* dir = (*env)->GetStringUTFChars(env, path, 0);
 
     int b = chdir(dir);
@@ -56,7 +47,7 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_chdir(JNIEn
     return b;
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv* env, jclass clazz, jstring str1, jstring str2) {
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv* env, jobject jobject, jstring str1, jstring str2) {
     char const* name = (*env)->GetStringUTFChars(env, str1, 0);
     char const* value = (*env)->GetStringUTFChars(env, str2, 0);
 
@@ -66,7 +57,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIE
     (*env)->ReleaseStringUTFChars(env, str2, value);
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIEnv* env, jclass clazz, jstring str) {
+JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIEnv* env, jobject jobject, jstring str) {
     dlerror();
 
     int ret = 0;
@@ -74,7 +65,7 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIE
 
     void* handle;
     dlerror();
-    handle = dlopen(lib_name, RTLD_GLOBAL);
+    handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
     __android_log_print(dlerror() == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", lib_name, dlerror());
 
     if (handle == NULL) {
@@ -85,15 +76,40 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIE
     return ret;
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jclass clazz, jobject bridge) {
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibraryPath(JNIEnv *env, jobject jobject, jstring ldLibraryPath) {
+    android_update_LD_LIBRARY_PATH_t android_update_LD_LIBRARY_PATH;
+    void *libdl_handle = dlopen("libdl.so", RTLD_LAZY);
+    void *updateLdLibPath = dlsym(libdl_handle, "android_update_LD_LIBRARY_PATH");
+    if (updateLdLibPath == NULL) {
+        updateLdLibPath = dlsym(libdl_handle, "__loader_android_update_LD_LIBRARY_PATH");
+        __android_log_print(dlerror() == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", "libdl.so", dlerror());
+    }
+    android_update_LD_LIBRARY_PATH = (android_update_LD_LIBRARY_PATH_t) updateLdLibPath;
+    const char* ldLibPathUtf = (*env)->GetStringUTFChars(env, ldLibraryPath, 0);
+    android_update_LD_LIBRARY_PATH(ldLibPathUtf);
+    (*env)->ReleaseStringUTFChars(env, ldLibraryPath, ldLibPathUtf);
+}
+
+void (*old_exit)(int code);
+void custom_exit(int code) {
+    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "JVM exit with code %d.", code);
+    JNIEnv *env;
+    (*exitTrap_jvm)->AttachCurrentThread(exitTrap_jvm, &env, NULL);
+    (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
+    (*env)->DeleteGlobalRef(env, exitTrap_bridge);
+    (*exitTrap_jvm)->DetachCurrentThread(exitTrap_jvm);
+    old_exit(code);
+}
+
+JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1, jobject bridge) {
     exitTrap_bridge = (*env)->NewGlobalRef(env, bridge);
     (*env)->GetJavaVM(env, &exitTrap_jvm);
     jclass exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
-    exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "exit", "(I)V");
+    exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
-    // xhook_enable_debug(1);
+    xhook_enable_debug(1);
     xhook_register(".*\\.so$", "exit", custom_exit, (void **) &old_exit);
-    xhook_refresh(1);
+    return xhook_refresh(1);
 }
 
 int
@@ -110,7 +126,7 @@ int
               jint     ergo_class                     /* ergnomics policy */
 );
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupJLI(JNIEnv* env, jclass clazz){
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupJLI(JNIEnv* env, jobject jobject){
 
     void* handle;
     handle = dlopen("libjli.so", RTLD_LAZY);
@@ -118,7 +134,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupJLI(JN
 
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_jliLaunch(JNIEnv *env, jclass clazz, jobjectArray argsArray){
+JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_jliLaunch(JNIEnv *env, jobject jobject, jobjectArray argsArray){
     int argc = (*env)->GetArrayLength(env, argsArray);
     char* argv[argc];
     for (int i = 0; i < argc; i++) {

@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.util;
 
+import com.tungsten.fclcore.task.Schedulers;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.io.IOException;
@@ -11,8 +13,8 @@ import java.util.logging.Level;
 
 public class SocketServer {
 
-	private final DatagramPacket packet;
-	private final DatagramSocket socket;
+	private DatagramPacket packet;
+	private DatagramSocket socket;
 	private final Listener listener;
 	private final String ip;
 	private final int port;
@@ -24,13 +26,19 @@ public class SocketServer {
 		void onReceive(SocketServer server, String msg);
 	}
 
-	public SocketServer(String ip, int port, Listener listener) throws UnknownHostException, SocketException {
+	public SocketServer(String ip, int port, Listener listener) {
 		this.listener = listener;
 		this.ip = ip;
 		this.port = port;
-		byte[] bytes = new byte[1024];
-		packet = new DatagramPacket(bytes, bytes.length);
-		socket = new DatagramSocket(port, InetAddress.getByName(ip));
+		Schedulers.androidUIThread().execute(() -> {
+			byte[] bytes = new byte[1024];
+			packet = new DatagramPacket(bytes, bytes.length);
+			try {
+				socket = new DatagramSocket(port, InetAddress.getByName(ip));
+			} catch (SocketException | UnknownHostException e) {
+				Logging.LOG.log(Level.WARNING, "Failed to start socket server, error: " + e.getMessage());
+			}
+		});
 	}
 
 	public DatagramPacket getPacket() {
