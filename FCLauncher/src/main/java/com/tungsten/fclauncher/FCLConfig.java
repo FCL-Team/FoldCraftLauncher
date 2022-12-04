@@ -11,6 +11,7 @@ public class FCLConfig implements Serializable {
         RENDERER_ZINK("libGL.so:libEGL.so");
 
         private final String glInfo;
+        private String glVersion;
 
         Renderer(String glInfo) {
             this.glInfo = glInfo;
@@ -26,6 +27,14 @@ public class FCLConfig implements Serializable {
 
         public String getGlInfo() {
             return glInfo;
+        }
+
+        public void setGlVersion(String glVersion) {
+            this.glVersion = glVersion;
+        }
+
+        public String getGlVersion() {
+            return glVersion;
         }
     }
 

@@ -324,11 +324,15 @@ public class DefaultLauncher extends Launcher {
 
         String[] finalArgs = rawCommandLine.toArray(new String[0]);
 
+        FCLConfig.Renderer renderer = options.getRenderer();
+        if (version.getMinimumLauncherVersion() >= 21) {
+            renderer.setGlVersion("32");
+        }
         FCLConfig config = new FCLConfig(context,
                 FCLPath.LOG_DIR,
                 options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
                 repository.getRunDirectory(version.getId()).getAbsolutePath(),
-                options.getRenderer(),
+                renderer,
                 finalArgs);
         return FCLauncher.launchMinecraft(config);
     }
