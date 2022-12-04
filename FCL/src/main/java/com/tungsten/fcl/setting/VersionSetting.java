@@ -353,8 +353,7 @@ public final class VersionSetting implements Cloneable {
         }).thenSupplyAsync(() -> {
             if (getJava() == 0) {
                 return JavaVersion.getSuitableJavaVersion(version);
-            }
-            else {
+            } else {
                 return JavaVersion.getJavaFromId(getJava());
             }
         });

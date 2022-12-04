@@ -79,7 +79,9 @@ public class FCLBridge implements Serializable {
         this.callback = callback;
 
         // set graphic output and event pipe
-        setFCLNativeWindow(surface);
+        if (surface != null) {
+            setFCLNativeWindow(surface);
+        }
         setEventPipe();
 
         // start

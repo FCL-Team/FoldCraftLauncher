@@ -61,7 +61,7 @@ public class ProcessService extends Service {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         };
-        FCLauncher.launchAPIInstaller(config, callback);
+        FCLauncher.launchMinecraft(config).execute(null, callback);
     }
 
     @Override

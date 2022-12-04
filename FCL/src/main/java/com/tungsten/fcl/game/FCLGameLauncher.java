@@ -38,6 +38,16 @@ public final class FCLGameLauncher extends DefaultLauncher {
         File optionsFile = new File(repository.getRunDirectory(version.getId()), "options.txt");
         File configFolder = new File(repository.getRunDirectory(version.getId()), "config");
 
+        if (!configFolder.exists() && !configFolder.isDirectory()) {
+            configFolder.mkdirs();
+        }
+        File splashFile = new File(configFolder, "splash.properties");
+        try {
+            FileUtils.writeText(splashFile, "enabled=false");
+        } catch (IOException e) {
+            Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
+        }
+
         if (optionsFile.exists())
             return;
         if (configFolder.isDirectory())
@@ -45,7 +55,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
                 return;
         try {
             // TODO: Dirty implementation here
-            if (LocaleUtils.getSystemLocale() == Locale.CHINA)
+            if (LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName()))
                 FileUtils.writeText(optionsFile, "lang:zh_CN\nforceUnicodeFont:true\n");
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);

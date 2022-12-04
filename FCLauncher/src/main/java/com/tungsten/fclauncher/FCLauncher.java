@@ -131,10 +131,11 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         // Todo : mesa env
+        FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
-        envMap.put("LIBGL_NAME", config.getRenderer().getGlLibName());
-        envMap.put("LIBEGL_NAME", config.getRenderer().getEglLibName());
-        if (config.getRenderer() == FCLConfig.Renderer.RENDERER_GL4ES) {
+        envMap.put("LIBGL_NAME", renderer.getGlLibName());
+        envMap.put("LIBEGL_NAME", renderer.getEglLibName());
+        if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");
@@ -206,9 +207,10 @@ public class FCLauncher {
         bridge.dlopen(nativeDir + "/libopenal.so");
 
         // Todo : mesa
-        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
-        bridge.dlopen(nativeDir + "/" + config.getRenderer().getEglLibName());
-        if (config.getRenderer() == FCLConfig.Renderer.RENDERER_ZINK) {
+        FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
+        bridge.dlopen(nativeDir + "/" + renderer.getGlLibName());
+        bridge.dlopen(nativeDir + "/" + renderer.getEglLibName());
+        if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
             bridge.dlopen(nativeDir + "/libglapi.so");
             bridge.dlopen(nativeDir + "/libexpat.so");
             bridge.dlopen(nativeDir + "/zink_dri.so");

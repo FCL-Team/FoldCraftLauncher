@@ -105,37 +105,39 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
         refresh.setEnabled(false);
         VersionList<?> currentVersionList = DownloadProviders.getDownloadProvider().getVersionListById(libraryId);
         currentVersionList.refreshAsync(gameVersion).whenComplete((result, exception) -> {
-            if (exception == null) {
-                List<RemoteVersion> items = loadVersions();
+            if (isShowing()) {
+                if (exception == null) {
+                    List<RemoteVersion> items = loadVersions();
 
-                Schedulers.androidUIThread().execute(() -> {
-                    if (currentVersionList.getVersions(gameVersion).isEmpty()) {
-                        Toast.makeText(getContext(), getContext().getString(R.string.download_failed_empty), Toast.LENGTH_SHORT).show();
+                    Schedulers.androidUIThread().execute(() -> {
+                        if (currentVersionList.getVersions(gameVersion).isEmpty()) {
+                            Toast.makeText(getContext(), getContext().getString(R.string.download_failed_empty), Toast.LENGTH_SHORT).show();
+                            listView.setVisibility(View.GONE);
+                            failedRefresh.setVisibility(View.VISIBLE);
+                        } else {
+                            if (items.isEmpty()) {
+                                checkRelease.setChecked(true);
+                                checkSnapShot.setChecked(true);
+                                checkOld.setChecked(true);
+                            } else {
+                                RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
+                                listView.setAdapter(adapter);
+                            }
+                            listView.setVisibility(View.VISIBLE);
+                            failedRefresh.setVisibility(View.GONE);
+                        }
+                        progressBar.setVisibility(View.GONE);
+                        refresh.setEnabled(true);
+                    });
+                } else {
+                    LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
+                    Schedulers.androidUIThread().execute(() -> {
                         listView.setVisibility(View.GONE);
                         failedRefresh.setVisibility(View.VISIBLE);
-                    } else {
-                        if (items.isEmpty()) {
-                            checkRelease.setChecked(true);
-                            checkSnapShot.setChecked(true);
-                            checkOld.setChecked(true);
-                        } else {
-                            RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-                            listView.setAdapter(adapter);
-                        }
-                        listView.setVisibility(View.VISIBLE);
-                        failedRefresh.setVisibility(View.GONE);
-                    }
-                    progressBar.setVisibility(View.GONE);
-                    refresh.setEnabled(true);
-                });
-            } else {
-                LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
-                Schedulers.androidUIThread().execute(() -> {
-                    listView.setVisibility(View.GONE);
-                    failedRefresh.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    refresh.setEnabled(true);
-                });
+                        progressBar.setVisibility(View.GONE);
+                        refresh.setEnabled(true);
+                    });
+                }
             }
 
             System.gc();
