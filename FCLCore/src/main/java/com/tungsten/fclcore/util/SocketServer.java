@@ -35,8 +35,9 @@ public class SocketServer {
 			packet = new DatagramPacket(bytes, bytes.length);
 			try {
 				socket = new DatagramSocket(port, InetAddress.getByName(ip));
+				Logging.LOG.log(Level.INFO, "Socket server init!");
 			} catch (SocketException | UnknownHostException e) {
-				Logging.LOG.log(Level.WARNING, "Failed to start socket server, error: " + e.getMessage());
+				Logging.LOG.log(Level.WARNING, "Failed to init socket server", e);
 			}
 		});
 	}
@@ -61,17 +62,26 @@ public class SocketServer {
 		return port;
 	}
 
-	public void start() throws IOException {
-		if (packet == null || socket == null) {
-			return;
-		}
-		Logging.LOG.log(Level.INFO, "Socket server " + ip + ":" + port + " start!");
-		isReceiving = true;
-		while(isReceiving) {
-			socket.receive(packet);
-			String receiveMsg = new String(packet.getData(), 0, packet.getLength());
-			listener.onReceive(this, receiveMsg);
-		}
+	public void start() {
+		Schedulers.androidUIThread().execute(() -> {
+			if (packet == null || socket == null) {
+				return;
+			}
+			Logging.LOG.log(Level.INFO, "Socket server " + ip + ":" + port + " start!");
+			isReceiving = true;
+			new Thread(() -> {
+				while(isReceiving) {
+					try {
+						socket.receive(packet);
+						String receiveMsg = new String(packet.getData(), 0, packet.getLength());
+						listener.onReceive(this, receiveMsg);
+					} catch (IOException e) {
+						e.printStackTrace();
+						Logging.LOG.log(Level.INFO, "Socket server " + ip + ":" + port + " start!");
+					}
+				}
+			}).start();
+		});
 	}
 
 	public void send(String msg) throws IOException {

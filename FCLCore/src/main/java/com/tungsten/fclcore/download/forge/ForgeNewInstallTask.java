@@ -2,6 +2,7 @@ package com.tungsten.fclcore.download.forge;
 
 import static com.tungsten.fclcore.util.DigestUtils.digest;
 import static com.tungsten.fclcore.util.Hex.encodeHex;
+import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
@@ -22,6 +23,7 @@ import com.tungsten.fclcore.game.DownloadType;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.StringUtils;
@@ -147,14 +149,16 @@ public class ForgeNewInstallTask extends Task<Version> {
                 server1.stop();
                 latch.countDown();
             });
-            Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
-            Bundle bundle = new Bundle();
-            bundle.putStringArray("command", command.toArray(new String[0]));
-            service.putExtras(bundle);
-            FCLPath.CONTEXT.startService(service);
-            server.start();
+            Schedulers.androidUIThread().execute(() -> {
+                Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("command", command.toArray(new String[0]));
+                service.putExtras(bundle);
+                FCLPath.CONTEXT.startService(service);
+                server.start();
+            });
             latch.await();
-            exitCode = (int) server.getResult();
+            exitCode = tryCast(((String) server.getResult()).replaceAll(" ", ""), Integer.class).orElse(0);
             if (exitCode != 0)
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
 

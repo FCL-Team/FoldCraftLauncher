@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class FCLauncher {
 
@@ -220,7 +221,7 @@ public class FCLauncher {
         }
     }
 
-    private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
+    private static int launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
         printTaskTitle(task + " Arguments");
         String[] args = rebaseArgs(config);
         for (String arg : args) {
@@ -229,7 +230,9 @@ public class FCLauncher {
         bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
         System.out.println("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
-        System.out.println("OpenJDK exited with code : " + bridge.jliLaunch(args));
+        int exitCode = bridge.jliLaunch(args);
+        System.out.println("OpenJDK exited with code : " + exitCode);
+        return exitCode;
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
@@ -307,10 +310,12 @@ public class FCLauncher {
         return bridge;
     }
 
-    public static void launchAPIInstaller(FCLConfig config, FCLBridgeCallback callback) {
+    public static CompletableFuture<Integer> launchAPIInstaller(FCLConfig config, FCLBridgeCallback callback) {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge(callback);
+
+        CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Thread apiInstallerThread = new Thread(() -> {
             try {
@@ -330,13 +335,14 @@ public class FCLauncher {
                 bridge.chdir(config.getWorkingDir());
 
                 // launch api installer
-                launch(config, bridge, "API Installer");
+                future.complete(launch(config, bridge, "API Installer"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
         apiInstallerThread.start();
+        return future;
     }
 
 }
