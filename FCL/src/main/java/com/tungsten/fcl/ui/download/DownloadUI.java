@@ -38,11 +38,6 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();

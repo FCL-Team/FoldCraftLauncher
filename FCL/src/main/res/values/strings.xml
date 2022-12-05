@@ -153,6 +153,7 @@
     <string name="message_copy">Copy successfully!</string>
 
     <string name="mods">Mods</string>
+    <string name="mods_manage">Manage Mods</string>
     
     <string name="modpack">Modpack</string>
 
@@ -164,6 +165,9 @@
     <string name="profile_add_alert">Please fill the name and path first!</string>
 
     <string name="resourcepack">Resource Packs</string>
+
+    <string name="settings_game">Game Settings</string>
+    <string name="settings_tabs_installers">Modloaders</string>
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>
@@ -183,5 +187,6 @@
     <string name="version_new_profile">New Directory</string>
 
     <string name="world">Worlds</string>
+    <string name="world_manage">Worlds / Datapacks</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 </resources>

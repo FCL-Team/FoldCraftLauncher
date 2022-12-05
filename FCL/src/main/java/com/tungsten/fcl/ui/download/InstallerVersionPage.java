@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -16,6 +17,7 @@ import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -53,6 +55,7 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
     public void create() {
         LinearLayoutCompat checkBar = findViewById(R.id.bar);
         checkBar.setVisibility(DownloadProviders.getDownloadProvider().getVersionListById(libraryId).hasType() ? View.VISIBLE : View.GONE);
+        ThemeEngine.getInstance().registerEvent(checkBar, () -> checkBar.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
 
         checkRelease = findViewById(R.id.release);
         checkSnapShot = findViewById(R.id.snapshot);

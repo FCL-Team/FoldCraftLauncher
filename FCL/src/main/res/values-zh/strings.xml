@@ -134,6 +134,7 @@
     <string name="message_copy">复制成功！</string>
 
     <string name="mods">模组</string>
+    <string name="mods_manage">模组管理</string>
 
     <string name="modpack">整合包</string>
 
@@ -145,6 +146,9 @@
     <string name="profile_add_alert">请先填写名称与路径！</string>
 
     <string name="resourcepack">资源包</string>
+
+    <string name="settings_game">游戏设置</string>
+    <string name="settings_tabs_installers">自动安装</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
@@ -164,5 +168,6 @@
     <string name="version_new_profile">新建目录</string>
 
     <string name="world">世界</string>
+    <string name="world_manage">世界 / 数据包</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
 </resources>

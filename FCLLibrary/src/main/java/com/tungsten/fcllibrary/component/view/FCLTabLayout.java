@@ -40,11 +40,19 @@ public class FCLTabLayout extends TabLayout {
                     ThemeEngine.getInstance().getTheme().getDkColor(),
                     followTheme ? ThemeEngine.getInstance().getTheme().getAutoTint() : Color.GRAY
             };
+            int[][] bgState = {
+                    {
+
+                    }
+            };
+            int[] bgColor = {
+                    ThemeEngine.getInstance().getTheme().getLtColor()
+            };
             setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
             setTabTextColors(new ColorStateList(state, color));
             setTabIconTint(new ColorStateList(state, color));
             if (followTheme) {
-                setBackgroundColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                setBackgroundTintList(new ColorStateList(bgState, bgColor));
             }
         }
 
