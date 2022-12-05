@@ -25,7 +25,6 @@ import com.tungsten.fclcore.game.DownloadType;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.StringUtils;
