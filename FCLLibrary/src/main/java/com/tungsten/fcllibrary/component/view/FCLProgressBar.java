@@ -7,6 +7,8 @@ import android.widget.ProgressBar;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
+import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
+import com.tungsten.fclcore.fakefx.beans.property.DoublePropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -14,7 +16,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLProgressBar extends ProgressBar {
 
-    private IntegerProperty progress;
+    private DoubleProperty progress;
     private BooleanProperty visibilityProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
@@ -65,18 +67,19 @@ public class FCLProgressBar extends ProgressBar {
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
-    public final void setProgressValue(int progress) {
+    public final void setProgressValue(double progress) {
         progressProperty().set(progress);
     }
 
-    public final IntegerProperty progressProperty() {
+    public final DoubleProperty progressProperty() {
         if (progress == null) {
-            progress = new IntegerPropertyBase() {
+            progress = new DoublePropertyBase() {
 
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
-                        int progress = get();
-                        setProgress(progress);
+                        // progress should >= 0, <= 1
+                        double progress = get();
+                        setProgress((int) (progress * 1000));
                     });
                 }
 
