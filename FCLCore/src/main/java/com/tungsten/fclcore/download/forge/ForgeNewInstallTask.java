@@ -6,6 +6,8 @@ import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -143,6 +145,12 @@ public class ForgeNewInstallTask extends Task<Version> {
 
             LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
             int exitCode;
+            boolean listen = true;
+            while (listen) {
+                if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
+                    listen = false;
+                }
+            }
             CountDownLatch latch = new CountDownLatch(1);
             SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
                 server1.setResult(msg);
