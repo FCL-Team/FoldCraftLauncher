@@ -149,14 +149,12 @@ public class ForgeNewInstallTask extends Task<Version> {
                 server1.stop();
                 latch.countDown();
             });
-            Schedulers.androidUIThread().execute(() -> {
-                Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("command", command.toArray(new String[0]));
-                service.putExtras(bundle);
-                FCLPath.CONTEXT.startService(service);
-                server.start();
-            });
+            Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+            Bundle bundle = new Bundle();
+            bundle.putStringArray("command", command.toArray(new String[0]));
+            service.putExtras(bundle);
+            FCLPath.CONTEXT.startService(service);
+            server.start();
             latch.await();
             exitCode = tryCast(((String) server.getResult()).replaceAll(" ", ""), Integer.class).orElse(0);
             if (exitCode != 0)

@@ -68,7 +68,7 @@ public class ProcessService extends Service {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        onDestroy();
+        stopSelf();
     }
 
     @Override

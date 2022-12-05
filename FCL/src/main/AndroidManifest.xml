@@ -101,7 +101,6 @@
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
             android:process=":processService"
-            android:multiprocess="true"
             android:enabled="true"/>
         <provider
             android:name="androidx.core.content.FileProvider"
