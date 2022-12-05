@@ -2,7 +2,6 @@ package com.tungsten.fclcore.download.forge;
 
 import static com.tungsten.fclcore.util.DigestUtils.digest;
 import static com.tungsten.fclcore.util.Hex.encodeHex;
-import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
@@ -163,7 +162,7 @@ public class ForgeNewInstallTask extends Task<Version> {
             FCLPath.CONTEXT.startService(service);
             server.start();
             latch.await();
-            exitCode = tryCast(((String) server.getResult()).replaceAll(" ", ""), Integer.class).orElse(0);
+            exitCode = Integer.parseInt((String) server.getResult());
             if (exitCode != 0)
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
 

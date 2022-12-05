@@ -1,7 +1,6 @@
 package com.tungsten.fclcore.download.optifine;
 
 import static com.tungsten.fclcore.util.Lang.getOrDefault;
-import static com.tungsten.fclcore.util.Lang.tryCast;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -164,7 +163,7 @@ public final class OptiFineInstallTask extends Task<Version> {
                 FCLPath.CONTEXT.startService(service);
                 server.start();
                 latch.await();
-                exitCode = tryCast(((String) server.getResult()).replaceAll(" ", ""), Integer.class).orElse(0);
+                exitCode = Integer.parseInt((String) server.getResult());
                 if (exitCode != 0)
                     throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
             } else {
