@@ -253,21 +253,21 @@ public final class TaskListPane extends FCLAdapter {
             // @formatter:on
 
             title.setText(message);
-            icon.setBackground(context.getDrawable(R.drawable.ic_baseline_more_horiz_24));
+            icon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_more_horiz_24));
         }
 
         public void begin() {
             if (started) return;
             started = true;
-            icon.setBackground(context.getDrawable(R.drawable.ic_baseline_arrow_forward_24));
+            icon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_arrow_forward_24));
         }
 
         public void fail() {
-            icon.setBackground(context.getDrawable(R.drawable.ic_baseline_close_24));
+            icon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_close_24));
         }
 
         public void succeed() {
-            icon.setBackground(context.getDrawable(R.drawable.ic_baseline_done_24));
+            icon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_done_24));
         }
 
         public void count() {
