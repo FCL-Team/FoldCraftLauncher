@@ -17,6 +17,7 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="3dp"
+        android:max="1000"
         app:layout_constraintTop_toBottomOf="@+id/name"
         android:indeterminateDrawable="@drawable/bg_progress_indeterminate"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
