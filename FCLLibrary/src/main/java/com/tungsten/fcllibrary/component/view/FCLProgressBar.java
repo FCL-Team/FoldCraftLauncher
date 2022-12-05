@@ -79,7 +79,10 @@ public class FCLProgressBar extends ProgressBar {
                     Schedulers.androidUIThread().execute(() -> {
                         // progress should >= 0, <= 1
                         double progress = get();
-                        setProgress((int) (progress * 1000));
+                        setIndeterminate(progress < 0.0);
+                        if (progress >= 0.0) {
+                            setProgress((int) (progress * 1000));
+                        }
                     });
                 }
 
