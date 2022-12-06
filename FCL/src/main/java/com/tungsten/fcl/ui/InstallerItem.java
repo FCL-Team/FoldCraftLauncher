@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui;
 
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC_API;
@@ -30,6 +30,7 @@ import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -198,7 +199,7 @@ public class InstallerItem {
         private final InstallerItem installerItem;
 
         private final LinearLayoutCompat parent;
-        private final LinearLayoutCompat item;
+        private final FCLLinearLayout item;
         private final FCLImageButton remove;
         private final FCLImageButton select;
 

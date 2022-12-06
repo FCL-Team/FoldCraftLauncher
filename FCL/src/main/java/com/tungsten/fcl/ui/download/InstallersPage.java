@@ -13,6 +13,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;

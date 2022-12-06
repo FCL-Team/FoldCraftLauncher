@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
-
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion;
@@ -23,6 +21,7 @@ import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.time.ZoneId;
@@ -41,7 +40,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
     }
 
     private static class ViewHolder {
-        LinearLayoutCompat parent;
+        FCLLinearLayout parent;
         FCLImageView icon;
         FCLTextView version;
         FCLTextView tag;
@@ -75,7 +74,6 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         RemoteVersion remoteVersion = list.get(i);
-        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
         ThemeEngine.getInstance().registerEvent(viewHolder.tag, () -> viewHolder.tag.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() })));
         viewHolder.parent.setOnClickListener(view1 -> listener.onSelect(remoteVersion));
         viewHolder.icon.setBackground(getIcon(remoteVersion));

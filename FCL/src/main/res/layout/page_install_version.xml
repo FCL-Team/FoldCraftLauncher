@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/ui_bg_color"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"
@@ -8,7 +9,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        app:auto_linear_background_tint="true"
         android:id="@+id/bar"
         android:background="@drawable/bg_container_white"
         android:layout_marginBottom="10dp"
@@ -55,7 +57,7 @@
             android:layout_gravity="center"
             android:id="@+id/refresh"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

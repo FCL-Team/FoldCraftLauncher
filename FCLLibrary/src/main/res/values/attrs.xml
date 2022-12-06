@@ -23,6 +23,12 @@
     <declare-styleable name="FCLTabLayout">
         <attr name="follow_theme" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="FCLLinearLayout">
+        <attr name="auto_linear_background_tint" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="FCLConstraintLayout">
+        <attr name="auto_constraint_background_tint" format="boolean"/>
+    </declare-styleable>
 
     <declare-styleable name="ColorPickerView" parent="ColorPanelView">
         <attr format="boolean|reference" name="cpv_alphaChannelVisible"/>

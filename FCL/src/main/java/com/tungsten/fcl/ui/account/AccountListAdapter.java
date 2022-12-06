@@ -1,12 +1,9 @@
 package com.tungsten.fcl.ui.account;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
@@ -16,7 +13,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.component.view.FCLConstraintLayout;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -36,7 +33,7 @@ public class AccountListAdapter extends FCLAdapter {
     }
 
     static class ViewHolder {
-        ConstraintLayout parent;
+        FCLConstraintLayout parent;
         FCLRadioButton radioButton;
         FCLImageView avatar;
         FCLTextView name;
@@ -80,7 +77,6 @@ public class AccountListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         AccountListItem account = list.get(i);
-        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() })));
         viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
         viewHolder.avatar.imageProperty().bind(account.imageProperty());
         viewHolder.name.stringProperty().bind(account.titleProperty());

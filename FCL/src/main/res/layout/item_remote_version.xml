@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        app:auto_linear_background_tint="true"
         android:id="@+id/parent"
         android:layout_marginBottom="10dp"
         android:paddingTop="8dp"
@@ -70,6 +71,6 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

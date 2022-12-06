@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
+        app:auto_constraint_background_tint="true"
         android:id="@+id/parent"
         android:layout_marginTop="8dp"
         android:layout_marginStart="5dp"
@@ -119,6 +120,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
