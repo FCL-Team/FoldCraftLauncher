@@ -140,6 +140,9 @@ public class FCLauncher {
             if (renderer.getGlVersion() != null) {
                 envMap.put("LIBGL_GL", renderer.getGlVersion());
             }
+            if("libtinywrapper.so".equals(renderer.getGlLibName())) {
+                envMap.put("LIBGL_ES","3");
+            }
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");

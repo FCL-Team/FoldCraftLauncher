@@ -277,6 +277,8 @@ GLFWbool _glfwInitEGL(void)
         _glfw_dlsym(_glfw.egl.handle, "eglGetConfigAttrib");
     _glfw.egl.GetConfigs = (PFN_eglGetConfigs)
         _glfw_dlsym(_glfw.egl.handle, "eglGetConfigs");
+    _glfw.egl.ChooseConfig = (PFN_eglChooseConfig)
+            _glfw_dlsym(_glfw.egl.handle, "eglChooseConfig");
     _glfw.egl.GetDisplay = (PFN_eglGetDisplay)
         _glfw_dlsym(_glfw.egl.handle, "eglGetDisplay");
     _glfw.egl.GetError = (PFN_eglGetError)
@@ -382,12 +384,6 @@ void _glfwTerminateEGL(void)
     }
 }
 
-#define setAttrib(a, v) \
-{ \
-    assert(((size_t) index + 1) < sizeof(attribs) / sizeof(attribs[0])); \
-    attribs[index++] = a; \
-    attribs[index++] = v; \
-}
 
 // Create the OpenGL or OpenGL ES context
 //
@@ -395,10 +391,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
                                const _GLFWctxconfig* ctxconfig,
                                const _GLFWfbconfig* fbconfig)
 {
-    EGLint attribs[40];
-    EGLConfig config;
+    EGLConfig config=malloc(sizeof(EGLConfig));
     EGLContext share = NULL;
-    int index = 0;
 
     if (!_glfw.egl.display)
     {
@@ -409,12 +403,32 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
     if (ctxconfig->share)
         share = ctxconfig->share->context.egl.handle;
 
-    if (!chooseEGLConfig(ctxconfig, fbconfig, &config))
-    {
-        _glfwInputError(GLFW_FORMAT_UNAVAILABLE,
-                        "EGL: Failed to find a suitable EGLConfig");
+    EGLint egl_attributes[] = {
+            EGL_BLUE_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_RED_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            EGL_DEPTH_SIZE, 24,
+            EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_NONE
+    };
+    EGLint num_configs = 0;
+    const EGLint egl_context_attributes[] = { EGL_CONTEXT_CLIENT_VERSION, getenv("LIBGL_ES"), EGL_NONE };
+    if (eglChooseConfig(_glfw.egl.display, egl_attributes, NULL, 0, &num_configs) != GLFW_TRUE) {
+        _glfwInputError(GLFW_API_UNAVAILABLE, "eglChooseConfig() failed: %04x",
+                            eglGetError());
         return GLFW_FALSE;
     }
+
+    if (num_configs == 0) {
+        _glfwInputError(GLFW_API_UNAVAILABLE, "%s",
+                            "eglChooseConfig() found no matching config");
+        return GLFW_FALSE;
+    }
+
+    eglChooseConfig(_glfw.egl.display, egl_attributes, &config, 1, &num_configs);
+//    eglGetConfigAttrib(_glfw.egl.display, config, EGL_NATIVE_VISUAL_ID, 0);
 
     if (ctxconfig->client == GLFW_OPENGL_ES_API)
     {
@@ -437,82 +451,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
         }
     }
 
-    if (_glfw.egl.KHR_create_context)
-    {
-        int mask = 0, flags = 0;
-
-        if (ctxconfig->client == GLFW_OPENGL_API)
-        {
-            if (ctxconfig->forward)
-                flags |= EGL_CONTEXT_OPENGL_FORWARD_COMPATIBLE_BIT_KHR;
-
-            if (ctxconfig->profile == GLFW_OPENGL_CORE_PROFILE)
-                mask |= EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR;
-            else if (ctxconfig->profile == GLFW_OPENGL_COMPAT_PROFILE)
-                mask |= EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT_KHR;
-        }
-
-        if (ctxconfig->debug)
-            flags |= EGL_CONTEXT_OPENGL_DEBUG_BIT_KHR;
-
-        if (ctxconfig->robustness)
-        {
-            if (ctxconfig->robustness == GLFW_NO_RESET_NOTIFICATION)
-            {
-                setAttrib(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_KHR,
-                          EGL_NO_RESET_NOTIFICATION_KHR);
-            }
-            else if (ctxconfig->robustness == GLFW_LOSE_CONTEXT_ON_RESET)
-            {
-                setAttrib(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_KHR,
-                          EGL_LOSE_CONTEXT_ON_RESET_KHR);
-            }
-
-            flags |= EGL_CONTEXT_OPENGL_ROBUST_ACCESS_BIT_KHR;
-        }
-
-        if (ctxconfig->noerror)
-        {
-            if (_glfw.egl.KHR_create_context_no_error)
-                setAttrib(EGL_CONTEXT_OPENGL_NO_ERROR_KHR, GLFW_TRUE);
-        }
-
-        if (ctxconfig->major != 1 || ctxconfig->minor != 0)
-        {
-            setAttrib(EGL_CONTEXT_MAJOR_VERSION_KHR, ctxconfig->major);
-            setAttrib(EGL_CONTEXT_MINOR_VERSION_KHR, ctxconfig->minor);
-        }
-
-        if (mask)
-            setAttrib(EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR, mask);
-
-        if (flags)
-            setAttrib(EGL_CONTEXT_FLAGS_KHR, flags);
-    }
-    else
-    {
-        if (ctxconfig->client == GLFW_OPENGL_ES_API)
-            setAttrib(EGL_CONTEXT_CLIENT_VERSION, ctxconfig->major);
-    }
-
-    if (_glfw.egl.KHR_context_flush_control)
-    {
-        if (ctxconfig->release == GLFW_RELEASE_BEHAVIOR_NONE)
-        {
-            setAttrib(EGL_CONTEXT_RELEASE_BEHAVIOR_KHR,
-                      EGL_CONTEXT_RELEASE_BEHAVIOR_NONE_KHR);
-        }
-        else if (ctxconfig->release == GLFW_RELEASE_BEHAVIOR_FLUSH)
-        {
-            setAttrib(EGL_CONTEXT_RELEASE_BEHAVIOR_KHR,
-                      EGL_CONTEXT_RELEASE_BEHAVIOR_FLUSH_KHR);
-        }
-    }
-
-    setAttrib(EGL_NONE, EGL_NONE);
-
     window->context.egl.handle = eglCreateContext(_glfw.egl.display,
-                                                  config, share, attribs);
+                                                  config, share, egl_context_attributes);
 
     if (window->context.egl.handle == EGL_NO_CONTEXT)
     {
@@ -522,25 +462,11 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
         return GLFW_FALSE;
     }
 
-    // Set up attributes for surface creation
-    index = 0;
-
-    if (fbconfig->sRGB)
-    {
-        if (_glfw.egl.KHR_gl_colorspace)
-            setAttrib(EGL_GL_COLORSPACE_KHR, EGL_GL_COLORSPACE_SRGB_KHR);
-    }
-
-    if (!fbconfig->doublebuffer)
-        setAttrib(EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER);
-
-    setAttrib(EGL_NONE, EGL_NONE);
-
     window->context.egl.surface =
         eglCreateWindowSurface(_glfw.egl.display,
                                config,
                                _GLFW_EGL_NATIVE_WINDOW,
-                               attribs);
+                               NULL);
     if (window->context.egl.surface == EGL_NO_SURFACE)
     {
         _glfwInputError(GLFW_PLATFORM_ERROR,
@@ -548,7 +474,6 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
                         getEGLErrorString(eglGetError()));
         return GLFW_FALSE;
     }
-
     window->context.egl.config = config;
 
     // Load the appropriate client library
@@ -567,7 +492,7 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
         };
         const char* glsonames[] =
         {
-            "libgl4es.so",
+            getenv("LIBGL_NAME"),
         };
 
         if (ctxconfig->client == GLFW_OPENGL_ES_API)
@@ -610,7 +535,6 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
     return GLFW_TRUE;
 }
 
-#undef setAttrib
 
 
 //////////////////////////////////////////////////////////////////////////
