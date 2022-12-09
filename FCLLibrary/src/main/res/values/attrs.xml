@@ -7,6 +7,7 @@
     </declare-styleable>
     <declare-styleable name="FCLImageButton">
         <attr name="auto_tint" format="boolean"/>
+        <attr name="no_padding" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="FCLImageView">
         <attr name="auto_src_tint" format="boolean"/>

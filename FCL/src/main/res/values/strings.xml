@@ -93,11 +93,19 @@
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
     <string name="download_code_404">File not found on the remote server: %s</string>
+    <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
 
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
+
+    <string name="folder_config">Browse configs</string>
+    <string name="folder_game">Browse game directory</string>
+    <string name="folder_mod">Browse mods</string>
+    <string name="folder_resourcepacks">Browse resource packs</string>
+    <string name="folder_saves">Browse saves</string>
+    <string name="folder_screenshots">Browse screenshots</string>
 
     <string name="input_not_empty">Fill the required input box first.</string>
 
@@ -156,6 +164,7 @@
     <string name="mods_manage">Manage Mods</string>
     
     <string name="modpack">Modpack</string>
+    <string name="modpack_export">Export Modpack</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
@@ -179,12 +188,21 @@
     <string name="version_launch">Launch Game</string>
     <string name="version_no_version">No version</string>
     <string name="version_manage">Click to manage</string>
+    <string name="version_manage_clean">Delete Log Files</string>
+    <string name="version_manage_duplicate">Duplicate Instance</string>
+    <string name="version_manage_duplicate_duplicate_save">Duplicate Save</string>
+    <string name="version_manage_duplicate_prompt">Instance name</string>
+    <string name="version_manage_duplicate_confirm">The duplicated instance will have a copy of all the files of this instance, with an isolated game directory and settings.</string>
+    <string name="version_manage_redownload_assets_index">Update Game Assets</string>
     <string name="version_manage_remove_confirm">Are you sure you want to permanently remove the version %s? This action cannot be undone!</string>
     <string name="version_manage_remove_confirm_independent">Since this instance is stored in an isolated directory, deleting it will also delete its saves and other data. Do you still want to delete instance %s?</string>
+    <string name="version_manage_remove_libraries">Delete All Libraries</string>
+    <string name="version_manage_rename">Rename Instance</string>
     <string name="version_manage_rename_message">Rename version</string>
     <string name="version_manage_rename_new">New name</string>
     <string name="version_manage_rename_fail">Rename failed</string>
     <string name="version_new_profile">New Directory</string>
+    <string name="version_update">Update Modpack</string>
 
     <string name="world">Worlds</string>
     <string name="world_manage">Worlds / Datapacks</string>

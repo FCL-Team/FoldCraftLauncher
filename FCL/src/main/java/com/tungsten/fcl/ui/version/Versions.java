@@ -8,13 +8,19 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
@@ -26,6 +32,46 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class Versions {
+
+    /*
+    public static void importModpack() {
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile.getRepository().isLoaded()) {
+            Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile), i18n("install.modpack"));
+        }
+    }
+
+    public static void downloadModpackImpl(Profile profile, String version, RemoteMod.Version file) {
+        Path modpack;
+        URL downloadURL;
+        try {
+            modpack = Files.createTempFile("modpack", ".zip");
+            downloadURL = new URL(file.getFile().getUrl());
+        } catch (IOException e) {
+            Controllers.dialog(
+                    i18n("install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e),
+                    i18n("download_failed"), MessageDialogPane.MessageType.ERROR);
+            return;
+        }
+        Controllers.taskDialog(
+                new FileDownloadTask(downloadURL, modpack.toFile())
+                        .whenComplete(Schedulers.javafx(), e -> {
+                            if (e == null) {
+                                Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile, modpack.toFile()));
+                            } else if (e instanceof CancellationException) {
+                                Controllers.showToast(i18n("message.cancelled"));
+                            } else {
+                                Controllers.dialog(
+                                        i18n("install.failed.downloading.detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e),
+                                        i18n("download.failed"), MessageDialogPane.MessageType.ERROR);
+                            }
+                        }).executor(true),
+                i18n("message.downloading"),
+                TaskCancellationAction.NORMAL
+        );
+    }
+
+     */
 
     public static void deleteVersion(Context context, Profile profile, String version) {
         boolean isIndependent = profile.getVersionSetting(version).getGameDirType() == GameDirectoryType.VERSION_FOLDER;
@@ -65,55 +111,48 @@ public class Versions {
         return dialog.getFuture();
     }
 
-    /*
     public static void exportVersion(Profile profile, String version) {
-        Controllers.getDecorator().startWizard(new ExportWizardProvider(profile, version), i18n("modpack.wizard"));
+        //Controllers.getDecorator().startWizard(new ExportWizardProvider(profile, version), i18n("modpack.wizard"));
     }
-
-     */
 
     public static void openFolder(Activity context, Profile profile, String version) {
         FileBrowser.Builder builder = new FileBrowser.Builder(context);
         builder.setLibMode(LibMode.FILE_BROWSER);
         builder.setInitDir(profile.getRepository().getRunDirectory(version).getAbsolutePath());
-        builder.create().browse(context, RequestCodes.BROWSE_VERSION_DIR_CODE, null);
+        builder.create().browse(context, RequestCodes.BROWSE_DIR_CODE, null);
     }
 
-    /*
-    public static void duplicateVersion(Profile profile, String version) {
-        Controllers.prompt(
-                new PromptDialogPane.Builder(i18n("version.manage.duplicate.prompt"), (res, resolve, reject) -> {
-                    String newVersionName = ((PromptDialogPane.Builder.StringQuestion) res.get(1)).getValue();
-                    boolean copySaves = ((PromptDialogPane.Builder.BooleanQuestion) res.get(2)).getValue();
-                    Task.runAsync(() -> profile.getRepository().duplicateVersion(version, newVersionName, copySaves))
-                            .thenComposeAsync(profile.getRepository().refreshVersionsAsync())
-                            .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
-                                if (exception == null) {
-                                    resolve.run();
-                                } else {
-                                    reject.accept(StringUtils.getStackTrace(exception));
-                                    profile.getRepository().removeVersionFromDisk(newVersionName);
-                                }
-                            }).start();
-                })
-                        .addQuestion(new PromptDialogPane.Builder.HintQuestion(i18n("version.manage.duplicate.confirm")))
-                        .addQuestion(new PromptDialogPane.Builder.StringQuestion(null, version,
-                                new Validator(i18n("install.new_game.already_exists"), newVersionName -> !profile.getRepository().hasVersion(newVersionName))))
-                        .addQuestion(new PromptDialogPane.Builder.BooleanQuestion(i18n("version.manage.duplicate.duplicate_save"), false)));
+    public static void duplicateVersion(Context context, Profile profile, String version) {
+        DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, (res, resolve, reject) -> {
+            String newVersionName = (String) res.get(0);
+            boolean copySaves = (boolean) res.get(1);
+            Task.runAsync(() -> profile.getRepository().duplicateVersion(version, newVersionName, copySaves))
+                    .thenComposeAsync(profile.getRepository().refreshVersionsAsync())
+                    .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                        if (exception == null) {
+                            resolve.run();
+                        } else {
+                            reject.accept(StringUtils.getStackTrace(exception));
+                            profile.getRepository().removeVersionFromDisk(newVersionName);
+                        }
+                    }).start();
+        });
+        dialog.show();
     }
 
     public static void updateVersion(Profile profile, String version) {
-        Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile, version));
+        //Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile, version));
     }
 
-    public static void updateGameAssets(Profile profile, String version) {
+    public static void updateGameAssets(Context context, Profile profile, String version) {
         TaskExecutor executor = new GameAssetDownloadTask(profile.getDependency(), profile.getRepository().getVersion(version), GameAssetDownloadTask.DOWNLOAD_INDEX_FORCIBLY, true)
                 .executor();
-        Controllers.taskDialog(executor, i18n("version.manage.redownload_assets_index"), TaskCancellationAction.NO_CANCEL);
+        TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NO_CANCEL);
+        dialog.setExecutor(executor);
+        dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
+        dialog.show();
         executor.start();
     }
-
-     */
 
     public static void cleanVersion(Profile profile, String id) {
         try {

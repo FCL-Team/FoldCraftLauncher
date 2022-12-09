@@ -193,6 +193,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 uiManager.switchUI(uiManager.getVersionUI());
             } else {
                 titleView.setTextWithAnim(getString(R.string.manage));
+                uiManager.getManageUI().setVersion(version, Profiles.getSelectedProfile());
                 uiManager.switchUI(uiManager.getManageUI());
             }
         }

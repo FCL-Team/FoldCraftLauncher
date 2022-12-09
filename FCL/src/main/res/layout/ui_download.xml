@@ -19,6 +19,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        app:tabUnboundedRipple="false"
         app:tabGravity="fill"
         app:follow_theme="true"
         app:tabTextAppearance="@style/TabTextAppearance"

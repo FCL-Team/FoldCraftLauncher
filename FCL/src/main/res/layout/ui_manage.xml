@@ -19,10 +19,16 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
+        app:tabUnboundedRipple="false"
         app:tabGravity="fill"
         app:follow_theme="true"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/manage"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
