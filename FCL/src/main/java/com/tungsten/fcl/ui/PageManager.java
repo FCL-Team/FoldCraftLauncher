@@ -125,7 +125,9 @@ public abstract class PageManager {
 
     public void dismissAllTempPagesCreatedByPage(int id) {
         FCLCommonPage commonPage = getPageById(id);
-        commonPage.getCurrentTempPage().dismiss();
+        if (commonPage.getCurrentTempPage() != null) {
+            commonPage.getCurrentTempPage().dismiss();
+        }
         commonPage.getAllTempPages().clear();
         commonPage.setCurrentTempPage(null);
         if (currentPage == commonPage) {

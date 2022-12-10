@@ -18,7 +18,6 @@ import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -56,9 +55,20 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void onStart() {
         super.onStart();
-        for (FCLCommonPage page : pageManager.getAllPages()) {
-            ((VersionLoadable) page).loadVersion(getProfile(), getVersion());
+        // If we jumped to game list page and deleted this version
+        // and back to this page, we should return to main page.
+        if (!getProfile().getRepository().isLoaded() ||
+                !getProfile().getRepository().hasVersion(getVersion())) {
+            Schedulers.androidUIThread().execute(() -> {
+                if (isShowing()) {
+                    MainActivity.getInstance().refreshMenuView(null);
+                    MainActivity.getInstance().home.setSelected(true);
+                }
+            });
+            return;
         }
+
+        loadVersion(getVersion(), getProfile());
     }
 
     @Override

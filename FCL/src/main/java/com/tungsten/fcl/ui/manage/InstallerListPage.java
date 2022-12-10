@@ -107,6 +107,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder.setMessage(AndroidUtils.getLocalizedText(getContext(), "install_change_version_confirm", AndroidUtils.getLocalizedText(getContext(), "install_installer_" + libraryId), libraryVersion, remoteVersion.getSelfVersion()));
                             builder.setPositiveButton(() -> finish(profile, remoteVersion));
                             builder.setNegativeButton(null);
+                            builder.create().show();
                         }
                     });
                     ManagePageManager.getInstance().showTempPage(page);
