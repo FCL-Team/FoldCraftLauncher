@@ -18,6 +18,7 @@ import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
+import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -55,6 +56,9 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void onStart() {
         super.onStart();
+        for (FCLCommonPage page : pageManager.getAllPages()) {
+            ((VersionLoadable) page).loadVersion(getProfile(), getVersion());
+        }
     }
 
     @Override
@@ -171,6 +175,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         setVersion(version, profile);
         preferredVersionName = version;
 
+        pageManager.dismissAllTempPages();
         pageManager.loadVersion(profile, version);
     }
 

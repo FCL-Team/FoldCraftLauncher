@@ -123,6 +123,22 @@ public abstract class PageManager {
         }
     }
 
+    public void dismissAllTempPagesCreatedByPage(int id) {
+        FCLCommonPage commonPage = getPageById(id);
+        commonPage.getCurrentTempPage().dismiss();
+        commonPage.getAllTempPages().clear();
+        commonPage.setCurrentTempPage(null);
+        if (currentPage == commonPage) {
+            commonPage.onStart();
+        }
+    }
+
+    public void dismissAllTempPages() {
+        for (FCLCommonPage page : allPages) {
+            dismissAllTempPagesCreatedByPage(page.getId());
+        }
+    }
+
     public void onPause() {
         for (FCLCommonPage page : allPages) {
             page.onPause();
