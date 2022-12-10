@@ -163,6 +163,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             return;
                         alertFailureMessage(getContext(), executor.getException(), () -> {});
                     }
+                    loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                 });
             }
         });
@@ -234,7 +235,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                                 return;
                             alertFailureMessage(getContext(), executor.getException(), () -> {});
                         }
-
+                        loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                     });
                 }
             });
