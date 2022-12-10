@@ -118,8 +118,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             public void onSelect(FileBrowserAdapter adapter1, String path) {
                 if (selectedFiles.stream().anyMatch(s -> s.equals(path))) {
                     selectedFiles.remove(path);
-                }
-                else {
+                } else {
                     if (fileBrowser.getSelectionMode() == SelectionMode.SINGLE_SELECTION) {
                         selectedFiles = new ArrayList<>();
                     }
@@ -138,8 +137,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
     public void onBackPressed() {
         if (currentPath.getParent() != null && !currentPath.toString().equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
             refreshList(currentPath.getParent());
-        }
-        else {
+        } else {
             setResult(Activity.RESULT_CANCELED);
             finish();
         }
@@ -150,8 +148,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         if (view == back) {
             if (currentPath.getParent() != null && !currentPath.toString().equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
                 refreshList(currentPath.getParent());
-            }
-            else {
+            } else {
                 setResult(Activity.RESULT_CANCELED);
                 finish();
             }
@@ -166,16 +163,14 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         if (view == privateDir) {
             if (getExternalCacheDir().getParent() != null) {
                 refreshList(new File(getExternalCacheDir().getParent()).toPath());
-            }
-            else {
+            } else {
                 Toast.makeText(this, getString(R.string.file_browser_private_alert), Toast.LENGTH_SHORT).show();
             }
         }
         if (view == confirm) {
             if (selectedFiles.size() == 0 && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
                 Toast.makeText(this, getString(R.string.file_browser_positive_alert), Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Intent intent = new Intent();
                 intent.putParcelableArrayListExtra(FileBrowser.SELECTED_FILES, (ArrayList<? extends Parcelable>) selectedFiles.stream().map(Uri::parse).collect(Collectors.toList()));
                 setResult(Activity.RESULT_OK, intent);
