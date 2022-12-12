@@ -75,6 +75,8 @@ public class FCLBridge implements Serializable {
     public native void setupJLI();
     public native int jliLaunch(String[] args);
 
+    public native void setFCLBridge(FCLBridge fclBridge);
+
     public void setThread(Thread thread) {
         this.thread = thread;
     }
@@ -94,6 +96,7 @@ public class FCLBridge implements Serializable {
         while (!isLogPipeReady) {
             //wait for redirectStdio
         }
+        setFCLBridge(this);
         // set graphic output and event pipe
         if (surface != null) {
             setFCLNativeWindow(surface);
@@ -111,7 +114,7 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventPointer(int x, int y) {
-        pushEvent(System.nanoTime(), MotionNotify, x, y);
+        pushEvent(System.nanoTime(), MotionNotify, (int) (x*0.33), (int) (y*0.3));
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {

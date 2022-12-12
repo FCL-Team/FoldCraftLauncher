@@ -141,9 +141,6 @@ public class FCLauncher {
             if (renderer.getGlVersion() != null) {
                 envMap.put("LIBGL_GL", renderer.getGlVersion());
             }
-            if("libtinywrapper.so".equals(renderer.getGlLibName())) {
-                envMap.put("LIBGL_ES","2");
-            }
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");
@@ -283,11 +280,9 @@ public class FCLauncher {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge(null);
-
+        bridge.setLogPath(config.getLogDir() + "/latest_java_gui.log");
         Thread javaGUIThread = new Thread(() -> {
             try {
-                // redirect log path
-                bridge.redirectStdio(config.getLogDir() + "/latest_java_gui.log");
 
                 logStartInfo("Java GUI");
 
@@ -320,13 +315,11 @@ public class FCLauncher {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge(callback);
-
+        bridge.setLogPath(config.getLogDir() + "/latest_api_installer.log");
         CompletableFuture<Integer> future = new CompletableFuture<>();
 
         Thread apiInstallerThread = new Thread(() -> {
             try {
-                // redirect log path
-                bridge.redirectStdio(config.getLogDir() + "/latest_api_installer.log");
 
                 logStartInfo("API Installer");
 

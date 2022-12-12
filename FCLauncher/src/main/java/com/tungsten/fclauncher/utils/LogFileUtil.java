@@ -1,6 +1,9 @@
 package com.tungsten.fclauncher.utils;
 
+import android.os.Environment;
 import android.util.Log;
+
+import com.tungsten.fclauncher.FCLPath;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +31,9 @@ public class LogFileUtil {
     }
     public void writeLog(String log) {
         Log.e("FCL", log);
+        if (this.logFilePath==null){
+            this.logFilePath= FCLPath.SHARED_COMMON_DIR +"/latest.log";
+        }
         log+="\n";
         if (!isWrite){
             return;

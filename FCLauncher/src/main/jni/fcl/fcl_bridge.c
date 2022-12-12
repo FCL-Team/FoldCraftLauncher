@@ -41,6 +41,12 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativ
     FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl.window,ANativeWindow_getWidth(fcl.window),ANativeWindow_getHeight(fcl.window));
 }
 
+JNIEXPORT void JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLBridge(JNIEnv *env, jobject thiz,
+                                                           jobject fcl_bridge) {
+    fcl.object_FCLBridge = (jclass)(*env)->NewGlobalRef(env, thiz);
+}
+
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     memset(&fcl, 0, sizeof(fcl));
     fcl.android_jvm = vm;

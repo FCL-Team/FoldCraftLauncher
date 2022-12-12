@@ -32,6 +32,7 @@ typedef struct {
 typedef struct {
     JavaVM* android_jvm;
     jclass class_FCLBridge;
+    jobject object_FCLBridge;
     ANativeWindow* window;
     char* clipboard_string;
     EventQueue event_queue;
@@ -68,7 +69,7 @@ extern FCLInternal fcl;
     if (FCLBridge_##func_name == NULL) { \
         FCL_INTERNAL_LOG("Failed to find static method FCLBridge_"#func_name ); \
     } \
-    return_exp (*env)->Call##func_type##Method(env, fcl.class_FCLBridge, FCLBridge_##func_name, ##args); \
+    return_exp (*env)->Call##func_type##Method(env, fcl.object_FCLBridge, FCLBridge_##func_name, ##args); \
     do {} while(0)
 
 #endif //FOLD_CRAFT_LAUNCHER_FCL_INTERNAL_H
