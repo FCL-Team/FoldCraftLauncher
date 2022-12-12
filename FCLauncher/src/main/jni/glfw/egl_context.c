@@ -188,7 +188,7 @@ GLFWbool _glfwInitEGL(void)
     _glfw.egl.GetConfigs = (PFN_eglGetConfigs)
         _glfw_dlsym(_glfw.egl.handle, "eglGetConfigs");
     _glfw.egl.ChooseConfig = (PFN_eglChooseConfig)
-            _glfw_dlsym(_glfw.egl.handle, "eglChooseConfig");
+        _glfw_dlsym(_glfw.egl.handle, "eglChooseConfig");
     _glfw.egl.GetDisplay = (PFN_eglGetDisplay)
         _glfw_dlsym(_glfw.egl.handle, "eglGetDisplay");
     _glfw.egl.GetError = (PFN_eglGetError)
@@ -301,7 +301,7 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
                                const _GLFWctxconfig* ctxconfig,
                                const _GLFWfbconfig* fbconfig)
 {
-    EGLConfig config=malloc(sizeof(EGLConfig));
+    EGLConfig config = malloc(sizeof(EGLConfig));
     EGLContext share = NULL;
 
     if (!_glfw.egl.display)

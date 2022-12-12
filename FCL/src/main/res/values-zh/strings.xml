@@ -82,11 +82,19 @@
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
+    <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
 
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
+
+    <string name="folder_config">浏览配置文件夹</string>
+    <string name="folder_game">浏览游戏文件夹</string>
+    <string name="folder_mod">浏览模组文件夹</string>
+    <string name="folder_resourcepacks">浏览资源包文件夹</string>
+    <string name="folder_saves">浏览存档文件夹</string>
+    <string name="folder_screenshots">浏览截屏文件夹</string>
 
     <string name="input_not_empty">请先填写必要的输入框。</string>
 
@@ -137,6 +145,7 @@
     <string name="mods_manage">模组管理</string>
 
     <string name="modpack">整合包</string>
+    <string name="modpack_export">导出整合包</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
@@ -160,12 +169,21 @@
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
+    <string name="version_manage_clean">清理游戏目录</string>
+    <string name="version_manage_duplicate">复制游戏实例</string>
+    <string name="version_manage_duplicate_duplicate_save">复制存档</string>
+    <string name="version_manage_duplicate_prompt">实例名称</string>
+    <string name="version_manage_duplicate_confirm">将锁定复制产生的新游戏实例：开启版本隔离、游戏设置并复制该版本产生的文件。</string>
+    <string name="version_manage_redownload_assets_index">更新资源文件</string>
     <string name="version_manage_remove_confirm">你确定要删除 %s 吗？ 该操作无法撤回！</string>
     <string name="version_manage_remove_confirm_independent">该版本启用了版本隔离，删除该版本将会一并删除存档及其他数据。你仍要删除 %s 吗?</string>
+    <string name="version_manage_remove_libraries">删除所有库文件</string>
+    <string name="version_manage_rename">重命名版本</string>
     <string name="version_manage_rename_message">重命名版本</string>
     <string name="version_manage_rename_new">新名称</string>
     <string name="version_manage_rename_fail">重命名失败</string>
     <string name="version_new_profile">新建目录</string>
+    <string name="version_update">更新整合包</string>
 
     <string name="world">世界</string>
     <string name="world_manage">世界 / 数据包</string>

@@ -21,6 +21,7 @@
         app:tabTextAppearance="@style/TabTextAppearance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabUnboundedRipple="false"
         app:tabGravity="fill"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

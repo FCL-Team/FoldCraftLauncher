@@ -26,6 +26,7 @@ public class FCLImageButton extends AppCompatImageButton {
 
     private ObjectProperty<Drawable> image;
     private boolean autoTint;
+    private boolean noPadding;
     private BooleanProperty visibilityProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
@@ -48,7 +49,7 @@ public class FCLImageButton extends AppCompatImageButton {
                 setImageTintList(new ColorStateList(state, colorSrc));
             }
             RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
-            drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
+            drawable.setRadius(ConvertUtils.dip2px(getContext(), noPadding ? 12 : 20));
             setBackgroundDrawable(drawable);
         }
 
@@ -64,12 +65,16 @@ public class FCLImageButton extends AppCompatImageButton {
     };
 
     private void init() {
-        setPadding(
-                ConvertUtils.dip2px(getContext(), 8f),
-                ConvertUtils.dip2px(getContext(), 8f),
-                ConvertUtils.dip2px(getContext(), 8f),
-                ConvertUtils.dip2px(getContext(), 8f)
-        );
+        if (!noPadding) {
+            setPadding(
+                    ConvertUtils.dip2px(getContext(), 8f),
+                    ConvertUtils.dip2px(getContext(), 8f),
+                    ConvertUtils.dip2px(getContext(), 8f),
+                    ConvertUtils.dip2px(getContext(), 8f)
+            );
+        } else {
+            setPadding(0, 0, 0, 0);
+        }
         setScaleType(ScaleType.FIT_XY);
     }
 
@@ -83,6 +88,7 @@ public class FCLImageButton extends AppCompatImageButton {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
+        noPadding = typedArray.getBoolean(R.styleable.FCLImageButton_no_padding, false);
         typedArray.recycle();
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
@@ -92,6 +98,7 @@ public class FCLImageButton extends AppCompatImageButton {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageButton);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageButton_auto_tint, false);
+        noPadding = typedArray.getBoolean(R.styleable.FCLImageButton_no_padding, false);
         typedArray.recycle();
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
@@ -103,6 +110,14 @@ public class FCLImageButton extends AppCompatImageButton {
 
     public boolean isAutoTint() {
         return autoTint;
+    }
+
+    public void setNoPadding(boolean noPadding) {
+        this.noPadding = noPadding;
+    }
+
+    public boolean isNoPadding() {
+        return noPadding;
     }
 
     public final void setImage(Drawable drawable) {
