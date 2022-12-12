@@ -59,6 +59,8 @@ public class FCLBridge implements Serializable {
     private boolean isLogPipeReady=false;
     private WeakReference<LogReceiver> logReceiver;
 
+    public static int cursorMode=CursorEnabled;
+
     public FCLBridge(FCLBridgeCallback callback) {
         this.callback = callback;
     }
@@ -138,6 +140,7 @@ public class FCLBridge implements Serializable {
 
     // FCLBridge callbacks
     public void setCursorMode(int mode) {
+        cursorMode=mode;
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }

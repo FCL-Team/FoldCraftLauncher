@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -33,8 +34,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static FCLBridge fclBridge;
 
     //only for test version
-    private MioMouseKeyboard mioMouseKeyboard;
-    private ImageView mouse;
+    public MioMouseKeyboard mioMouseKeyboard;
+    public ImageView mouse;
     private EditText input;
 
     public static void setFClBridge(FCLBridge fclBridge, ControllerType controllerType) {
@@ -53,7 +54,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         }
 
         controller = controllerType == ControllerType.GAME ? new GameController() : new JavaGuiController();
-
+        controller.setup(this);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
         mouse=findViewById(R.id.mouse);
@@ -88,6 +89,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onBackPressed() {
         if(getResources().getConfiguration().keyboard!= Configuration.KEYBOARD_NOKEYS) {
             mioMouseKeyboard.catchPointer();
+            MioMouseKeyboard.baseX=0;
+            MioMouseKeyboard.baseY=0;
+//            if (FCLBridge.cursorMode==FCLBridge.CursorEnabled) {
+//                mouse.setVisibility(View.INVISIBLE);
+//                mioMouseKeyboard.releasePointer();
+//            } else {
+//                mouse.setVisibility(View.VISIBLE);
+//                mioMouseKeyboard.catchPointer();
+//            }
         }
     }
 }

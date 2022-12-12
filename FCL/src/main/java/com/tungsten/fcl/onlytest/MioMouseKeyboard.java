@@ -29,7 +29,7 @@ public class MioMouseKeyboard {
 
 	private FCLBridge fclBridge;
 	
-	private int baseX,baseY;
+	public static int baseX,baseY;
 	public MioMouseKeyboard(JVMActivity context, View mouse, View focusView){
 		this.context=context;
 		this.mouseCursor=mouse;
