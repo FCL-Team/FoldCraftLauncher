@@ -3,11 +3,14 @@ package com.tungsten.fclauncher.bridge;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.util.Log;
 import android.view.Surface;
 
 import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 
 public class FCLBridge implements Serializable {
 
@@ -43,6 +46,8 @@ public class FCLBridge implements Serializable {
 
     public FCLBridgeCallback callback;
 
+    private String logPath;
+
     static {
         System.loadLibrary("xhook");
         System.loadLibrary("fcl");
@@ -50,6 +55,9 @@ public class FCLBridge implements Serializable {
     }
 
     private Thread thread;
+    private Thread fclLogThread;
+    private boolean isLogPipeReady=false;
+    private WeakReference<LogReceiver> logReceiver;
 
     public FCLBridge(FCLBridgeCallback callback) {
         this.callback = callback;
@@ -78,6 +86,14 @@ public class FCLBridge implements Serializable {
     public void execute(Surface surface, FCLBridgeCallback callback) {
         this.callback = callback;
 
+        LogFileUtil logFileUtil = LogFileUtil.getInstance();
+        logFileUtil.setLogFilePath(getLogPath());
+        fclLogThread = new Thread(()->redirectStdio(getLogPath()));
+        fclLogThread.setName("FCLLogThread");
+        fclLogThread.start();
+        while (!isLogPipeReady) {
+            //wait for redirectStdio
+        }
         // set graphic output and event pipe
         if (surface != null) {
             setFCLNativeWindow(surface);
@@ -139,4 +155,28 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
+    public String getLogPath() {
+        return logPath;
+    }
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
+    }
+
+    public void setLogPipeReady(){
+        this.isLogPipeReady=true;
+    }
+
+    public void receiveLog(String log){
+        if (logReceiver == null || logReceiver.get() == null) {
+            logReceiver = new WeakReference<>(new LogReceiver() {
+                @Override
+                public void pushLog(String log) {
+                    LogFileUtil.getInstance().writeLog(log);
+                }
+            });
+        } else {
+            logReceiver.get().pushLog(log);
+        }
+    }
 }

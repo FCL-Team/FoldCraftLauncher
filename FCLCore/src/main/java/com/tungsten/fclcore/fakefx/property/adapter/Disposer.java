@@ -1,5 +1,7 @@
 package com.tungsten.fclcore.fakefx.property.adapter;
 
+import com.tungsten.fclauncher.utils.LogFileUtil;
+
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -44,7 +46,7 @@ public class Disposer implements Runnable {
                 Runnable rec = (Runnable)records.remove(obj);
                 rec.run();
             } catch (Exception e) {
-                System.out.println("Exception while removing reference: " + e);
+                LogFileUtil.getInstance().writeLog("Exception while removing reference: " + e);
                 e.printStackTrace();
             }
         }

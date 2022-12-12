@@ -101,6 +101,9 @@ public class DefaultLauncher extends Launcher {
 
             res.addDefault("-Dfml.ignoreInvalidMinecraftCertificates=", "true");
             res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
+//            res.addDefault("-Dorg.lwjgl.util.Debug=","true");
+//            res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
+//            res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
         }
 
         // Fix RCE vulnerability of log4j2

@@ -39,15 +39,16 @@ typedef struct {
     int has_event_pipe;
     int event_pipe_fd[2];
     int epoll_fd;
+    FILE* logFile;
 } FCLInternal;
 
 extern FCLInternal fcl;
 
 #define FCL_INTERNAL_LOG(x...) do { \
-    fprintf(stderr, "[FCL Internal] %s:%d\n", __FILE__, __LINE__); \
-    fprintf(stderr, x); \
-    fprintf(stderr, "\n"); \
-    fflush(stderr); \
+    fprintf(fcl.logFile, "[FCL Internal] %s:%d\n", __FILE__, __LINE__); \
+    fprintf(fcl.logFile, x); \
+    fprintf(fcl.logFile, "\n"); \
+    fflush(fcl.logFile); \
     } while (0)
 
 #define PrepareFCLBridgeJNI() \

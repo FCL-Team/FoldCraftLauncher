@@ -2,10 +2,11 @@
 // Created by Tungsten on 2022/10/11.
 //
 
-#include <fcl_internal.h>
+#include "fcl_internal.h"
 
 #include <android/native_window_jni.h>
 #include <jni.h>
+#include <android/log.h>
 
 FCLInternal fcl;
 
@@ -37,7 +38,7 @@ const char* fclGetPrimaryClipString() {
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativeWindow(JNIEnv* env, jclass clazz, jobject surface) {
     fcl.window = ANativeWindow_fromSurface(env, surface);
-    FCL_INTERNAL_LOG("setFCLNativeWindow : %p", fcl.window);
+    FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl.window,ANativeWindow_getWidth(fcl.window),ANativeWindow_getHeight(fcl.window));
 }
 
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {

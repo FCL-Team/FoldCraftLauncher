@@ -10,6 +10,7 @@ import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,13 +30,13 @@ public class FCLauncher {
     // Todo : mesa
 
     private static void printTaskTitle(String task) {
-        System.out.println("==================== " + task + " ====================");
+        LogFileUtil.getInstance().writeLog("==================== " + task + " ====================");
     }
 
     private static void logStartInfo(String task) {
         printTaskTitle("Start " + task);
-        System.out.println("Device: " + DeviceName.getDeviceName());
-        System.out.println("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
+        LogFileUtil.getInstance().writeLog("Device: " + DeviceName.getDeviceName());
+        LogFileUtil.getInstance().writeLog("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
@@ -141,7 +142,7 @@ public class FCLauncher {
                 envMap.put("LIBGL_GL", renderer.getGlVersion());
             }
             if("libtinywrapper.so".equals(renderer.getGlLibName())) {
-                envMap.put("LIBGL_ES","3");
+                envMap.put("LIBGL_ES","2");
             }
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
@@ -165,7 +166,7 @@ public class FCLauncher {
         }
         printTaskTitle("Env Map");
         for (String key : envMap.keySet()) {
-            System.out.println("Env: " + key + "=" + envMap.get(key));
+            LogFileUtil.getInstance().writeLog("Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
         printTaskTitle("Env Map");
@@ -228,13 +229,13 @@ public class FCLauncher {
         printTaskTitle(task + " Arguments");
         String[] args = rebaseArgs(config);
         for (String arg : args) {
-            System.out.println(task + " argument: " + arg);
+            LogFileUtil.getInstance().writeLog(task + " argument: " + arg);
         }
         bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
-        System.out.println("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
+        LogFileUtil.getInstance().writeLog("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
         int exitCode = bridge.jliLaunch(args);
-        System.out.println("OpenJDK exited with code : " + exitCode);
+        LogFileUtil.getInstance().writeLog("OpenJDK exited with code : " + exitCode);
         return exitCode;
     }
 
@@ -242,12 +243,9 @@ public class FCLauncher {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge(null);
-
+        bridge.setLogPath(config.getLogDir() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
-                // redirect log path
-                bridge.redirectStdio(config.getLogDir() + "/latest_game.log");
-
                 logStartInfo("Minecraft");
 
                 // env
@@ -260,7 +258,7 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                System.out.println("Working directory: " + config.getWorkingDir());
+                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch game
@@ -298,7 +296,7 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                System.out.println("Working directory: " + config.getWorkingDir());
+                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch java gui
@@ -334,7 +332,7 @@ public class FCLauncher {
                 setUpJavaRuntime(config, bridge);
 
                 // set working directory
-                System.out.println("Working directory: " + config.getWorkingDir());
+                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch api installer
