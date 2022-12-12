@@ -3,6 +3,7 @@
 //
 
 #include <fcl_internal.h>
+#include <android/log.h>
 
 void EventQueue_init(EventQueue* queue) {
     queue->count = 0;

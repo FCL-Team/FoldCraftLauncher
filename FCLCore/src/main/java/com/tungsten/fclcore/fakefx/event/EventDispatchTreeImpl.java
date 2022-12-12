@@ -317,27 +317,27 @@ public final class EventDispatchTreeImpl implements EventDispatchTree {
     }
 
 //    void dumpInternalData() {
-//        System.out.println("reservedCount: " + reservedCount);
-//        System.out.println("rootIndex: " + rootIndex);
-//        System.out.println("tailFirstIndex: " + tailFirstIndex);
-//        System.out.println("tailLastIndex: " + tailLastIndex);
+//        LogFileUtil.getInstance().writeLog("reservedCount: " + reservedCount);
+//        LogFileUtil.getInstance().writeLog("rootIndex: " + rootIndex);
+//        LogFileUtil.getInstance().writeLog("tailFirstIndex: " + tailFirstIndex);
+//        LogFileUtil.getInstance().writeLog("tailLastIndex: " + tailLastIndex);
 //
 //        System.out.print("dispatchers:");
 //        for (int i = 0; i < reservedCount; ++i) {
 //            System.out.print(" " + dispatchers[i]);
 //        }
-//        System.out.println();
+//        LogFileUtil.getInstance().writeLog();
 //
 //        System.out.print("nextSiblings:");
 //        for (int i = 0; i < reservedCount; ++i) {
 //            System.out.print(" " + nextSiblings[i]);
 //        }
-//        System.out.println();
+//        LogFileUtil.getInstance().writeLog();
 //
 //        System.out.print("nextChildren:");
 //        for (int i = 0; i < reservedCount; ++i) {
 //            System.out.print(" " + nextChildren[i]);
 //        }
-//        System.out.println();
+//        LogFileUtil.getInstance().writeLog();
 //    }
 }

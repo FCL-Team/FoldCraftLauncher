@@ -9,4 +9,15 @@
         android:layout_height="match_parent"
         android:id="@+id/texture_view"/>
 
+    <ImageView
+        android:id="@+id/mouse"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_cursor"/>
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/input"
+        android:layout_width="1px"
+        android:layout_height="1px"/>
+
 </RelativeLayout>

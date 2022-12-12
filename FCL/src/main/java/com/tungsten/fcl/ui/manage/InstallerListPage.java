@@ -33,6 +33,7 @@ import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class InstallerListPage extends FCLCommonPage implements ManageUI.VersionLoadable {
+public class InstallerListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private Profile profile;
     private String versionId;
@@ -52,6 +53,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
     private ScrollView scrollView;
     private LinearLayoutCompat parent;
 
+    private FCLButton installOfflineButton;
+
     public InstallerListPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
         create();
@@ -59,6 +62,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
 
     private void create() {
         scrollView = findViewById(R.id.scroll);
+        installOfflineButton = findViewById(R.id.install_offline);
+        installOfflineButton.setOnClickListener(this);
     }
 
     @Override
@@ -107,6 +112,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder.setMessage(AndroidUtils.getLocalizedText(getContext(), "install_change_version_confirm", AndroidUtils.getLocalizedText(getContext(), "install_installer_" + libraryId), libraryVersion, remoteVersion.getSelfVersion()));
                             builder.setPositiveButton(() -> finish(profile, remoteVersion));
                             builder.setNegativeButton(null);
+                            builder.create().show();
                         }
                     });
                     ManagePageManager.getInstance().showTempPage(page);
@@ -162,6 +168,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             return;
                         alertFailureMessage(getContext(), executor.getException(), () -> {});
                     }
+                    loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                 });
             }
         });
@@ -233,7 +240,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                                 return;
                             alertFailureMessage(getContext(), executor.getException(), () -> {});
                         }
-
+                        loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                     });
                 }
             });
@@ -241,5 +248,12 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
             pane.show();
             executor.start();
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == installOfflineButton) {
+            installOffline();
+        }
     }
 }

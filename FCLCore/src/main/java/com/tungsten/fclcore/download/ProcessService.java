@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,7 +28,7 @@ public class ProcessService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        System.out.println("ProcessService started!");
+        LogFileUtil.getInstance().writeLog("ProcessService started!");
         String[] command = intent.getExtras().getStringArray("command");
         FCLConfig config = new FCLConfig(
                 getApplicationContext(),
@@ -64,7 +65,7 @@ public class ProcessService extends Service {
             DatagramPacket packet = new DatagramPacket(data, data.length);
             socket.send(packet);
             socket.close();
-            System.out.println("Code = " + code + ", send the code now!");
+            LogFileUtil.getInstance().writeLog("Code = " + code + ", send the code now!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,7 +74,7 @@ public class ProcessService extends Service {
 
     @Override
     public void onDestroy() {
-        System.out.println("Destroy the service now!");
+        LogFileUtil.getInstance().writeLog("Destroy the service now!");
         super.onDestroy();
         android.os.Process.killProcess(android.os.Process.myPid());
     }
