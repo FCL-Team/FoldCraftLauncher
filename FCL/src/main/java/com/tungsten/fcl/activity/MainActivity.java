@@ -22,6 +22,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.version.Versions;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.Account;
@@ -290,9 +291,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 String libraryId = mark.getLibraryId();
                 String libraryVersion = mark.getLibraryVersion();
                 if (libraryId.equals(MINECRAFT.getPatchId())) continue;
-                int resId = getResources().getIdentifier("install_installer_" + libraryId.replace("-", "_"), "string", getPackageName());
-                if (resId != 0 && getString(resId) != null) {
-                    libraries.append(", ").append(getString(resId));
+                if (AndroidUtils.hasStringId(this, "install_installer_" + libraryId.replace("-", "_"))) {
+                    libraries.append(", ").append(AndroidUtils.getLocalizedText(this, "install_installer_" + libraryId.replace("-", "_")));
                     if (libraryVersion != null)
                         libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
                 }

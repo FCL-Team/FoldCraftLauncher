@@ -152,7 +152,7 @@
     <string name="profile_name">名称</string>
     <string name="profile_path">路径</string>
     <string name="profile_select">选择目录</string>
-    <string name="profile_add_alert">请先填写名称与路径！</string>
+    <string name="profile_already_exist">该名称已存在！</string>
 
     <string name="resourcepack">资源包</string>
 

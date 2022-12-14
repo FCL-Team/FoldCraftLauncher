@@ -171,7 +171,7 @@
     <string name="profile_name">Name</string>
     <string name="profile_path">Path</string>
     <string name="profile_select">Select Directory</string>
-    <string name="profile_add_alert">Please fill the name and path first!</string>
+    <string name="profile_already_exist">This name already exists, please use a different name.</string>
 
     <string name="resourcepack">Resource Packs</string>
 

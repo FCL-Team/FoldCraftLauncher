@@ -80,10 +80,7 @@ public class Versions {
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setMessage(message);
-        builder.setPositiveButton(() -> {
-            profile.getRepository().removeVersionFromDisk(version);
-            UIManager.getInstance().getVersionUI().refresh().start();
-        });
+        builder.setPositiveButton(() -> profile.getRepository().removeVersionFromDisk(version));
         builder.setNegativeButton(null);
         builder.create().show();
     }
@@ -101,7 +98,6 @@ public class Versions {
                             if (profile.getRepository().hasVersion(newName)) {
                                 profile.setSelectedVersion(newName);
                             }
-                            UIManager.getInstance().getVersionUI().refresh().start();
                         }).start();
             } else {
                 reject.accept(context.getString(R.string.version_manage_rename_fail));

@@ -1,9 +1,12 @@
 package com.tungsten.fcl.ui.version;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -12,7 +15,6 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class ProfileListAdapter extends FCLAdapter {
@@ -25,7 +27,7 @@ public class ProfileListAdapter extends FCLAdapter {
     }
 
     static class ViewHolder {
-        FCLRadioButton radioButton;
+        ConstraintLayout parent;
         FCLTextView name;
         FCLTextView path;
         FCLImageButton delete;
@@ -41,13 +43,14 @@ public class ProfileListAdapter extends FCLAdapter {
         return list.get(i);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
         if (view == null) {
             viewHolder = new ViewHolder();
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_profile, null);
-            viewHolder.radioButton = view.findViewById(R.id.radio);
+            viewHolder.parent = view.findViewById(R.id.parent);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.path = view.findViewById(R.id.path);
             viewHolder.delete = view.findViewById(R.id.delete);
@@ -57,17 +60,15 @@ public class ProfileListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         Profile profile = list.get(i);
-        viewHolder.radioButton.setChecked(profile == Profiles.getSelectedProfile());
+        viewHolder.parent.setBackground(profile == Profiles.getSelectedProfile() ? getContext().getDrawable(R.drawable.bg_container_transparent_selected) : getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
         viewHolder.name.setText(profile.getName());
         viewHolder.path.setText(profile.getGameDir().getAbsolutePath());
-        viewHolder.radioButton.setOnClickListener(view1 -> {
+        viewHolder.parent.setOnClickListener(view1 -> {
             Profiles.setSelectedProfile(profile);
             notifyDataSetChanged();
-            UIManager.getInstance().getVersionUI().refresh().start();
         });
         viewHolder.delete.setOnClickListener(view1 -> {
             Profiles.getProfiles().remove(profile);
-            UIManager.getInstance().getVersionUI().refresh().start();
             UIManager.getInstance().getVersionUI().refreshProfile();
         });
         return view;

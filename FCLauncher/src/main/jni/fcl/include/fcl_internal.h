@@ -67,7 +67,7 @@ extern FCLInternal fcl;
 #define CallFCLBridgeJNIFunc(return_exp, func_type, func_name, signature, args...) \
     jmethodID FCLBridge_##func_name = (*env)->GetMethodID(env, fcl.class_FCLBridge, #func_name, signature); \
     if (FCLBridge_##func_name == NULL) { \
-        FCL_INTERNAL_LOG("Failed to find static method FCLBridge_"#func_name ); \
+        FCL_INTERNAL_LOG("Failed to find method FCLBridge_"#func_name ); \
     } \
     return_exp (*env)->Call##func_type##Method(env, fcl.object_FCLBridge, FCLBridge_##func_name, ##args); \
     do {} while(0)
