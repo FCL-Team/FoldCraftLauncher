@@ -122,7 +122,7 @@ public class FCLRadioButton extends AppCompatRadioButton {
                 }
 
                 public String getName() {
-                    return "visibility";
+                    return "check";
                 }
             };
         }
