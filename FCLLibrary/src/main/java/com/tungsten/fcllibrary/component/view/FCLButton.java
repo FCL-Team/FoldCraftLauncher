@@ -26,6 +26,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 public class FCLButton extends AppCompatButton {
 
     private BooleanProperty visibilityProperty;
+    private BooleanProperty disableProperty;
 
     private final boolean ripple;
     private boolean isDown;
@@ -201,5 +202,37 @@ public class FCLButton extends AppCompatButton {
         }
 
         return visibilityProperty;
+    }
+
+    public final void setDisableValue(boolean disableValue) {
+        disableProperty().set(disableValue);
+    }
+
+    public final boolean getDisableValue() {
+        return disableProperty == null || disableProperty.get();
+    }
+
+    public final BooleanProperty disableProperty() {
+        if (disableProperty == null) {
+            disableProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean disable = get();
+                        setEnabled(!disable);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "disable";
+                }
+            };
+        }
+
+        return disableProperty;
     }
 }
