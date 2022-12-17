@@ -105,7 +105,7 @@
 
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:id="@+id/setting_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -264,6 +264,7 @@
                             android:orientation="horizontal">
 
                             <com.tungsten.fcllibrary.component.view.FCLTextView
+                                android:id="@+id/memory_info_text"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -273,6 +274,7 @@
                                 android:text="@string/settings_memory_used_per_total"/>
 
                             <com.tungsten.fcllibrary.component.view.FCLTextView
+                                android:id="@+id/memory_allocate_text"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -732,7 +734,7 @@
 
                 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
