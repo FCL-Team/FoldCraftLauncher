@@ -18,6 +18,9 @@
     <declare-styleable name="FCLEditText">
         <attr name="auto_edit_tint" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="FCLCheckBox">
+        <attr name="auto_hint_tint" format="boolean"/>
+    </declare-styleable>
     <declare-styleable name="FCLTitleView">
         <attr name="title" format="string" localization="suggested" />
     </declare-styleable>

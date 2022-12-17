@@ -156,8 +156,43 @@
 
     <string name="resourcepack">资源包</string>
 
+    <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
+    <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
+    <string name="settings_advanced_game_dir_default">默认 (.minecraft/)</string>
+    <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
+    <string name="settings_advanced_java_permanent_generation_space">内存永久保存区域</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">单位 MB</string>
+    <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>
+    <string name="settings_advanced_minecraft_arguments">游戏参数</string>
+    <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
+    <string name="settings_advanced_process_priority">进程优先级</string>
+    <string name="settings_advanced_process_priority_low">低</string>
+    <string name="settings_advanced_process_priority_normal">中</string>
+    <string name="settings_advanced_process_priority_high">高</string>
+    <string name="settings_advanced_server_ip">服务器地址</string>
+    <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
+    <string name="settings_fcl_controller">控制</string>
+    <string name="settings_fcl_controller_injector">基岩版触控手势 (1.7.10 – 1.19.2)</string>
+    <string name="settings_fcl_renderer">渲染器</string>
+    <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_game">游戏设置</string>
+    <string name="settings_game_dimension">窗口分辨率</string>
+    <string name="settings_game_fullscreen">全屏</string>
+    <string name="settings_game_java_version">Java 版本</string>
+    <string name="settings_game_java_version_auto">自动选择</string>
+    <string name="settings_game_working_directory">版本隔离</string>
+    <string name="settings_icon">版本图标</string>
+    <string name="settings_memory">游戏内存</string>
+    <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>
+    <string name="settings_memory_allocate_auto_exceeded">最低分配 %1$.1f GB / 实际分配 %2$.1f GB (%3$.1f GB 可用)</string>
+    <string name="settings_memory_allocate_manual">游戏分配 %1$.1f GB</string>
+    <string name="settings_memory_allocate_manual_exceeded">游戏分配 %1$.1f GB (设备仅 %3$.1f GB 可用)</string>
+    <string name="settings_memory_auto_allocate">自动分配内存</string>
+    <string name="settings_memory_lower_bound">最低内存分配</string>
+    <string name="settings_memory_used_per_total">设备中已使用 %1$.1f GB / 设备总内存 %2$.1f GB</string>
+    <string name="settings_physical_memory">物理内存大小</string>
     <string name="settings_tabs_installers">自动安装</string>
+    <string name="settings_type_special_enable">启用游戏特定设置</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
