@@ -78,8 +78,11 @@ public class AccountListAdapter extends FCLAdapter {
         }
         AccountListItem account = list.get(i);
         viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
+        viewHolder.avatar.imageProperty().unbind();
         viewHolder.avatar.imageProperty().bind(account.imageProperty());
+        viewHolder.name.stringProperty().unbind();
         viewHolder.name.stringProperty().bind(account.titleProperty());
+        viewHolder.type.stringProperty().unbind();
         viewHolder.type.stringProperty().bind(account.subtitleProperty());
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(view1 -> {
