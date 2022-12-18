@@ -60,6 +60,7 @@ public class VersionListAdapter extends FCLAdapter {
         }
         VersionListItem versionListItem = list.get(i);
         versionListItem.checkSelection();
+        viewHolder.radioButton.checkProperty().unbind();
         viewHolder.radioButton.checkProperty().bind(versionListItem.selectedProperty());
         viewHolder.icon.setBackground(versionListItem.getDrawable());
         viewHolder.title.setText(versionListItem.getVersion());

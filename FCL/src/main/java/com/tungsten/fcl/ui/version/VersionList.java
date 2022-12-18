@@ -49,9 +49,9 @@ public class VersionList {
             if (profile == Profiles.getSelectedProfile()) {
                 List<VersionListItem> children = repository.getDisplayVersions()
                         .map(version -> {
-                            String game = Profiles.getSelectedProfile().getRepository().getGameVersion(version.getId()).orElse(context.getString(R.string.message_unknown));
+                            String game = profile.getRepository().getGameVersion(version.getId()).orElse(context.getString(R.string.message_unknown));
                             StringBuilder libraries = new StringBuilder(game);
-                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(Profiles.getSelectedProfile().getRepository().getResolvedPreservingPatchesVersion(version.getId()));
+                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(repository.getResolvedPreservingPatchesVersion(version.getId()));
                             for (LibraryAnalyzer.LibraryMark mark : analyzer) {
                                 String libraryId = mark.getLibraryId();
                                 String libraryVersion = mark.getLibraryVersion();
@@ -66,21 +66,23 @@ public class VersionList {
                         })
                         .collect(Collectors.toList());
                 children.forEach(VersionListItem::checkSelection);
-                Schedulers.androidUIThread().execute(() -> {
-                    VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
-                    listView.setAdapter(adapter);
-                    refreshButton.setEnabled(true);
-                    listView.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                });
+                if (profile == Profiles.getSelectedProfile()) {
+                    Schedulers.androidUIThread().execute(() -> {
+                        VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
+                        listView.setAdapter(adapter);
+                        refreshButton.setEnabled(true);
+                        listView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    });
 
-                profile.selectedVersionProperty().addListener(listenerHolder.weak((a, b, newValue) -> Schedulers.androidUIThread().execute(() -> {
-                    children.forEach(it -> it.selectedProperty().set(false));
-                    children.stream()
-                            .filter(it -> it.getVersion().equals(newValue))
-                            .findFirst()
-                            .ifPresent(it -> it.selectedProperty().set(true));
-                })));
+                    profile.selectedVersionProperty().addListener(listenerHolder.weak((a, b, newValue) -> Schedulers.androidUIThread().execute(() -> {
+                        children.forEach(it -> it.selectedProperty().set(false));
+                        children.stream()
+                                .filter(it -> it.getVersion().equals(newValue))
+                                .findFirst()
+                                .ifPresent(it -> it.selectedProperty().set(true));
+                    })));
+                }
             }
         }).start();
     }
