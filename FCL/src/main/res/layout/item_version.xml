@@ -5,11 +5,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@drawable/bg_item"
+    <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
+        android:background="@drawable/bg_container_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        app:auto_constraint_background_tint="true"
         android:padding="5dp">
 
         <com.tungsten.fcllibrary.component.view.FCLRadioButton
@@ -37,7 +38,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             app:layout_constraintStart_toEndOf="@+id/icon"
-            app:layout_constraintEnd_toStartOf="@+id/rename"
+            app:layout_constraintEnd_toStartOf="@+id/delete"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5">
@@ -58,39 +59,6 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/rename"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_edit_24"
-            app:auto_tint="true"
-            app:layout_constraintEnd_toStartOf="@+id/copy"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/copy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_content_copy_24"
-            app:auto_tint="true"
-            app:layout_constraintEnd_toStartOf="@+id/browse"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/browse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_folder_24"
-            app:auto_tint="true"
-            app:layout_constraintEnd_toStartOf="@+id/delete"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,6 +69,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

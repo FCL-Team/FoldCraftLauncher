@@ -23,6 +23,7 @@ import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -86,7 +87,10 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
             Function<String, Runnable> removeAction = libraryId -> () -> profile.getDependency().removeLibraryAsync(version, libraryId)
                     .thenComposeAsync(profile.getRepository()::saveAsync)
                     .withComposeAsync(profile.getRepository().refreshVersionsAsync())
-                    .withRunAsync(Schedulers.androidUIThread(), () -> loadVersion(this.profile, this.versionId))
+                    .withRunAsync(Schedulers.androidUIThread(), () -> {
+                        loadVersion(this.profile, this.versionId);
+                        profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
+                    })
                     .start();
 
             clear();
@@ -161,7 +165,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                         builder.setCancelable(false);
                         builder.setMessage(getContext().getString(R.string.install_success));
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> profile.getRepository().onVersionIconChanged.fireEvent(new Event(this)));
                         builder.create().show();
                     } else {
                         if (executor.getException() == null)
@@ -233,7 +237,10 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.install_success));
-                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissCurrentTempPage());
+                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                                ManagePageManager.getInstance().dismissCurrentTempPage();
+                                profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
+                            });
                             builder1.create().show();
                         } else {
                             if (executor.getException() == null)

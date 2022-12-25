@@ -5,6 +5,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
@@ -109,6 +110,8 @@ public final class Profiles {
     /**
      * Called when it's ready to load profiles from {@link ConfigHolder#config()}.
      */
+    private static final WeakListenerHolder holder = new WeakListenerHolder();
+
     static void init() {
         if (initialized)
             throw new IllegalStateException("Already initialized");
@@ -129,14 +132,14 @@ public final class Profiles {
                         .findFirst()
                         .orElse(profiles.get(0)));
 
-        EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> {
+        holder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> {
             Profile profile = selectedProfile.get();
             if (profile != null && profile.getRepository() == event.getSource()) {
                 selectedVersion.bind(profile.selectedVersionProperty());
                 for (Consumer<Profile> listener : versionsListeners)
                     listener.accept(profile);
             }
-        });
+        }));
     }
 
     public static ObservableList<Profile> getProfiles() {

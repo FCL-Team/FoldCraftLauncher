@@ -18,6 +18,8 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLRadioButton extends AppCompatRadioButton {
 
     private BooleanProperty visibilityProperty;
+    private BooleanProperty checkProperty;
+    private BooleanProperty disableProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -95,6 +97,70 @@ public class FCLRadioButton extends AppCompatRadioButton {
         }
 
         return visibilityProperty;
+    }
+
+    public final void setCheckValue(boolean isChecked) {
+        checkProperty().set(isChecked);
+    }
+
+    public final boolean getCheckValue() {
+        return checkProperty == null || checkProperty.get();
+    }
+
+    public final BooleanProperty checkProperty() {
+        if (checkProperty == null) {
+            checkProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean isCheck = get();
+                        setChecked(isCheck);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "check";
+                }
+            };
+        }
+
+        return checkProperty;
+    }
+
+    public final void setDisableValue(boolean disableValue) {
+        disableProperty().set(disableValue);
+    }
+
+    public final boolean getDisableValue() {
+        return disableProperty == null || disableProperty.get();
+    }
+
+    public final BooleanProperty disableProperty() {
+        if (disableProperty == null) {
+            disableProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean disable = get();
+                        setEnabled(!disable);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "disable";
+                }
+            };
+        }
+
+        return disableProperty;
     }
 
 }

@@ -9,7 +9,6 @@ import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -80,10 +79,7 @@ public class Versions {
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setMessage(message);
-        builder.setPositiveButton(() -> {
-            profile.getRepository().removeVersionFromDisk(version);
-            UIManager.getInstance().getVersionUI().refresh().start();
-        });
+        builder.setPositiveButton(() -> profile.getRepository().removeVersionFromDisk(version));
         builder.setNegativeButton(null);
         builder.create().show();
     }
@@ -101,7 +97,6 @@ public class Versions {
                             if (profile.getRepository().hasVersion(newName)) {
                                 profile.setSelectedVersion(newName);
                             }
-                            UIManager.getInstance().getVersionUI().refresh().start();
                         }).start();
             } else {
                 reject.accept(context.getString(R.string.version_manage_rename_fail));
