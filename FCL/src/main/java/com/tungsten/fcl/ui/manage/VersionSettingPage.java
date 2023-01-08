@@ -46,9 +46,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private WeakListenerHolder listenerHolder;
     private String versionId;
 
-    private FCLLinearLayout settingTypeLayout;
-    private FCLLinearLayout settingLayout;
-
     private FCLEditText txtWidth;
     private FCLEditText txtHeight;
     private FCLEditText txtJVMArgs;
@@ -65,7 +62,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLProgressBar memoryBar;
 
-    private FCLSwitch specialSettingSwitch;
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
     private FCLSwitch noGameCheckSwitch;
@@ -98,8 +94,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     }
 
     private void create() {
-        settingTypeLayout = findViewById(R.id.special_setting_layout);
-        settingLayout = findViewById(R.id.setting_layout);
+        FCLLinearLayout settingTypeLayout = findViewById(R.id.special_setting_layout);
+        FCLLinearLayout settingLayout = findViewById(R.id.setting_layout);
 
         txtWidth = findViewById(R.id.edit_width);
         txtHeight = findViewById(R.id.edit_height);
@@ -117,7 +113,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         memoryBar = findViewById(R.id.memory_bar);
 
-        specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
+        FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
         specialSettingSwitch.addCheckedChangeListener();
         isolateWorkingDirSwitch = findViewById(R.id.edit_game_dir);
         beGestureSwitch = findViewById(R.id.edit_controller_injector);
@@ -175,6 +171,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
+
+        editIconButton.setOnClickListener(this);
+        deleteIconButton.setOnClickListener(this);
+        controllerButton.setOnClickListener(this);
 
         memoryText = findViewById(R.id.memory_text);
         memoryInfoText = findViewById(R.id.memory_info_text);
@@ -281,6 +281,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         dialog.show();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void onDeleteIcon() {
         if (versionId == null)
             return;
@@ -301,6 +302,14 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     @Override
     public void onClick(View view) {
+        if (view == editIconButton) {
+            onExploreIcon();
+        }
+        if (view == deleteIconButton) {
+            onDeleteIcon();
+        }
+        if (view == controllerButton) {
 
+        }
     }
 }
