@@ -474,7 +474,7 @@ public final class VersionSetting implements Cloneable {
             vs.setFullscreen(Optional.ofNullable(obj.get("fullscreen")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
-            vs.setNotCheckJVM(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
+            vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setProcessPriority(ProcessPriority.values()[Optional.ofNullable(obj.get("processPriority")).map(JsonElement::getAsInt).orElse(ProcessPriority.NORMAL.ordinal())]);
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
