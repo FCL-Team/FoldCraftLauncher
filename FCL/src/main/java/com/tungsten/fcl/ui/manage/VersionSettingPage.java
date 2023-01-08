@@ -185,9 +185,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (!globalSetting) {
             specialSettingSwitch.disableProperty().bind(modpack);
             specialSettingSwitch.checkProperty().bindBidirectional(enableSpecificSettings);
+            settingLayout.visibilityProperty().bind(enableSpecificSettings);
         }
-
-        settingLayout.visibilityProperty().bind(enableSpecificSettings);
 
         enableSpecificSettings.addListener((a, b, newValue) -> {
             if (versionId == null) return;
