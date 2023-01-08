@@ -57,7 +57,7 @@ public final class FXUtils {
     public static <T> void bind(FCLEditText editText, Property<T> property, StringConverter<T> converter) {
         editText.setText(converter == null ? (String) property.getValue() : converter.toString(property.getValue()));
         EditTextBindingListener<T> listener = new EditTextBindingListener<>(editText, property, converter);
-        editText.stringProperty().addListener(listener);
+        editText.stringProperty().addListener((ChangeListener<String>) listener);
         property.addListener(listener);
     }
 
@@ -71,11 +71,11 @@ public final class FXUtils {
 
     public static void unbind(FCLEditText editText, Property<?> property) {
         EditTextBindingListener<?> listener = new EditTextBindingListener<>(editText, property, null);
-        editText.stringProperty().removeListener(listener);
+        editText.stringProperty().removeListener((ChangeListener<String>) listener);
         property.removeListener(listener);
     }
 
-    private static final class EditTextBindingListener<T> implements InvalidationListener {
+    private static final class EditTextBindingListener<T> implements ChangeListener<String>, InvalidationListener {
         private final int hashCode;
         private final WeakReference<FCLEditText> editTextRef;
         private final WeakReference<Property<T>> propertyRef;
@@ -89,13 +89,31 @@ public final class FXUtils {
         }
 
         @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String str) { // On EditText changed
+            FCLEditText editText = editTextRef.get();
+            Property<T> property = this.propertyRef.get();
+
+            if (editText != null && property != null) {
+                String newText = editText.getText().toString();
+                @SuppressWarnings("unchecked")
+                T newValue = converter == null ? (T) newText : converter.fromString(newText);
+
+                if (!Objects.equals(newValue, property.getValue()))
+                    property.setValue(newValue);
+            }
+        }
+
+        @Override
         public void invalidated(Observable observable) { // On property change
             FCLEditText editText = editTextRef.get();
             Property<T> property = this.propertyRef.get();
 
             if (editText != null && property != null) {
-                T value = property.getValue();
-                editText.setText(converter == null ? (String) value : converter.toString(value));
+                if (!editText.fromUserOrSystem) {
+                    T value = property.getValue();
+                    editText.setText(converter == null ? (String) value : converter.toString(value));
+                }
+                editText.fromUserOrSystem = false;
             }
         }
 

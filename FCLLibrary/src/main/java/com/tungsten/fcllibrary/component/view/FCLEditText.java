@@ -27,7 +27,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLEditText extends AppCompatEditText {
 
     private boolean autoTint;
-    private boolean fromUserOrSystem = false;
+    public boolean fromUserOrSystem = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty disableProperty;
     private BooleanProperty focusedProperty;
@@ -254,13 +254,7 @@ public class FCLEditText extends AppCompatEditText {
             stringProperty = new StringPropertyBase() {
 
                 public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            String s = get();
-                            setText(s);
-                        }
-                        fromUserOrSystem = false;
-                    });
+
                 }
 
                 public Object getBean() {
@@ -268,7 +262,7 @@ public class FCLEditText extends AppCompatEditText {
                 }
 
                 public String getName() {
-                    return "visibility";
+                    return "string";
                 }
             };
         }

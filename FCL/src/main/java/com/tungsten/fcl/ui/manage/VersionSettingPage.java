@@ -37,7 +37,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.util.ArrayList;
 
-public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable {
+public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private final boolean globalSetting;
 
@@ -297,5 +297,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         }
 
         iconView.setImageDrawable(profile.getRepository().getVersionIconImage(versionId));
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 }
