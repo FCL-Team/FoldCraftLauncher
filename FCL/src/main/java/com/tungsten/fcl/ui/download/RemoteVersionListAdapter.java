@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.download;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.tungsten.fclcore.download.optifine.OptiFineRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltAPIRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -74,7 +72,6 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         RemoteVersion remoteVersion = list.get(i);
-        ThemeEngine.getInstance().registerEvent(viewHolder.tag, () -> viewHolder.tag.setBackgroundTintList(new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() })));
         viewHolder.parent.setOnClickListener(view1 -> listener.onSelect(remoteVersion));
         viewHolder.icon.setBackground(getIcon(remoteVersion));
         viewHolder.version.setText(remoteVersion.getSelfVersion());

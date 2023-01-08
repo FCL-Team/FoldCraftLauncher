@@ -55,56 +55,56 @@ public class DefaultLauncher extends Launcher {
         res.addAllWithoutParsing(options.getJavaArguments());
 
         // JVM Args
-        if (!options.isNoGeneratedJVMArgs()) {
-            appendJvmArgs(res);
+        appendJvmArgs(res);
 
-            res.addDefault("-Dminecraft.client.jar=", repository.getVersionJar(version).toString());
+        res.addDefault("-Dminecraft.client.jar=", repository.getVersionJar(version).toString());
 
-            // Using G1GC with its settings by default
-            if (options.getJava().getVersion() >= 8) {
-                boolean addG1Args = true;
-                for (String javaArg : options.getJavaArguments()) {
-                    if ("-XX:-UseG1GC".equals(javaArg) || (javaArg.startsWith("-XX:+Use") && javaArg.endsWith("GC"))) {
-                        addG1Args = false;
-                        break;
-                    }
-                }
-                if (addG1Args) {
-                    res.addUnstableDefault("UnlockExperimentalVMOptions", true);
-                    res.addUnstableDefault("UseG1GC", true);
-                    res.addUnstableDefault("G1NewSizePercent", "20");
-                    res.addUnstableDefault("G1ReservePercent", "20");
-                    res.addUnstableDefault("MaxGCPauseMillis", "50");
-                    res.addUnstableDefault("G1HeapRegionSize", "16m");
+        // Using G1GC with its settings by default
+        if (options.getJava().getVersion() >= 8) {
+            boolean addG1Args = true;
+            for (String javaArg : options.getJavaArguments()) {
+                if ("-XX:-UseG1GC".equals(javaArg) || (javaArg.startsWith("-XX:+Use") && javaArg.endsWith("GC"))) {
+                    addG1Args = false;
+                    break;
                 }
             }
-
-            if (options.getMetaspace() != null && options.getMetaspace() > 0)
-                res.addDefault("-XX:MetaspaceSize=", options.getMetaspace() + "m");
-
-            res.addUnstableDefault("UseAdaptiveSizePolicy", false);
-            res.addUnstableDefault("OmitStackTraceInFastThrow", false);
-            res.addUnstableDefault("DontCompileHugeMethods", false);
-            res.addDefault("-Xmn", "128m");
-
-            // As 32-bit JVM allocate 320KB for stack by default rather than 64-bit version allocating 1MB,
-            // causing Minecraft 1.13 crashed accounting for java.lang.StackOverflowError.
-            if (Architecture.is32BitsDevice()) {
-                res.addDefault("-Xss", "1m");
+            if (addG1Args) {
+                res.addUnstableDefault("UnlockExperimentalVMOptions", true);
+                res.addUnstableDefault("UseG1GC", true);
+                res.addUnstableDefault("G1NewSizePercent", "20");
+                res.addUnstableDefault("G1ReservePercent", "20");
+                res.addUnstableDefault("MaxGCPauseMillis", "50");
+                res.addUnstableDefault("G1HeapRegionSize", "16m");
             }
-
-            if (options.getMaxMemory() != null && options.getMaxMemory() > 0)
-                res.addDefault("-Xmx", options.getMaxMemory() + "m");
-
-            if (options.getMinMemory() != null && options.getMinMemory() > 0)
-                res.addDefault("-Xms", options.getMinMemory() + "m");
-
-            res.addDefault("-Dfml.ignoreInvalidMinecraftCertificates=", "true");
-            res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
-//            res.addDefault("-Dorg.lwjgl.util.Debug=","true");
-//            res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
-//            res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
         }
+
+        if (options.getMetaspace() != null && options.getMetaspace() > 0)
+            res.addDefault("-XX:MetaspaceSize=", options.getMetaspace() + "m");
+
+        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
+        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
+        res.addUnstableDefault("DontCompileHugeMethods", false);
+        res.addDefault("-Xmn", "128m");
+
+        // As 32-bit JVM allocate 320KB for stack by default rather than 64-bit version allocating 1MB,
+        // causing Minecraft 1.13 crashed accounting for java.lang.StackOverflowError.
+        if (Architecture.is32BitsDevice()) {
+            res.addDefault("-Xss", "1m");
+        }
+
+        if (options.getMaxMemory() != null && options.getMaxMemory() > 0)
+            res.addDefault("-Xmx", options.getMaxMemory() + "m");
+
+        if (options.getMinMemory() != null && options.getMinMemory() > 0)
+            res.addDefault("-Xms", options.getMinMemory() + "m");
+
+        res.addDefault("-Dfml.ignoreInvalidMinecraftCertificates=", "true");
+        res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
+
+        // Enable LWJGL debug mode
+//        res.addDefault("-Dorg.lwjgl.util.Debug=","true");
+//        res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
+//        res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
 
         // Fix RCE vulnerability of log4j2
         res.addDefault("-Djava.rmi.server.useCodebaseOnly=", "true");

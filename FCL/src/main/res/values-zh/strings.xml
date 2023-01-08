@@ -172,9 +172,9 @@
     <string name="settings_advanced_minecraft_arguments">游戏参数</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
     <string name="settings_advanced_process_priority">进程优先级</string>
-    <string name="settings_advanced_process_priority_low">低</string>
-    <string name="settings_advanced_process_priority_normal">中</string>
-    <string name="settings_advanced_process_priority_high">高</string>
+    <string name="settings_advanced_process_priority_low">低（节省游戏占用资源）</string>
+    <string name="settings_advanced_process_priority_normal">中（平衡）</string>
+    <string name="settings_advanced_process_priority_high">高（优先保障游戏进程）</string>
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
 

@@ -21,6 +21,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLCheckBox extends AppCompatCheckBox {
 
     private boolean autoTint;
+    private boolean fromUserOrSystem = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty checkProperty;
     private BooleanProperty disableProperty;
@@ -58,6 +59,13 @@ public class FCLCheckBox extends AppCompatCheckBox {
             return "theme";
         }
     };
+
+    public void addCheckedChangeListener() {
+        setOnCheckedChangeListener((compoundButton, b) -> {
+            fromUserOrSystem = true;
+            checkProperty().set(b);
+        });
+    }
 
     public FCLCheckBox(@NonNull Context context) {
         super(context);
@@ -134,8 +142,11 @@ public class FCLCheckBox extends AppCompatCheckBox {
 
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean isCheck = get();
-                        setChecked(isCheck);
+                        if (!fromUserOrSystem) {
+                            boolean isCheck = get();
+                            setChecked(isCheck);
+                        }
+                        fromUserOrSystem = false;
                     });
                 }
 

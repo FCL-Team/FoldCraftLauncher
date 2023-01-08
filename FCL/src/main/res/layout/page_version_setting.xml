@@ -26,7 +26,7 @@
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:minHeight="46dp"
+                    android:minHeight="48dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -62,7 +62,7 @@
                     android:background="@android:color/darker_gray"/>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:minHeight="46dp"
+                    android:minHeight="48dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -71,15 +71,7 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp">
 
-                    <com.tungsten.fcllibrary.component.view.FCLImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/img_grass"
-                        android:layout_gravity="center"
-                        android:id="@+id/icon"/>
-
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_marginStart="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:auto_text_tint="true"
@@ -92,14 +84,32 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"/>
 
+                    <com.tungsten.fcllibrary.component.view.FCLImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/img_grass"
+                        android:layout_gravity="center"
+                        android:id="@+id/icon"/>
+
                     <com.tungsten.fcllibrary.component.view.FCLImageButton
                         app:no_padding="true"
                         app:auto_tint="true"
+                        android:layout_marginStart="15dp"
                         android:src="@drawable/ic_baseline_edit_24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:id="@+id/edit_icon"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageButton
+                        app:no_padding="true"
+                        app:auto_tint="true"
+                        android:layout_marginStart="15dp"
+                        android:src="@drawable/ic_baseline_close_24"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/delete_icon"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -119,7 +129,7 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -141,7 +151,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"/>
 
-                        <androidx.appcompat.widget.AppCompatSpinner
+                        <com.tungsten.fcllibrary.component.view.FCLSpinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -155,7 +165,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -293,7 +303,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -361,7 +371,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -383,7 +393,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"/>
 
-                        <androidx.appcompat.widget.AppCompatSpinner
+                        <com.tungsten.fcllibrary.component.view.FCLSpinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -397,7 +407,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -439,7 +449,7 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -478,7 +488,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -514,7 +524,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -536,7 +546,7 @@
                             android:layout_height="0dp"
                             android:layout_weight="1"/>
 
-                        <androidx.appcompat.widget.AppCompatSpinner
+                        <com.tungsten.fcllibrary.component.view.FCLSpinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -555,7 +565,7 @@
                     android:orientation="vertical">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -591,7 +601,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -628,7 +638,7 @@
                         tools:ignore="TooManyViews" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -665,7 +675,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -701,7 +711,7 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:minHeight="46dp"
+                        android:minHeight="48dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"

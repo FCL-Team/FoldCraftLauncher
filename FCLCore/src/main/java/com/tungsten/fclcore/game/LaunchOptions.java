@@ -28,7 +28,6 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private boolean fullscreen;
     private String serverIp;
-    private boolean noGeneratedJVMArgs;
     private ProcessPriority processPriority = ProcessPriority.NORMAL;
     private FCLConfig.Renderer renderer;
 
@@ -139,13 +138,6 @@ public class LaunchOptions implements Serializable {
      */
     public String getServerIp() {
         return serverIp;
-    }
-
-    /**
-     * Prevent game launcher from generating default JVM arguments like max memory.
-     */
-    public boolean isNoGeneratedJVMArgs() {
-        return noGeneratedJVMArgs;
     }
 
     /**
@@ -277,13 +269,6 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
-         * Prevent game launcher from generating default JVM arguments like max memory.
-         */
-        public boolean isNoGeneratedJVMArgs() {
-            return options.noGeneratedJVMArgs;
-        }
-
-        /**
          * Process priority
          */
         public ProcessPriority getProcessPriority() {
@@ -372,11 +357,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setServerIp(String serverIp) {
             options.serverIp = serverIp;
-            return this;
-        }
-
-        public Builder setNoGeneratedJVMArgs(boolean noGeneratedJVMArgs) {
-            options.noGeneratedJVMArgs = noGeneratedJVMArgs;
             return this;
         }
 

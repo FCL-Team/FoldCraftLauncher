@@ -13,7 +13,12 @@
         <attr name="auto_src_tint" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="FCLTextView">
+        <attr name="auto_text_background_tint" format="boolean"/>
         <attr name="auto_text_tint" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="FCLCheckedTextView">
+        <attr name="auto_checked_text_background_tint" format="boolean"/>
+        <attr name="auto_checked_text_tint" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="FCLEditText">
         <attr name="auto_edit_tint" format="boolean"/>

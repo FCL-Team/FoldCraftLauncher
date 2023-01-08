@@ -301,18 +301,35 @@ public final class VersionSetting implements Cloneable {
      * 0 - .minecraft<br/>
      * 1 - .minecraft/versions/&lt;version&gt;/<br/>
      */
-    private final ObjectProperty<GameDirectoryType> gameDirTypeProperty = new SimpleObjectProperty<>(this, "gameDirType", GameDirectoryType.ROOT_FOLDER);
+    private final BooleanProperty isolateGameDirProperty = new SimpleBooleanProperty(this, "isolateGameDir", false);
 
-    public ObjectProperty<GameDirectoryType> gameDirTypeProperty() {
-        return gameDirTypeProperty;
+    public BooleanProperty isolateGameDirProperty() {
+        return isolateGameDirProperty;
     }
 
-    public GameDirectoryType getGameDirType() {
-        return gameDirTypeProperty.get();
+    public boolean isIsolateGameDir() {
+        return isolateGameDirProperty.get();
     }
 
-    public void setGameDirType(GameDirectoryType gameDirType) {
-        gameDirTypeProperty.set(gameDirType);
+    public void setIsolateGameDir(boolean isolateGameDir) {
+        isolateGameDirProperty.set(isolateGameDir);
+    }
+
+    private final BooleanProperty beGestureProperty = new SimpleBooleanProperty(this, "beGesture", false);
+
+    public BooleanProperty beGestureProperty() {
+        return beGestureProperty;
+    }
+
+    /**
+     * True if FCL does not check game's completeness.
+     */
+    public boolean isBeGesture() {
+        return beGestureProperty.get();
+    }
+
+    public void setBeGesture(boolean beGesture) {
+        beGestureProperty.set(beGesture);
     }
 
     private final ObjectProperty<ProcessPriority> processPriorityProperty = new SimpleObjectProperty<>(this, "processPriority", ProcessPriority.NORMAL);
@@ -331,11 +348,11 @@ public final class VersionSetting implements Cloneable {
 
     private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_GL4ES);
 
-    public ObjectProperty<FCLConfig.Renderer> renderProperty() {
+    public ObjectProperty<FCLConfig.Renderer> rendererProperty() {
         return rendererProperty;
     }
 
-    public FCLConfig.Renderer getRender() {
+    public FCLConfig.Renderer getRenderer() {
         return rendererProperty.get();
     }
 
@@ -374,7 +391,8 @@ public final class VersionSetting implements Cloneable {
         fullscreenProperty.addListener(listener);
         widthProperty.addListener(listener);
         heightProperty.addListener(listener);
-        gameDirTypeProperty.addListener(listener);
+        isolateGameDirProperty.addListener(listener);
+        beGestureProperty.addListener(listener);
         processPriorityProperty.addListener(listener);
         rendererProperty.addListener(listener);
     }
@@ -396,9 +414,10 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setFullscreen(isFullscreen());
         versionSetting.setWidth(getWidth());
         versionSetting.setHeight(getHeight());
-        versionSetting.setGameDirType(getGameDirType());
+        versionSetting.setIsolateGameDir(isIsolateGameDir());
+        versionSetting.setBeGesture(isBeGesture());
         versionSetting.setProcessPriority(getProcessPriority());
-        versionSetting.setRenderer(getRender());
+        versionSetting.setRenderer(getRenderer());
         return versionSetting;
     }
 
@@ -422,9 +441,10 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("fullscreen", src.isFullscreen());
             obj.addProperty("notCheckGame", src.isNotCheckGame());
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
+            obj.addProperty("beGesture", src.isBeGesture());
             obj.addProperty("processPriority", src.getProcessPriority().ordinal());
-            obj.addProperty("renderer", src.getRender().ordinal());
-            obj.addProperty("gameDirType", src.getGameDirType().ordinal());
+            obj.addProperty("renderer", src.getRenderer().ordinal());
+            obj.addProperty("isolateGameDir", src.isIsolateGameDir());
 
             return obj;
         }
@@ -454,9 +474,10 @@ public final class VersionSetting implements Cloneable {
             vs.setFullscreen(Optional.ofNullable(obj.get("fullscreen")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
+            vs.setNotCheckJVM(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setProcessPriority(ProcessPriority.values()[Optional.ofNullable(obj.get("processPriority")).map(JsonElement::getAsInt).orElse(ProcessPriority.NORMAL.ordinal())]);
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
-            vs.setGameDirType(GameDirectoryType.values()[Optional.ofNullable(obj.get("gameDirType")).map(JsonElement::getAsInt).orElse(GameDirectoryType.ROOT_FOLDER.ordinal())]);
+            vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
 
             return vs;
         }

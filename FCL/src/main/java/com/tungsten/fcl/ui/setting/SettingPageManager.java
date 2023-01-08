@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.setting;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIListener;
 import com.tungsten.fcl.ui.manage.VersionSettingPage;
@@ -46,6 +47,8 @@ public class SettingPageManager extends PageManager {
         helpPage = new HelpPage(getContext(), PAGE_ID_SETTING_HELP, getParent(), R.layout.page_help);
         communityPage = new CommunityPage(getContext(), PAGE_ID_SETTING_COMMUNITY, getParent(), R.layout.page_community);
         aboutPage = new AboutPage(getContext(), PAGE_ID_SETTING_ABOUT, getParent(), R.layout.page_about);
+
+        versionSettingPage.loadVersion(Profiles.getSelectedProfile(), null);
 
         if (listener != null) {
             listener.onLoad();

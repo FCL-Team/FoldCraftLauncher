@@ -148,7 +148,7 @@ public final class ModpackHelper {
             VersionSetting vs = repository.specializeVersionSetting(name);
             repository.undoMark(name);
             if (vs != null)
-                vs.setGameDirType(GameDirectoryType.VERSION_FOLDER);
+                vs.setIsolateGameDir(true);
         };
 
         ExceptionalConsumer<Exception, ?> failure = ex -> {
@@ -189,7 +189,7 @@ public final class ModpackHelper {
             VersionSetting vs = repository.specializeVersionSetting(name);
             repository.undoMark(name);
             if (vs != null)
-                vs.setGameDirType(GameDirectoryType.VERSION_FOLDER);
+                vs.setIsolateGameDir(true);
         };
 
         ExceptionalConsumer<Exception, ?> failure = ex -> {
@@ -233,7 +233,7 @@ public final class ModpackHelper {
 
     public static void toVersionSetting(MultiMCInstanceConfiguration c, VersionSetting vs) {
         vs.setUsesGlobal(false);
-        vs.setGameDirType(GameDirectoryType.VERSION_FOLDER);
+        vs.setIsolateGameDir(true);
 
         if (c.isOverrideMemory()) {
             vs.setPermSize(Optional.ofNullable(c.getPermGen()).map(Object::toString).orElse(""));

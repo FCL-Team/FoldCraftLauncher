@@ -73,7 +73,7 @@ public class Versions {
      */
 
     public static void deleteVersion(Context context, Profile profile, String version) {
-        boolean isIndependent = profile.getVersionSetting(version).getGameDirType() == GameDirectoryType.VERSION_FOLDER;
+        boolean isIndependent = profile.getVersionSetting(version).isIsolateGameDir();
         String message = isIndependent ? String.format(context.getString(R.string.version_manage_remove_confirm_independent), version) : String.format(context.getString(R.string.version_manage_remove_confirm), version);
 
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);

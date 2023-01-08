@@ -1,6 +1,7 @@
 package com.tungsten.fcllibrary.component.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -22,6 +23,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLTextView extends AppCompatTextView {
 
     private boolean autoTint;
+    private boolean autoBackgroundTint;
     private StringProperty string;
     private BooleanProperty visibilityProperty;
 
@@ -32,6 +34,9 @@ public class FCLTextView extends AppCompatTextView {
             get();
             if (autoTint) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            }
+            if (autoBackgroundTint) {
+                setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
             }
         }
 
@@ -48,6 +53,8 @@ public class FCLTextView extends AppCompatTextView {
 
     public FCLTextView(@NonNull Context context) {
         super(context);
+        autoTint = false;
+        autoBackgroundTint = false;
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
@@ -55,6 +62,7 @@ public class FCLTextView extends AppCompatTextView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
+        autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -63,6 +71,7 @@ public class FCLTextView extends AppCompatTextView {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
+        autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -85,6 +94,14 @@ public class FCLTextView extends AppCompatTextView {
 
     public boolean isAutoTint() {
         return autoTint;
+    }
+
+    public void setAutoBackgroundTint(boolean autoBackgroundTint) {
+        this.autoBackgroundTint = autoBackgroundTint;
+    }
+
+    public boolean isAutoBackgroundTint() {
+        return autoBackgroundTint;
     }
 
     public final void setString(String string) {

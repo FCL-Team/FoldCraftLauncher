@@ -5,6 +5,8 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,9 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyBooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -22,8 +27,40 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLEditText extends AppCompatEditText {
 
     private boolean autoTint;
+    private boolean fromUserOrSystem = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty disableProperty;
+    private BooleanProperty focusedProperty;
+    private StringProperty stringProperty;
+
+    private final Thread focusListener = new Thread(() -> {
+        if (focusedProperty == null) {
+            focusedProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "focused";
+                }
+            };
+        }
+        while (true) {
+            focusedProperty.set(isFocused());
+        }
+    });
+
+    public void runFocusListener() {
+        Schedulers.androidUIThread().execute(() -> {
+            focusListener.setPriority(Thread.MIN_PRIORITY);
+            focusListener.start();
+        });
+    }
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -62,9 +99,30 @@ public class FCLEditText extends AppCompatEditText {
         }
     };
 
+    public void addTextWatcher() {
+        addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                fromUserOrSystem = true;
+                stringProperty().set(getText().toString());
+            }
+        });
+    }
+
     public FCLEditText(@NonNull Context context) {
         super(context);
         autoTint = false;
+        addTextWatcher();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
@@ -73,6 +131,7 @@ public class FCLEditText extends AppCompatEditText {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLEditText);
         autoTint = typedArray.getBoolean(R.styleable.FCLEditText_auto_edit_tint, false);
         typedArray.recycle();
+        addTextWatcher();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
@@ -81,6 +140,7 @@ public class FCLEditText extends AppCompatEditText {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLEditText);
         autoTint = typedArray.getBoolean(R.styleable.FCLEditText_auto_edit_tint, false);
         typedArray.recycle();
+        addTextWatcher();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
@@ -154,5 +214,65 @@ public class FCLEditText extends AppCompatEditText {
         }
 
         return disableProperty;
+    }
+
+    public final boolean getFocusedValue() {
+        return focusedProperty == null || focusedProperty.get();
+    }
+
+    public final ReadOnlyBooleanProperty focusedProperty() {
+        if (focusedProperty == null) {
+            focusedProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "focused";
+                }
+            };
+        }
+
+        return focusedProperty;
+    }
+
+    public final void setStringValue(String string) {
+        stringProperty().set(string);
+    }
+
+    public final String getStringValue() {
+        return stringProperty == null ? null : stringProperty.get();
+    }
+
+    public final StringProperty stringProperty() {
+        if (stringProperty == null) {
+            stringProperty = new StringPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        if (!fromUserOrSystem) {
+                            String s = get();
+                            setText(s);
+                        }
+                        fromUserOrSystem = false;
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "visibility";
+                }
+            };
+        }
+
+        return stringProperty;
     }
 }

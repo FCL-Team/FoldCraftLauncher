@@ -65,7 +65,7 @@ public class FCLGameRepository extends DefaultGameRepository {
         if (beingModpackVersions.contains(id) || isModpack(id)) {
             return GameDirectoryType.VERSION_FOLDER;
         } else {
-            return getVersionSetting(id).getGameDirType();
+            return getVersionSetting(id).isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER;
         }
     }
 
@@ -147,9 +147,9 @@ public class FCLGameRepository extends DefaultGameRepository {
         FileUtils.writeText(toJson.toFile(), JsonUtils.GSON.toJson(fromVersion.setId(dstId)));
         
         VersionSetting oldVersionSetting = getVersionSetting(srcId).clone();
-        GameDirectoryType originalGameDirType = oldVersionSetting.getGameDirType();
+        GameDirectoryType originalGameDirType = (oldVersionSetting.isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER);
         oldVersionSetting.setUsesGlobal(false);
-        oldVersionSetting.setGameDirType(GameDirectoryType.VERSION_FOLDER);
+        oldVersionSetting.setIsolateGameDir(true);
         VersionSetting newVersionSetting = initLocalVersionSetting(dstId, oldVersionSetting);
         saveVersionSetting(dstId);
 
@@ -225,7 +225,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             loadLocalVersionSetting(id);
         VersionSetting setting = localVersionSettings.get(id);
         if (setting != null && isModpack(id))
-            setting.setGameDirType(GameDirectoryType.VERSION_FOLDER);
+            setting.setIsolateGameDir(true);
         return setting;
     }
 
@@ -336,7 +336,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setServerIp(vs.getServerIp())
                 .setProcessPriority(vs.getProcessPriority())
                 .setJavaAgents(javaAgents)
-                .setRenderer(vs.getRender());
+                .setRenderer(vs.getRenderer());
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {

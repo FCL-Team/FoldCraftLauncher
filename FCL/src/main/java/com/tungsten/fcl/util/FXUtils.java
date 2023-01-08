@@ -3,10 +3,19 @@ package com.tungsten.fcl.util;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.WeakInvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.property.Property;
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener;
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
 import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
+import com.tungsten.fclcore.fakefx.util.StringConverter;
+import com.tungsten.fclcore.util.fakefx.SafeStringConverter;
+import com.tungsten.fcllibrary.component.view.FCLCheckBox;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
+import com.tungsten.fcllibrary.component.view.FCLSpinner;
+import com.tungsten.fcllibrary.component.view.FCLSwitch;
 
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class FXUtils {
@@ -43,6 +52,94 @@ public final class FXUtils {
         }
         runnable.run();
         return originalListener;
+    }
+
+    public static <T> void bind(FCLEditText editText, Property<T> property, StringConverter<T> converter) {
+        editText.setText(converter == null ? (String) property.getValue() : converter.toString(property.getValue()));
+        EditTextBindingListener<T> listener = new EditTextBindingListener<>(editText, property, converter);
+        editText.stringProperty().addListener(listener);
+        property.addListener(listener);
+    }
+
+    public static void bindInt(FCLEditText textField, Property<Number> property) {
+        bind(textField, property, SafeStringConverter.fromInteger());
+    }
+
+    public static void bindString(FCLEditText editText, Property<String> property) {
+        bind(editText, property, null);
+    }
+
+    public static void unbind(FCLEditText editText, Property<?> property) {
+        EditTextBindingListener<?> listener = new EditTextBindingListener<>(editText, property, null);
+        editText.stringProperty().removeListener(listener);
+        property.removeListener(listener);
+    }
+
+    private static final class EditTextBindingListener<T> implements InvalidationListener {
+        private final int hashCode;
+        private final WeakReference<FCLEditText> editTextRef;
+        private final WeakReference<Property<T>> propertyRef;
+        private final StringConverter<T> converter;
+
+        EditTextBindingListener(FCLEditText editText, Property<T> property, StringConverter<T> converter) {
+            this.editTextRef = new WeakReference<>(editText);
+            this.propertyRef = new WeakReference<>(property);
+            this.converter = converter;
+            this.hashCode = System.identityHashCode(editText) ^ System.identityHashCode(property);
+        }
+
+        @Override
+        public void invalidated(Observable observable) { // On property change
+            FCLEditText editText = editTextRef.get();
+            Property<T> property = this.propertyRef.get();
+
+            if (editText != null && property != null) {
+                T value = property.getValue();
+                editText.setText(converter == null ? (String) value : converter.toString(value));
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return hashCode;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof EditTextBindingListener))
+                return false;
+            EditTextBindingListener<?> other = (EditTextBindingListener<?>) obj;
+            return this.hashCode == other.hashCode
+                    && this.editTextRef.get() == other.editTextRef.get()
+                    && this.propertyRef.get() == other.propertyRef.get();
+        }
+    }
+
+    public static void bindBoolean(FCLSwitch fclSwitch, Property<Boolean> property) {
+        fclSwitch.addCheckedChangeListener();
+        fclSwitch.checkProperty().bindBidirectional(property);
+    }
+
+    public static void unbindBoolean(FCLSwitch fclSwitch, Property<Boolean> property) {
+        fclSwitch.checkProperty().unbindBidirectional(property);
+    }
+
+    public static void bindBoolean(FCLCheckBox checkBox, Property<Boolean> property) {
+        checkBox.addCheckedChangeListener();
+        checkBox.checkProperty().bindBidirectional(property);
+    }
+
+    public static void unbindBoolean(FCLCheckBox checkBox, Property<Boolean> property) {
+        checkBox.checkProperty().unbindBidirectional(property);
+    }
+
+    public static <T> void bindSelection(FCLSpinner<T> spinner, Property<T> property) {
+        spinner.addSelectListener();
+        spinner.selectedItemProperty().bindBidirectional(property);
+    }
+
+    public static <T> void unbindSelection(FCLSpinner<T> spinner, Property<T> property) {
+        spinner.selectedItemProperty().unbindBidirectional(property);
     }
 
 }
