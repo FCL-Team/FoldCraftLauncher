@@ -117,6 +117,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
         noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
 
+        isolateWorkingDirSwitch.disableProperty().bind(modpack);
+
         javaSpinner = findViewById(R.id.edit_java);
         processPrioritySpinner = findViewById(R.id.edit_process_priority);
         rendererSpinner = findViewById(R.id.edit_renderer);
