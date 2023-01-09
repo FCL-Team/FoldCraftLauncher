@@ -1,14 +1,9 @@
 package com.tungsten.fcl.activity;
 
-import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +13,6 @@ import com.tungsten.fcl.control.Controller;
 import com.tungsten.fcl.control.ControllerType;
 import com.tungsten.fcl.control.GameController;
 import com.tungsten.fcl.control.JavaGuiController;
-import com.tungsten.fcl.onlytest.MioMouseKeyboard;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -32,11 +26,6 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private Controller controller;
     private static ControllerType controllerType;
     private static FCLBridge fclBridge;
-
-    //only for test version
-    public MioMouseKeyboard mioMouseKeyboard;
-    public ImageView mouse;
-    private EditText input;
 
     public static void setFClBridge(FCLBridge fclBridge, ControllerType controllerType) {
         JVMActivity.fclBridge = fclBridge;
@@ -57,11 +46,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         controller.setup(this);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
-        mouse=findViewById(R.id.mouse);
-        input=findViewById(R.id.input);
         textureView.setFocusable(true);
-        mioMouseKeyboard=new MioMouseKeyboard(this,mouse,textureView);
-        mioMouseKeyboard.setFCLBridge(fclBridge);
     }
 
     @Override
@@ -87,17 +72,6 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onBackPressed() {
-        if(getResources().getConfiguration().keyboard!= Configuration.KEYBOARD_NOKEYS) {
-            mioMouseKeyboard.catchPointer();
-            MioMouseKeyboard.baseX=0;
-            MioMouseKeyboard.baseY=0;
-//            if (FCLBridge.cursorMode==FCLBridge.CursorEnabled) {
-//                mouse.setVisibility(View.INVISIBLE);
-//                mioMouseKeyboard.releasePointer();
-//            } else {
-//                mouse.setVisibility(View.VISIBLE);
-//                mioMouseKeyboard.catchPointer();
-//            }
-        }
+
     }
 }

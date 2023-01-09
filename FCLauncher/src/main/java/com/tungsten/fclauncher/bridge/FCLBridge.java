@@ -3,7 +3,6 @@ package com.tungsten.fclauncher.bridge;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import android.view.Surface;
 
 import com.tungsten.fclauncher.FCLPath;
@@ -59,7 +58,7 @@ public class FCLBridge implements Serializable {
     private boolean isLogPipeReady=false;
     private WeakReference<LogReceiver> logReceiver;
 
-    public static int cursorMode=CursorEnabled;
+    public static int cursorMode = CursorEnabled;
 
     public FCLBridge(FCLBridgeCallback callback) {
         this.callback = callback;
@@ -92,7 +91,7 @@ public class FCLBridge implements Serializable {
 
         LogFileUtil logFileUtil = LogFileUtil.getInstance();
         logFileUtil.setLogFilePath(getLogPath());
-        fclLogThread = new Thread(()->redirectStdio(getLogPath()));
+        fclLogThread = new Thread(() -> redirectStdio(getLogPath()));
         fclLogThread.setName("FCLLogThread");
         fclLogThread.start();
         while (!isLogPipeReady) {
@@ -116,7 +115,7 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventPointer(int x, int y) {
-        pushEvent(System.nanoTime(), MotionNotify, (int) (x*0.33), (int) (y*0.3));
+        pushEvent(System.nanoTime(), MotionNotify, x, y);
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
@@ -140,7 +139,7 @@ public class FCLBridge implements Serializable {
 
     // FCLBridge callbacks
     public void setCursorMode(int mode) {
-        cursorMode=mode;
+        cursorMode = mode;
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }
@@ -170,17 +169,12 @@ public class FCLBridge implements Serializable {
     }
 
     public void setLogPipeReady(){
-        this.isLogPipeReady=true;
+        this.isLogPipeReady = true;
     }
 
     public void receiveLog(String log){
         if (logReceiver == null || logReceiver.get() == null) {
-            logReceiver = new WeakReference<>(new LogReceiver() {
-                @Override
-                public void pushLog(String log) {
-                    LogFileUtil.getInstance().writeLog(log);
-                }
-            });
+            logReceiver = new WeakReference<>(log1 -> LogFileUtil.getInstance().writeLog(log1));
         } else {
             logReceiver.get().pushLog(log);
         }
