@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.manage;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,8 +11,10 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
+import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -25,7 +28,12 @@ import com.tungsten.fclcore.game.ProcessPriority;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.platform.MemoryUtils;
+import com.tungsten.fcllibrary.browser.FileBrowser;
+import com.tungsten.fcllibrary.browser.options.LibMode;
+import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -40,7 +48,9 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -319,8 +329,34 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (versionId == null)
             return;
 
-        SelectIconDialog dialog = new SelectIconDialog(getContext());
-        dialog.show();
+        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+        ArrayList<String> suffix = new ArrayList<>();
+        suffix.add(".png");
+        builder.setLibMode(LibMode.FILE_CHOOSER);
+        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+        builder.setTitle(getContext().getString(R.string.settings_icon));
+        builder.setSuffix(suffix);
+        builder.create().browse(getActivity(), RequestCodes.SELECT_VERSION_ICON_CODE, (requestCode, resultCode, data) -> {
+            if (requestCode == RequestCodes.SELECT_VERSION_ICON_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                if (FileBrowser.getSelectedFiles(data).size() == 0)
+                    return;
+
+                String path = FileBrowser.getSelectedFiles(data).get(0);
+                if (path == null)
+                    return;
+
+                File selectedFile = new File(path);
+                File iconFile = profile.getRepository().getVersionIconFile(versionId);
+                try {
+                    FileUtils.copyFile(selectedFile, iconFile);
+
+                    profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
+                    loadIcon();
+                } catch (IOException e) {
+                    Logging.LOG.log(Level.SEVERE, "Failed to copy icon file from " + selectedFile + " to " + iconFile, e);
+                }
+            }
+        });
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -331,6 +367,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         File iconFile = profile.getRepository().getVersionIconFile(versionId);
         if (iconFile.exists())
             iconFile.delete();
+        profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
         loadIcon();
     }
 
