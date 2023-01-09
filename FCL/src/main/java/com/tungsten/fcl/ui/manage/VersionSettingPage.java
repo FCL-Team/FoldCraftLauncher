@@ -61,19 +61,17 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private WeakListenerHolder listenerHolder;
     private String versionId;
 
-    private FCLEditText txtWidth;
-    private FCLEditText txtHeight;
     private FCLEditText txtJVMArgs;
     private FCLEditText txtGameArgs;
     private FCLEditText txtMetaspace;
     private FCLEditText txtServerIP;
 
     private FCLCheckBox chkAutoAllocate;
-    private FCLCheckBox chkFullscreen;
 
     private FCLImageView iconView;
 
     private FCLSeekBar allocateSeekbar;
+    private FCLSeekBar scaleFactorSeekbar;
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
@@ -106,19 +104,17 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FCLLinearLayout settingTypeLayout = findViewById(R.id.special_setting_layout);
         FCLLinearLayout settingLayout = findViewById(R.id.setting_layout);
 
-        txtWidth = findViewById(R.id.edit_width);
-        txtHeight = findViewById(R.id.edit_height);
         txtJVMArgs = findViewById(R.id.edit_jvm_args);
         txtGameArgs = findViewById(R.id.edit_minecraft_args);
         txtMetaspace = findViewById(R.id.edit_permgen_space);
         txtServerIP = findViewById(R.id.edit_server);
 
         chkAutoAllocate = findViewById(R.id.edit_auto_allocate);
-        chkFullscreen = findViewById(R.id.edit_fullscreen);
 
         iconView = findViewById(R.id.icon);
 
         allocateSeekbar = findViewById(R.id.edit_memory);
+        scaleFactorSeekbar = findViewById(R.id.edit_scale_factor);
 
         FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
         specialSettingSwitch.addCheckedChangeListener();
@@ -132,6 +128,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaSpinner = findViewById(R.id.edit_java);
         processPrioritySpinner = findViewById(R.id.edit_process_priority);
         rendererSpinner = findViewById(R.id.edit_renderer);
+
+        FCLTextView scaleFactorText = findViewById(R.id.scale_factor_text);
+
+        scaleFactorSeekbar.addProgressListener();
+        scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> scaleFactorSeekbar.getProgress() + " %", scaleFactorSeekbar.percentProgressProperty()));
 
         // add spinner data
         ArrayList<Integer> javaVersionDataList = new ArrayList<>();
@@ -278,14 +279,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         // unbind data fields
         if (lastVersionSetting != null) {
-            FXUtils.unbind(txtWidth, lastVersionSetting.widthProperty());
-            FXUtils.unbind(txtHeight, lastVersionSetting.heightProperty());
             FXUtils.unbind(txtJVMArgs, lastVersionSetting.javaArgsProperty());
             FXUtils.unbind(txtGameArgs, lastVersionSetting.minecraftArgsProperty());
             FXUtils.unbind(txtMetaspace, lastVersionSetting.permSizeProperty());
             FXUtils.unbind(txtServerIP, lastVersionSetting.serverIpProperty());
             FXUtils.unbindBoolean(chkAutoAllocate, lastVersionSetting.autoMemoryProperty());
-            FXUtils.unbindBoolean(chkFullscreen, lastVersionSetting.fullscreenProperty());
             FXUtils.unbindBoolean(isolateWorkingDirSwitch, lastVersionSetting.isolateGameDirProperty());
             FXUtils.unbindBoolean(noGameCheckSwitch, lastVersionSetting.notCheckGameProperty());
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.notCheckJVMProperty());
@@ -293,20 +291,18 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindSelection(javaSpinner, lastVersionSetting.javaProperty());
             FXUtils.unbindSelection(processPrioritySpinner, lastVersionSetting.processPriorityProperty());
             FXUtils.unbindSelection(rendererSpinner, lastVersionSetting.rendererProperty());
+            scaleFactorSeekbar.percentProgressProperty().unbindBidirectional(lastVersionSetting.scaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.maxMemoryProperty());
 
             lastVersionSetting.usesGlobalProperty().removeListener(specificSettingsListener);
         }
 
         // bind new data fields
-        FXUtils.bindInt(txtWidth, versionSetting.widthProperty());
-        FXUtils.bindInt(txtHeight, versionSetting.heightProperty());
         FXUtils.bindString(txtJVMArgs, versionSetting.javaArgsProperty());
         FXUtils.bindString(txtGameArgs, versionSetting.minecraftArgsProperty());
         FXUtils.bindString(txtMetaspace, versionSetting.permSizeProperty());
         FXUtils.bindString(txtServerIP, versionSetting.serverIpProperty());
         FXUtils.bindBoolean(chkAutoAllocate, versionSetting.autoMemoryProperty());
-        FXUtils.bindBoolean(chkFullscreen, versionSetting.fullscreenProperty());
         FXUtils.bindBoolean(isolateWorkingDirSwitch, versionSetting.isolateGameDirProperty());
         FXUtils.bindBoolean(noGameCheckSwitch, versionSetting.notCheckGameProperty());
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.notCheckJVMProperty());
@@ -314,6 +310,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindSelection(javaSpinner, versionSetting.javaProperty());
         FXUtils.bindSelection(processPrioritySpinner, versionSetting.processPriorityProperty());
         FXUtils.bindSelection(rendererSpinner, versionSetting.rendererProperty());
+        scaleFactorSeekbar.percentProgressProperty().bindBidirectional(versionSetting.scaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.maxMemoryProperty());
 
         versionSetting.usesGlobalProperty().addListener(specificSettingsListener);

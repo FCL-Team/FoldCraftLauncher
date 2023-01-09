@@ -45,18 +45,18 @@ public class FCLBridge implements Serializable {
 
     public FCLBridgeCallback callback;
 
+    private double scaleFactor = 1f;
     private String logPath;
+    private Thread thread;
+    private Thread fclLogThread;
+    private boolean isLogPipeReady = false;
+    private WeakReference<LogReceiver> logReceiver;
 
     static {
         System.loadLibrary("xhook");
         System.loadLibrary("fcl");
         System.loadLibrary("glfw");
     }
-
-    private Thread thread;
-    private Thread fclLogThread;
-    private boolean isLogPipeReady=false;
-    private WeakReference<LogReceiver> logReceiver;
 
     public static int cursorMode = CursorEnabled;
 
@@ -95,7 +95,7 @@ public class FCLBridge implements Serializable {
         fclLogThread.setName("FCLLogThread");
         fclLogThread.start();
         while (!isLogPipeReady) {
-            //wait for redirectStdio
+            // wait for redirectStdio
         }
         setFCLBridge(this);
         // set graphic output and event pipe
@@ -160,6 +160,14 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
+    public void setScaleFactor(double scaleFactor) {
+        this.scaleFactor = scaleFactor;
+    }
+
+    public double getScaleFactor() {
+        return scaleFactor;
+    }
+
     public String getLogPath() {
         return logPath;
     }
@@ -168,11 +176,11 @@ public class FCLBridge implements Serializable {
         this.logPath = logPath;
     }
 
-    public void setLogPipeReady(){
+    public void setLogPipeReady() {
         this.isLogPipeReady = true;
     }
 
-    public void receiveLog(String log){
+    public void receiveLog(String log) {
         if (logReceiver == null || logReceiver.get() == null) {
             logReceiver = new WeakReference<>(log1 -> LogFileUtil.getInstance().writeLog(log1));
         } else {

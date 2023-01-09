@@ -185,7 +185,6 @@
 
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
-    <string name="settings_game_fullscreen">全屏</string>
     <string name="settings_game_java_version">Java 版本</string>
     <string name="settings_game_java_version_auto">自动选择</string>
     <string name="settings_game_working_directory">版本隔离</string>

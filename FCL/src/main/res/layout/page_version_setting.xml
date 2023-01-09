@@ -311,48 +311,24 @@
                             android:singleLine="true"
                             android:text="@string/settings_game_dimension"/>
 
-                        <View
+                        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                            android:layout_gravity="center"
                             android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLEditText
-                            app:auto_edit_tint="true"
-                            android:textSize="14sp"
-                            android:singleLine="true"
-                            android:inputType="number"
-                            android:layout_width="60dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:id="@+id/edit_width"/>
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:min="25"
+                            android:max="100"
+                            android:id="@+id/edit_scale_factor"/>
 
-                        <com.tungsten.fcllibrary.component.view.FCLImageView
-                            app:auto_src_tint="true"
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
+                            app:auto_text_tint="true"
+                            android:singleLine="true"
+                            android:layout_marginStart="10dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_baseline_close_24"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLEditText
-                            app:auto_edit_tint="true"
-                            android:textSize="14sp"
-                            android:singleLine="true"
-                            android:layout_marginStart="10dp"
-                            android:inputType="number"
-                            android:layout_width="60dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:id="@+id/edit_height"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-                            app:auto_hint_tint="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/settings_game_fullscreen"
-                            android:layout_marginStart="10dp"
-                            android:id="@+id/edit_fullscreen"/>
+                            android:id="@+id/scale_factor_text"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 

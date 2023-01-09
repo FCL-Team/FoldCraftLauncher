@@ -55,8 +55,11 @@ public final class FCLGameLauncher extends DefaultLauncher {
                 return;
         try {
             // TODO: Dirty implementation here
-            if (LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName()))
-                FileUtils.writeText(optionsFile, "lang:zh_CN\nforceUnicodeFont:true\n");
+            if (LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
+                FileUtils.writeText(optionsFile, "lang:zh_CN\nforceUnicodeFont:true\nfullscreen:false\n");
+            } else {
+                FileUtils.writeText(optionsFile, "fullscreen:false\n");
+            }
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
         }

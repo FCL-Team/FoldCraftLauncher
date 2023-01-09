@@ -166,9 +166,6 @@ public class DefaultLauncher extends Launcher {
             res.add(args.length > 1 ? args[1] : "25565");
         }
 
-        if (options.isFullscreen())
-            res.add("--fullscreen");
-
         res.addAllWithoutParsing(Arguments.parseStringArguments(options.getGameArguments(), configuration));
 
         res.removeIf(it -> getForbiddens().containsKey(it) && getForbiddens().get(it).get());

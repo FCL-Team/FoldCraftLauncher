@@ -79,6 +79,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
         <activity
+            android:name=".activity.ControllerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
+            android:screenOrientation="sensorLandscape"/>
+        <activity
             android:process=":game"
             android:launchMode="standard"
             android:multiprocess="true"

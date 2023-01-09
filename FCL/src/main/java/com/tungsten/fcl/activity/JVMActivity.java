@@ -52,12 +52,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
+        surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
         fclBridge.execute(new Surface(surfaceTexture), controller.getCallbackBridge());
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-
+        surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
     }
 
     @Override

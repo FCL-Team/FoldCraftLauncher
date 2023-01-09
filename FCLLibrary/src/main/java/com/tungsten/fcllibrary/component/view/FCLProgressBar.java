@@ -81,7 +81,7 @@ public class FCLProgressBar extends ProgressBar {
                         double progress = get();
                         setIndeterminate(progress < 0.0);
                         if (progress >= 0.0) {
-                            setProgress((int) (progress * 1000));
+                            setProgress((int) (progress * getMax()));
                         }
                     });
                 }

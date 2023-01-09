@@ -26,7 +26,6 @@ public class LaunchOptions implements Serializable {
     private Integer metaspace;
     private Integer width;
     private Integer height;
-    private boolean fullscreen;
     private String serverIp;
     private ProcessPriority processPriority = ProcessPriority.NORMAL;
     private FCLConfig.Renderer renderer;
@@ -124,13 +123,6 @@ public class LaunchOptions implements Serializable {
      */
     public Integer getHeight() {
         return height;
-    }
-
-    /**
-     * Is inital game window fullscreen.
-     */
-    public boolean isFullscreen() {
-        return fullscreen;
     }
 
     /**
@@ -255,13 +247,6 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
-         * Is inital game window fullscreen.
-         */
-        public boolean isFullscreen() {
-            return options.fullscreen;
-        }
-
-        /**
          * The server ip that will connect to when enter game main menu.
          */
         public String getServerIp() {
@@ -347,11 +332,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setHeight(Integer height) {
             options.height = height;
-            return this;
-        }
-
-        public Builder setFullscreen(boolean fullscreen) {
-            options.fullscreen = fullscreen;
             return this;
         }
 

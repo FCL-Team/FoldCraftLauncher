@@ -245,14 +245,6 @@ public final class ModpackHelper {
         if (c.isOverrideJavaArgs()) {
             vs.setJavaArgs(Lang.nonNull(c.getJvmArgs(), ""));
         }
-
-        if (c.isOverrideWindow()) {
-            vs.setFullscreen(c.isFullscreen());
-            if (c.getWidth() != null)
-                vs.setWidth(c.getWidth());
-            if (c.getHeight() != null)
-                vs.setHeight(c.getHeight());
-        }
     }
 
     private static Task<Void> createMultiMCPostInstallTask(Profile profile, MultiMCInstanceConfiguration manifest, String version) {

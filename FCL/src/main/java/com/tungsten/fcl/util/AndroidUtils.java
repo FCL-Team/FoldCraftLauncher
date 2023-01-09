@@ -6,8 +6,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.widget.Toast;
 
@@ -62,6 +64,21 @@ public class AndroidUtils {
     public static boolean hasStringId(Context context, String key) {
         int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
         return resId != 0 && context.getString(resId) != null;
+    }
+
+
+    public static int getScreenHeight(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        return point.y;
+    }
+
+    public static int getScreenWidth(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        return point.x;
     }
 
 }

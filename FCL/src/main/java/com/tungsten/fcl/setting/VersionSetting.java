@@ -6,14 +6,15 @@ import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.ProcessPriority;
 import com.tungsten.fclcore.game.Version;
@@ -21,7 +22,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.MemoryUtils;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
@@ -237,64 +237,18 @@ public final class VersionSetting implements Cloneable {
     }
 
 
-    private final BooleanProperty fullscreenProperty = new SimpleBooleanProperty(this, "fullscreen", false);
+    private final DoubleProperty scaleFactorProperty = new SimpleDoubleProperty(this, "scaleFactor", 1d);
 
-    public BooleanProperty fullscreenProperty() {
-        return fullscreenProperty;
+    public DoubleProperty scaleFactorProperty() {
+        return scaleFactorProperty;
     }
 
-    /**
-     * True if Minecraft started in fullscreen mode.
-     */
-    public boolean isFullscreen() {
-        return fullscreenProperty.get();
+    public double getScaleFactor() {
+        return scaleFactorProperty.get();
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        fullscreenProperty.set(fullscreen);
-    }
-
-    private final IntegerProperty widthProperty = new SimpleIntegerProperty(this, "width", 854);
-
-    public IntegerProperty widthProperty() {
-        return widthProperty;
-    }
-
-    /**
-     * The width of Minecraft window, defaults 800.
-     * <p>
-     * The field saves int value.
-     * String type prevents unexpected value from JsonParseException.
-     * We can only reset this field instead of recreating the whole setting file.
-     */
-    public int getWidth() {
-        return widthProperty.get();
-    }
-
-    public void setWidth(int width) {
-        widthProperty.set(width);
-    }
-
-
-    private final IntegerProperty heightProperty = new SimpleIntegerProperty(this, "height", 480);
-
-    public IntegerProperty heightProperty() {
-        return heightProperty;
-    }
-
-    /**
-     * The height of Minecraft window, defaults 480.
-     * <p>
-     * The field saves int value.
-     * String type prevents unexpected value from JsonParseException.
-     * We can only reset this field instead of recreating the whole setting file.
-     */
-    public int getHeight() {
-        return heightProperty.get();
-    }
-
-    public void setHeight(int height) {
-        heightProperty.set(height);
+    public void setScaleFactor(double scaleFactor) {
+        scaleFactorProperty.set(scaleFactor);
     }
 
     /**
@@ -388,9 +342,7 @@ public final class VersionSetting implements Cloneable {
         notCheckGameProperty.addListener(listener);
         notCheckJVMProperty.addListener(listener);
         serverIpProperty.addListener(listener);
-        fullscreenProperty.addListener(listener);
-        widthProperty.addListener(listener);
-        heightProperty.addListener(listener);
+        scaleFactorProperty.addListener(listener);
         isolateGameDirProperty.addListener(listener);
         beGestureProperty.addListener(listener);
         processPriorityProperty.addListener(listener);
@@ -411,9 +363,7 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setNotCheckGame(isNotCheckGame());
         versionSetting.setNotCheckJVM(isNotCheckJVM());
         versionSetting.setServerIp(getServerIp());
-        versionSetting.setFullscreen(isFullscreen());
-        versionSetting.setWidth(getWidth());
-        versionSetting.setHeight(getHeight());
+        versionSetting.setScaleFactor(getScaleFactor());
         versionSetting.setIsolateGameDir(isIsolateGameDir());
         versionSetting.setBeGesture(isBeGesture());
         versionSetting.setProcessPriority(getProcessPriority());
@@ -434,11 +384,9 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("minMemory", src.getMinMemory());
             obj.addProperty("autoMemory", src.isAutoMemory());
             obj.addProperty("permSize", src.getPermSize());
-            obj.addProperty("width", src.getWidth());
-            obj.addProperty("height", src.getHeight());
             obj.addProperty("serverIp", src.getServerIp());
             obj.addProperty("java", src.getJava());
-            obj.addProperty("fullscreen", src.isFullscreen());
+            obj.addProperty("scaleFactor", src.getScaleFactor());
             obj.addProperty("notCheckGame", src.isNotCheckGame());
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
             obj.addProperty("beGesture", src.isBeGesture());
@@ -467,11 +415,9 @@ public final class VersionSetting implements Cloneable {
             vs.setMinMemory(Optional.ofNullable(obj.get("minMemory")).map(JsonElement::getAsInt).orElse(null));
             vs.setAutoMemory(Optional.ofNullable(obj.get("autoMemory")).map(JsonElement::getAsBoolean).orElse(true));
             vs.setPermSize(Optional.ofNullable(obj.get("permSize")).map(JsonElement::getAsString).orElse(""));
-            vs.setWidth(Optional.ofNullable(obj.get("width")).map(JsonElement::getAsJsonPrimitive).map(this::parseJsonPrimitive).orElse(0));
-            vs.setHeight(Optional.ofNullable(obj.get("height")).map(JsonElement::getAsJsonPrimitive).map(this::parseJsonPrimitive).orElse(0));
             vs.setServerIp(Optional.ofNullable(obj.get("serverIp")).map(JsonElement::getAsString).orElse(""));
             vs.setJava(Optional.ofNullable(obj.get("java")).map(JsonElement::getAsInt).orElse(0));
-            vs.setFullscreen(Optional.ofNullable(obj.get("fullscreen")).map(JsonElement::getAsBoolean).orElse(false));
+            vs.setScaleFactor(Optional.ofNullable(obj.get("scaleFactor")).map(JsonElement::getAsDouble).orElse(1d));
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
@@ -480,10 +426,6 @@ public final class VersionSetting implements Cloneable {
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
 
             return vs;
-        }
-
-        private int parseJsonPrimitive(JsonPrimitive primitive) {
-            return parseJsonPrimitive(primitive, 0);
         }
 
         private int parseJsonPrimitive(JsonPrimitive primitive, int defaultValue) {

@@ -206,12 +206,11 @@
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
-    <string name="settings_game_fullscreen">Fullscreen</string>
     <string name="settings_game_java_version">Java Version</string>
     <string name="settings_game_java_version_auto">Auto</string>
     <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
     <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
-    <string name="settings_game_working_directory">Working Directory</string>
+    <string name="settings_game_working_directory">Isolate Working Directory</string>
 
     <string name="settings_icon">Icon</string>
 
