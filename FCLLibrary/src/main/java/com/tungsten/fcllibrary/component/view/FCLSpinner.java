@@ -29,6 +29,7 @@ public class FCLSpinner<T> extends AppCompatSpinner {
                 if (dataList != null && dataList.size() > i) {
                     fromUserOrSystem = true;
                     selectedItemProperty().set(dataList.get(i));
+                    fromUserOrSystem = false;
                 }
             }
 
@@ -85,7 +86,6 @@ public class FCLSpinner<T> extends AppCompatSpinner {
                             T data = get();
                             setSelection(dataList.indexOf(data));
                         }
-                        fromUserOrSystem = false;
                     });
                 }
 

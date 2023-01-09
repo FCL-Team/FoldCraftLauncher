@@ -3,6 +3,7 @@ package com.tungsten.fcllibrary.component.view;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.util.AttributeSet;
+import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +18,10 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLSeekBar extends AppCompatSeekBar {
 
+    private boolean fromUserOrSystem = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty disableProperty;
+    private IntegerProperty progressProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -47,6 +50,27 @@ public class FCLSeekBar extends AppCompatSeekBar {
             return "theme";
         }
     };
+
+    public void addProgressListener() {
+        setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                fromUserOrSystem = true;
+                progressProperty().set(i);
+                fromUserOrSystem = false;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
 
     public FCLSeekBar(@NonNull Context context) {
         super(context);
@@ -125,6 +149,40 @@ public class FCLSeekBar extends AppCompatSeekBar {
         }
 
         return disableProperty;
+    }
+
+    public final void setProgressValue(int progressValue) {
+        progressProperty().set(progressValue);
+    }
+
+    public final int getProgressValue() {
+        return progressProperty == null ? -1 : progressProperty().get();
+    }
+
+    public final IntegerProperty progressProperty() {
+        if (progressProperty == null) {
+            progressProperty = new IntegerPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        if (!fromUserOrSystem) {
+                            int progress = get();
+                            setProgress(progress);
+                        }
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "progress";
+                }
+            };
+        }
+
+        return progressProperty;
     }
 
 }

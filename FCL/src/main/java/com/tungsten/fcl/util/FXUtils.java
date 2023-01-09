@@ -113,7 +113,6 @@ public final class FXUtils {
                     T value = property.getValue();
                     editText.setText(converter == null ? (String) value : converter.toString(value));
                 }
-                editText.fromUserOrSystem = false;
             }
         }
 

@@ -115,6 +115,7 @@ public class FCLEditText extends AppCompatEditText {
             public void afterTextChanged(Editable editable) {
                 fromUserOrSystem = true;
                 stringProperty().set(getText().toString());
+                fromUserOrSystem = false;
             }
         });
     }

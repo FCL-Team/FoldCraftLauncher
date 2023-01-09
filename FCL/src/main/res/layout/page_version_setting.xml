@@ -267,33 +267,24 @@
                             android:layout_height="wrap_content"
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
 
-                        <androidx.appcompat.widget.LinearLayoutCompat
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:layout_marginStart="10dp"
-                            android:layout_width="match_parent"
+                            android:id="@+id/memory_info_text"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:singleLine="true"
+                            app:auto_text_tint="true"
+                            android:text="@string/settings_memory_used_per_total"/>
 
-                            <com.tungsten.fcllibrary.component.view.FCLTextView
-                                android:id="@+id/memory_info_text"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                app:auto_text_tint="true"
-                                android:layout_gravity="center"
-                                android:text="@string/settings_memory_used_per_total"/>
-
-                            <com.tungsten.fcllibrary.component.view.FCLTextView
-                                android:id="@+id/memory_allocate_text"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:singleLine="true"
-                                app:auto_text_tint="true"
-                                android:layout_gravity="center"
-                                android:text="@string/settings_memory_allocate_auto"/>
-
-                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="5dp"
+                            android:id="@+id/memory_allocate_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="true"
+                            app:auto_text_tint="true"
+                            android:text="@string/settings_memory_allocate_auto"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 

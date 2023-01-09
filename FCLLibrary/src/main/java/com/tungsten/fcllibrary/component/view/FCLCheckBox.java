@@ -64,6 +64,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
         setOnCheckedChangeListener((compoundButton, b) -> {
             fromUserOrSystem = true;
             checkProperty().set(b);
+            fromUserOrSystem = false;
         });
     }
 
@@ -146,7 +147,6 @@ public class FCLCheckBox extends AppCompatCheckBox {
                             boolean isCheck = get();
                             setChecked(isCheck);
                         }
-                        fromUserOrSystem = false;
                     });
                 }
 

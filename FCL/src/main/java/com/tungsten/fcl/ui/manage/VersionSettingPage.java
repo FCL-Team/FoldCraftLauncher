@@ -5,12 +5,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
@@ -21,6 +24,8 @@ import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.ProcessPriority;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -60,8 +65,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLSeekBar allocateSeekbar;
 
-    private FCLProgressBar memoryBar;
-
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
     private FCLSwitch noGameCheckSwitch;
@@ -75,15 +78,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
 
-    private FCLTextView memoryText;
-    private FCLTextView memoryInfoText;
-    private FCLTextView memoryAllocateText;
-
     private final InvalidationListener specificSettingsListener;
     private final StringProperty selectedVersion = new SimpleStringProperty();
     private final BooleanProperty enableSpecificSettings = new SimpleBooleanProperty(false);
     private final IntegerProperty maxMemory = new SimpleIntegerProperty();
-    //private final ObjectProperty<OperatingSystem.PhysicalMemoryStatus> memoryStatus = new SimpleObjectProperty<>(OperatingSystem.PhysicalMemoryStatus.INVALID);
+    private final IntegerProperty usedMemory = new SimpleIntegerProperty(0);
     private final BooleanProperty modpack = new SimpleBooleanProperty();
 
     public VersionSettingPage(Context context, int id, FCLUILayout parent, int resId, boolean globalSetting) {
@@ -110,8 +109,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         iconView = findViewById(R.id.icon);
 
         allocateSeekbar = findViewById(R.id.edit_memory);
-
-        memoryBar = findViewById(R.id.memory_bar);
 
         FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
         specialSettingSwitch.addCheckedChangeListener();
@@ -176,9 +173,46 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
 
-        memoryText = findViewById(R.id.memory_text);
-        memoryInfoText = findViewById(R.id.memory_info_text);
-        memoryAllocateText = findViewById(R.id.memory_allocate_text);
+        FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
+
+        FCLTextView memoryStateText = findViewById(R.id.memory_state);
+        FCLTextView memoryText = findViewById(R.id.memory_text);
+        FCLTextView memoryInfoText = findViewById(R.id.memory_info_text);
+        FCLTextView memoryAllocateText = findViewById(R.id.memory_allocate_text);
+
+        memoryStateText.stringProperty().bind(Bindings.createStringBinding(() -> {
+            if (chkAutoAllocate.isChecked()) {
+                return getContext().getString(R.string.settings_memory_lower_bound);
+            } else {
+                return getContext().getString(R.string.settings_memory);
+            }
+        }, chkAutoAllocate.checkProperty()));
+
+        allocateSeekbar.setMax(MemoryUtils.getTotalDeviceMemory(getContext()));
+        memoryBar.setMax(MemoryUtils.getTotalDeviceMemory(getContext()));
+
+        allocateSeekbar.addProgressListener();
+        allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
+
+        memoryText.stringProperty().bind(Bindings.createStringBinding(() -> allocateSeekbar.progressProperty().intValue() + " MB", allocateSeekbar.progressProperty()));
+
+        memoryBar.firstProgressProperty().bind(usedMemory);
+        memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding(() -> {
+            int allocate = (int) (FCLGameRepository.getAllocatedMemory(maxMemory.intValue() * 1024L * 1024L, MemoryUtils.getFreeDeviceMemory(getContext()) * 1024L * 1024L, chkAutoAllocate.isChecked()) / 1024. / 1024);
+            return usedMemory.intValue() + (chkAutoAllocate.isChecked() ? allocate : maxMemory.intValue());
+        }, usedMemory, maxMemory, chkAutoAllocate.checkProperty()));
+
+        memoryInfoText.stringProperty().bind(Bindings.createStringBinding(() -> AndroidUtils.getLocalizedText(getContext(), "settings_memory_used_per_total", MemoryUtils.getUsedDeviceMemory(getContext()) / 1024., MemoryUtils.getTotalDeviceMemory(getContext()) / 1024.), usedMemory));
+
+        memoryAllocateText.stringProperty().bind(Bindings.createStringBinding(() -> {
+            long maxMemory = Lang.parseInt(this.maxMemory.get(), 0) * 1024L * 1024L;
+            return AndroidUtils.getLocalizedText(getContext(), maxMemory / 1024. / 1024. > MemoryUtils.getFreeDeviceMemory(getContext())
+                            ? (chkAutoAllocate.isChecked() ? "settings_memory_allocate_auto_exceeded" : "settings_memory_allocate_manual_exceeded")
+                            : (chkAutoAllocate.isChecked() ? "settings_memory_allocate_auto" : "settings_memory_allocate_manual"),
+                    maxMemory / 1024. / 1024. / 1024.,
+                    FCLGameRepository.getAllocatedMemory(maxMemory, MemoryUtils.getFreeDeviceMemory(getContext()) * 1024L * 1024L, chkAutoAllocate.isChecked()) / 1024. / 1024. / 1024.,
+                    MemoryUtils.getFreeDeviceMemory(getContext()) / 1024.);
+        }, usedMemory, maxMemory, chkAutoAllocate.checkProperty()));
 
         settingTypeLayout.setVisibility(globalSetting ? View.GONE : View.VISIBLE);
 
@@ -209,6 +243,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));
+    }
+
+    @Override
     public void loadVersion(Profile profile, String versionId) {
         this.profile = profile;
         this.versionId = versionId;
@@ -222,12 +262,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         VersionSetting versionSetting = profile.getVersionSetting(versionId);
 
         modpack.set(versionId != null && profile.getRepository().isModpack(versionId));
+        usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));
 
         // unbind data fields
         if (lastVersionSetting != null) {
             FXUtils.unbind(txtWidth, lastVersionSetting.widthProperty());
             FXUtils.unbind(txtHeight, lastVersionSetting.heightProperty());
-            maxMemory.unbindBidirectional(lastVersionSetting.maxMemoryProperty());
             FXUtils.unbind(txtJVMArgs, lastVersionSetting.javaArgsProperty());
             FXUtils.unbind(txtGameArgs, lastVersionSetting.minecraftArgsProperty());
             FXUtils.unbind(txtMetaspace, lastVersionSetting.permSizeProperty());
@@ -241,6 +281,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindSelection(javaSpinner, lastVersionSetting.javaProperty());
             FXUtils.unbindSelection(processPrioritySpinner, lastVersionSetting.processPriorityProperty());
             FXUtils.unbindSelection(rendererSpinner, lastVersionSetting.rendererProperty());
+            maxMemory.unbindBidirectional(lastVersionSetting.maxMemoryProperty());
 
             lastVersionSetting.usesGlobalProperty().removeListener(specificSettingsListener);
         }
@@ -248,8 +289,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         // bind new data fields
         FXUtils.bindInt(txtWidth, versionSetting.widthProperty());
         FXUtils.bindInt(txtHeight, versionSetting.heightProperty());
-        maxMemory.bindBidirectional(versionSetting.maxMemoryProperty());
-
         FXUtils.bindString(txtJVMArgs, versionSetting.javaArgsProperty());
         FXUtils.bindString(txtGameArgs, versionSetting.minecraftArgsProperty());
         FXUtils.bindString(txtMetaspace, versionSetting.permSizeProperty());
@@ -263,6 +302,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindSelection(javaSpinner, versionSetting.javaProperty());
         FXUtils.bindSelection(processPrioritySpinner, versionSetting.processPriorityProperty());
         FXUtils.bindSelection(rendererSpinner, versionSetting.rendererProperty());
+        maxMemory.bindBidirectional(versionSetting.maxMemoryProperty());
 
         versionSetting.usesGlobalProperty().addListener(specificSettingsListener);
         if (versionId != null)

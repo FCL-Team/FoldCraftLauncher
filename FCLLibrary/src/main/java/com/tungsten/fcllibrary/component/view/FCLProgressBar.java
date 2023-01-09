@@ -17,6 +17,8 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 public class FCLProgressBar extends ProgressBar {
 
     private DoubleProperty progress;
+    private IntegerProperty firstProgressProperty;
+    private IntegerProperty secondProgressProperty;
     private BooleanProperty visibilityProperty;
     private BooleanProperty disableProperty;
 
@@ -34,6 +36,7 @@ public class FCLProgressBar extends ProgressBar {
                     ThemeEngine.getInstance().getTheme().getDkColor()
             };
             setProgressTintList(new ColorStateList(state, color));
+            setSecondaryProgressTintList(new ColorStateList(state, color));
             setIndeterminateTintList(new ColorStateList(state, color));
         }
 
@@ -68,11 +71,7 @@ public class FCLProgressBar extends ProgressBar {
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
-    public final void setProgressValue(double progress) {
-        progressProperty().set(progress);
-    }
-
-    public final DoubleProperty progressProperty() {
+    public final DoubleProperty percentProgressProperty() {
         if (progress == null) {
             progress = new DoublePropertyBase() {
 
@@ -92,12 +91,64 @@ public class FCLProgressBar extends ProgressBar {
                 }
 
                 public String getName() {
-                    return "progress";
+                    return "percentProgress";
                 }
             };
         }
 
         return progress;
+    }
+
+    public final IntegerProperty firstProgressProperty() {
+        if (firstProgressProperty == null) {
+            firstProgressProperty = new IntegerPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        int progress = get();
+                        if (progress >= 0) {
+                            setProgress(Math.min(progress, getMax()));
+                        }
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "firstProgress";
+                }
+            };
+        }
+
+        return firstProgressProperty;
+    }
+
+    public final IntegerProperty secondProgressProperty() {
+        if (secondProgressProperty == null) {
+            secondProgressProperty = new IntegerPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        int progress = get();
+                        if (progress >= 0) {
+                            setSecondaryProgress(Math.min(progress, getMax()));
+                        }
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "secondProgress";
+                }
+            };
+        }
+
+        return secondProgressProperty;
     }
 
     public final void setVisibilityValue(boolean visibility) {
