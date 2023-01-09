@@ -13,8 +13,6 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -77,10 +75,10 @@ public class VersionList {
                         progressBar.setVisibility(View.GONE);
                     });
 
-                    profile.selectedVersionProperty().addListener(listenerHolder.weak((InvalidationListener) observable -> Schedulers.androidUIThread().execute(() -> {
+                    profile.selectedVersionProperty().addListener(listenerHolder.weak((a, b, newValue) -> Schedulers.androidUIThread().execute(() -> {
                         children.forEach(it -> it.selectedProperty().set(false));
                         children.stream()
-                                .filter(it -> it.getVersion().equals(profile.selectedVersionProperty().get()))
+                                .filter(it -> it.getVersion().equals(newValue))
                                 .findFirst()
                                 .ifPresent(it -> it.selectedProperty().set(true));
                     })));
