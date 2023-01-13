@@ -98,8 +98,19 @@
     <string name="community">Community</string>
 
     <string name="control_create">Create Controller</string>
+    <string name="control_delete">Are you sure to delete this controller?</string>
+    <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
+    <string name="control_info_author">Author: </string>
+    <string name="control_info_description">Description: </string>
+    <string name="control_info_edit">Edit Controller Information</string>
+    <string name="control_info_more">More Info</string>
+    <string name="control_info_name">Name: </string>
+    <string name="control_info_name_exist">The controller already exist, please change the name!</string>
+    <string name="control_info_name_invalid">Invalid Name</string>
+    <string name="control_info_version">Version: </string>
     <string name="control_list">Controller List</string>
+    <string name="control_select">Select Controller</string>
 
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
@@ -118,6 +129,8 @@
 
     <string name="help">Help</string>
 
+    <string name="input_hint_not_empty">Required</string>
+    <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Fill the required input box first.</string>
 
     <string name="install_change_version">Change Version</string>

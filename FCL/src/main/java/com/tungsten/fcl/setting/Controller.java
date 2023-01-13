@@ -103,7 +103,7 @@ public class Controller implements Observable {
     }
 
     public Controller(String name) {
-        this(name, "1.0.0");
+        this(name, "");
     }
 
     public Controller(String name, String version) {
@@ -206,7 +206,7 @@ public class Controller implements Observable {
             if (json == JsonNull.INSTANCE || !(json instanceof JsonObject)) return null;
             JsonObject obj = (JsonObject) json;
             String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
-            String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("1.0.0");
+            String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
             String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
             String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
             int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);

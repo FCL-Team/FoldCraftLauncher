@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.Controller;
+import com.tungsten.fcl.control.ControllerCallback;
 import com.tungsten.fcl.control.ControllerType;
 import com.tungsten.fcl.control.GameController;
 import com.tungsten.fcl.control.JavaGuiController;
@@ -23,7 +23,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     private TextureView textureView;
 
-    private Controller controller;
+    private ControllerCallback controller;
     private static ControllerType controllerType;
     private static FCLBridge fclBridge;
 

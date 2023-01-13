@@ -5,7 +5,7 @@ import android.view.View;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 
-public class JavaGuiController implements Controller {
+public class JavaGuiController implements ControllerCallback {
 
     @Override
     public View getLayout() {

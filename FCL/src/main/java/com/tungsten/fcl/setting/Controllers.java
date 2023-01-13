@@ -3,7 +3,6 @@ package com.tungsten.fcl.setting;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.Observable;
@@ -21,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class Controllers {
 
@@ -51,12 +51,25 @@ public class Controllers {
      */
     private static boolean initialized = false;
 
+    public static boolean isInitialized() {
+        return initialized;
+    }
+
     private static void updateControllerStorages() {
         // don't update the underlying storage before data loading is completed
         // otherwise it might cause data loss
         if (!initialized)
             return;
         // update storage
+        File[] files = new File(FCLPath.CONTROLLER_DIR).listFiles();
+        if (files != null) {
+            ArrayList<String> fileNames = (ArrayList<String>) controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
+            for (File file : files) {
+                if (file.isDirectory() || !fileNames.contains(file.getName())) {
+                    file.delete();
+                }
+            }
+        }
         for (Controller controller : controllers) {
             try {
                 controller.saveToDisk();
@@ -75,7 +88,6 @@ public class Controllers {
         if (initialized)
             throw new IllegalStateException("Already initialized");
 
-        getControllersFromDisk();
         controllers.addAll(getControllersFromDisk());
         checkControllers();
 
@@ -108,6 +120,16 @@ public class Controllers {
 
     public static ReadOnlyListProperty<Controller> controllersProperty() {
         return controllersWrapper.getReadOnlyProperty();
+    }
+
+    public static void addController(Controller controller) {
+        if (!initialized) return;
+        controllers.add(controller);
+    }
+
+    public static void removeControllers(Controller controller) {
+        if (!initialized) return;
+        controllers.remove(controller);
     }
 
 }

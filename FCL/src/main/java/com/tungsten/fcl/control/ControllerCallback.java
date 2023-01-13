@@ -5,7 +5,7 @@ import android.view.View;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 
-public interface Controller {
+public interface ControllerCallback {
 
     View getLayout();
 

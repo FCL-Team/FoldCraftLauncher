@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.SelectControllerDialog;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -386,7 +387,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             onDeleteIcon();
         }
         if (view == controllerButton) {
-
+            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
+                lastVersionSetting.setController(controller.getName());
+            });
+            dialog.show();
         }
     }
 }

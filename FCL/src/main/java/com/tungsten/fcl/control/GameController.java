@@ -11,7 +11,7 @@ import com.tungsten.fclcore.util.Logging;
 
 import java.util.logging.Level;
 
-public class GameController implements Controller {
+public class GameController implements ControllerCallback {
 
     @Override
     public View getLayout() {
