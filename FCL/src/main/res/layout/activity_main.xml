@@ -7,59 +7,72 @@
     android:id="@+id/background"
     tools:context=".activity.MainActivity">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:paddingStart="5dp"
-        android:paddingEnd="5dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:id="@+id/left_menu"
-        android:orientation="vertical"
+    <ScrollView
+        android:id="@+id/left_scroll"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_home_24"
-            android:id="@+id/home"/>
+            android:layout_height="wrap_content">
 
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_videogame_asset_24"
-            android:id="@+id/manage"/>
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_home_24"
+                android:id="@+id/home"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_cloud_download_24"
-            android:id="@+id/download"/>
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_videogame_asset_24"
+                android:id="@+id/manage"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_wifi_24"
-            android:id="@+id/multiplayer"/>
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_cloud_download_24"
+                android:id="@+id/download"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
-            android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_settings_24"
-            android:id="@+id/setting"/>
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_build_24"
+                android:id="@+id/controller"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_wifi_24"
+                android:id="@+id/multiplayer"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLMenuView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_settings_24"
+                android:id="@+id/setting"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
 
     <View
         android:background="@android:color/darker_gray"
         android:id="@+id/split_left"
         android:layout_width="1dp"
         android:layout_height="match_parent"
-        app:layout_constraintStart_toEndOf="@id/left_menu"/>
+        app:layout_constraintStart_toEndOf="@id/left_scroll"/>
 
     <View
         android:background="@android:color/darker_gray"

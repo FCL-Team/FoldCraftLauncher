@@ -275,15 +275,26 @@ public final class VersionSetting implements Cloneable {
         return beGestureProperty;
     }
 
-    /**
-     * True if FCL does not check game's completeness.
-     */
     public boolean isBeGesture() {
         return beGestureProperty.get();
     }
 
     public void setBeGesture(boolean beGesture) {
         beGestureProperty.set(beGesture);
+    }
+
+    private final StringProperty controllerProperty = new SimpleStringProperty(this, "controller", "Default");
+
+    public StringProperty controllerProperty() {
+        return controllerProperty;
+    }
+
+    public String getController() {
+        return controllerProperty.get();
+    }
+
+    public void setController(String controller) {
+        controllerProperty.set(controller);
     }
 
     private final ObjectProperty<ProcessPriority> processPriorityProperty = new SimpleObjectProperty<>(this, "processPriority", ProcessPriority.NORMAL);
@@ -345,6 +356,7 @@ public final class VersionSetting implements Cloneable {
         scaleFactorProperty.addListener(listener);
         isolateGameDirProperty.addListener(listener);
         beGestureProperty.addListener(listener);
+        controllerProperty.addListener(listener);
         processPriorityProperty.addListener(listener);
         rendererProperty.addListener(listener);
     }
@@ -366,6 +378,7 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setScaleFactor(getScaleFactor());
         versionSetting.setIsolateGameDir(isIsolateGameDir());
         versionSetting.setBeGesture(isBeGesture());
+        versionSetting.setController(getController());
         versionSetting.setProcessPriority(getProcessPriority());
         versionSetting.setRenderer(getRenderer());
         return versionSetting;
@@ -390,6 +403,7 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("notCheckGame", src.isNotCheckGame());
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
             obj.addProperty("beGesture", src.isBeGesture());
+            obj.addProperty("controller", src.getController());
             obj.addProperty("processPriority", src.getProcessPriority().ordinal());
             obj.addProperty("renderer", src.getRenderer().ordinal());
             obj.addProperty("isolateGameDir", src.isIsolateGameDir());
@@ -421,6 +435,7 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
+            vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("Default"));
             vs.setProcessPriority(ProcessPriority.values()[Optional.ofNullable(obj.get("processPriority")).map(JsonElement::getAsInt).orElse(ProcessPriority.NORMAL.ordinal())]);
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));

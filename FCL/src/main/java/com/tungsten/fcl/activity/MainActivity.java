@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ScrollView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -61,10 +62,11 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private UIManager uiManager;
     public FCLUILayout uiLayout;
 
-    private LinearLayoutCompat leftMenu;
+    private ScrollView leftMenu;
     public FCLMenuView home;
     public FCLMenuView manage;
     public FCLMenuView download;
+    public FCLMenuView controller;
     public FCLMenuView multiplayer;
     public FCLMenuView setting;
 
@@ -107,7 +109,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
         uiLayout = findViewById(R.id.ui_layout);
         uiLayout.post(() -> {
-            leftMenu = findViewById(R.id.left_menu);
+            leftMenu = findViewById(R.id.left_scroll);
             ThemeEngine.getInstance().registerEvent(leftMenu, () -> leftMenu.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
 
             account = findViewById(R.id.account);
@@ -129,11 +131,13 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 home = findViewById(R.id.home);
                 manage = findViewById(R.id.manage);
                 download = findViewById(R.id.download);
+                controller = findViewById(R.id.controller);
                 multiplayer = findViewById(R.id.multiplayer);
                 setting = findViewById(R.id.setting);
                 home.setOnSelectListener(this);
                 manage.setOnSelectListener(this);
                 download.setOnSelectListener(this);
+                controller.setOnSelectListener(this);
                 multiplayer.setOnSelectListener(this);
                 setting.setOnSelectListener(this);
                 home.setSelected(true);
@@ -202,6 +206,10 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             titleView.setTextWithAnim(getString(R.string.download));
             uiManager.switchUI(uiManager.getDownloadUI());
         }
+        if (view == controller) {
+            titleView.setTextWithAnim(getString(R.string.controller));
+            uiManager.switchUI(uiManager.getControllerUI());
+        }
         if (view == multiplayer) {
             titleView.setTextWithAnim(getString(R.string.multiplayer));
             uiManager.switchUI(uiManager.getMultiplayerUI());
@@ -217,6 +225,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 home,
                 manage,
                 download,
+                controller,
                 multiplayer,
                 setting
         };

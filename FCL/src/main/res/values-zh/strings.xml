@@ -12,6 +12,7 @@
     <string name="version">版本列表</string>
     <string name="manage">管理版本</string>
     <string name="download">下载资源</string>
+    <string name="controller">控制</string>
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
 
@@ -84,6 +85,10 @@
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
     <string name="community">社区</string>
+
+    <string name="control_create">创建新布局</string>
+    <string name="control_import">导入布局</string>
+    <string name="control_list">布局列表</string>
 
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
