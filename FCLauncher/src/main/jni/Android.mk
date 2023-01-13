@@ -281,7 +281,6 @@ LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
                            lwjgl2/generated/opengl/org_lwjgl_opengl_NVVertexProgram.c \
                            lwjgl2/generated/opengl/org_lwjgl_opengl_NVVideoCapture.c
 
-
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/lwjgl2/common \
 						   $(LOCAL_PATH)/lwjgl2/common/opengl \
 						   $(LOCAL_PATH)/lwjgl2/common/CL \
@@ -523,7 +522,6 @@ LOCAL_SRC_FILES         := lwjgl3/common_tools.c \
                            lwjgl3/org_lwjgl_system_ThreadLocalUtil.c \
                            lwjgl3/org_lwjgl_util_tinyfd_TinyFileDialogs.c \
                            lwjgl3/tinyfiledialogs.c
-
 
 LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DLWJGL_FCL -Wunused-value
 
