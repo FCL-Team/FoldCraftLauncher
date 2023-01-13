@@ -273,6 +273,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         }
 
         VersionSetting versionSetting = profile.getVersionSetting(versionId);
+        versionSetting.checkController();
 
         modpack.set(versionId != null && profile.getRepository().isModpack(versionId));
         usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));

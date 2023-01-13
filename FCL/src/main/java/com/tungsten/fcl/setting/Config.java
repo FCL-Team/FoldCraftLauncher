@@ -64,12 +64,6 @@ public final class Config implements Cloneable, Observable {
     @SerializedName("commonpath")
     private StringProperty commonDirectory = new SimpleStringProperty(FCLPath.SHARED_COMMON_DIR);
 
-    @SerializedName("width")
-    private DoubleProperty width = new SimpleDoubleProperty();
-
-    @SerializedName("height")
-    private DoubleProperty height = new SimpleDoubleProperty();
-
     @SerializedName("autoDownloadThreads")
     private BooleanProperty autoDownloadThreads = new SimpleBooleanProperty(false);
 
@@ -164,30 +158,6 @@ public final class Config implements Cloneable, Observable {
 
     public StringProperty commonDirectoryProperty() {
         return commonDirectory;
-    }
-
-    public double getWidth() {
-        return width.get();
-    }
-
-    public DoubleProperty widthProperty() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width.set(width);
-    }
-
-    public double getHeight() {
-        return height.get();
-    }
-
-    public DoubleProperty heightProperty() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height.set(height);
     }
 
     public boolean getAutoDownloadThreads() {

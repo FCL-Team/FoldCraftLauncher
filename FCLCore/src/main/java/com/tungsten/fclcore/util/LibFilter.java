@@ -15,7 +15,7 @@ public class LibFilter {
     public static List<Library> filterLibs(List<Library> libraries) {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
-            if (!library.isNative() && !library.getName().contains("net.java.jinput") && !library.getName().contains("org.lwjgl") && !library.getName().contains("platform")) {
+            if (!library.isNative() && !library.getName().contains("org.lwjgl") && !library.getName().contains("platform")) {
                 newLibraries.add(library);
             }
         }

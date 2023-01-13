@@ -341,6 +341,17 @@ public final class VersionSetting implements Cloneable {
         });
     }
 
+    public void checkController() {
+        Controllers.checkControllers();
+
+        Controller controller = Controllers.getControllers().stream()
+                .filter(it -> it.getName().equals(getController()))
+                .findFirst()
+                .orElse(Controllers.getControllers().get(0));
+
+        setController(controller.getName());
+    }
+
     public void addPropertyChangedListener(InvalidationListener listener) {
         usesGlobalProperty.addListener(listener);
         javaProperty.addListener(listener);

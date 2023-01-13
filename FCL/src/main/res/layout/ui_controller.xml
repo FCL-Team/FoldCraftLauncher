@@ -95,15 +95,17 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ListView
-        android:id="@+id/list"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/info_layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintWidth_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
