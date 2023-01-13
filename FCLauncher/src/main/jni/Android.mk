@@ -73,7 +73,7 @@ LOCAL_SRC_FILES         := awt_xawt/xawt_fake.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE            := lwjgl
+LOCAL_MODULE            := lwjgl2
 LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
                            lwjgl2/common/extal.c \
@@ -295,4 +295,236 @@ LOCAL_C_INCLUDES        := $(LOCAL_PATH)/lwjgl2/common \
 
 LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DPLATFORM_FCL
 LOCAL_LDLIBS            := -lm -landroid
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE            := dyncall
+LOCAL_SRC_FILES         := lwjgl3/dyncall/$(TARGET_ARCH_ABI)/libdyncall_s.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE            := dyncallback
+LOCAL_SRC_FILES         := lwjgl3/dyncall/$(TARGET_ARCH_ABI)/libdyncallback_s.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE            := dynload
+LOCAL_SRC_FILES         := lwjgl3/dyncall/$(TARGET_ARCH_ABI)/libdynload_s.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE            := lwjgl
+LOCAL_STATIC_LIBRARIES  := dyncall \
+						   dyncallback \
+						   dynload
+LOCAL_SRC_FILES         := lwjgl3/common_tools.c \
+                           lwjgl3/org_lwjgl_opengl_AMDDebugOutput.c \
+                           lwjgl3/org_lwjgl_opengl_AMDDrawBuffersBlend.c \
+                           lwjgl3/org_lwjgl_opengl_AMDFramebufferMultisampleAdvanced.c \
+                           lwjgl3/org_lwjgl_opengl_AMDInterleavedElements.c \
+                           lwjgl3/org_lwjgl_opengl_AMDOcclusionQueryEvent.c \
+                           lwjgl3/org_lwjgl_opengl_AMDPerformanceMonitor.c \
+                           lwjgl3/org_lwjgl_opengl_AMDSamplePositions.c \
+                           lwjgl3/org_lwjgl_opengl_AMDSparseTexture.c \
+                           lwjgl3/org_lwjgl_opengl_AMDStencilOperationExtended.c \
+                           lwjgl3/org_lwjgl_opengl_AMDVertexShaderTessellator.c \
+                           lwjgl3/org_lwjgl_opengl_ARBBindlessTexture.c \
+                           lwjgl3/org_lwjgl_opengl_ARBBufferStorage.c \
+                           lwjgl3/org_lwjgl_opengl_ARBClearBufferObject.c \
+                           lwjgl3/org_lwjgl_opengl_ARBColorBufferFloat.c \
+                           lwjgl3/org_lwjgl_opengl_ARBComputeVariableGroupSize.c \
+                           lwjgl3/org_lwjgl_opengl_ARBDebugOutput.c \
+                           lwjgl3/org_lwjgl_opengl_ARBDrawBuffers.c \
+                           lwjgl3/org_lwjgl_opengl_ARBDrawBuffersBlend.c \
+                           lwjgl3/org_lwjgl_opengl_ARBDrawInstanced.c \
+                           lwjgl3/org_lwjgl_opengl_ARBES32Compatibility.c \
+                           lwjgl3/org_lwjgl_opengl_ARBFramebufferNoAttachments.c \
+                           lwjgl3/org_lwjgl_opengl_ARBGeometryShader4.c \
+                           lwjgl3/org_lwjgl_opengl_ARBGLSPIRV.c \
+                           lwjgl3/org_lwjgl_opengl_ARBGPUShaderFP64.c \
+                           lwjgl3/org_lwjgl_opengl_ARBGPUShaderInt64.c \
+                           lwjgl3/org_lwjgl_opengl_ARBImaging.c \
+                           lwjgl3/org_lwjgl_opengl_ARBIndirectParameters.c \
+                           lwjgl3/org_lwjgl_opengl_ARBInstancedArrays.c \
+                           lwjgl3/org_lwjgl_opengl_ARBMatrixPalette.c \
+                           lwjgl3/org_lwjgl_opengl_ARBMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_ARBMultitexture.c \
+                           lwjgl3/org_lwjgl_opengl_ARBOcclusionQuery.c \
+                           lwjgl3/org_lwjgl_opengl_ARBParallelShaderCompile.c \
+                           lwjgl3/org_lwjgl_opengl_ARBPointParameters.c \
+                           lwjgl3/org_lwjgl_opengl_ARBRobustness.c \
+                           lwjgl3/org_lwjgl_opengl_ARBSampleLocations.c \
+                           lwjgl3/org_lwjgl_opengl_ARBSampleShading.c \
+                           lwjgl3/org_lwjgl_opengl_ARBShaderObjects.c \
+                           lwjgl3/org_lwjgl_opengl_ARBShadingLanguageInclude.c \
+                           lwjgl3/org_lwjgl_opengl_ARBSparseBuffer.c \
+                           lwjgl3/org_lwjgl_opengl_ARBSparseTexture.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTextureBufferObject.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTextureBufferRange.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTextureCompression.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTextureStorage.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTextureStorageMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_ARBTransposeMatrix.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexAttrib64Bit.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexAttribBinding.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexBlend.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexBufferObject.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexProgram.c \
+                           lwjgl3/org_lwjgl_opengl_ARBVertexShader.c \
+                           lwjgl3/org_lwjgl_opengl_ARBWindowPos.c \
+                           lwjgl3/org_lwjgl_opengl_EXTBindableUniform.c \
+                           lwjgl3/org_lwjgl_opengl_EXTBlendColor.c \
+                           lwjgl3/org_lwjgl_opengl_EXTBlendEquationSeparate.c \
+                           lwjgl3/org_lwjgl_opengl_EXTBlendFuncSeparate.c \
+                           lwjgl3/org_lwjgl_opengl_EXTBlendMinmax.c \
+                           lwjgl3/org_lwjgl_opengl_EXTCompiledVertexArray.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDebugLabel.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDebugMarker.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDepthBoundsTest.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDirectStateAccess.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDrawBuffers2.c \
+                           lwjgl3/org_lwjgl_opengl_EXTDrawInstanced.c \
+                           lwjgl3/org_lwjgl_opengl_EXTEGLImageStorage.c \
+                           lwjgl3/org_lwjgl_opengl_EXTExternalBuffer.c \
+                           lwjgl3/org_lwjgl_opengl_EXTFramebufferBlit.c \
+                           lwjgl3/org_lwjgl_opengl_EXTFramebufferMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_EXTFramebufferObject.c \
+                           lwjgl3/org_lwjgl_opengl_EXTGeometryShader4.c \
+                           lwjgl3/org_lwjgl_opengl_EXTGPUProgramParameters.c \
+                           lwjgl3/org_lwjgl_opengl_EXTGPUShader4.c \
+                           lwjgl3/org_lwjgl_opengl_EXTMemoryObject.c \
+                           lwjgl3/org_lwjgl_opengl_EXTMemoryObjectFD.c \
+                           lwjgl3/org_lwjgl_opengl_EXTMemoryObjectWin32.c \
+                           lwjgl3/org_lwjgl_opengl_EXTPointParameters.c \
+                           lwjgl3/org_lwjgl_opengl_EXTPolygonOffsetClamp.c \
+                           lwjgl3/org_lwjgl_opengl_EXTProvokingVertex.c \
+                           lwjgl3/org_lwjgl_opengl_EXTRasterMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_EXTSecondaryColor.c \
+                           lwjgl3/org_lwjgl_opengl_EXTSemaphore.c \
+                           lwjgl3/org_lwjgl_opengl_EXTSemaphoreFD.c \
+                           lwjgl3/org_lwjgl_opengl_EXTSemaphoreWin32.c \
+                           lwjgl3/org_lwjgl_opengl_EXTSeparateShaderObjects.c \
+                           lwjgl3/org_lwjgl_opengl_EXTShaderFramebufferFetchNonCoherent.c \
+                           lwjgl3/org_lwjgl_opengl_EXTShaderImageLoadStore.c \
+                           lwjgl3/org_lwjgl_opengl_EXTStencilClearTag.c \
+                           lwjgl3/org_lwjgl_opengl_EXTStencilTwoSide.c \
+                           lwjgl3/org_lwjgl_opengl_EXTTextureArray.c \
+                           lwjgl3/org_lwjgl_opengl_EXTTextureBufferObject.c \
+                           lwjgl3/org_lwjgl_opengl_EXTTextureInteger.c \
+                           lwjgl3/org_lwjgl_opengl_EXTTimerQuery.c \
+                           lwjgl3/org_lwjgl_opengl_EXTTransformFeedback.c \
+                           lwjgl3/org_lwjgl_opengl_EXTVertexAttrib64bit.c \
+                           lwjgl3/org_lwjgl_opengl_EXTWin32KeyedMutex.c \
+                           lwjgl3/org_lwjgl_opengl_EXTWindowRectangles.c \
+                           lwjgl3/org_lwjgl_opengl_EXTX11SyncObject.c \
+                           lwjgl3/org_lwjgl_opengl_GL11.c \
+                           lwjgl3/org_lwjgl_opengl_GL11C.c \
+                           lwjgl3/org_lwjgl_opengl_GL12C.c \
+                           lwjgl3/org_lwjgl_opengl_GL13.c \
+                           lwjgl3/org_lwjgl_opengl_GL13C.c \
+                           lwjgl3/org_lwjgl_opengl_GL14.c \
+                           lwjgl3/org_lwjgl_opengl_GL14C.c \
+                           lwjgl3/org_lwjgl_opengl_GL15C.c \
+                           lwjgl3/org_lwjgl_opengl_GL20C.c \
+                           lwjgl3/org_lwjgl_opengl_GL21C.c \
+                           lwjgl3/org_lwjgl_opengl_GL30C.c \
+                           lwjgl3/org_lwjgl_opengl_GL31C.c \
+                           lwjgl3/org_lwjgl_opengl_GL32C.c \
+                           lwjgl3/org_lwjgl_opengl_GL33.c \
+                           lwjgl3/org_lwjgl_opengl_GL33C.c \
+                           lwjgl3/org_lwjgl_opengl_GL40C.c \
+                           lwjgl3/org_lwjgl_opengl_GL41C.c \
+                           lwjgl3/org_lwjgl_opengl_GL42C.c \
+                           lwjgl3/org_lwjgl_opengl_GL43C.c \
+                           lwjgl3/org_lwjgl_opengl_GL44C.c \
+                           lwjgl3/org_lwjgl_opengl_GL45.c \
+                           lwjgl3/org_lwjgl_opengl_GL45C.c \
+                           lwjgl3/org_lwjgl_opengl_GL46C.c \
+                           lwjgl3/org_lwjgl_opengl_GREMEDYFrameTerminator.c \
+                           lwjgl3/org_lwjgl_opengl_GREMEDYStringMarker.c \
+                           lwjgl3/org_lwjgl_opengl_INTELFramebufferCMAA.c \
+                           lwjgl3/org_lwjgl_opengl_INTELMapTexture.c \
+                           lwjgl3/org_lwjgl_opengl_INTELPerformanceQuery.c \
+                           lwjgl3/org_lwjgl_opengl_KHRBlendEquationAdvanced.c \
+                           lwjgl3/org_lwjgl_opengl_KHRParallelShaderCompile.c \
+                           lwjgl3/org_lwjgl_opengl_NVAlphaToCoverageDitherControl.c \
+                           lwjgl3/org_lwjgl_opengl_NVBindlessMultiDrawIndirect.c \
+                           lwjgl3/org_lwjgl_opengl_NVBindlessMultiDrawIndirectCount.c \
+                           lwjgl3/org_lwjgl_opengl_NVBindlessTexture.c \
+                           lwjgl3/org_lwjgl_opengl_NVBlendEquationAdvanced.c \
+                           lwjgl3/org_lwjgl_opengl_NVClipSpaceWScaling.c \
+                           lwjgl3/org_lwjgl_opengl_NVCommandList.c \
+                           lwjgl3/org_lwjgl_opengl_NVConditionalRender.c \
+                           lwjgl3/org_lwjgl_opengl_NVConservativeRaster.c \
+                           lwjgl3/org_lwjgl_opengl_NVConservativeRasterDilate.c \
+                           lwjgl3/org_lwjgl_opengl_NVConservativeRasterPreSnapTriangles.c \
+                           lwjgl3/org_lwjgl_opengl_NVCopyImage.c \
+                           lwjgl3/org_lwjgl_opengl_NVDepthBufferFloat.c \
+                           lwjgl3/org_lwjgl_opengl_NVDrawTexture.c \
+                           lwjgl3/org_lwjgl_opengl_NVDrawVulkanImage.c \
+                           lwjgl3/org_lwjgl_opengl_NVExplicitMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_NVFence.c \
+                           lwjgl3/org_lwjgl_opengl_NVFragmentCoverageToColor.c \
+                           lwjgl3/org_lwjgl_opengl_NVFramebufferMixedSamples.c \
+                           lwjgl3/org_lwjgl_opengl_NVFramebufferMultisampleCoverage.c \
+                           lwjgl3/org_lwjgl_opengl_NVGPUMulticast.c \
+                           lwjgl3/org_lwjgl_opengl_NVGPUShader5.c \
+                           lwjgl3/org_lwjgl_opengl_NVHalfFloat.c \
+                           lwjgl3/org_lwjgl_opengl_NVInternalformatSampleQuery.c \
+                           lwjgl3/org_lwjgl_opengl_NVMemoryAttachment.c \
+                           lwjgl3/org_lwjgl_opengl_NVMeshShader.c \
+                           lwjgl3/org_lwjgl_opengl_NVPathRendering.c \
+                           lwjgl3/org_lwjgl_opengl_NVPixelDataRange.c \
+                           lwjgl3/org_lwjgl_opengl_NVPointSprite.c \
+                           lwjgl3/org_lwjgl_opengl_NVPrimitiveRestart.c \
+                           lwjgl3/org_lwjgl_opengl_NVQueryResource.c \
+                           lwjgl3/org_lwjgl_opengl_NVQueryResourceTag.c \
+                           lwjgl3/org_lwjgl_opengl_NVSampleLocations.c \
+                           lwjgl3/org_lwjgl_opengl_NVScissorExclusive.c \
+                           lwjgl3/org_lwjgl_opengl_NVShaderBufferLoad.c \
+                           lwjgl3/org_lwjgl_opengl_NVShadingRateImage.c \
+                           lwjgl3/org_lwjgl_opengl_NVTextureBarrier.c \
+                           lwjgl3/org_lwjgl_opengl_NVTextureMultisample.c \
+                           lwjgl3/org_lwjgl_opengl_NVTransformFeedback.c \
+                           lwjgl3/org_lwjgl_opengl_NVTransformFeedback2.c \
+                           lwjgl3/org_lwjgl_opengl_NVVertexArrayRange.c \
+                           lwjgl3/org_lwjgl_opengl_NVVertexAttribInteger64bit.c \
+                           lwjgl3/org_lwjgl_opengl_NVVertexBufferUnifiedMemory.c \
+                           lwjgl3/org_lwjgl_opengl_NVViewportSwizzle.c \
+                           lwjgl3/org_lwjgl_opengl_NVXConditionalRender.c \
+                           lwjgl3/org_lwjgl_opengl_NVXGpuMulticast2.c \
+                           lwjgl3/org_lwjgl_opengl_NVXProgressFence.c \
+                           lwjgl3/org_lwjgl_opengl_OVRMultiview.c \
+                           lwjgl3/org_lwjgl_stb_LibSTB.c \
+                           lwjgl3/org_lwjgl_stb_STBDXT.c \
+                           lwjgl3/org_lwjgl_stb_STBEasyFont.c \
+                           lwjgl3/org_lwjgl_stb_STBImage.c \
+                           lwjgl3/org_lwjgl_stb_STBImageResize.c \
+                           lwjgl3/org_lwjgl_stb_STBImageWrite.c \
+                           lwjgl3/org_lwjgl_stb_STBPerlin.c \
+                           lwjgl3/org_lwjgl_stb_STBRectPack.c \
+                           lwjgl3/org_lwjgl_stb_STBTruetype.c \
+                           lwjgl3/org_lwjgl_stb_STBTTFontinfo.c \
+                           lwjgl3/org_lwjgl_stb_STBVorbis.c \
+                           lwjgl3/org_lwjgl_system_Callback.c \
+                           lwjgl3/org_lwjgl_system_dyncall_DynCall.c \
+                           lwjgl3/org_lwjgl_system_dyncall_DynCallback.c \
+                           lwjgl3/org_lwjgl_system_dyncall_DynLoad.c \
+                           lwjgl3/org_lwjgl_system_fcl_DynamicLinkLoader.c \
+                           lwjgl3/org_lwjgl_system_JNI.c \
+                           lwjgl3/org_lwjgl_system_jni_JNINativeInterface.c \
+                           lwjgl3/org_lwjgl_system_libc_LibCErrno.c \
+                           lwjgl3/org_lwjgl_system_libc_LibCLocale.c \
+                           lwjgl3/org_lwjgl_system_libc_LibCStdio.c \
+                           lwjgl3/org_lwjgl_system_libc_LibCStdlib.c \
+                           lwjgl3/org_lwjgl_system_libc_LibCString.c \
+                           lwjgl3/org_lwjgl_system_MemoryAccessJNI.c \
+                           lwjgl3/org_lwjgl_system_MemoryUtil.c \
+                           lwjgl3/org_lwjgl_system_ThreadLocalUtil.c \
+                           lwjgl3/org_lwjgl_util_tinyfd_TinyFileDialogs.c \
+                           lwjgl3/tinyfiledialogs.c
+
+
+LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DLWJGL_FCL -Wunused-value
+
 include $(BUILD_SHARED_LIBRARY)

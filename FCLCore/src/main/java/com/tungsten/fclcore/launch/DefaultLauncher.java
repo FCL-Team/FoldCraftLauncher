@@ -102,9 +102,9 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
 
         // Enable LWJGL debug mode
-//        res.addDefault("-Dorg.lwjgl.util.Debug=","true");
-//        res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
-//        res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
+        res.addDefault("-Dorg.lwjgl.util.Debug=","true");
+        res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
+        res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
 
         // Fix RCE vulnerability of log4j2
         res.addDefault("-Djava.rmi.server.useCodebaseOnly=", "true");
