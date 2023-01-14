@@ -106,6 +106,19 @@ public final class FileUtils {
         return new String(Files.readAllBytes(file), charset);
     }
 
+    public static void writeTextWithAppendMode(File file, String text) throws IOException {
+        writeBytesWithAppendMode(file.toPath(), text.getBytes(UTF_8));
+    }
+
+    public static void writeTextWithAppendMode(Path file, String text) throws IOException {
+        writeBytesWithAppendMode(file, text.getBytes(UTF_8));
+    }
+
+    public static void writeBytesWithAppendMode(Path file, byte[] data) throws IOException {
+        Files.createDirectories(file.getParent());
+        Files.write(file, data, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
     /**
      * Write plain text to file. Characters are encoded into bytes using UTF-8.
      * <p>

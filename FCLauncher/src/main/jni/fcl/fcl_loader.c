@@ -41,35 +41,33 @@ jstring CStr2Jstring(JNIEnv *env, char *buffer) {
     return (jstring) (*env)->NewObject(env, strClass, ctorID, bytes, encoding);
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jclass clazz,
-                                                                                   jstring path){
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jclass clazz, jstring path) {
 
     int fclFd[2];
-    if  (pipe(fclFd) < 0){
+    if  (pipe(fclFd) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
     }
 
-    if(dup2(fclFd[1], STDOUT_FILENO) != STDOUT_FILENO && dup2(fclFd[1], STDERR_FILENO) != STDERR_FILENO){
+    if (dup2(fclFd[1], STDOUT_FILENO) != STDOUT_FILENO && dup2(fclFd[1], STDERR_FILENO) != STDERR_FILENO) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio !");
     }
     char buffer[1024];
-    jclass birdge = (*env) -> FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
-    jmethodID method_setLogPipeReady = (*env) ->GetMethodID(env, birdge,"setLogPipeReady", "()V");
-    if(!method_setLogPipeReady){
-        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find setLogPipeReady method !");
+    jclass bridge = (*env) -> FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
+    jmethodID method_setLogPipeReady = (*env) -> GetMethodID(env, bridge,"setLogPipeReady", "()V");
+    if (!method_setLogPipeReady) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find setLogPipeReady method!");
     }
-    fcl.logFile=fdopen(fclFd[1],"a");
+    fcl.logFile = fdopen(fclFd[1],"a");
     FCL_INTERNAL_LOG("Log pipe ready.");
-    (*env)->CallVoidMethod(env,clazz,method_setLogPipeReady);
-    jmethodID method_receiveLog = (*env) ->GetMethodID(env, birdge,"receiveLog",
-                                                         "(Ljava/lang/String;)V");
-    if(!method_receiveLog){
-        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method !");
+    (*env) -> CallVoidMethod(env,clazz,method_setLogPipeReady);
+    jmethodID method_receiveLog = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
+    if (!method_receiveLog) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
     }
-    while (1){
+    while (1) {
         memset(buffer, '\0', sizeof(buffer));
         ssize_t _s = read(fclFd[0], buffer, sizeof(buffer) - 1);
-        if (_s < 0){
+        if (_s < 0) {
             __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log !");
             close(fclFd[0]);
             close(fclFd[1]);
@@ -77,7 +75,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
         } else {
             buffer[_s] = '\0';
         }
-        if(buffer[0] == '\0')
+        if (buffer[0] == '\0')
             continue;
         else {
             (*env)->CallVoidMethod(env, clazz, method_receiveLog, CStr2Jstring(env, buffer));
@@ -114,7 +112,9 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIE
     void* handle;
     dlerror();
     handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
-    __android_log_print(dlerror() == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", lib_name, dlerror());
+
+    char * error = dlerror();
+    __android_log_print(error == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", lib_name, error);
 
     if (handle == NULL) {
         ret = -1;
@@ -130,7 +130,8 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibrar
     void *updateLdLibPath = dlsym(libdl_handle, "android_update_LD_LIBRARY_PATH");
     if (updateLdLibPath == NULL) {
         updateLdLibPath = dlsym(libdl_handle, "__loader_android_update_LD_LIBRARY_PATH");
-        __android_log_print(dlerror() == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", "libdl.so", dlerror());
+        char * error = dlerror();
+        __android_log_print(error == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", "libdl.so", error);
     }
     android_update_LD_LIBRARY_PATH = (android_update_LD_LIBRARY_PATH_t) updateLdLibPath;
     const char* ldLibPathUtf = (*env)->GetStringUTFChars(env, ldLibraryPath, 0);
@@ -155,6 +156,7 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTr
     jclass exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
     exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
+    // Enable xhook debug mode here
     // xhook_enable_debug(1);
     xhook_register(".*\\.so$", "exit", custom_exit, (void **) &old_exit);
     return xhook_refresh(1);

@@ -84,7 +84,7 @@ public class Controllers {
         controllers.addListener(onInvalidating(Controllers::checkControllers));
     }
 
-    static void init() {
+    public static void init() {
         if (initialized)
             throw new IllegalStateException("Already initialized");
 

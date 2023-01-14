@@ -8,13 +8,17 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
-import com.tungsten.fclauncher.utils.LogFileUtil;
+import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public class ProcessService extends Service {
 
@@ -28,7 +32,6 @@ public class ProcessService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogFileUtil.getInstance().writeLog("ProcessService started!");
         String[] command = intent.getExtras().getStringArray("command");
         FCLConfig config = new FCLConfig(
                 getApplicationContext(),
@@ -41,7 +44,10 @@ public class ProcessService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    private boolean firstLog = true;
+
     public void startProcess(FCLConfig config) {
+        FCLBridge bridge = FCLauncher.launchAPIInstaller(config);
         FCLBridgeCallback callback = new FCLBridgeCallback() {
             @Override
             public void onCursorModeChange(int mode) {
@@ -49,12 +55,25 @@ public class ProcessService extends Service {
             }
 
             @Override
+            public void onLog(String log) {
+                try {
+                    if (firstLog) {
+                        FileUtils.writeText(new File(bridge.getLogPath()), log + "\n");
+                        firstLog = false;
+                    } else {
+                        FileUtils.writeTextWithAppendMode(new File(bridge.getLogPath()), log + "\n");
+                    }
+                } catch (IOException e) {
+                    Logging.LOG.log(Level.WARNING, "Can't log game log to target file", e.getMessage());
+                }
+            }
+
+            @Override
             public void onExit(int code) {
                 sendCode(code);
             }
         };
-        CompletableFuture<Integer> future = FCLauncher.launchAPIInstaller(config, callback);
-        future.whenComplete((integer, throwable) -> sendCode(integer));
+        bridge.execute(null, callback);
     }
 
     private void sendCode(int code) {
@@ -65,7 +84,6 @@ public class ProcessService extends Service {
             DatagramPacket packet = new DatagramPacket(data, data.length);
             socket.send(packet);
             socket.close();
-            LogFileUtil.getInstance().writeLog("Code = " + code + ", send the code now!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +92,6 @@ public class ProcessService extends Service {
 
     @Override
     public void onDestroy() {
-        LogFileUtil.getInstance().writeLog("Destroy the service now!");
         super.onDestroy();
         android.os.Process.killProcess(android.os.Process.myPid());
     }

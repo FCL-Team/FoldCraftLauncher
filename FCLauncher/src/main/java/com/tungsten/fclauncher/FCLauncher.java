@@ -8,9 +8,7 @@ import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.utils.Architecture;
-import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,23 +18,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class FCLauncher {
 
     // Todo : don't crash when launch 1.17+ with OpenGL 2.1
     // Todo : mouse scroll event
-    // Todo : custom logger
     // Todo : mesa
 
-    private static void printTaskTitle(String task) {
-        LogFileUtil.getInstance().writeLog("==================== " + task + " ====================");
+    private static void printTaskTitle(FCLBridge bridge, String task) {
+        bridge.getCallback().onLog("==================== " + task + " ====================");
     }
 
-    private static void logStartInfo(String task) {
-        printTaskTitle("Start " + task);
-        LogFileUtil.getInstance().writeLog("Device: " + DeviceName.getDeviceName());
-        LogFileUtil.getInstance().writeLog("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
+    private static void logStartInfo(FCLBridge bridge, String task) {
+        printTaskTitle(bridge, "Start " + task);
+        bridge.getCallback().onLog("Device: " + DeviceName.getDeviceName());
+        bridge.getCallback().onLog("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
@@ -166,12 +162,12 @@ public class FCLauncher {
         if (render) {
             addRendererEnv(config, envMap);
         }
-        printTaskTitle("Env Map");
+        printTaskTitle(bridge, "Env Map");
         for (String key : envMap.keySet()) {
-            LogFileUtil.getInstance().writeLog("Env: " + key + "=" + envMap.get(key));
+            bridge.getCallback().onLog("Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
-        printTaskTitle("Env Map");
+        printTaskTitle(bridge, "Env Map");
     }
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
@@ -228,27 +224,27 @@ public class FCLauncher {
     }
 
     private static int launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
-        printTaskTitle(task + " Arguments");
+        printTaskTitle(bridge, task + " Arguments");
         String[] args = rebaseArgs(config);
         for (String arg : args) {
-            LogFileUtil.getInstance().writeLog(task + " argument: " + arg);
+            bridge.getCallback().onLog(task + " argument: " + arg);
         }
         bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
-        LogFileUtil.getInstance().writeLog("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
+        bridge.getCallback().onLog("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
         int exitCode = bridge.jliLaunch(args);
-        LogFileUtil.getInstance().writeLog("OpenJDK exited with code : " + exitCode);
+        bridge.getCallback().onLog("OpenJDK exited with code : " + exitCode);
         return exitCode;
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(null);
+        FCLBridge bridge = new FCLBridge();
         bridge.setLogPath(config.getLogDir() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
-                logStartInfo("Minecraft");
+                logStartInfo(bridge, "Minecraft");
 
                 // env
                 setEnv(config, bridge, true);
@@ -260,11 +256,12 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
+                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch game
-                launch(config, bridge, "Minecraft");
+                int code = launch(config, bridge, "Minecraft");
+                bridge.onExit(code);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -279,12 +276,12 @@ public class FCLauncher {
     public static FCLBridge launchJavaGUI(FCLConfig config) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(null);
+        FCLBridge bridge = new FCLBridge();
         bridge.setLogPath(config.getLogDir() + "/latest_java_gui.log");
         Thread javaGUIThread = new Thread(() -> {
             try {
 
-                logStartInfo("Java GUI");
+                logStartInfo(bridge, "Java GUI");
 
                 // env
                 setEnv(config, bridge, true);
@@ -296,11 +293,12 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
+                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch java gui
-                launch(config, bridge, "Java GUI");
+                int code = launch(config, bridge, "Java GUI");
+                bridge.onExit(code);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -311,17 +309,15 @@ public class FCLauncher {
         return bridge;
     }
 
-    public static CompletableFuture<Integer> launchAPIInstaller(FCLConfig config, FCLBridgeCallback callback) {
+    public static FCLBridge launchAPIInstaller(FCLConfig config) {
 
         // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge(callback);
+        FCLBridge bridge = new FCLBridge();
         bridge.setLogPath(config.getLogDir() + "/latest_api_installer.log");
-        CompletableFuture<Integer> future = new CompletableFuture<>();
-
         Thread apiInstallerThread = new Thread(() -> {
             try {
 
-                logStartInfo("API Installer");
+                logStartInfo(bridge, "API Installer");
 
                 // env
                 setEnv(config, bridge, false);
@@ -330,18 +326,20 @@ public class FCLauncher {
                 setUpJavaRuntime(config, bridge);
 
                 // set working directory
-                LogFileUtil.getInstance().writeLog("Working directory: " + config.getWorkingDir());
+                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch api installer
-                future.complete(launch(config, bridge, "API Installer"));
+                int code = launch(config, bridge, "API Installer");
+                bridge.onExit(code);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
-        apiInstallerThread.start();
-        return future;
+        bridge.setThread(apiInstallerThread);
+
+        return bridge;
     }
 
 }

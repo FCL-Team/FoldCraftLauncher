@@ -3,12 +3,14 @@ package com.tungsten.fcl.ui.controller;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ListView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.ControllerActivity;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -158,7 +160,8 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
             dialog.show();
         }
         if (view == editController) {
-
+            Intent intent = new Intent(getContext(), ControllerActivity.class);
+            getActivity().startActivity(intent);
         }
     }
 }

@@ -12,13 +12,12 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
-import com.tungsten.fcl.control.ControllerType;
+import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.AccountListItem;
 import com.tungsten.fcl.util.TaskCancellationAction;
-import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;
@@ -133,7 +132,8 @@ public final class LauncherHelper {
                 }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                     Intent intent = new Intent(context, JVMActivity.class);
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
-                    JVMActivity.setFClBridge(fclBridge, ControllerType.GAME);
+                    fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
+                    JVMActivity.setFClBridge(fclBridge, MenuType.GAME);
                     LOG.log(Level.INFO, "Start JVMActivity!");
                     context.startActivity(intent);
                 })).withStage("launch.state.waiting_launching"))

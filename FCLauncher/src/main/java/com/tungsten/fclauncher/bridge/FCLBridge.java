@@ -5,11 +5,11 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+
 import com.tungsten.fclauncher.FCLPath;
-import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 
 public class FCLBridge implements Serializable {
 
@@ -43,14 +43,14 @@ public class FCLBridge implements Serializable {
 
     public static final int CloseRequest          = 0;
 
-    public FCLBridgeCallback callback;
+    private FCLBridgeCallback callback;
 
     private double scaleFactor = 1f;
+    private String controller = "Default";
     private String logPath;
     private Thread thread;
     private Thread fclLogThread;
     private boolean isLogPipeReady = false;
-    private WeakReference<LogReceiver> logReceiver;
 
     static {
         System.loadLibrary("xhook");
@@ -58,10 +58,7 @@ public class FCLBridge implements Serializable {
         System.loadLibrary("glfw");
     }
 
-    public static int cursorMode = CursorEnabled;
-
-    public FCLBridge(FCLBridgeCallback callback) {
-        this.callback = callback;
+    public FCLBridge() {
     }
 
     public native void setFCLNativeWindow(Surface surface);
@@ -86,11 +83,13 @@ public class FCLBridge implements Serializable {
         return thread;
     }
 
+    public FCLBridgeCallback getCallback() {
+        return callback;
+    }
+
     public void execute(Surface surface, FCLBridgeCallback callback) {
         this.callback = callback;
 
-        LogFileUtil logFileUtil = LogFileUtil.getInstance();
-        logFileUtil.setLogFilePath(getLogPath());
         fclLogThread = new Thread(() -> redirectStdio(getLogPath()));
         fclLogThread.setName("FCLLogThread");
         fclLogThread.start();
@@ -139,7 +138,6 @@ public class FCLBridge implements Serializable {
 
     // FCLBridge callbacks
     public void setCursorMode(int mode) {
-        cursorMode = mode;
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }
@@ -168,6 +166,15 @@ public class FCLBridge implements Serializable {
         return scaleFactor;
     }
 
+    public void setController(String controller) {
+        this.controller = controller;
+    }
+
+    public String getController() {
+        return controller;
+    }
+
+    @NonNull
     public String getLogPath() {
         return logPath;
     }
@@ -181,10 +188,8 @@ public class FCLBridge implements Serializable {
     }
 
     public void receiveLog(String log) {
-        if (logReceiver == null || logReceiver.get() == null) {
-            logReceiver = new WeakReference<>(log1 -> LogFileUtil.getInstance().writeLog(log1));
-        } else {
-            logReceiver.get().pushLog(log);
+        if (callback != null) {
+            callback.onLog(log);
         }
     }
 }
