@@ -95,6 +95,7 @@ public class GameMenu implements MenuCallback {
         if (exitCode != 0) {
             JVMCrashActivity.startCrashActivity(activity, exitCode);
             Logging.LOG.log(Level.INFO, "JVM crashed, start jvm crash activity to show errors now!");
+            android.os.Process.killProcess(android.os.Process.myPid());
         }
     }
 
