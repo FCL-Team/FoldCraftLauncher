@@ -393,35 +393,35 @@ GLFWbool _glfwRefreshContextAttribs(_GLFWwindow* window,
         return GLFW_FALSE;
     }
 
-    if (window->context.major < ctxconfig->major ||
-        (window->context.major == ctxconfig->major &&
-         window->context.minor < ctxconfig->minor))
-    {
-        // The desired OpenGL version is greater than the actual version
-        // This only happens if the machine lacks {GLX|WGL}_ARB_create_context
-        // /and/ the user has requested an OpenGL version greater than 1.0
-
-        // For API consistency, we emulate the behavior of the
-        // {GLX|WGL}_ARB_create_context extension and fail here
-
-        if (window->context.client == GLFW_OPENGL_API)
-        {
-            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
-                            "Requested OpenGL version %i.%i, got version %i.%i",
-                            ctxconfig->major, ctxconfig->minor,
-                            window->context.major, window->context.minor);
-        }
-        else
-        {
-            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
-                            "Requested OpenGL ES version %i.%i, got version %i.%i",
-                            ctxconfig->major, ctxconfig->minor,
-                            window->context.major, window->context.minor);
-        }
-
-        glfwMakeContextCurrent((GLFWwindow*) previous);
-        return GLFW_FALSE;
-    }
+//    if (window->context.major < ctxconfig->major ||
+//        (window->context.major == ctxconfig->major &&
+//         window->context.minor < ctxconfig->minor))
+//    {
+//        // The desired OpenGL version is greater than the actual version
+//        // This only happens if the machine lacks {GLX|WGL}_ARB_create_context
+//        // /and/ the user has requested an OpenGL version greater than 1.0
+//
+//        // For API consistency, we emulate the behavior of the
+//        // {GLX|WGL}_ARB_create_context extension and fail here
+//
+//        if (window->context.client == GLFW_OPENGL_API)
+//        {
+//            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
+//                            "Requested OpenGL version %i.%i, got version %i.%i",
+//                            ctxconfig->major, ctxconfig->minor,
+//                            window->context.major, window->context.minor);
+//        }
+//        else
+//        {
+//            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
+//                            "Requested OpenGL ES version %i.%i, got version %i.%i",
+//                            ctxconfig->major, ctxconfig->minor,
+//                            window->context.major, window->context.minor);
+//        }
+//
+//        glfwMakeContextCurrent((GLFWwindow*) previous);
+//        return GLFW_FALSE;
+//    }
 
     if (window->context.major >= 3)
     {

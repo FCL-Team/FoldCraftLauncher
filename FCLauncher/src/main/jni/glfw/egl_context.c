@@ -324,7 +324,9 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
             EGL_NONE
     };
     EGLint num_configs = 0;
-    const EGLint egl_context_attributes[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
+    int libgl_es = strtol(getenv("LIBGL_ES"), NULL, 0);
+    if(libgl_es < 0 || libgl_es > INT16_MAX) libgl_es = 2;
+    const EGLint egl_context_attributes[] = { EGL_CONTEXT_CLIENT_VERSION, libgl_es, EGL_NONE };
     if (eglChooseConfig(_glfw.egl.display, egl_attributes, NULL, 0, &num_configs) != GLFW_TRUE) {
         _glfwInputError(GLFW_API_UNAVAILABLE, "eglChooseConfig() failed: %04x",
                             eglGetError());

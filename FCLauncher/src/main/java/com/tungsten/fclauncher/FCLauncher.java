@@ -134,9 +134,9 @@ public class FCLauncher {
         envMap.put("LIBGL_NAME", renderer.getGlLibName());
         envMap.put("LIBEGL_NAME", renderer.getEglLibName());
         if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
-            if (renderer.getGlVersion() != null) {
-                envMap.put("LIBGL_GL", renderer.getGlVersion());
-            }
+//            if (renderer.getGlVersion() != null) {
+//                envMap.put("LIBGL_VERSION", "4.6");
+//            }
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");
