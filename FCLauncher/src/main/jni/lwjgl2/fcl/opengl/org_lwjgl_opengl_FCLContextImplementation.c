@@ -64,9 +64,10 @@ static void createContextEGL(JNIEnv *env, FCLPeerInfo *peer_info, FCLContext *co
 		return;
 	}
 	EGLContext context;
+	const EGLint egl_context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 	if (attribs) {
-		EGLint *attrib_list = (EGLint *)(*env)->GetDirectBufferAddress(env, attribs);
-		context = lwjgl_eglCreateContext(peer_info->display, *config, shared_context, attrib_list);
+//		EGLint *attrib_list = (EGLint *)(*env)->GetDirectBufferAddress(env, attribs);
+		context = lwjgl_eglCreateContext(peer_info->display, *config, shared_context, egl_context_attributes);
 	} else {
 		context = lwjgl_eglCreateContext(peer_info->display, *config, shared_context, NULL);
 	}

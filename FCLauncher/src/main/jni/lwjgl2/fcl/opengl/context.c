@@ -45,7 +45,29 @@
 #include "context.h"
 
 EGLConfig *getFBConfigFromPeerInfo(JNIEnv *env, FCLPeerInfo *peer_info) {
-	int attribs[] = {EGL_CONFIG_ID, peer_info->config_id, EGL_NONE, EGL_NONE};
+	EGLint attribs[] = {
+			EGL_BLUE_SIZE, 8,
+			EGL_GREEN_SIZE, 8,
+			EGL_RED_SIZE, 8,
+			EGL_ALPHA_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_NONE
+	};
+//	EGLint num_configs = 0;
+//	if (lwjgl_eglChooseConfig(peer_info->display, egl_attributes, NULL, 0, &num_configs)!=EGL_TRUE) {
+//		throwException(env, "eglChooseConfig() failed");
+//		return false;
+//	}
+//
+//	if (num_configs == 0) {
+//		throwException(env, "eglChooseConfig() found no matching config");
+//		return false;
+//	}
+//	EGLConfig config = calloc(num_configs, sizeof(EGLConfig));
+//	lwjgl_eglChooseConfig(peer_info->display, egl_attributes, &config, 1, &num_configs);
+//	EGLConfig *configs=&config;
 	int num_elements;
 	EGLBoolean ret;
 	ret = lwjgl_eglChooseConfig(peer_info->display, attribs, NULL, 0, &num_elements);
@@ -61,11 +83,11 @@ EGLConfig *getFBConfigFromPeerInfo(JNIEnv *env, FCLPeerInfo *peer_info) {
 		return NULL;
 	}
 	// Check that only one FBConfig matches the config id
-	if (num_elements != 1) {
-		free(configs);
-		throwException(env, "No unique EGL 1.4 config matches peer info");
-		return NULL;
-	}
+//	if (num_elements != 1) {
+//		free(configs);
+//		throwException(env, "No unique EGL 1.4 config matches peer info");
+//		return NULL;
+//	}
 	return configs;
 }
 
@@ -88,59 +110,55 @@ static int convertToBPE(int bpp) {
 }
 
 static EGLConfig *chooseVisualEGLFromBPP(JNIEnv *env, EGLDisplay disp, jobject pixel_format, int bpp, int drawable_type) {
-	jclass cls_pixel_format = (*env)->GetObjectClass(env, pixel_format);
-	int alpha = (int)(*env)->GetIntField(env, pixel_format, (*env)->GetFieldID(env, cls_pixel_format, "alpha", "I"));
-	int depth = (int)(*env)->GetIntField(env, pixel_format, (*env)->GetFieldID(env, cls_pixel_format, "depth", "I"));
-	int stencil = (int)(*env)->GetIntField(env, pixel_format, (*env)->GetFieldID(env, cls_pixel_format, "stencil", "I"));
-	int samples = (int)(*env)->GetIntField(env, pixel_format, (*env)->GetFieldID(env, cls_pixel_format, "samples", "I"));
-	
-	int bpe = convertToBPE(bpp);
-	attrib_list_t attrib_list;
-	initAttribList(&attrib_list);
-		
-	putAttrib(&attrib_list, EGL_SURFACE_TYPE); putAttrib(&attrib_list, drawable_type);
-	putAttrib(&attrib_list, EGL_DEPTH_SIZE); putAttrib(&attrib_list, depth);
-	putAttrib(&attrib_list, EGL_RED_SIZE); putAttrib(&attrib_list, bpe);
-	putAttrib(&attrib_list, EGL_GREEN_SIZE); putAttrib(&attrib_list, bpe);
-	putAttrib(&attrib_list, EGL_BLUE_SIZE); putAttrib(&attrib_list, bpe);
-	putAttrib(&attrib_list, EGL_ALPHA_SIZE); putAttrib(&attrib_list, alpha);
-	putAttrib(&attrib_list, EGL_STENCIL_SIZE); putAttrib(&attrib_list, stencil);
-	// Assume the caller has checked support for multisample
-	if (samples > 0) {
-		putAttrib(&attrib_list, EGL_SAMPLE_BUFFERS); putAttrib(&attrib_list, 1);
-		putAttrib(&attrib_list, EGL_SAMPLES); putAttrib(&attrib_list, samples);
+	EGLint egl_attributes[] = {
+			EGL_BLUE_SIZE, 8,
+			EGL_GREEN_SIZE, 8,
+			EGL_RED_SIZE, 8,
+			EGL_ALPHA_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_NONE
+	};
+	EGLint num_configs = 0;
+	if (lwjgl_eglChooseConfig(disp, egl_attributes, NULL, 0, &num_configs)!=EGL_TRUE) {
+		throwException(env, "eglChooseConfig() failed");
+		return false;
 	}
-	putAttrib(&attrib_list, EGL_NONE); putAttrib(&attrib_list, EGL_NONE);
-	int num_formats = 0;
-	EGLBoolean ret;
-	ret = lwjgl_eglChooseConfig(disp, attrib_list.attribs, NULL, 0, &num_formats);
-	if (!ret) {
-		return NULL;
+
+	if (num_configs == 0) {
+		throwException(env, "eglChooseConfig() found no matching config");
+		return false;
 	}
-	EGLConfig* configs = calloc(num_formats, sizeof(EGLConfig));
-	ret = lwjgl_eglChooseConfig(disp, attrib_list.attribs, configs, num_formats, &num_formats);
-	if (ret && num_formats > 0) {
-		return configs;
-	} else {
-		if (configs != NULL)
-			free(configs);
-		return NULL;
-	}
+	EGLConfig *configs = calloc(num_configs, sizeof(EGLConfig));
+	lwjgl_eglChooseConfig(disp, egl_attributes, configs, 1, &num_configs);
+	return configs;
 }
 
 EGLConfig *chooseVisualEGL(JNIEnv *env, EGLDisplay disp, jobject pixel_format, bool use_display_bpp, int drawable_type) {
-	jclass cls_pixel_format = (*env)->GetObjectClass(env, pixel_format);
-	int bpp;
-	if (use_display_bpp) {
-		bpp = 32;
-		EGLConfig *configs = chooseVisualEGLFromBPP(env, disp, pixel_format, bpp, drawable_type);
-		if (configs != NULL)
-			return configs;
-		else
-			bpp = 24;
-	} else
-		bpp = (int)(*env)->GetIntField(env, pixel_format, (*env)->GetFieldID(env, cls_pixel_format, "bpp", "I"));
-	return chooseVisualEGLFromBPP(env, disp, pixel_format, bpp, drawable_type);
+	EGLint egl_attributes[] = {
+			EGL_BLUE_SIZE, 8,
+			EGL_GREEN_SIZE, 8,
+			EGL_RED_SIZE, 8,
+			EGL_ALPHA_SIZE, 8,
+			EGL_DEPTH_SIZE, 24,
+			EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+			EGL_NONE
+	};
+	EGLint num_configs = 0;
+	if (lwjgl_eglChooseConfig(disp, egl_attributes, NULL, 0, &num_configs)!=EGL_TRUE) {
+		throwException(env, "eglChooseConfig() failed");
+		return false;
+	}
+
+	if (num_configs == 0) {
+		throwException(env, "eglChooseConfig() found no matching config");
+		return false;
+	}
+	EGLConfig *configs = calloc(num_configs, sizeof(EGLConfig));
+	lwjgl_eglChooseConfig(disp, egl_attributes, configs, 1, &num_configs);
+	return configs;
 }
 
 static void dumpVisualInfo(JNIEnv *env, EGLDisplay display, EGLConfig config) {

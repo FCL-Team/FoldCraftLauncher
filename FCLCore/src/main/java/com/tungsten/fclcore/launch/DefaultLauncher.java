@@ -121,6 +121,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dlwjgl.platform=", "FCL");
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
+        res.addDefault("-Dlwjgl2.width=",options.getWidth()+"");
+        res.addDefault("-Dlwjgl2.height=",options.getHeight()+"");
 
         List<String> classpath = repository.getClasspath(version);
 
