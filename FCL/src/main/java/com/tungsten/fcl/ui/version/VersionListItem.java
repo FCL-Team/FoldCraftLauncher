@@ -45,10 +45,6 @@ public class VersionListItem {
         return selected;
     }
 
-    public void checkSelection() {
-        selected.set(version.equals(profile.getSelectedVersion()));
-    }
-
     public boolean canUpdate() {
         return isModpack;
     }

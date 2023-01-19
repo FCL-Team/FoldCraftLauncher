@@ -60,7 +60,7 @@
         android:theme="@style/Theme.FoldCraftLauncher"
         android:extractNativeLibs="true"
         android:allowNativeHeapPointerTagging="false"
-        tools:targetApi="32">
+        tools:targetApi="33">
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"

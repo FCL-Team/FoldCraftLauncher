@@ -8,13 +8,17 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 
 public class JVMCrashActivity extends FCLActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jvm_crash);
+        FCLImageView contentView = new FCLImageView(this);
+        contentView.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+        setContentView(contentView);
     }
 
     public static void startCrashActivity(Context context, int exitCode) {

@@ -102,9 +102,9 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
 
         // Enable LWJGL debug mode
-        res.addDefault("-Dorg.lwjgl.util.Debug=","true");
-        res.addDefault("-Dorg.lwjgl.util.DebugLoader=","true");
-        res.addDefault("-Dorg.lwjgl.util.DebugFunctions=","true");
+        res.addDefault("-Dorg.lwjgl.util.Debug=", "true");
+        res.addDefault("-Dorg.lwjgl.util.DebugLoader=", "true");
+        res.addDefault("-Dorg.lwjgl.util.DebugFunctions=", "true");
 
         // Fix RCE vulnerability of log4j2
         res.addDefault("-Djava.rmi.server.useCodebaseOnly=", "true");
@@ -121,8 +121,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dlwjgl.platform=", "FCL");
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dlwjgl2.width=",options.getWidth()+"");
-        res.addDefault("-Dlwjgl2.height=",options.getHeight()+"");
+        res.addDefault("-Dlwjgl2.width=", options.getWidth() + "");
+        res.addDefault("-Dlwjgl2.height=", options.getHeight() + "");
 
         List<String> classpath = repository.getClasspath(version);
 
@@ -327,9 +327,6 @@ public class DefaultLauncher extends Launcher {
         String[] finalArgs = rawCommandLine.toArray(new String[0]);
 
         FCLConfig.Renderer renderer = options.getRenderer();
-        if (version.getMinimumLauncherVersion() >= 21) {
-            renderer.setGlVersion("32");
-        }
         FCLConfig config = new FCLConfig(context,
                 FCLPath.LOG_DIR,
                 options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,

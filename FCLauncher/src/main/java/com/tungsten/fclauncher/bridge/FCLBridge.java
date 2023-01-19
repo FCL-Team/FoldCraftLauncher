@@ -132,6 +132,7 @@ public class FCLBridge implements Serializable {
     // Loader function
     public void onExit(int code) {
         if (callback != null) {
+            callback.onLog("OpenJDK exited with code : " + code);
             callback.onExit(code);
         }
     }
