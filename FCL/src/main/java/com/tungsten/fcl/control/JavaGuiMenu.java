@@ -3,11 +3,19 @@ package com.tungsten.fcl.control;
 import android.view.KeyEvent;
 import android.view.View;
 
-import com.tungsten.fcl.activity.JVMActivity;
+import androidx.annotation.Nullable;
+
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 
 public class JavaGuiMenu implements MenuCallback {
+
+    @Override
+    public void setup(FCLActivity activity, FCLBridge fclBridge) {
+
+    }
 
     @Override
     public View getLayout() {
@@ -15,13 +23,29 @@ public class JavaGuiMenu implements MenuCallback {
     }
 
     @Override
-    public void setup(JVMActivity activity, FCLBridge fclBridge) {
-
+    @Nullable
+    public FCLBridge getBridge() {
+        return null;
     }
 
     @Override
     public FCLBridgeCallback getCallbackBridge() {
         return null;
+    }
+
+    @Override
+    public FCLInput getInput() {
+        return null;
+    }
+
+    @Override
+    public FCLImageView getCursor() {
+        return null;
+    }
+
+    @Override
+    public int getCursorMode() {
+        return 0;
     }
 
     @Override

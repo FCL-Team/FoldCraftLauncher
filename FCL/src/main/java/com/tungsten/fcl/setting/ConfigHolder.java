@@ -18,7 +18,7 @@ public final class ConfigHolder {
     private ConfigHolder() {
     }
 
-    public static final Path CONFIG_PATH = new File(FCLPath.FILES_DIR + "/global_config.json").toPath();
+    public static final Path CONFIG_PATH = new File(FCLPath.FILES_DIR + "/config.json").toPath();
     public static final Path GLOBAL_CONFIG_PATH = new File(FCLPath.FILES_DIR + "/global_config.json").toPath();
 
     private static Config configInstance;
