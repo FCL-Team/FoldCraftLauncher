@@ -199,11 +199,13 @@ public class GameMenu implements MenuCallback {
     @Override
     public void onCursorModeChange(int mode) {
         this.cursorMode = mode;
-        if (mode == FCLBridge.CursorEnabled) {
-            getCursor().setVisibility(View.VISIBLE);
-        } else {
-            getCursor().setVisibility(View.GONE);
-        }
+        activity.runOnUiThread(() -> {
+            if (mode == FCLBridge.CursorEnabled) {
+                getCursor().setVisibility(View.VISIBLE);
+            } else {
+                getCursor().setVisibility(View.GONE);
+            }
+        });
     }
 
     private boolean firstLog = true;
