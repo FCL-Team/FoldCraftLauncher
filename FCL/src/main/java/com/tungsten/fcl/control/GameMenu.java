@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.view.InputDevice;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 
