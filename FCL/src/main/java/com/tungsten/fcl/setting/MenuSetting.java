@@ -41,6 +41,34 @@ public class MenuSetting {
         this.lockMenuViewProperty.set(lockMenuView);
     }
 
+    private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.5d);
+
+    public DoubleProperty menuPositionXProperty() {
+        return menuPositionXProperty;
+    }
+
+    public double getMenuPositionX() {
+        return menuPositionXProperty.get();
+    }
+
+    public void setMenuPositionX(double menuPositionX) {
+        this.menuPositionXProperty.set(menuPositionX);
+    }
+
+    private final DoubleProperty menuPositionYProperty = new SimpleDoubleProperty(this, "menuPositionY", 0.5d);
+
+    public DoubleProperty menuPositionYProperty() {
+        return menuPositionYProperty;
+    }
+
+    public double getMenuPositionY() {
+        return menuPositionYProperty.get();
+    }
+
+    public void setMenuPositionY(double menuPositionY) {
+        this.menuPositionYProperty.set(menuPositionY);
+    }
+
     private final BooleanProperty disableGestureProperty = new SimpleBooleanProperty(this, "disableGesture", false);
 
     public BooleanProperty disableGestureProperty() {
@@ -155,6 +183,8 @@ public class MenuSetting {
 
     public void addPropertyChangedListener(InvalidationListener listener) {
         lockMenuViewProperty.addListener(listener);
+        menuPositionXProperty.addListener(listener);
+        menuPositionYProperty.addListener(listener);
         disableGestureProperty.addListener(listener);
         disableBEGestureProperty.addListener(listener);
         gestureModeProperty.addListener(listener);
@@ -172,6 +202,8 @@ public class MenuSetting {
             JsonObject obj = new JsonObject();
 
             obj.addProperty("lockMenuView", src.isLockMenuView());
+            obj.addProperty("menuPositionX", src.getMenuPositionX());
+            obj.addProperty("menuPositionY", src.getMenuPositionY());
             obj.addProperty("disableGesture", src.isDisableGesture());
             obj.addProperty("disableBEGesture", src.isDisableBEGesture());
             obj.addProperty("gestureMode", src.getGestureMode().getId());
@@ -193,6 +225,8 @@ public class MenuSetting {
             MenuSetting ms = new MenuSetting();
 
             ms.setLockMenuView(Optional.ofNullable(obj.get("lockMenuView")).map(JsonElement::getAsBoolean).orElse(false));
+            ms.setMenuPositionX(Optional.ofNullable(obj.get("menuPositionX")).map(JsonElement::getAsDouble).orElse(0.5d));
+            ms.setMenuPositionY(Optional.ofNullable(obj.get("menuPositionY")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setDisableGesture(Optional.ofNullable(obj.get("disableGesture")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setDisableBEGesture(Optional.ofNullable(obj.get("disableBEGesture")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setGestureMode(GestureMode.getById(Optional.ofNullable(obj.get("gestureMode")).map(JsonElement::getAsInt).orElse(0)));

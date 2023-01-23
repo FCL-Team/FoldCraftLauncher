@@ -16,6 +16,7 @@ import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.TouchPad;
+import com.tungsten.fcl.control.view.ViewManager;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.FCLKeycodes;
@@ -53,6 +54,11 @@ public class GameMenu implements MenuCallback {
     private TouchCharInput touchCharInput;
     private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
+    private ViewManager viewManager;
+
+    public FCLActivity getActivity() {
+        return activity;
+    }
 
     public boolean isSimulated() {
         return simulated;
@@ -98,6 +104,14 @@ public class GameMenu implements MenuCallback {
         this.pointerY = pointerY;
     }
 
+    public ViewManager getViewManager() {
+        return viewManager;
+    }
+
+    public TouchPad getTouchPad() {
+        return touchPad;
+    }
+
     @Override
     public void setup(FCLActivity activity, FCLBridge fclBridge) {
         this.activity = activity;
@@ -141,6 +155,9 @@ public class GameMenu implements MenuCallback {
         }
         touchPad.init(this);
         touchCharInput.setCharacterSender(new LwjglCharSender(this));
+
+        viewManager = new ViewManager(this);
+        viewManager.setup();
     }
 
     @Override
