@@ -180,6 +180,28 @@
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
 
+    <string name="menu_settings">Settings</string>
+    <string name="menu_settings_debug">Debug</string>
+    <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
+    <string name="menu_settings_disable_gesture">Disable Gesture</string>
+    <string name="menu_settings_force_exit">Force Exit</string>
+    <string name="menu_settings_force_exit_button">Exit</string>
+    <string name="menu_settings_function">Function</string>
+    <string name="menu_settings_gesture">Gesture</string>
+    <string name="menu_settings_gesture_mode">Gesture Mode</string>
+    <string name="menu_settings_gyro">Gyroscope</string>
+    <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
+    <string name="menu_settings_lock_view">Lock Menu View</string>
+    <string name="menu_settings_mouse">Mouse</string>
+    <string name="menu_settings_mouse_mode">Mouse Mode</string>
+    <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
+    <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_multiplayer">Multiplayer Menu</string>
+    <string name="menu_settings_multiplayer_button">Open</string>
+    <string name="menu_settings_quick_input">Quick Input</string>
+    <string name="menu_settings_quick_input_button">Manage</string>
+    <string name="menu_settings_show_log">Show Log</string>
+
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>

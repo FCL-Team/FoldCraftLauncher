@@ -56,6 +56,8 @@ public class GameMenu implements MenuCallback {
     private FCLImageView cursorView;
     private ViewManager viewManager;
 
+
+
     public FCLActivity getActivity() {
         return activity;
     }

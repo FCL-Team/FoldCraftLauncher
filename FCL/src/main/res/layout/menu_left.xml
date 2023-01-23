@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tungsten.fcllibrary.component.view.FCLLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="12dp"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusable="true"
     android:background="@drawable/bg_game_menu">
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.tungsten.fcllibrary.component.view.FCLLinearLayout>

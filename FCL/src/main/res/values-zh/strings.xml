@@ -161,6 +161,28 @@
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
 
+    <string name="menu_settings">设置</string>
+    <string name="menu_settings_debug">调试</string>
+    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
+    <string name="menu_settings_disable_gesture">禁用手势</string>
+    <string name="menu_settings_force_exit">强制退出</string>
+    <string name="menu_settings_force_exit_button">退出</string>
+    <string name="menu_settings_function">功能</string>
+    <string name="menu_settings_gesture">手势</string>
+    <string name="menu_settings_gesture_mode">触控模式</string>
+    <string name="menu_settings_gyro">陀螺仪</string>
+    <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
+    <string name="menu_settings_lock_view">锁定菜单键</string>
+    <string name="menu_settings_mouse">鼠标</string>
+    <string name="menu_settings_mouse_mode">鼠标控制模式</string>
+    <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
+    <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_multiplayer">联机菜单</string>
+    <string name="menu_settings_multiplayer_button">打开</string>
+    <string name="menu_settings_quick_input">快捷输入</string>
+    <string name="menu_settings_quick_input_button">管理</string>
+    <string name="menu_settings_show_log">显示日志</string>
+
     <string name="message_cancelled">操作已取消</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
