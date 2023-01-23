@@ -23,6 +23,15 @@
             android:visibility="gone"
             android:id="@+id/launch_progress"/>
 
+        <com.tungsten.fcl.control.keyboard.TouchCharInput
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
+            android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
+            android:id="@+id/input_scanner"/>
+
     </com.tungsten.fcl.control.view.TouchPad>
 
     <RelativeLayout

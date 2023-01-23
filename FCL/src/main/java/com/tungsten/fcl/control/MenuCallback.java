@@ -31,10 +31,6 @@ public interface MenuCallback {
 
     void onResume();
 
-    boolean onKeyDown(int keyCode, KeyEvent event);
-
-    boolean onKeyUp(int keyCode, KeyEvent event);
-
     void onBackPressed();
 
     void onGraphicOutput();

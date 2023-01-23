@@ -59,16 +59,6 @@ public class JavaGuiMenu implements MenuCallback {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return false;
-    }
-
-    @Override
     public void onBackPressed() {
 
     }

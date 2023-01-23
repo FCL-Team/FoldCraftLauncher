@@ -2,6 +2,8 @@ package com.tungsten.fcl.control;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +14,12 @@ import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
+import com.tungsten.fcl.control.keyboard.LwjglCharSender;
+import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.MenuSetting;
+import com.tungsten.fclauncher.FCLKeycodes;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
@@ -46,6 +51,7 @@ public class GameMenu implements MenuCallback {
 
     private View layout;
     private TouchPad touchPad;
+    private TouchCharInput touchCharInput;
     private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
 
@@ -127,6 +133,7 @@ public class GameMenu implements MenuCallback {
         });
 
         touchPad = findViewById(R.id.touch_pad);
+        touchCharInput = findViewById(R.id.input_scanner);
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
         if (!isSimulated()) {
@@ -134,6 +141,7 @@ public class GameMenu implements MenuCallback {
             launchProgress.setVisibility(View.VISIBLE);
         }
         touchPad.init(this);
+        touchCharInput.setCharacterSender(new LwjglCharSender(this));
     }
 
     @Override
@@ -167,27 +175,36 @@ public class GameMenu implements MenuCallback {
 
     @Override
     public void onPause() {
-
+        if (cursorMode == FCLBridge.CursorDisabled) {
+            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
+            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
+        }
     }
 
     @Override
     public void onResume() {
-
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return false;
+        // Ignore
     }
 
     @Override
     public void onBackPressed() {
-
+        boolean mouse = false;
+        final int[] devices = InputDevice.getDeviceIds();
+        for (int j : devices) {
+            InputDevice device = InputDevice.getDevice(j);
+            if (device != null && !device.isVirtual()) {
+                if (device.getName().contains("Mouse") || (touchCharInput != null && !touchCharInput.isEnabled())) {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || device.isExternal()) {
+                        mouse = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!mouse) {
+            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
+            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
+        }
     }
 
     @Override

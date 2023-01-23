@@ -58,11 +58,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
         surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
+        fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
+        fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
     }
 
     @Override
@@ -85,24 +87,14 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     protected void onPause() {
-        super.onPause();
         menu.onPause();
+        super.onPause();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         menu.onResume();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return menu.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return menu.onKeyUp(keyCode, event);
+        super.onResume();
     }
 
     @Override

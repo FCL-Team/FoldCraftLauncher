@@ -59,7 +59,7 @@ public class FCLInput {
         }
     }
 
-    public void sendMessage(char keyChar) {
+    public void sendChar(char keyChar) {
         if (menu.getBridge() != null) {
             menu.getBridge().pushEventKey(FCLKeycodes.KEY_RESERVED, keyChar, true);
             menu.getBridge().pushEventKey(FCLKeycodes.KEY_RESERVED, keyChar, false);
