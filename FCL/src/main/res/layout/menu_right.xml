@@ -180,7 +180,7 @@
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:padding="5dp"
                 android:layout_width="match_parent"

@@ -10,6 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.tungsten.fcl.control.view.LogWindow
+            android:background="@color/ui_bg_color"
+            android:visibility="gone"
+            android:id="@+id/log_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:clickable="false"/>
+
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
