@@ -127,7 +127,12 @@ public class TouchPad extends RelativeLayout {
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
                     int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
-                    gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
+                    if (gameMenu.getMenuSetting().isEnableGyroscope()) {
+                        gameMenu.setPointerX(initialX + deltaX);
+                        gameMenu.setPointerY(initialY + deltaY);
+                    } else {
+                        gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
+                    }
                     if ((deltaX > 1 || deltaY > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }

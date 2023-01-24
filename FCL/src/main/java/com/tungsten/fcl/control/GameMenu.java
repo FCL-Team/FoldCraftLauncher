@@ -71,6 +71,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
     private ViewManager viewManager;
+    private Gyroscope gyroscope;
 
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
@@ -266,6 +267,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             cursorView.setLayoutParams(params);
         });
 
+        gyroscope = new Gyroscope(this);
+        gyroscope.enableProperty().bind(menuSetting.enableGyroscopeProperty());
+
         viewManager = new ViewManager(this);
         viewManager.setup();
 
@@ -308,11 +312,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
         }
+        gyroscope.disableSensor();
     }
 
     @Override
     public void onResume() {
-        // Ignore
+        if (menuSetting != null && menuSetting.isEnableGyroscope() && gyroscope != null) {
+            gyroscope.enableSensor();
+        }
     }
 
     @Override
