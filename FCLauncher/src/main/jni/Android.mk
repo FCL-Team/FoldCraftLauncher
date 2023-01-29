@@ -99,6 +99,7 @@ LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
                            lwjgl2/fcl/opengl/org_lwjgl_opengl_Display.c \
                            lwjgl2/fcl/opengl/org_lwjgl_opengl_FCLContextImplementation.c \
                            lwjgl2/fcl/opengl/org_lwjgl_opengl_Pbuffer.c \
+                           lwjgl2/fcl/opengl/org_lwjgl_opengl_FCLInjector.c \
                            lwjgl2/fcl/org_lwjgl_input_Cursor.c \
                            lwjgl2/fcl/org_lwjgl_opengl_Display.c \
                            lwjgl2/fcl/org_lwjgl_opengl_FCLEvent.c \
