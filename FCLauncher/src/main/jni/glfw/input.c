@@ -443,6 +443,18 @@ void _glfwCenterCursorInContentArea(_GLFWwindow* window)
 //////                        GLFW public API                       //////
 //////////////////////////////////////////////////////////////////////////
 
+GLFWAPI void glfwSetInjectorMode(int mode) {
+    _glfwPlatformSetInjectorMode(mode);
+}
+
+GLFWAPI int glfwGetInjectorMode() {
+    return _glfwPlatformGetInjectorMode();
+}
+
+GLFWAPI void glfwSetHitResultType(int type) {
+    _glfwPlatformSetHitResultType(type);
+}
+
 GLFWAPI int glfwGetInputMode(GLFWwindow* handle, int mode)
 {
     _GLFWwindow* window = (_GLFWwindow*) handle;

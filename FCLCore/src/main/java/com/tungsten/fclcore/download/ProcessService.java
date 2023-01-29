@@ -55,6 +55,11 @@ public class ProcessService extends Service {
             }
 
             @Override
+            public void onHitResultTypeChange(int type) {
+                // Ignore
+            }
+
+            @Override
             public void onLog(String log) {
                 try {
                     if (firstLog) {

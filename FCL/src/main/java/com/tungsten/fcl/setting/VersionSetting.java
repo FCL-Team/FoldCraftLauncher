@@ -269,7 +269,7 @@ public final class VersionSetting implements Cloneable {
         isolateGameDirProperty.set(isolateGameDir);
     }
 
-    private final BooleanProperty beGestureProperty = new SimpleBooleanProperty(this, "beGesture", false);
+    private final BooleanProperty beGestureProperty = new SimpleBooleanProperty(this, "beGesture", true);
 
     public BooleanProperty beGestureProperty() {
         return beGestureProperty;

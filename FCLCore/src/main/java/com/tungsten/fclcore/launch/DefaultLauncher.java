@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.content.Context;
 
+import com.google.gson.GsonBuilder;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -17,6 +18,7 @@ import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.game.Version;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -25,9 +27,11 @@ import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public class DefaultLauncher extends Launcher {
 
@@ -123,6 +127,10 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
         res.addDefault("-Dlwjgl2.width=", options.getWidth() + "");
         res.addDefault("-Dlwjgl2.height=", options.getHeight() + "");
+
+        if (getInjectorArg() != null && options.isBeGesture()) {
+            res.addDefault("-Dfcl.injector=", getInjectorArg());
+        }
 
         List<String> classpath = repository.getClasspath(version);
 
@@ -225,6 +233,23 @@ public class DefaultLauncher extends Launcher {
             }
         }
         res.add(cacioClasspath.toString());
+    }
+
+    public String getInjectorArg() {
+        try {
+            String map = IOUtils.readFullyAsString(DefaultLauncher.class.getResourceAsStream("/assets/map.json"), StandardCharsets.UTF_8);
+            InjectorMap injectorMap = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create()
+                    .fromJson(map, InjectorMap.class);
+            Optional<InjectorMap.MapInfo> mapInfo = injectorMap.getMaps().stream()
+                    .filter(it -> it.getId().equals(version.getAssetIndex().getId()))
+                    .findFirst();
+            return mapInfo.map(it -> it.getArgument().getArgument(version)).orElse(null);
+        } catch (IOException e) {
+            Logging.LOG.log(Level.WARNING, "Failed to get game map", e);
+            return null;
+        }
     }
 
     public Map<String, Boolean> getFeatures() {

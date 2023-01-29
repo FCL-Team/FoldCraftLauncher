@@ -583,6 +583,9 @@ const char* _glfwPlatformGetVersionString(void);
 
 void _glfwPlatformGetCursorPos(_GLFWwindow* window, double* xpos, double* ypos);
 void _glfwPlatformSetCursorPos(_GLFWwindow* window, double xpos, double ypos);
+void _glfwPlatformSetInjectorMode(int mode);
+int _glfwPlatformGetInjectorMode();
+void _glfwPlatformSetHitResultType(int type);
 void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode);
 void _glfwPlatformSetRawMouseMotion(_GLFWwindow *window, GLFWbool enabled);
 GLFWbool _glfwPlatformRawMouseMotionSupported(void);

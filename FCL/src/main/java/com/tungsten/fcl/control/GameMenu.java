@@ -59,6 +59,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLInput fclInput;
     private MenuSetting menuSetting;
     private int cursorMode = FCLBridge.CursorEnabled;
+    private int hitResultType = FCLBridge.HIT_RESULT_TYPE_UNKNOWN;
     private int cursorX;
     private int cursorY;
     private int pointerX;
@@ -91,6 +92,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     public int getCursorMode() {
         return cursorMode;
+    }
+
+    public int getHitResultType() {
+        return hitResultType;
     }
 
     public int getCursorX() {
@@ -423,6 +428,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         @Override
         public void onCursorModeChange(int mode) {
             gameMenu.onCursorModeChange(mode);
+        }
+
+        @Override
+        public void onHitResultTypeChange(int type) {
+            gameMenu.hitResultType = type;
         }
 
         @Override

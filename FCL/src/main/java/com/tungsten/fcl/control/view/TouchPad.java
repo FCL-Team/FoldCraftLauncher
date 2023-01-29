@@ -42,12 +42,6 @@ public class TouchPad extends RelativeLayout {
         this.screenHeight = AndroidUtils.getScreenHeight(getContext());
     }
 
-    public TouchPad(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
-    }
-
     private int downX;
     private int downY;
     private long downTime;
@@ -58,8 +52,8 @@ public class TouchPad extends RelativeLayout {
     private final Handler handler = new Handler();
 
     private final Runnable runnable = () -> {
-        if (gameMenu.getMenuSetting().isDisableBEGesture()) {
-            if (gameMenu.getMenuSetting().getGestureMode() == GestureMode.BUILD) {
+        if (!gameMenu.getMenuSetting().isDisableGesture()) {
+            if (getGestureMode() == GestureMode.BUILD) {
                 gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
                 cancelMouseLeft = true;
                 cancelMouseRight = false;
@@ -68,10 +62,26 @@ public class TouchPad extends RelativeLayout {
                 cancelMouseRight = true;
                 cancelMouseLeft = false;
             }
-        } else {
-            // Todo: be gesture here
         }
     };
+
+    private GestureMode getGestureMode() {
+        if (gameMenu.getMenuSetting().isDisableBEGesture()) {
+            return gameMenu.getMenuSetting().getGestureMode();
+        } else {
+            if (gameMenu.getBridge() != null) {
+                if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_UNKNOWN) {
+                    return gameMenu.getMenuSetting().getGestureMode();
+                } else if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_BLOCK) {
+                    return GestureMode.BUILD;
+                } else {
+                    return GestureMode.FIGHT;
+                }
+            } else {
+                return gameMenu.getMenuSetting().getGestureMode();
+            }
+        }
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -100,7 +110,7 @@ public class TouchPad extends RelativeLayout {
                         int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
                         int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
                         int targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
-                        int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));;
+                        int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                         gameMenu.getInput().setPointer(targetX, targetY);
                         break;
                     case MotionEvent.ACTION_CANCEL:
@@ -117,6 +127,9 @@ public class TouchPad extends RelativeLayout {
         } else {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
+                    if (gameMenu.getBridge() != null) {
+                        gameMenu.getBridge().refreshHitResultType();
+                    }
                     downX = (int) event.getX();
                     downY = (int) event.getY();
                     downTime = System.currentTimeMillis();
@@ -152,16 +165,12 @@ public class TouchPad extends RelativeLayout {
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
                         if (!gameMenu.getMenuSetting().isDisableGesture()) {
-                            if (gameMenu.getMenuSetting().isDisableBEGesture()) {
-                                if (gameMenu.getMenuSetting().getGestureMode() == GestureMode.BUILD) {
-                                    gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, true);
-                                    gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, false);
-                                } else {
-                                    gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
-                                    gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
-                                }
+                            if (getGestureMode() == GestureMode.BUILD) {
+                                gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, true);
+                                gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, false);
                             } else {
-                                // Todo: be gesture here
+                                gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
+                                gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
                             }
                         }
                     }

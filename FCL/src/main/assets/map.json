@@ -1,0 +1,132 @@
+{
+  "maps": [
+    {
+      "id": "1.7.3",
+      "argument": {
+        "vanilla": "false:bao:B:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.7.4",
+      "argument": {
+        "vanilla": "false:bao:B:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.7.10",
+      "argument": {
+        "vanilla": "false:bao:B:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.8",
+      "argument": {
+        "vanilla": "false:ave:A:s:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.9",
+      "argument": {
+        "vanilla": "false:bcd:z:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.10",
+      "argument": {
+        "vanilla": "false:bcx:z:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.11",
+      "argument": {
+        "vanilla": "false:bes:z:t:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.12",
+      "argument": {
+        "vanilla": "false:bib:z:s:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.13",
+      "argument": {
+        "vanilla": "false:cft:s:s:a",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.14",
+      "argument": {
+        "vanilla": "true:cyc:u:u:c",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "1.15",
+      "argument": {
+        "vanilla": "true:dbn:x:u:c",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "1.16",
+      "argument": {
+        "vanilla": "true:djz:C:v:c",
+        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "1.17",
+      "argument": {
+        "vanilla": "true:dvp:C:v:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "1.18",
+      "argument": {
+        "vanilla": "true:dyr:D:v:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "1.19",
+      "argument": {
+        "vanilla": "true:eev:G:v:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "2",
+      "argument": {
+        "vanilla": "true:ejf:N:w:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    }
+  ]
+}

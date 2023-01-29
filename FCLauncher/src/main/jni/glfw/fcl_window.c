@@ -604,6 +604,18 @@ void _glfwPlatformSetCursorPos(_GLFWwindow* window, double x, double y)
     // fclSetCursorPos(x, y);
 }
 
+void _glfwPlatformSetInjectorMode(int mode) {
+    fclSetInjectorMode(mode);
+}
+
+int _glfwPlatformGetInjectorMode() {
+    return fclGetInjectorMode();
+}
+
+void _glfwPlatformSetHitResultType(int type) {
+    fclSetHitResultType(type);
+}
+
 void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
 {
     if (mode == GLFW_CURSOR_DISABLED)
