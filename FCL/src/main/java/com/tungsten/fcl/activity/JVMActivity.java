@@ -76,6 +76,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
+        if (textureView != null && textureView.getSurfaceTexture() != null) {
+            textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
+        }
         if (output == 1) {
             menu.onGraphicOutput();
             output++;
