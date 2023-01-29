@@ -21,7 +21,6 @@ import java.util.Map;
 
 public class FCLauncher {
 
-    // Todo : don't crash when launch 1.17+ with OpenGL 2.1
     // Todo : mouse scroll event
     // Todo : mesa
 
