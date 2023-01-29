@@ -146,7 +146,7 @@ public class TouchPad extends RelativeLayout {
                     } else {
                         gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
                     }
-                    if ((deltaX > 1 || deltaY > 1) && System.currentTimeMillis() - downTime < 400) {
+                    if ((Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }
                     break;
