@@ -243,7 +243,24 @@ public class DefaultLauncher extends Launcher {
                     .create()
                     .fromJson(map, InjectorMap.class);
             Optional<InjectorMap.MapInfo> mapInfo = injectorMap.getMaps().stream()
-                    .filter(it -> it.getId().equals(version.getAssetIndex().getId()))
+                    .filter(it -> {
+                        String versionTypeId = version.getAssetIndex().getId();
+                        if (versionTypeId.equals("legacy") || versionTypeId.equals("pre-1.6")) {
+                            versionTypeId = repository.getGameVersion(version).orElse("");
+                        }
+                        if (versionTypeId.equals("1.8")
+                                && repository.getGameVersion(version).isPresent()
+                                && (repository.getGameVersion(version).get().equals("1.8.8")
+                                || repository.getGameVersion(version).get().equals("1.8.9"))) {
+                            versionTypeId = "1.8.8";
+                        }
+                        if (versionTypeId.equals("1.9")
+                                && repository.getGameVersion(version).isPresent()
+                                && repository.getGameVersion(version).get().equals("1.9.4")) {
+                            versionTypeId = "1.9.4";
+                        }
+                        return it.getId().equals(versionTypeId);
+                    })
                     .findFirst();
             return mapInfo.map(it -> it.getArgument().getArgument(version)).orElse(null);
         } catch (IOException e) {
