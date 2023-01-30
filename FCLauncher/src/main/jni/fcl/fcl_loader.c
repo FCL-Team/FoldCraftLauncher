@@ -10,7 +10,7 @@
 #include <android/log.h>
 #include <xhook.h>
 #include <string.h>
-#include "fcl_internal.h"
+#include <fcl_internal.h>
 
 #define FULL_VERSION "1.8.0-internal"
 #define DOT_VERSION "1.8"
@@ -29,9 +29,13 @@ typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
 static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
-jstring CStr2Jstring(JNIEnv *env, char *buffer);
+static bool logPipeReady = false;
+static volatile jobject log_bridge;
+static volatile jmethodID log_method;
+static JavaVM *log_pipe_jvm;
+jstring CStr2Jstring(JNIEnv *env, const char *buffer);
 
-jstring CStr2Jstring(JNIEnv *env, char *buffer) {
+jstring CStr2Jstring(JNIEnv *env, const char *buffer) {
     jsize len = strlen(buffer);
     jclass strClass = (*env)->FindClass(env, "java/lang/String");
     jstring encoding = (*env)->NewStringUTF(env, "UTF-8");
@@ -41,8 +45,16 @@ jstring CStr2Jstring(JNIEnv *env, char *buffer) {
     return (jstring) (*env)->NewObject(env, strClass, ctorID, bytes, encoding);
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jclass clazz, jstring path) {
+void fclLog(const char *buffer) {
+    if (logPipeReady) {
+        JNIEnv *env;
+        (*log_pipe_jvm)->AttachCurrentThread(log_pipe_jvm, &env, NULL);
+        (*env)->CallVoidMethod(env, log_bridge, log_method, CStr2Jstring(env, buffer));
+        (*log_pipe_jvm)->DetachCurrentThread(log_pipe_jvm);
+    }
+}
 
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
     int fclFd[2];
     if  (pipe(fclFd) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
@@ -59,16 +71,20 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
     }
     fcl.logFile = fdopen(fclFd[1],"a");
     FCL_INTERNAL_LOG("Log pipe ready.");
-    (*env) -> CallVoidMethod(env,clazz,method_setLogPipeReady);
-    jmethodID method_receiveLog = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
-    if (!method_receiveLog) {
+    (*env) -> CallVoidMethod(env, jobject, method_setLogPipeReady);
+    log_method = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
+    if (!log_method) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
+        return;
     }
+    log_bridge = (*env)->NewGlobalRef(env, jobject);
+    (*env)->GetJavaVM(env, &log_pipe_jvm);
+    logPipeReady = true;
     while (1) {
         memset(buffer, '\0', sizeof(buffer));
         ssize_t _s = read(fclFd[0], buffer, sizeof(buffer) - 1);
         if (_s < 0) {
-            __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log !");
+            __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
             close(fclFd[0]);
             close(fclFd[1]);
             return;
@@ -78,7 +94,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
         if (buffer[0] == '\0')
             continue;
         else {
-            (*env)->CallVoidMethod(env, clazz, method_receiveLog, CStr2Jstring(env, buffer));
+            (*env)->CallVoidMethod(env, jobject, log_method, CStr2Jstring(env, buffer));
         }
     }
 

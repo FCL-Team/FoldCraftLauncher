@@ -12,6 +12,7 @@ ANativeWindow* fclGetNativeWindow(void);
 int fclWaitForEvent(int timeout);
 int fclPollEvent(FCLEvent* event);
 int fclGetEventFd(void);
+void fclLog(const char *buffer);
 void fclSetInjectorMode(int mode);
 int fclGetInjectorMode();
 void fclSetHitResultType(int type);

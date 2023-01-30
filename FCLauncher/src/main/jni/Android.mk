@@ -84,6 +84,7 @@ LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
                            lwjgl2/common/opengl/org_lwjgl_opengl_NVPresentVideoUtil.c \
                            lwjgl2/common/opengl/org_lwjgl_opengl_NVVideoCaptureUtil.c \
                            lwjgl2/common/org_lwjgl_BufferUtils.c \
+                           lwjgl2/common/org_lwjgl_LWJGLUtil.c \
                            lwjgl2/common/org_lwjgl_openal_AL.c \
                            lwjgl2/common/org_lwjgl_openal_ALC10.c \
                            lwjgl2/common/org_lwjgl_openal_ALC11.c \
