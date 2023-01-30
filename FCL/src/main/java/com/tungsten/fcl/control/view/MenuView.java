@@ -63,7 +63,7 @@ public class MenuView extends View {
         iconPaint = new Paint();
         iconPaint.setAntiAlias(true);
 
-        icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.img_enchanting_table);
+        icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.img_app);
 
         srcRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
         destRect = new Rect(ConvertUtils.dip2px(getContext(), 6),
