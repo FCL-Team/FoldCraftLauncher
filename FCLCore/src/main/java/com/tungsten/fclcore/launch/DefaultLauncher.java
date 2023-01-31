@@ -132,6 +132,11 @@ public class DefaultLauncher extends Launcher {
             res.addDefault("-Dfcl.injector=", getInjectorArg());
         }
 
+        // Fix 1.7.2 Forge
+        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().equals("1.7.2")) {
+            res.addDefault("-Dsort.patch=", "true");
+        }
+
         List<String> classpath = repository.getClasspath(version);
 
         File jar = repository.getVersionJar(version);
