@@ -83,10 +83,6 @@ public final class Artifact {
         return version;
     }
 
-    public Artifact setVersion(String version) {
-        return new Artifact(group, name, version, classifier, extension);
-    }
-
     public String getClassifier() {
         return classifier;
     }
