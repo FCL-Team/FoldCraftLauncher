@@ -127,6 +127,9 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
         res.addDefault("-Dlwjgl2.width=", options.getWidth() + "");
         res.addDefault("-Dlwjgl2.height=", options.getHeight() + "");
+        res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
+        res.addDefault("-Duser.language=", System.getProperty("user.language"));
+        res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
 
         if (getInjectorArg() != null && options.isBeGesture()) {
             res.addDefault("-Dfcl.injector=", getInjectorArg());
