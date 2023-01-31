@@ -16,7 +16,11 @@ public class LibFilter {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
             if (!library.isNative() && !library.getName().contains("org.lwjgl") && !library.getName().contains("platform")) {
-                newLibraries.add(library);
+                if (library.getArtifactId().equals("asm-all") && library.getVersion().equals("4.1")) {
+                    newLibraries.add(library.setVersion("5.2"));
+                } else {
+                    newLibraries.add(library);
+                }
             }
         }
         return newLibraries;

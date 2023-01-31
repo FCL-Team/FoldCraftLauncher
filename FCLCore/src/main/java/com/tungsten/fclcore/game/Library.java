@@ -182,6 +182,10 @@ public class Library implements Comparable<Library>, Validation {
         return Objects.hash(getName(), isNative());
     }
 
+    public Library setVersion(String version) {
+        return new Library(artifact.setVersion(version), url, downloads, checksums, extract, natives, rules, hint, fileName);
+    }
+
     public Library setClassifier(String classifier) {
         return new Library(artifact.setClassifier(classifier), url, downloads, checksums, extract, natives, rules, hint, fileName);
     }
