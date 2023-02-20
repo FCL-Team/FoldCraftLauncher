@@ -133,6 +133,7 @@ public final class LauncherHelper {
                     Intent intent = new Intent(context, JVMActivity.class);
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
                     fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
+                    fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                     JVMActivity.setFClBridge(fclBridge, MenuType.GAME);
                     LOG.log(Level.INFO, "Start JVMActivity!");
                     context.startActivity(intent);

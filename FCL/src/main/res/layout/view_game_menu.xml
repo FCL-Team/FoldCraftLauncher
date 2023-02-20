@@ -40,6 +40,14 @@
             android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
             android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
             android:id="@+id/input_scanner"/>
+        
+        <com.tungsten.fcl.control.view.GameItemBar
+            android:visibility="gone"
+            android:id="@+id/game_item_bar"
+            android:layout_width="270dp"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>
 
     </com.tungsten.fcl.control.view.TouchPad>
 

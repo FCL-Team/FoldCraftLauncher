@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.FCLPath;
 
@@ -55,6 +56,7 @@ public class FCLBridge implements Serializable {
 
     private double scaleFactor = 1f;
     private String controller = "Default";
+    private String gameDir;
     private String logPath;
     private Thread thread;
     private Thread fclLogThread;
@@ -187,6 +189,15 @@ public class FCLBridge implements Serializable {
 
     public String getController() {
         return controller;
+    }
+
+    public void setGameDir(String gameDir) {
+        this.gameDir = gameDir;
+    }
+
+    @Nullable
+    public String getGameDir() {
+        return gameDir;
     }
 
     @NonNull

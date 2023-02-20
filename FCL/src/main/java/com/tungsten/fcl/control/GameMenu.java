@@ -17,6 +17,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
+import com.tungsten.fcl.control.view.GameItemBar;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
@@ -67,6 +68,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private View layout;
     private TouchPad touchPad;
+    private GameItemBar gameItemBar;
     private LogWindow logWindow;
     private TouchCharInput touchCharInput;
     private FCLProgressBar launchProgress;
@@ -251,6 +253,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         });
 
         touchPad = findViewById(R.id.touch_pad);
+        gameItemBar = findViewById(R.id.game_item_bar);
         logWindow = findViewById(R.id.log_window);
         touchCharInput = findViewById(R.id.input_scanner);
         launchProgress = findViewById(R.id.launch_progress);
@@ -258,6 +261,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!isSimulated()) {
             touchPad.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
+            touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
         touchCharInput.setCharacterSender(new LwjglCharSender(this));
@@ -360,8 +364,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         activity.runOnUiThread(() -> {
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
+                gameItemBar.setVisibility(View.GONE);
             } else {
                 getCursor().setVisibility(View.GONE);
+                gameItemBar.setVisibility(View.VISIBLE);
             }
         });
     }
