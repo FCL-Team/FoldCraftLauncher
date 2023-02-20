@@ -58,34 +58,33 @@ public final class FCLGameLauncher extends DefaultLauncher {
             if (findFiles(configFolder, "options.txt"))
                 return;
         try {
-            RuntimeUtils.copyAssets(context,"options.txt",optionsFile.getAbsolutePath());
+            RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
         }
 
         // TODO: Dirty implementation here
-        if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())){
-            String str="";
-            try(BufferedReader bfr=new BufferedReader(new FileReader(optionsFile))){
+        if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
+            StringBuilder str = new StringBuilder();
+            try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
                 String line;
-                while ((line= bfr.readLine())!=null){
-                    if (line.contains("lang:")){
-                        str+="lang:en_us\n";
+                while ((line = bfr.readLine()) != null) {
+                    if (line.contains("lang:")) {
+                        str.append("lang:en_us\n");
                     } else {
-                        str+=line+"\n";
+                        str.append(line).append("\n");
                     }
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
             }
-            if(!"".equals(str)) {
-                try(FileWriter fw=new FileWriter(optionsFile)) {
-                    fw.write(str);
-                }catch (IOException e){
+            if (!"".equals(str.toString())) {
+                try (FileWriter fw = new FileWriter(optionsFile)) {
+                    fw.write(str.toString());
+                } catch (IOException e) {
                     Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
                 }
             }
-
         }
     }
 

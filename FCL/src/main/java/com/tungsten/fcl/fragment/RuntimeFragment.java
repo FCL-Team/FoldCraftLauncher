@@ -246,9 +246,9 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             java17Progress.setVisibility(View.VISIBLE);
             new Thread(() -> {
                 try {
+                    RuntimeUtils.copyAssets(getContext(), "resolv.conf", FCLPath.JAVA_17_PATH + "/resolv.conf");
                     RuntimeUtils.installJava(getContext(), FCLPath.JAVA_17_PATH, "app_runtime/java/jre17");
                     java17 = true;
-                    RuntimeUtils.copyAssets(getContext(),"resolv.conf",FCLPath.JAVA_17_PATH+"/resolv.conf");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
