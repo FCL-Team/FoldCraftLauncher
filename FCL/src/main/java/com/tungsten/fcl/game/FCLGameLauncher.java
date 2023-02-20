@@ -3,6 +3,7 @@ package com.tungsten.fcl.game;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -14,7 +15,10 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.LocaleUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
@@ -54,14 +58,34 @@ public final class FCLGameLauncher extends DefaultLauncher {
             if (findFiles(configFolder, "options.txt"))
                 return;
         try {
-            // TODO: Dirty implementation here
-            if (LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
-                FileUtils.writeText(optionsFile, "lang:zh_CN\nforceUnicodeFont:true\nfullscreen:false\n");
-            } else {
-                FileUtils.writeText(optionsFile, "fullscreen:false\n");
-            }
+            RuntimeUtils.copyAssets(context,"options.txt",optionsFile.getAbsolutePath());
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
+        }
+
+        // TODO: Dirty implementation here
+        if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())){
+            String str="";
+            try(BufferedReader bfr=new BufferedReader(new FileReader(optionsFile))){
+                String line;
+                while ((line= bfr.readLine())!=null){
+                    if (line.contains("lang:")){
+                        str+="lang:en_us\n";
+                    } else {
+                        str+=line+"\n";
+                    }
+                }
+            }catch (Exception e){
+                Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
+            }
+            if(!"".equals(str)) {
+                try(FileWriter fw=new FileWriter(optionsFile)) {
+                    fw.write(str);
+                }catch (IOException e){
+                    Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
+                }
+            }
+
         }
     }
 
