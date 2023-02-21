@@ -13,7 +13,7 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 
 public class Gyroscope implements SensorEventListener {
 
-    private static final float NS2S = 1.0f / 1000000000.0f;
+    private static final float NS2S = 1.0f / 40000000.0f;
 
     private BooleanProperty enableProperty;
 
@@ -62,6 +62,7 @@ public class Gyroscope implements SensorEventListener {
     }
 
     public void enableSensor() {
+        timestamp = 0;
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
@@ -79,12 +80,10 @@ public class Gyroscope implements SensorEventListener {
         if (gameMenu.getCursorMode() == FCLBridge.CursorDisabled) {
             if (timestamp != 0) {
                 final float dT = (event.timestamp - timestamp) * NS2S;
-                angle[0] += event.values[0] * dT;
-                angle[1] += event.values[1] * dT;
-                float angleX = (float) Math.toDegrees(angle[0]);
-                float angleY = (float) Math.toDegrees(angle[1]);
+                angle[0] += event.values[0] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
+                angle[1] += event.values[1] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
                 if (gameMenu.getBridge() != null) {
-                    gameMenu.getBridge().pushEventPointer((int) (gameMenu.getPointerX() - (angleX * gameMenu.getMenuSetting().getGyroscopeSensitivity())), (int) (gameMenu.getPointerY() + (angleY * gameMenu.getMenuSetting().getGyroscopeSensitivity())));
+                    gameMenu.getBridge().pushEventPointer((int) (gameMenu.getPointerX() - angle[0]), (int) (gameMenu.getPointerY() + angle[1]));
                 }
             }
             timestamp = event.timestamp;
@@ -95,4 +94,5 @@ public class Gyroscope implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Ignore
     }
+
 }
