@@ -14,7 +14,7 @@ public class ViewManager {
         // Initialize menu view
         MenuView menuView = new MenuView(gameMenu.getActivity());
         menuView.setup(gameMenu);
-        gameMenu.getTouchPad().addView(menuView);
+        gameMenu.getBaseLayout().addView(menuView);
     }
 
 }

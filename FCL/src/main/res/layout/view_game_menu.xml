@@ -4,11 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.tungsten.fcl.control.view.TouchPad
-        android:id="@+id/touch_pad"
+    <RelativeLayout
+        android:id="@+id/base_layout"
         android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <com.tungsten.fcl.control.view.TouchPad
+            android:id="@+id/touch_pad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <com.tungsten.fcl.control.view.LogWindow
             android:background="@color/ui_bg_color"
@@ -40,7 +45,7 @@
             android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
             android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
             android:id="@+id/input_scanner"/>
-        
+
         <com.tungsten.fcl.control.view.GameItemBar
             android:visibility="gone"
             android:id="@+id/game_item_bar"
@@ -49,7 +54,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"/>
 
-    </com.tungsten.fcl.control.view.TouchPad>
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_marginTop="30dp"

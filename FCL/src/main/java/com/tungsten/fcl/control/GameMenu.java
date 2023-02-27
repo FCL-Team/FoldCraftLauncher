@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,6 +68,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private int pointerY;
 
     private View layout;
+    private RelativeLayout baseLayout;
     private TouchPad touchPad;
     private GameItemBar gameItemBar;
     private LogWindow logWindow;
@@ -134,6 +136,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     public ViewManager getViewManager() {
         return viewManager;
+    }
+
+    public RelativeLayout getBaseLayout() {
+        return baseLayout;
     }
 
     public TouchPad getTouchPad() {
@@ -252,6 +258,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
         });
 
+        baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);
         gameItemBar = findViewById(R.id.game_item_bar);
         logWindow = findViewById(R.id.log_window);
@@ -259,7 +266,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
         if (!isSimulated()) {
-            touchPad.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
+            baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
             touchPad.post(() -> gameItemBar.setup(this));
         }
@@ -354,8 +361,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onGraphicOutput() {
-        touchPad.setBackground(new ColorDrawable(Color.TRANSPARENT));
-        touchPad.removeView(launchProgress);
+        baseLayout.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        baseLayout.removeView(launchProgress);
     }
 
     @Override

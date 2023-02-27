@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.RelativeLayout;
+import android.view.View;
 
 import com.tungsten.fcl.control.FCLInput;
 import com.tungsten.fcl.control.GameMenu;
@@ -13,7 +13,7 @@ import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
-public class TouchPad extends RelativeLayout {
+public class TouchPad extends View {
 
     private final int screenWidth;
     private final int screenHeight;
