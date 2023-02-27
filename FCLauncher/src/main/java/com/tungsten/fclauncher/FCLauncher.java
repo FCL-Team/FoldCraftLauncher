@@ -240,10 +240,12 @@ public class FCLauncher {
         bridge.setLogPath(config.getLogDir() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
-                if (config.getContext().getApplicationInfo().nativeLibraryDir.contains("arm64")){
+                logStartInfo(bridge, "Minecraft");
+
+                // patch linker if using 64 bit device
+                if (Architecture.is64BitsDevice()) {
                     bridge.patchLinker();
                 }
-                logStartInfo(bridge, "Minecraft");
 
                 // env
                 setEnv(config, bridge, true);
