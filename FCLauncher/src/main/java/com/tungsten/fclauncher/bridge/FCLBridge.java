@@ -83,6 +83,7 @@ public class FCLBridge implements Serializable {
     public native void refreshHitResultType();
     public native void setupJLI();
     public native int jliLaunch(String[] args);
+    public native void patchLinker();
 
     public native void setFCLBridge(FCLBridge fclBridge);
 

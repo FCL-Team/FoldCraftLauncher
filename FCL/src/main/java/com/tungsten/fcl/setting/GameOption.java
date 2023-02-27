@@ -1,5 +1,6 @@
 package com.tungsten.fcl.setting;
 
+import android.os.Build;
 import android.os.FileObserver;
 
 import androidx.annotation.NonNull;
@@ -131,13 +132,24 @@ public class GameOption {
     /** Add a file observer to reload options on file change
      * Listeners get notified of the change */
     private void setupFileObserver() {
-        fileObserver = new FileObserver(new File(optionPath), FileObserver.MODIFY) {
-            @Override
-            public void onEvent(int i, @Nullable String s) {
-                load(optionPath);
-                notifyListeners();
-            }
-        };
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            fileObserver = new FileObserver(new File(optionPath), FileObserver.MODIFY) {
+                @Override
+                public void onEvent(int i, @Nullable String s) {
+                    load(optionPath);
+                    notifyListeners();
+                }
+            };
+        } else {
+            fileObserver = new FileObserver(optionPath, FileObserver.MODIFY) {
+                @Override
+                public void onEvent(int i, @Nullable String s) {
+                    load(optionPath);
+                    notifyListeners();
+                }
+            };
+        }
+
         fileObserver.startWatching();
     }
 
