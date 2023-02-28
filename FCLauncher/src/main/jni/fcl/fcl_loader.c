@@ -196,7 +196,7 @@ int
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupJLI(JNIEnv* env, jobject jobject){
 
     void* handle;
-    handle = dlopen("libjli.so", RTLD_LAZY);
+    handle = dlopen("libjli.so", RTLD_LAZY | RTLD_GLOBAL);
     JLI_Launch = (int (*)(int, char **, int, const char**, int, const char**, const char*, const char*, const char*, const char*, jboolean, jboolean, jboolean, jint))dlsym(handle, "JLI_Launch");
 
 }
