@@ -16,10 +16,12 @@ import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JavaGuiMenu;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener {
@@ -56,6 +58,11 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
+        GameOption gameOption=new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
+        gameOption.set("fullscreen","false");
+        gameOption.set("overrideWidth",""+i);
+        gameOption.set("overrideHeight",""+i1);
+        gameOption.save();
         surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
         fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
