@@ -147,7 +147,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         return touchPad;
     }
 
-    public TouchCharInput getTouchCharInput(){
+    public TouchCharInput getTouchCharInput() {
         return touchCharInput;
     }
 
