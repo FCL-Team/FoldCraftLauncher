@@ -94,6 +94,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         return menuSetting;
     }
 
+    @Override
     public int getCursorMode() {
         return cursorMode;
     }
@@ -144,6 +145,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     public TouchPad getTouchPad() {
         return touchPad;
+    }
+
+    public TouchCharInput getTouchCharInput(){
+        return touchCharInput;
     }
 
     private void initLeftMenu() {
