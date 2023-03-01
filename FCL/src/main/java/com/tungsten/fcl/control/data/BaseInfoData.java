@@ -28,6 +28,29 @@ public class BaseInfoData implements Cloneable {
         ABSOLUTE
     }
 
+    public enum VisibilityType {
+        ALWAYS,
+        IN_GAME,
+        MENU
+    }
+
+    /**
+     * Visibility type
+     */
+    private final ObjectProperty<VisibilityType> visibilityTypeProperty = new SimpleObjectProperty<>(this, "visibilityType", VisibilityType.ALWAYS);
+
+    public ObjectProperty<VisibilityType> visibilityTypeProperty() {
+        return visibilityTypeProperty;
+    }
+
+    public void setVisibilityType(VisibilityType visibilityType) {
+        visibilityTypeProperty.set(visibilityType);
+    }
+
+    public VisibilityType getVisibilityType() {
+        return visibilityTypeProperty.get();
+    }
+
     /**
      * Controller x percentage position
      * 10 times the actual value
@@ -156,6 +179,7 @@ public class BaseInfoData implements Cloneable {
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
+        visibilityTypeProperty.addListener(listener);
         xPositionProperty.addListener(listener);
         yPositionProperty.addListener(listener);
         sizeTypeProperty.addListener(listener);
@@ -170,6 +194,7 @@ public class BaseInfoData implements Cloneable {
     @Override
     public BaseInfoData clone() {
         BaseInfoData data = new BaseInfoData();
+        data.setVisibilityType(getVisibilityType());
         data.setXPosition(getXPosition());
         data.setYPosition(getYPosition());
         data.setSizeType(getSizeType());
@@ -188,6 +213,7 @@ public class BaseInfoData implements Cloneable {
 
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+            obj.addProperty("visibilityType", src.getVisibilityType().toString());
             obj.addProperty("xPosition", src.getXPosition());
             obj.addProperty("yPosition", src.getYPosition());
             obj.addProperty("sizeType", src.getSizeType().toString());
@@ -208,6 +234,7 @@ public class BaseInfoData implements Cloneable {
             BaseInfoData data = new BaseInfoData();
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+            data.setVisibilityType(getVisibilityType(Optional.ofNullable(obj.get("visibilityType")).map(JsonElement::getAsString).orElse(VisibilityType.ALWAYS.toString())));
             data.setXPosition(Optional.ofNullable(obj.get("xPosition")).map(JsonElement::getAsInt).orElse(0));
             data.setYPosition(Optional.ofNullable(obj.get("yPosition")).map(JsonElement::getAsInt).orElse(0));
             data.setSizeType(Optional.ofNullable(obj.get("sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
@@ -225,6 +252,16 @@ public class BaseInfoData implements Cloneable {
             data.setPercentageHeight(height);
 
             return data;
+        }
+
+        public VisibilityType getVisibilityType(String type) {
+            if (type.equals(VisibilityType.IN_GAME.toString())) {
+                return VisibilityType.IN_GAME;
+            } else if (type.equals(VisibilityType.MENU.toString())) {
+                return VisibilityType.MENU;
+            } else {
+                return VisibilityType.ALWAYS;
+            }
         }
     }
 
