@@ -146,17 +146,6 @@ public class TouchPad extends View {
                     handler.postDelayed(runnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
-                    int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
-                    if (gameMenu.getMenuSetting().isEnableGyroscope()) {
-                        gameMenu.setPointerX(initialX + deltaX);
-                        gameMenu.setPointerY(initialY + deltaY);
-                    } else {
-//                        gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
-                    }
-                    if ((Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(runnable);
-                    }
                     int pointerCount = event.getPointerCount();
                     int pointerIndex = event.findPointerIndex(currentPointerID);
                     if (pointerIndex == -1 || lastPointerCount != pointerCount || !shouldBeDown) {
@@ -166,9 +155,17 @@ public class TouchPad extends View {
                         downY = (int) event.getY();
                         break;
                     }
-                    deltaX=(int) (event.getX(pointerIndex)-downX);
-                    deltaY=(int) (event.getY(pointerIndex)-downY);
-                    gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
+                    int deltaX = (int) ((event.getX(pointerIndex) - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
+                    int deltaY = (int) ((event.getY(pointerIndex) - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
+                    if (gameMenu.getMenuSetting().isEnableGyroscope()) {
+                        gameMenu.setPointerX(initialX + deltaX);
+                        gameMenu.setPointerY(initialY + deltaY);
+                    } else {
+                        gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY);
+                    }
+                    if ((Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) && System.currentTimeMillis() - downTime < 400) {
+                        handler.removeCallbacks(runnable);
+                    }
                     downX = (int) event.getX(pointerIndex);
                     downY = (int) event.getY(pointerIndex);
                     break;

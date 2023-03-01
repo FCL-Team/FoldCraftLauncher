@@ -38,10 +38,9 @@ public class FCLInput {
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
                 ((GameMenu) menu).setCursorX(x);
                 ((GameMenu) menu).setCursorY(y);
-            } else {
-                ((GameMenu) menu).setPointerX(x);
-                ((GameMenu) menu).setPointerY(y);
             }
+            ((GameMenu) menu).setPointerX(x);
+            ((GameMenu) menu).setPointerY(y);
         }
         if (menu.getBridge() != null) {
             menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
