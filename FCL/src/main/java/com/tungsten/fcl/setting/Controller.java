@@ -4,6 +4,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,6 +15,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.FCLPath;
@@ -247,6 +249,7 @@ public class Controller implements Observable {
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
+            jsonObject.addProperty("viewGroups", new GsonBuilder().setPrettyPrinting().create().toJson(src.getViewGroups()));
 
             return jsonObject;
         }
@@ -255,13 +258,16 @@ public class Controller implements Observable {
         public Controller deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (json == JsonNull.INSTANCE || !(json instanceof JsonObject)) return null;
             JsonObject obj = (JsonObject) json;
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
             String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
             String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
             String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
             String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
             int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
+            ArrayList<ControlViewGroup> viewGroups = gson.fromJson(Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<ControlViewGroup>(){}.getType());
 
-            return new Controller(name, version, author, description, controllerVersion);
+            return new Controller(name, version, author, description, controllerVersion, viewGroups);
         }
 
     }

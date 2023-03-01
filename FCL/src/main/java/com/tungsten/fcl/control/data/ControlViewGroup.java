@@ -296,8 +296,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 ViewData data = new ViewData();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                data.setButtonList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<String>(){}.getType()));
-                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<String>(){}.getType()));
+                data.setButtonList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<ControlButtonData>(){}.getType()));
+                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<ControlDirectionData>(){}.getType()));
 
                 return data;
             }
