@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -11,18 +13,20 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclauncher.FCLKeycodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 
 @JsonAdapter(DirectionEventData.Serializer.class)
-public class DirectionEventData implements Cloneable {
+public class DirectionEventData implements Cloneable, Observable {
     
     public enum FollowOption {
         FIX,
@@ -154,7 +158,7 @@ public class DirectionEventData implements Cloneable {
     }
 
     public DirectionEventData() {
-
+        addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
@@ -165,6 +169,22 @@ public class DirectionEventData implements Cloneable {
         followOptionProperty.addListener(listener);
         sneakProperty.addListener(listener);
         sneakKeycodeProperty.addListener(listener);
+    }
+
+    private ObservableHelper observableHelper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        observableHelper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        observableHelper.removeListener(listener);
+    }
+
+    private void invalidate() {
+        observableHelper.invalidate();
     }
 
     @Override

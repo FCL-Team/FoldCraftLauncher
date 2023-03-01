@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -13,19 +15,21 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Optional;
 
 @JsonAdapter(ButtonEventData.Serializer.class)
-public class ButtonEventData implements Cloneable {
+public class ButtonEventData implements Cloneable, Observable {
 
     /**
      * Press event
@@ -96,7 +100,7 @@ public class ButtonEventData implements Cloneable {
     }
 
     public ButtonEventData() {
-        
+        addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
@@ -104,10 +108,22 @@ public class ButtonEventData implements Cloneable {
         longPressEventProperty.addListener(listener);
         clickEventProperty.addListener(listener);
         doubleClickEventProperty.addListener(listener);
-        pressEventProperty.get().addPropertyChangedListener(listener);
-        longPressEventProperty.get().addPropertyChangedListener(listener);
-        clickEventProperty.get().addPropertyChangedListener(listener);
-        doubleClickEventProperty.get().addPropertyChangedListener(listener);
+    }
+
+    private ObservableHelper observableHelper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        observableHelper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        observableHelper.removeListener(listener);
+    }
+
+    private void invalidate() {
+        observableHelper.invalidate();
     }
 
     @Override
@@ -155,7 +171,7 @@ public class ButtonEventData implements Cloneable {
     }
 
     @JsonAdapter(Event.Serializer.class)
-    public static class Event implements Cloneable {
+    public static class Event implements Cloneable, Observable {
 
         /**
          * Control mouse pointer
@@ -328,7 +344,7 @@ public class ButtonEventData implements Cloneable {
         }
 
         public Event() {
-            
+            addPropertyChangedListener(onInvalidating(this::invalidate));
         }
 
         public void addKeycode(int keycode) {
@@ -375,6 +391,22 @@ public class ButtonEventData implements Cloneable {
             outputTextProperty.addListener(listener);
             outputKeycodesProperty.addListener(listener);
             bindViewGroupProperty.addListener(listener);
+        }
+
+        private ObservableHelper observableHelper = new ObservableHelper(this);
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            observableHelper.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            observableHelper.removeListener(listener);
+        }
+
+        private void invalidate() {
+            observableHelper.invalidate();
         }
 
         @Override
@@ -432,8 +464,8 @@ public class ButtonEventData implements Cloneable {
                 event.setSwitchTouchMode(Optional.ofNullable(obj.get("switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
-                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsString).orElse("{}"), new TypeToken<Integer>(){}.getType()));
-                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsString).orElse("{}"), new TypeToken<String>(){}.getType()));
+                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<Integer>(){}.getType()));
+                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<String>(){}.getType()));
 
                 return event;
             }

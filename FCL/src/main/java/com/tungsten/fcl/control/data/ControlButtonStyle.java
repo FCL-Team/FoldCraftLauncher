@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+
 import android.graphics.Color;
 
 import com.google.gson.JsonDeserializationContext;
@@ -12,16 +14,18 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 
 @JsonAdapter(ControlButtonStyle.Serializer.class)
-public class ControlButtonStyle implements Cloneable {
+public class ControlButtonStyle implements Cloneable, Observable {
 
     public static final ControlButtonStyle DEFAULT_BUTTON_STYLE = new ControlButtonStyle("Default");
 
@@ -252,6 +256,8 @@ public class ControlButtonStyle implements Cloneable {
 
     public ControlButtonStyle(String name) {
         this.nameProperty.set(name);
+
+        addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
@@ -268,6 +274,22 @@ public class ControlButtonStyle implements Cloneable {
         strokeColorPressedProperty.addListener(listener);
         cornerRadiusPressedProperty.addListener(listener);
         fillColorPressedProperty.addListener(listener);
+    }
+
+    private ObservableHelper observableHelper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        observableHelper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        observableHelper.removeListener(listener);
+    }
+
+    private void invalidate() {
+        observableHelper.invalidate();
     }
 
     @Override

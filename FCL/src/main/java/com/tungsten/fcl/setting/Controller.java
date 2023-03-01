@@ -14,13 +14,16 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.util.ToStringBuilder;
@@ -31,6 +34,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @JsonAdapter(Controller.Serializer.class)
@@ -102,6 +106,20 @@ public class Controller implements Observable {
         return controllerVersion.get();
     }
 
+    private final SimpleObjectProperty<ArrayList<ControlViewGroup>> viewGroups;
+
+    public ObjectProperty<ArrayList<ControlViewGroup>> viewGroupsProperty() {
+        return viewGroups;
+    }
+
+    public ArrayList<ControlViewGroup> getViewGroups() {
+        return viewGroups.get();
+    }
+
+    public void setViewGroups(ArrayList<ControlViewGroup> viewGroups) {
+        this.viewGroups.set(viewGroups);
+    }
+
     public Controller(String name) {
         this(name, "");
     }
@@ -119,14 +137,45 @@ public class Controller implements Observable {
     }
 
     public Controller(String name, String version, String author, String description, int controllerVersion) {
+        this(name, version, author, description, controllerVersion, new ArrayList<>());
+    }
+
+    public Controller(String name, String version, String author, String description, int controllerVersion, ArrayList<ControlViewGroup> viewGroups) {
         this.name = new SimpleStringProperty(this, "name", name);
         this.version = new SimpleStringProperty(this, "version", version);
         this.author = new SimpleStringProperty(this, "author", author);
         this.description = new SimpleStringProperty(this, "description", description);
+        this.viewGroups = new SimpleObjectProperty<>(this, "viewGroups", viewGroups);
 
         this.controllerVersion.set(controllerVersion);
 
         addPropertyChangedListener(onInvalidating(this::invalidate));
+    }
+
+    public void addViewGroup(ControlViewGroup viewGroup) {
+        ArrayList<ControlViewGroup> list = getViewGroups();
+        boolean exist = false;
+        for (ControlViewGroup group : list) {
+            if (viewGroup.getId().equals(group.getId())) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist) {
+            list.add(viewGroup);
+            setViewGroups(list);
+        }
+    }
+
+    public void removeViewGroup(ControlViewGroup viewGroup) {
+        ArrayList<ControlViewGroup> list = getViewGroups();
+        for (ControlViewGroup group : list) {
+            if (viewGroup.getId().equals(group.getId())) {
+                list.remove(group);
+                setViewGroups(list);
+                break;
+            }
+        }
     }
 
     @NonNull
@@ -146,6 +195,7 @@ public class Controller implements Observable {
         version.addListener(listener);
         author.addListener(listener);
         description.addListener(listener);
+        viewGroups.addListener(listener);
         controllerVersion.addListener(listener);
     }
 

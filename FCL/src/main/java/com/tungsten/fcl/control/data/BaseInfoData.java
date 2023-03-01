@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -12,16 +14,18 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 
 @JsonAdapter(BaseInfoData.Serializer.class)
-public class BaseInfoData implements Cloneable {
+public class BaseInfoData implements Cloneable, Observable {
 
     public enum SizeType {
         PERCENTAGE,
@@ -175,7 +179,7 @@ public class BaseInfoData implements Cloneable {
     }
 
     public BaseInfoData() {
-
+        addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
@@ -186,9 +190,23 @@ public class BaseInfoData implements Cloneable {
         absoluteWidthProperty.addListener(listener);
         absoluteHeightProperty.addListener(listener);
         percentageWidthProperty.addListener(listener);
-        percentageWidthProperty.get().addPropertyChangedListener(listener);
         percentageHeightProperty.addListener(listener);
-        percentageHeightProperty.get().addPropertyChangedListener(listener);
+    }
+
+    private ObservableHelper observableHelper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        observableHelper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        observableHelper.removeListener(listener);
+    }
+
+    private void invalidate() {
+        observableHelper.invalidate();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.util.FXUtils.onInvalidating;
+
 import android.graphics.Color;
 
 import com.google.gson.JsonDeserializationContext;
@@ -12,16 +14,18 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.util.Optional;
 
-public class ControlDirectionStyle implements Cloneable {
+public class ControlDirectionStyle implements Cloneable, Observable {
 
     public static final ControlDirectionStyle DEFAULT_DIRECTION_STYLE = new ControlDirectionStyle("Default");
 
@@ -100,15 +104,31 @@ public class ControlDirectionStyle implements Cloneable {
 
     public ControlDirectionStyle(String name) {
         this.nameProperty.set(name);
+
+        addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
         nameProperty.addListener(listener);
         styleTypeProperty.addListener(listener);
         buttonStyleProperty.addListener(listener);
-        buttonStyleProperty.get().addPropertyChangedListener(listener);
         rockerStyleProperty.addListener(listener);
-        rockerStyleProperty.get().addPropertyChangedListener(listener);
+    }
+
+    private ObservableHelper observableHelper = new ObservableHelper(this);
+
+    @Override
+    public void addListener(InvalidationListener listener) {
+        observableHelper.addListener(listener);
+    }
+
+    @Override
+    public void removeListener(InvalidationListener listener) {
+        observableHelper.removeListener(listener);
+    }
+
+    private void invalidate() {
+        observableHelper.invalidate();
     }
 
     @Override
@@ -121,7 +141,7 @@ public class ControlDirectionStyle implements Cloneable {
     }
 
     @JsonAdapter(ButtonStyle.Serializer.class)
-    public static class ButtonStyle implements Cloneable {
+    public static class ButtonStyle implements Cloneable, Observable {
 
         /**
          * Button interval
@@ -350,7 +370,7 @@ public class ControlDirectionStyle implements Cloneable {
         }
 
         public ButtonStyle() {
-
+            addPropertyChangedListener(onInvalidating(this::invalidate));
         }
 
         public void addPropertyChangedListener(InvalidationListener listener) {
@@ -367,6 +387,22 @@ public class ControlDirectionStyle implements Cloneable {
             strokeColorPressedProperty.addListener(listener);
             cornerRadiusPressedProperty.addListener(listener);
             fillColorPressedProperty.addListener(listener);
+        }
+
+        private ObservableHelper observableHelper = new ObservableHelper(this);
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            observableHelper.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            observableHelper.removeListener(listener);
+        }
+
+        private void invalidate() {
+            observableHelper.invalidate();
         }
 
         @Override
@@ -440,7 +476,7 @@ public class ControlDirectionStyle implements Cloneable {
     }
 
     @JsonAdapter(RockerStyle.Serializer.class)
-    public static class RockerStyle implements Cloneable {
+    public static class RockerStyle implements Cloneable, Observable {
 
         /**
          * Percentage rocker size, max is 90%, min is 10%
@@ -601,7 +637,7 @@ public class ControlDirectionStyle implements Cloneable {
         }
 
         public RockerStyle() {
-
+            addPropertyChangedListener(onInvalidating(this::invalidate));
         }
 
         public void addPropertyChangedListener(InvalidationListener listener) {
@@ -614,6 +650,22 @@ public class ControlDirectionStyle implements Cloneable {
             rockerStrokeWidthProperty.addListener(listener);
             rockerStrokeColorProperty.addListener(listener);
             rockerFillColorProperty.addListener(listener);
+        }
+
+        private ObservableHelper observableHelper = new ObservableHelper(this);
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            observableHelper.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            observableHelper.removeListener(listener);
+        }
+
+        private void invalidate() {
+            observableHelper.invalidate();
         }
 
         @Override
