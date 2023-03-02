@@ -20,6 +20,8 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 
 import java.lang.reflect.Type;
@@ -169,108 +171,108 @@ public class ControlViewGroup implements Cloneable, Observable {
     }
 
     @JsonAdapter(ViewData.Serializer.class)
-    public static class ViewData implements Cloneable {
+    public static class ViewData implements Cloneable, Observable {
 
         /**
          * Button data list
          */
-        private final ObjectProperty<ArrayList<ControlButtonData>> buttonListProperty = new SimpleObjectProperty<>(this, "buttonList", new ArrayList<>());
+        private final ObservableList<ControlButtonData> buttonList = FXCollections.observableArrayList(new ArrayList<>());
         
-        public ObjectProperty<ArrayList<ControlButtonData>> buttonListProperty() {
-            return buttonListProperty;
+        public ObservableList<ControlButtonData> buttonList() {
+            return buttonList;
         }
         
-        public void setButtonList(ArrayList<ControlButtonData> buttonList) {
-            buttonListProperty.set(buttonList);
-        }
-        
-        public ArrayList<ControlButtonData> getButtonList() {
-            return buttonListProperty.get();
+        public void setButtonList(ObservableList<ControlButtonData> list) {
+            buttonList.setAll(list);
         }
 
         /**
          * Direction data list
          */
-        private final ObjectProperty<ArrayList<ControlDirectionData>> directionListProperty = new SimpleObjectProperty<>(this, "directionList", new ArrayList<>());
+        private final ObservableList<ControlDirectionData> directionList = FXCollections.observableArrayList(new ArrayList<>());
 
-        public ObjectProperty<ArrayList<ControlDirectionData>> directionListProperty() {
-            return directionListProperty;
+        public ObservableList<ControlDirectionData> directionList() {
+            return directionList;
         }
 
-        public void setDirectionList(ArrayList<ControlDirectionData> directionList) {
-            directionListProperty.set(directionList);
-        }
-
-        public ArrayList<ControlDirectionData> getDirectionList() {
-            return directionListProperty.get();
+        public void setDirectionList(ObservableList<ControlDirectionData> list) {
+            directionList.setAll(list);
         }
 
         public void addButton(ControlButtonData data) {
-            ArrayList<ControlButtonData> list = getButtonList();
             boolean exist = false;
-            for (ControlButtonData buttonData : list) {
+            for (ControlButtonData buttonData : buttonList()) {
                 if (buttonData.equals(data)) {
                     exist = true;
                     break;
                 }
             }
             if (!exist) {
-                list.add(data);
-                setButtonList(list);
+                buttonList.add(data);
             }
         }
 
         public void removeButton(ControlButtonData data) {
-            ArrayList<ControlButtonData> list = getButtonList();
-            for (ControlButtonData buttonData : list) {
+            for (ControlButtonData buttonData : buttonList()) {
                 if (buttonData.equals(data)) {
-                    list.remove(buttonData);
-                    setButtonList(list);
+                    buttonList.remove(buttonData);
                     break;
                 }
             }
         }
 
         public void addDirection(ControlDirectionData data) {
-            ArrayList<ControlDirectionData> list = getDirectionList();
             boolean exist = false;
-            for (ControlDirectionData directionData : list) {
+            for (ControlDirectionData directionData : directionList()) {
                 if (directionData.equals(data)) {
                     exist = true;
                     break;
                 }
             }
             if (!exist) {
-                list.add(data);
-                setDirectionList(list);
+                directionList.add(data);
             }
         }
 
         public void removeDirection(ControlDirectionData data) {
-            ArrayList<ControlDirectionData> list = getDirectionList();
-            for (ControlDirectionData directionData : list) {
+            for (ControlDirectionData directionData : directionList()) {
                 if (directionData.equals(data)) {
-                    list.remove(directionData);
-                    setDirectionList(list);
+                    directionList.remove(directionData);
                     break;
                 }
             }
         }
         
         public ViewData() {
-            
+            addPropertyChangedListener(onInvalidating(this::invalidate));
         }
 
         public void addPropertyChangedListener(InvalidationListener listener) {
-            buttonListProperty.addListener(listener);
-            directionListProperty.addListener(listener);
+            buttonList.addListener(listener);
+            directionList.addListener(listener);
+        }
+
+        private ObservableHelper observableHelper = new ObservableHelper(this);
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            observableHelper.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            observableHelper.removeListener(listener);
+        }
+
+        private void invalidate() {
+            observableHelper.invalidate();
         }
 
         @Override
         public ViewData clone() {
             ViewData data = new ViewData();
-            data.setButtonList(getButtonList());
-            data.setDirectionList(getDirectionList());
+            data.setButtonList(buttonList());
+            data.setDirectionList(directionList());
             return data;
         }
 
@@ -281,8 +283,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 JsonObject obj = new JsonObject();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                obj.addProperty("buttonList", gson.toJson(src.getButtonList()));
-                obj.addProperty("directionList", gson.toJson(src.getDirectionList()));
+                obj.addProperty("buttonList", gson.toJson(src.buttonList()));
+                obj.addProperty("directionList", gson.toJson(src.directionList()));
 
                 return obj;
             }
@@ -296,8 +298,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 ViewData data = new ViewData();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                data.setButtonList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<ControlButtonData>(){}.getType()));
-                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsString).orElse(gson.toJson(new ArrayList<>())), new TypeToken<ControlDirectionData>(){}.getType()));
+                data.setButtonList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<ControlButtonData>(){}.getType()));
+                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<ControlDirectionData>(){}.getType()));
 
                 return data;
             }

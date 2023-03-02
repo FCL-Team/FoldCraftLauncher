@@ -284,7 +284,7 @@ public class BaseInfoData implements Cloneable, Observable {
     }
 
     @JsonAdapter(PercentageSize.Serializer.class)
-    public static class PercentageSize implements Cloneable {
+    public static class PercentageSize implements Cloneable, Observable {
         
         public enum Reference {
             SCREEN_WIDTH,
@@ -329,12 +329,28 @@ public class BaseInfoData implements Cloneable, Observable {
         }
         
         public PercentageSize() {
-            
+            addPropertyChangedListener(onInvalidating(this::invalidate));
         }
 
         public void addPropertyChangedListener(InvalidationListener listener) {
             referenceProperty.addListener(listener);
             sizeProperty.addListener(listener);
+        }
+
+        private ObservableHelper observableHelper = new ObservableHelper(this);
+
+        @Override
+        public void addListener(InvalidationListener listener) {
+            observableHelper.addListener(listener);
+        }
+
+        @Override
+        public void removeListener(InvalidationListener listener) {
+            observableHelper.removeListener(listener);
+        }
+
+        private void invalidate() {
+            observableHelper.invalidate();
         }
 
         @Override
