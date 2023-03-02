@@ -47,7 +47,7 @@ void *extcl_NativeGetFunctionPointer(const char *function) {
 void extcl_LoadLibrary(JNIEnv *env, jstring path) {
 	char *path_str = GetStringNativeChars(env, path);
 	printfDebugJava(env, "Testing '%s'", path_str);
-	handleOCL = dlopen(path_str, RTLD_LAZY);
+	handleOCL = dlopen(path_str, RTLD_LAZY | RTLD_GLOBAL);
 	if (handleOCL != NULL) {
 		printfDebugJava(env, "Found OpenCL at '%s'", path_str);
 	} else {

@@ -48,7 +48,7 @@ void *extal_NativeGetFunctionPointer(const char *function) {
 void extal_LoadLibrary(JNIEnv *env, jstring path) {
 	char *path_str = GetStringNativeChars(env, path);
 	printfDebugJava(env, "Testing '%s'", path_str);
-	handleOAL = dlopen(path_str, RTLD_LAZY);
+	handleOAL = dlopen(path_str, RTLD_LAZY | RTLD_GLOBAL);
 	if (handleOAL != NULL) {
 		printfDebugJava(env, "Found OpenAL at '%s'", path_str);
 	} else {
