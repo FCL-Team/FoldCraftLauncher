@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -243,13 +244,15 @@ public class Controller implements Cloneable, Observable {
             if (src == null)
                 return JsonNull.INSTANCE;
 
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("name", src.getName());
             jsonObject.addProperty("version", src.getVersion());
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
-            jsonObject.addProperty("viewGroups", new GsonBuilder().setPrettyPrinting().create().toJson(src.viewGroups()));
+            jsonObject.add("viewGroups", gson.toJsonTree(new ArrayList<>(src.viewGroups()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()).getAsJsonArray());
 
             return jsonObject;
         }
@@ -265,7 +268,7 @@ public class Controller implements Cloneable, Observable {
             String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
             String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
             int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
-            ObservableList<ControlViewGroup> viewGroups = gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<ControlViewGroup>(){}.getType());
+            ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
 
             return new Controller(name, version, author, description, controllerVersion, viewGroups);
         }

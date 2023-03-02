@@ -4,6 +4,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -283,8 +284,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 JsonObject obj = new JsonObject();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                obj.addProperty("buttonList", gson.toJson(src.buttonList()));
-                obj.addProperty("directionList", gson.toJson(src.directionList()));
+                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.buttonList()), new TypeToken<ArrayList<ControlButtonData>>(){}.getType()).getAsJsonArray());
+                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.directionList()), new TypeToken<ArrayList<ControlDirectionData>>(){}.getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -298,8 +299,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 ViewData data = new ViewData();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                data.setButtonList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<ControlButtonData>(){}.getType()));
-                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<ControlDirectionData>(){}.getType()));
+                data.setButtonList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonData>>(){}.getType())));
+                data.setDirectionList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionData>>(){}.getType())));
 
                 return data;
             }

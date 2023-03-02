@@ -4,6 +4,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -402,8 +403,8 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("switchTouchMode", src.isSwitchTouchMode());
                 obj.addProperty("input", src.isInput());
                 obj.addProperty("outputText", src.getOutputText());
-                obj.addProperty("outputKeycodes", gson.toJson(src.outputKeycodesList()));
-                obj.addProperty("bindViewGroup", gson.toJson(src.bindViewGroupList()));
+                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.outputKeycodesList()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
+                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.bindViewGroupList()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -425,8 +426,8 @@ public class ButtonEventData implements Cloneable, Observable {
                 event.setSwitchTouchMode(Optional.ofNullable(obj.get("switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
-                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<Integer>(){}.getType()));
-                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsString).orElse(gson.toJson(FXCollections.observableArrayList(new ArrayList<>()))), new TypeToken<String>(){}.getType()));
+                event.setOutputKeycodes(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType())));
+                event.setBindViewGroup(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType())));
 
                 return event;
             }
