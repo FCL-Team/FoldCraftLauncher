@@ -189,11 +189,39 @@
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_failed">操作失败</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
 
     <string name="mods">模组</string>
-    <string name="mods_manage">模组管理</string>
+    <string name="mods_add">添加模组</string>
+    <string name="mods_add_failed">无法安装模组 %s。</string>
+    <string name="mods_add_success">%s 成功安装。</string>
+    <string name="mods_category">类别</string>
+    <string name="mods_check_updates">检查更新</string>
+    <string name="mods_check_updates_current_version">当前版本</string>
+    <string name="mods_check_updates_failed">无法下载部分文件。</string>
+    <string name="mods_check_updates_file">文件</string>
+    <string name="mods_check_updates_source">下载源</string>
+    <string name="mods_check_updates_target_version">目标版本</string>
+    <string name="mods_check_updates_update">更新</string>
+    <string name="mods_choose_mod">选择模组</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependencies">依赖</string>
+    <string name="mods_disable">禁用</string>
+    <string name="mods_download">模组下载</string>
+    <string name="mods_download_title">模组下载 - %1s</string>
+    <string name="mods_enable">启动</string>
+    <string name="mods_manage">管理模组</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">MCMOD 页面</string>
+    <string name="mods_mcmod_search">在 MCMOD 搜索</string>
+    <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_name">名称</string>
+    <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
+    <string name="mods_restore">回滚</string>
+    <string name="mods_url">官方页面</string>
 
     <string name="modpack">整合包</string>
     <string name="modpack_export">导出整合包</string>
@@ -224,7 +252,7 @@
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
 
     <string name="settings_fcl_controller">控制</string>
-    <string name="settings_fcl_controller_injector">基岩版触控手势 (1.7.10 – 1.19.2)</string>
+    <string name="settings_fcl_controller_injector">基岩版触控手势</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
 
