@@ -30,7 +30,7 @@ typedef VkResult (APIENTRY *PFN_vkCreateAndroidSurfaceKHR)(VkInstance, const VkA
 #include "osmesa_context.h"
 #include "null_joystick.h"
 
-#define _glfw_dlopen(name) dlopen(name, RTLD_LAZY | RTLD_LOCAL)
+#define _glfw_dlopen(name) dlopen(name, RTLD_LAZY | RTLD_GLOBAL)
 #define _glfw_dlclose(handle) dlclose(handle)
 #define _glfw_dlsym(handle, name) dlsym(handle, name)
 
