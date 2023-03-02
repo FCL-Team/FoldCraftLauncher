@@ -180,6 +180,20 @@
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
 
+    <string name="menu_controls">Controller</string>
+    <string name="menu_controls_current">Current Controller</string>
+    <string name="menu_controls_edit_mode">Edit Mode</string>
+    <string name="menu_controls_show_boundary">Show View Boundaries</string>
+    <string name="menu_controls_groups">View Groups</string>
+    <string name="menu_controls_manage">Manage</string>
+    <string name="menu_controls_current_view_group">Current View Group</string>
+    <string name="menu_controls_add_button">Add Button</string>
+    <string name="menu_controls_add_direction">Add Direction Controller</string>
+    <string name="menu_controls_add_view_button">Add</string>
+    <string name="menu_controls_style">Styles</string>
+    <string name="menu_controls_button_style">Button Styles</string>
+    <string name="menu_controls_direction_style">Direction Controller Styles</string>
+
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>
     <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
