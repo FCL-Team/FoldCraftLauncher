@@ -370,7 +370,7 @@
     <string name="view_info_size_type">尺寸类型</string>
     <string name="view_info_width">宽度</string>
     <string name="view_info_height">高度</string>
-    <string name="view_info_width_refrence">宽度参考对象</string>
+    <string name="view_info_width_reference">宽度参考对象</string>
     <string name="view_info_height_reference">高度参考对象</string>
     <string name="view_info_size">尺寸</string>
     <string name="view_info_reference">尺寸参考对象</string>
