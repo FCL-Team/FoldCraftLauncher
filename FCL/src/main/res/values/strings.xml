@@ -127,6 +127,7 @@
     <string name="event_button_movable">Movable</string>
     <string name="event_button_switch_touch_mode">Switch Touch Mode</string>
     <string name="event_button_input">Input</string>
+    <string name="event_button_quick_input">Open Quick Input Dialog</string>
     <string name="event_button_output_text">Output Text</string>
     <string name="event_button_output_keycodes">Output Keycodes</string>
     <string name="event_button_bind_view_groups">Show/Hide View Groups</string>

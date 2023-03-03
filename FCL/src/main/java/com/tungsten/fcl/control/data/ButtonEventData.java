@@ -296,6 +296,23 @@ public class ButtonEventData implements Cloneable, Observable {
         }
 
         /**
+         * Open quick input dialog
+         */
+        private final BooleanProperty quickInputProperty = new SimpleBooleanProperty(this, "quickInput", false);
+
+        public BooleanProperty quickInputProperty() {
+            return quickInputProperty;
+        }
+
+        public void setQuickInput(boolean quickInput) {
+            quickInputProperty.set(quickInput);
+        }
+
+        public boolean isQuickInput() {
+            return quickInputProperty.get();
+        }
+
+        /**
          * Output text
          */
         private final StringProperty outputTextProperty = new SimpleStringProperty(this, "outputText", "");
@@ -350,6 +367,7 @@ public class ButtonEventData implements Cloneable, Observable {
             movableProperty.addListener(listener);
             switchTouchModeProperty.addListener(listener);
             inputProperty.addListener(listener);
+            quickInputProperty.addListener(listener);
             outputTextProperty.addListener(listener);
             outputKeycodesList.addListener(listener);
             bindViewGroupList.addListener(listener);
@@ -381,6 +399,7 @@ public class ButtonEventData implements Cloneable, Observable {
             event.setMovable(isMovable());
             event.setSwitchTouchMode(isSwitchTouchMode());
             event.setInput(isInput());
+            event.setQuickInput(isQuickInput());
             event.setOutputText(getOutputText());
             event.setOutputKeycodes(outputKeycodesList());
             event.setBindViewGroup(bindViewGroupList());
@@ -402,6 +421,7 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("Movable", src.isMovable());
                 obj.addProperty("switchTouchMode", src.isSwitchTouchMode());
                 obj.addProperty("input", src.isInput());
+                obj.addProperty("quickInput", src.isQuickInput());
                 obj.addProperty("outputText", src.getOutputText());
                 obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.outputKeycodesList()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
                 obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.bindViewGroupList()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
@@ -425,6 +445,7 @@ public class ButtonEventData implements Cloneable, Observable {
                 event.setMovable(Optional.ofNullable(obj.get("Movable")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setSwitchTouchMode(Optional.ofNullable(obj.get("switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
                 event.setOutputKeycodes(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType())));
                 event.setBindViewGroup(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType())));

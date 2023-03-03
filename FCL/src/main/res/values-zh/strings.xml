@@ -116,6 +116,7 @@
     <string name="event_button_movable">可拖动</string>
     <string name="event_button_switch_touch_mode">切换触控模式</string>
     <string name="event_button_input">输入</string>
+    <string name="event_button_quick_input">打开快捷输入</string>
     <string name="event_button_output_text">输出文本</string>
     <string name="event_button_output_keycodes">输出键值</string>
     <string name="event_button_bind_view_groups">显示/隐藏按键合集</string>
