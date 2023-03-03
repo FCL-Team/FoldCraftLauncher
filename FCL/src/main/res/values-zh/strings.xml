@@ -105,6 +105,8 @@
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
 
+
+
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
@@ -293,6 +295,7 @@
     <string name="settings_type_global_manage">全局游戏设置</string>
     <string name="settings_type_special_enable">启用游戏特定设置</string>
 
+    <string name="style_button">按键样式</string>
     <string name="style_button_normal">常规状态</string>
     <string name="style_button_pressed">触发状态</string>
     <string name="style_button_text_size">文本大小</string>
@@ -302,6 +305,8 @@
     <string name="style_button_corner_radius">圆角半径</string>
     <string name="style_button_fill_color">填充颜色</string>
     <string name="style_button_interval">按键间隔</string>
+    <string name="style_direction">方向控制键样式</string>
+    <string name="style_rocker">摇杆样式</string>
     <string name="style_rocker_size">摇杆大小</string>
     <string name="style_rocker_bg_stroke_width">背景边框宽度</string>
     <string name="style_rocker_bg_stroke_color">背景边框颜色</string>

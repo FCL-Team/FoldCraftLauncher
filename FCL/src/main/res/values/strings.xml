@@ -316,6 +316,7 @@
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
 
+    <string name="style_button">Button Style</string>
     <string name="style_button_normal">Normal</string>
     <string name="style_button_pressed">Enabled</string>
     <string name="style_button_text_size">Text Size</string>
@@ -325,6 +326,8 @@
     <string name="style_button_corner_radius">Corner Radius</string>
     <string name="style_button_fill_color">Fill Color</string>
     <string name="style_button_interval">Button Interval</string>
+    <string name="style_direction">Direction Controller Style</string>
+    <string name="style_rocker">Rocker Style</string>
     <string name="style_rocker_size">Rocker Size</string>
     <string name="style_rocker_bg_stroke_width">Background Stroke Width</string>
     <string name="style_rocker_bg_stroke_color">Background Stroke Color</string>
