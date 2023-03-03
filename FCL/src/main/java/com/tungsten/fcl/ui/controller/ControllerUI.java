@@ -4,6 +4,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
@@ -161,6 +162,9 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
         }
         if (view == editController) {
             Intent intent = new Intent(getContext(), ControllerActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("controller", getSelectedController().getName());
+            intent.putExtras(bundle);
             getActivity().startActivity(intent);
         }
     }

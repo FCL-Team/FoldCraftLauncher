@@ -132,4 +132,9 @@ public class Controllers {
         controllers.remove(controller);
     }
 
+    public static Controller findControllerByName(String name) {
+        checkControllers();
+        return controllers.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(controllers.get(0));
+    }
+
 }

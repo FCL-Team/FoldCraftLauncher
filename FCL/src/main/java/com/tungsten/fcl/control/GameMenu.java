@@ -16,12 +16,14 @@ import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
+import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
+import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fcl.util.FXUtils;
@@ -30,8 +32,12 @@ import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -39,6 +45,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -51,6 +58,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class GameMenu implements MenuCallback, View.OnClickListener {
 
@@ -77,6 +85,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLImageView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
+    
+    private FCLButton manageViewGroups;
+    private FCLButton addButton;
+    private FCLButton addDirection;
+    private FCLButton manageButtonStyle;
+    private FCLButton manageDirectionStyle;
 
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
@@ -150,9 +164,107 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     public TouchCharInput getTouchCharInput() {
         return touchCharInput;
     }
+    
+    private final BooleanProperty editModeProperty = new SimpleBooleanProperty(this, "editMode", false);
+    
+    public BooleanProperty editModeProperty() {
+        return editModeProperty;
+    }
+    
+    public void setEditMode(boolean editMode) {
+        editModeProperty.set(editMode);
+    }
+    
+    public boolean isEditMode() {
+        return editModeProperty.get();
+    }
+
+    private final BooleanProperty showViewBoundariesProperty = new SimpleBooleanProperty(this, "showViewBoundaries", false);
+
+    public BooleanProperty showViewBoundariesProperty() {
+        return showViewBoundariesProperty;
+    }
+
+    public void setShowViewBoundaries(boolean showViewBoundaries) {
+        showViewBoundariesProperty.set(showViewBoundaries);
+    }
+
+    public boolean isShowViewBoundaries() {
+        return showViewBoundariesProperty.get();
+    }
+
+    private final ObjectProperty<Controller> controllerProperty = new SimpleObjectProperty<>(this, "controller", null);
+
+    public ObjectProperty<Controller> controllerProperty() {
+        return controllerProperty;
+    }
+
+    public void setController(Controller controller) {
+        controllerProperty.set(controller);
+    }
+
+    public Controller getController() {
+        return controllerProperty.get();
+    }
+
+    private final ObjectProperty<ControlViewGroup> viewGroupProperty = new SimpleObjectProperty<>(this, "viewGroup", null);
+
+    public ObjectProperty<ControlViewGroup> viewGroupProperty() {
+        return viewGroupProperty;
+    }
+
+    public void setViewGroup(ControlViewGroup viewGroup) {
+        viewGroupProperty.set(viewGroup);
+    }
+
+    public ControlViewGroup getViewGroup() {
+        return viewGroupProperty.get();
+    }
 
     private void initLeftMenu() {
+        FCLSwitch editMode = findViewById(R.id.edit_mode);
+        FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
+        
+        FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
+        FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
 
+        FCLLinearLayout editLayout = findViewById(R.id.edit_layout);
+        
+        manageViewGroups = findViewById(R.id.manage_view_groups);
+        addButton = findViewById(R.id.add_button);
+        addDirection = findViewById(R.id.add_direction);
+        manageButtonStyle = findViewById(R.id.manage_button_style);
+        manageDirectionStyle = findViewById(R.id.manage_direction_style);
+        
+        FXUtils.bindBoolean(editMode, editModeProperty);
+        FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
+
+        ArrayList<String> controllerNameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toCollection(ArrayList::new));
+        currentControllerSpinner.setDataList(new ArrayList<>(Controllers.getControllers()));
+        ArrayAdapter<String> controllerNameAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, controllerNameList);
+        controllerNameAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small);
+        currentControllerSpinner.setAdapter(controllerNameAdapter);
+        FXUtils.bindSelection(currentControllerSpinner, controllerProperty);
+
+        refreshViewGroupList(currentViewGroupSpinner);
+        controllerProperty.addListener(invalidate -> refreshViewGroupList(currentViewGroupSpinner));
+
+        editLayout.visibilityProperty().bind(editModeProperty);
+        
+        manageViewGroups.setOnClickListener(this);
+        addButton.setOnClickListener(this);
+        addDirection.setOnClickListener(this);
+        manageButtonStyle.setOnClickListener(this);
+        manageDirectionStyle.setOnClickListener(this);
+    }
+
+    private void refreshViewGroupList(FCLSpinner<ControlViewGroup> spinner) {
+        ArrayList<String> viewGroupNameList = controllerProperty.get().viewGroups().stream().map(ControlViewGroup::getName).collect(Collectors.toCollection(ArrayList::new));
+        spinner.setDataList(new ArrayList<>(controllerProperty.get().viewGroups()));
+        ArrayAdapter<String> viewGroupNameAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, viewGroupNameList);
+        viewGroupNameAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small);
+        spinner.setAdapter(viewGroupNameAdapter);
+        FXUtils.bindSelection(spinner, viewGroupProperty);
     }
 
     private void initRightMenu() {
@@ -262,6 +374,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 Logging.LOG.log(Level.SEVERE, "Failed to save menu setting", e);
             }
         });
+        
+        editModeProperty.set(isSimulated());
+        controllerProperty.set(Controllers.findControllerByName(activity.getIntent().getExtras().getString("controller")));
 
         baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);
@@ -418,6 +533,22 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        if (v == manageViewGroups) {
+
+        }
+        if (v == addButton) {
+
+        }
+        if (v == addDirection) {
+
+        }
+        if (v == manageButtonStyle) {
+
+        }
+        if (v == manageDirectionStyle) {
+
+        }
+        
         if (v == openMultiplayerMenu) {
 
         }
