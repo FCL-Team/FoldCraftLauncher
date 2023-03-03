@@ -105,7 +105,27 @@
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
 
-
+    <string name="event_button_press">按压</string>
+    <string name="event_button_long_press">长按</string>
+    <string name="event_button_click">点击</string>
+    <string name="event_button_double_click">双击</string>
+    <string name="event_button_pointer_follow">指针跟随</string>
+    <string name="event_button_auto_keep">自动保持</string>
+    <string name="event_button_auto_click">连续点击</string>
+    <string name="event_button_open_menu">打开菜单</string>
+    <string name="event_button_movable">可拖动</string>
+    <string name="event_button_switch_touch_mode">切换触控模式</string>
+    <string name="event_button_input">输入</string>
+    <string name="event_button_output_text">输出文本</string>
+    <string name="event_button_output_keycodes">输出键值</string>
+    <string name="event_button_bind_view_groups">显示/隐藏按键合集</string>
+    <string name="event_rocker_up_keycode">前进键值</string>
+    <string name="event_rocker_down_keycode">后退键值</string>
+    <string name="event_rocker_left_keycode">向左键值</string>
+    <string name="event_rocker_right_keycode">向右键值</string>
+    <string name="event_rocker_follow_option">跟随选项（仅摇杆）</string>
+    <string name="event_rocker_sneak">双击中心位置潜行</string>
+    <string name="event_rocker_sneak_keycode">潜行键值</string>
 
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>

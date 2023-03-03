@@ -116,6 +116,28 @@
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
 
+    <string name="event_button_press">Press</string>
+    <string name="event_button_long_press">Long Press</string>
+    <string name="event_button_click">Click</string>
+    <string name="event_button_double_click">Double Click</string>
+    <string name="event_button_pointer_follow">Pointer Follow</string>
+    <string name="event_button_auto_keep">Keep Pressing</string>
+    <string name="event_button_auto_click">Keep Clicking</string>
+    <string name="event_button_open_menu">Open Menu</string>
+    <string name="event_button_movable">Movable</string>
+    <string name="event_button_switch_touch_mode">Switch Touch Mode</string>
+    <string name="event_button_input">Input</string>
+    <string name="event_button_output_text">Output Text</string>
+    <string name="event_button_output_keycodes">Output Keycodes</string>
+    <string name="event_button_bind_view_groups">Show/Hide View Groups</string>
+    <string name="event_rocker_up_keycode">Forward Keycode</string>
+    <string name="event_rocker_down_keycode">Back Keycode</string>
+    <string name="event_rocker_left_keycode">Left Keycode</string>
+    <string name="event_rocker_right_keycode">Right Keycode</string>
+    <string name="event_rocker_follow_option">Follow Option (Only Rocker Style)</string>
+    <string name="event_rocker_sneak">Double Click Center to Enable Sneak</string>
+    <string name="event_rocker_sneak_keycode">Sneak Keycode</string>
+
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
