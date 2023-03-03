@@ -293,6 +293,25 @@
     <string name="settings_type_global_manage">全局游戏设置</string>
     <string name="settings_type_special_enable">启用游戏特定设置</string>
 
+    <string name="style_button_normal">常规状态</string>
+    <string name="style_button_pressed">触发状态</string>
+    <string name="style_button_text_size">文本大小</string>
+    <string name="style_button_text_color">文本颜色</string>
+    <string name="style_button_stroke_width">边框宽度</string>
+    <string name="style_button_stroke_color">边框颜色</string>
+    <string name="style_button_corner_radius">圆角半径</string>
+    <string name="style_button_fill_color">填充颜色</string>
+    <string name="style_button_interval">按键间隔</string>
+    <string name="style_rocker_size">摇杆大小</string>
+    <string name="style_rocker_bg_stroke_width">背景边框宽度</string>
+    <string name="style_rocker_bg_stroke_color">背景边框颜色</string>
+    <string name="style_rocker_bg_corner_radius">背景圆角半径</string>
+    <string name="style_rocker_bg_fill_color">背景填充颜色</string>
+    <string name="style_rocker_stroke_width">摇杆边框宽度</string>
+    <string name="style_rocker_stroke_color">摇杆边框颜色</string>
+    <string name="style_rocker_corner_radius">摇杆圆角半径</string>
+    <string name="style_rocker_fill_color">摇杆背景颜色</string>
+
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
     <string name="version_game_release">正式版</string>

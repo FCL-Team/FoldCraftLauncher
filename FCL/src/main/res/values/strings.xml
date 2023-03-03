@@ -316,6 +316,25 @@
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
 
+    <string name="style_button_normal">Normal</string>
+    <string name="style_button_pressed">Enabled</string>
+    <string name="style_button_text_size">Text Size</string>
+    <string name="style_button_text_color">Text Color</string>
+    <string name="style_button_stroke_width">Stroke Width</string>
+    <string name="style_button_stroke_color">Stroke Color</string>
+    <string name="style_button_corner_radius">Corner Radius</string>
+    <string name="style_button_fill_color">Fill Color</string>
+    <string name="style_button_interval">Button Interval</string>
+    <string name="style_rocker_size">Rocker Size</string>
+    <string name="style_rocker_bg_stroke_width">Background Stroke Width</string>
+    <string name="style_rocker_bg_stroke_color">Background Stroke Color</string>
+    <string name="style_rocker_bg_corner_radius">Background Corner Radius</string>
+    <string name="style_rocker_bg_fill_color">Background Fill Color</string>
+    <string name="style_rocker_stroke_width">Rocker Stroke Width</string>
+    <string name="style_rocker_stroke_color">Rocker Stroke Color</string>
+    <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
+    <string name="style_rocker_fill_color">Rocker Fill Color</string>
+
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>
     <string name="version_game_release">Release</string>
