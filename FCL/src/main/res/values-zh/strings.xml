@@ -364,6 +364,17 @@
     <string name="version_new_profile">新建目录</string>
     <string name="version_update">更新整合包</string>
 
+    <string name="view_info_visibility">可视性</string>
+    <string name="view_info_x">X 坐标</string>
+    <string name="view_info_y">Y 坐标</string>
+    <string name="view_info_size_type">尺寸类型</string>
+    <string name="view_info_width">宽度</string>
+    <string name="view_info_height">高度</string>
+    <string name="view_info_width_refrence">宽度参考对象</string>
+    <string name="view_info_height_reference">高度参考对象</string>
+    <string name="view_info_size">尺寸</string>
+    <string name="view_info_reference">尺寸参考对象</string>
+
     <string name="world">世界</string>
     <string name="world_manage">世界 / 数据包</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>

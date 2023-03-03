@@ -387,6 +387,17 @@
     <string name="version_new_profile">New Directory</string>
     <string name="version_update">Update Modpack</string>
 
+    <string name="view_info_visibility">Visibility Option</string>
+    <string name="view_info_x">X Position</string>
+    <string name="view_info_y">Y Position</string>
+    <string name="view_info_size_type">Size Measurement</string>
+    <string name="view_info_width">Width</string>
+    <string name="view_info_height">Height</string>
+    <string name="view_info_width_refrence">Width Reference</string>
+    <string name="view_info_height_reference">Height Reference</string>
+    <string name="view_info_size">Size</string>
+    <string name="view_info_reference">Size Reference</string>
+
     <string name="world">Worlds</string>
     <string name="world_manage">Worlds / Datapacks</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
