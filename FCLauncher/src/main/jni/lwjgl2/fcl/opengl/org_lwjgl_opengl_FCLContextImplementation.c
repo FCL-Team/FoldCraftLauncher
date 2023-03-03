@@ -59,10 +59,10 @@ static void createContextEGL(JNIEnv *env, FCLPeerInfo *peer_info, FCLContext *co
 	EGLConfig *config = getFBConfigFromPeerInfo(env, peer_info);
 	if (config == NULL)
 		return;
-	if (!lwjgl_eglBindAPI(EGL_OPENGL_API)) {
-		throwException(env, "Could not bind OpenGL API");
-		return;
-	}
+//	if (!lwjgl_eglBindAPI(EGL_OPENGL_API)) {
+//		throwException(env, "Could not bind OpenGL API");
+//		return;
+//	}
 	EGLContext context;
 	const EGLint egl_context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
 	if (attribs) {

@@ -341,8 +341,15 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 
     eglChooseConfig(_glfw.egl.display, egl_attributes, &config, 1, &num_configs);
 //    eglGetConfigAttrib(_glfw.egl.display, config, EGL_NATIVE_VISUAL_ID, 0);
+    int client=0;
+    const char* render= getenv("LIBGL_NAME");
+    if (strcmp(render,"libgl4es.so")==0){
+        client=0;
+    } else if (strcmp(render,"libtinywrapper.so")==0){
+        client=1;
+    }
 
-    if (ctxconfig->client == GLFW_OPENGL_ES_API)
+    if (client==0)
     {
         if (!eglBindAPI(EGL_OPENGL_ES_API))
         {

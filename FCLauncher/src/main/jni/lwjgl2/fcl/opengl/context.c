@@ -109,32 +109,6 @@ static int convertToBPE(int bpp) {
 	return bpe;
 }
 
-static EGLConfig *chooseVisualEGLFromBPP(JNIEnv *env, EGLDisplay disp, jobject pixel_format, int bpp, int drawable_type) {
-	EGLint egl_attributes[] = {
-			EGL_BLUE_SIZE, 8,
-			EGL_GREEN_SIZE, 8,
-			EGL_RED_SIZE, 8,
-			EGL_ALPHA_SIZE, 8,
-			EGL_DEPTH_SIZE, 24,
-			EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
-			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-			EGL_NONE
-	};
-	EGLint num_configs = 0;
-	if (lwjgl_eglChooseConfig(disp, egl_attributes, NULL, 0, &num_configs)!=EGL_TRUE) {
-		throwException(env, "eglChooseConfig() failed");
-		return false;
-	}
-
-	if (num_configs == 0) {
-		throwException(env, "eglChooseConfig() found no matching config");
-		return false;
-	}
-	EGLConfig *configs = calloc(num_configs, sizeof(EGLConfig));
-	lwjgl_eglChooseConfig(disp, egl_attributes, configs, 1, &num_configs);
-	return configs;
-}
-
 EGLConfig *chooseVisualEGL(JNIEnv *env, EGLDisplay disp, jobject pixel_format, bool use_display_bpp, int drawable_type) {
 	EGLint egl_attributes[] = {
 			EGL_BLUE_SIZE, 8,
@@ -158,6 +132,7 @@ EGLConfig *chooseVisualEGL(JNIEnv *env, EGLDisplay disp, jobject pixel_format, b
 	}
 	EGLConfig *configs = calloc(num_configs, sizeof(EGLConfig));
 	lwjgl_eglChooseConfig(disp, egl_attributes, configs, 1, &num_configs);
+
 	return configs;
 }
 
@@ -208,22 +183,22 @@ bool initPeerInfo(JNIEnv *env, jobject peer_info_handle, EGLDisplay display, job
 		return false;
 	}
 
-	EGLConfig *configs = chooseVisualEGL(env, display, pixel_format, use_display_bpp, drawable_type);
-	if (configs == NULL) {
-		throwException(env, "Could not choose EGL config");
-		return false;
-	}
-	if (isDebugEnabled()) {
-		dumpVisualInfo(env, display, configs[0]);
-	}
-	EGLint config_id;
-	int result = lwjgl_eglGetConfigAttrib(display, configs[0], EGL_CONFIG_ID, &config_id);
-	free(configs);
-	if (result != EGL_TRUE) {
-		throwException(env, "Could not get EGL_CONFIG_ID from EGLConfig");
-		return false;
-	}
-	peer_info->config_id = config_id;
+//	EGLConfig *configs = chooseVisualEGL(env, display, pixel_format, use_display_bpp, drawable_type);
+//	if (configs == NULL) {
+//		throwException(env, "Could not choose EGL config");
+//		return false;
+//	}
+//	if (isDebugEnabled()) {
+//		dumpVisualInfo(env, display, configs[0]);
+//	}
+//	EGLint config_id;
+//	int result = lwjgl_eglGetConfigAttrib(display, configs[0], EGL_CONFIG_ID, &config_id);
+//	free(configs);
+//	if (result != EGL_TRUE) {
+//		throwException(env, "Could not get EGL_CONFIG_ID from EGLConfig");
+//		return false;
+//	}
+//	peer_info->config_id = config_id;
 	peer_info->display = display;
 	peer_info->drawable = EGL_NO_SURFACE;
 	return true;
