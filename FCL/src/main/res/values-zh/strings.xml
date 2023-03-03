@@ -198,6 +198,15 @@
     <string name="menu_controls_button_style">案件样式</string>
     <string name="menu_controls_direction_style">方向控制键样式</string>
 
+    <string name="menu_control_base">基本设置</string>
+    <string name="menu_control_button">按键</string>
+    <string name="menu_control_button_text">文本</string>
+    <string name="menu_control_direction">方向控制键</string>
+    <string name="menu_control_event">事件设置</string>
+    <string name="menu_control_select">选择</string>
+    <string name="menu_control_set">设置</string>
+    <string name="menu_control_style">样式设置</string>
+
     <string name="menu_settings">设置</string>
     <string name="menu_settings_debug">调试</string>
     <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>

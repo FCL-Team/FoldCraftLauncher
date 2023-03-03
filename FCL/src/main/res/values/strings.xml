@@ -217,6 +217,15 @@
     <string name="menu_controls_button_style">Button Styles</string>
     <string name="menu_controls_direction_style">Direction Controller Styles</string>
 
+    <string name="menu_control_base">Basic Setting</string>
+    <string name="menu_control_button">Button</string>
+    <string name="menu_control_button_text">Text</string>
+    <string name="menu_control_direction">Direction Controller</string>
+    <string name="menu_control_event">Event Setting</string>
+    <string name="menu_control_select">Select</string>
+    <string name="menu_control_set">Set</string>
+    <string name="menu_control_style">Style Setting</string>
+
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>
     <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
