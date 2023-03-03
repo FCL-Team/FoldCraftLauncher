@@ -397,15 +397,22 @@
     <string name="version_update">Update Modpack</string>
 
     <string name="view_info_visibility">Visibility Option</string>
+    <string name="view_info_visibility_always">Always Visible</string>
+    <string name="view_info_visibility_game">Visible in Game</string>
+    <string name="view_info_visibility_menu">Visible out of Game</string>
     <string name="view_info_x">X Position</string>
     <string name="view_info_y">Y Position</string>
     <string name="view_info_size_type">Size Measurement</string>
+    <string name="view_info_size_type_percentage">Percentage Size</string>
+    <string name="view_info_size_type_absolute">Absolute Size</string>
     <string name="view_info_width">Width</string>
     <string name="view_info_height">Height</string>
     <string name="view_info_width_reference">Width Reference</string>
     <string name="view_info_height_reference">Height Reference</string>
     <string name="view_info_size">Size</string>
     <string name="view_info_reference">Size Reference</string>
+    <string name="view_info_reference_width">Screen Width</string>
+    <string name="view_info_reference_height">Screen Height</string>
 
     <string name="world">Worlds</string>
     <string name="world_manage">Worlds / Datapacks</string>
