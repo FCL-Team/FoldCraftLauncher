@@ -1,6 +1,7 @@
 package com.tungsten.fcl.activity;
 
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -31,6 +32,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private MenuCallback menu;
     private static MenuType menuType;
     private static FCLBridge fclBridge;
+    private boolean isTranslated=false;
 
     public static void setFClBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -53,6 +55,19 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         textureView.setSurfaceTextureListener(this);
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            int screenHeight = getWindow().getDecorView().getHeight();
+            Rect rect = new Rect();
+            getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+            if (screenHeight * 2 / 3 > rect.bottom){
+                textureView.setTranslationY(rect.bottom-screenHeight);
+                isTranslated = true;
+            } else if (isTranslated){
+                isTranslated =  false;
+                textureView.setTranslationY(0);
+            }
+        });
     }
 
     @Override
