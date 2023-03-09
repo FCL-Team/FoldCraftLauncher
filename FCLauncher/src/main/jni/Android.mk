@@ -50,14 +50,13 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/fcl_init.c \
                            glfw/fcl_monitor.c \
                            glfw/fcl_window.c \
-                           glfw/null_joystick.c \
                            glfw/egl_context.c \
                            glfw/osmesa_context.c \
                            glfw/posix_thread.c \
                            glfw/posix_time.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
-LOCAL_CFLAGS            := -Wall -fuse-ld=gold -Werror=implicit-function-declaration
+LOCAL_CFLAGS            := -Wall
 LOCAL_LDLIBS            := -llog -ldl -landroid
 include $(BUILD_SHARED_LIBRARY)
 

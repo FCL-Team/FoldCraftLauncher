@@ -3,7 +3,6 @@
 //
 
 #include <internal.h>
-#include <mappings.h>
 
 #include <string.h>
 #include <stdlib.h>
@@ -224,19 +223,6 @@ GLFWAPI int glfwInit(void)
     _glfw.timer.offset = _glfwPlatformGetTimerValue();
 
     glfwDefaultWindowHints();
-
-    {
-        int i;
-
-        for (i = 0;  _glfwDefaultMappings[i];  i++)
-        {
-            if (!glfwUpdateGamepadMappings(_glfwDefaultMappings[i]))
-            {
-                terminate();
-                return GLFW_FALSE;
-            }
-        }
-    }
 
     return GLFW_TRUE;
 }
