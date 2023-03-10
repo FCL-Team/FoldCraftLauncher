@@ -481,9 +481,6 @@ struct _GLFWjoystick
     char            guid[33];
     _GLFWmapping*   mapping;
 
-    // This is defined in the joystick API's joystick.h
-    _GLFW_PLATFORM_JOYSTICK_STATE;
-
 };
 
 // Thread local storage structure
@@ -559,8 +556,6 @@ struct _GLFWlibrary
     _GLFW_PLATFORM_LIBRARY_WINDOW_STATE;
     // This is defined in the context API's context.h
     _GLFW_PLATFORM_LIBRARY_CONTEXT_STATE;
-    // This is defined in the platform's joystick.h
-    _GLFW_PLATFORM_LIBRARY_JOYSTICK_STATE;
     // This is defined in egl_context.h
     _GLFW_EGL_LIBRARY_CONTEXT_STATE;
     // This is defined in osmesa_context.h

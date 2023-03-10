@@ -28,7 +28,6 @@ typedef VkResult (APIENTRY *PFN_vkCreateAndroidSurfaceKHR)(VkInstance, const VkA
 #include "posix_time.h"
 #include "egl_context.h"
 #include "osmesa_context.h"
-#include "null_joystick.h"
 
 #define _glfw_dlopen(name) dlopen(name, RTLD_LAZY | RTLD_GLOBAL)
 #define _glfw_dlclose(handle) dlclose(handle)
