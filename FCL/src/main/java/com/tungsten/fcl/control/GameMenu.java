@@ -504,6 +504,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onLog(String log) {
         if (fclBridge != null) {
+            logWindow.appendLog(log);
             try {
                 if (firstLog) {
                     FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");
