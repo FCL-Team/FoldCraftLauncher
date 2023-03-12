@@ -112,10 +112,13 @@ public final class TexturesLoader {
                 }
             }
         }
-
-        Bitmap img = BitmapFactory.decodeStream(Files.newInputStream(file));
-        if (img == null)
+        Bitmap img;
+        try(InputStream in = Files.newInputStream(file)){
+            img = BitmapFactory.decodeStream(in);
+        }
+        if (img == null) {
             throw new IOException("Texture is malformed");
+        }
 
         Map<String, String> metadata = texture.getMetadata();
         if (metadata == null) {
@@ -144,9 +147,13 @@ public final class TexturesLoader {
                 }
             }
 
-            Bitmap img = BitmapFactory.decodeStream(Files.newInputStream(file));
-            if (img == null)
+            Bitmap img;
+            try(InputStream in = Files.newInputStream(file)){
+                img = BitmapFactory.decodeStream(in);
+            }
+            if (img == null) {
                 throw new IOException("Texture is malformed");
+            }
 
             return img;
         }

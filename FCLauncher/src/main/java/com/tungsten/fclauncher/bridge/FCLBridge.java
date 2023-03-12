@@ -3,50 +3,64 @@ package com.tungsten.fclauncher.bridge;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.tungsten.fclauncher.FCLPath;
-import com.tungsten.fclauncher.utils.LogFileUtil;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 
 public class FCLBridge implements Serializable {
 
-    public static final int KeyPress              = 2;
-    public static final int KeyRelease            = 3;
-    public static final int ButtonPress           = 4;
-    public static final int ButtonRelease         = 5;
-    public static final int MotionNotify          = 6;
-    public static final int ConfigureNotify       = 22;
-    public static final int FCLMessage            = 37;
+    public static final int HIT_RESULT_TYPE_UNKNOWN          = 0;
+    public static final int HIT_RESULT_TYPE_MISS             = 1;
+    public static final int HIT_RESULT_TYPE_BLOCK            = 2;
+    public static final int HIT_RESULT_TYPE_ENTITY           = 3;
 
-    public static final int Button1               = 1;
-    public static final int Button2               = 2;
-    public static final int Button3               = 3;
-    public static final int Button4               = 4;
-    public static final int Button5               = 5;
-    public static final int Button6               = 6;
-    public static final int Button7               = 7;
+    public static final int INJECTOR_MODE_ENABLE             = 1;
+    public static final int INJECTOR_MODE_DISABLE            = 0;
 
-    public static final int CursorEnabled         = 1;
-    public static final int CursorDisabled        = 0;
+    public static final int KeyPress                         = 2;
+    public static final int KeyRelease                       = 3;
+    public static final int ButtonPress                      = 4;
+    public static final int ButtonRelease                    = 5;
+    public static final int MotionNotify                     = 6;
+    public static final int ConfigureNotify                  = 22;
+    public static final int FCLMessage                       = 37;
 
-    public static final int ShiftMask             = 1 << 0;
-    public static final int LockMask              = 1 << 1;
-    public static final int ControlMask           = 1 << 2;
-    public static final int Mod1Mask              = 1 << 3;
-    public static final int Mod2Mask              = 1 << 4;
-    public static final int Mod3Mask              = 1 << 5;
-    public static final int Mod4Mask              = 1 << 6;
-    public static final int Mod5Mask              = 1 << 7;
+    public static final int Button1                          = 1;
+    public static final int Button2                          = 2;
+    public static final int Button3                          = 3;
+    public static final int Button4                          = 4;
+    public static final int Button5                          = 5;
+    public static final int Button6                          = 6;
+    public static final int Button7                          = 7;
 
-    public static final int CloseRequest          = 0;
+    public static final int CursorEnabled                    = 1;
+    public static final int CursorDisabled                   = 0;
 
-    public FCLBridgeCallback callback;
+    public static final int ShiftMask                        = 1 << 0;
+    public static final int LockMask                         = 1 << 1;
+    public static final int ControlMask                      = 1 << 2;
+    public static final int Mod1Mask                         = 1 << 3;
+    public static final int Mod2Mask                         = 1 << 4;
+    public static final int Mod3Mask                         = 1 << 5;
+    public static final int Mod4Mask                         = 1 << 6;
+    public static final int Mod5Mask                         = 1 << 7;
 
+    public static final int CloseRequest                     = 0;
+
+    private FCLBridgeCallback callback;
+
+    private double scaleFactor = 1f;
+    private String controller = "Default";
+    private String gameDir;
     private String logPath;
+    private Thread thread;
+    private Thread fclLogThread;
+    private boolean isLogPipeReady = false;
 
     static {
         System.loadLibrary("xhook");
@@ -54,15 +68,7 @@ public class FCLBridge implements Serializable {
         System.loadLibrary("glfw");
     }
 
-    private Thread thread;
-    private Thread fclLogThread;
-    private boolean isLogPipeReady=false;
-    private WeakReference<LogReceiver> logReceiver;
-
-    public static int cursorMode=CursorEnabled;
-
-    public FCLBridge(FCLBridgeCallback callback) {
-        this.callback = callback;
+    public FCLBridge() {
     }
 
     public native void setFCLNativeWindow(Surface surface);
@@ -74,8 +80,10 @@ public class FCLBridge implements Serializable {
     public native int setupExitTrap(FCLBridge bridge);
     public native void setEventPipe();
     public native void pushEvent(long time, int type, int keycode, int keyChar);
+    public native void refreshHitResultType();
     public native void setupJLI();
     public native int jliLaunch(String[] args);
+    public native void patchLinker();
 
     public native void setFCLBridge(FCLBridge fclBridge);
 
@@ -87,16 +95,18 @@ public class FCLBridge implements Serializable {
         return thread;
     }
 
+    public FCLBridgeCallback getCallback() {
+        return callback;
+    }
+
     public void execute(Surface surface, FCLBridgeCallback callback) {
         this.callback = callback;
 
-        LogFileUtil logFileUtil = LogFileUtil.getInstance();
-        logFileUtil.setLogFilePath(getLogPath());
-        fclLogThread = new Thread(()->redirectStdio(getLogPath()));
+        fclLogThread = new Thread(() -> redirectStdio(getLogPath()));
         fclLogThread.setName("FCLLogThread");
         fclLogThread.start();
         while (!isLogPipeReady) {
-            //wait for redirectStdio
+            // wait for redirectStdio
         }
         setFCLBridge(this);
         // set graphic output and event pipe
@@ -116,7 +126,7 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventPointer(int x, int y) {
-        pushEvent(System.nanoTime(), MotionNotify, (int) (x*0.33), (int) (y*0.3));
+        pushEvent(System.nanoTime(), MotionNotify, x, y);
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
@@ -131,16 +141,21 @@ public class FCLBridge implements Serializable {
         pushEvent(System.nanoTime(), FCLMessage, msg, 0);
     }
 
-    // Loader function
+    // FCLBridge callbacks
     public void onExit(int code) {
         if (callback != null) {
+            callback.onLog("OpenJDK exited with code : " + code);
             callback.onExit(code);
         }
     }
 
-    // FCLBridge callbacks
+    public void setHitResultType(int type) {
+        if (callback != null) {
+            callback.onHitResultTypeChange(type);
+        }
+    }
+
     public void setCursorMode(int mode) {
-        cursorMode=mode;
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }
@@ -161,6 +176,32 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
+    public void setScaleFactor(double scaleFactor) {
+        this.scaleFactor = scaleFactor;
+    }
+
+    public double getScaleFactor() {
+        return scaleFactor;
+    }
+
+    public void setController(String controller) {
+        this.controller = controller;
+    }
+
+    public String getController() {
+        return controller;
+    }
+
+    public void setGameDir(String gameDir) {
+        this.gameDir = gameDir;
+    }
+
+    @Nullable
+    public String getGameDir() {
+        return gameDir;
+    }
+
+    @NonNull
     public String getLogPath() {
         return logPath;
     }
@@ -169,20 +210,13 @@ public class FCLBridge implements Serializable {
         this.logPath = logPath;
     }
 
-    public void setLogPipeReady(){
-        this.isLogPipeReady=true;
+    public void setLogPipeReady() {
+        this.isLogPipeReady = true;
     }
 
-    public void receiveLog(String log){
-        if (logReceiver == null || logReceiver.get() == null) {
-            logReceiver = new WeakReference<>(new LogReceiver() {
-                @Override
-                public void pushLog(String log) {
-                    LogFileUtil.getInstance().writeLog(log);
-                }
-            });
-        } else {
-            logReceiver.get().pushLog(log);
+    public void receiveLog(String log) {
+        if (callback != null) {
+            callback.onLog(log);
         }
     }
 }

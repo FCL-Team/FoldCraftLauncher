@@ -11,8 +11,8 @@ import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -44,7 +44,6 @@ public class VersionList {
             progressBar.setVisibility(View.VISIBLE);
         });
         FCLGameRepository repository = profile.getRepository();
-        WeakListenerHolder listenerHolder = new WeakListenerHolder();
         new Thread(() -> {
             if (profile == Profiles.getSelectedProfile()) {
                 List<VersionListItem> children = repository.getDisplayVersions()
@@ -65,7 +64,6 @@ public class VersionList {
                             return new VersionListItem(profile, version.getId(), libraries.toString(), repository.getVersionIconImage(version.getId()));
                         })
                         .collect(Collectors.toList());
-                children.forEach(VersionListItem::checkSelection);
                 if (profile == Profiles.getSelectedProfile()) {
                     Schedulers.androidUIThread().execute(() -> {
                         VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
@@ -75,13 +73,7 @@ public class VersionList {
                         progressBar.setVisibility(View.GONE);
                     });
 
-                    profile.selectedVersionProperty().addListener(listenerHolder.weak((a, b, newValue) -> Schedulers.androidUIThread().execute(() -> {
-                        children.forEach(it -> it.selectedProperty().set(false));
-                        children.stream()
-                                .filter(it -> it.getVersion().equals(newValue))
-                                .findFirst()
-                                .ifPresent(it -> it.selectedProperty().set(true));
-                    })));
+                    children.forEach(it -> it.selectedProperty().bind(Bindings.createBooleanBinding(() -> profile.selectedVersionProperty().get().equals(it.getVersion()), profile.selectedVersionProperty())));
                 }
             }
         }).start();

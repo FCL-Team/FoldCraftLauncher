@@ -221,16 +221,8 @@ public interface GameRepository extends VersionProvider {
         List<String> classpath = new ArrayList<>();
         if (version.getMinimumLauncherVersion() >= 21) {
             classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-glfw.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-jemalloc.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-openal.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-opengl.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-stb.jar");
-            classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl-tinyfd.jar");
-        }
-        else {
+        } else {
             classpath.add(FCLPath.LWJGL2_DIR + "/lwjgl.jar");
-            classpath.add(FCLPath.LWJGL2_DIR + "/lwjgl_util.jar");
         }
         for (Library library : version.getLibraries())
             if (library.appliesToCurrentEnvironment() && !library.isNative()) {

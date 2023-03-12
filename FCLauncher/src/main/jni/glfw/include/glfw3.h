@@ -4129,6 +4129,23 @@ GLFWAPI int glfwGetInputMode(GLFWwindow* window, int mode);
  */
 GLFWAPI void glfwSetInputMode(GLFWwindow* window, int mode, int value);
 
+/**
+ * For FCL, set injector mode
+ * @param mode 0 is disable, 1 is enable, when enabled, lwjgl will try to get hit result type
+ */
+GLFWAPI void glfwSetInjectorMode(int mode);
+
+/**
+ * For FCL, get injector mode
+ */
+GLFWAPI int glfwGetInjectorMode();
+
+/**
+ * For FCL, set type of what player's cursor point to
+ * @param type Hit result type
+ */
+GLFWAPI void glfwSetHitResultType(int type);
+
 /*! @brief Returns whether raw mouse motion is supported.
  *
  *  This function returns whether raw mouse motion is supported on the current

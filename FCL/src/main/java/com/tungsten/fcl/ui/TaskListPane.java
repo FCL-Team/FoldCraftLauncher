@@ -308,13 +308,13 @@ public final class TaskListPane extends FCLAdapter {
             FCLTextView title = parent.findViewById(R.id.name);
             state = parent.findViewById(R.id.state);
 
-            bar.progressProperty().bind(task.progressProperty());
+            bar.percentProgressProperty().bind(task.progressProperty());
             title.setText(task.getName());
             state.stringProperty().bind(task.messageProperty());
         }
 
         public void unbind() {
-            bar.progressProperty().unbind();
+            bar.percentProgressProperty().unbind();
             state.stringProperty().unbind();
         }
 

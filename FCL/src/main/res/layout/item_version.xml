@@ -44,12 +44,14 @@
             app:layout_constraintVertical_bias="0.5">
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                app:auto_text_tint="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:id="@+id/title"/>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                app:auto_text_tint="true"
                 android:textSize="11sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

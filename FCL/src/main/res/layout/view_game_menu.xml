@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keepScreenOn="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/base_layout"
+        android:background="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.tungsten.fcl.control.view.TouchPad
+            android:id="@+id/touch_pad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.tungsten.fcl.control.view.LogWindow
+            android:background="@color/ui_bg_color"
+            android:visibility="gone"
+            android:id="@+id/log_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:clickable="false"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:id="@+id/cursor"
+            android:src="@drawable/img_cursor"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:id="@+id/launch_progress"/>
+
+        <com.tungsten.fcl.control.keyboard.TouchCharInput
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
+            android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
+            android:id="@+id/input_scanner"/>
+
+        <com.tungsten.fcl.control.view.GameItemBar
+            android:visibility="gone"
+            android:id="@+id/game_item_bar"
+            android:layout_width="270dp"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_width="270dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start">
+
+        <include
+            layout="@layout/menu_left"
+            android:layout_marginStart="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_width="270dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end">
+
+        <include
+            layout="@layout/menu_right"
+            android:layout_marginEnd="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

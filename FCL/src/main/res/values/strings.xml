@@ -20,6 +20,7 @@
     <string name="version">Version</string>
     <string name="manage">Manage</string>
     <string name="download">Download</string>
+    <string name="controller">Controller</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
     
@@ -96,9 +97,47 @@
 
     <string name="community">Community</string>
 
+    <string name="control_create">Create Controller</string>
+    <string name="control_delete">Are you sure to delete this controller?</string>
+    <string name="control_edit">Edit Controller</string>
+    <string name="control_import">Import Controller</string>
+    <string name="control_info_author">Author: </string>
+    <string name="control_info_description">Description: </string>
+    <string name="control_info_edit">Edit Controller Information</string>
+    <string name="control_info_more">More Info</string>
+    <string name="control_info_name">Name: </string>
+    <string name="control_info_name_exist">The controller already exist, please change the name!</string>
+    <string name="control_info_name_invalid">Invalid Name</string>
+    <string name="control_info_version">Version: </string>
+    <string name="control_list">Controller List</string>
+    <string name="control_select">Select Controller</string>
+
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
+
+    <string name="event_button_press">Press</string>
+    <string name="event_button_long_press">Long Press</string>
+    <string name="event_button_click">Click</string>
+    <string name="event_button_double_click">Double Click</string>
+    <string name="event_button_pointer_follow">Pointer Follow</string>
+    <string name="event_button_auto_keep">Keep Pressing</string>
+    <string name="event_button_auto_click">Keep Clicking</string>
+    <string name="event_button_open_menu">Open Menu</string>
+    <string name="event_button_movable">Movable</string>
+    <string name="event_button_switch_touch_mode">Switch Touch Mode</string>
+    <string name="event_button_input">Input</string>
+    <string name="event_button_quick_input">Open Quick Input Dialog</string>
+    <string name="event_button_output_text">Output Text</string>
+    <string name="event_button_output_keycodes">Output Keycodes</string>
+    <string name="event_button_bind_view_groups">Show/Hide View Groups</string>
+    <string name="event_rocker_up_keycode">Forward Keycode</string>
+    <string name="event_rocker_down_keycode">Back Keycode</string>
+    <string name="event_rocker_left_keycode">Left Keycode</string>
+    <string name="event_rocker_right_keycode">Right Keycode</string>
+    <string name="event_rocker_follow_option">Follow Option (Only Rocker Style)</string>
+    <string name="event_rocker_sneak">Double Click Center to Enable Sneak</string>
+    <string name="event_rocker_sneak_keycode">Sneak Keycode</string>
 
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
@@ -113,6 +152,8 @@
 
     <string name="help">Help</string>
 
+    <string name="input_hint_not_empty">Required</string>
+    <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Fill the required input box first.</string>
 
     <string name="install_change_version">Change Version</string>
@@ -162,12 +203,90 @@
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
 
+    <string name="menu_controls">Controller</string>
+    <string name="menu_controls_current">Current Controller</string>
+    <string name="menu_controls_edit_mode">Edit Mode</string>
+    <string name="menu_controls_show_boundary">Show View Boundaries</string>
+    <string name="menu_controls_groups">View Groups</string>
+    <string name="menu_controls_manage">Manage</string>
+    <string name="menu_controls_current_view_group">Current View Group</string>
+    <string name="menu_controls_add_button">Add Button</string>
+    <string name="menu_controls_add_direction">Add Direction Controller</string>
+    <string name="menu_controls_add_view_button">Add</string>
+    <string name="menu_controls_style">Styles</string>
+    <string name="menu_controls_button_style">Button Styles</string>
+    <string name="menu_controls_direction_style">Direction Controller Styles</string>
+
+    <string name="menu_control_base">Basic Setting</string>
+    <string name="menu_control_button">Button</string>
+    <string name="menu_control_button_text">Text</string>
+    <string name="menu_control_direction">Direction Controller</string>
+    <string name="menu_control_event">Event Setting</string>
+    <string name="menu_control_select">Select</string>
+    <string name="menu_control_set">Set</string>
+    <string name="menu_control_style">Style Setting</string>
+
+    <string name="menu_settings">Settings</string>
+    <string name="menu_settings_debug">Debug</string>
+    <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
+    <string name="menu_settings_disable_gesture">Disable Gesture</string>
+    <string name="menu_settings_force_exit">Force Exit</string>
+    <string name="menu_settings_force_exit_button">Exit</string>
+    <string name="menu_settings_force_exit_msg">Are you sure to force exit?</string>
+    <string name="menu_settings_function">Function</string>
+    <string name="menu_settings_gesture">Gesture</string>
+    <string name="menu_settings_gesture_mode">Gesture Mode</string>
+    <string name="menu_settings_gesture_mode_build">Build</string>
+    <string name="menu_settings_gesture_mode_fight">Fight</string>
+    <string name="menu_settings_gyro">Gyroscope</string>
+    <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
+    <string name="menu_settings_lock_view">Lock Menu View</string>
+    <string name="menu_settings_mouse">Mouse</string>
+    <string name="menu_settings_mouse_mode">Mouse Mode</string>
+    <string name="menu_settings_mouse_mode_click">Click</string>
+    <string name="menu_settings_mouse_mode_slide">Slide</string>
+    <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
+    <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_multiplayer">Multiplayer Menu</string>
+    <string name="menu_settings_multiplayer_button">Open</string>
+    <string name="menu_settings_quick_input">Quick Input</string>
+    <string name="menu_settings_quick_input_button">Manage</string>
+    <string name="menu_settings_show_log">Show Log</string>
+
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_failed">Operation Failed</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>
 
     <string name="mods">Mods</string>
+    <string name="mods_add">Add Mods</string>
+    <string name="mods_add_failed">Failed to install mod %s.</string>
+    <string name="mods_add_success">%s was installed successfully.</string>
+    <string name="mods_category">Category</string>
+    <string name="mods_check_updates">Check for Updates</string>
+    <string name="mods_check_updates_current_version">Current Version</string>
+    <string name="mods_check_updates_failed">Unable to download some of the files.</string>
+    <string name="mods_check_updates_file">File</string>
+    <string name="mods_check_updates_source">Source</string>
+    <string name="mods_check_updates_target_version">Target Version</string>
+    <string name="mods_check_updates_update">Update</string>
+    <string name="mods_choose_mod">Choose a mod</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependencies">Dependencies</string>
+    <string name="mods_disable">Disable</string>
+    <string name="mods_download">Mod Download</string>
+    <string name="mods_download_title">Mod Download - %1s</string>
+    <string name="mods_enable">Enable</string>
     <string name="mods_manage">Manage Mods</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">MCMOD Page</string>
+    <string name="mods_mcmod_search">Search in MCMOD</string>
+    <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_name">Name</string>
+    <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
+    <string name="mods_restore">Rollback</string>
+    <string name="mods_url">Official Page</string>
     
     <string name="modpack">Modpack</string>
     <string name="modpack_export">Export Modpack</string>
@@ -198,20 +317,20 @@
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
 
     <string name="settings_fcl_controller">Controller</string>
-    <string name="settings_fcl_controller_injector">BE Gesture (1.7.10 – 1.19.2)</string>
+    <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
+    <string name="settings_fcl_renderer_vgpu" translatable="false">Vgpu (OpenGL 2.1+)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
-    <string name="settings_game_fullscreen">Fullscreen</string>
     <string name="settings_game_java_version">Java Version</string>
     <string name="settings_game_java_version_auto">Auto</string>
     <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
     <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
-    <string name="settings_game_working_directory">Working Directory</string>
+    <string name="settings_game_working_directory">Isolate Working Directory</string>
 
     <string name="settings_icon">Icon</string>
 
@@ -229,6 +348,28 @@
     <string name="settings_tabs_installers">Modloaders</string>
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
+
+    <string name="style_button">Button Style</string>
+    <string name="style_button_normal">Normal</string>
+    <string name="style_button_pressed">Enabled</string>
+    <string name="style_button_text_size">Text Size</string>
+    <string name="style_button_text_color">Text Color</string>
+    <string name="style_button_stroke_width">Stroke Width</string>
+    <string name="style_button_stroke_color">Stroke Color</string>
+    <string name="style_button_corner_radius">Corner Radius</string>
+    <string name="style_button_fill_color">Fill Color</string>
+    <string name="style_button_interval">Button Interval</string>
+    <string name="style_direction">Direction Controller Style</string>
+    <string name="style_rocker">Rocker Style</string>
+    <string name="style_rocker_size">Rocker Size</string>
+    <string name="style_rocker_bg_stroke_width">Background Stroke Width</string>
+    <string name="style_rocker_bg_stroke_color">Background Stroke Color</string>
+    <string name="style_rocker_bg_corner_radius">Background Corner Radius</string>
+    <string name="style_rocker_bg_fill_color">Background Fill Color</string>
+    <string name="style_rocker_stroke_width">Rocker Stroke Width</string>
+    <string name="style_rocker_stroke_color">Rocker Stroke Color</string>
+    <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
+    <string name="style_rocker_fill_color">Rocker Fill Color</string>
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>
@@ -255,6 +396,24 @@
     <string name="version_manage_rename_fail">Rename failed</string>
     <string name="version_new_profile">New Directory</string>
     <string name="version_update">Update Modpack</string>
+
+    <string name="view_info_visibility">Visibility Option</string>
+    <string name="view_info_visibility_always">Always Visible</string>
+    <string name="view_info_visibility_game">Visible in Game</string>
+    <string name="view_info_visibility_menu">Visible out of Game</string>
+    <string name="view_info_x">X Position</string>
+    <string name="view_info_y">Y Position</string>
+    <string name="view_info_size_type">Size Measurement</string>
+    <string name="view_info_size_type_percentage">Percentage Size</string>
+    <string name="view_info_size_type_absolute">Absolute Size</string>
+    <string name="view_info_width">Width</string>
+    <string name="view_info_height">Height</string>
+    <string name="view_info_width_reference">Width Reference</string>
+    <string name="view_info_height_reference">Height Reference</string>
+    <string name="view_info_size">Size</string>
+    <string name="view_info_reference">Size Reference</string>
+    <string name="view_info_reference_width">Screen Width</string>
+    <string name="view_info_reference_height">Screen Height</string>
 
     <string name="world">Worlds</string>
     <string name="world_manage">Worlds / Datapacks</string>

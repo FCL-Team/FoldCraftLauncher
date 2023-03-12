@@ -12,6 +12,7 @@
     <string name="version">版本列表</string>
     <string name="manage">管理版本</string>
     <string name="download">下载资源</string>
+    <string name="controller">控制布局</string>
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
 
@@ -85,9 +86,47 @@
 
     <string name="community">社区</string>
 
+    <string name="control_create">创建新布局</string>
+    <string name="control_delete">你确定要删除该布局吗？</string>
+    <string name="control_edit">编辑布局方案</string>
+    <string name="control_import">导入布局</string>
+    <string name="control_info_author">作者：</string>
+    <string name="control_info_description">描述：</string>
+    <string name="control_info_edit">编辑布局信息</string>
+    <string name="control_info_more">更多信息</string>
+    <string name="control_info_name">名称：</string>
+    <string name="control_info_name_exist">该布局已存在，请换一个名字！</string>
+    <string name="control_info_name_invalid">无效的名称</string>
+    <string name="control_info_version">版本：</string>
+    <string name="control_list">布局列表</string>
+    <string name="control_select">选择布局</string>
+
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
+
+    <string name="event_button_press">按压</string>
+    <string name="event_button_long_press">长按</string>
+    <string name="event_button_click">点击</string>
+    <string name="event_button_double_click">双击</string>
+    <string name="event_button_pointer_follow">指针跟随</string>
+    <string name="event_button_auto_keep">自动保持</string>
+    <string name="event_button_auto_click">连续点击</string>
+    <string name="event_button_open_menu">打开菜单</string>
+    <string name="event_button_movable">可拖动</string>
+    <string name="event_button_switch_touch_mode">切换触控模式</string>
+    <string name="event_button_input">输入</string>
+    <string name="event_button_quick_input">打开快捷输入</string>
+    <string name="event_button_output_text">输出文本</string>
+    <string name="event_button_output_keycodes">输出键值</string>
+    <string name="event_button_bind_view_groups">显示/隐藏按键合集</string>
+    <string name="event_rocker_up_keycode">前进键值</string>
+    <string name="event_rocker_down_keycode">后退键值</string>
+    <string name="event_rocker_left_keycode">向左键值</string>
+    <string name="event_rocker_right_keycode">向右键值</string>
+    <string name="event_rocker_follow_option">跟随选项（仅摇杆）</string>
+    <string name="event_rocker_sneak">双击中心位置潜行</string>
+    <string name="event_rocker_sneak_keycode">潜行键值</string>
 
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
@@ -102,6 +141,8 @@
 
     <string name="help">帮助</string>
 
+    <string name="input_hint_not_empty">必填</string>
+    <string name="input_hint_optional">选填</string>
     <string name="input_not_empty">请先填写必要的输入框。</string>
 
     <string name="install_change_version">更改版本</string>
@@ -143,12 +184,90 @@
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
 
+    <string name="menu_controls">控制</string>
+    <string name="menu_controls_current">当前布局方案</string>
+    <string name="menu_controls_edit_mode">编辑模式</string>
+    <string name="menu_controls_show_boundary">显示控件边缘</string>
+    <string name="menu_controls_groups">控件组</string>
+    <string name="menu_controls_manage">管理</string>
+    <string name="menu_controls_current_view_group">当前控件组</string>
+    <string name="menu_controls_add_button">添加按键</string>
+    <string name="menu_controls_add_direction">添加方向控制键</string>
+    <string name="menu_controls_add_view_button">添加</string>
+    <string name="menu_controls_style">样式</string>
+    <string name="menu_controls_button_style">案件样式</string>
+    <string name="menu_controls_direction_style">方向控制键样式</string>
+
+    <string name="menu_control_base">基本设置</string>
+    <string name="menu_control_button">按键</string>
+    <string name="menu_control_button_text">文本</string>
+    <string name="menu_control_direction">方向控制键</string>
+    <string name="menu_control_event">事件设置</string>
+    <string name="menu_control_select">选择</string>
+    <string name="menu_control_set">设置</string>
+    <string name="menu_control_style">样式设置</string>
+
+    <string name="menu_settings">设置</string>
+    <string name="menu_settings_debug">调试</string>
+    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
+    <string name="menu_settings_disable_gesture">禁用手势</string>
+    <string name="menu_settings_force_exit">强制退出</string>
+    <string name="menu_settings_force_exit_button">退出</string>
+    <string name="menu_settings_force_exit_msg">你确定要强制退出吗？</string>
+    <string name="menu_settings_function">功能</string>
+    <string name="menu_settings_gesture">手势</string>
+    <string name="menu_settings_gesture_mode">触控模式</string>
+    <string name="menu_settings_gesture_mode_build">建筑模式</string>
+    <string name="menu_settings_gesture_mode_fight">战斗模式</string>
+    <string name="menu_settings_gyro">陀螺仪</string>
+    <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
+    <string name="menu_settings_lock_view">锁定菜单键</string>
+    <string name="menu_settings_mouse">鼠标</string>
+    <string name="menu_settings_mouse_mode">鼠标控制模式</string>
+    <string name="menu_settings_mouse_mode_click">点击</string>
+    <string name="menu_settings_mouse_mode_slide">拖动</string>
+    <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
+    <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_multiplayer">联机菜单</string>
+    <string name="menu_settings_multiplayer_button">打开</string>
+    <string name="menu_settings_quick_input">快捷输入</string>
+    <string name="menu_settings_quick_input_button">管理</string>
+    <string name="menu_settings_show_log">显示日志</string>
+
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_failed">操作失败</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
 
     <string name="mods">模组</string>
-    <string name="mods_manage">模组管理</string>
+    <string name="mods_add">添加模组</string>
+    <string name="mods_add_failed">无法安装模组 %s。</string>
+    <string name="mods_add_success">%s 成功安装。</string>
+    <string name="mods_category">类别</string>
+    <string name="mods_check_updates">检查更新</string>
+    <string name="mods_check_updates_current_version">当前版本</string>
+    <string name="mods_check_updates_failed">无法下载部分文件。</string>
+    <string name="mods_check_updates_file">文件</string>
+    <string name="mods_check_updates_source">下载源</string>
+    <string name="mods_check_updates_target_version">目标版本</string>
+    <string name="mods_check_updates_update">更新</string>
+    <string name="mods_choose_mod">选择模组</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependencies">依赖</string>
+    <string name="mods_disable">禁用</string>
+    <string name="mods_download">模组下载</string>
+    <string name="mods_download_title">模组下载 - %1s</string>
+    <string name="mods_enable">启动</string>
+    <string name="mods_manage">管理模组</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">MCMOD 页面</string>
+    <string name="mods_mcmod_search">在 MCMOD 搜索</string>
+    <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_name">名称</string>
+    <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
+    <string name="mods_restore">回滚</string>
+    <string name="mods_url">官方页面</string>
 
     <string name="modpack">整合包</string>
     <string name="modpack_export">导出整合包</string>
@@ -172,20 +291,19 @@
     <string name="settings_advanced_minecraft_arguments">游戏参数</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
     <string name="settings_advanced_process_priority">进程优先级</string>
-    <string name="settings_advanced_process_priority_low">低</string>
-    <string name="settings_advanced_process_priority_normal">中</string>
-    <string name="settings_advanced_process_priority_high">高</string>
+    <string name="settings_advanced_process_priority_low">低（节省游戏占用资源）</string>
+    <string name="settings_advanced_process_priority_normal">中（平衡）</string>
+    <string name="settings_advanced_process_priority_high">高（优先保障游戏进程）</string>
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
 
     <string name="settings_fcl_controller">控制</string>
-    <string name="settings_fcl_controller_injector">基岩版触控手势 (1.7.10 – 1.19.2)</string>
+    <string name="settings_fcl_controller_injector">基岩版触控手势</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
 
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
-    <string name="settings_game_fullscreen">全屏</string>
     <string name="settings_game_java_version">Java 版本</string>
     <string name="settings_game_java_version_auto">自动选择</string>
     <string name="settings_game_working_directory">版本隔离</string>
@@ -206,6 +324,28 @@
     <string name="settings_tabs_installers">自动安装</string>
     <string name="settings_type_global_manage">全局游戏设置</string>
     <string name="settings_type_special_enable">启用游戏特定设置</string>
+
+    <string name="style_button">按键样式</string>
+    <string name="style_button_normal">常规状态</string>
+    <string name="style_button_pressed">触发状态</string>
+    <string name="style_button_text_size">文本大小</string>
+    <string name="style_button_text_color">文本颜色</string>
+    <string name="style_button_stroke_width">边框宽度</string>
+    <string name="style_button_stroke_color">边框颜色</string>
+    <string name="style_button_corner_radius">圆角半径</string>
+    <string name="style_button_fill_color">填充颜色</string>
+    <string name="style_button_interval">按键间隔</string>
+    <string name="style_direction">方向控制键样式</string>
+    <string name="style_rocker">摇杆样式</string>
+    <string name="style_rocker_size">摇杆大小</string>
+    <string name="style_rocker_bg_stroke_width">背景边框宽度</string>
+    <string name="style_rocker_bg_stroke_color">背景边框颜色</string>
+    <string name="style_rocker_bg_corner_radius">背景圆角半径</string>
+    <string name="style_rocker_bg_fill_color">背景填充颜色</string>
+    <string name="style_rocker_stroke_width">摇杆边框宽度</string>
+    <string name="style_rocker_stroke_color">摇杆边框颜色</string>
+    <string name="style_rocker_corner_radius">摇杆圆角半径</string>
+    <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
@@ -232,6 +372,24 @@
     <string name="version_manage_rename_fail">重命名失败</string>
     <string name="version_new_profile">新建目录</string>
     <string name="version_update">更新整合包</string>
+
+    <string name="view_info_visibility">可视性</string>
+    <string name="view_info_visibility_always">总是可见</string>
+    <string name="view_info_visibility_game">游戏内可见</string>
+    <string name="view_info_visibility_menu">游戏外可见</string>
+    <string name="view_info_x">X 坐标</string>
+    <string name="view_info_y">Y 坐标</string>
+    <string name="view_info_size_type">尺寸类型</string>
+    <string name="view_info_size_type_percentage">百分比尺寸</string>
+    <string name="view_info_size_type_absolute">绝对尺寸</string>
+    <string name="view_info_width">宽度</string>
+    <string name="view_info_height">高度</string>
+    <string name="view_info_width_reference">宽度参考对象</string>
+    <string name="view_info_height_reference">高度参考对象</string>
+    <string name="view_info_size">尺寸</string>
+    <string name="view_info_reference">尺寸参考对象</string>
+    <string name="view_info_reference_width">屏幕宽</string>
+    <string name="view_info_reference_height">屏幕高</string>
 
     <string name="world">世界</string>
     <string name="world_manage">世界 / 数据包</string>

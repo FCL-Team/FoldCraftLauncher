@@ -1,13 +1,22 @@
 package com.tungsten.fcl.util;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
+import static android.content.Context.MODE_PRIVATE;
+import static android.os.Build.VERSION.SDK_INT;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.widget.Toast;
 
@@ -62,6 +71,38 @@ public class AndroidUtils {
     public static boolean hasStringId(Context context, String key) {
         int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
         return resId != 0 && context.getString(resId) != null;
+    }
+
+
+    public static int getScreenHeight(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        return point.y;
+    }
+
+    public static int getScreenWidth(Activity context) {
+        SharedPreferences sharedPreferences;
+        sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
+        boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Point point = new Point();
+        wm.getDefaultDisplay().getRealSize(point);
+        if (fullscreen || SDK_INT < Build.VERSION_CODES.P){
+            return point.x;
+        } else {
+            try {
+                Rect notchRect;
+                if(SDK_INT >= Build.VERSION_CODES.S){
+                    notchRect = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                } else {
+                    notchRect = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                }
+                return point.x-Math.min(notchRect.width(), notchRect.height());
+            } catch (Exception e){
+                return point.x;
+            }
+        }
     }
 
 }

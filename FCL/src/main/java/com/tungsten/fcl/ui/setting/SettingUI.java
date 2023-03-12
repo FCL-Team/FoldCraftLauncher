@@ -6,6 +6,8 @@ import android.content.Context;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.manage.VersionSettingPage;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
@@ -34,6 +36,12 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
 
         tabLayout.addOnTabSelectedListener(this);
         container.post(this::initPages);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((VersionSettingPage) pageManager.getPageById(SettingPageManager.PAGE_ID_SETTING_GAME)).loadVersion(Profiles.getSelectedProfile(), null);
     }
 
     @Override
@@ -99,6 +107,7 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
                     break;
                 default:
                     pageManager.switchPage(SettingPageManager.PAGE_ID_SETTING_GAME);
+                    ((VersionSettingPage) pageManager.getPageById(SettingPageManager.PAGE_ID_SETTING_GAME)).loadVersion(Profiles.getSelectedProfile(), null);
                     break;
             }
         }

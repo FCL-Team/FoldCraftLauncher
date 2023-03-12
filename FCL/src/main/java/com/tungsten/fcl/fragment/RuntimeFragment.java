@@ -16,11 +16,15 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
+import com.tungsten.fcllibrary.component.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 public class RuntimeFragment extends FCLFragment implements View.OnClickListener {
 
@@ -247,6 +251,11 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             new Thread(() -> {
                 try {
                     RuntimeUtils.installJava(getContext(), FCLPath.JAVA_17_PATH, "app_runtime/java/jre17");
+                    if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
+                        FileUtils.writeText(new File(FCLPath.JAVA_17_PATH + "/resolv.conf"), "nameserver 1.1.1.1\n" + "nameserver 1.0.0.1");
+                    } else {
+                        FileUtils.writeText(new File(FCLPath.JAVA_17_PATH + "/resolv.conf"), "nameserver 8.8.8.8\n" + "nameserver 8.8.4.4");
+                    }
                     java17 = true;
                 } catch (IOException e) {
                     e.printStackTrace();

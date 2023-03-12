@@ -604,6 +604,18 @@ void _glfwPlatformSetCursorPos(_GLFWwindow* window, double x, double y)
     // fclSetCursorPos(x, y);
 }
 
+void _glfwPlatformSetInjectorMode(int mode) {
+    fclSetInjectorMode(mode);
+}
+
+int _glfwPlatformGetInjectorMode() {
+    return fclGetInjectorMode();
+}
+
+void _glfwPlatformSetHitResultType(int type) {
+    fclSetHitResultType(type);
+}
+
 void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
 {
     if (mode == GLFW_CURSOR_DISABLED)
@@ -622,7 +634,7 @@ const char* _glfwPlatformGetScancodeName(int scancode)
     if (scancode < 0 || scancode > 0xff ||
         _glfw.fcl.keycodes[scancode] == GLFW_KEY_UNKNOWN)
     {
-        _glfwInputError(GLFW_INVALID_VALUE, "Invalid scancode");
+//        _glfwInputError(GLFW_INVALID_VALUE, "Invalid scancode:%d",scancode);
         return NULL;
     }
 

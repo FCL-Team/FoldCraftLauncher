@@ -28,6 +28,7 @@ public final class Settings {
         DownloadProviders.init();
         Accounts.init();
         Profiles.init();
+        Controllers.init();
         AuthlibInjectorServers.init();
 
         CacheRepository.setInstance(FCLCacheRepository.REPOSITORY);

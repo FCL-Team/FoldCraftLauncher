@@ -57,6 +57,7 @@
                     android:id="@+id/tag"
                     android:layout_gravity="center"
                     android:singleLine="true"
+                    app:auto_text_background_tint="true"
                     app:auto_text_tint="true"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

@@ -6,13 +6,14 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
-import com.tungsten.fcl.control.ControllerType;
+import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
@@ -131,7 +132,13 @@ public final class LauncherHelper {
                     return Task.supplyAsync(launcher::launch);
                 }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                     Intent intent = new Intent(context, JVMActivity.class);
-                    JVMActivity.setFClBridge(fclBridge, ControllerType.GAME);
+                    fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
+                    fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
+                    fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
+                    JVMActivity.setFClBridge(fclBridge, MenuType.GAME);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
+                    intent.putExtras(bundle);
                     LOG.log(Level.INFO, "Start JVMActivity!");
                     context.startActivity(intent);
                 })).withStage("launch.state.waiting_launching"))

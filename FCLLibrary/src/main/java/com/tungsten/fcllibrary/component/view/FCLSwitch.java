@@ -18,6 +18,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLSwitch extends SwitchCompat {
 
+    private boolean fromUserOrSystem = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty checkProperty;
     private BooleanProperty disableProperty;
@@ -57,6 +58,13 @@ public class FCLSwitch extends SwitchCompat {
             return "theme";
         }
     };
+
+    public void addCheckedChangeListener() {
+        setOnCheckedChangeListener((compoundButton, b) -> {
+            fromUserOrSystem = true;
+            checkProperty().set(b);
+        });
+    }
 
     public FCLSwitch(@NonNull Context context) {
         super(context);
@@ -119,8 +127,11 @@ public class FCLSwitch extends SwitchCompat {
 
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean isCheck = get();
-                        setChecked(isCheck);
+                        if (!fromUserOrSystem) {
+                            boolean isCheck = get();
+                            setChecked(isCheck);
+                        }
+                        fromUserOrSystem = false;
                     });
                 }
 
