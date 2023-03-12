@@ -490,6 +490,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         this.cursorMode = mode;
         activity.runOnUiThread(() -> {
             if (mode == FCLBridge.CursorEnabled) {
+                getInput().setPointer(getCursorX(),getCursorY());
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
             } else {
