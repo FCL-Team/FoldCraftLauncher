@@ -81,7 +81,7 @@ public class AndroidUtils {
         return point.y;
     }
 
-    public static int getScreenWidth(Context context) {
+    public static int getScreenWidth(Activity context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
@@ -91,13 +91,17 @@ public class AndroidUtils {
         if (fullscreen || SDK_INT < Build.VERSION_CODES.P){
             return point.x;
         } else {
-            Rect notchRect;
-            if(SDK_INT >= Build.VERSION_CODES.S){
-                notchRect = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout().getBoundingRects().get(0);
-            } else {
-                notchRect = ((Activity)context).getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+            try {
+                Rect notchRect;
+                if(SDK_INT >= Build.VERSION_CODES.S){
+                    notchRect = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                } else {
+                    notchRect = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                }
+                return point.x-Math.min(notchRect.width(), notchRect.height());
+            } catch (Exception e){
+                return point.x;
             }
-            return point.x-Math.min(notchRect.width(), notchRect.height());
         }
     }
 

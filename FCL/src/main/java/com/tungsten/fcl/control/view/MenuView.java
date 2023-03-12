@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.util.AndroidUtils;
@@ -25,27 +26,27 @@ public class MenuView extends View {
     private final int screenWidth;
     private final int screenHeight;
 
-    private final int DEFAULT_WIDTH = ConvertUtils.dip2px(getContext(), 40);
-    private final int DEFAULT_HEIGHT = ConvertUtils.dip2px(getContext(), 40);
+    private final int DEFAULT_WIDTH = ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 40);
+    private final int DEFAULT_HEIGHT = ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 40);
 
     private GameMenu gameMenu;
 
     public MenuView(Context context) {
         super(context);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     public MenuView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     public MenuView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     public void setup(GameMenu gameMenu) {
@@ -55,7 +56,7 @@ public class MenuView extends View {
         strokePaint.setAntiAlias(true);
         strokePaint.setColor(Color.DKGRAY);
         strokePaint.setStyle(Paint.Style.STROKE);
-        strokePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 2));
+        strokePaint.setStrokeWidth(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 2));
 
         areaPaint = new Paint();
         areaPaint.setAntiAlias(true);
@@ -63,13 +64,13 @@ public class MenuView extends View {
         iconPaint = new Paint();
         iconPaint.setAntiAlias(true);
 
-        icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.img_app);
+        icon = BitmapFactory.decodeResource(FCLApplication.getCurrentActivity().getResources(), R.drawable.img_app);
 
         srcRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
-        destRect = new Rect(ConvertUtils.dip2px(getContext(), 6),
-                ConvertUtils.dip2px(getContext(), 6),
-                ConvertUtils.dip2px(getContext(), 34),
-                ConvertUtils.dip2px(getContext(), 34));
+        destRect = new Rect(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
+                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
+                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34),
+                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34));
     }
 
     @Override
@@ -93,12 +94,12 @@ public class MenuView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (pressed) {
-            areaPaint.setColor(getContext().getColor(R.color.ui_bg_color));
+            areaPaint.setColor(FCLApplication.getCurrentActivity().getColor(R.color.ui_bg_color));
         } else {
             areaPaint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(getContext(), 1), strokePaint);
-        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(getContext(), 2), areaPaint);
+        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 1), strokePaint);
+        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 2), areaPaint);
         canvas.drawBitmap(icon, srcRect, destRect, iconPaint);
     }
 

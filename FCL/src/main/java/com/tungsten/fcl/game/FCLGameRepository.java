@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -331,8 +332,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMinMemory())
                 .setMetaspace(Lang.toIntOrNull(vs.getPermSize()))
-                .setWidth((int) (AndroidUtils.getScreenWidth(FCLPath.CONTEXT) * vs.getScaleFactor()))
-                .setHeight((int) (AndroidUtils.getScreenHeight(FCLPath.CONTEXT) * vs.getScaleFactor()))
+                .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
+                .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
                 .setServerIp(vs.getServerIp())
                 .setProcessPriority(vs.getProcessPriority())
                 .setJavaAgents(javaAgents)
