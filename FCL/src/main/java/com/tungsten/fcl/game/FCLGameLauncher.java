@@ -47,7 +47,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
         File splashFile = new File(configFolder, "splash.properties");
         try {
-            FileUtils.writeText(splashFile, "enabled=false");
+            FileUtils.writeText(splashFile, "enabled=true");
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
         }

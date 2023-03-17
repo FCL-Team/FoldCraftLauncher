@@ -42,7 +42,8 @@
 #include "extgl_egl.h"
 #include "context.h"
 #include "common_tools.h"
-
+#include <android/log.h>
+#include <unistd.h>
 typedef struct {
 	EGLContext context;
 } FCLContext;
@@ -65,20 +66,20 @@ static void createContextEGL(JNIEnv *env, FCLPeerInfo *peer_info, FCLContext *co
 //	}
 	EGLContext context;
 	const EGLint egl_context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-    context = lwjgl_eglCreateContext(peer_info->display, *config, shared_context, egl_context_attributes);
+	context = lwjgl_eglCreateContext(peer_info->display, *config, shared_context, egl_context_attributes);
 	if (!checkContext(env, peer_info->display, context))
 		return;
 	context_info->context = context;
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_getEGLContext(JNIEnv *env, jclass clazz, jobject context_handle) {
-   FCLContext *context_info = (*env)->GetDirectBufferAddress(env, context_handle);
-    return (intptr_t)context_info->context;
+	FCLContext *context_info = (*env)->GetDirectBufferAddress(env, context_handle);
+	return (intptr_t)context_info->context;
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_getDisplay(JNIEnv *env, jclass clazz, jobject peer_info_handle) {
-    FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_info_handle);
-    return (intptr_t)peer_info->display;
+	FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_info_handle);
+	return (intptr_t)peer_info->display;
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nSetSwapInterval(JNIEnv *env, jclass clazz, jobject peer_info_handle, jobject context_handle, jint value) {
@@ -89,7 +90,8 @@ JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nSetSwapIn
 }
 
 JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nCreate
-  (JNIEnv *env , jclass clazz, jobject peer_handle, jobject attribs, jobject shared_context_handle) {
+		(JNIEnv *env , jclass clazz, jobject peer_handle, jobject attribs, jobject shared_context_handle) {
+	__android_log_print(ANDROID_LOG_ERROR, "FCL-Create", "%p,%p,%p,tid=%d",peer_handle, attribs,shared_context_handle,gettid());
 	jobject context_handle = newJavaManagedByteBuffer(env, sizeof(FCLContext));
 	if (context_handle == NULL) {
 		throwException(env, "Could not allocate handle buffer");
@@ -111,39 +113,49 @@ JNIEXPORT jobject JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nCreate
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nDestroy
-  (JNIEnv *env, jclass clazz, jobject peer_handle, jobject context_handle) {
+		(JNIEnv *env, jclass clazz, jobject peer_handle, jobject context_handle) {
 	FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_handle);
 	FCLContext *context_info = (*env)->GetDirectBufferAddress(env, context_handle);
 	lwjgl_eglDestroyContext(peer_info->display, context_info->context);
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nReleaseCurrentContext
-  (JNIEnv *env , jclass clazz, jobject peer_info_handle) {
+		(JNIEnv *env , jclass clazz, jobject peer_info_handle) {
 	FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_info_handle);
 	bool result;
+	__android_log_print(ANDROID_LOG_ERROR, "FCL-Release", "%p,tid=%d",peer_info_handle,gettid());
 	result = lwjgl_eglMakeCurrent(peer_info->display, EGL_NO_SURFACE, EGL_NO_SURFACE, NULL);
 	if (!result)
 		throwException(env, "Could not release current context");
 }
-
+static int a=0;
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nMakeCurrent
-  (JNIEnv *env, jclass clazz, jobject peer_info_handle, jobject context_handle) {
+		(JNIEnv *env, jclass clazz, jobject peer_info_handle, jobject context_handle) {
+	a++;
 	FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_info_handle);
 	FCLContext *context_info = (*env)->GetDirectBufferAddress(env, context_handle);
 	bool result;
+	__android_log_print(ANDROID_LOG_ERROR, "FCL-MakeCurrent", "%p,%p,a=%d,tid=%d",peer_info_handle, context_handle,a,gettid());
 	result = lwjgl_eglMakeCurrent(peer_info->display, peer_info->drawable, peer_info->drawable, context_info->context);
 	if (!result)
 		throwException(env, "Could not make context current");
+	if (a==2||a==5){
+		//EGL_BAD_ACCESS
+		result = lwjgl_eglMakeCurrent(peer_info->display, EGL_NO_SURFACE, EGL_NO_SURFACE, NULL);
+		__android_log_print(ANDROID_LOG_ERROR, "FCL-Release", "%p,tid=%d",peer_info_handle,gettid());
+		if (!result)
+			throwException(env, "Could not release current context");
+	}
 }
 
 JNIEXPORT jboolean JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nIsCurrent
-  (JNIEnv *env, jclass clazz, jobject context_handle) {
+		(JNIEnv *env, jclass clazz, jobject context_handle) {
 	FCLContext *context_info = (*env)->GetDirectBufferAddress(env, context_handle);
 	return context_info->context == lwjgl_eglGetCurrentContext();
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_opengl_FCLContextImplementation_nSwapBuffers
-  (JNIEnv *env, jclass clazz, jobject peer_info_handle) {
+		(JNIEnv *env, jclass clazz, jobject peer_info_handle) {
 	FCLPeerInfo *peer_info = (*env)->GetDirectBufferAddress(env, peer_info_handle);
 	lwjgl_eglSwapBuffers(peer_info->display, peer_info->drawable);
 }

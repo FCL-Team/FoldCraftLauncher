@@ -303,7 +303,7 @@ LOCAL_C_INCLUDES        := $(LOCAL_PATH)/lwjgl2/common \
 						   $(LOCAL_PATH)/fcl/include
 
 LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DPLATFORM_FCL
-LOCAL_LDLIBS            := -lm -landroid
+LOCAL_LDLIBS            := -lm -landroid -llog
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
