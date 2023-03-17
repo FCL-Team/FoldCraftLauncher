@@ -242,11 +242,6 @@ public class FCLauncher {
             try {
                 logStartInfo(bridge, "Minecraft");
 
-                // patch linker if using 64 bit device
-                if (Architecture.is64BitsDevice()) {
-//                    bridge.patchLinker();
-                }
-
                 // env
                 setEnv(config, bridge, true);
 
