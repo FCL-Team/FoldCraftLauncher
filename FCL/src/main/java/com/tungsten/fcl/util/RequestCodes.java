@@ -15,4 +15,6 @@ public class RequestCodes {
     public static final int SELECT_MANUAL_INSTALLER_CODE = 250;
 
     public static final int SELECT_VERSION_ICON_CODE = 300;
+
+    public static final int SELECT_MODS_CODE = 350;
 }

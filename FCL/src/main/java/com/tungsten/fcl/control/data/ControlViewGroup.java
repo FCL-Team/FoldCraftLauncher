@@ -149,7 +149,7 @@ public class ControlViewGroup implements Cloneable, Observable {
             obj.addProperty("id", src.getId());
             obj.addProperty("name", src.getName());
             obj.addProperty("visibility", src.getVisibility().toString());
-            obj.addProperty("viewData", gson.toJson(src.getViewData()));
+            obj.add("viewData", gson.toJsonTree(src.getViewData()).getAsJsonObject());
 
             return obj;
         }
@@ -165,7 +165,7 @@ public class ControlViewGroup implements Cloneable, Observable {
 
             viewGroup.setName(Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse(""));
             viewGroup.setVisibility(Optional.ofNullable(obj.get("visibility")).map(JsonElement::getAsString).orElse(Visibility.VISIBLE.toString()).equals(Visibility.INVISIBLE.toString()) ? Visibility.INVISIBLE : Visibility.VISIBLE);
-            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsString).orElse(gson.toJson(new ViewData())), ViewData.class));
+            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), new TypeToken<ViewData>(){}.getType()));
 
             return viewGroup;
         }

@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -159,9 +160,9 @@ public class ControlButtonData implements Cloneable, Observable {
 
             obj.addProperty("id", src.getId());
             obj.addProperty("text", src.getText());
-            obj.addProperty("style", gson.toJson(src.getStyle()));
-            obj.addProperty("baseInfo", gson.toJson(src.getBaseInfo()));
-            obj.addProperty("event", gson.toJson(src.getEvent()));
+            obj.add("style", gson.toJsonTree(src.getStyle()).getAsJsonObject());
+            obj.add("baseInfo", gson.toJsonTree(src.getBaseInfo()).getAsJsonObject());
+            obj.add("event", gson.toJsonTree(src.getEvent()).getAsJsonObject());
 
             return obj;
         }
@@ -176,9 +177,9 @@ public class ControlButtonData implements Cloneable, Observable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             data.setText(Optional.ofNullable(obj.get("text")).map(JsonElement::getAsString).orElse(""));
-            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsString).orElse(gson.toJson(ControlButtonStyle.DEFAULT_BUTTON_STYLE)), ControlButtonStyle.class));
-            data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsString).orElse(gson.toJson(new BaseInfoData())), BaseInfoData.class));
-            data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsString).orElse(gson.toJson(new ButtonEventData())), ButtonEventData.class));
+            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlButtonStyle.DEFAULT_BUTTON_STYLE).getAsJsonObject()), new TypeToken<ControlButtonStyle>(){}.getType()));
+            data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new BaseInfoData()).getAsJsonObject()), new TypeToken<BaseInfoData>(){}.getType()));
+            data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonEventData()).getAsJsonObject()), new TypeToken<ButtonEventData>(){}.getType()));
 
             return data;
         }

@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -137,9 +138,9 @@ public class ControlDirectionData implements Cloneable, Observable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             obj.addProperty("id", src.getId());
-            obj.addProperty("style", gson.toJson(src.getStyle()));
-            obj.addProperty("baseInfo", gson.toJson(src.getBaseInfo()));
-            obj.addProperty("event", gson.toJson(src.getEvent()));
+            obj.add("style", gson.toJsonTree(src.getStyle()).getAsJsonObject());
+            obj.add("baseInfo", gson.toJsonTree(src.getBaseInfo()).getAsJsonObject());
+            obj.add("event", gson.toJsonTree(src.getEvent()).getAsJsonObject());
 
             return obj;
         }
@@ -153,9 +154,9 @@ public class ControlDirectionData implements Cloneable, Observable {
             ControlDirectionData data = new ControlDirectionData(Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsString).orElse(gson.toJson(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE)), ControlDirectionStyle.class));
-            data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsString).orElse(gson.toJson(new BaseInfoData())), BaseInfoData.class));
-            data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsString).orElse(gson.toJson(new DirectionEventData())), DirectionEventData.class));
+            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>(){}.getType()));
+            data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new BaseInfoData()).getAsJsonObject()), new TypeToken<BaseInfoData>(){}.getType()));
+            data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new DirectionEventData()).getAsJsonObject()), new TypeToken<DirectionEventData>(){}.getType()));
 
             return data;
         }

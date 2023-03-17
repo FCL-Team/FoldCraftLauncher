@@ -69,7 +69,7 @@ public class Gyroscope implements SensorEventListener {
     public void disableSensor() {
         sensorManager.unregisterListener(this);
         if (gameMenu.getCursorMode() == FCLBridge.CursorDisabled) {
-            gameMenu.getInput().setPointer(gameMenu.getPointerX(), gameMenu.getPointerY());
+            gameMenu.getInput().setPointer(gameMenu.getPointerX(), gameMenu.getPointerY(), "Gyro");
         }
     }
 
