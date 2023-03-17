@@ -132,7 +132,7 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
         envMap.put("LIBGL_NAME", renderer.getGlLibName());
         envMap.put("LIBEGL_NAME", renderer.getEglLibName());
-        if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
+        if (renderer == FCLConfig.Renderer.RENDERER_GL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU) {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
@@ -241,11 +241,6 @@ public class FCLauncher {
         Thread gameThread = new Thread(() -> {
             try {
                 logStartInfo(bridge, "Minecraft");
-
-                // patch linker if using 64 bit device
-                if (Architecture.is64BitsDevice()) {
-                    bridge.patchLinker();
-                }
 
                 // env
                 setEnv(config, bridge, true);

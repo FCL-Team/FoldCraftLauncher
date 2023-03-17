@@ -6,6 +6,7 @@
 #include "common_tools.h"
 #include "FCLLWJGL.h"
 #include <dlfcn.h>
+#include "byopen/byopen.h"
 
 EXTERN_C_ENTER
 
@@ -15,9 +16,9 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlopen(JNIE
     char const *filename = (char const *)(intptr_t)filenameAddress;
     UNUSED_PARAMS(__env, clazz)
     if (!glesHandle) {
-        glesHandle = dlopen("libGLESv2.so", RTLD_GLOBAL | RTLD_LAZY);
+        glesHandle = by_dlopen("libGLESv2.so", BY_RTLD_LAZY);
     }
-    return (jlong)(intptr_t)dlopen(filename, RTLD_GLOBAL | RTLD_LAZY);
+    return (jlong)(intptr_t)by_dlopen(filename, BY_RTLD_LAZY);
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlerror(JNIEnv *__env, jclass clazz) {
@@ -29,9 +30,9 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlsym(JNIEn
     void *handle = (void *)(intptr_t)handleAddress;
     char const *name = (char const *)(intptr_t)nameAddress;
     UNUSED_PARAMS(__env, clazz)
-    jlong retval = (jlong)(intptr_t)dlsym(handle, name);
+    jlong retval = (jlong)(intptr_t)by_dlsym(handle, name);
     if (!retval && name[0] == 'g' && name[1] == 'l') {
-        retval = (jlong)(intptr_t)dlsym(glesHandle, name);
+        retval = (jlong)(intptr_t)by_dlsym(glesHandle, name);
     }
     return retval;
 }
@@ -39,7 +40,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlsym(JNIEn
 JNIEXPORT jint JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlclose(JNIEnv *__env, jclass clazz, jlong handleAddress) {
     void *handle = (void *)(intptr_t)handleAddress;
     UNUSED_PARAMS(__env, clazz)
-    return (jint)dlclose(handle);
+    return (jint)by_dlclose(handle);
 }
 
 EXTERN_C_EXIT

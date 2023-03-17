@@ -9,7 +9,8 @@ public class FCLConfig implements Serializable {
     public enum Renderer implements Serializable {
         RENDERER_GL4ES("libgl4es.so:libEGL.so"),
         RENDERER_ZINK("libGL.so:libEGL.so"),
-        RENDERER_ANGLE("libtinywrapper.so:libEGL_angle.so");
+        RENDERER_ANGLE("libtinywrapper.so:libEGL_angle.so"),
+        RENDERER_VGPU("libvgpu.so:libEGL.so");
 
         private final String glInfo;
         private String glVersion;

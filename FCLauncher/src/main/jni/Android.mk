@@ -28,8 +28,16 @@ LOCAL_LDLIBS            := -llog
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE            := byopen
+LOCAL_SRC_FILES         := byopen/byopen_android.c
+LOCAL_C_INCLUDES        := $(LOCAL_PATH)/byopen
+LOCAL_CFLAGS            := -Wall
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE            := fcl
-LOCAL_SHARED_LIBRARIES  := xhook
+LOCAL_SHARED_LIBRARIES  := xhook \
+						   byopen
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
                            fcl/fcl_loader.c
@@ -40,7 +48,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE            := glfw
-LOCAL_SHARED_LIBRARIES  := fcl
+LOCAL_SHARED_LIBRARIES  := fcl \
+						   byopen
 LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/init.c \
                            glfw/input.c \
@@ -50,14 +59,13 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/fcl_init.c \
                            glfw/fcl_monitor.c \
                            glfw/fcl_window.c \
-                           glfw/null_joystick.c \
                            glfw/egl_context.c \
                            glfw/osmesa_context.c \
                            glfw/posix_thread.c \
                            glfw/posix_time.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
-LOCAL_CFLAGS            := -Wall -fuse-ld=gold -Werror=implicit-function-declaration
+LOCAL_CFLAGS            := -Wall
 LOCAL_LDLIBS            := -llog -ldl -landroid
 include $(BUILD_SHARED_LIBRARY)
 
@@ -318,6 +326,7 @@ LOCAL_MODULE            := lwjgl
 LOCAL_STATIC_LIBRARIES  := dyncall \
 						   dyncallback \
 						   dynload
+LOCAL_SHARED_LIBRARIES  := byopen
 LOCAL_SRC_FILES         := lwjgl3/common_tools.c \
                            lwjgl3/org_lwjgl_opengl_AMDDebugOutput.c \
                            lwjgl3/org_lwjgl_opengl_AMDDrawBuffersBlend.c \

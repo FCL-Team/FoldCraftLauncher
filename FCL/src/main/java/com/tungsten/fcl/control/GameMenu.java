@@ -503,6 +503,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         this.cursorModeProperty.set(mode);
         activity.runOnUiThread(() -> {
             if (mode == FCLBridge.CursorEnabled) {
+                getInput().setPointer(getCursorX(),getCursorY());
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
             } else {
@@ -517,6 +518,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onLog(String log) {
         if (fclBridge != null) {
+            logWindow.appendLog(log);
             try {
                 if (firstLog) {
                     FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");

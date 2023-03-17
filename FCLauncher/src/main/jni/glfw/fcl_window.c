@@ -634,7 +634,7 @@ const char* _glfwPlatformGetScancodeName(int scancode)
     if (scancode < 0 || scancode > 0xff ||
         _glfw.fcl.keycodes[scancode] == GLFW_KEY_UNKNOWN)
     {
-        _glfwInputError(GLFW_INVALID_VALUE, "Invalid scancode");
+//        _glfwInputError(GLFW_INVALID_VALUE, "Invalid scancode:%d",scancode);
         return NULL;
     }
 

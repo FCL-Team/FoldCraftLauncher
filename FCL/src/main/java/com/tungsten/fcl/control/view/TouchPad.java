@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.control.FCLInput;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
@@ -28,20 +29,20 @@ public class TouchPad extends View {
 
     public TouchPad(Context context) {
         super(context);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     public TouchPad(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     public TouchPad(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.screenWidth = AndroidUtils.getScreenWidth(getContext());
-        this.screenHeight = AndroidUtils.getScreenHeight(getContext());
+        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
     }
 
     private int downX;

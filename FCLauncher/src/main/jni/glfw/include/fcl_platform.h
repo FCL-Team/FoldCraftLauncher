@@ -11,6 +11,7 @@
 #include <dlfcn.h>
 
 #include <internal.h>
+#include "byopen/byopen.h"
 
 typedef VkFlags VkAndroidSurfaceCreateFlagsKHR;
 
@@ -28,11 +29,10 @@ typedef VkResult (APIENTRY *PFN_vkCreateAndroidSurfaceKHR)(VkInstance, const VkA
 #include "posix_time.h"
 #include "egl_context.h"
 #include "osmesa_context.h"
-#include "null_joystick.h"
 
-#define _glfw_dlopen(name) dlopen(name, RTLD_LAZY | RTLD_GLOBAL)
-#define _glfw_dlclose(handle) dlclose(handle)
-#define _glfw_dlsym(handle, name) dlsym(handle, name)
+#define _glfw_dlopen(name) by_dlopen(name, BY_RTLD_LAZY)
+#define _glfw_dlclose(handle) by_dlclose(handle)
+#define _glfw_dlsym(handle, name) by_dlsym(handle, name)
 
 #define _GLFW_EGL_NATIVE_WINDOW  ((EGLNativeWindowType) window->fcl.handle)
 #define _GLFW_EGL_NATIVE_DISPLAY EGL_DEFAULT_DISPLAY

@@ -130,8 +130,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dlwjgl.platform=", "FCL");
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dlwjgl2.width=", options.getWidth() + "");
-        res.addDefault("-Dlwjgl2.height=", options.getHeight() + "");
+        res.addDefault("-Dwindow.width=", options.getWidth() + "");
+        res.addDefault("-Dwindow.height=", options.getHeight() + "");
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
         res.addDefault("-Duser.language=", System.getProperty("user.language"));
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
