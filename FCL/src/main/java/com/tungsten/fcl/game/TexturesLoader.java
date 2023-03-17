@@ -113,7 +113,7 @@ public final class TexturesLoader {
             }
         }
         Bitmap img;
-        try(InputStream in = Files.newInputStream(file)){
+        try (InputStream in = Files.newInputStream(file)) {
             img = BitmapFactory.decodeStream(in);
         }
         if (img == null) {
@@ -148,7 +148,7 @@ public final class TexturesLoader {
             }
 
             Bitmap img;
-            try(InputStream in = Files.newInputStream(file)){
+            try (InputStream in = Files.newInputStream(file)) {
                 img = BitmapFactory.decodeStream(in);
             }
             if (img == null) {

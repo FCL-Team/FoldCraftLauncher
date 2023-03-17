@@ -17,6 +17,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
@@ -92,8 +93,8 @@ public class ControlButton extends AppCompatButton {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(getContext());
-        screenHeight = AndroidUtils.getScreenHeight(getContext());
+        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
 
         post(() -> {
             notifyData();
