@@ -88,18 +88,18 @@ public class AndroidUtils {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
         wm.getDefaultDisplay().getRealSize(point);
-        if (fullscreen || SDK_INT < Build.VERSION_CODES.P){
+        if (fullscreen || SDK_INT < Build.VERSION_CODES.P) {
             return point.x;
         } else {
             try {
                 Rect notchRect;
-                if(SDK_INT >= Build.VERSION_CODES.S){
+                if (SDK_INT >= Build.VERSION_CODES.S) {
                     notchRect = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout().getBoundingRects().get(0);
                 } else {
                     notchRect = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
                 }
-                return point.x-Math.min(notchRect.width(), notchRect.height());
-            } catch (Exception e){
+                return point.x - Math.min(notchRect.width(), notchRect.height());
+            } catch (Exception e) {
                 return point.x;
             }
         }

@@ -25,25 +25,41 @@ public class FCLInput {
 
     private final MenuCallback menu;
 
+    private String pointerId;
+
+    public void setPointerId(String pointerId) {
+        if (pointerId == null) {
+            this.pointerId = null;
+        } else if (this.pointerId == null) {
+            this.pointerId = pointerId;
+        }
+    }
+
+    public String getPointerId() {
+        return pointerId;
+    }
+
     public FCLInput(MenuCallback menu) {
         this.menu = menu;
     }
 
-    public void setPointer(int x, int y) {
-        if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            menu.getCursor().setX(x);
-            menu.getCursor().setY(y);
-        }
-        if (menu instanceof GameMenu) {
+    public void setPointer(int x, int y, String id) {
+        if (id.equals(pointerId) || id.equals("Gyro")) {
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                ((GameMenu) menu).setCursorX(x);
-                ((GameMenu) menu).setCursorY(y);
+                menu.getCursor().setX(x);
+                menu.getCursor().setY(y);
             }
-            ((GameMenu) menu).setPointerX(x);
-            ((GameMenu) menu).setPointerY(y);
-        }
-        if (menu.getBridge() != null) {
-            menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
+            if (menu instanceof GameMenu) {
+                if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+                    ((GameMenu) menu).setCursorX(x);
+                    ((GameMenu) menu).setCursorY(y);
+                }
+                ((GameMenu) menu).setPointerX(x);
+                ((GameMenu) menu).setPointerY(y);
+            }
+            if (menu.getBridge() != null) {
+                menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
+            }
         }
     }
 

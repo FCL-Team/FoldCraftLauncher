@@ -195,7 +195,7 @@
     <string name="menu_controls_add_direction">添加方向控制键</string>
     <string name="menu_controls_add_view_button">添加</string>
     <string name="menu_controls_style">样式</string>
-    <string name="menu_controls_button_style">案件样式</string>
+    <string name="menu_controls_button_style">按键样式</string>
     <string name="menu_controls_direction_style">方向控制键样式</string>
 
     <string name="menu_control_base">基本设置</string>
@@ -206,6 +206,7 @@
     <string name="menu_control_select">选择</string>
     <string name="menu_control_set">设置</string>
     <string name="menu_control_style">样式设置</string>
+    <string name="menu_control_style_add">添加样式</string>
 
     <string name="menu_settings">设置</string>
     <string name="menu_settings_debug">调试</string>
@@ -219,6 +220,7 @@
     <string name="menu_settings_gesture_mode">触控模式</string>
     <string name="menu_settings_gesture_mode_build">建筑模式</string>
     <string name="menu_settings_gesture_mode_fight">战斗模式</string>
+    <string name="menu_settings_gesture_current">当前模式为 %s</string>
     <string name="menu_settings_gyro">陀螺仪</string>
     <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
@@ -325,6 +327,10 @@
     <string name="settings_type_global_manage">全局游戏设置</string>
     <string name="settings_type_special_enable">启用游戏特定设置</string>
 
+    <string name="style_name">名称</string>
+    <string name="style_warning_delete">你确定要删除该样式吗？</string>
+    <string name="style_warning_exist">该样式已存在！</string>
+    <string name="style_warning_name">请先填充名称！</string>
     <string name="style_button">按键样式</string>
     <string name="style_button_normal">常规状态</string>
     <string name="style_button_pressed">触发状态</string>

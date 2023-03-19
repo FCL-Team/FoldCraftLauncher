@@ -225,6 +225,7 @@
     <string name="menu_control_select">Select</string>
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
+    <string name="menu_control_style_add">Add Style</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>
@@ -238,6 +239,7 @@
     <string name="menu_settings_gesture_mode">Gesture Mode</string>
     <string name="menu_settings_gesture_mode_build">Build</string>
     <string name="menu_settings_gesture_mode_fight">Fight</string>
+    <string name="menu_settings_gesture_current">Current Mode is %s</string>
     <string name="menu_settings_gyro">Gyroscope</string>
     <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
     <string name="menu_settings_lock_view">Lock Menu View</string>
@@ -322,7 +324,7 @@
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
-    <string name="settings_fcl_renderer_vgpu" translatable="false">Vgpu (OpenGL 2.1+)</string>
+    <string name="settings_fcl_renderer_vgpu" translatable="false">VGPU (OpenGL 2.1+)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
@@ -349,6 +351,10 @@
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
 
+    <string name="style_name">Name</string>
+    <string name="style_warning_delete">Are you sure to delete this style?</string>
+    <string name="style_warning_exist">The style already exist!</string>
+    <string name="style_warning_name">Fill the style name first!</string>
     <string name="style_button">Button Style</string>
     <string name="style_button_normal">Normal</string>
     <string name="style_button_pressed">Enabled</string>

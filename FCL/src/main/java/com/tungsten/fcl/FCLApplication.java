@@ -20,7 +20,7 @@ public class FCLApplication extends Application implements Application.ActivityL
         this.registerActivityLifecycleCallbacks(this);
     }
 
-    public static Activity getCurrentActivity(){
+    public static Activity getCurrentActivity() {
         return currentActivity.get();
     }
 
@@ -73,7 +73,7 @@ public class FCLApplication extends Application implements Application.ActivityL
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-        if (currentActivity.get() == activity){
+        if (currentActivity.get() == activity) {
             currentActivity = null;
         }
     }

@@ -13,6 +13,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -237,8 +238,8 @@ public class BaseInfoData implements Cloneable, Observable {
             obj.addProperty("sizeType", src.getSizeType().toString());
             obj.addProperty("absoluteWidth", src.getAbsoluteWidth());
             obj.addProperty("absoluteHeight", src.getAbsoluteHeight());
-            obj.addProperty("percentageWidth", gson.toJson(src.getPercentageWidth()));
-            obj.addProperty("percentageHeight", gson.toJson(src.getPercentageHeight()));
+            obj.add("percentageWidth", gson.toJsonTree(src.getPercentageWidth()).getAsJsonObject());
+            obj.add("percentageHeight", gson.toJsonTree(src.getPercentageHeight()).getAsJsonObject());
 
             return obj;
         }
@@ -258,16 +259,8 @@ public class BaseInfoData implements Cloneable, Observable {
             data.setSizeType(Optional.ofNullable(obj.get("sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
             data.setAbsoluteWidth(Optional.ofNullable(obj.get("absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
             data.setAbsoluteHeight(Optional.ofNullable(obj.get("absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
-            PercentageSize width = new PercentageSize();
-            PercentageSize height = new PercentageSize();
-            if (Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsString).isPresent()) {
-                width = gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsString).get(), PercentageSize.class);
-            }
-            if (Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsString).isPresent()) {
-                height = gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsString).get(), PercentageSize.class);
-            }
-            data.setPercentageWidth(width);
-            data.setPercentageHeight(height);
+            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
+            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
 
             return data;
         }

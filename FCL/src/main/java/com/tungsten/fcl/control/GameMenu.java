@@ -16,7 +16,9 @@ import androidx.annotation.Nullable;
 import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
@@ -68,7 +70,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLBridge fclBridge;
     private FCLInput fclInput;
     private MenuSetting menuSetting;
-    private int cursorMode = FCLBridge.CursorEnabled;
     private int hitResultType = FCLBridge.HIT_RESULT_TYPE_UNKNOWN;
     private int cursorX;
     private int cursorY;
@@ -110,7 +111,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public int getCursorMode() {
-        return cursorMode;
+        return cursorModeProperty.get();
     }
 
     public int getHitResultType() {
@@ -177,6 +178,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     
     public boolean isEditMode() {
         return editModeProperty.get();
+    }
+
+    private final IntegerProperty cursorModeProperty = new SimpleIntegerProperty(this, "cursorMode", FCLBridge.CursorEnabled);
+
+    public IntegerProperty cursorModeProperty() {
+        return cursorModeProperty;
     }
 
     private final BooleanProperty showViewBoundariesProperty = new SimpleBooleanProperty(this, "showViewBoundaries", false);
@@ -351,6 +358,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!Controllers.isInitialized()) {
             Controllers.init();
         }
+        if (!ButtonStyles.isInitialized()) {
+            ButtonStyles.init();
+        }
+        if (!DirectionStyles.isInitialized()) {
+            DirectionStyles.init();
+        }
 
         if (Files.exists(new File(FCLPath.FILES_DIR + "/menu_setting.json").toPath())) {
             try {
@@ -444,7 +457,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onPause() {
-        if (cursorMode == FCLBridge.CursorDisabled) {
+        if (cursorModeProperty.get() == FCLBridge.CursorDisabled) {
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
         }
@@ -487,10 +500,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onCursorModeChange(int mode) {
-        this.cursorMode = mode;
+        this.cursorModeProperty.set(mode);
         activity.runOnUiThread(() -> {
             if (mode == FCLBridge.CursorEnabled) {
-                getInput().setPointer(getCursorX(),getCursorY());
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
             } else {
@@ -533,6 +545,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         return getLayout().findViewById(id);
     }
 
+    public void openQuickInput() {
+
+    }
+
     @Override
     public void onClick(View v) {
         if (v == manageViewGroups) {
@@ -545,7 +561,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         }
         if (v == manageButtonStyle) {
-
+            ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity());
+            dialog.show();
         }
         if (v == manageDirectionStyle) {
 
@@ -555,7 +572,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         }
         if (v == manageQuickInput) {
-
+            openQuickInput();
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
