@@ -303,6 +303,7 @@
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
+    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
