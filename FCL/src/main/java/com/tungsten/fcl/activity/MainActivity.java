@@ -124,6 +124,10 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             account.setOnClickListener(this);
             version.setOnClickListener(this);
             launch.setOnClickListener(this);
+            launch.setOnLongClickListener(view ->{
+                startActivity(new Intent(MainActivity.this,ShellActivity.class));
+                return true;
+            });
 
             uiManager = new UIManager(this, uiLayout);
             uiManager.registerDefaultBackEvent(backToMainUI);
