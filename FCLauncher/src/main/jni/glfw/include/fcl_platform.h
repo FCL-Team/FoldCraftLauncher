@@ -30,7 +30,7 @@ typedef VkResult (APIENTRY *PFN_vkCreateAndroidSurfaceKHR)(VkInstance, const VkA
 #include "egl_context.h"
 #include "osmesa_context.h"
 
-#define _glfw_dlopen(name) by_dlopen(name, BY_RTLD_LAZY)
+#define _glfw_dlopen(name) by_dlopen(name, RTLD_LAZY | RTLD_GLOBAL)
 #define _glfw_dlclose(handle) by_dlclose(handle)
 #define _glfw_dlsym(handle, name) by_dlsym(handle, name)
 
