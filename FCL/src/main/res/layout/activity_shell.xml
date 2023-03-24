@@ -11,7 +11,7 @@
         android:id="@+id/shell_input"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/background_layout_item"
+        android:background="#FFFFFF"
         android:lines="1"
         android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="parent"/>
