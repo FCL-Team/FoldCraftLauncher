@@ -29,12 +29,7 @@ public class ShellActivity extends AppCompatActivity {
         editText = findViewById(R.id.shell_input);
         logWindow.appendLog("Welcome to use Fold Craft Launcher!\n");
         logWindow.appendLog("Here is the shell command line!\n");
-        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), new ShellUtil.Callback() {
-            @Override
-            public void output(String output) {
-                logWindow.appendLog("\t" + output + "\n");
-            }
-        });
+        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> logWindow.appendLog("\t" + output + "\n"));
         shellUtil.start();
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -76,5 +71,11 @@ public class ShellActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        shellUtil.interrupt();
     }
 }
