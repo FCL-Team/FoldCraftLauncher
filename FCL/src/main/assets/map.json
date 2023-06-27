@@ -1,6 +1,62 @@
 {
   "maps": [
     {
+      "id": "1.0",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.1",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.2.1",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.2.2",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.2.3",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.2.4",
+      "argument": {
+        "vanilla": "false:azd:A:t:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "fabric": null
+      }
+    },
+    {
+      "id": "1.2.5",
+      "argument": {
+        "vanilla": "false:false:net.minecraft.client.Minecraft:A:z:a",
+        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_6305_x:field_1167_a",
+        "fabric": null
+      }
+    },
+    {
       "id": "1.3.1",
       "argument": {
         "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
@@ -92,22 +148,6 @@
       "id": "1.7.2",
       "argument": {
         "vanilla": "true:azd:A:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
-        "fabric": null
-      }
-    },
-    {
-      "id": "1.7.3",
-      "argument": {
-        "vanilla": null,
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
-        "fabric": null
-      }
-    },
-    {
-      "id": "1.7.4",
-      "argument": {
-        "vanilla": null,
         "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
