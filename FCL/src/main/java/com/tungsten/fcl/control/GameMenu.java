@@ -561,11 +561,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         }
         if (v == manageButtonStyle) {
-            ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity());
+            ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
             dialog.show();
         }
         if (v == manageDirectionStyle) {
-
+            DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
+            dialog.show();
         }
         
         if (v == openMultiplayerMenu) {

@@ -343,6 +343,8 @@
     <string name="style_button_fill_color">填充颜色</string>
     <string name="style_button_interval">按键间隔</string>
     <string name="style_direction">方向控制键样式</string>
+    <string name="style_direction_button">十字键</string>
+    <string name="style_direction_rocker">摇杆</string>
     <string name="style_rocker">摇杆样式</string>
     <string name="style_rocker_size">摇杆大小</string>
     <string name="style_rocker_bg_stroke_width">背景边框宽度</string>

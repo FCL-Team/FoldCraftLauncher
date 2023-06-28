@@ -366,6 +366,8 @@
     <string name="style_button_fill_color">Fill Color</string>
     <string name="style_button_interval">Button Interval</string>
     <string name="style_direction">Direction Controller Style</string>
+    <string name="style_direction_button">Button</string>
+    <string name="style_direction_rocker">Rocker</string>
     <string name="style_rocker">Rocker Style</string>
     <string name="style_rocker_size">Rocker Size</string>
     <string name="style_rocker_bg_stroke_width">Background Stroke Width</string>

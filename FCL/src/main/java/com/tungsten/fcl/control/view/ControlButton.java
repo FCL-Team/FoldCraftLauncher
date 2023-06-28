@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -130,8 +131,10 @@ public class ControlButton extends AppCompatButton {
                     (int) (screenWidth * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f)) :
                     (int) (screenHeight * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f));
         }
-        setWidth(width);
-        setHeight(height);
+        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        layoutParams.width = width;
+        layoutParams.height = height;
+        setLayoutParams(layoutParams);
 
         // Position
         int x;
@@ -147,6 +150,11 @@ public class ControlButton extends AppCompatButton {
                 (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
                 (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
                 menu.cursorModeProperty(), parentVisibilityProperty()));
+        visibilityProperty().addListener(observable -> {
+            if (!visibilityProperty.get()) {
+                cancelAllEvent();
+            }
+        });
     }
 
     private GradientDrawable drawableNormal;
@@ -247,7 +255,12 @@ public class ControlButton extends AppCompatButton {
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
-                        
+                        setX(positionX);
+                        setY(positionY);
+
+                    } else {
+                        getData().getBaseInfo().setXPosition((int) ((1000 * (getX() + (getMeasuredWidth() / 2))) / screenWidth));
+                        getData().getBaseInfo().setYPosition((int) ((1000 * (getY() + (getMeasuredHeight() / 2))) / screenHeight));
                     }
                     break;
             }

@@ -30,8 +30,8 @@ dependencies {
     implementation project(path: ':FCLauncher')
     implementation project(path: ':FCLCore')
     implementation 'commons-io:commons-io:2.11.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.asynclayoutinflater:asynclayoutinflater:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -4,22 +4,35 @@ import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
+import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.HorizontalListView;
 
 public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener {
 
+    private final boolean select;
+    private final ControlButtonStyle initStyle;
+    private final Callback callback;
+
     private FCLButton addStyle;
     private FCLButton positive;
 
     private HorizontalListView listView;
 
-    public ButtonStyleDialog(@NonNull Context context) {
+    public interface Callback {
+        void onStyleSelect(ControlButtonStyle style);
+    }
+
+    public ButtonStyleDialog(@NonNull Context context, boolean select, @Nullable ControlButtonStyle initStyle, Callback callback) {
         super(context);
+        this.select = select;
+        this.initStyle = initStyle;
+        this.callback = callback;
         setContentView(R.layout.dialog_manage_button_style);
         setCancelable(false);
 
@@ -32,8 +45,10 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         refreshList();
     }
 
+    private ButtonStyleAdapter adapter;
+
     public void refreshList() {
-        ButtonStyleAdapter adapter = new ButtonStyleAdapter(getContext(), ButtonStyles.getStyles(), false);
+        adapter = new ButtonStyleAdapter(getContext(), ButtonStyles.getStyles(), select, initStyle);
         listView.setAdapter(adapter);
     }
 
@@ -48,6 +63,9 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         }
         if (v == positive) {
             dismiss();
+            if (callback != null && select) {
+                callback.onStyleSelect(adapter.getSelectedStyle());
+            }
         }
     }
 }

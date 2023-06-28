@@ -107,7 +107,7 @@ public class DirectionEventData implements Cloneable, Observable {
     }
 
     /**
-     * Follow option
+     * Follow option (only rocker style)
      */
     private final ObjectProperty<FollowOption> followOptionProperty = new SimpleObjectProperty<>(this, "followOption", FollowOption.CENTER_FOLLOW);
 
