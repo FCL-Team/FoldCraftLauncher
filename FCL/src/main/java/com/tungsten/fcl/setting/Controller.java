@@ -204,6 +204,10 @@ public class Controller implements Cloneable, Observable {
         description.addListener(listener);
         viewGroups.addListener(listener);
         viewGroups.forEach(it -> it.addListener(listener));
+        viewGroups.addListener((InvalidationListener) observable -> {
+            viewGroups.forEach(it -> it.removeListener(listener));
+            viewGroups.forEach(it -> it.addListener(listener));
+        });
         controllerVersion.addListener(listener);
     }
 
