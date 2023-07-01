@@ -95,7 +95,9 @@ public class TouchPad extends View {
     public boolean onTouchEvent(MotionEvent event) {
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (gameMenu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK) {
+                gameMenu.getInput().setPointerId(POINTER_ID);
                 gameMenu.getInput().setPointer((int) event.getX(), (int) event.getY(), POINTER_ID);
+                gameMenu.getInput().setPointerId(null);
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
