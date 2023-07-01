@@ -226,6 +226,14 @@
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
     <string name="menu_control_style_add">Add Style</string>
+    <string name="menu_control_view_group_add">Add View Group</string>
+    <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
+    <string name="menu_control_view_group_name">Name</string>
+    <string name="menu_control_view_group_visibility">Initial Visibility</string>
+    <string name="menu_control_view_group_exist">The view group already exist</string>
+    <string name="menu_control_view_group_empty">Please fill the view group name first</string>
+    <string name="menu_control_view_group_visible">Visible</string>
+    <string name="menu_control_view_group_invisible">Invisible</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>

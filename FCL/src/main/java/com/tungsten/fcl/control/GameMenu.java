@@ -254,7 +254,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(currentControllerSpinner, controllerProperty);
 
         refreshViewGroupList(currentViewGroupSpinner);
-        controllerProperty.addListener(invalidate -> refreshViewGroupList(currentViewGroupSpinner));
+        getController().addListener(i -> refreshViewGroupList(currentViewGroupSpinner));
+        controllerProperty.addListener(invalidate -> {
+            refreshViewGroupList(currentViewGroupSpinner);
+            getController().addListener(i -> refreshViewGroupList(currentViewGroupSpinner));
+        });
 
         editLayout.visibilityProperty().bind(editModeProperty);
         
@@ -552,7 +556,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == manageViewGroups) {
-
+            ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this);
+            dialog.show();
         }
         if (v == addButton) {
 
@@ -570,7 +575,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         
         if (v == openMultiplayerMenu) {
-
+            
         }
         if (v == manageQuickInput) {
             openQuickInput();

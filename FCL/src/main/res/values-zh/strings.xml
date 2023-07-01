@@ -207,6 +207,14 @@
     <string name="menu_control_set">设置</string>
     <string name="menu_control_style">样式设置</string>
     <string name="menu_control_style_add">添加样式</string>
+    <string name="menu_control_view_group_add">添加控件组</string>
+    <string name="menu_control_view_group_delete">你确定要删除该控件组吗？</string>
+    <string name="menu_control_view_group_name">名称</string>
+    <string name="menu_control_view_group_visibility">初始可见性</string>
+    <string name="menu_control_view_group_exist">该控件组已存在</string>
+    <string name="menu_control_view_group_empty">请填写控件组名称</string>
+    <string name="menu_control_view_group_visible">显示</string>
+    <string name="menu_control_view_group_invisible">隐藏</string>
 
     <string name="menu_settings">设置</string>
     <string name="menu_settings_debug">调试</string>
