@@ -74,7 +74,7 @@ public class Controllers {
             try {
                 controller.saveToDisk();
             } catch (IOException e) {
-                Logging.LOG.log(Level.SEVERE, "Failed to save controller!");
+                Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
             }
         }
     }

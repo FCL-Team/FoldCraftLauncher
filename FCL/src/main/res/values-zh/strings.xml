@@ -110,6 +110,7 @@
     <string name="edit_view_style">控件样式</string>
 
     <string name="edit_button_title">编辑按键</string>
+    <string name="edit_button_delete">你确定要删除该按键吗？</string>
     <string name="edit_button_text">显示的文本</string>
     <string name="edit_button_event_follow">指针跟随手指</string>
     <string name="edit_button_event_movable">可移动</string>
@@ -130,6 +131,7 @@
     <string name="edit_button_event_bind_group">切换控件组可视性</string>
 
     <string name="edit_direction_title">编辑方向控制键</string>
+    <string name="edit_direction_delete">你确定要删除该方向控制键吗？</string>
     <string name="edit_direction_event_up">前键值</string>
     <string name="edit_direction_event_down">后键值</string>
     <string name="edit_direction_event_left">左键值</string>

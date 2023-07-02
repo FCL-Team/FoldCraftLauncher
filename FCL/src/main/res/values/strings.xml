@@ -121,6 +121,7 @@
     <string name="edit_view_style">View Style</string>
 
     <string name="edit_button_title">Edit Button</string>
+    <string name="edit_button_delete">Are you sure to delete this button?</string>
     <string name="edit_button_text">Displayed Text</string>
     <string name="edit_button_event_follow">Pointer Follows Finger</string>
     <string name="edit_button_event_movable">Movable</string>
@@ -141,6 +142,7 @@
     <string name="edit_button_event_bind_group">Switch View Group Visibility</string>
 
     <string name="edit_direction_title">Edit Direction Controller</string>
+    <string name="edit_direction_delete">Are you sure to delete this direction controller?</string>
     <string name="edit_direction_event_up">Front Keycode</string>
     <string name="edit_direction_event_down">Back Keycode</string>
     <string name="edit_direction_event_left">Left Keycode</string>

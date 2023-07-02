@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
@@ -228,6 +229,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         viewGroupProperty.set(viewGroup);
     }
 
+    @Nullable
     public ControlViewGroup getViewGroup() {
         return viewGroupProperty.get();
     }
@@ -438,6 +440,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     public View getLayout() {
         if (layout == null) {
             layout = LayoutInflater.from(activity).inflate(R.layout.view_game_menu, null);
+            ((DrawerLayout) layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         }
         return layout;
     }
@@ -564,15 +567,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             dialog.show();
         }
         if (v == addButton) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> {
-
-            });
+            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
             dialog.show();
         }
         if (v == addDirection) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> {
-
-            });
+            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
             dialog.show();
         }
         if (v == manageButtonStyle) {

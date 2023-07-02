@@ -155,6 +155,11 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
         return ViewType.CONTROL_BUTTON;
     }
 
+    @Override
+    public String getViewId() {
+        return getId();
+    }
+
     public static class Serializer implements JsonSerializer<ControlButtonData>, JsonDeserializer<ControlButtonData> {
         @Override
         public JsonElement serialize(ControlButtonData src, Type typeOfSrc, JsonSerializationContext context) {

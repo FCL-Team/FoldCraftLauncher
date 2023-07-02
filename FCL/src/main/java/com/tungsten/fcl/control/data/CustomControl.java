@@ -8,4 +8,5 @@ public interface CustomControl {
     }
 
     ViewType getType();
+    String getViewId();
 }

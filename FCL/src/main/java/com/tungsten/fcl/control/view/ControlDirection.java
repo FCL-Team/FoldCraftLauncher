@@ -19,11 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
+import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -34,6 +36,7 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.UUID;
@@ -42,7 +45,7 @@ import java.util.UUID;
  * Custom control direction view.
  */
 @SuppressLint("ViewConstructor")
-public class ControlDirection extends RelativeLayout {
+public class ControlDirection extends RelativeLayout implements CustomView {
 
     @Nullable
     private final GameMenu menu;
@@ -62,6 +65,20 @@ public class ControlDirection extends RelativeLayout {
     private static final double ANGLE_8D_OF_5P = 247.5;
     private static final double ANGLE_8D_OF_6P = 292.5;
     private static final double ANGLE_8D_OF_7P = 337.5;
+
+    private final BooleanProperty readyProperty = new SimpleBooleanProperty(this, "ready", false);
+
+    public BooleanProperty readyProperty() {
+        return readyProperty;
+    }
+
+    public void setReady(boolean ready) {
+        readyProperty.set(ready);
+    }
+
+    public boolean isReady() {
+        return readyProperty.get();
+    }
 
     private BooleanProperty visibilityProperty;
 
@@ -113,6 +130,14 @@ public class ControlDirection extends RelativeLayout {
             if (menu != null) {
                 menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
             }
+            dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
+                notifyData();
+                cancelAllEvent();
+                getData().addListener(i -> Schedulers.androidUIThread().execute(() -> {
+                    notifyData();
+                    cancelAllEvent();
+                }));
+            }));
             getData().addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
                 cancelAllEvent();
@@ -120,6 +145,7 @@ public class ControlDirection extends RelativeLayout {
             if (menu != null) {
                 menu.showViewBoundariesProperty().addListener(invalidate -> invalidate());
             }
+            setReady(true);
         });
     }
 
@@ -140,7 +166,12 @@ public class ControlDirection extends RelativeLayout {
 
         post(() -> {
             notifyData();
+            dataProperty.addListener(invalidate -> {
+                Schedulers.androidUIThread().execute(this::notifyData);
+                getData().addListener(i -> Schedulers.androidUIThread().execute(this::notifyData));
+            });
             getData().addListener(invalidate -> Schedulers.androidUIThread().execute(this::notifyData));
+            setReady(true);
         });
     }
 
@@ -148,7 +179,7 @@ public class ControlDirection extends RelativeLayout {
         ControlDirectionData data = getData();
 
         refreshBaseInfo(data);
-        refreshStyle(data);
+        post(() -> refreshStyle(data));
     }
 
     public void setSize(int size) {
@@ -171,14 +202,16 @@ public class ControlDirection extends RelativeLayout {
         setSize(size);
 
         // Position
-        int x;
-        int y;
-        x = (int) (screenWidth * (data.getBaseInfo().getXPosition() / 1000f)) - (size / 2);
-        y = (int) (screenHeight * (data.getBaseInfo().getYPosition() / 1000f)) - (size / 2);
-        if (!displayMode) {
-            setX(x);
-            setY(y);
-        }
+        post(() -> {
+            int x;
+            int y;
+            x = (int) ((screenWidth - size) * (data.getBaseInfo().getXPosition() / 1000f));
+            y = (int) ((screenHeight - size) * (data.getBaseInfo().getYPosition() / 1000f));
+            if (!displayMode) {
+                setX(x);
+                setY(y);
+            }
+        });
 
         // Visibility
         if (!displayMode && menu != null) {
@@ -349,8 +382,23 @@ public class ControlDirection extends RelativeLayout {
 
     private final Handler handler = new Handler();
     private final Runnable deleteRunnable = () -> {
-
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setCancelable(false);
+        builder.setMessage(getContext().getString(R.string.edit_direction_delete));
+        builder.setPositiveButton(this::deleteView);
+        builder.setNegativeButton(() -> {
+            setX(positionX);
+            setY(positionY);
+        });
+        builder.create().show();
     };
+
+    private void deleteView() {
+        if (menu != null) {
+            menu.getViewManager().removeView(getData());
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -368,8 +416,8 @@ public class ControlDirection extends RelativeLayout {
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
                     int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), positionX + deltaX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), positionY + deltaY));
+                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
+                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
                     if ((Math.abs(event.getX() - downX) > 1 || Math.abs(event.getY() - downY) > 1) && System.currentTimeMillis() - downTime < 400) {
@@ -385,15 +433,17 @@ public class ControlDirection extends RelativeLayout {
                         setX(positionX);
                         setY(positionY);
                         EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, view -> {
-                            ControlDirectionData newData = (ControlDirectionData) view;
+                            ControlDirectionData newData = ((ControlDirectionData) view).clone();
                             getData().setBaseInfo(newData.getBaseInfo());
                             getData().setStyle(newData.getStyle());
                             getData().setEvent(newData.getEvent());
+                            menu.getViewManager().saveController();
                         });
                         dialog.show();
                     } else {
-                        getData().getBaseInfo().setXPosition((int) ((1000 * (getX() + (getMeasuredWidth() / 2))) / screenWidth));
-                        getData().getBaseInfo().setYPosition((int) ((1000 * (getY() + (getMeasuredHeight() / 2))) / screenHeight));
+                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
+                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getMeasuredHeight())));
+                        menu.getViewManager().saveController();
                     }
                     break;
             }
@@ -666,8 +716,8 @@ public class ControlDirection extends RelativeLayout {
         } else {
             int x;
             int y;
-            x = (int) (screenWidth * (getData().getBaseInfo().getXPosition() / 1000f)) - (getMeasuredWidth() / 2);
-            y = (int) (screenHeight * (getData().getBaseInfo().getYPosition() / 1000f)) - (getMeasuredWidth() / 2);
+            x = (int) ((screenWidth - getMeasuredWidth()) * (getData().getBaseInfo().getXPosition() / 1000f));
+            y = (int) ((screenHeight - getMeasuredHeight()) * (getData().getBaseInfo().getYPosition() / 1000f));
             if (!displayMode) {
                 setX(x);
                 setY(y);
@@ -706,5 +756,20 @@ public class ControlDirection extends RelativeLayout {
         }
 
         return visibilityProperty;
+    }
+
+    @Override
+    public CustomControl.ViewType getType() {
+        return CustomControl.ViewType.CONTROL_DIRECTION;
+    }
+
+    @Override
+    public String getViewId() {
+        return getData().getId();
+    }
+
+    @Override
+    public void switchParentVisibility() {
+        setParentVisibility(!parentVisibilityProperty.get());
     }
 }

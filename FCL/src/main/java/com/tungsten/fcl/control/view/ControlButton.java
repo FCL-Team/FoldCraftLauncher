@@ -27,6 +27,7 @@ import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -38,6 +39,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.Objects;
@@ -47,13 +49,27 @@ import java.util.UUID;
  * Custom game control button.
  */
 @SuppressLint("ViewConstructor")
-public class ControlButton extends AppCompatButton {
+public class ControlButton extends AppCompatButton implements CustomView {
 
     private final GameMenu menu;
     private final Path boundaryPath;
     private final Paint boundaryPaint;
     private final int screenWidth;
     private final int screenHeight;
+
+    private final BooleanProperty readyProperty = new SimpleBooleanProperty(this, "ready", false);
+
+    public BooleanProperty readyProperty() {
+        return readyProperty;
+    }
+
+    public void setReady(boolean ready) {
+        readyProperty.set(ready);
+    }
+
+    public boolean isReady() {
+        return readyProperty.get();
+    }
 
     private BooleanProperty visibilityProperty;
 
@@ -101,11 +117,20 @@ public class ControlButton extends AppCompatButton {
         post(() -> {
             notifyData();
             menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
+            dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
+                notifyData();
+                cancelAllEvent();
+                getData().addListener(i -> Schedulers.androidUIThread().execute(() -> {
+                    notifyData();
+                    cancelAllEvent();
+                }));
+            }));
             getData().addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
                 cancelAllEvent();
             }));
             menu.showViewBoundariesProperty().addListener(invalidate -> invalidate());
+            setReady(true);
         });
     }
 
@@ -114,7 +139,7 @@ public class ControlButton extends AppCompatButton {
 
         setText(data.getText());
         refreshBaseInfo(data);
-        refreshStyle(data);
+        post(() -> refreshStyle(data));
     }
 
     private void refreshBaseInfo(ControlButtonData data) {
@@ -138,12 +163,14 @@ public class ControlButton extends AppCompatButton {
         setLayoutParams(layoutParams);
 
         // Position
-        int x;
-        int y;
-        x = (int) (screenWidth * (data.getBaseInfo().getXPosition() / 1000f)) - (width / 2);
-        y = (int) (screenHeight * (data.getBaseInfo().getYPosition() / 1000f)) - (height / 2);
-        setX(x);
-        setY(y);
+        post(() -> {
+            int x;
+            int y;
+            x = (int) ((screenWidth - width) * (data.getBaseInfo().getXPosition() / 1000f));
+            y = (int) ((screenHeight - height) * (data.getBaseInfo().getYPosition() / 1000f));
+            setX(x);
+            setY(y);
+        });
 
         // Visibility
         visibilityProperty().unbind();
@@ -221,8 +248,23 @@ public class ControlButton extends AppCompatButton {
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
     private final Runnable deleteRunnable = () -> {
-
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setCancelable(false);
+        builder.setMessage(getContext().getString(R.string.edit_button_delete));
+        builder.setPositiveButton(this::deleteView);
+        builder.setNegativeButton(() -> {
+            setX(positionX);
+            setY(positionY);
+        });
+        builder.create().show();
     };
+
+    private void deleteView() {
+        if (menu != null) {
+            menu.getViewManager().removeView(getData());
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -239,10 +281,10 @@ public class ControlButton extends AppCompatButton {
                     handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
-                    int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), positionX + deltaX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), positionY + deltaY));
+                    int deltaX = (int) (event.getX() - downX);
+                    int deltaY = (int) (event.getY() - downY);
+                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
+                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
                     if ((Math.abs(event.getX() - downX) > 1 || Math.abs(event.getY() - downY) > 1) && System.currentTimeMillis() - downTime < 400) {
@@ -259,16 +301,18 @@ public class ControlButton extends AppCompatButton {
                         setX(positionX);
                         setY(positionY);
                         EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, view -> {
-                            ControlButtonData newData = (ControlButtonData) view;
+                            ControlButtonData newData = ((ControlButtonData) view).clone();
                             getData().setText(newData.getText());
                             getData().setBaseInfo(newData.getBaseInfo());
                             getData().setStyle(newData.getStyle());
                             getData().setEvent(newData.getEvent());
+                            menu.getViewManager().saveController();
                         });
                         dialog.show();
                     } else {
-                        getData().getBaseInfo().setXPosition((int) ((1000 * (getX() + (getMeasuredWidth() / 2))) / screenWidth));
-                        getData().getBaseInfo().setYPosition((int) ((1000 * (getY() + (getMeasuredHeight() / 2))) / screenHeight));
+                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
+                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getMeasuredHeight())));
+                        menu.getViewManager().saveController();
                     }
                     break;
             }
@@ -537,5 +581,20 @@ public class ControlButton extends AppCompatButton {
         }
 
         return visibilityProperty;
+    }
+
+    @Override
+    public CustomControl.ViewType getType() {
+        return CustomControl.ViewType.CONTROL_BUTTON;
+    }
+
+    @Override
+    public String getViewId() {
+        return getData().getId();
+    }
+
+    @Override
+    public void switchParentVisibility() {
+        setParentVisibility(!parentVisibilityProperty.get());
     }
 }

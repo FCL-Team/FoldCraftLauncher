@@ -250,8 +250,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     }
                 });
 
-                widthText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageWidth().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteWidth() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteWidthProperty(), data.getBaseInfo().percentageWidthProperty()));
-                heightText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageHeight().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteHeight() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteHeightProperty(), data.getBaseInfo().percentageHeightProperty()));
+                widthText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageWidth().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteWidth() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteWidthProperty(), data.getBaseInfo().percentageWidthProperty(), width.progressProperty()));
+                heightText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageHeight().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteHeight() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteHeightProperty(), data.getBaseInfo().percentageHeightProperty(), height.progressProperty()));
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
@@ -371,7 +371,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
         @Override
         public CustomControl getView() {
-            return data;
+            return data.clone();
         }
 
         @Override
@@ -512,7 +512,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 data.getBaseInfo().absoluteWidthProperty().addListener(listener);
                 data.getBaseInfo().percentageWidthProperty().addListener(listener);
 
-                sizeText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageWidth().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteWidth() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteWidthProperty(), data.getBaseInfo().percentageWidthProperty()));
+                sizeText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageWidth().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteWidth() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteWidthProperty(), data.getBaseInfo().percentageWidthProperty(), size.progressProperty()));
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
@@ -594,7 +594,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
         @Override
         public CustomControl getView() {
-            return data;
+            return data.clone();
         }
 
         @Override
