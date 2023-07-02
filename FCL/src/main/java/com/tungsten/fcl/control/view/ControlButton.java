@@ -334,8 +334,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     setPressedStyle();
                     downX = event.getX();
                     downY = event.getY();
-                    initialX = menu.getCursorX();
-                    initialY = menu.getCursorY();
+                    initialX = menu.getCursorMode() == FCLBridge.CursorEnabled ? menu.getCursorX() : menu.getPointerX();
+                    initialY = menu.getCursorMode() == FCLBridge.CursorEnabled ? menu.getCursorY() : menu.getPointerY();
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
@@ -388,10 +388,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private void cancelAllEvent() {
         handleUpAfterPressEvent();
         handleUpAfterLongPressEvent();
-        handleTickEvent(false, getData().getEvent().getPressEvent(), 0);
-        handleTickEvent(false, getData().getEvent().getLongPressEvent(), 1);
-        handleTickEvent(false, getData().getEvent().getClickEvent(), 2);
-        handleTickEvent(false, getData().getEvent().getDoubleClickEvent(), 3);
+        cancelTickEvent(getData().getEvent().getPressEvent());
+        cancelTickEvent(getData().getEvent().getLongPressEvent());
+        cancelTickEvent(getData().getEvent().getClickEvent());
+        cancelTickEvent(getData().getEvent().getDoubleClickEvent());
         setNormalStyle();
     }
 
@@ -493,6 +493,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
         }
     }
 
+    private void cancelTickEvent(ButtonEventData.Event event) {
+        if (event.isAutoKeep()) {
+            if (event.isAutoClick()) {
+                handleAutoClick(event, false);
+            } else {
+                handleKeyEvent(event, false);
+            }
+        }
+    }
+
     /**
      * Handle event
      * @param enable true is start event, false is end event
@@ -511,7 +521,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             } else {
                 setNormalStyle();
             }
-        } else if (enable) {
+        } else {
             switch (eventType) {
                 case 0:
                 case 1:
@@ -529,46 +539,44 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
 
-        if (enable) {
-            if (event.isOpenMenu()) {
-                ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.START, true);
-                ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.END, true);
-            }
-            if (event.isSwitchTouchMode()) {
-                menu.getMenuSetting().setGestureMode(menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ? GestureMode.FIGHT : GestureMode.BUILD);
-                Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
-                        menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
-                                getContext().getString(R.string.menu_settings_gesture_mode_build) :
-                                getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
-            }
-            if (event.isInput()) {
-                menu.getTouchCharInput().switchKeyboardState();
-            }
-            if (event.isQuickInput()) {
-                menu.openQuickInput();
-            }
-            if (StringUtils.isNotBlank(event.getOutputText())) {
-                if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+        if (event.isOpenMenu()) {
+            ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.START, true);
+            ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.END, true);
+        }
+        if (event.isSwitchTouchMode()) {
+            menu.getMenuSetting().setGestureMode(menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ? GestureMode.FIGHT : GestureMode.BUILD);
+            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+                    menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
+                            getContext().getString(R.string.menu_settings_gesture_mode_build) :
+                            getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
+        }
+        if (event.isInput()) {
+            menu.getTouchCharInput().switchKeyboardState();
+        }
+        if (event.isQuickInput()) {
+            menu.openQuickInput();
+        }
+        if (StringUtils.isNotBlank(event.getOutputText())) {
+            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+                for (int i = 0; i < event.getOutputText().length(); i++) {
+                    menu.getInput().sendChar(event.getOutputText().charAt(i));
+                }
+            } else {
+                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
+                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
+                new Handler().postDelayed(() -> {
                     for (int i = 0; i < event.getOutputText().length(); i++) {
                         menu.getInput().sendChar(event.getOutputText().charAt(i));
                     }
-                } else {
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
-                    new Handler().postDelayed(() -> {
-                        for (int i = 0; i < event.getOutputText().length(); i++) {
-                            menu.getInput().sendChar(event.getOutputText().charAt(i));
-                        }
-                        menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
-                        menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
-                    }, 50);
-                }
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
+                }, 50);
             }
-            for (String id : event.bindViewGroupList()) {
-                if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
-                    ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().orElse(null);
-                    menu.getViewManager().switchViewGroupVisibility(viewGroup);
-                }
+        }
+        for (String id : event.bindViewGroupList()) {
+            if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
+                ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().orElse(null);
+                menu.getViewManager().switchViewGroupVisibility(viewGroup);
             }
         }
     }
