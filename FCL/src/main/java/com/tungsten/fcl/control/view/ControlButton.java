@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
@@ -116,7 +118,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         post(() -> {
             notifyData();
-            menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
+            menu.editModeProperty().addListener(invalidate -> {
+                notifyData();
+                cancelAllEvent();
+            });
             dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
                 cancelAllEvent();
@@ -174,10 +179,15 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         // Visibility
         visibilityProperty().unbind();
-        visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
-                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
-                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
-                menu.cursorModeProperty(), parentVisibilityProperty()));
+        if (menu.isEditMode()) {
+            visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && (menu.getViewGroup().getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))),
+                    menu.editModeProperty(), menu.viewGroupProperty()));
+        } else {
+            visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
+                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
+                    menu.cursorModeProperty(), parentVisibilityProperty()));
+        }
         visibilityProperty().addListener(observable -> {
             if (!visibilityProperty.get()) {
                 cancelAllEvent();
@@ -248,6 +258,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
     private final Runnable deleteRunnable = () -> {
+        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setCancelable(false);
@@ -595,6 +607,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     @Override
     public void switchParentVisibility() {
-        setParentVisibility(!parentVisibilityProperty.get());
+        setParentVisibility(!isParentVisibility());
     }
 }

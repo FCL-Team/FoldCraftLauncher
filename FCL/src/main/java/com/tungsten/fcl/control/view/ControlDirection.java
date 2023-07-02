@@ -9,6 +9,8 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -128,7 +130,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         post(() -> {
             notifyData();
             if (menu != null) {
-                menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
+                menu.editModeProperty().addListener(invalidate -> {
+                    notifyData();
+                    cancelAllEvent();
+                });
             }
             dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
@@ -216,10 +221,15 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         // Visibility
         if (!displayMode && menu != null) {
             visibilityProperty().unbind();
-            visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
-                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
-                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
-                    menu.cursorModeProperty(), parentVisibilityProperty()));
+            if (menu.isEditMode()) {
+                visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && menu.getViewGroup().getViewData().directionList().stream().anyMatch(it -> it.getId().equals(getData().getId())),
+                        menu.editModeProperty(), menu.viewGroupProperty()));
+            } else {
+                visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
+                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
+                        menu.cursorModeProperty(), parentVisibilityProperty()));
+            }
             visibilityProperty().addListener(observable -> {
                 if (!visibilityProperty.get()) {
                     cancelAllEvent();
@@ -259,11 +269,19 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private GradientDrawable drawablePressed;
 
     private void refreshStyle(ControlDirectionData data) {
+        int viewSize;
+        if (data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
+            viewSize = ConvertUtils.dip2px(getContext(), data.getBaseInfo().getAbsoluteWidth());
+        } else {
+            viewSize = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
+                    (int) (screenWidth * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
+                    (int) (screenHeight * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f));
+        }
         if (data.getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
-            int size = (getMeasuredWidth() * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
+            int size = (viewSize * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
             int p0 = 0;
-            int p1 = size + ((getMeasuredWidth() * getData().getStyle().getButtonStyle().getInterval()) / 1000);
-            int p2 = getMeasuredWidth() - size;
+            int p1 = size + ((viewSize * getData().getStyle().getButtonStyle().getInterval()) / 1000);
+            int p2 = viewSize - size;
             drawableNormal = new GradientDrawable();
             drawableNormal.setCornerRadius(ConvertUtils.dip2px(getContext(), data.getStyle().getButtonStyle().getCornerRadius() / 10f));
             drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), data.getStyle().getButtonStyle().getStrokeWidth() / 10f), data.getStyle().getButtonStyle().getStrokeColor());
@@ -310,9 +328,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             downLeftBtn.setVisibility(GONE);
             downRightBtn.setVisibility(GONE);
         } else {
-            rockerSize = (getMeasuredWidth() * getData().getStyle().getRockerStyle().getRockerSize()) / 1000;
+            rockerSize = (viewSize * getData().getStyle().getRockerStyle().getRockerSize()) / 1000;
             GradientDrawable drawableArea = new GradientDrawable();
-            drawableArea.setCornerRadius((float) (getMeasuredWidth() * data.getStyle().getRockerStyle().getBgCornerRadius()) / 1000);
+            drawableArea.setCornerRadius((float) (viewSize * data.getStyle().getRockerStyle().getBgCornerRadius()) / 1000);
             drawableArea.setStroke(ConvertUtils.dip2px(getContext(), data.getStyle().getRockerStyle().getBgStrokeWidth() / 10f), data.getStyle().getRockerStyle().getBgStrokeColor());
             drawableArea.setColor(data.getStyle().getRockerStyle().getBgFillColor());
             GradientDrawable drawableRocker = new GradientDrawable();
@@ -327,7 +345,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             area.setBackground(drawableArea);
             rocker.setBackground(drawableRocker);
             setButtonPosition(area, 0, 0);
-            setButtonPosition(rocker, (getMeasuredWidth() / 2) - (rockerSize / 2), (getMeasuredWidth() / 2) - (rockerSize / 2));
+            setButtonPosition(rocker, (viewSize / 2) - (rockerSize / 2), (viewSize / 2) - (rockerSize / 2));
         }
     }
 
@@ -382,6 +400,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable deleteRunnable = () -> {
+        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setCancelable(false);
@@ -770,6 +790,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     @Override
     public void switchParentVisibility() {
-        setParentVisibility(!parentVisibilityProperty.get());
+        setParentVisibility(!isParentVisibility());
     }
 }

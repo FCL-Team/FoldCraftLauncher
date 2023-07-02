@@ -506,10 +506,11 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 InvalidationListener listener = i -> {
                     data.getBaseInfo().setAbsoluteHeight(data.getBaseInfo().getAbsoluteWidth());
-                    data.getBaseInfo().setPercentageHeight(data.getBaseInfo().getPercentageWidth());
+                    data.getBaseInfo().setPercentageHeight(data.getBaseInfo().getPercentageWidth().clone());
                 };
 
                 data.getBaseInfo().absoluteWidthProperty().addListener(listener);
+                data.getBaseInfo().getPercentageWidth().addListener(listener);
                 data.getBaseInfo().percentageWidthProperty().addListener(listener);
 
                 sizeText.stringProperty().bind(Bindings.createStringBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? (data.getBaseInfo().getPercentageWidth().getSize() / 10f + " %") : (data.getBaseInfo().getAbsoluteWidth() + " dp"), data.getBaseInfo().sizeTypeProperty(), data.getBaseInfo().absoluteWidthProperty(), data.getBaseInfo().percentageWidthProperty(), size.progressProperty()));

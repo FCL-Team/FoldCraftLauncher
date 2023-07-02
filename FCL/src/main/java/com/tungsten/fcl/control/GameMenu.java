@@ -430,10 +430,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gyroscope.enableProperty().bind(menuSetting.enableGyroscopeProperty());
 
         viewManager = new ViewManager(this);
-        viewManager.setup();
 
         initLeftMenu();
         initRightMenu();
+
+        viewManager.setup();
     }
 
     @Override
