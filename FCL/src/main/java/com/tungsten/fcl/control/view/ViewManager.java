@@ -126,6 +126,8 @@ public class ViewManager {
     }
 
     public void switchViewGroupVisibility(ControlViewGroup viewGroup) {
+        if (viewGroup == null)
+            return;
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
             View view = gameMenu.getBaseLayout().getChildAt(i);
             if (view instanceof CustomView) {

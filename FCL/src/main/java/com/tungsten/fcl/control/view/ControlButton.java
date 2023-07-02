@@ -511,7 +511,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             } else {
                 setNormalStyle();
             }
-        } else {
+        } else if (enable) {
             switch (eventType) {
                 case 0:
                 case 1:
@@ -529,44 +529,46 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
 
-        if (event.isOpenMenu()) {
-            ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.START, true);
-            ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.END, true);
-        }
-        if (event.isSwitchTouchMode()) {
-            menu.getMenuSetting().setGestureMode(menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ? GestureMode.FIGHT : GestureMode.BUILD);
-            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
-                    menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
-                            getContext().getString(R.string.menu_settings_gesture_mode_build) :
-                            getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
-        }
-        if (event.isInput()) {
-            menu.getTouchCharInput().switchKeyboardState();
-        }
-        if (event.isQuickInput()) {
-            menu.openQuickInput();
-        }
-        if (StringUtils.isNotBlank(event.getOutputText())) {
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                for (int i = 0; i < event.getOutputText().length(); i++) {
-                    menu.getInput().sendChar(event.getOutputText().charAt(i));
-                }
-            } else {
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
-                new Handler().postDelayed(() -> {
+        if (enable) {
+            if (event.isOpenMenu()) {
+                ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.START, true);
+                ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.END, true);
+            }
+            if (event.isSwitchTouchMode()) {
+                menu.getMenuSetting().setGestureMode(menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ? GestureMode.FIGHT : GestureMode.BUILD);
+                Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+                        menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
+                                getContext().getString(R.string.menu_settings_gesture_mode_build) :
+                                getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
+            }
+            if (event.isInput()) {
+                menu.getTouchCharInput().switchKeyboardState();
+            }
+            if (event.isQuickInput()) {
+                menu.openQuickInput();
+            }
+            if (StringUtils.isNotBlank(event.getOutputText())) {
+                if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
                     for (int i = 0; i < event.getOutputText().length(); i++) {
                         menu.getInput().sendChar(event.getOutputText().charAt(i));
                     }
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
-                }, 50);
+                } else {
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
+                    new Handler().postDelayed(() -> {
+                        for (int i = 0; i < event.getOutputText().length(); i++) {
+                            menu.getInput().sendChar(event.getOutputText().charAt(i));
+                        }
+                        menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
+                        menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
+                    }, 50);
+                }
             }
-        }
-        for (String id : event.bindViewGroupList()) {
-            if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
-                @SuppressWarnings("OptionalGetWithoutIsPresent") ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().get();
-                menu.getViewManager().switchViewGroupVisibility(viewGroup);
+            for (String id : event.bindViewGroupList()) {
+                if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
+                    ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().orElse(null);
+                    menu.getViewManager().switchViewGroupVisibility(viewGroup);
+                }
             }
         }
     }
