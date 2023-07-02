@@ -531,8 +531,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                         handleKeyEvent(event, true);
                     }
                     break;
+                case 2:
                 case 3:
-                case 4:
                     handleKeyEvent(event, true);
                     handleKeyEvent(event, false);
                     break;

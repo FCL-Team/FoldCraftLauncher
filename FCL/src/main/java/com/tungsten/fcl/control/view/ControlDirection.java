@@ -127,6 +127,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
 
+        setWillNotDraw(false);
+
         post(() -> {
             notifyData();
             if (menu != null) {
@@ -397,6 +399,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private long firstClickTime;
     private boolean doubleClickEvent = false;
     private boolean startClick = false;
+    private boolean startRecord = false;
 
     private final Handler handler = new Handler();
     private final Runnable deleteRunnable = () -> {
@@ -510,8 +513,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                                         && event.getX() <= (float) ((getMeasuredWidth() / 2) + (rockerSize / 2))
                                         && event.getY() >= (float) ((getMeasuredWidth() / 2) - (rockerSize / 2))
                                         && event.getY() <= (float) ((getMeasuredWidth() / 2) + (rockerSize / 2)))) {
-                            downX = event.getX();
-                            downY = event.getY();
                             downTime = System.currentTimeMillis();
                             startClick = true;
                             int deltaX = (int) (event.getX() - (getMeasuredWidth() / 2));
@@ -526,10 +527,17 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                         }
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        handleRockerEvent((int) event.getX(), (int) event.getY());
+                        if (!startRecord) {
+                            downX = event.getX();
+                            downY = event.getY();
+                            startRecord = true;
+                        } else if (!startClick || Math.abs(event.getX() - downX) > 10 || Math.abs(event.getY() - downY) > 10) {
+                            handleRockerEvent((int) event.getX(), (int) event.getY());
+                        }
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
+                        startRecord = false;
                         if (startClick
                                 && System.currentTimeMillis() - downTime <= 100
                                 && Math.abs(event.getX() - downX) <= 10
