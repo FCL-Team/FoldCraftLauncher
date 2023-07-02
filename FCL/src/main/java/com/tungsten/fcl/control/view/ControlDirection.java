@@ -113,7 +113,7 @@ public class ControlDirection extends RelativeLayout {
             if (menu != null) {
                 menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
             }
-            dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
+            getData().addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
                 cancelAllEvent();
             }));
@@ -140,7 +140,7 @@ public class ControlDirection extends RelativeLayout {
 
         post(() -> {
             notifyData();
-            dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(this::notifyData));
+            getData().addListener(invalidate -> Schedulers.androidUIThread().execute(this::notifyData));
         });
     }
 

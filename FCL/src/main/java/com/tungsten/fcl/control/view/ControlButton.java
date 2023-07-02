@@ -101,7 +101,7 @@ public class ControlButton extends AppCompatButton {
         post(() -> {
             notifyData();
             menu.editModeProperty().addListener(invalidate -> cancelAllEvent());
-            dataProperty.addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
+            getData().addListener(invalidate -> Schedulers.androidUIThread().execute(() -> {
                 notifyData();
                 cancelAllEvent();
             }));
