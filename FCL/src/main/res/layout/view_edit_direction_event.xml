@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.tungsten.fcllibrary.component.view.FCLLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:text="@string/edit_view_event"
+        android:singleLine="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_up"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:auto_padding="false"
+            android:padding="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center"
+            android:id="@+id/up"
+            android:text="@string/menu_control_set"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_down"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:auto_padding="false"
+            android:padding="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center"
+            android:id="@+id/down"
+            android:text="@string/menu_control_set"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_left"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:auto_padding="false"
+            android:padding="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center"
+            android:id="@+id/left"
+            android:text="@string/menu_control_set"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_right"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:auto_padding="false"
+            android:padding="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center"
+            android:id="@+id/right"
+            android:text="@string/menu_control_set"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_sneak"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/sneak"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_sneak_code"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:auto_padding="false"
+            android:padding="8dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:layout_gravity="center"
+            android:id="@+id/sneak_keycode"
+            android:text="@string/menu_control_set"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_follow"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLSpinner
+            android:id="@+id/follow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+</com.tungsten.fcllibrary.component.view.FCLLinearLayout>

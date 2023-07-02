@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @JsonAdapter(ControlButtonData.Serializer.class)
-public class ControlButtonData implements Cloneable, Observable {
+public class ControlButtonData implements Cloneable, Observable, CustomControl {
 
     /**
      * Unique id
@@ -148,6 +148,11 @@ public class ControlButtonData implements Cloneable, Observable {
         data.setBaseInfo(getBaseInfo().clone());
         data.setEvent(getEvent().clone());
         return data;
+    }
+
+    @Override
+    public ViewType getType() {
+        return ViewType.CONTROL_BUTTON;
     }
 
     public static class Serializer implements JsonSerializer<ControlButtonData>, JsonDeserializer<ControlButtonData> {

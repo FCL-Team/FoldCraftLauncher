@@ -17,6 +17,8 @@ import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.data.ButtonStyles;
+import com.tungsten.fcl.control.data.ControlButtonData;
+import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
@@ -40,6 +42,7 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -59,6 +62,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -556,14 +560,20 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == manageViewGroups) {
-            ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this);
+            ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
             dialog.show();
         }
         if (v == addButton) {
+            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> {
 
+            });
+            dialog.show();
         }
         if (v == addDirection) {
+            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> {
 
+            });
+            dialog.show();
         }
         if (v == manageButtonStyle) {
             ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
@@ -575,7 +585,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         
         if (v == openMultiplayerMenu) {
-            
+
         }
         if (v == manageQuickInput) {
             openQuickInput();

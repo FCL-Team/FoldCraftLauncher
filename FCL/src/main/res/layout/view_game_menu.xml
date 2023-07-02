@@ -10,11 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.tungsten.fcl.control.view.TouchPad
-            android:id="@+id/touch_pad"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
         <com.tungsten.fcl.control.view.LogWindow
             android:background="@color/ui_bg_color"
             android:visibility="gone"
@@ -23,6 +18,11 @@
             android:layout_height="match_parent"
             android:focusable="false"
             android:clickable="false"/>
+
+        <com.tungsten.fcl.control.view.TouchPad
+            android:id="@+id/touch_pad"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:layout_width="15dp"

@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
@@ -383,7 +384,13 @@ public class ControlDirection extends RelativeLayout {
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-
+                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, view -> {
+                            ControlDirectionData newData = (ControlDirectionData) view;
+                            getData().setBaseInfo(newData.getBaseInfo());
+                            getData().setStyle(newData.getStyle());
+                            getData().setEvent(newData.getEvent());
+                        });
+                        dialog.show();
                     } else {
                         getData().getBaseInfo().setXPosition((int) ((1000 * (getX() + (getMeasuredWidth() / 2))) / screenWidth));
                         getData().getBaseInfo().setYPosition((int) ((1000 * (getY() + (getMeasuredHeight() / 2))) / screenHeight));
