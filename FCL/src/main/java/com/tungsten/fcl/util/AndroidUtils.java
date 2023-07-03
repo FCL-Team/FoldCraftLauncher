@@ -10,9 +10,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -103,6 +103,21 @@ public class AndroidUtils {
                 return point.x;
             }
         }
+    }
+
+    @SuppressWarnings("resource")
+    public static String getMimeType(String filePath) {
+        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+        String mime = "*/*";
+        if (filePath != null) {
+            try {
+                mmr.setDataSource(filePath);
+                mime = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
+            } catch (RuntimeException e) {
+                return mime;
+            }
+        }
+        return mime;
     }
 
 }

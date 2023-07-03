@@ -17,4 +17,6 @@ public class RequestCodes {
     public static final int SELECT_VERSION_ICON_CODE = 300;
 
     public static final int SELECT_MODS_CODE = 350;
+
+    public static final int SELECT_CONTROLLER_CODE = 400;
 }

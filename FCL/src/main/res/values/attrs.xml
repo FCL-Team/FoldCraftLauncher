@@ -3,4 +3,7 @@
     <declare-styleable name="KeycodeView">
         <attr name="keycode" format="integer"/>
     </declare-styleable>
+    <declare-styleable name="LogWindow">
+        <attr name="auto_log_tint" format="boolean"/>
+    </declare-styleable>
 </resources>
