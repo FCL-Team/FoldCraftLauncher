@@ -510,8 +510,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                     viewHolder.avatar = view.findViewById(R.id.avatar);
                     viewHolder.name = view.findViewById(R.id.name);
                     view.setTag(viewHolder);
-                }
-                else {
+                } else {
                     viewHolder = (ViewHolder) view.getTag();
                 }
                 GameProfile gameProfile = profiles.get(i);

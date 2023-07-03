@@ -67,8 +67,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.date = view.findViewById(R.id.date);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         RemoteVersion remoteVersion = list.get(i);

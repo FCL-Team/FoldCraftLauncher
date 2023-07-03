@@ -85,8 +85,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
             viewHolder.radioButton = view.findViewById(R.id.radio_button);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         ControlDirectionStyle style = list.get(i);

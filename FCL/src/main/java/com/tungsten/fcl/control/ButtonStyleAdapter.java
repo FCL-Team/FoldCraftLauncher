@@ -90,8 +90,7 @@ public class ButtonStyleAdapter extends FCLAdapter {
             viewHolder.radioButton = view.findViewById(R.id.radio_button);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         ControlButtonStyle style = list.get(i);

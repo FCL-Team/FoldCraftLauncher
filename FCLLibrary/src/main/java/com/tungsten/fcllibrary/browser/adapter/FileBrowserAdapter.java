@@ -97,8 +97,7 @@ public class FileBrowserAdapter extends FCLAdapter {
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.description = view.findViewById(R.id.description);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         File file = list.get(i);

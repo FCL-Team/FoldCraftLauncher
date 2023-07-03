@@ -77,8 +77,7 @@ public class ViewGroupAdapter extends FCLAdapter {
             viewHolder.edit = view.findViewById(R.id.edit);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         ControlViewGroup group = list.get(i);

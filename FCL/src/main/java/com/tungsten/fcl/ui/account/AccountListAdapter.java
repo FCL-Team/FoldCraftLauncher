@@ -72,8 +72,7 @@ public class AccountListAdapter extends FCLAdapter {
             viewHolder.skin = view.findViewById(R.id.skin);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         AccountListItem account = list.get(i);
