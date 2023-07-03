@@ -22,6 +22,7 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
@@ -374,6 +375,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!DirectionStyles.isInitialized()) {
             DirectionStyles.init();
         }
+        if (!QuickInputTexts.isInitialized()) {
+            QuickInputTexts.init();
+        }
 
         if (Files.exists(new File(FCLPath.FILES_DIR + "/menu_setting.json").toPath())) {
             try {
@@ -558,7 +562,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     public void openQuickInput() {
-
+        QuickInputDialog dialog = new QuickInputDialog(activity, this);
+        dialog.show();
     }
 
     @Override

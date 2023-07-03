@@ -323,6 +323,12 @@
     <string name="profile_select">Select Directory</string>
     <string name="profile_already_exist">This name already exists, please use a different name.</string>
 
+    <string name="quick_input_title">Quick Input</string>
+    <string name="quick_input_add">Add New Text</string>
+    <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_exist">The text already exist!</string>
+    <string name="quick_input_empty">Fill the text first!</string>
+
     <string name="resourcepack">Resource Packs</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>

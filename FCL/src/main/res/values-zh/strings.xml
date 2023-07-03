@@ -304,6 +304,12 @@
     <string name="profile_select">选择目录</string>
     <string name="profile_already_exist">该名称已存在！</string>
 
+    <string name="quick_input_title">快捷输入</string>
+    <string name="quick_input_add">添加新文本</string>
+    <string name="quick_input_text">快捷输入文本</string>
+    <string name="quick_input_exist">该文本已存在！</string>
+    <string name="quick_input_empty">请先填写文本！</string>
+
     <string name="resourcepack">资源包</string>
 
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
