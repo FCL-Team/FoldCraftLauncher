@@ -26,7 +26,7 @@ public class RuntimeUtils {
 
     public static boolean isLatest(String targetDir, String srcDir) throws IOException {
         File targetFile = new File(targetDir + "/version");
-        long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version"), StandardCharsets.UTF_8));
+        long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));
         return targetFile.exists() && Long.parseLong(FileUtils.readText(targetFile)) == version;
     }
 
@@ -43,7 +43,7 @@ public class RuntimeUtils {
         new File(targetDir).mkdirs();
         String universalPath = srcDir + "/universal.tar.xz";
         String archPath = srcDir + "/bin-" + Architecture.archAsString(Architecture.getDeviceArchitecture()) + ".tar.xz";
-        String version = IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream("/assets/" + srcDir + "/version"), StandardCharsets.UTF_8);
+        String version = IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream("/assets/" + srcDir + "/version"));
         uncompressTarXZ(context.getAssets().open(universalPath), new File(targetDir));
         uncompressTarXZ(context.getAssets().open(archPath), new File(targetDir));
         FileUtils.writeText(new File(targetDir + "/version"), version);

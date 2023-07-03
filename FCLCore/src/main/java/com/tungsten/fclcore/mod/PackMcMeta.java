@@ -5,7 +5,6 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.Validation;
-import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;
@@ -124,19 +123,17 @@ public class PackMcMeta implements Validation {
         }
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile) throws IOException, JsonParseException {
-        try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(modFile)) {
-            Path mcmod = fs.getPath("pack.mcmeta");
-            if (Files.notExists(mcmod))
-                throw new IOException("File " + modFile + " is not a resource pack.");
-            PackMcMeta metadata = JsonUtils.fromNonNullJson(FileUtils.readText(mcmod), PackMcMeta.class);
-            return new LocalModFile(
-                    modManager,
-                    modManager.getLocalMod(FileUtils.getNameWithoutExtension(modFile), ModLoaderType.PACK),
-                    modFile,
-                    FileUtils.getNameWithoutExtension(modFile),
-                    metadata.pack.description,
-                    "", "", "", "", "");
-        }
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path mcmod = fs.getPath("pack.mcmeta");
+        if (Files.notExists(mcmod))
+            throw new IOException("File " + modFile + " is not a resource pack.");
+        PackMcMeta metadata = JsonUtils.fromNonNullJson(FileUtils.readText(mcmod), PackMcMeta.class);
+        return new LocalModFile(
+                modManager,
+                modManager.getLocalMod(FileUtils.getNameWithoutExtension(modFile), ModLoaderType.PACK),
+                modFile,
+                FileUtils.getNameWithoutExtension(modFile),
+                metadata.pack.description,
+                "", "", "", "", "");
     }
 }

@@ -5,8 +5,7 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOADER;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.MINECRAFT;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.OPTIFINE;
-import static com.tungsten.fclcore.util.DigestUtils.digest;
-import static com.tungsten.fclcore.util.Hex.encodeHex;
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT;
 
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.DefaultGameRepository;
@@ -18,6 +17,7 @@ import com.tungsten.fclcore.mod.curse.CurseManifest;
 import com.tungsten.fclcore.mod.curse.CurseManifestMinecraft;
 import com.tungsten.fclcore.mod.curse.CurseManifestModLoader;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -62,7 +62,7 @@ public class McbbsModpackExportTask extends Task<Void> {
                     Path file = runDirectory.resolve(path);
                     if (Files.isRegularFile(file)) {
                         String relativePath = runDirectory.relativize(file).normalize().toString().replace(File.separatorChar, '/');
-                        files.add(new McbbsModpackManifest.AddonFile(true, relativePath, encodeHex(digest("SHA-1", file))));
+                        files.add(new McbbsModpackManifest.AddonFile(true, relativePath, DigestUtils.digestToString("SHA-1", file)));
                     }
                     return true;
                 } else {
@@ -85,6 +85,8 @@ public class McbbsModpackExportTask extends Task<Void> {
                     addons.add(new McbbsModpackManifest.Addon(OPTIFINE.getPatchId(), optifineVersion)));
             analyzer.getVersion(FABRIC).ifPresent(fabricVersion ->
                     addons.add(new McbbsModpackManifest.Addon(FABRIC.getPatchId(), fabricVersion)));
+            analyzer.getVersion(QUILT).ifPresent(quiltVersion ->
+                    addons.add(new McbbsModpackManifest.Addon(QUILT.getPatchId(), quiltVersion)));
 
             List<Library> libraries = new ArrayList<>();
             // TODO libraries

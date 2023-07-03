@@ -96,7 +96,7 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
 
     /**
      * Remove library by library id
-     * @param libraryId patch id or "forge"/"optifine"/"liteloader"/"fabric"
+     * @param libraryId patch id or "forge"/"optifine"/"liteloader"/"fabric"/"quilt"
      * @return this
      */
     public LibraryAnalyzer removeLibrary(String libraryId) {
@@ -139,7 +139,10 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     public static boolean isModded(VersionProvider provider, Version version) {
         Version resolvedVersion = version.resolve(provider);
         String mainClass = resolvedVersion.getMainClass();
-        return mainClass != null && (LAUNCH_WRAPPER_MAIN.equals(mainClass) || mainClass.startsWith("net.fabricmc") || mainClass.startsWith("cpw.mods"));
+        return mainClass != null && (LAUNCH_WRAPPER_MAIN.equals(mainClass)
+                || mainClass.startsWith("net.fabricmc")
+                || mainClass.startsWith("org.quiltmc")
+                || mainClass.startsWith("cpw.mods"));
     }
 
     public enum LibraryType {
@@ -225,13 +228,13 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     public static final String BOOTSTRAP_LAUNCHER_MAIN = "cpw.mods.bootstraplauncher.BootstrapLauncher";
 
     public static final String[] FORGE_TWEAKERS = new String[] {
-        "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker", // 1.5.2
-        "cpw.mods.fml.common.launcher.FMLTweaker", // 1.6.1 ~ 1.7.10
-        "net.minecraftforge.fml.common.launcher.FMLTweaker" // 1.8 ~ 1.12.2
+            "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker", // 1.5.2
+            "cpw.mods.fml.common.launcher.FMLTweaker", // 1.6.1 ~ 1.7.10
+            "net.minecraftforge.fml.common.launcher.FMLTweaker" // 1.8 ~ 1.12.2
     };
     public static final String[] OPTIFINE_TWEAKERS = new String[] {
-        "optifine.OptiFineTweaker",
-        "optifine.OptiFineForgeTweaker"
+            "optifine.OptiFineTweaker",
+            "optifine.OptiFineForgeTweaker"
     };
     public static final String LITELOADER_TWEAKER = "com.mumfrey.liteloader.launch.LiteLoaderTweaker";
 }

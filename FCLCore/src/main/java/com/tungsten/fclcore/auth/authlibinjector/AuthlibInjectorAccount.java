@@ -108,7 +108,7 @@ public class AuthlibInjectorAccount extends YggdrasilAccount {
         private final String prefetchedMeta;
 
         public AuthlibInjectorAuthInfo(AuthInfo authInfo, AuthlibInjectorArtifactInfo artifact, AuthlibInjectorServer server, String prefetchedMeta) {
-            super(authInfo.getUsername(), authInfo.getUUID(), authInfo.getAccessToken(), authInfo.getUserProperties());
+            super(authInfo.getUsername(), authInfo.getUUID(), authInfo.getAccessToken(), authInfo.getUserType(), authInfo.getUserProperties());
 
             this.artifact = artifact;
             this.server = server;
@@ -142,6 +142,11 @@ public class AuthlibInjectorAccount extends YggdrasilAccount {
     }
 
     @Override
+    public String getIdentifier() {
+        return server.getUrl() + ":" + super.getIdentifier();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), server.hashCode());
     }
@@ -151,7 +156,8 @@ public class AuthlibInjectorAccount extends YggdrasilAccount {
         if (obj == null || obj.getClass() != AuthlibInjectorAccount.class)
             return false;
         AuthlibInjectorAccount another = (AuthlibInjectorAccount) obj;
-        return characterUUID.equals(another.characterUUID) && server.equals(another.server);
+        return isPortable() == another.isPortable()
+                && characterUUID.equals(another.characterUUID) && server.equals(another.server);
     }
 
     @Override
@@ -169,7 +175,7 @@ public class AuthlibInjectorAccount extends YggdrasilAccount {
             return emptySet();
         Set<TextureType> result = EnumSet.noneOf(TextureType.class);
         for (String val : prop.split(",")) {
-            val = val.toUpperCase();
+            val = val.toUpperCase(Locale.ROOT);
             TextureType parsed;
             try {
                 parsed = TextureType.valueOf(val);

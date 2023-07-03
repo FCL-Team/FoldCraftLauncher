@@ -11,13 +11,13 @@ import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
@@ -54,8 +54,8 @@ public final class McbbsModpackProvider implements ModpackProvider {
         config.getManifest().injectLaunchOptions(builder);
     }
 
-    private static Modpack fromManifestFile(String json, Charset encoding) throws IOException, JsonParseException {
-        McbbsModpackManifest manifest = JsonUtils.fromNonNullJson(json, McbbsModpackManifest.class);
+    private static Modpack fromManifestFile(InputStream json, Charset encoding) throws IOException, JsonParseException {
+        McbbsModpackManifest manifest = JsonUtils.fromNonNullJsonFully(json, McbbsModpackManifest.class);
         return manifest.toModpack(encoding);
     }
 
@@ -63,11 +63,11 @@ public final class McbbsModpackProvider implements ModpackProvider {
     public Modpack readManifest(ZipFile zip, Path file, Charset encoding) throws IOException, JsonParseException {
         ZipArchiveEntry mcbbsPackMeta = zip.getEntry("mcbbs.packmeta");
         if (mcbbsPackMeta != null) {
-            return fromManifestFile(IOUtils.readFullyAsString(zip.getInputStream(mcbbsPackMeta)), encoding);
+            return fromManifestFile(zip.getInputStream(mcbbsPackMeta), encoding);
         }
         ZipArchiveEntry manifestJson = zip.getEntry("manifest.json");
         if (manifestJson != null) {
-            return fromManifestFile(IOUtils.readFullyAsString(zip.getInputStream(manifestJson)), encoding);
+            return fromManifestFile(zip.getInputStream(manifestJson), encoding);
         }
         throw new IOException("`mcbbs.packmeta` or `manifest.json` cannot be found");
     }

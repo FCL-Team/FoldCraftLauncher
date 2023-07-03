@@ -26,8 +26,8 @@ public class NormalizedSkin {
         this.texture = texture;
 
         // check format
-        int w = texture.getWidth();
-        int h = texture.getHeight();
+        int w = (int) texture.getWidth();
+        int h = (int) texture.getHeight();
         if (w % 64 != 0) {
             throw new InvalidSkinException("Invalid size " + w + "x" + h);
         }
@@ -84,10 +84,6 @@ public class NormalizedSkin {
         return oldFormat;
     }
 
-    /**
-     * Tests whether the skin is slim.
-     * Note that this method doesn't guarantee the result is correct.
-     */
     public boolean isSlim() {
         return (hasTransparencyRelative(50, 16, 2, 4) ||
                 hasTransparencyRelative(54, 20, 2, 12) ||

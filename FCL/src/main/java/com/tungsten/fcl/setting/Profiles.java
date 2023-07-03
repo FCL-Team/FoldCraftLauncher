@@ -16,14 +16,15 @@ import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public final class Profiles {
 
@@ -103,8 +104,11 @@ public final class Profiles {
         if (!initialized)
             return;
         // update storage
-        config().getConfigurations().clear();
-        config().getConfigurations().putAll(profiles.stream().collect(Collectors.toMap(Profile::getName, it -> it)));
+        TreeMap<String, Profile> newConfigurations = new TreeMap<>();
+        for (Profile profile : profiles) {
+            newConfigurations.put(profile.getName(), profile);
+        }
+        config().getConfigurations().setValue(FXCollections.observableMap(newConfigurations));
     }
 
     /**

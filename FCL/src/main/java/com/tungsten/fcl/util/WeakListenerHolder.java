@@ -7,11 +7,11 @@ import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
 import com.tungsten.fclcore.fakefx.collections.ListChangeListener;
 import com.tungsten.fclcore.fakefx.collections.WeakListChangeListener;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WeakListenerHolder {
-    private List<Object> refs = new LinkedList<>();
+    private final List<Object> refs = new ArrayList<>(0);
 
     public WeakListenerHolder() {
     }

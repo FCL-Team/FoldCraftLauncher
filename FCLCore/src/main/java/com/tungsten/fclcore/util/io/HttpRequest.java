@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -127,7 +126,7 @@ public abstract class HttpRequest {
             return getStringWithRetry(() -> {
                 HttpURLConnection con = createConnection();
                 con = resolveConnection(con);
-                return IOUtils.readFullyAsString(con.getInputStream(), StandardCharsets.UTF_8);
+                return IOUtils.readFullyAsString(con.getInputStream());
             }, retryTimes);
         }
     }

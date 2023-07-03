@@ -250,7 +250,7 @@ public class DefaultLauncher extends Launcher {
 
     public String getInjectorArg() {
         try {
-            String map = IOUtils.readFullyAsString(DefaultLauncher.class.getResourceAsStream("/assets/map.json"), StandardCharsets.UTF_8);
+            String map = IOUtils.readFullyAsString(DefaultLauncher.class.getResourceAsStream("/assets/map.json"));
             InjectorMap injectorMap = new GsonBuilder()
                     .setPrettyPrinting()
                     .create()

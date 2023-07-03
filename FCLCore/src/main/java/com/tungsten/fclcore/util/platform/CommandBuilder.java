@@ -2,8 +2,6 @@ package com.tungsten.fclcore.util.platform;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-import com.tungsten.fclcore.util.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -20,7 +18,6 @@ public final class CommandBuilder {
     private final List<Item> raw = new ArrayList<>();
 
     public CommandBuilder() {
-
     }
 
     private String parse(String s) {
@@ -57,28 +54,97 @@ public final class CommandBuilder {
         return this;
     }
 
-    public String addDefault(String opt) {
-        for (Item item : raw) {
-            if (item.arg.equals(opt)) {
-                return item.arg;
+    public void addAllDefault(Collection<String> args) {
+        addAllDefault(args, true);
+    }
+
+    public void addAllDefaultWithoutParsing(Collection<String> args) {
+        addAllDefault(args, false);
+    }
+
+    private void addAllDefault(Collection<String> args, boolean parse) {
+        loop:
+        for (String arg : args) {
+            if (arg.startsWith("-D")) {
+                int idx = arg.indexOf('=');
+                if (idx >= 0) {
+                    addDefault(arg.substring(0, idx + 1), arg.substring(idx + 1), parse);
+                } else {
+                    String opt = arg + "=";
+                    for (Item item : raw) {
+                        if (item.arg.startsWith(opt)) {
+                            LOG.info("Default option '" + arg + "' is suppressed by '" + item.arg + "'");
+                            continue loop;
+                        } else if (item.arg.equals(arg)) {
+                            continue loop;
+                        }
+                    }
+                    raw.add(new Item(arg, parse));
+                }
+                continue;
             }
+
+            if (arg.startsWith("-XX:")) {
+                Matcher matcher = UNSTABLE_OPTION_PATTERN.matcher(arg);
+                if (matcher.matches()) {
+                    addUnstableDefault(matcher.group("key"), matcher.group("value"), parse);
+                    continue;
+                }
+
+                matcher = UNSTABLE_BOOLEAN_OPTION_PATTERN.matcher(arg);
+                if (matcher.matches()) {
+                    addUnstableDefault(matcher.group("key"), "+".equals(matcher.group("value")), parse);
+                    continue;
+                }
+            }
+
+            if (arg.startsWith("-X")) {
+                String opt = null;
+                String value = null;
+
+                for (String prefix : new String[]{"-Xmx", "-Xms", "-Xmn", "-Xss"}) {
+                    if (arg.startsWith(prefix)) {
+                        opt = prefix;
+                        value = arg.substring(prefix.length());
+                        break;
+                    }
+                }
+
+                if (opt != null) {
+                    addDefault(opt, value, parse);
+                    continue;
+                }
+            }
+
+            for (Item item : raw) {
+                if (item.arg.equals(arg)) {
+                    continue loop;
+                }
+            }
+            raw.add(new Item(arg, parse));
         }
-        raw.add(new Item(opt, true));
-        return null;
     }
 
     public String addDefault(String opt, String value) {
+        return addDefault(opt, value, true);
+    }
+
+    private String addDefault(String opt, String value, boolean parse) {
         for (Item item : raw) {
             if (item.arg.startsWith(opt)) {
                 LOG.info("Default option '" + opt + value + "' is suppressed by '" + item.arg + "'");
                 return item.arg;
             }
         }
-        raw.add(new Item(opt + value, true));
+        raw.add(new Item(opt + value, parse));
         return null;
     }
 
     public String addUnstableDefault(String opt, boolean value) {
+        return addUnstableDefault(opt, value, true);
+    }
+
+    private String addUnstableDefault(String opt, boolean value, boolean parse) {
         for (Item item : raw) {
             final Matcher matcher = UNSTABLE_BOOLEAN_OPTION_PATTERN.matcher(item.arg);
             if (matcher.matches()) {
@@ -89,14 +155,18 @@ public final class CommandBuilder {
         }
 
         if (value) {
-            raw.add(new Item("-XX:+" + opt, true));
+            raw.add(new Item("-XX:+" + opt, parse));
         } else {
-            raw.add(new Item("-XX:-" + opt, true));
+            raw.add(new Item("-XX:-" + opt, parse));
         }
         return null;
     }
 
     public String addUnstableDefault(String opt, String value) {
+        return addUnstableDefault(opt, value, true);
+    }
+
+    private String addUnstableDefault(String opt, String value, boolean parse) {
         for (Item item : raw) {
             final Matcher matcher = UNSTABLE_OPTION_PATTERN.matcher(item.arg);
             if (matcher.matches()) {
@@ -106,12 +176,16 @@ public final class CommandBuilder {
             }
         }
 
-        raw.add(new Item("-XX:" + opt + "=" + value, true));
+        raw.add(new Item("-XX:" + opt + "=" + value, parse));
         return null;
     }
 
     public boolean removeIf(Predicate<String> pred) {
         return raw.removeIf(i -> pred.test(i.arg));
+    }
+
+    public boolean noneMatch(Predicate<String> predicate) {
+        return raw.stream().noneMatch(it -> predicate.test(it.arg));
     }
 
     @Override
@@ -128,8 +202,8 @@ public final class CommandBuilder {
     }
 
     private static class Item {
-        String arg;
-        boolean parse;
+        final String arg;
+        final boolean parse;
 
         Item(String arg, boolean parse) {
             this.arg = arg;
@@ -147,22 +221,53 @@ public final class CommandBuilder {
     }
 
     public static boolean hasExecutionPolicy() {
-        return true;
+        try {
+            final Process process = Runtime.getRuntime().exec(new String[]{"powershell", "-Command", "Get-ExecutionPolicy"});
+            if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                process.destroy();
+                return false;
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), OperatingSystem.NATIVE_CHARSET))) {
+                String policy = reader.readLine();
+                return "Unrestricted".equalsIgnoreCase(policy) || "RemoteSigned".equalsIgnoreCase(policy);
+            }
+        } catch (Throwable ignored) {
+        }
+        return false;
     }
 
     public static boolean setExecutionPolicy() {
+        try {
+            final Process process = Runtime.getRuntime().exec(new String[]{"powershell", "-Command", "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"});
+            if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                process.destroy();
+                return false;
+            }
+        } catch (Throwable ignored) {
+        }
         return true;
     }
 
+    private static boolean containsEscape(String str, String escapeChars) {
+        for (int i = 0; i < escapeChars.length(); i++) {
+            if (str.indexOf(escapeChars.charAt(i)) >= 0)
+                return true;
+        }
+        return false;
+    }
+
+    private static String escape(String str, char... escapeChars) {
+        for (char ch : escapeChars) {
+            str = str.replace("" + ch, "\\" + ch);
+        }
+        return str;
+    }
+
+    public static String toBatchStringLiteral(String s) {
+        return containsEscape(s, " \t\"^&<>|") ? '"' + escape(s, '\\', '"') + '"' : s;
+    }
+
     public static String toShellStringLiteral(String s) {
-        String escaping = " \t\"!#$&'()*,;<=>?[\\]^`{|}~";
-        String escaped = "\"$&`";
-        if (s.indexOf(' ') >= 0 || s.indexOf('\t') >= 0 || StringUtils.containsOne(s, escaping.toCharArray())) {
-            // The argument has not been quoted, add quotes.
-            for (char ch : escaped.toCharArray())
-                s = s.replace("" + ch, "\\" + ch);
-            return '"' + s + '"';
-        } else
-            return s;
+        return containsEscape(s, " \t\"!#$&'()*,;<=>?[\\]^`{|}~") ? '"' + escape(s, '"', '$', '&', '`') + '"' : s;
     }
 }

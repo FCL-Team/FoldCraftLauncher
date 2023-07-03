@@ -5,7 +5,6 @@ import static com.tungsten.fclcore.util.DigestUtils.getDigest;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.FileSystem;
@@ -17,6 +16,7 @@ import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
 
+import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.ChecksumMismatchException;
 import com.tungsten.fclcore.util.io.CompressingUtils;
@@ -54,7 +54,7 @@ public class FileDownloadTask extends FetchTask<Void> {
         }
 
         public void performCheck(MessageDigest digest) throws ChecksumMismatchException {
-            String actualChecksum = String.format("%1$040x", new BigInteger(1, digest.digest()));
+            String actualChecksum = Hex.encodeHex(digest.digest());
             if (!checksum.equalsIgnoreCase(actualChecksum)) {
                 throw new ChecksumMismatchException(algorithm, checksum, actualChecksum);
             }
@@ -248,7 +248,7 @@ public class FileDownloadTask extends FetchTask<Void> {
     }
 
     public static final IntegrityCheckHandler ZIP_INTEGRITY_CHECK_HANDLER = (filePath, destinationPath) -> {
-        String ext = FileUtils.getExtension(destinationPath).toLowerCase();
+        String ext = FileUtils.getExtension(destinationPath).toLowerCase(Locale.ROOT);
         if (ext.equals("zip") || ext.equals("jar")) {
             try (FileSystem ignored = CompressingUtils.createReadOnlyZipFileSystem(filePath)) {
                 // test for zip format

@@ -175,7 +175,7 @@ public interface GameRepository extends VersionProvider {
      * @param version the id of specific version that is relevant to {@code assetId}
      * @param assetId the asset id, you can find it in {@link AssetIndexInfo#getId()} {@link Version#getAssetIndex()}
      * @param name the asset object name, you can find it in keys of {@link AssetIndex#getObjects()}
-     * @throws IOException if I/O operation fails.
+     * @throws java.io.IOException if I/O operation fails.
      * @return the file that given asset object refers to
      */
     Optional<Path> getAssetObject(String version, String assetId, String name) throws IOException;

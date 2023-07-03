@@ -1,7 +1,5 @@
 package com.tungsten.fclcore.download.forge;
 
-import static com.tungsten.fclcore.util.DigestUtils.digest;
-import static com.tungsten.fclcore.util.Hex.encodeHex;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
@@ -25,6 +23,7 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalFunction;
@@ -86,7 +85,7 @@ public class ForgeNewInstallTask extends Task<Version> {
                 if (Files.exists(artifact)) {
                     String code;
                     try (InputStream stream = Files.newInputStream(artifact)) {
-                        code = encodeHex(digest("SHA-1", stream));
+                        code = (DigestUtils.digestToString("SHA-1", stream));
                     }
 
                     if (!Objects.equals(code, value)) {
@@ -173,7 +172,7 @@ public class ForgeNewInstallTask extends Task<Version> {
 
                 String code;
                 try (InputStream stream = Files.newInputStream(artifact)) {
-                    code = encodeHex(digest("SHA-1", stream));
+                    code = DigestUtils.digestToString("SHA-1", stream);
                 }
 
                 if (!Objects.equals(code, entry.getValue())) {

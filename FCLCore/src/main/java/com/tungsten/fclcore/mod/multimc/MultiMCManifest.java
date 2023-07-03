@@ -2,7 +2,6 @@ package com.tungsten.fclcore.mod.multimc;
 
 import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -42,8 +41,7 @@ public final class MultiMCManifest {
         ZipArchiveEntry mmcPack = zipFile.getEntry(rootEntryName + "mmc-pack.json");
         if (mmcPack == null)
             return null;
-        String json = IOUtils.readFullyAsString(zipFile.getInputStream(mmcPack));
-        MultiMCManifest manifest = JsonUtils.fromNonNullJson(json, MultiMCManifest.class);
+        MultiMCManifest manifest = JsonUtils.fromNonNullJsonFully(zipFile.getInputStream(mmcPack), MultiMCManifest.class);
         if (manifest.getComponents() == null)
             throw new IOException("mmc-pack.json malformed.");
 

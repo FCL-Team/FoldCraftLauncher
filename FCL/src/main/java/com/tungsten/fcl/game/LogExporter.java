@@ -41,12 +41,17 @@ public final class LogExporter {
 
         return CompletableFuture.runAsync(() -> {
             try (Zipper zipper = new Zipper(zipFile)) {
-                if (Files.exists(runDirectory.resolve("logs").resolve("debug.log"))) {
-                    zipper.putFile(runDirectory.resolve("logs").resolve("debug.log"), "debug.log");
+                Path logsDir = runDirectory.resolve("logs");
+                if (Files.exists(logsDir.resolve("debug.log"))) {
+                    zipper.putFile(logsDir.resolve("debug.log"), "debug.log");
                 }
-                if (Files.exists(runDirectory.resolve("logs").resolve("latest.log"))) {
-                    zipper.putFile(runDirectory.resolve("logs").resolve("latest.log"), "latest.log");
+                if (Files.exists(logsDir.resolve("latest.log"))) {
+                    zipper.putFile(logsDir.resolve("latest.log"), "latest.log");
                 }
+                if (Files.exists(logsDir.resolve("fml-client-latest.log"))) {
+                    zipper.putFile(logsDir.resolve("fml-client-latest.log"), "fml-client-latest.log");
+                }
+
                 zipper.putTextFile(Logging.getLogs(), "fcl.log");
                 zipper.putTextFile(logs, "minecraft.log");
 

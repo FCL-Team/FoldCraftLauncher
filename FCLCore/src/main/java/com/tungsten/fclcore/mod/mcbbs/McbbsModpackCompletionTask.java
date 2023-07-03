@@ -1,7 +1,5 @@
 package com.tungsten.fclcore.mod.mcbbs;
 
-import static com.tungsten.fclcore.util.DigestUtils.digest;
-import static com.tungsten.fclcore.util.Hex.encodeHex;
 import static com.tungsten.fclcore.util.Lang.wrap;
 import static com.tungsten.fclcore.util.Lang.wrapConsumer;
 
@@ -18,6 +16,7 @@ import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.GetTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskCompletableFuture;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -126,7 +125,7 @@ public class McbbsModpackCompletionTask extends CompletableFutureTask<Void> {
                         } else if (getFileHash(file) != null) {
                             // If user modified this entry file, we will not replace this file since this modified file is what user expects.
                             // Or we have downloaded latest file in previous completion task, this time we have no need to download it again.
-                            String fileHash = encodeHex(digest("SHA-1", actualPath));
+                            String fileHash = DigestUtils.digestToString("SHA-1", actualPath);
                             String oldHash = getFileHash(oldFile);
                             String newHash = getFileHash(file);
                             if (oldHash == null) {

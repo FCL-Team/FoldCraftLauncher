@@ -1,11 +1,7 @@
 package com.tungsten.fclcore.auth.offline;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -16,29 +12,23 @@ import static java.util.Objects.requireNonNull;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class Texture {
+import com.tungsten.fclcore.util.Hex;
+
+public final class Texture {
     private final String hash;
-    private final byte[] data;
+    private final Bitmap image;
 
-    public Texture(String hash, byte[] data) {
+    public Texture(String hash, Bitmap image) {
         this.hash = requireNonNull(hash);
-        this.data = requireNonNull(data);
-    }
-
-    public byte[] getData() {
-        return data;
+        this.image = requireNonNull(image);
     }
 
     public String getHash() {
         return hash;
     }
 
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(data);
-    }
-
-    public int getLength() {
-        return data.length;
+    public Bitmap getImage() {
+        return image;
     }
 
     private static final Map<String, Texture> textures = new HashMap<>();
@@ -58,8 +48,9 @@ public class Texture {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        int width = img.getWidth();
-        int height = img.getHeight();
+
+        int width = (int) img.getWidth();
+        int height = (int) img.getHeight();
         byte[] buf = new byte[4096];
 
         putInt(buf, 0, width);
@@ -82,8 +73,7 @@ public class Texture {
             digest.update(buf, 0, pos);
         }
 
-        byte[] sha256 = digest.digest();
-        return String.format("%0" + (sha256.length << 1) + "x", new BigInteger(1, sha256));
+        return Hex.encodeHex(digest.digest());
     }
 
     private static void putInt(byte[] array, int offset, int x) {
@@ -95,33 +85,31 @@ public class Texture {
 
     public static Texture loadTexture(InputStream in) throws IOException {
         if (in == null) return null;
-        Bitmap img = BitmapFactory.decodeStream(in);
-        if (img == null) {
-            throw new IOException("No image found");
+        Bitmap img;
+        try (InputStream is = in) {
+            img = BitmapFactory.decodeStream(is);
         }
 
-        String hash = computeTextureHash(img);
+        return loadTexture(img);
+    }
+
+    public static Texture loadTexture(Bitmap image) {
+        if (image == null) return null;
+
+        String hash = computeTextureHash(image);
 
         Texture existent = textures.get(hash);
         if (existent != null) {
             return existent;
         }
 
-        ByteArrayOutputStream buf = new ByteArrayOutputStream();
-        img.compress(Bitmap.CompressFormat.PNG, 100, buf);
-        Texture texture = new Texture(hash, buf.toByteArray());
-
+        Texture texture = new Texture(hash, image);
         existent = textures.putIfAbsent(hash, texture);
 
         if (existent != null) {
             return existent;
         }
         return texture;
-    }
-
-    public static Texture loadTexture(String url) throws IOException {
-        if (url == null) return null;
-        return loadTexture(new URL(url).openStream());
     }
 
 }
