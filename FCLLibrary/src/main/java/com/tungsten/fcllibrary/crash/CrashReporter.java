@@ -333,8 +333,6 @@ public final class CrashReporter {
 
         String errorDetails = "";
 
-        errorDetails += context.getString(R.string.crash_reporter_hint) + " \n\n";
-
         errorDetails += "Build version: " + versionName + " \n";
         if (buildDateAsString != null) {
             errorDetails += "Build date: " + buildDateAsString + " \n";
