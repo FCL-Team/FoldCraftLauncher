@@ -415,10 +415,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
         if (getData().getEvent().isMovable()) {
-            int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
-            int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-            float targetX = Math.max(0, Math.min(screenWidth - getWidth(), positionX + deltaX));
-            float targetY = Math.max(0, Math.min(screenHeight - getHeight(), positionY + deltaY));
+            int deltaX = (int) (event.getX() - downX);
+            int deltaY = (int) (event.getY() - downY);
+            float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
+            float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
             setX(targetX);
             setY(targetY);
         }
