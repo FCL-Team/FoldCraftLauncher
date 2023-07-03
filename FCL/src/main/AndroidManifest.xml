@@ -85,6 +85,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
         <activity
+            android:name=".activity.ShellActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
+            android:screenOrientation="sensorLandscape"/>
+        <activity
             android:process=":game"
             android:launchMode="standard"
             android:multiprocess="true"
@@ -105,11 +110,6 @@
             android:name="com.tungsten.fcllibrary.crash.CrashReportActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
-        <activity
-            android:name="com.tungsten.fcl.activity.ShellActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
-            android:screenOrientation="sensorPortrait"/>
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
             android:process=":processService"
