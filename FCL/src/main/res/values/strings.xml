@@ -120,6 +120,7 @@
 
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
+    <string name="edit_view_no_group">Please add or select a view group first!</string>
     <string name="edit_view_style">View Style</string>
 
     <string name="edit_button_title">Edit Button</string>

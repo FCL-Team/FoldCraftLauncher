@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -573,12 +574,20 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             dialog.show();
         }
         if (v == addButton) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
-            dialog.show();
+            if (getViewGroup() == null) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+            } else {
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                dialog.show();
+            }
         }
         if (v == addDirection) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
-            dialog.show();
+            if (getViewGroup() == null) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+            } else {
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                dialog.show();
+            }
         }
         if (v == manageButtonStyle) {
             ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
