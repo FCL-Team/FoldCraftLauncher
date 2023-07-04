@@ -18,7 +18,7 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
 
     private LinearLayoutCompat addOfflineAccount;
     private LinearLayoutCompat addMicrosoftAccount;
-    private LinearLayoutCompat addExternalAccount;
+    private LinearLayoutCompat addLoginServer;
 
     private ListView listView;
     private AccountListAdapter accountListAdapter;
@@ -33,12 +33,15 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
 
         addOfflineAccount = findViewById(R.id.offline);
         addMicrosoftAccount = findViewById(R.id.microsoft);
-        addExternalAccount = findViewById(R.id.add_login_server);
+        addLoginServer = findViewById(R.id.add_login_server);
         addOfflineAccount.setOnClickListener(this);
         addMicrosoftAccount.setOnClickListener(this);
-        addExternalAccount.setOnClickListener(this);
+        addLoginServer.setOnClickListener(this);
 
         listView = findViewById(R.id.list);
+
+        ListView serverListView = findViewById(R.id.server_list);
+        serverListView.setAdapter(new ServerListAdapter(getContext()));
     }
 
     @Override
@@ -81,8 +84,8 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
             CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_MICROSOFT);
             dialog.show();
         }
-        if (view == addExternalAccount) {
-            CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_AUTHLIB_INJECTOR);
+        if (view == addLoginServer) {
+            AddAuthlibInjectorServerDialog dialog = new AddAuthlibInjectorServerDialog(getContext());
             dialog.show();
         }
     }

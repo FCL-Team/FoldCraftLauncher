@@ -6,14 +6,15 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginTop="5dp"
-        android:background="@drawable/bg_item_clickable"
+        android:clickable="true"
+        android:background="@drawable/bg_container_transparent_clickable"
         android:id="@+id/parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/avatar"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -29,7 +30,7 @@
             android:singleLine="true"
             android:layout_marginStart="8dp"
             app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/avatar"
+            app:layout_constraintStart_toEndOf="@+id/avatar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

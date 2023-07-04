@@ -18,6 +18,9 @@
 
     <string name="about">关于</string>
 
+    <string name="account_add_server">添加认证服务器</string>
+    <string name="account_add_server_url">服务器地址</string>
+    <string name="account_add_server_name">服务器名称</string>
     <string name="account_cape">披风</string>
     <string name="account_create">创建账户</string>
     <string name="account_create_offline">创建离线账户</string>
@@ -39,6 +42,7 @@
     <string name="account_failed">账户刷新失败</string>
     <string name="account_failed_no_character">该账户中无角色。</string>
     <string name="account_failed_connect_authentication_server">无法连接认证服务器，请检查网络。</string>
+    <string name="account_failed_connect_injector_server">无法连接认证服务器。 请检查网络并确认你输入了正确的地址。</string>
     <string name="account_failed_server_disconnected">无法连接认证服务器。你可以暂时离线游戏或尝试重新登录。</string>
     <string name="account_failed_server_response_malformed">无效的返回码，该认证服务器可能失效。</string>
     <string name="account_failed_invalid_credentials">不正确的密码或被限速，请稍后再试。</string>
@@ -47,6 +51,7 @@
     <string name="account_failed_migration">你的账户需要迁移至微软账户，如果已经迁移，请尝试重新登录。</string>
     <string name="account_failed_injector_download_failure">无法下载 authlib-injector。 请检查网络，或修改下载源。</string>
     <string name="account_failed_character_deleted">该角色已被删除。</string>
+    <string name="account_failed_ssl">连接服务器时发生了 SSL 错误。</string>
     <string name="account_failed_wrong_account">登录了错误的账户。</string>
     <string name="account_skin_invalid_skin">无效的皮肤文件</string>
     <string name="account_methods_microsoft_error_add_family">你尚未满 18 岁，需要一位成年将你加入至家庭中。</string>
@@ -145,6 +150,9 @@
     <string name="edit_direction_event_follow_always">完全跟随手指</string>
     <string name="edit_direction_event_sneak">双击中心潜行</string>
     <string name="edit_direction_event_sneak_code">潜行键值</string>
+
+    <string name="event_next">下一步</string>
+    <string name="event_prev">上一步</string>
 
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>

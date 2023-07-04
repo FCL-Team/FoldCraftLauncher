@@ -26,6 +26,9 @@
     
     <string name="about">About</string>
 
+    <string name="account_add_server">Add Authentication Server</string>
+    <string name="account_add_server_url">Server URL</string>
+    <string name="account_add_server_name">Server Name</string>
     <string name="account_cape">Cape</string>
     <string name="account_create">Create Account</string>
     <string name="account_create_offline">Create Offline Account</string>
@@ -47,6 +50,7 @@
     <string name="account_failed">Account refresh failed</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>
     <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
+    <string name="account_failed_connect_injector_server">Unable to connect to the authentication server. Please check your network and make sure you entered the correct URL.</string>
     <string name="account_failed_server_disconnected">Cannot access authentication server. You can log in offline or try to re-login.</string>
     <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
     <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
@@ -55,6 +59,7 @@
     <string name="account_failed_migration">Your account needs to be migrated to a Microsoft account. If you already did, you should re-login to your migrated Microsoft account instead.</string>
     <string name="account_failed_injector_download_failure">Unable to download authlib-injector. Please check your network, or try switching to a different download mirror.</string>
     <string name="account_failed_character_deleted">The character has already been deleted.</string>
+    <string name="account_failed_ssl">An SSL error occurred while connecting to the server.</string>
     <string name="account_failed_wrong_account">You have logged in to the wrong account.</string>
     <string name="account_skin_invalid_skin">Invalid skin file</string>
     <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
@@ -156,6 +161,9 @@
     <string name="edit_direction_event_follow_always">All Parts Follow Finger</string>
     <string name="edit_direction_event_sneak">Double Click Center to Sneak</string>
     <string name="edit_direction_event_sneak_code">Sneak Keycode</string>
+
+    <string name="event_next">Next</string>
+    <string name="event_prev">Prev</string>
 
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
