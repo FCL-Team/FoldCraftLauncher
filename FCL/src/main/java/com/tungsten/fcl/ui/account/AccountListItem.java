@@ -168,7 +168,10 @@ public class AccountListItem {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".png");
         builder.setSuffix(suffix);
-        builder.create().browse(MainActivity.getInstance(), RequestCodes.SELECT_SKIN_CODE, (requestCode, resultCode, data) -> {
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Schedulers.androidUIThread().execute(() -> builder.create().browse(MainActivity.getInstance(), RequestCodes.SELECT_SKIN_CODE, (requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_SKIN_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String selectedFile = FileBrowser.getSelectedFiles(data).get(0);
                 if (selectedFile == null) {
@@ -205,7 +208,14 @@ public class AccountListItem {
             } else {
                 completableFuture.complete(null);
             }
-        });
+            latch.countDown();
+        }));
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         return completableFuture;
     }

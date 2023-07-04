@@ -15,6 +15,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -27,7 +28,7 @@ public class ServerListAdapter extends FCLAdapter {
         super(context);
         list = config().getAuthlibInjectorServers();
 
-        list.addListener((InvalidationListener) i -> notifyDataSetChanged());
+        list.addListener((InvalidationListener) i -> Schedulers.androidUIThread().execute(this::notifyDataSetChanged));
     }
 
     static class ViewHolder {

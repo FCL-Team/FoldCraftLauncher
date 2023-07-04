@@ -358,9 +358,9 @@ public final class Accounts {
     // ==== authlib-injector ====
     private static AuthlibInjectorArtifactProvider createAuthlibInjectorArtifactProvider() {
         String authlibinjectorLocation = FCLPath.AUTHLIB_INJECTOR_PATH;
-        if (authlibinjectorLocation == null) {
+        if (!new File(authlibinjectorLocation).exists()) {
             return new AuthlibInjectorDownloader(
-                    new File(FCLPath.AUTHLIB_INJECTOR_PATH).toPath(),
+                    new File(authlibinjectorLocation).toPath(),
                     DownloadProviders::getDownloadProvider) {
                 @Override
                 public Optional<AuthlibInjectorArtifactInfo> getArtifactInfoImmediately() {

@@ -10,6 +10,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
@@ -136,16 +137,38 @@ public class AccountListAdapter extends FCLAdapter {
         });
         viewHolder.skin.setOnClickListener(v -> {
             try {
-                Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
-                if (uploadTask != null) {
-                    viewHolder.skin.setVisibility(View.GONE);
-                    viewHolder.skinProgress.setVisibility(View.VISIBLE);
-                    uploadTask
-                            .whenComplete(Schedulers.androidUIThread(), ex -> {
-                                viewHolder.skin.setVisibility(View.VISIBLE);
-                                viewHolder.skinProgress.setVisibility(View.GONE);
-                            })
-                            .start();
+                if (account.getAccount() instanceof AuthlibInjectorAccount) {
+                    new Thread(() -> {
+                        try {
+                            Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
+                            Schedulers.androidUIThread().execute(() -> {
+                                if (uploadTask != null) {
+                                    viewHolder.skin.setVisibility(View.GONE);
+                                    viewHolder.skinProgress.setVisibility(View.VISIBLE);
+                                    uploadTask
+                                            .whenComplete(Schedulers.androidUIThread(), ex -> {
+                                                viewHolder.skin.setVisibility(View.VISIBLE);
+                                                viewHolder.skinProgress.setVisibility(View.GONE);
+                                            })
+                                            .start();
+                                }
+                            });
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
+                } else {
+                    Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
+                    if (uploadTask != null) {
+                        viewHolder.skin.setVisibility(View.GONE);
+                        viewHolder.skinProgress.setVisibility(View.VISIBLE);
+                        uploadTask
+                                .whenComplete(Schedulers.androidUIThread(), ex -> {
+                                    viewHolder.skin.setVisibility(View.VISIBLE);
+                                    viewHolder.skinProgress.setVisibility(View.GONE);
+                                })
+                                .start();
+                    }
                 }
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
