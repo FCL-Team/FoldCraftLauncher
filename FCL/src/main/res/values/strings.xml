@@ -276,6 +276,7 @@
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
     <string name="menu_settings_quick_input_button">Manage</string>
+    <string name="menu_settings_search_table">Chinese-English Table</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
