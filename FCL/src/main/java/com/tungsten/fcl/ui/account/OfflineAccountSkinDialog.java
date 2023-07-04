@@ -199,7 +199,7 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
     }
 
     private Skin getSkin() {
-        return new Skin(typeProperty.get(), cslUrl.getStringValue(), null, StringUtils.isBlank(skinPathText.getString()) ? null : skinPathText.getString(), StringUtils.isBlank(capePathText.getString()) ? null : capePathText.getString());
+        return new Skin(typeProperty.get(), cslUrl.getStringValue() == null ? "" : cslUrl.getStringValue(), null, StringUtils.isBlank(skinPathText.getString()) ? null : skinPathText.getString(), StringUtils.isBlank(capePathText.getString()) ? null : capePathText.getString());
     }
 
     @Override
