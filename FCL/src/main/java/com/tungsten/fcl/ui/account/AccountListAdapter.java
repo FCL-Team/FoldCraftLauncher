@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.account;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -40,6 +43,7 @@ public class AccountListAdapter extends FCLAdapter {
         FCLTextView type;
         FCLProgressBar refreshProgress;
         FCLProgressBar skinProgress;
+        FCLImageButton move;
         FCLImageButton refresh;
         FCLImageButton skin;
         FCLImageButton delete;
@@ -55,6 +59,7 @@ public class AccountListAdapter extends FCLAdapter {
         return list.get(i);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
@@ -68,6 +73,7 @@ public class AccountListAdapter extends FCLAdapter {
             viewHolder.type = view.findViewById(R.id.type);
             viewHolder.refreshProgress = view.findViewById(R.id.refresh_progress);
             viewHolder.skinProgress = view.findViewById(R.id.skin_progress);
+            viewHolder.move = view.findViewById(R.id.move);
             viewHolder.refresh = view.findViewById(R.id.refresh);
             viewHolder.skin = view.findViewById(R.id.skin);
             viewHolder.delete = view.findViewById(R.id.delete);
@@ -84,18 +90,39 @@ public class AccountListAdapter extends FCLAdapter {
         viewHolder.type.stringProperty().unbind();
         viewHolder.type.stringProperty().bind(account.subtitleProperty());
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
-        viewHolder.radioButton.setOnClickListener(view1 -> {
+        viewHolder.radioButton.setOnClickListener(v -> {
             Accounts.setSelectedAccount(account.getAccount());
             UIManager.getInstance().getAccountUI().refresh().start();
         });
-        viewHolder.refresh.setOnClickListener(view1 -> {
+        viewHolder.move.imageProperty().bind(Bindings.createObjectBinding(() -> account.getAccount().isPortable() ? getContext().getDrawable(R.drawable.ic_baseline_earth_24) : getContext().getDrawable(R.drawable.ic_baseline_output_24), account.getAccount().portableProperty()));
+        viewHolder.move.setOnClickListener(v -> {
+            Account acc = account.getAccount();
+            Accounts.getAccounts().remove(acc);
+            if (acc.isPortable()) {
+                acc.setPortable(false);
+                if (!Accounts.getAccounts().contains(acc))
+                    Accounts.getAccounts().add(acc);
+            } else {
+                acc.setPortable(true);
+                if (!Accounts.getAccounts().contains(acc)) {
+                    int idx = 0;
+                    for (int j = Accounts.getAccounts().size() - 1; j >= 0; j--) {
+                        if (Accounts.getAccounts().get(j).isPortable()) {
+                            idx = j + 1;
+                            break;
+                        }
+                    }
+                    Accounts.getAccounts().add(idx, acc);
+                }
+            }
+        });
+        viewHolder.refresh.setOnClickListener(v -> {
             viewHolder.refresh.setVisibility(View.GONE);
             viewHolder.refreshProgress.setVisibility(View.VISIBLE);
             account.refreshAsync()
                     .whenComplete(Schedulers.androidUIThread(), ex -> {
                         viewHolder.refresh.setVisibility(View.VISIBLE);
                         viewHolder.refreshProgress.setVisibility(View.GONE);
-
                         if (ex != null) {
                             FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
@@ -103,12 +130,11 @@ public class AccountListAdapter extends FCLAdapter {
                             builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
                             builder1.create().show();
                         }
-
                         UIManager.getInstance().getAccountUI().refresh().start();
                     })
                     .start();
         });
-        viewHolder.skin.setOnClickListener(view1 -> {
+        viewHolder.skin.setOnClickListener(v -> {
             try {
                 Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
                 if (uploadTask != null) {
@@ -125,7 +151,7 @@ public class AccountListAdapter extends FCLAdapter {
                 e.printStackTrace();
             }
         });
-        viewHolder.delete.setOnClickListener(view1 -> {
+        viewHolder.delete.setOnClickListener(v -> {
             account.remove();
             UIManager.getInstance().getAccountUI().refresh().start();
         });
