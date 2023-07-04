@@ -27,6 +27,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLPath;
@@ -218,6 +219,15 @@ public class AccountListItem {
         }
 
         return completableFuture;
+    }
+
+    public void refreshSkinBinding() {
+        image.unbind();
+        texture.unbind();
+        image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
+        texture.bind(TexturesLoader.textureBinding(account));
+        MainActivity.getInstance().refreshAvatar(account);
+        UIManager.getInstance().getMainUI().refreshSkin(account);
     }
 
     public static AuthInfo logIn(Account account) throws CancellationException, AuthenticationException, InterruptedException {

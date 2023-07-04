@@ -14,8 +14,6 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.Objects.requireNonNull;
 
-import android.graphics.BitmapFactory;
-
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;
@@ -189,21 +187,9 @@ public class OfflineAccount extends Account {
 
     @Override
     public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        try {
-            Skin.LoadedSkin loadedSkin = skin.load(username).run();
-            Map<TextureType, Texture> map = new HashMap<>();
-            if (loadedSkin != null) {
-                map.put(TextureType.SKIN, new Texture(null, null, loadedSkin.getSkin().getImage()));
-                if (loadedSkin.getCape() != null) {
-                    map.put(TextureType.CAPE, new Texture(null, null, loadedSkin.getCape().getImage()));
-                }
-            } else {
-                map.put(TextureType.SKIN, new Texture(null, null, BitmapFactory.decodeStream(OfflineAccount.class.getResourceAsStream(TextureModel.detectUUID(uuid) == TextureModel.ALEX ? "/assets/img/alex.img" : "/assets/img/steve.png"))));
-            }
-            return Bindings.createObjectBinding(() -> Optional.of(map));
-        } catch (Exception e) {
-            return super.getTextures();
-        }
+        Map<TextureType, Texture> map = new HashMap<>();
+        map.put(TextureType.SKIN, new Texture("offline", null));
+        return Bindings.createObjectBinding(() -> Optional.of(map));
     }
 
     @Override

@@ -67,7 +67,6 @@
     <string name="account_select_character">选择角色</string>
     <string name="account_skin">皮肤</string>
     <string name="account_skin_type_default">默认</string>
-    <string name="account_skin_type_csl_api_location">服务器地址</string>
     <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI 地址</string>
     <string name="account_skin_type_csl_api_hint">你需要在皮肤站中创建并使用和该离线账户角色同名角色，此时离线账户皮肤将为皮肤站上角色所设定的皮肤。</string>
     <string name="account_skin_type_local_file">本地文件</string>

@@ -13,6 +13,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -92,8 +93,8 @@ public class MainUI extends FCLCommonUI {
             @Override
             protected void invalidated() {
                 Account account = get();
+                renderer.textureProperty().unbind();
                 if (account == null) {
-                    renderer.textureProperty().unbind();
                     renderer.updateTexture(BitmapFactory.decodeStream(MainUI.class.getResourceAsStream("/assets/img/alex.png")), null);
                 } else {
                     renderer.textureProperty().bind(TexturesLoader.textureBinding(account));
@@ -101,5 +102,14 @@ public class MainUI extends FCLCommonUI {
             }
         };
         currentAccount.bind(Accounts.selectedAccountProperty());
+    }
+
+    public void refreshSkin(Account account) {
+        Schedulers.androidUIThread().execute(() -> {
+            if (currentAccount.get() == account) {
+                renderer.textureProperty().unbind();
+                renderer.textureProperty().bind(TexturesLoader.textureBinding(currentAccount.get()));
+            }
+        });
     }
 }

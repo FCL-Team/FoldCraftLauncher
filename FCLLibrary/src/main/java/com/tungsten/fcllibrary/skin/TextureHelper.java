@@ -18,7 +18,7 @@ public class TextureHelper {
     
     public static int[] loadGLTextureFromBitmap(final Bitmap skin, final Bitmap cape, final GL10 gl10) {
         // Log.i("loadTex", "start");
-        final int[] array = { 0 , 0 };
+        final int[] array = new int[2];
         gl10.glGenTextures(2, array, 0);
         gl10.glBindTexture(3553, array[0]);
         gl10.glTexParameterf(3553, 10241, 9728.0f);
@@ -32,8 +32,7 @@ public class TextureHelper {
         }
         if (array[0] == 0 || (cape != null && array[1] == 0)) {
             throw new RuntimeException("Error loading texture.");
-        }
-        else {
+        } else {
             Log.i("loadTex", "success");
         }
         return array;
@@ -41,7 +40,7 @@ public class TextureHelper {
     
     public static int[] loadTexture(final Context context, final int n) {
         TextureHelper.isLoadingError = false;
-        final int[] array = { 0 };
+        final int[] array = new int[2];
         GLES20.glGenTextures(1, array, 0);
         if (array[0] != 0) {
             final BitmapFactory.Options bitmapFactory = new BitmapFactory.Options();
@@ -61,7 +60,7 @@ public class TextureHelper {
     
     public static int[] loadTexture(final Bitmap bitmap) {
         TextureHelper.isLoadingError = false;
-        final int[] array = { 0 };
+        final int[] array = new int[2];
         GLES20.glGenTextures(1, array, 0);
         if (array[0] != 0) {
             new BitmapFactory.Options().inScaled = false;

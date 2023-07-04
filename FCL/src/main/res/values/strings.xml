@@ -78,7 +78,6 @@
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
-    <string name="account_skin_type_csl_api_location">Address</string>
     <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
     <string name="account_skin_type_csl_api_hint">You need to create a character with the same name as your offline account on your skin provider website. Your skin will then be your uploaded skin to that site.</string>
     <string name="account_skin_type_local_file">Local Skin File</string>

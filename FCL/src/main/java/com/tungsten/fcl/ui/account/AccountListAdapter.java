@@ -131,6 +131,7 @@ public class AccountListAdapter extends FCLAdapter {
                             builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
                             builder1.create().show();
                         }
+                        account.refreshSkinBinding();
                         UIManager.getInstance().getAccountUI().refresh().start();
                     })
                     .start();
@@ -149,6 +150,7 @@ public class AccountListAdapter extends FCLAdapter {
                                             .whenComplete(Schedulers.androidUIThread(), ex -> {
                                                 viewHolder.skin.setVisibility(View.VISIBLE);
                                                 viewHolder.skinProgress.setVisibility(View.GONE);
+                                                account.refreshSkinBinding();
                                             })
                                             .start();
                                 }
@@ -166,6 +168,7 @@ public class AccountListAdapter extends FCLAdapter {
                                 .whenComplete(Schedulers.androidUIThread(), ex -> {
                                     viewHolder.skin.setVisibility(View.VISIBLE);
                                     viewHolder.skinProgress.setVisibility(View.GONE);
+                                    account.refreshSkinBinding();
                                 })
                                 .start();
                     }
