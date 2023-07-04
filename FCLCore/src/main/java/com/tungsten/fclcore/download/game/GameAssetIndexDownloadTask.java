@@ -10,7 +10,6 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -60,7 +59,7 @@ public final class GameAssetIndexDownloadTask extends Task<Void> {
             // verify correctness of file content
             if (verifyHashCode) {
                 try {
-                    String actualSum = Hex.encodeHex(DigestUtils.digest("SHA-1", assetIndexFile));
+                    String actualSum = DigestUtils.digestToString("SHA-1", assetIndexFile);
                     if (actualSum.equalsIgnoreCase(assetIndexInfo.getSha1()))
                         return;
                 } catch (IOException e) {

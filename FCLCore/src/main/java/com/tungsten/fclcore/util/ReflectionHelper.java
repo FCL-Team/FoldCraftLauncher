@@ -1,26 +1,9 @@
 package com.tungsten.fclcore.util;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
 public final class ReflectionHelper {
     private ReflectionHelper() {
-    }
-
-    private static Method accessible0;
-
-    static {
-        try {
-            accessible0 = AccessibleObject.class.getDeclaredMethod("setAccessible0", boolean.class);
-            accessible0.setAccessible(true);
-        } catch (Throwable ignored) {
-        }
-    }
-
-    public static void setAccessible(AccessibleObject obj) throws InvocationTargetException, IllegalAccessException {
-        accessible0.invoke(obj, true);
     }
 
     /**

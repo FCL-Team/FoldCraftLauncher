@@ -1,9 +1,7 @@
 package com.tungsten.fclcore.mod;
 
-import static com.tungsten.fclcore.util.DigestUtils.digest;
-import static com.tungsten.fclcore.util.Hex.encodeHex;
-
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -52,7 +50,7 @@ public final class MinecraftInstanceTask<T> extends Task<ModpackConfiguration<T>
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                             String relativePath = root.relativize(file).normalize().toString().replace(File.separatorChar, '/');
-                            overrides.add(new ModpackConfiguration.FileInformation(relativePath, encodeHex(digest("SHA-1", file))));
+                            overrides.add(new ModpackConfiguration.FileInformation(relativePath, DigestUtils.digestToString("SHA-1", file)));
                             return FileVisitResult.CONTINUE;
                         }
                     });

@@ -8,38 +8,20 @@ import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.fakefx.collections.ObservableMap;
-import com.tungsten.fclcore.fakefx.collections.ObservableSet;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 import com.tungsten.fclcore.util.fakefx.PropertyUtils;
-import com.tungsten.fclcore.util.gson.FileTypeAdapter;
-import com.tungsten.fclcore.util.gson.fakefx.creators.ObservableListCreator;
-import com.tungsten.fclcore.util.gson.fakefx.creators.ObservableMapCreator;
-import com.tungsten.fclcore.util.gson.fakefx.creators.ObservableSetCreator;
-import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.*;
 
 @JsonAdapter(GlobalConfig.Serializer.class)
 public class GlobalConfig implements Cloneable, Observable {
 
-    private static final Gson CONFIG_GSON = new GsonBuilder()
-            .registerTypeAdapter(File.class, FileTypeAdapter.INSTANCE)
-            .registerTypeAdapter(ObservableList.class, new ObservableListCreator())
-            .registerTypeAdapter(ObservableSet.class, new ObservableSetCreator())
-            .registerTypeAdapter(ObservableMap.class, new ObservableMapCreator())
-            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-            .setPrettyPrinting()
-            .create();
-
     @Nullable
     public static GlobalConfig fromJson(String json) throws JsonParseException {
-        GlobalConfig loaded = CONFIG_GSON.fromJson(json, GlobalConfig.class);
+        GlobalConfig loaded = Config.CONFIG_GSON.fromJson(json, GlobalConfig.class);
         if (loaded == null) {
             return null;
         }
@@ -72,7 +54,7 @@ public class GlobalConfig implements Cloneable, Observable {
     }
 
     public String toJson() {
-        return CONFIG_GSON.toJson(this);
+        return Config.CONFIG_GSON.toJson(this);
     }
 
     @Override

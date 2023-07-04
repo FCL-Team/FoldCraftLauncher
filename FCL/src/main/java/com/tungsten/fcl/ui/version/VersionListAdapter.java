@@ -54,8 +54,7 @@ public class VersionListAdapter extends FCLAdapter {
             viewHolder.subtitle = view.findViewById(R.id.subtitle);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         VersionListItem versionListItem = list.get(i);

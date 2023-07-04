@@ -6,4 +6,7 @@
     <cache-path
         name="cache_path"
         path="."/>
+    <files-path
+        name="files_path"
+        path="."/>
 </paths>

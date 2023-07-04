@@ -13,6 +13,7 @@ import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.task.Schedulers;
@@ -197,7 +198,7 @@ public class Versions {
     private static void ensureSelectedAccount(Context context, Consumer<Account> action) {
         Account account = Accounts.getSelectedAccount();
         if (account == null) {
-            CreateAccountDialog dialog = new CreateAccountDialog(context, null);
+            CreateAccountDialog dialog = new CreateAccountDialog(context, (AccountFactory<?>) null);
             dialog.setOnDismissListener(dialogInterface -> {
                 Account newAccount = Accounts.getSelectedAccount();
                 if (newAccount == null) {

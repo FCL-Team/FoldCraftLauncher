@@ -2,7 +2,6 @@ package com.tungsten.fclcore.game;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.Validation;
 
@@ -43,6 +42,6 @@ public final class AssetObject implements Validation {
 
     public boolean validateChecksum(Path file, boolean defaultValue) throws IOException {
         if (hash == null) return defaultValue;
-        return Hex.encodeHex(DigestUtils.digest("SHA-1", file)).equalsIgnoreCase(hash);
+        return DigestUtils.digestToString("SHA-1", file).equalsIgnoreCase(hash);
     }
 }

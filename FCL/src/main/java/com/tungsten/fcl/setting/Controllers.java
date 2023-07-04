@@ -33,7 +33,7 @@ public class Controllers {
     public static void checkControllers() {
         if (controllers.isEmpty()) {
             try {
-                String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"), StandardCharsets.UTF_8);
+                String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
                 Controller controller = new GsonBuilder()
                         .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                         .setPrettyPrinting()

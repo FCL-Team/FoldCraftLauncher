@@ -51,8 +51,7 @@ public class SelectableControllerListAdapter extends FCLAdapter {
             viewHolder.version = view.findViewById(R.id.version);
             viewHolder.description = view.findViewById(R.id.description);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         Controller controller = list.get(i);

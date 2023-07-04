@@ -7,16 +7,15 @@
     android:id="@+id/background"
     tools:context=".activity.SplashActivity">
 
-    <com.tungsten.fcllibrary.component.view.FCLTitleView
+    <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
-        app:title="@string/splash_title"
+        android:text="@string/splash_title"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintWidth_percent="0.75"
-        app:layout_constraintHeight_percent="0.10"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@color/white"
+        app:auto_text_background_tint="true"
+        app:auto_text_tint="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

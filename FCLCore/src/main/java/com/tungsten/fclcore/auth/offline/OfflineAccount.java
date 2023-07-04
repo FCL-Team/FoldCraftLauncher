@@ -51,6 +51,10 @@ public class OfflineAccount extends Account {
         }
     }
 
+    public AuthlibInjectorArtifactProvider getDownloader() {
+        return downloader;
+    }
+
     @Override
     public UUID getUUID() {
         return uuid;
@@ -66,6 +70,11 @@ public class OfflineAccount extends Account {
         return username;
     }
 
+    @Override
+    public String getIdentifier() {
+        return username + ":" + username;
+    }
+
     public Skin getSkin() {
         return skin;
     }
@@ -75,7 +84,7 @@ public class OfflineAccount extends Account {
         invalidate();
     }
 
-    private boolean loadAuthlibInjector(Skin skin) {
+    protected boolean loadAuthlibInjector(Skin skin) {
         if (skin == null) return false;
         if (skin.getType() == Skin.Type.DEFAULT) return false;
         TextureModel defaultModel = TextureModel.detectUUID(getUUID());
@@ -88,7 +97,8 @@ public class OfflineAccount extends Account {
 
     @Override
     public AuthInfo logIn() throws AuthenticationException {
-        AuthInfo authInfo = new AuthInfo(username, uuid, UUIDTypeAdapter.fromUUID(UUID.randomUUID()), "{}");
+        // Using "legacy" user type here because "mojang" user type may cause "invalid session token" or "disconnected" when connecting to a game server.
+        AuthInfo authInfo = new AuthInfo(username, uuid, UUIDTypeAdapter.fromUUID(UUID.randomUUID()), AuthInfo.USER_TYPE_MSA, "{}");
 
         if (loadAuthlibInjector(skin)) {
             CompletableFuture<AuthlibInjectorArtifactInfo> artifactTask = CompletableFuture.supplyAsync(() -> {
@@ -128,7 +138,7 @@ public class OfflineAccount extends Account {
         private YggdrasilServer server;
 
         public OfflineAuthInfo(AuthInfo authInfo, AuthlibInjectorArtifactInfo artifact) {
-            super(authInfo.getUsername(), authInfo.getUUID(), authInfo.getAccessToken(), authInfo.getUserProperties());
+            super(authInfo.getUsername(), authInfo.getUUID(), authInfo.getAccessToken(), USER_TYPE_MSA, authInfo.getUserProperties());
 
             this.artifact = artifact;
         }
@@ -140,7 +150,8 @@ public class OfflineAccount extends Account {
             server.start();
 
             try {
-                server.addCharacter(new YggdrasilServer.Character(uuid, username, skin.load(username).run()));
+                server.addCharacter(new YggdrasilServer.Character(uuid, username,
+                        skin != null ? skin.load(username).run() : null));
             } catch (IOException e) {
                 // ignore
             } catch (Exception e) {
@@ -182,9 +193,9 @@ public class OfflineAccount extends Account {
             Skin.LoadedSkin loadedSkin = skin.load(username).run();
             Map<TextureType, Texture> map = new HashMap<>();
             if (loadedSkin != null) {
-                map.put(TextureType.SKIN, new Texture(null, null, BitmapFactory.decodeStream(loadedSkin.getSkin().getInputStream())));
+                map.put(TextureType.SKIN, new Texture(null, null, loadedSkin.getSkin().getImage()));
                 if (loadedSkin.getCape() != null) {
-                    map.put(TextureType.CAPE, new Texture(null, null, BitmapFactory.decodeStream(loadedSkin.getCape().getInputStream())));
+                    map.put(TextureType.CAPE, new Texture(null, null, loadedSkin.getCape().getImage()));
                 }
             } else {
                 map.put(TextureType.SKIN, new Texture(null, null, BitmapFactory.decodeStream(OfflineAccount.class.getResourceAsStream(TextureModel.detectUUID(uuid) == TextureModel.ALEX ? "/assets/img/alex.img" : "/assets/img/steve.png"))));
@@ -213,6 +224,6 @@ public class OfflineAccount extends Account {
         if (!(obj instanceof OfflineAccount))
             return false;
         OfflineAccount another = (OfflineAccount) obj;
-        return username.equals(another.username);
+        return isPortable() == another.isPortable() && username.equals(another.username);
     }
 }

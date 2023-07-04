@@ -7,7 +7,6 @@ import static com.tungsten.fclcore.util.StringUtils.substringAfterLast;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -116,7 +115,7 @@ public final class NetworkUtils {
     /**
      * This method is a work-around that aims to solve problem when "Location" in
      * stupid server's response is not encoded.
-     * 
+     *
      * @see <a href="https://github.com/curl/curl/issues/473">Issue with libcurl</a>
      * @param conn the stupid http connection.
      * @return manually redirected http connection.
@@ -158,13 +157,13 @@ public final class NetworkUtils {
     public static String doGet(URL url) throws IOException {
         HttpURLConnection con = createHttpConnection(url);
         con = resolveConnection(con);
-        return IOUtils.readFullyAsString(con.getInputStream(), StandardCharsets.UTF_8);
+        return IOUtils.readFullyAsString(con.getInputStream());
     }
 
     public static String doPost(URL u, Map<String, String> params) throws IOException {
         StringBuilder sb = new StringBuilder();
         if (params != null) {
-            for (Entry<String, String> e : params.entrySet())
+            for (Map.Entry<String, String> e : params.entrySet())
                 sb.append(e.getKey()).append("=").append(e.getValue()).append("&");
             sb.deleteCharAt(sb.length() - 1);
         }
@@ -192,13 +191,13 @@ public final class NetworkUtils {
     public static String readData(HttpURLConnection con) throws IOException {
         try {
             try (InputStream stdout = con.getInputStream()) {
-                return IOUtils.readFullyAsString(stdout, UTF_8);
+                return IOUtils.readFullyAsString(stdout);
             }
         } catch (IOException e) {
             try (InputStream stderr = con.getErrorStream()) {
                 if (stderr == null)
                     throw e;
-                return IOUtils.readFullyAsString(stderr, UTF_8);
+                return IOUtils.readFullyAsString(stderr);
             }
         }
     }

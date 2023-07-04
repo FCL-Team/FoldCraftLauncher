@@ -54,8 +54,7 @@ public class ProfileListAdapter extends FCLAdapter {
             viewHolder.path = view.findViewById(R.id.path);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         Profile profile = list.get(i);

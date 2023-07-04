@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
@@ -377,6 +379,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!DirectionStyles.isInitialized()) {
             DirectionStyles.init();
         }
+        if (!QuickInputTexts.isInitialized()) {
+            QuickInputTexts.init();
+        }
 
         if (Files.exists(new File(FCLPath.FILES_DIR + "/menu_setting.json").toPath())) {
             try {
@@ -561,7 +566,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     public void openQuickInput() {
-
+        QuickInputDialog dialog = new QuickInputDialog(activity, this);
+        dialog.show();
     }
 
     @Override
@@ -571,12 +577,20 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             dialog.show();
         }
         if (v == addButton) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
-            dialog.show();
+            if (getViewGroup() == null) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+            } else {
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                dialog.show();
+            }
         }
         if (v == addDirection) {
-            EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
-            dialog.show();
+            if (getViewGroup() == null) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+            } else {
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                dialog.show();
+            }
         }
         if (v == manageButtonStyle) {
             ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);

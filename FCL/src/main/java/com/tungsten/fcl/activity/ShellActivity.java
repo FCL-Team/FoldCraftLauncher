@@ -3,22 +3,24 @@ package com.tungsten.fcl.activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.util.ShellUtil;
 import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.Theme;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
 
 import java.io.File;
+import java.util.Objects;
 
-public class ShellActivity extends AppCompatActivity {
+public class ShellActivity extends FCLActivity {
+
     private LogWindow logWindow;
-    private EditText editText;
+    private FCLEditText editText;
     private ShellUtil shellUtil;
 
     @Override
@@ -44,7 +46,7 @@ public class ShellActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String cmd = editText.getText().toString();
+                String cmd = Objects.requireNonNull(editText.getText()).toString();
                 if (cmd.endsWith("\n")) {
                     logWindow.appendLog("->" + cmd);
                     editText.setText("");

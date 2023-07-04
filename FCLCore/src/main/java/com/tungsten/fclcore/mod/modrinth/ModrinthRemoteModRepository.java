@@ -10,7 +10,6 @@ import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -85,7 +84,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
     @Override
     public Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException {
-        String sha1 = Hex.encodeHex(DigestUtils.digest("SHA-1", file));
+        String sha1 = DigestUtils.digestToString("SHA-1", file);
 
         try {
             ProjectVersion mod = HttpRequest.GET(PREFIX + "/v2/version_file/" + sha1,
@@ -483,6 +482,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     loaders.stream().flatMap(loader -> {
                         if ("fabric".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FABRIC);
                         else if ("forge".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FORGE);
+                        else if ("quilt".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.QUILT);
                         else return Stream.empty();
                     }).collect(Collectors.toList())
             ));

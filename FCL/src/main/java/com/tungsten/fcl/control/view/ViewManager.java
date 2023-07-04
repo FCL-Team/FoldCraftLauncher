@@ -1,7 +1,9 @@
 package com.tungsten.fcl.control.view;
 
 import android.view.View;
+import android.widget.Toast;
 
+import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
@@ -35,14 +37,18 @@ public class ViewManager {
     }
 
     public void addView(CustomControl control) {
-        if (gameMenu.getViewGroup() != null && gameMenu.isEditMode()) {
-            if (control instanceof ControlButtonData) {
-                gameMenu.getViewGroup().getViewData().addButton((ControlButtonData) control);
+        if (gameMenu.isEditMode()) {
+            if (gameMenu.getViewGroup() != null) {
+                if (control instanceof ControlButtonData) {
+                    gameMenu.getViewGroup().getViewData().addButton((ControlButtonData) control);
+                } else {
+                    gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
+                }
+                saveController();
+                loadView(control, true);
             } else {
-                gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
+                Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             }
-            saveController();
-            loadView(control, true);
         }
     }
 

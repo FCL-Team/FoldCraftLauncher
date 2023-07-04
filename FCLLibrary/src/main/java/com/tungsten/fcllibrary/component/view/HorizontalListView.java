@@ -1,14 +1,12 @@
 package com.tungsten.fcllibrary.component.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -187,9 +185,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         setWillNotDraw(false);
 
         // If the OS version is high enough then set the friction on the fling tracker */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            HoneycombPlus.setFriction(mFlingTracker, FLING_FRICTION);
-        }
+        HoneycombPlus.setFriction(mFlingTracker, FLING_FRICTION);
     }
 
     /** Registers the gesture detector to receive gesture notifications for this view */
@@ -277,7 +273,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             Bundle bundle = (Bundle) state;
 
             // Restore our state from the bundle
-            mRestoreX = Integer.valueOf((bundle.getInt(BUNDLE_ID_CURRENT_X)));
+            mRestoreX = (bundle.getInt(BUNDLE_ID_CURRENT_X));
 
             // Restore out parent's state from the bundle
             super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_ID_PARENT_STATE));
@@ -600,14 +596,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     /** Determines the current fling absorb velocity */
     private float determineFlingAbsorbVelocity() {
         // If the OS version is high enough get the real velocity */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            return IceCreamSandwichPlus.getCurrVelocity(mFlingTracker);
-        } else {
-            // Unable to get the velocity so just return a default.
-            // In actuality this is never used since EdgeEffectCompat does not draw anything unless the device is ICS+.
-            // Less then ICS EdgeEffectCompat essentially performs a NOP.
-            return FLING_DEFAULT_ABSORB_VELOCITY;
-        }
+        return IceCreamSandwichPlus.getCurrVelocity(mFlingTracker);
     }
 
     /** Use to schedule a request layout via a runnable */
@@ -1275,14 +1264,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         return mMaxX > 0;
     }
 
-    @TargetApi(11)
     /** Wrapper class to protect access to API version 11 and above features */
     private static final class HoneycombPlus {
-        static {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                throw new RuntimeException("Should not get to HoneycombPlus class unless sdk is >= 11!");
-            }
-        }
 
         /** Sets the friction for the provided scroller */
         public static void setFriction(Scroller scroller, float friction) {
@@ -1292,14 +1275,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         }
     }
 
-    @TargetApi(14)
     /** Wrapper class to protect access to API version 14 and above features */
     private static final class IceCreamSandwichPlus {
-        static {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                throw new RuntimeException("Should not get to IceCreamSandwichPlus class unless sdk is >= 14!");
-            }
-        }
 
         /** Gets the velocity for the provided scroller */
         public static float getCurrVelocity(Scroller scroller) {

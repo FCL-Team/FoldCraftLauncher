@@ -3,7 +3,6 @@ package com.tungsten.fclcore.game;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
@@ -64,6 +63,6 @@ public class DownloadInfo implements Validation {
 
     public boolean validateChecksum(Path file, boolean defaultValue) throws IOException {
         if (getSha1() == null) return defaultValue;
-        return Hex.encodeHex(DigestUtils.digest("SHA-1", file)).equalsIgnoreCase(getSha1());
+        return DigestUtils.digestToString("SHA-1", file).equalsIgnoreCase(getSha1());
     }
 }

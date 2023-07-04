@@ -55,8 +55,7 @@ public class EditableControllerListAdapter extends FCLAdapter {
             viewHolder.version = view.findViewById(R.id.version);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         Controller controller = list.get(i);

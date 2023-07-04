@@ -1,45 +1,59 @@
 package com.tungsten.fcl.control.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
-import android.widget.TextView;
 
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class LogWindow extends ScrollView {
 
+    private boolean autoTint;
     private BooleanProperty visibilityProperty;
-    private TextView textView;
+    private FCLTextView textView;
     private int lineCount;
 
     public LogWindow(Context context) {
         super(context);
+        autoTint = false;
         init(context);
     }
 
     public LogWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
+        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
+        typedArray.recycle();
         init(context);
     }
 
     public LogWindow(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
+        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
+        typedArray.recycle();
         init(context);
     }
 
     public LogWindow(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
+        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
+        typedArray.recycle();
         init(context);
     }
 
     private void init(Context context) {
-        this.textView = new TextView(context);
+        this.textView = new FCLTextView(context);
+        textView.setAutoTint(autoTint);
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         addView(textView);
         textView.setTextColor(Color.WHITE);

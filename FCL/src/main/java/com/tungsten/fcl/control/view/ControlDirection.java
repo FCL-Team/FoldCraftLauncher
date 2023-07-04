@@ -733,33 +733,35 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     }
 
     private void cancelAllEvent() {
-        if (getData().getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
-            upLeftBtn.setVisibility(GONE);
-            upRightBtn.setVisibility(GONE);
-            downLeftBtn.setVisibility(GONE);
-            downRightBtn.setVisibility(GONE);
-            for (AppCompatButton b : buttons) {
-                setButtonStyle(b, false);
+        Schedulers.androidUIThread().execute(() -> {
+            if (getData().getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
+                upLeftBtn.setVisibility(GONE);
+                upRightBtn.setVisibility(GONE);
+                downLeftBtn.setVisibility(GONE);
+                downRightBtn.setVisibility(GONE);
+                for (AppCompatButton b : buttons) {
+                    setButtonStyle(b, false);
+                }
+            } else {
+                int x;
+                int y;
+                x = (int) ((screenWidth - getMeasuredWidth()) * (getData().getBaseInfo().getXPosition() / 1000f));
+                y = (int) ((screenHeight - getMeasuredHeight()) * (getData().getBaseInfo().getYPosition() / 1000f));
+                if (!displayMode) {
+                    setX(x);
+                    setY(y);
+                }
+                setButtonPosition(area, 0, 0);
+                setButtonPosition(rocker, (getMeasuredWidth() / 2) - (rockerSize / 2), (getMeasuredWidth() / 2) - (rockerSize / 2));
+                tempDirection = Direction.DIRECTION_CENTER;
             }
-        } else {
-            int x;
-            int y;
-            x = (int) ((screenWidth - getMeasuredWidth()) * (getData().getBaseInfo().getXPosition() / 1000f));
-            y = (int) ((screenHeight - getMeasuredHeight()) * (getData().getBaseInfo().getYPosition() / 1000f));
-            if (!displayMode) {
-                setX(x);
-                setY(y);
+            if (menu != null) {
+                menu.getInput().sendKeyEvent(getData().getEvent().getUpKeycode(), false);
+                menu.getInput().sendKeyEvent(getData().getEvent().getDownKeycode(), false);
+                menu.getInput().sendKeyEvent(getData().getEvent().getLeftKeycode(), false);
+                menu.getInput().sendKeyEvent(getData().getEvent().getRightKeycode(), false);
             }
-            setButtonPosition(area, 0, 0);
-            setButtonPosition(rocker, (getMeasuredWidth() / 2) - (rockerSize / 2), (getMeasuredWidth() / 2) - (rockerSize / 2));
-            tempDirection = Direction.DIRECTION_CENTER;
-        }
-        if (menu != null) {
-            menu.getInput().sendKeyEvent(getData().getEvent().getUpKeycode(), false);
-            menu.getInput().sendKeyEvent(getData().getEvent().getDownKeycode(), false);
-            menu.getInput().sendKeyEvent(getData().getEvent().getLeftKeycode(), false);
-            menu.getInput().sendKeyEvent(getData().getEvent().getRightKeycode(), false);
-        }
+        });
     }
 
     public final BooleanProperty visibilityProperty() {

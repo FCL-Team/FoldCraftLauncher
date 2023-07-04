@@ -2,7 +2,6 @@ package com.tungsten.fclcore.mod;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.io.IOUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -83,18 +82,18 @@ public final class LiteModMetadata {
     public String getUpdateURI() {
         return updateURI;
     }
-    
+
     public static LocalModFile fromFile(ModManager modManager, Path modFile) throws IOException, JsonParseException {
         try (ZipFile zipFile = new ZipFile(modFile.toFile())) {
             ZipEntry entry = zipFile.getEntry("litemod.json");
             if (entry == null)
                 throw new IOException("File " + modFile + "is not a LiteLoader mod.");
-            LiteModMetadata metadata = JsonUtils.GSON.fromJson(IOUtils.readFullyAsString(zipFile.getInputStream(entry)), LiteModMetadata.class);
+            LiteModMetadata metadata = JsonUtils.fromJsonFully(zipFile.getInputStream(entry), LiteModMetadata.class);
             if (metadata == null)
                 throw new IOException("Mod " + modFile + " `litemod.json` is malformed.");
             return new LocalModFile(modManager, modManager.getLocalMod(metadata.getName(), ModLoaderType.LITE_LOADER), modFile, metadata.getName(), new LocalModFile.Description(metadata.getDescription()), metadata.getAuthor(),
                     metadata.getVersion(), metadata.getGameVersion(), metadata.getUpdateURI(), "");
         }
     }
-    
+
 }
