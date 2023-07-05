@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIListener;
+import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -21,8 +22,8 @@ public class DownloadPageManager extends PageManager {
     private static DownloadPageManager instance;
 
     private InstallVersionPage installVersionPage;
-    private DownloadPage downloadModpackPage;
-    private DownloadPage downloadModPage;
+    private ModpackDownloadPage downloadModpackPage;
+    private ModDownloadPage downloadModPage;
     private DownloadPage downloadResourcePackPage;
     private DownloadPage downloadWorldPage;
 
@@ -41,10 +42,10 @@ public class DownloadPageManager extends PageManager {
     @Override
     public void init(UIListener listener) {
         installVersionPage = new InstallVersionPage(getContext(), PAGE_ID_DOWNLOAD_GAME, getParent(), R.layout.page_install_version);
-        downloadModpackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, getParent(), R.layout.page_download);
-        downloadModPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, getParent(), R.layout.page_download);
-        downloadResourcePackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, getParent(), R.layout.page_download);
-        downloadWorldPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_WORLD, getParent(), R.layout.page_download);
+        downloadModpackPage = new ModpackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, getParent(), R.layout.page_download);
+        downloadModPage = new ModDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, getParent(), R.layout.page_download);
+        downloadResourcePackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, getParent(), R.layout.page_download, CurseForgeRemoteModRepository.RESOURCE_PACKS);
+        downloadWorldPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_WORLD, getParent(), R.layout.page_download, CurseForgeRemoteModRepository.WORLDS);
 
         if (listener != null) {
             listener.onLoad();

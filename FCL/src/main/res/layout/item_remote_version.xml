@@ -45,7 +45,6 @@
                     app:auto_text_tint="true"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:background="@drawable/bg_container_white"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
                     android:paddingTop="2dp"
@@ -57,7 +56,6 @@
                     android:id="@+id/tag"
                     android:layout_gravity="center"
                     android:singleLine="true"
-                    app:auto_text_background_tint="true"
                     app:auto_text_tint="true"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>

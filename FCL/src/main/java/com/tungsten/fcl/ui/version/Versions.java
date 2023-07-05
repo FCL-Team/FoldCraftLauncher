@@ -8,6 +8,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.util.RequestCodes;
@@ -15,7 +16,6 @@ import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
-import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -33,14 +33,14 @@ import java.util.logging.Level;
 
 public class Versions {
 
-    /*
     public static void importModpack() {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile), i18n("install.modpack"));
+            //Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile), i18n("install.modpack"));
         }
     }
 
+    /*
     public static void downloadModpackImpl(Profile profile, String version, RemoteMod.Version file) {
         Path modpack;
         URL downloadURL;
