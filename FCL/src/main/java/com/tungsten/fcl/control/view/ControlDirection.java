@@ -203,24 +203,28 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         setLayoutParams(params);
     }
 
+    public int getSize() {
+        int viewSize;
+        if (getData().getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
+            viewSize = ConvertUtils.dip2px(getContext(), getData().getBaseInfo().getAbsoluteWidth());
+        } else {
+            viewSize = getData().getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
+                    (int) (screenWidth * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
+                    (int) (screenHeight * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f));
+        }
+        return viewSize;
+    }
+
     private void refreshBaseInfo(ControlDirectionData data) {
         // Size
-        int size;
-        if (data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
-            size = ConvertUtils.dip2px(getContext(), data.getBaseInfo().getAbsoluteWidth());
-        } else {
-            size = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
-                    (int) (screenWidth * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
-                    (int) (screenHeight * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f));
-        }
-        setSize(size);
+        setSize(getSize());
 
         // Position
         post(() -> {
             int x;
             int y;
-            x = (int) ((screenWidth - size) * (data.getBaseInfo().getXPosition() / 1000f));
-            y = (int) ((screenHeight - size) * (data.getBaseInfo().getYPosition() / 1000f));
+            x = (int) ((screenWidth - getSize()) * (data.getBaseInfo().getXPosition() / 1000f));
+            y = (int) ((screenHeight - getSize()) * (data.getBaseInfo().getYPosition() / 1000f));
             if (!displayMode) {
                 setX(x);
                 setY(y);
@@ -278,14 +282,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private GradientDrawable drawablePressed;
 
     private void refreshStyle(ControlDirectionData data) {
-        int viewSize;
-        if (data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
-            viewSize = ConvertUtils.dip2px(getContext(), data.getBaseInfo().getAbsoluteWidth());
-        } else {
-            viewSize = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
-                    (int) (screenWidth * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
-                    (int) (screenHeight * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f));
-        }
+        int viewSize = getSize();
         if (data.getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
             int size = (viewSize * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
             int p0 = 0;
@@ -379,15 +376,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     public void requestLayout() {
         super.requestLayout();
         post(() -> {
-            int viewSize;
-            if (getData().getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
-                viewSize = ConvertUtils.dip2px(getContext(), getData().getBaseInfo().getAbsoluteWidth());
-            } else {
-                viewSize = getData().getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
-                        (int) (screenWidth * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
-                        (int) (screenHeight * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f));
-            }
-            measure(MeasureSpec.makeMeasureSpec(viewSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(viewSize, MeasureSpec.EXACTLY));
+            measure(MeasureSpec.makeMeasureSpec(getSize(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(getSize(), MeasureSpec.EXACTLY));
             layout(getLeft(), getTop(), getRight(), getBottom());
         });
     }
@@ -397,9 +386,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         super.onDraw(canvas);
         if (menu != null && menu.isShowViewBoundaries() && !displayMode) {
             boundaryPath.moveTo(0, 0);
-            boundaryPath.lineTo(getWidth(), 0);
-            boundaryPath.lineTo(getWidth(), getHeight());
-            boundaryPath.lineTo(0, getHeight());
+            boundaryPath.lineTo(getSize(), 0);
+            boundaryPath.lineTo(getSize(), getSize());
+            boundaryPath.lineTo(0, getSize());
             boundaryPath.lineTo(0, 0);
             canvas.drawPath(boundaryPath, boundaryPaint);
         }
@@ -454,8 +443,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
                     int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
+                    float targetX = Math.max(0, Math.min(screenWidth - getSize(), getX() + deltaX));
+                    float targetY = Math.max(0, Math.min(screenHeight - getSize(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
                     if ((Math.abs(event.getX() - downX) > 1 || Math.abs(event.getY() - downY) > 1) && System.currentTimeMillis() - downTime < 400) {
@@ -479,8 +468,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                         });
                         dialog.show();
                     } else {
-                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
-                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getMeasuredHeight())));
+                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getSize())));
+                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getSize())));
                         menu.getViewManager().saveController();
                     }
                     break;
@@ -524,14 +513,14 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     case MotionEvent.ACTION_DOWN:
                         if (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.FOLLOW ||
                                 (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW
-                                        && event.getX() >= (float) ((getMeasuredWidth() / 2) - (rockerSize / 2))
-                                        && event.getX() <= (float) ((getMeasuredWidth() / 2) + (rockerSize / 2))
-                                        && event.getY() >= (float) ((getMeasuredWidth() / 2) - (rockerSize / 2))
-                                        && event.getY() <= (float) ((getMeasuredWidth() / 2) + (rockerSize / 2)))) {
+                                        && event.getX() >= (float) ((getSize() / 2) - (rockerSize / 2))
+                                        && event.getX() <= (float) ((getSize() / 2) + (rockerSize / 2))
+                                        && event.getY() >= (float) ((getSize() / 2) - (rockerSize / 2))
+                                        && event.getY() <= (float) ((getSize() / 2) + (rockerSize / 2)))) {
                             downTime = System.currentTimeMillis();
                             startClick = true;
-                            int deltaX = (int) (event.getX() - (getMeasuredWidth() / 2));
-                            int deltaY = (int) (event.getY() - (getMeasuredWidth() / 2));
+                            int deltaX = (int) (event.getX() - (getSize() / 2));
+                            int deltaY = (int) (event.getY() - (getSize() / 2));
                             int targetX = (int) (getX() + deltaX);
                             int targetY = (int) (getY() + deltaY);
                             setX(targetX);
@@ -583,9 +572,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     }
 
     private void handleButtonEvent(int x, int y) {
-        int size = (getMeasuredWidth() * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
-        int p1 = size + ((getMeasuredWidth() * getData().getStyle().getButtonStyle().getInterval()) / 1000);
-        int p2 = getMeasuredWidth() - size;
+        int size = (getSize() * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
+        int p1 = size + ((getSize() * getData().getStyle().getButtonStyle().getInterval()) / 1000);
+        int p2 = getSize() - size;
         if (x <= size && y <= size) {
             // up left
             handleMoveEvent(true, false, true, false);
@@ -617,8 +606,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     }
 
     private void handleRockerEvent(int x, int y) {
-        int maxDistance = (getMeasuredWidth() / 2) - (rockerSize / 2);
-        Point centerPoint = new Point(getMeasuredWidth() / 2, getMeasuredWidth() / 2);
+        int maxDistance = (getSize() / 2) - (rockerSize / 2);
+        Point centerPoint = new Point(getSize() / 2, getSize() / 2);
         Point touchPoint = new Point(x, y);
         Point position = getRockerPositionPoint(centerPoint, touchPoint, maxDistance);
         rocker.setX(position.x - (float) (rockerSize / 2));
@@ -760,14 +749,14 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             } else {
                 int x;
                 int y;
-                x = (int) ((screenWidth - getMeasuredWidth()) * (getData().getBaseInfo().getXPosition() / 1000f));
-                y = (int) ((screenHeight - getMeasuredHeight()) * (getData().getBaseInfo().getYPosition() / 1000f));
+                x = (int) ((screenWidth - getSize()) * (getData().getBaseInfo().getXPosition() / 1000f));
+                y = (int) ((screenHeight - getSize()) * (getData().getBaseInfo().getYPosition() / 1000f));
                 if (!displayMode) {
                     setX(x);
                     setY(y);
                 }
                 setButtonPosition(area, 0, 0);
-                setButtonPosition(rocker, (getMeasuredWidth() / 2) - (rockerSize / 2), (getMeasuredWidth() / 2) - (rockerSize / 2));
+                setButtonPosition(rocker, (getSize() / 2) - (rockerSize / 2), (getSize() / 2) - (rockerSize / 2));
                 tempDirection = Direction.DIRECTION_CENTER;
             }
             if (menu != null) {
