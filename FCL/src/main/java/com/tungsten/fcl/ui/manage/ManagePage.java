@@ -1,7 +1,9 @@
 package com.tungsten.fcl.ui.manage;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.View;
+import android.widget.ScrollView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -14,6 +16,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -24,6 +27,9 @@ import java.io.File;
 public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private final BooleanProperty currentVersionUpgradable = new SimpleBooleanProperty();
+
+    private ScrollView left;
+    private ScrollView right;
 
     private FCLImageButton browseGame;
     private FCLImageButton browseMod;
@@ -57,6 +63,11 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     }
 
     private void create() {
+        left = findViewById(R.id.left);
+        right = findViewById(R.id.right);
+        ThemeEngine.getInstance().registerEvent(left, () -> left.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(right, () -> right.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+
         browseGame = findViewById(R.id.browse_game_dir);
         browseMod = findViewById(R.id.browse_mods);
         browseConfig = findViewById(R.id.browse_config);
