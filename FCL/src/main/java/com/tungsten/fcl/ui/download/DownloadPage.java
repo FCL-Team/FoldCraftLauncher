@@ -8,6 +8,8 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -30,6 +32,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
+import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -40,16 +43,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DownloadPage extends FCLCommonPage implements View.OnClickListener {
+public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     protected RemoteModRepository repository;
     protected final BooleanProperty supportChinese = new SimpleBooleanProperty();
+    private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     protected final ListProperty<String> downloadSources = new SimpleListProperty<>(this, "downloadSources", FXCollections.observableArrayList());
     protected final StringProperty downloadSource = new SimpleStringProperty();
     private final StringProperty gameVersion = new SimpleStringProperty(this, "gameVersion", "");
     private final ObjectProperty<CategoryIndented> category = new SimpleObjectProperty<>(this, "category", new CategoryIndented(0, null));
     private final ObjectProperty<RemoteModRepository.SortType> sortType = new SimpleObjectProperty<>(this, "sortType", RemoteModRepository.SortType.POPULARITY);
     private TaskExecutor executor;
+    private Runnable retrySearch;
     private RemoteModListAdapter adapter;
 
     private ScrollView searchLayout;
@@ -64,6 +69,7 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
 
     private ListView listView;
     private FCLProgressBar progressBar;
+    private FCLImageButton retry;
 
     public void setLoading(boolean loading) {
         Schedulers.androidUIThread().execute(() -> {
@@ -75,6 +81,17 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
             sortSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             listView.setVisibility(loading ? View.GONE : View.VISIBLE);
+            if (loading) {
+                retry.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void setFailed() {
+        Schedulers.androidUIThread().execute(() -> {
+            retry.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
         });
     }
 
@@ -87,6 +104,7 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
     }
 
     public void search(String userGameVersion, RemoteModRepository.Category category, int pageOffset, String searchFilter, RemoteModRepository.SortType sort) {
+        retrySearch = null;
         setLoading(true);
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
@@ -100,6 +118,9 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
 
                         });
                         listView.setAdapter(adapter);
+                    } else {
+                        setFailed();
+                        retrySearch = () -> search(userGameVersion, category, pageOffset, searchFilter, sort);
                     }
         }).executor(true);
     }
@@ -139,6 +160,8 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
 
         listView = findViewById(R.id.list);
         progressBar = findViewById(R.id.progress);
+        retry = findViewById(R.id.retry);
+        retry.setOnClickListener(this);
 
         nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
 
@@ -207,6 +230,11 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
     }
 
     @Override
+    public void loadVersion(Profile profile, String version) {
+        this.version.set(new Profile.ProfileVersion(profile, version));
+    }
+
+    @Override
     public Task<?> refresh(Object... param) {
         return null;
     }
@@ -215,6 +243,9 @@ public class DownloadPage extends FCLCommonPage implements View.OnClickListener 
     public void onClick(View v) {
         if (v == search) {
             search();
+        }
+        if (v == retry && retrySearch != null) {
+            retrySearch.run();
         }
     }
 

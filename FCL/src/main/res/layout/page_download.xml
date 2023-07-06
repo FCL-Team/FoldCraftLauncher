@@ -139,10 +139,17 @@
             android:dividerHeight="0dp" />
 
         <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:id="@+id/progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:id="@+id/progress"/>
+            android:layout_centerInParent="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/retry"
+            android:src="@drawable/ic_baseline_refresh_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
 
     </RelativeLayout>
 
