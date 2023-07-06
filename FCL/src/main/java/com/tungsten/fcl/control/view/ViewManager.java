@@ -28,6 +28,7 @@ public class ViewManager {
         MenuView menuView = new MenuView(gameMenu.getActivity());
         menuView.setup(gameMenu);
         gameMenu.getBaseLayout().addView(menuView);
+        menuView.initPosition();
 
         // Initialize controller
         initializeController();
