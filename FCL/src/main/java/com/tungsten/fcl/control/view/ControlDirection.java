@@ -52,7 +52,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     @Nullable
     private final GameMenu menu;
     private final boolean displayMode;
-    private final Path boundaryPath;
+    private Path boundaryPath;
     private final Paint boundaryPaint;
     private final int screenWidth;
     private final int screenHeight;
@@ -150,7 +150,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 cancelAllEvent();
             }));
             if (menu != null) {
-                menu.showViewBoundariesProperty().addListener(invalidate -> invalidate());
+                menu.showViewBoundariesProperty().addListener(invalidate -> {
+                    boundaryPath = new Path();
+                    invalidate();
+                });
             }
             setReady(true);
         });
@@ -186,7 +189,11 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         ControlDirectionData data = getData();
 
         refreshBaseInfo(data);
-        post(() -> refreshStyle(data));
+        post(() -> {
+            refreshStyle(data);
+            boundaryPath = new Path();
+            invalidate();
+        });
     }
 
     public void setSize(int size) {

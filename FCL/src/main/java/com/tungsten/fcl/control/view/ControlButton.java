@@ -54,7 +54,7 @@ import java.util.UUID;
 public class ControlButton extends AppCompatButton implements CustomView {
 
     private final GameMenu menu;
-    private final Path boundaryPath;
+    private Path boundaryPath;
     private final Paint boundaryPaint;
     private final int screenWidth;
     private final int screenHeight;
@@ -134,7 +134,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 notifyData();
                 cancelAllEvent();
             }));
-            menu.showViewBoundariesProperty().addListener(invalidate -> invalidate());
+            menu.showViewBoundariesProperty().addListener(invalidate -> {
+                boundaryPath = new Path();
+                invalidate();
+            });
             setReady(true);
         });
     }
@@ -144,7 +147,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         setText(data.getText());
         refreshBaseInfo(data);
-        post(() -> refreshStyle(data));
+        post(() -> {
+            refreshStyle(data);
+            boundaryPath = new Path();
+            invalidate();
+        });
     }
 
     private void refreshBaseInfo(ControlButtonData data) {
