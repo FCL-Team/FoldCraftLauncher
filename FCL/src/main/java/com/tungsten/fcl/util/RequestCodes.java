@@ -21,4 +21,6 @@ public class RequestCodes {
     public static final int SELECT_MODS_CODE = 400;
 
     public static final int SELECT_CONTROLLER_CODE = 450;
+
+    public static final int SELECT_DOWNLOAD_FOLDER_CODE = 500;
 }

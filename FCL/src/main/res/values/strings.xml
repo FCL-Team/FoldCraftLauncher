@@ -403,6 +403,7 @@
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_downloading">Downloading</string>
     <string name="message_failed">Operation Failed</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>

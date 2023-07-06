@@ -16,6 +16,7 @@ import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
+import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -40,8 +41,8 @@ public class Versions {
         }
     }
 
-    /*
-    public static void downloadModpackImpl(Profile profile, String version, RemoteMod.Version file) {
+    public static void downloadModpackImpl(Context context, Profile profile, String version, RemoteMod.Version file) {
+        /*
         Path modpack;
         URL downloadURL;
         try {
@@ -69,9 +70,9 @@ public class Versions {
                 i18n("message.downloading"),
                 TaskCancellationAction.NORMAL
         );
-    }
 
-     */
+         */
+    }
 
     public static void deleteVersion(Context context, Profile profile, String version) {
         boolean isIndependent = profile.getVersionSetting(version).isIsolateGameDir();

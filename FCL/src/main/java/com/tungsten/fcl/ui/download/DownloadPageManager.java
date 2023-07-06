@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIListener;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
@@ -61,6 +62,13 @@ public class DownloadPageManager extends PageManager {
         pages.add(downloadResourcePackPage);
         pages.add(downloadWorldPage);
         return pages;
+    }
+
+    public void loadVersion(Profile profile, String version) {
+        downloadModpackPage.loadVersion(profile, version);
+        downloadModPage.loadVersion(profile, version);
+        downloadResourcePackPage.loadVersion(profile, version);
+        downloadWorldPage.loadVersion(profile, version);
     }
 
 }

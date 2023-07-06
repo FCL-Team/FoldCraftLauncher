@@ -59,6 +59,11 @@ public class ModpackDownloadPage extends DownloadPage {
     }
 
     @Override
+    protected String getLocalizedOfficialPage() {
+        return downloadSource.get();
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         installModpack = findViewById(R.id.install_modpack);

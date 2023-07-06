@@ -384,6 +384,7 @@
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_downloading">正在下载</string>
     <string name="message_failed">操作失败</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>

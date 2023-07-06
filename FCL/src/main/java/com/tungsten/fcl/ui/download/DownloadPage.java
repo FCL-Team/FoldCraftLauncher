@@ -1,17 +1,29 @@
 package com.tungsten.fcl.ui.download;
 
+import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
+import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
+import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
+import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -23,11 +35,14 @@ import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
+import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -37,15 +52,20 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
 public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     protected RemoteModRepository repository;
+    private final RemoteModDownloadPage.DownloadCallback callback;
     protected final BooleanProperty supportChinese = new SimpleBooleanProperty();
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     protected final ListProperty<String> downloadSources = new SimpleListProperty<>(this, "downloadSources", FXCollections.observableArrayList());
@@ -115,7 +135,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     if (exception == null) {
                         ArrayList<RemoteMod> list = result.collect(Collectors.toCollection(ArrayList::new));
                         adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
-
+                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+                            DownloadPageManager.getInstance().showTempPage(page);
                         });
                         listView.setAdapter(adapter);
                     } else {
@@ -136,9 +157,28 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                         : getLocalizedCategory(category.getCategory().getId()));
     }
 
+    protected String getLocalizedOfficialPage() {
+        return getContext().getString(R.string.mods_curseforge);
+    }
+
     public DownloadPage(Context context, int id, FCLUILayout parent, int resId, RemoteModRepository repository) {
         super(context, id, parent, resId);
         this.repository = repository;
+
+        switch (id) {
+            case PAGE_ID_DOWNLOAD_MODPACK:
+                this.callback = ((profile, version1, file) -> Versions.downloadModpackImpl(context, profile, version1, file));
+                break;
+            case PAGE_ID_DOWNLOAD_MOD:
+                this.callback = (profile, version, file) -> download(context, profile, version, file, "mods");
+                break;
+            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
+                this.callback = (profile, version, file) -> download(context, profile, version, file, "resourcepacks");
+                break;
+            default:
+                this.callback = null;
+                break;
+        }
 
         if (repository != null) {
             create();
@@ -227,6 +267,46 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         FXUtils.bindSelection(sortSpinner, sortType);
 
         search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
+    }
+
+    private static void download(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
+        if (version == null) version = profile.getSelectedVersion();
+
+        Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
+
+        DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.getFile().getFilename(), name -> {
+            Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
+
+            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+            taskDialog.setTitle(context.getString(R.string.message_downloading));
+            Schedulers.androidUIThread().execute(() -> {
+                TaskExecutor executor = Task.composeAsync(() -> {
+                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.getFile().getUrl()), dest.toFile());
+                    task.setName(file.getName());
+                    return task;
+                }).whenComplete(Schedulers.androidUIThread(), exception -> {
+                    if (exception != null) {
+                        if (exception instanceof CancellationException) {
+                            Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
+                        } else {
+                            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                            builder.setCancelable(false);
+                            builder.setTitle(context.getString(R.string.install_failed_downloading));
+                            builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception));
+                            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.create().show();
+                        }
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
+                    }
+                }).executor();
+                taskDialog.setExecutor(executor);
+                taskDialog.show();
+                executor.start();
+            });
+        });
+        dialog.show();
     }
 
     @Override

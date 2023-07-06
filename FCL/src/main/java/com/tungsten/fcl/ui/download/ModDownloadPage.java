@@ -53,4 +53,9 @@ public class ModDownloadPage extends DownloadPage {
         }
     }
 
+    @Override
+    protected String getLocalizedOfficialPage() {
+        return downloadSource.get();
+    }
+
 }
