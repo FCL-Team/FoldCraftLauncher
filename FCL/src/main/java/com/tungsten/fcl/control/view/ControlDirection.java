@@ -379,7 +379,15 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     public void requestLayout() {
         super.requestLayout();
         post(() -> {
-            measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY));
+            int viewSize;
+            if (getData().getBaseInfo().getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
+                viewSize = ConvertUtils.dip2px(getContext(), getData().getBaseInfo().getAbsoluteWidth());
+            } else {
+                viewSize = getData().getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
+                        (int) (screenWidth * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
+                        (int) (screenHeight * (getData().getBaseInfo().getPercentageWidth().getSize() / 1000f));
+            }
+            measure(MeasureSpec.makeMeasureSpec(viewSize, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(viewSize, MeasureSpec.EXACTLY));
             layout(getLeft(), getTop(), getRight(), getBottom());
         });
     }
