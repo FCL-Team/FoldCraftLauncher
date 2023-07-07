@@ -2,6 +2,9 @@ package com.tungsten.fcl.ui.version;
 
 import android.app.Activity;
 import android.content.Context;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -9,14 +12,21 @@ import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
+import com.tungsten.fcl.ui.download.LocalModpackPage;
+import com.tungsten.fcl.ui.download.ModpackSelectionPage;
+import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.mod.RemoteMod;
+import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -26,52 +36,66 @@ import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class Versions {
 
-    public static void importModpack() {
+    public static void importModpack(Context context, FCLUILayout parent) {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            //Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile), i18n("install.modpack"));
+            ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, null);
+            DownloadPageManager.getInstance().showTempPage(page);
         }
     }
 
-    public static void downloadModpackImpl(Context context, Profile profile, String version, RemoteMod.Version file) {
-        /*
+    public static void downloadModpackImpl(Context context, FCLUILayout parent, Profile profile, RemoteMod.Version file) {
         Path modpack;
         URL downloadURL;
         try {
             modpack = Files.createTempFile("modpack", ".zip");
             downloadURL = new URL(file.getFile().getUrl());
         } catch (IOException e) {
-            Controllers.dialog(
-                    i18n("install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e),
-                    i18n("download_failed"), MessageDialogPane.MessageType.ERROR);
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setCancelable(false);
+            builder.setTitle(context.getString(R.string.download_failed));
+            builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.create().show();
             return;
         }
-        Controllers.taskDialog(
-                new FileDownloadTask(downloadURL, modpack.toFile())
-                        .whenComplete(Schedulers.javafx(), e -> {
-                            if (e == null) {
-                                Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile, modpack.toFile()));
-                            } else if (e instanceof CancellationException) {
-                                Controllers.showToast(i18n("message.cancelled"));
-                            } else {
-                                Controllers.dialog(
-                                        i18n("install.failed.downloading.detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e),
-                                        i18n("download.failed"), MessageDialogPane.MessageType.ERROR);
-                            }
-                        }).executor(true),
-                i18n("message.downloading"),
-                TaskCancellationAction.NORMAL
-        );
 
-         */
+        TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+        taskDialog.setTitle(context.getString(R.string.message_downloading));
+        TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
+                .whenComplete(Schedulers.androidUIThread(), e -> {
+                    if (e == null) {
+                        LocalModpackPage page = new LocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack, profile, null, modpack.toFile());
+                        DownloadPageManager.getInstance().showTempPage(page);
+                    } else if (e instanceof CancellationException) {
+                        Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
+                    } else {
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder.setCancelable(false);
+                        builder.setTitle(context.getString(R.string.download_failed));
+                        builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+                        builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.create().show();
+                    }
+                }).executor();
+        taskDialog.setExecutor(executor);
+        taskDialog.show();
+        executor.start();
     }
 
     public static void deleteVersion(Context context, Profile profile, String version) {
@@ -137,8 +161,9 @@ public class Versions {
         dialog.show();
     }
 
-    public static void updateVersion(Profile profile, String version) {
-        //Controllers.getDecorator().startWizard(new ModpackInstallWizardProvider(profile, version));
+    public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {
+        ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, version);
+        ManagePageManager.getInstance().showTempPage(page);
     }
 
     public static void updateGameAssets(Context context, Profile profile, String version) {

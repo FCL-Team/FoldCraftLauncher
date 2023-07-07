@@ -106,9 +106,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         }
         currentPath = path;
         currentText.setText(path.toString());
-        ThemeEngine.getInstance().registerEvent(currentText, () -> {
-            currentText.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
-        });
+        ThemeEngine.getInstance().registerEvent(currentText, () -> currentText.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
         FileBrowserAdapter adapter = new FileBrowserAdapter(this, fileBrowser, path, selectedFiles, new FileBrowserListener() {
             @Override
             public void onEnterDir(String path) {

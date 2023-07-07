@@ -1,11 +1,13 @@
 package com.tungsten.fcl.ui.version;
 
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.MINECRAFT;
+import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
 
+import com.google.gson.JsonParseException;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
@@ -13,12 +15,15 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class VersionList {
@@ -61,7 +66,15 @@ public class VersionList {
                                         libraries.append(": ").append(libraryVersion.replaceAll("(?i)" + libraryId, ""));
                                 }
                             }
-                            return new VersionListItem(profile, version.getId(), libraries.toString(), repository.getVersionIconImage(version.getId()));
+                            String tag = null;
+                            try {
+                                ModpackConfiguration<?> config = profile.getRepository().readModpackConfiguration(version.getId());
+                                if (config != null)
+                                    tag = config.getVersion();
+                            } catch (IOException | JsonParseException e) {
+                                LOG.log(Level.WARNING, "Failed to read modpack configuration from " + version, e);
+                            }
+                            return new VersionListItem(profile, version.getId(), libraries.toString(), tag, repository.getVersionIconImage(version.getId()));
                         })
                         .collect(Collectors.toList());
                 if (profile == Profiles.getSelectedProfile()) {

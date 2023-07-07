@@ -75,7 +75,7 @@ public class ModpackDownloadPage extends DownloadPage {
     public void onClick(View v) {
         super.onClick(v);
         if (v == installModpack) {
-            Versions.importModpack();
+            Versions.importModpack(getContext(), getParent());
         }
     }
 }

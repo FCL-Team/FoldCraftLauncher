@@ -119,7 +119,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     }
 
     private void updateGame() {
-        Versions.updateVersion(getProfile(), getVersion());
+        Versions.updateVersion(getContext(), getParent(), getProfile(), getVersion());
     }
 
     private void export() {

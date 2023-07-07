@@ -2,6 +2,7 @@ package com.tungsten.fclcore.download;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
@@ -78,7 +79,8 @@ public class ProcessService extends Service {
                 sendCode(code);
             }
         };
-        bridge.execute(null, callback);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> bridge.execute(null, callback), 1000);
     }
 
     private void sendCode(int code) {

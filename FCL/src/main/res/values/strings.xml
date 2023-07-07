@@ -99,6 +99,8 @@
     <string name="assets_download_all">Validating assets integrity</string>
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
+    <string name="button_install">Install</string>
+
     <string name="community">Community</string>
 
     <string name="control_create">Create Controller</string>
@@ -404,6 +406,7 @@
 
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_downloading">Downloading</string>
+    <string name="message_error">Error</string>
     <string name="message_failed">Operation Failed</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>

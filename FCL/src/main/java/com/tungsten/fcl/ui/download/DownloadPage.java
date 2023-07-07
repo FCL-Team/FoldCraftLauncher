@@ -167,7 +167,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
         switch (id) {
             case PAGE_ID_DOWNLOAD_MODPACK:
-                this.callback = ((profile, version1, file) -> Versions.downloadModpackImpl(context, profile, version1, file));
+                this.callback = ((profile, version, file) -> Versions.downloadModpackImpl(context, parent, profile, file));
                 break;
             case PAGE_ID_DOWNLOAD_MOD:
                 this.callback = (profile, version, file) -> download(context, profile, version, file, "mods");

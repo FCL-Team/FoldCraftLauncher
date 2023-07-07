@@ -125,8 +125,7 @@ public class FileBrowserAdapter extends FCLAdapter {
         viewHolder.description.setText(description);
         if (selectedFiles.contains(file.getAbsolutePath()) && file.isFile()) {
             viewHolder.parent.setBackgroundColor(Color.GRAY);
-        }
-        else {
+        } else {
             viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.clickable_parent));
         }
         viewHolder.parent.setOnClickListener(view1 -> {

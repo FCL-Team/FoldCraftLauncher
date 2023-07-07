@@ -88,6 +88,8 @@
     <string name="assets_download_all">检查资源文件完整性</string>
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
+    <string name="button_install">安装</string>
+
     <string name="community">社区</string>
 
     <string name="control_create">创建新布局</string>
@@ -385,6 +387,7 @@
 
     <string name="message_cancelled">操作已取消</string>
     <string name="message_downloading">正在下载</string>
+    <string name="message_error">错误</string>
     <string name="message_failed">操作失败</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>

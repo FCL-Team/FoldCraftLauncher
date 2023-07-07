@@ -21,8 +21,7 @@ public class FileOperator {
         List<File> rawList;
         if (files != null) {
             rawList = Arrays.asList(files);
-        }
-        else {
+        } else {
             rawList = Collections.emptyList();
         }
         Comparator<File> nameComparator = NameFileComparator.NAME_INSENSITIVE_COMPARATOR;
@@ -36,17 +35,16 @@ public class FileOperator {
                 if (file.isFile()) {
                     for (String suffix : fileBrowser.getSuffix()) {
                         add = file.getAbsolutePath().endsWith(suffix);
+                        break;
                     }
-                }
-                else {
+                } else {
                     add = true;
                 }
                 if (add) {
                     filterList.add(file);
                 }
             }
-        }
-        else {
+        } else {
             filterList.addAll(rawList);
         }
         if (fileBrowser.getLibMode() == LibMode.FOLDER_CHOOSER) {
@@ -55,8 +53,7 @@ public class FileOperator {
                     list.add(file);
                 }
             }
-        }
-        else {
+        } else {
             list.addAll(filterList);
         }
         return list;
