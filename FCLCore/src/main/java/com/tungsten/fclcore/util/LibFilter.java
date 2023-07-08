@@ -32,7 +32,7 @@ public class LibFilter {
     public static List<Library> filterLibs(List<Library> libraries) {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
-            if (!library.isNative() && !library.getName().contains("org.lwjgl") && !library.getName().contains("platform")) {
+            if (!library.isNative() && !library.getName().contains("org.lwjgl") && (library.getName().contains("jna") || !library.getName().contains("platform"))) {
                 if (library.getArtifactId().equals("asm-all") && library.getVersion().equals("4.1")) {
                     newLibraries.add(ASM_ALL_5_2);
                 } else {
