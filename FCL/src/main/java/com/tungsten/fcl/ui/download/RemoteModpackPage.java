@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.View;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class RemoteModpackPage extends ModpackPage {
 
         progressBar.setVisibility(View.GONE);
         layout.setVisibility(View.VISIBLE);
+        describe.setVisibility(View.VISIBLE);
 
         name.setText(manifest.getName());
         version.setText(manifest.getVersion());
@@ -97,5 +99,17 @@ public class RemoteModpackPage extends ModpackPage {
             task = ModpackInstaller.getModpackInstallTask(getContext(), profile, updateVersion, null, manifest, modpack, name);
         }
         ModpackInstaller.installModpack(getContext(), task, updateVersion != null);
+    }
+
+    @Override
+    protected void onDescribe() {
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setCancelable(false);
+        builder.setTitle(getContext().getString(R.string.modpack_description));
+        CharSequence charSequence = Html.fromHtml(manifest.getDescription(), 0);
+        builder.setMessage(charSequence);
+        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+        builder.create().show();
     }
 }

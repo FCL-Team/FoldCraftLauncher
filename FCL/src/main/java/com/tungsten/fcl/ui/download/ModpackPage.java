@@ -31,6 +31,7 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
     protected FCLTextView author;
 
     protected FCLButton install;
+    protected FCLButton describe;
 
     public ModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile) {
         super(context, id, parent, resId);
@@ -48,7 +49,9 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
         version = findViewById(R.id.version);
         author = findViewById(R.id.author);
         install = findViewById(R.id.install);
+        describe = findViewById(R.id.describe);
         install.setOnClickListener(this);
+        describe.setOnClickListener(this);
         ThemeEngine.getInstance().registerEvent(infoLayout, () -> infoLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
     }
 
@@ -64,10 +67,15 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
 
     protected abstract void onInstall();
 
+    protected abstract void onDescribe();
+
     @Override
     public void onClick(View v) {
         if (v == install) {
             onInstall();
+        }
+        if (v == describe) {
+            onDescribe();
         }
     }
 }

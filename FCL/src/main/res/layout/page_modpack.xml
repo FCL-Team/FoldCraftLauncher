@@ -185,6 +185,14 @@
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             app:ripple="true"
+            android:id="@+id/describe"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/modpack_description"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            app:ripple="true"
             android:id="@+id/install"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
