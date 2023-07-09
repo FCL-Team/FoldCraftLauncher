@@ -81,8 +81,8 @@ LOCAL_SRC_FILES         := awt_xawt/xawt_fake.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := fcl_awt
-LOCAL_SRC_FILES := awt/awt_bridge.c
+LOCAL_MODULE            := fcl_awt
+LOCAL_SRC_FILES         := awt/awt_bridge.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)

@@ -6,17 +6,14 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.Surface;
-import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.FCLPath;
 
-import java.io.File;
 import java.io.Serializable;
 
 public class FCLBridge implements Serializable {
@@ -184,21 +181,21 @@ public class FCLBridge implements Serializable {
     }
 
     public static void openLink(final String link) {
-        Context ctx = FCLPath.CONTEXT;
-        ((Activity)ctx).runOnUiThread(() -> {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 String targetLink = link;
-                if(targetLink.startsWith("file:")) {
+                if (targetLink.startsWith("file:")) {
                     targetLink = targetLink.replace("file:","");
-                    if(targetLink.startsWith("//")) {
+                    if (targetLink.startsWith("//")) {
                         targetLink = targetLink.replace("//","/");
                     }
                 }
                 intent.setDataAndType(Uri.parse(targetLink), "*/*");
-                ctx.startActivity(intent);
+                context.startActivity(intent);
             } catch (Exception e) {
-                Log.e("openLink error",e.toString());
+                Log.e("openLink error", e.toString());
             }
         });
     }
