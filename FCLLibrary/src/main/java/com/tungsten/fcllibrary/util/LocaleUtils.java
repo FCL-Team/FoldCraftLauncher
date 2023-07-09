@@ -1,4 +1,4 @@
-package com.tungsten.fcllibrary.component;
+package com.tungsten.fcllibrary.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

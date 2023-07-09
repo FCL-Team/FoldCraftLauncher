@@ -25,4 +25,6 @@ public class RequestCodes {
     public static final int SELECT_DOWNLOAD_FOLDER_CODE = 500;
 
     public static final int SELECT_MODPACK_CODE = 550;
+
+    public static final int SELECT_EXPORT_FOLDER_CODE = 600;
 }

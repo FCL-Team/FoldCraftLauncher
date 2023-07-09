@@ -123,7 +123,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     }
 
     private void export() {
-        Versions.exportVersion(getProfile(), getVersion());
+        Versions.exportVersion(getContext(), getParent(), getProfile(), getVersion());
     }
 
     private void rename() {

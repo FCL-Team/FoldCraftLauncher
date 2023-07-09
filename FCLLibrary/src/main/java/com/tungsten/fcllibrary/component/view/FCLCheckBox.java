@@ -22,8 +22,10 @@ public class FCLCheckBox extends AppCompatCheckBox {
 
     private boolean autoTint;
     private boolean fromUserOrSystem = false;
+    private boolean fromIndeterminate = false;
     private BooleanProperty visibilityProperty;
     private BooleanProperty checkProperty;
+    private BooleanProperty indeterminateProperty;
     private BooleanProperty disableProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
@@ -62,9 +64,12 @@ public class FCLCheckBox extends AppCompatCheckBox {
 
     public void addCheckedChangeListener() {
         setOnCheckedChangeListener((compoundButton, b) -> {
-            fromUserOrSystem = true;
-            checkProperty().set(b);
-            fromUserOrSystem = false;
+            if (!fromIndeterminate) {
+                fromUserOrSystem = true;
+                checkProperty().set(b);
+                indeterminateProperty().set(false);
+                fromUserOrSystem = false;
+            }
         });
     }
 
@@ -161,6 +166,45 @@ public class FCLCheckBox extends AppCompatCheckBox {
         }
 
         return checkProperty;
+    }
+
+    public final void setIndeterminate(boolean indeterminate) {
+        checkProperty().set(indeterminate);
+    }
+
+    public final boolean isIndeterminate() {
+        return indeterminateProperty().get();
+    }
+
+    public final BooleanProperty indeterminateProperty() {
+        if (indeterminateProperty == null) {
+            indeterminateProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        if (!fromUserOrSystem) {
+                            fromIndeterminate = true;
+                            if (get()) {
+                                setChecked(true);
+                            } else {
+                                setChecked(checkProperty().get());
+                            }
+                            fromIndeterminate = false;
+                        }
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "indeterminate";
+                }
+            };
+        }
+
+        return indeterminateProperty;
     }
 
     public final void setDisableValue(boolean disableValue) {

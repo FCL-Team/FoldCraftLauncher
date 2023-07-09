@@ -13,7 +13,7 @@ import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;

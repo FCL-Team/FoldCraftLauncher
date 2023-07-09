@@ -35,23 +35,7 @@ public class FCLImageButton extends AppCompatImageButton {
         @Override
         protected void invalidated() {
             get();
-            int[][] state = {
-                    {
-
-                    }
-            };
-            int[] colorSrc = {
-                    ThemeEngine.getInstance().getTheme().getAutoTint()
-            };
-            int[] colorRipple = {
-                    ThemeEngine.getInstance().getTheme().getLtColor()
-            };
-            if (autoTint) {
-                setImageTintList(new ColorStateList(state, colorSrc));
-            }
-            RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
-            drawable.setRadius(ConvertUtils.dip2px(getContext(), noPadding ? 12 : 20));
-            setBackgroundDrawable(drawable);
+            refreshStyle();
         }
 
         @Override
@@ -64,6 +48,26 @@ public class FCLImageButton extends AppCompatImageButton {
             return "theme";
         }
     };
+
+    public void refreshStyle() {
+        int[][] state = {
+                {
+
+                }
+        };
+        int[] colorSrc = {
+                ThemeEngine.getInstance().getTheme().getAutoTint()
+        };
+        int[] colorRipple = {
+                ThemeEngine.getInstance().getTheme().getLtColor()
+        };
+        if (autoTint) {
+            setImageTintList(new ColorStateList(state, colorSrc));
+        }
+        RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
+        drawable.setRadius(ConvertUtils.dip2px(getContext(), noPadding ? 12 : 20));
+        setBackgroundDrawable(drawable);
+    }
 
     private void init() {
         if (!noPadding) {
@@ -107,6 +111,7 @@ public class FCLImageButton extends AppCompatImageButton {
 
     public void setAutoTint(boolean autoTint) {
         this.autoTint = autoTint;
+        refreshStyle();
     }
 
     public boolean isAutoTint() {
@@ -115,6 +120,7 @@ public class FCLImageButton extends AppCompatImageButton {
 
     public void setNoPadding(boolean noPadding) {
         this.noPadding = noPadding;
+        refreshStyle();
     }
 
     public boolean isNoPadding() {

@@ -100,6 +100,8 @@
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
     <string name="button_install">Install</string>
+    <string name="button_next">Next</string>
+    <string name="button_prev">Prev</string>
 
     <string name="community">Community</string>
 
@@ -275,9 +277,6 @@
     <string name="edit_direction_event_sneak">Double Click Center to Sneak</string>
     <string name="edit_direction_event_sneak_code">Sneak Keycode</string>
 
-    <string name="event_next">Next</string>
-    <string name="event_prev">Prev</string>
-
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
     <string name="exception_ssl_handshake">Unable to establish SSL connection due to missing SSL certificates in current Java installation.</string>
@@ -294,6 +293,8 @@
     <string name="input_hint_not_empty">Required</string>
     <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Fill the required input box first.</string>
+    <string name="input_number">The input must be a number.</string>
+    <string name="input_url">The input must be a valid URL.</string>
 
     <string name="install_change_version">Change Version</string>
     <string name="install_change_version_confirm">Are you sure you want to switch %s from version %s to %s?</string>

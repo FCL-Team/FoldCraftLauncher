@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.version;
 
-import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -19,8 +18,8 @@ import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.LocalModpackPage;
 import com.tungsten.fcl.ui.download.ModpackSelectionPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
@@ -33,8 +32,6 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -132,15 +129,9 @@ public class Versions {
         return dialog.getFuture();
     }
 
-    public static void exportVersion(Profile profile, String version) {
-        //Controllers.getDecorator().startWizard(new ExportWizardProvider(profile, version), i18n("modpack.wizard"));
-    }
-
-    public static void openFolder(Activity context, Profile profile, String version) {
-        FileBrowser.Builder builder = new FileBrowser.Builder(context);
-        builder.setLibMode(LibMode.FILE_BROWSER);
-        builder.setInitDir(profile.getRepository().getRunDirectory(version).getAbsolutePath());
-        builder.create().browse(context, RequestCodes.BROWSE_DIR_CODE, null);
+    public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
+        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_type, profile, version);
+        ManagePageManager.getInstance().showTempPage(page);
     }
 
     public static void duplicateVersion(Context context, Profile profile, String version) {

@@ -9,7 +9,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;

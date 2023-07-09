@@ -21,7 +21,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.SimpleMultimap;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;

@@ -18,7 +18,7 @@ import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 

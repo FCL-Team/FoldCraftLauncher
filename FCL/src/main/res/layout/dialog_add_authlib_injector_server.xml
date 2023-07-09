@@ -49,7 +49,7 @@
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:layout_marginTop="10dp"
             android:id="@+id/next"
-            android:text="@string/event_next"
+            android:text="@string/button_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -124,7 +124,7 @@
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:layout_marginTop="15dp"
             android:id="@+id/prev"
-            android:text="@string/event_prev"
+            android:text="@string/button_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"

@@ -89,6 +89,8 @@
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
     <string name="button_install">安装</string>
+    <string name="button_next">下一步</string>
+    <string name="button_prev">上一步</string>
 
     <string name="community">社区</string>
 
@@ -264,9 +266,6 @@
     <string name="edit_direction_event_sneak">双击中心潜行</string>
     <string name="edit_direction_event_sneak_code">潜行键值</string>
 
-    <string name="event_next">下一步</string>
-    <string name="event_prev">上一步</string>
-
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
@@ -283,6 +282,8 @@
     <string name="input_hint_not_empty">必填</string>
     <string name="input_hint_optional">选填</string>
     <string name="input_not_empty">请先填写必要的输入框。</string>
+    <string name="input_number">指定的输入框必须输入数字。</string>
+    <string name="input_url">指定的输入框必须输入有效的链接。</string>
 
     <string name="install_change_version">更改版本</string>
     <string name="install_change_version_confirm">你确定将 %s 版本从 %s 改为 %s 吗?</string>
