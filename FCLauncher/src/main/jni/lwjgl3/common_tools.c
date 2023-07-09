@@ -8,6 +8,7 @@
 #include "common_tools.h"
 #include <stdlib.h>
 #include <errno.h>
+#include "fcl_hook.h"
 
 JavaVM *jvm;
 
@@ -184,7 +185,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     UNUSED_PARAM(reserved)
 
     jvm = vm;
-
+    JNIEnv *env = NULL;
+    (*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_4);
+    hookExec(env);
     envTLSInit();
     return JNI_VERSION_1_6;
 }

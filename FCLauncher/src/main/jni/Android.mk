@@ -331,8 +331,10 @@ LOCAL_MODULE            := lwjgl
 LOCAL_STATIC_LIBRARIES  := dyncall \
 						   dyncallback \
 						   dynload
-LOCAL_SHARED_LIBRARIES  := byopen
-LOCAL_SRC_FILES         := lwjgl3/common_tools.c \
+LOCAL_SHARED_LIBRARIES  := byopen \
+						   fcl
+LOCAL_SRC_FILES         := lwjgl3/fcl_hook.c \
+						   lwjgl3/common_tools.c \
                            lwjgl3/org_lwjgl_opengl_AMDDebugOutput.c \
                            lwjgl3/org_lwjgl_opengl_AMDDrawBuffersBlend.c \
                            lwjgl3/org_lwjgl_opengl_AMDFramebufferMultisampleAdvanced.c \

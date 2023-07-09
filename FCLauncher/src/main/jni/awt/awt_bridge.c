@@ -5,8 +5,6 @@
 
 static JavaVM* dalvikJavaVMPtr;
 
-static JavaVM* runtimeJavaVMPtr;
-
 jclass class_FCLBridge;
 jmethodID method_OpenLink;
 jmethodID method_OpenPath;
@@ -19,10 +17,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         class_FCLBridge = (*env)->NewGlobalRef(env, (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
         method_OpenLink = (*env)->GetStaticMethodID(env, class_FCLBridge, "openLink", "(Ljava/lang/String;)V");
         method_OpenPath = (*env)->GetStaticMethodID(env, class_FCLBridge, "openLink", "(Ljava/lang/String;)V");
-    } else if (dalvikJavaVMPtr != vm) {
-        runtimeJavaVMPtr = vm;
     }
-
     return JNI_VERSION_1_4;
 }
 
