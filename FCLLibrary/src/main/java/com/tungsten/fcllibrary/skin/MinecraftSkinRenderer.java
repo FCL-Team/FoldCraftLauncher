@@ -37,41 +37,41 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
 
     public MinecraftSkinRenderer(final Context context) {
         this.changeSkinImage = false;
-        this.plane_texcoords = new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
-        this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
+        this.plane_texcoords = new float[] { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+        this.plane_vertices = new float[] { -200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f };
         this.updateBitmapSkin = false;
         this.superRun = false;
         this.context = context;
         this.character = new GameCharacter();
     }
 
-    public MinecraftSkinRenderer(final Context mContext, final int n) {
+    public MinecraftSkinRenderer(final Context context, final int n) {
         this.changeSkinImage = false;
-        this.plane_texcoords = new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
-        this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
+        this.plane_texcoords = new float[] { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+        this.plane_vertices = new float[] { -200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f };
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.context = mContext;
+        this.context = context;
         this.character = new GameCharacter(n);
     }
 
-    public MinecraftSkinRenderer(final Context mContext, final int n, final boolean b) {
+    public MinecraftSkinRenderer(final Context context, final int n, final boolean b) {
         this.changeSkinImage = false;
-        this.plane_texcoords = new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
-        this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
+        this.plane_texcoords = new float[] { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f };
+        this.plane_vertices = new float[] { -200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f };
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.context = mContext;
+        this.context = context;
         this.character = new GameCharacter(b, n);
     }
 
-    public MinecraftSkinRenderer(final Context mContext, final boolean b) {
+    public MinecraftSkinRenderer(final Context context, final boolean b) {
         this.changeSkinImage = false;
         this.plane_texcoords = new float[] {0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
         this.plane_vertices = new float[] {-200.0f, -100.0f, -100.0f, -200.0f, 100.0f, -100.0f, 200.0f, 100.0f, -100.0f, 200.0f, -100.0f, -100.0f};
         this.updateBitmapSkin = false;
         this.superRun = false;
-        this.context = mContext;
+        this.context = context;
         this.character = new GameCharacter(b);
     }
 
@@ -143,12 +143,25 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
         this.updateBitmapSkin = true;
     }
 
+    public void refresh(Bitmap[] texture) {
+        Schedulers.androidUIThread().execute(() -> {
+            try {
+                NormalizedSkin normalizedSkin = new NormalizedSkin(texture[0]);
+                character = new GameCharacter(normalizedSkin.isSlim());
+                character.setRunning(true);
+                updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), texture[1]);
+            } catch (InvalidSkinException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public final void setTexture(Bitmap skin, Bitmap cape) {
         this.textureProperty().set(new Bitmap[] { skin, cape });
     }
 
     public final Bitmap[] getTexture() {
-        return textureProperty == null ? null : textureProperty.get();
+        return textureProperty().get();
     }
 
     public final ObjectProperty<Bitmap[]> textureProperty() {
@@ -158,14 +171,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
                         Bitmap[] texture = get();
-                        try {
-                            NormalizedSkin normalizedSkin = new NormalizedSkin(texture[0]);
-                            character = new GameCharacter(normalizedSkin.isSlim());
-                            character.setRunning(true);
-                            updateTexture(normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture(), texture[1]);
-                        } catch (InvalidSkinException e) {
-                            e.printStackTrace();
-                        }
+                        refresh(texture);
                     });
                 }
 
@@ -177,6 +183,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
                     return "image";
                 }
             };
+            textureProperty.set(new Bitmap[] { BitmapFactory.decodeStream(MinecraftSkinRenderer.class.getResourceAsStream("/assets/img/alex.png")), null });
         }
 
         return textureProperty;
