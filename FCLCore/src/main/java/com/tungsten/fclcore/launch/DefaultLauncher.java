@@ -47,13 +47,13 @@ public class DefaultLauncher extends Launcher {
 
         switch (options.getProcessPriority()) {
             case HIGH:
-                res.add("nice", "-n", "-5");
+                // res.add("nice", "-n", "-5");
                 break;
             case NORMAL:
                 // do nothing
                 break;
             case LOW:
-                res.add("nice", "-n", "5");
+                // res.add("nice", "-n", "5");
                 break;
         }
 
