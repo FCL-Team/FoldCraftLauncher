@@ -81,6 +81,11 @@ LOCAL_SRC_FILES         := awt_xawt/xawt_fake.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE := fcl_awt
+LOCAL_SRC_FILES := awt/awt_bridge.c
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE            := lwjgl2
 LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
