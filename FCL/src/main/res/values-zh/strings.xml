@@ -391,6 +391,7 @@
     <string name="message_downloading">正在下载</string>
     <string name="message_error">错误</string>
     <string name="message_failed">操作失败</string>
+    <string name="message_file_exist">文件已存在</string>
     <string name="message_success">已完成</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>

@@ -410,6 +410,7 @@
     <string name="message_downloading">Downloading</string>
     <string name="message_error">Error</string>
     <string name="message_failed">Operation Failed</string>
+    <string name="message_file_exist">File already exist</string>
     <string name="message_success">Operation completed successfully</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>

@@ -253,6 +253,11 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
             } else {
                 File file = new File(path.get(), fileName.get() + ".zip");
 
+                if (file.exists()) {
+                    Toast.makeText(getContext(), getContext().getString(R.string.message_file_exist), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 exportInfo.setName(name.get());
                 exportInfo.setFileApi(fileApi.get());
                 exportInfo.setVersion(version.get());
