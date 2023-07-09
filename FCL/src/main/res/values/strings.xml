@@ -406,9 +406,11 @@
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_doing">Please wait</string>
     <string name="message_downloading">Downloading</string>
     <string name="message_error">Error</string>
     <string name="message_failed">Operation Failed</string>
+    <string name="message_success">Operation completed successfully</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>
 
@@ -479,7 +481,7 @@
     <string name="modpack_wizard_step_initialization_force_update">Force updating the modpack to the latest version (you\'ll need a file-hosting service)</string>
     <string name="modpack_wizard_step_initialization_include_launcher">Include the launcher</string>
     <string name="modpack_wizard_step_initialization_save">Export to…</string>
-    <string name="modpack_wizard_step_initialization_warning">Before creating a modpack, please make sure the game launches, and it is a release version instead of a snapshot version. The launcher will save your download settings.\n\nKeep in mind that you are not allowed to add mods and resource packs that are explicitly said not to be distributed or put in a modpack.</string>
+    <string name="modpack_wizard_step_initialization_warning">Before creating a modpack, please make sure the game launches, and it is a release version instead of a snapshot version.\n\nKeep in mind that you are not allowed to add mods and resource packs that are explicitly said not to be distributed or put in a modpack.</string>
 
     <string name="modrinth_category_adventure">Adventure</string>
     <string name="modrinth_category_bukkit">Bukkit</string>

@@ -272,7 +272,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, options, ModAdviser::suggestMod, exportInfo, file);
+                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
                 ManagePageManager.getInstance().showTempPage(page);
             }
         }
