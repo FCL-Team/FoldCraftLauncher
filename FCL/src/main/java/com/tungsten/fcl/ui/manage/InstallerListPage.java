@@ -176,7 +176,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                 });
             }
         });
-        TaskDialog dialog = new TaskDialog(getContext(), TaskCancellationAction.NO_CANCEL);
+        TaskDialog dialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
         dialog.setTitle(getContext().getString(R.string.install_installer_install_offline));
         dialog.setExecutor(executor);
         dialog.show();

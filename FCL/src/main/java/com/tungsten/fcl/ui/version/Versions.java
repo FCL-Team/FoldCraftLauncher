@@ -160,7 +160,7 @@ public class Versions {
     public static void updateGameAssets(Context context, Profile profile, String version) {
         TaskExecutor executor = new GameAssetDownloadTask(profile.getDependency(), profile.getRepository().getVersion(version), GameAssetDownloadTask.DOWNLOAD_INDEX_FORCIBLY, true)
                 .executor();
-        TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NO_CANCEL);
+        TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NORMAL);
         dialog.setExecutor(executor);
         dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
         dialog.show();
