@@ -56,7 +56,7 @@ public class ModpackInstaller {
                             if (executor.getException() instanceof ModpackCompletionException) {
                                 if (executor.getException().getCause() instanceof FileNotFoundException) {
                                     FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(context);
-                                    builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                                    builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                                     builder1.setCancelable(false);
                                     builder1.setTitle(context.getString(R.string.install_failed));
                                     builder1.setMessage(context.getString(R.string.modpack_type_curse_not_found));

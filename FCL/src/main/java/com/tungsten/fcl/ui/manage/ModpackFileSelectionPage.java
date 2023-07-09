@@ -8,18 +8,31 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatDialog;
+
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.VersionSetting;
+import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
+import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
+import com.tungsten.fclcore.mod.multimc.MultiMCInstanceConfiguration;
+import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
+import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.task.TaskExecutor;
+import com.tungsten.fclcore.task.TaskListener;
+import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeAdapter;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeItem;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -28,6 +41,8 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,11 +51,10 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
 
     private final Profile profile;
     private final String version;
-    private final String type;
-    private final ModpackExportInfo.Options options;
+    private final String modpackType;
     private final ModAdviser adviser;
     private final ModpackExportInfo exportInfo;
-    private final File file;
+    private final File modpackFile;
 
     private FCLCheckBoxTreeItem<String> rootItem;
 
@@ -48,15 +62,14 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     private ListView listView;
     private FCLButton next;
 
-    public ModpackFileSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version, String type, ModpackExportInfo.Options options, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
+    public ModpackFileSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
         super(context, id, parent, resId);
         this.profile = profile;
         this.version = version;
-        this.type = type;
-        this.options = options;
+        this.modpackType = type;
         this.adviser = adviser;
         this.exportInfo = exportInfo;
-        this.file = file;
+        this.modpackFile = file;
     }
 
     @Override
@@ -95,8 +108,42 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     private void finish() {
         ArrayList<String> list = new ArrayList<>();
         getFilesNeeded(rootItem, "minecraft", list);
+        exportInfo.setWhitelist(list);
 
-        
+        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+        taskDialog.setTitle(getContext().getString(R.string.message_doing));
+
+        Task<?> task = getExportTask(modpackType, exportInfo, modpackFile);
+        TaskExecutor executor = task.executor(new TaskListener() {
+            @Override
+            public void onStop(boolean success, TaskExecutor executor) {
+                Schedulers.androidUIThread().execute(() -> {
+                    if (success) {
+                        FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
+                        builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                        builder1.setCancelable(false);
+                        builder1.setMessage(getContext().getString(R.string.message_success));
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE));
+                        builder1.create().show();
+                    } else {
+                        if (executor.getException() == null)
+                            return;
+                        String appendix = StringUtils.getStackTrace(executor.getException());
+                        FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
+                        builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder1.setCancelable(false);
+                        builder1.setTitle(getContext().getString(R.string.message_failed));
+                        builder1.setMessage(appendix);
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder1.create().show();
+                    }
+
+                });
+            }
+        });
+        taskDialog.setExecutor(executor);
+        taskDialog.show();
+        executor.start();
     }
 
     private FCLCheckBoxTreeItem<String> getTreeItem(File file, String basePath) {
@@ -158,6 +205,120 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                 list.add(StringUtils.substringAfter(basePath, "minecraft/"));
             item.getSubItem().forEach(it -> getFilesNeeded(it, basePath + "/" + it.getData(), list));
         }
+    }
+
+    private Task<?> getExportTask(String modpackType, ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Object>() {
+            Task<?> exportTask;
+
+            @Override
+            public boolean doPreExecute() {
+                return true;
+            }
+
+            @Override
+            public void preExecute() throws Exception {
+                switch (modpackType) {
+                    case ModpackTypeSelectionPage.MODPACK_TYPE_MCBBS:
+                        exportTask = exportAsMcbbs(exportInfo, modpackFile);
+                        break;
+                    case ModpackTypeSelectionPage.MODPACK_TYPE_MULTIMC:
+                        exportTask = exportAsMultiMC(exportInfo, modpackFile);
+                        break;
+                    case ModpackTypeSelectionPage.MODPACK_TYPE_SERVER:
+                        exportTask = exportAsServer(exportInfo, modpackFile);
+                        break;
+                    default:
+                        throw new IllegalStateException("Unrecognized modpack type " + modpackType);
+                }
+
+            }
+
+            @Override
+            public Collection<Task<?>> getDependents() {
+                return Collections.singleton(exportTask);
+            }
+
+            @Override
+            public void execute() throws Exception {
+
+            }
+        };
+    }
+
+    private Task<?> exportAsMcbbs(ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Void>() {
+            Task<?> dependency = null;
+
+            @Override
+            public void execute() {
+                dependency = new McbbsModpackExportTask(profile.getRepository(), version, exportInfo, modpackFile);
+            }
+
+            @Override
+            public Collection<Task<?>> getDependencies() {
+                return Collections.singleton(dependency);
+            }
+        };
+    }
+
+    private Task<?> exportAsMultiMC(ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Void>() {
+            Task<?> dependency;
+
+            @Override
+            public void execute() {
+                VersionSetting vs = profile.getVersionSetting(version);
+                dependency = new MultiMCModpackExportTask(profile.getRepository(), version, exportInfo.getWhitelist(),
+                        new MultiMCInstanceConfiguration(
+                                "OneSix",
+                                exportInfo.getName() + "-" + exportInfo.getVersion(),
+                                null,
+                                Lang.toIntOrNull(vs.getPermSize()),
+                                "",
+                                "",
+                                null,
+                                exportInfo.getDescription(),
+                                null,
+                                exportInfo.getJavaArguments(),
+                                false,
+                                854,
+                                480,
+                                vs.getMaxMemory(),
+                                exportInfo.getMinMemory(),
+                                false,
+                                /* showConsoleOnError */ true,
+                                /* autoCloseConsole */ false,
+                                /* overrideMemory */ true,
+                                /* overrideJavaLocation */ false,
+                                /* overrideJavaArgs */ true,
+                                /* overrideConsole */ true,
+                                /* overrideCommands */ true,
+                                /* overrideWindow */ true
+                        ), modpackFile);
+            }
+
+            @Override
+            public Collection<Task<?>> getDependencies() {
+                return Collections.singleton(dependency);
+            }
+        };
+    }
+
+    private Task<?> exportAsServer(ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Void>() {
+            Task<?> dependency;
+
+            @Override
+            public void execute() {
+                dependency = new ServerModpackExportTask(profile.getRepository(), version, exportInfo, modpackFile);
+            }
+
+            @Override
+            public Collection<Task<?>> getDependencies() {
+                return Collections.singleton(dependency);
+            }
+        };
     }
 
     @Override

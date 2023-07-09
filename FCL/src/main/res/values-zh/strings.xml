@@ -387,9 +387,11 @@
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_doing">请耐心等待</string>
     <string name="message_downloading">正在下载</string>
     <string name="message_error">错误</string>
     <string name="message_failed">操作失败</string>
+    <string name="message_success">已完成</string>
     <string name="message_unknown">未知</string>
     <string name="message_copy">复制成功！</string>
 
@@ -460,7 +462,7 @@
     <string name="modpack_wizard_step_initialization_force_update">强制升级整合包至最新版本（需要自建服务器）</string>
     <string name="modpack_wizard_step_initialization_include_launcher">包含启动器</string>
     <string name="modpack_wizard_step_initialization_save">选择要导出到的游戏整合包位置</string>
-    <string name="modpack_wizard_step_initialization_warning">在制作整合包前，请您确认您选择的版本可以正常启动，\n并保证您的 Minecraft 是正式版而非快照版，\n而且不应当将不允许非官方途径传播的 Mod、材质包等纳入整合包。\n整合包会保存您目前的下载源设置</string>
+    <string name="modpack_wizard_step_initialization_warning">在制作整合包前，请您确认您选择的版本可以正常启动，\n并保证您的 Minecraft 是正式版而非快照版，\n而且不应当将不允许非官方途径传播的 Mod、材质包等纳入整合包。</string>
 
     <string name="modrinth_category_adventure">冒险</string>
     <string name="modrinth_category_bukkit">Bukkit</string>
