@@ -250,7 +250,17 @@ public class ControlViewGroup implements Cloneable, Observable {
 
         public void addPropertyChangedListener(InvalidationListener listener) {
             buttonList.addListener(listener);
+            buttonList.forEach(it -> it.addListener(listener));
+            buttonList.addListener((InvalidationListener) observable -> {
+                buttonList.forEach(it -> it.removeListener(listener));
+                buttonList.forEach(it -> it.addListener(listener));
+            });
             directionList.addListener(listener);
+            directionList.forEach(it -> it.addListener(listener));
+            directionList.addListener((InvalidationListener) observable -> {
+                directionList.forEach(it -> it.removeListener(listener));
+                directionList.forEach(it -> it.addListener(listener));
+            });
         }
 
         private ObservableHelper observableHelper = new ObservableHelper(this);

@@ -5,7 +5,6 @@ import com.tungsten.fcl.ui.TaskDialog;
 import java.util.function.Consumer;
 
 public class TaskCancellationAction {
-    public static TaskCancellationAction NO_CANCEL = new TaskCancellationAction((Consumer<TaskDialog>) null);
     public static TaskCancellationAction NORMAL = new TaskCancellationAction(() -> {
     });
 

@@ -26,6 +26,9 @@
     
     <string name="about">About</string>
 
+    <string name="account_add_server">Add Authentication Server</string>
+    <string name="account_add_server_url">Server URL</string>
+    <string name="account_add_server_name">Server Name</string>
     <string name="account_cape">Cape</string>
     <string name="account_create">Create Account</string>
     <string name="account_create_offline">Create Offline Account</string>
@@ -47,6 +50,7 @@
     <string name="account_failed">Account refresh failed</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>
     <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
+    <string name="account_failed_connect_injector_server">Unable to connect to the authentication server. Please check your network and make sure you entered the correct URL.</string>
     <string name="account_failed_server_disconnected">Cannot access authentication server. You can log in offline or try to re-login.</string>
     <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
     <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
@@ -55,6 +59,7 @@
     <string name="account_failed_migration">Your account needs to be migrated to a Microsoft account. If you already did, you should re-login to your migrated Microsoft account instead.</string>
     <string name="account_failed_injector_download_failure">Unable to download authlib-injector. Please check your network, or try switching to a different download mirror.</string>
     <string name="account_failed_character_deleted">The character has already been deleted.</string>
+    <string name="account_failed_ssl">An SSL error occurred while connecting to the server.</string>
     <string name="account_failed_wrong_account">You have logged in to the wrong account.</string>
     <string name="account_skin_invalid_skin">Invalid skin file</string>
     <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
@@ -73,7 +78,6 @@
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
-    <string name="account_skin_type_csl_api_location">Address</string>
     <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
     <string name="account_skin_type_csl_api_hint">You need to create a character with the same name as your offline account on your skin provider website. Your skin will then be your uploaded skin to that site.</string>
     <string name="account_skin_type_local_file">Local Skin File</string>
@@ -95,12 +99,17 @@
     <string name="assets_download_all">Validating assets integrity</string>
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
+    <string name="button_install">Install</string>
+    <string name="button_next">Next</string>
+    <string name="button_prev">Prev</string>
+
     <string name="community">Community</string>
 
     <string name="control_create">Create Controller</string>
     <string name="control_delete">Are you sure to delete this controller?</string>
     <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
+    <string name="control_import_failed">Failed to import controller!</string>
     <string name="control_info_author">Author: </string>
     <string name="control_info_description">Description: </string>
     <string name="control_info_edit">Edit Controller Information</string>
@@ -111,33 +120,162 @@
     <string name="control_info_version">Version: </string>
     <string name="control_list">Controller List</string>
     <string name="control_select">Select Controller</string>
+    <string name="control_share">Share Controller</string>
+
+    <string name="curse_category_0">All</string>
+
+    <string name="curse_category_4474">Sci-Fi</string>
+    <string name="curse_category_4481">Small / Light</string>
+    <string name="curse_category_4483">Combat</string>
+    <string name="curse_category_4477">Mini Game</string>
+    <string name="curse_category_4478">Quests</string>
+    <string name="curse_category_4484">Multiplayer</string>
+    <string name="curse_category_4476">Exploration</string>
+    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_4475">Adventure and RPG</string>
+    <string name="curse_category_4487">FTB</string>
+    <string name="curse_category_4480">Map Based</string>
+    <string name="curse_category_4479">Hardcore</string>
+    <string name="curse_category_4482">Extra Large</string>
+    <string name="curse_category_4472">Tech</string>
+    <string name="curse_category_4473">Magic</string>
+    <string name="curse_category_5128">Vanilla+</string>
+
+    <string name="curse_category_5299">Education</string>
+    <string name="curse_category_5232">Galacticraft</string>
+    <string name="curse_category_5129">Vanilla+</string>
+    <string name="curse_category_5189">Utility &#38; QOL</string>
+    <string name="curse_category_5190">QoL</string>
+    <string name="curse_category_5191">Utility &#38; QoL</string>
+    <string name="curse_category_5192">FancyMenu</string>
+    <string name="curse_category_423">Map and Information</string>
+    <string name="curse_category_426">Addons</string>
+    <string name="curse_category_434">Armor, Tools, and Weapons</string>
+    <string name="curse_category_409">Structures</string>
+    <string name="curse_category_4485">Blood Magic</string>
+    <string name="curse_category_420">Storage</string>
+    <string name="curse_category_429">Industrial Craft</string>
+    <string name="curse_category_419">Magic</string>
+    <string name="curse_category_412">Technology</string>
+    <string name="curse_category_4557">Redstone</string>
+    <string name="curse_category_428">Tinker\'s Construct</string>
+    <string name="curse_category_414">Player Transport</string>
+    <string name="curse_category_4486">Lucky Blocks</string>
+    <string name="curse_category_432">Buildcraft</string>
+    <string name="curse_category_418">Genetics</string>
+    <string name="curse_category_4671">Twitch Integration</string>
+    <string name="curse_category_5314">KubeJS</string>
+    <string name="curse_category_408">Ores and Resources</string>
+    <string name="curse_category_4773">CraftTweaker</string>
+    <string name="curse_category_430">Thaumcraft</string>
+    <string name="curse_category_422">Adventure and RPG</string>
+    <string name="curse_category_413">Processing</string>
+    <string name="curse_category_417">Energy</string>
+    <string name="curse_category_415">Energy, Fluid and Item Transport</string>
+    <string name="curse_category_433">Forestry</string>
+    <string name="curse_category_425">Miscellaneous</string>
+    <string name="curse_category_4545">Applied Energistics 2</string>
+    <string name="curse_category_416">Farming</string>
+    <string name="curse_category_421">API and Library</string>
+    <string name="curse_category_4780">Fabric</string>
+    <string name="curse_category_424">Cosmetic</string>
+    <string name="curse_category_406">World gen</string>
+    <string name="curse_category_435">Server Utility</string>
+    <string name="curse_category_411">Mobs</string>
+    <string name="curse_category_407">Biomes</string>
+    <string name="curse_category_427">Thermal Expansion</string>
+    <string name="curse_category_410">Dimensions</string>
+    <string name="curse_category_436">Food</string>
+    <string name="curse_category_4558">Redstone</string>
+    <string name="curse_category_4843">Automation</string>
+    <string name="curse_category_4906">MCreator</string>
+
+    <string name="curse_category_5244">Font Packs</string>
+    <string name="curse_category_5193">Data Packs</string>
+    <string name="curse_category_399">Steampunk</string>
+    <string name="curse_category_396">128x</string>
+    <string name="curse_category_398">512x and Higher</string>
+    <string name="curse_category_397">256x</string>
+    <string name="curse_category_405">Miscellaneous</string>
+    <string name="curse_category_395">64x</string>
+    <string name="curse_category_400">Photo Realistic</string>
+    <string name="curse_category_393">16x</string>
+    <string name="curse_category_403">Traditional</string>
+    <string name="curse_category_394">32x</string>
+    <string name="curse_category_404">Animated</string>
+    <string name="curse_category_4465">Mod Support</string>
+    <string name="curse_category_402">Medieval</string>
+    <string name="curse_category_401">Modern</string>
+
+    <string name="curse_category_4464">Modded World</string>
+    <string name="curse_category_250">Game Map</string>
+    <string name="curse_category_249">Creation</string>
+    <string name="curse_category_251">Parkour</string>
+    <string name="curse_category_253">Survival</string>
+    <string name="curse_category_248">Adventure</string>
+    <string name="curse_category_252">Puzzle</string>
+
+    <string name="curse_category_4551">Hardcore Questing Mode</string>
+    <string name="curse_category_4548">Lucky Blocks</string>
+    <string name="curse_category_4556">Progression</string>
+    <string name="curse_category_4752">Building Gadgets</string>
+    <string name="curse_category_4553">CraftTweaker</string>
+    <string name="curse_category_4554">Recipes</string>
+    <string name="curse_category_4549">Guidebook</string>
+    <string name="curse_category_4547">Configuration</string>
+    <string name="curse_category_4550">Quests</string>
+    <string name="curse_category_4555">World Gen</string>
+    <string name="curse_category_4552">Scripts</string>
+
+    <string name="curse_sort_author">Author</string>
+    <string name="curse_sort_date_created">Date Created</string>
+    <string name="curse_sort_last_updated">Last Updated</string>
+    <string name="curse_sort_name">Name</string>
+    <string name="curse_sort_popularity">Popularity</string>
+    <string name="curse_sort_total_downloads">Total Downloads</string>
 
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
 
-    <string name="event_button_press">Press</string>
-    <string name="event_button_long_press">Long Press</string>
-    <string name="event_button_click">Click</string>
-    <string name="event_button_double_click">Double Click</string>
-    <string name="event_button_pointer_follow">Pointer Follow</string>
-    <string name="event_button_auto_keep">Keep Pressing</string>
-    <string name="event_button_auto_click">Keep Clicking</string>
-    <string name="event_button_open_menu">Open Menu</string>
-    <string name="event_button_movable">Movable</string>
-    <string name="event_button_switch_touch_mode">Switch Touch Mode</string>
-    <string name="event_button_input">Input</string>
-    <string name="event_button_quick_input">Open Quick Input Dialog</string>
-    <string name="event_button_output_text">Output Text</string>
-    <string name="event_button_output_keycodes">Output Keycodes</string>
-    <string name="event_button_bind_view_groups">Show/Hide View Groups</string>
-    <string name="event_rocker_up_keycode">Forward Keycode</string>
-    <string name="event_rocker_down_keycode">Back Keycode</string>
-    <string name="event_rocker_left_keycode">Left Keycode</string>
-    <string name="event_rocker_right_keycode">Right Keycode</string>
-    <string name="event_rocker_follow_option">Follow Option (Only Rocker Style)</string>
-    <string name="event_rocker_sneak">Double Click Center to Enable Sneak</string>
-    <string name="event_rocker_sneak_keycode">Sneak Keycode</string>
+    <string name="edit_view_event">View Event</string>
+    <string name="edit_view_info">Base View Info</string>
+    <string name="edit_view_no_group">Please add or select a view group first!</string>
+    <string name="edit_view_style">View Style</string>
+
+    <string name="edit_button_title">Edit Button</string>
+    <string name="edit_button_delete">Are you sure to delete this button?</string>
+    <string name="edit_button_text">Displayed Text</string>
+    <string name="edit_button_event_follow">Pointer Follows Finger</string>
+    <string name="edit_button_event_movable">Movable</string>
+    <string name="edit_button_event_press">Press</string>
+    <string name="edit_button_event_long_press">Long Press</string>
+    <string name="edit_button_event_click">Click</string>
+    <string name="edit_button_event_double_click">Double Click</string>
+    <string name="edit_button_event_auto_keep">Keep Pressing</string>
+    <string name="edit_button_event_auto_click">Keep Clicking</string>
+    <string name="edit_button_event_open_menu">Open Menu</string>
+    <string name="edit_button_event_touch_mode">Switch Gesture Mode</string>
+    <string name="edit_button_event_input">Input</string>
+    <string name="edit_button_event_quick_input">Open Quick Input Dialog</string>
+    <string name="edit_button_event_output_text">Send Text</string>
+    <string name="edit_button_event_keycodes">Output Keycodes</string>
+    <string name="edit_button_event_keycodes_keyboard">Keyboard</string>
+    <string name="edit_button_event_keycodes_mouse">Mouse</string>
+    <string name="edit_button_event_bind_group">Switch View Group Visibility</string>
+
+    <string name="edit_direction_title">Edit Direction Controller</string>
+    <string name="edit_direction_delete">Are you sure to delete this direction controller?</string>
+    <string name="edit_direction_event_up">Front Keycode</string>
+    <string name="edit_direction_event_down">Back Keycode</string>
+    <string name="edit_direction_event_left">Left Keycode</string>
+    <string name="edit_direction_event_right">Right Keycode</string>
+    <string name="edit_direction_event_follow">Follow Option (Only for rocker style)</string>
+    <string name="edit_direction_event_follow_fix">Fixed</string>
+    <string name="edit_direction_event_follow_center">Center Follows Finger</string>
+    <string name="edit_direction_event_follow_always">All Parts Follow Finger</string>
+    <string name="edit_direction_event_sneak">Double Click Center to Sneak</string>
+    <string name="edit_direction_event_sneak_code">Sneak Keycode</string>
 
     <string name="exception_access_denied">Unable to access the file %s.</string>
     <string name="exception_artifact_malformed">Cannot verify the integrity of the downloaded files.</string>
@@ -155,6 +293,8 @@
     <string name="input_hint_not_empty">Required</string>
     <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Fill the required input box first.</string>
+    <string name="input_number">The input must be a number.</string>
+    <string name="input_url">The input must be a valid URL.</string>
 
     <string name="install_change_version">Change Version</string>
     <string name="install_change_version_confirm">Are you sure you want to switch %s from version %s to %s?</string>
@@ -184,6 +324,7 @@
     <string name="install_installer_optifine" translatable="false">OptiFine</string>
     <string name="install_installer_quilt" translatable="false">Quilt</string>
     <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_modpack">Install a Modpack</string>
     <string name="install_new_game">Add a New Instance</string>
     <string name="install_new_game_already_exists">This instance already exists. Please use another name.</string>
     <string name="install_new_game_malformed">Invalid Name</string>
@@ -226,6 +367,14 @@
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
     <string name="menu_control_style_add">Add Style</string>
+    <string name="menu_control_view_group_add">Add View Group</string>
+    <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
+    <string name="menu_control_view_group_name">Name</string>
+    <string name="menu_control_view_group_visibility">Initial Visibility</string>
+    <string name="menu_control_view_group_exist">The view group already exist</string>
+    <string name="menu_control_view_group_empty">Please fill the view group name first</string>
+    <string name="menu_control_view_group_visible">Visible</string>
+    <string name="menu_control_view_group_invisible">Invisible</string>
 
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>
@@ -253,12 +402,129 @@
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
     <string name="menu_settings_quick_input_button">Manage</string>
+    <string name="menu_settings_search_table">Chinese-English Table</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_doing">Please wait</string>
+    <string name="message_downloading">Downloading</string>
+    <string name="message_error">Error</string>
     <string name="message_failed">Operation Failed</string>
+    <string name="message_file_exist">File already exist</string>
+    <string name="message_success">Operation completed successfully</string>
     <string name="message_unknown">Unknown</string>
     <string name="message_copy">Copy successfully!</string>
+
+    <string name="modpack">Modpack</string>
+    <string name="modpack_choose">Select a modpack</string>
+    <string name="modpack_choose_local">Import from local file</string>
+    <string name="modpack_choose_remote">Download from the Internet</string>
+    <string name="modpack_choose_remote_tooltip">Please enter your modpack URL</string>
+    <string name="modpack_completion">Downloading dependencies</string>
+    <string name="modpack_desc">Describe your modpack, including an introduction and probably some changelog. Markdown and images from URL are currently supported.</string>
+    <string name="modpack_description">Description</string>
+    <string name="modpack_download">Download Modpack</string>
+    <string name="modpack_enter_name">Enter a name for this modpack.</string>
+    <string name="modpack_export">Export Modpack</string>
+    <string name="modpack_export_as">Export Modpack As…</string>
+    <string name="modpack_file_api">Modpack URL Prefix</string>
+    <string name="modpack_files_blueprints">BuildCraft Blueprints</string>
+    <string name="modpack_files_config">Mod Configs</string>
+    <string name="modpack_files_dumps">NEI Debug Output File</string>
+    <string name="modpack_files_fclversion_cfg">Launcher Configuration File</string>
+    <string name="modpack_files_liteconfig">Mod Configuration File</string>
+    <string name="modpack_files_mods">Mods</string>
+    <string name="modpack_files_mods_voxelmods">VoxelMods options</string>
+    <string name="modpack_files_options_txt">Minecraft Settings File</string>
+    <string name="modpack_files_optionsshaders_txt">Shaders Settings File</string>
+    <string name="modpack_files_resourcepacks">Resource/Texture Packs</string>
+    <string name="modpack_files_saves">Game Saves</string>
+    <string name="modpack_files_scripts">MineTweaker Configuration File</string>
+    <string name="modpack_files_servers_dat">Server List File</string>
+    <string name="modpack_install">Install Modpack %s</string>
+    <string name="modpack_installing">Installing Modpack</string>
+    <string name="modpack_introduction">CurseForge, Modrinth, MultiMC, and MCBBS modpacks are currently supported.</string>
+    <string name="modpack_invalid">Invalid modpack, you can try to redownload it.</string>
+    <string name="modpack_mismatched_type">Modpack type mismatched, the current instance is a %s type, but the provided one is %s type.</string>
+    <string name="modpack_name">Modpack Name</string>
+    <string name="modpack_not_a_valid_name">Invalid Modpack Name</string>
+    <string name="modpack_origin">Source</string>
+    <string name="modpack_origin_url">Official Website</string>
+    <string name="modpack_origin_mcbbs">MCBBS</string>
+    <string name="modpack_origin_mcbbs_prompt">Post ID</string>
+    <string name="modpack_scan">Parsing Modpack Index</string>
+    <string name="modpack_task_install">Install Modpack</string>
+    <string name="modpack_task_install_error">Unable to identify this modpack. We currently only support Curse, Modrinth, MultiMC, and MCBBS modpacks.</string>
+    <string name="modpack_task_install_will">You are going to install modpack:</string>
+    <string name="modpack_type_curse">Curse</string>
+    <string name="modpack_type_curse_tolerable_error">Unable to download dependencies, you can try to continue downloading by launching this game instance.</string>
+    <string name="modpack_type_curse_error">Unable to download dependencies from CurseForge, please try again or use a proxy connection.</string>
+    <string name="modpack_type_curse_not_found">Some dependencies are no longer available, please try to install a newer version of the modpack.</string>
+    <string name="modpack_type_manual_warning">The modpack is manually packaged by the publisher, which may already contain a launcher. It is recommended to try to decompress and run the game with its own launcher. FCL can still import it, with no guarantee of its usability, still continue?</string>
+    <string name="modpack_type_mcbbs">MCBBS Type</string>
+    <string name="modpack_type_mcbbs_export">Can be imported by FCL, HMCL and MultiMC</string>
+    <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_multimc">MultiMC</string>
+    <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
+    <string name="modpack_type_server">Auto-Update Modpack from Server</string>
+    <string name="modpack_type_server_export">Allows server owner to update the game instance remotely</string>
+    <string name="modpack_type_server_malformed">Invalid modpack manifest, please refer to the server modpack maker to fix this issue.</string>
+    <string name="modpack_unsupported">Unsupported modpack format</string>
+    <string name="modpack_update">Updating modpack</string>
+    <string name="modpack_wizard">Modpack Export Wizard</string>
+    <string name="modpack_wizard_step_1">Basic Settings</string>
+    <string name="modpack_wizard_step_1_title">Some basic settings for the modpack.</string>
+    <string name="modpack_wizard_step_2">Select Files</string>
+    <string name="modpack_wizard_step_2_title">Select files you wanted to add to the modpack.</string>
+    <string name="modpack_wizard_step_3">Modpack Type</string>
+    <string name="modpack_wizard_step_3_title">Choose the modpack type you wanted to export as.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">Game version to export</string>
+    <string name="modpack_wizard_step_initialization_force_update">Force updating the modpack to the latest version (you\'ll need a file-hosting service)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">Include the launcher</string>
+    <string name="modpack_wizard_step_initialization_save">Export to…</string>
+    <string name="modpack_wizard_step_initialization_warning">Before creating a modpack, please make sure the game launches, and it is a release version instead of a snapshot version.\n\nKeep in mind that you are not allowed to add mods and resource packs that are explicitly said not to be distributed or put in a modpack.</string>
+
+    <string name="modrinth_category_adventure">Adventure</string>
+    <string name="modrinth_category_bukkit">Bukkit</string>
+    <string name="modrinth_category_bungeecord">BungeeCord</string>
+    <string name="modrinth_category_challenging">Challenging</string>
+    <string name="modrinth_category_combat">Combat</string>
+    <string name="modrinth_category_cursed">Cursed</string>
+    <string name="modrinth_category_decoration">Decoration</string>
+    <string name="modrinth_category_economy">Economy</string>
+    <string name="modrinth_category_equipment">Equipment</string>
+    <string name="modrinth_category_fabric">Fabric</string>
+    <string name="modrinth_category_food">Food</string>
+    <string name="modrinth_category_forge">Forge</string>
+    <string name="modrinth_category_game_mechanics">Game Mechanics</string>
+    <string name="modrinth_category_kitchen_sink">Kitchen-Sink</string>
+    <string name="modrinth_category_library">Library</string>
+    <string name="modrinth_category_lightweight">Lightweight</string>
+    <string name="modrinth_category_magic">Magic</string>
+    <string name="modrinth_category_management">Management</string>
+    <string name="modrinth_category_minigame">Minigame</string>
+    <string name="modrinth_category_misc">Misc</string>
+    <string name="modrinth_category_mobs">Mobs</string>
+    <string name="modrinth_category_modloader">Modloader</string>
+    <string name="modrinth_category_multiplayer">Multiplayer</string>
+    <string name="modrinth_category_optimization">Optimization</string>
+    <string name="modrinth_category_paper">Paper</string>
+    <string name="modrinth_category_purpur">Purpur</string>
+    <string name="modrinth_category_quests">Quests</string>
+    <string name="modrinth_category_quilt">Quilt</string>
+    <string name="modrinth_category_rift">Rift</string>
+    <string name="modrinth_category_social">Social</string>
+    <string name="modrinth_category_spigot">Spigot</string>
+    <string name="modrinth_category_sponge">Sponge</string>
+    <string name="modrinth_category_storage">Storage</string>
+    <string name="modrinth_category_technology">Technology</string>
+    <string name="modrinth_category_transportation">Transportation</string>
+    <string name="modrinth_category_utility">Utility</string>
+    <string name="modrinth_category_velocity">Velocity</string>
+    <string name="modrinth_category_waterfall">Waterfall</string>
+    <string name="modrinth_category_worldgen">Worldgen</string>
+    <string name="modrinth_category_datapack">Datapack</string>
+    <string name="modrinth_category_folia">Folia</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>
@@ -289,9 +555,6 @@
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
     <string name="mods_restore">Rollback</string>
     <string name="mods_url">Official Page</string>
-    
-    <string name="modpack">Modpack</string>
-    <string name="modpack_export">Export Modpack</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
@@ -300,7 +563,18 @@
     <string name="profile_select">Select Directory</string>
     <string name="profile_already_exist">This name already exists, please use a different name.</string>
 
+    <string name="quick_input_title">Quick Input</string>
+    <string name="quick_input_add">Add New Text</string>
+    <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_exist">The text already exist!</string>
+    <string name="quick_input_empty">Fill the text first!</string>
+
     <string name="resourcepack">Resource Packs</string>
+
+    <string name="search">Search</string>
+    <string name="search_hint_chinese">Search queries support both Chinese and English</string>
+    <string name="search_hint_english">Only English is supported</string>
+    <string name="search_sort">Sort By</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
@@ -324,7 +598,7 @@
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
-    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+,only support 1.17-)</string>
+    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
@@ -337,6 +611,7 @@
     <string name="settings_icon">Icon</string>
 
     <string name="settings_launcher">Launcher Settings</string>
+    <string name="settings_launcher_download_source">Download Source</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
@@ -366,6 +641,8 @@
     <string name="style_button_fill_color">Fill Color</string>
     <string name="style_button_interval">Button Interval</string>
     <string name="style_direction">Direction Controller Style</string>
+    <string name="style_direction_button">Button</string>
+    <string name="style_direction_rocker">Rocker</string>
     <string name="style_rocker">Rocker Style</string>
     <string name="style_rocker_size">Rocker Size</string>
     <string name="style_rocker_bg_stroke_width">Background Stroke Width</string>
@@ -422,6 +699,53 @@
     <string name="view_info_reference_height">Screen Height</string>
 
     <string name="world">Worlds</string>
+    <string name="world_add">Add a World (.zip)</string>
+    <string name="world_datapack">Manage Datapacks</string>
+    <string name="world_datapack_1_13">Only Minecraft 1.13 or newer supports datapacks.</string>
+    <string name="world_description">%s. Last played on %s. Game Version: %s.</string>
+    <string name="world_download">Download a World</string>
+    <string name="world_export">Export World</string>
+    <string name="world_export_title">Select a directory for this exported world</string>
+    <string name="world_export_location">Export to</string>
+    <string name="world_export_wizard">Export World %s</string>
+    <string name="world_extension">World Archive</string>
+    <string name="world_game_version">Game Version</string>
+    <string name="world_import_already_exists">This world already exists.</string>
+    <string name="world_import_choose">Select the save archive you want to import</string>
+    <string name="world_import_failed">Unable to import this world: %s</string>
+    <string name="world_import_invalid">Unable to parse the save.</string>
+    <string name="world_info_title">World %s - Information</string>
+    <string name="world_info_basic">Basic Information</string>
+    <string name="world_info_allow_cheats">Allow Cheats</string>
+    <string name="world_info_dimension_the_nether">The Nether</string>
+    <string name="world_info_dimension_the_end">The End</string>
+    <string name="world_info_difficulty">Difficulty</string>
+    <string name="world_info_difficulty_peaceful">Peaceful</string>
+    <string name="world_info_difficulty_easy">Easy</string>
+    <string name="world_info_difficulty_normal">Normal</string>
+    <string name="world_info_difficulty_hard">Hard</string>
+    <string name="world_info_game_version">Game Version</string>
+    <string name="world_info_last_played">Last Played</string>
+    <string name="world_info_generate_features">Generate structures</string>
+    <string name="world_info_player">Player Information</string>
+    <string name="world_info_player_food_level">Hunger Level</string>
+    <string name="world_info_player_game_type">Game Mode</string>
+    <string name="world_info_player_game_type_adventure">Adventure</string>
+    <string name="world_info_player_game_type_creative">Creative</string>
+    <string name="world_info_player_game_type_spectator">Spectator</string>
+    <string name="world_info_player_game_type_survival">Survival</string>
+    <string name="world_info_player_health">Health</string>
+    <string name="world_info_player_last_death_location">Last Death Location</string>
+    <string name="world_info_player_location">Location</string>
+    <string name="world_info_player_spawn">Spawn Location</string>
+    <string name="world_info_player_xp_level">Experience Level</string>
+    <string name="world_info_random_seed">Seed</string>
+    <string name="world_info_time">Game Time</string>
+    <string name="world_info_time_format">%s days</string>
     <string name="world_manage">Worlds / Datapacks</string>
+    <string name="world_name">World Name</string>
+    <string name="world_name_enter">Enter the world name</string>
+    <string name="world_reveal">Reveal in Explorer</string>
+    <string name="world_show_all">Show All</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 </resources>

@@ -24,6 +24,7 @@
 
         <com.tungsten.fcllibrary.component.view.FCLCheckBox
             android:id="@+id/release"
+            app:auto_hint_tint="true"
             android:layout_gravity="center"
             android:text="@string/version_game_release"
             android:layout_width="wrap_content"
@@ -31,6 +32,7 @@
 
         <com.tungsten.fcllibrary.component.view.FCLCheckBox
             android:id="@+id/snapshot"
+            app:auto_hint_tint="true"
             android:layout_gravity="center"
             android:text="@string/version_game_snapshot"
             android:layout_marginStart="10dp"
@@ -39,6 +41,7 @@
 
         <com.tungsten.fcllibrary.component.view.FCLCheckBox
             android:id="@+id/old"
+            app:auto_hint_tint="true"
             android:layout_gravity="center"
             android:text="@string/version_game_old"
             android:layout_marginStart="10dp"

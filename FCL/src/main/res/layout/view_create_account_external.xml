@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_baseline_home_24"
-                app:auto_tint="true"
+                android:tint="@android:color/darker_gray"
                 android:id="@+id/home"/>
 
             <com.tungsten.fcllibrary.component.view.FCLImageButton
@@ -47,17 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_baseline_person_add_24"
-                app:auto_tint="true"
+                android:tint="@android:color/darker_gray"
                 android:id="@+id/register"/>
-
-            <com.tungsten.fcllibrary.component.view.FCLImageButton
-                android:layout_marginStart="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_settings_24"
-                app:auto_tint="true"
-                android:id="@+id/setting"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

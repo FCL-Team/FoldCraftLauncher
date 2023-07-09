@@ -124,6 +124,7 @@ public class FCLauncher {
     private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
+        envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {

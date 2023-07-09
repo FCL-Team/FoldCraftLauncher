@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="KeycodeView">
+        <attr name="keycode" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="LogWindow">
+        <attr name="auto_log_tint" format="boolean"/>
+    </declare-styleable>
+</resources>

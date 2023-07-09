@@ -16,6 +16,7 @@ public class ResultListener {
     public static void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (listener != null) {
             listener.onActivityResult(requestCode, resultCode, data);
+            listener = null;
         }
     }
 

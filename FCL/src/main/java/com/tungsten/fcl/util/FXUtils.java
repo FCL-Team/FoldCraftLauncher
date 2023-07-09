@@ -17,6 +17,7 @@ import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public final class FXUtils {
 
@@ -52,6 +53,21 @@ public final class FXUtils {
         }
         runnable.run();
         return originalListener;
+    }
+
+    public static <T> StringConverter<T> stringConverter(Function<T, String> func) {
+        return new StringConverter<T>() {
+
+            @Override
+            public String toString(T object) {
+                return object == null ? "" : func.apply(object);
+            }
+
+            @Override
+            public T fromString(String string) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     public static <T> void bind(FCLEditText editText, Property<T> property, StringConverter<T> converter) {

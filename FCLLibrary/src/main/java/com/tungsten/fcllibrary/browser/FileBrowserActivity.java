@@ -21,7 +21,6 @@ import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLTitleView;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -32,7 +31,6 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
     private FileBrowser fileBrowser;
 
-    private FCLTitleView titleView;
     private FCLButton back;
     private FCLButton close;
     private FCLTextView mode;
@@ -56,8 +54,11 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
         fileBrowser = (FileBrowser) getIntent().getExtras().getSerializable("config");
 
+        /*
         titleView = findViewById(R.id.title);
         titleView.setTitle(fileBrowser.getTitle());
+
+         */
         mode = findViewById(R.id.mode);
         type = findViewById(R.id.type);
         mode.setText(getMode());
@@ -105,9 +106,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         }
         currentPath = path;
         currentText.setText(path.toString());
-        ThemeEngine.getInstance().registerEvent(currentText, () -> {
-            currentText.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor());
-        });
+        ThemeEngine.getInstance().registerEvent(currentText, () -> currentText.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
         FileBrowserAdapter adapter = new FileBrowserAdapter(this, fileBrowser, path, selectedFiles, new FileBrowserListener() {
             @Override
             public void onEnterDir(String path) {

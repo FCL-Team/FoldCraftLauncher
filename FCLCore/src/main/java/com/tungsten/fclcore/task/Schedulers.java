@@ -2,7 +2,6 @@ package com.tungsten.fclcore.task;
 
 import static com.tungsten.fclcore.util.Lang.threadPool;
 
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 

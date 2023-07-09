@@ -24,10 +24,6 @@ public final class DigestUtils {
         }
     }
 
-    public static byte[] digest(String algorithm, String data) {
-        return digest(algorithm, data.getBytes(UTF_8));
-    }
-
     public static byte[] digest(String algorithm, byte[] data) {
         return getDigest(algorithm).digest(data);
     }
@@ -46,8 +42,22 @@ public final class DigestUtils {
         return updateDigest(digest, data).digest();
     }
 
+    public static String digestToString(String algorithm, byte[] data) throws IOException {
+        return Hex.encodeHex(digest(algorithm, data));
+    }
+
+    public static String digestToString(String algorithm, Path path) throws IOException {
+        return Hex.encodeHex(digest(algorithm, path));
+    }
+
+    public static String digestToString(String algorithm, InputStream data) throws IOException {
+        return Hex.encodeHex(digest(algorithm, data));
+    }
+
+    private static final ThreadLocal<byte[]> threadLocalBuffer = ThreadLocal.withInitial(() -> new byte[STREAM_BUFFER_LENGTH]);
+
     public static MessageDigest updateDigest(MessageDigest digest, InputStream data) throws IOException {
-        byte[] buffer = new byte[STREAM_BUFFER_LENGTH];
+        byte[] buffer = threadLocalBuffer.get();
         int read = data.read(buffer, 0, STREAM_BUFFER_LENGTH);
 
         while (read > -1) {

@@ -7,7 +7,6 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.LibraryDownloadInfo;
 import com.tungsten.fclcore.util.CacheRepository;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
@@ -83,7 +82,7 @@ public class DefaultCacheRepository extends CacheRepository {
             LibraryDownloadInfo info = library.getDownload();
             String hash = info.getSha1();
             if (hash != null) {
-                String checksum = Hex.encodeHex(DigestUtils.digest("SHA-1", jar));
+                String checksum = DigestUtils.digestToString("SHA-1", jar);
                 if (hash.equalsIgnoreCase(checksum))
                     cacheLibrary(library, jar, false);
             } else if (library.getChecksums() != null && !library.getChecksums().isEmpty()) {
@@ -136,7 +135,7 @@ public class DefaultCacheRepository extends CacheRepository {
         if (Files.exists(jar)) {
             try {
                 if (hash != null) {
-                    String checksum = Hex.encodeHex(DigestUtils.digest("SHA-1", jar));
+                    String checksum = DigestUtils.digestToString("SHA-1", jar);
                     if (hash.equalsIgnoreCase(checksum))
                         return Optional.of(restore(jar, () -> cacheLibrary(library, jar, false)));
                 } else if (library.getChecksums() != null && !library.getChecksums().isEmpty()) {
@@ -165,7 +164,7 @@ public class DefaultCacheRepository extends CacheRepository {
     public Path cacheLibrary(Library library, Path path, boolean forge) throws IOException {
         String hash = library.getDownload().getSha1();
         if (hash == null)
-            hash = Hex.encodeHex(DigestUtils.digest(SHA1, path));
+            hash = DigestUtils.digestToString(SHA1, path);
 
         Path cache = getFile(SHA1, hash);
         FileUtils.copyFile(path.toFile(), cache.toFile());
@@ -228,7 +227,7 @@ public class DefaultCacheRepository extends CacheRepository {
         }
     }
 
-    private class LibraryIndex implements Validation {
+    private static final class LibraryIndex implements Validation {
         private final String name;
         private final String hash;
         private final String type;

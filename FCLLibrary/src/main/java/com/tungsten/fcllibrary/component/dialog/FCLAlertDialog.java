@@ -105,6 +105,10 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         this.message.setText(message);
     }
 
+    public void setMessage(CharSequence message) {
+        this.message.setText(message);
+    }
+
     public void setPositiveButton(String text, ButtonListener listener) {
         positive.setVisibility(View.VISIBLE);
         positive.setText(text);
@@ -147,6 +151,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         }
 
         public Builder setMessage(String message) {
+            dialog.setMessage(message);
+            return this;
+        }
+
+        public Builder setMessage(CharSequence message) {
             dialog.setMessage(message);
             return this;
         }

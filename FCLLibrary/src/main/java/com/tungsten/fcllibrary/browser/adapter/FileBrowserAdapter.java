@@ -97,8 +97,7 @@ public class FileBrowserAdapter extends FCLAdapter {
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.description = view.findViewById(R.id.description);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         File file = list.get(i);
@@ -126,8 +125,7 @@ public class FileBrowserAdapter extends FCLAdapter {
         viewHolder.description.setText(description);
         if (selectedFiles.contains(file.getAbsolutePath()) && file.isFile()) {
             viewHolder.parent.setBackgroundColor(Color.GRAY);
-        }
-        else {
+        } else {
             viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.clickable_parent));
         }
         viewHolder.parent.setOnClickListener(view1 -> {

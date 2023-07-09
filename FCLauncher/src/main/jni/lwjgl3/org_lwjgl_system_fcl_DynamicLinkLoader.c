@@ -18,7 +18,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlopen(JNIE
     if (!glesHandle) {
         glesHandle = dlopen("libGLESv2.so", RTLD_LAZY | RTLD_GLOBAL);
     }
-    if (strstr(filename,"glfw")!=0){
+    if (strstr(filename, "glfw") != 0) {
         return (jlong)(intptr_t)by_dlopen(filename, RTLD_LAZY | RTLD_GLOBAL);
     }
     return (jlong)(intptr_t)dlopen(filename, RTLD_LAZY | RTLD_GLOBAL);
@@ -33,7 +33,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_fcl_DynamicLinkLoader_ndlsym(JNIEn
     void *handle = (void *)(intptr_t)handleAddress;
     char const *name = (char const *)(intptr_t)nameAddress;
     UNUSED_PARAMS(__env, clazz)
-    if (strstr(name,"glfw")!=0){
+    if (strstr(name,"glfw") != 0) {
         return (jlong)(intptr_t)by_dlsym(handle, name);
     }
     jlong retval = (jlong)(intptr_t)dlsym(handle, name);

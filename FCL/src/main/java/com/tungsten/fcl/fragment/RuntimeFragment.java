@@ -18,7 +18,7 @@ import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 
@@ -144,7 +144,13 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         }
     }
 
+    private boolean installing = false;
+
     private void install() {
+        if (installing)
+            return;
+
+        installing = true;
         if (!lwjgl2) {
             lwjgl2State.setVisibility(View.GONE);
             lwjgl2Progress.setVisibility(View.VISIBLE);

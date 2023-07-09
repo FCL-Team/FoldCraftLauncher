@@ -29,7 +29,7 @@ import java.util.Optional;
 public class DirectionEventData implements Cloneable, Observable {
     
     public enum FollowOption {
-        FIX,
+        FIXED,
         CENTER_FOLLOW,
         FOLLOW
     }
@@ -107,7 +107,7 @@ public class DirectionEventData implements Cloneable, Observable {
     }
 
     /**
-     * Follow option
+     * Follow option (only rocker style)
      */
     private final ObjectProperty<FollowOption> followOptionProperty = new SimpleObjectProperty<>(this, "followOption", FollowOption.CENTER_FOLLOW);
 
@@ -237,8 +237,8 @@ public class DirectionEventData implements Cloneable, Observable {
         }
 
         public FollowOption getFollowOption(String option) {
-            if (option.equals(FollowOption.FIX.toString())) {
-                return FollowOption.FIX;
+            if (option.equals(FollowOption.FIXED.toString())) {
+                return FollowOption.FIXED;
             } else if (option.equals(FollowOption.FOLLOW.toString())) {
                 return FollowOption.FOLLOW;
             } else {

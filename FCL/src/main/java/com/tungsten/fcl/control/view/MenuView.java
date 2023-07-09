@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
@@ -73,11 +75,15 @@ public class MenuView extends View {
                 ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34));
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        setX((float) ((screenWidth - DEFAULT_WIDTH) * gameMenu.getMenuSetting().getMenuPositionX()));
-        setY((float) ((screenHeight - DEFAULT_HEIGHT) * gameMenu.getMenuSetting().getMenuPositionY()));
+    public void initPosition() {
+        post(() -> {
+            ViewGroup.LayoutParams layoutParams = getLayoutParams();
+            layoutParams.width = DEFAULT_WIDTH;
+            layoutParams.height = DEFAULT_HEIGHT;
+            setLayoutParams(layoutParams);
+            setX((float) ((screenWidth - DEFAULT_WIDTH) * gameMenu.getMenuSetting().getMenuPositionX()));
+            setY((float) ((screenHeight - DEFAULT_HEIGHT) * gameMenu.getMenuSetting().getMenuPositionY()));
+        });
     }
 
     private boolean pressed = false;
@@ -107,6 +113,7 @@ public class MenuView extends View {
     private float downY;
     private long downTime;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()){

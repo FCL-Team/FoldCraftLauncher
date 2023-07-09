@@ -1,4 +1,4 @@
-package com.tungsten.fcllibrary.component;
+package com.tungsten.fcllibrary.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -21,10 +21,10 @@ public class LocaleUtils {
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || (lang == 0 && getSystemLocale() == Locale.CHINA);
+        return lang == 2 || (lang == 0 && getSystemLocale().toString().equals(Locale.CHINA.toString()));
     }
 
-    public static Context setLanguage(Context context){
+    public static Context setLanguage(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         return updateResources(context, sharedPreferences.getInt("lang", 0));
     }

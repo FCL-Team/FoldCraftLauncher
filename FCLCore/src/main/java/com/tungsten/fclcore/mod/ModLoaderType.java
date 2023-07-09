@@ -4,6 +4,7 @@ public enum ModLoaderType {
     UNKNOWN,
     FORGE,
     FABRIC,
+    QUILT,
     LITE_LOADER,
     PACK
 }

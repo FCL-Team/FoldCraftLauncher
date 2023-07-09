@@ -222,7 +222,7 @@ public class OAuth {
          *
          * @param url OAuth url.
          */
-        void openBrowser(String url);
+        void openBrowser(String url) throws IOException;
 
         String getClientId();
 
@@ -236,7 +236,7 @@ public class OAuth {
         DEVICE,
     }
 
-    public class Result {
+    public static final class Result {
         private final String accessToken;
         private final String refreshToken;
 
@@ -265,7 +265,7 @@ public class OAuth {
         @SerializedName("verification_uri")
         public String verificationURI;
 
-        // Life time in seconds for device_code and user_code
+        // Lifetime in seconds for device_code and user_code
         @SerializedName("expires_in")
         public int expiresIn;
 

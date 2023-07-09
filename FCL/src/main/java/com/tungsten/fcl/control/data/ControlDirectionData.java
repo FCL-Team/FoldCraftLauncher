@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @JsonAdapter(ControlDirectionData.Serializer.class)
-public class ControlDirectionData implements Cloneable, Observable {
+public class ControlDirectionData implements Cloneable, Observable, CustomControl {
 
     /**
      * Unique id
@@ -127,6 +127,16 @@ public class ControlDirectionData implements Cloneable, Observable {
         data.setBaseInfo(getBaseInfo().clone());
         data.setEvent(getEvent().clone());
         return data;
+    }
+
+    @Override
+    public ViewType getType() {
+        return ViewType.CONTROL_DIRECTION;
+    }
+
+    @Override
+    public String getViewId() {
+        return getId();
     }
 
     public static class Serializer implements JsonSerializer<ControlDirectionData>, JsonDeserializer<ControlDirectionData> {

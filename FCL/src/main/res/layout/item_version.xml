@@ -43,12 +43,36 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5">
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                app:auto_text_tint="true"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:id="@+id/title"/>
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    app:auto_text_tint="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:layout_gravity="center"
+                    android:id="@+id/title"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:id="@+id/tag"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    android:background="@drawable/bg_container_white"
+                    app:auto_text_tint="true"
+                    app:auto_text_background_tint="true"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 app:auto_text_tint="true"

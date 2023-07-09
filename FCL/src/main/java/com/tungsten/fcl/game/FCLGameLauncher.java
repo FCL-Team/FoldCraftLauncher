@@ -13,7 +13,7 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.launch.DefaultLauncher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.component.LocaleUtils;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

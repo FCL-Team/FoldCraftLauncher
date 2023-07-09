@@ -107,7 +107,7 @@ public enum ModTranslations {
             return true;
         }
         try {
-            String modData = IOUtils.readFullyAsString(ModTranslations.class.getResourceAsStream(resourceName), StandardCharsets.UTF_8);
+            String modData = IOUtils.readFullyAsString(ModTranslations.class.getResourceAsStream(resourceName));
             mods = Arrays.stream(modData.split("\n")).filter(line -> !line.startsWith("#")).map(Mod::new).collect(Collectors.toList());
             return true;
         } catch (Exception e) {

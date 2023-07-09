@@ -76,7 +76,7 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
             if (!create) {
                 nameList.remove(controller.getName());
             }
-            if (!OperatingSystem.isNameValid(editName.getText().toString())) {
+            if (!OperatingSystem.isNameValid(editName.getText().toString()) || editName.getText().toString().equals("Error")) {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_info_name_invalid), Toast.LENGTH_SHORT).show();
             } else if (nameList.contains(editName.getText().toString())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_info_name_exist), Toast.LENGTH_SHORT).show();

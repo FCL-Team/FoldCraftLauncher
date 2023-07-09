@@ -16,8 +16,6 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Non thread-safe
- *
- * @author huangyuhui
  */
 public final class Zipper implements Closeable {
 

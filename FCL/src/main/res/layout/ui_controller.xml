@@ -254,6 +254,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:ripple="true"
+            android:text="@string/control_share"
+            android:id="@+id/share"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:ripple="true"
             android:text="@string/control_info_edit"
             android:id="@+id/edit_info"/>
 

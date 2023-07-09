@@ -2,6 +2,7 @@ package com.tungsten.fclcore.mod;
 
 import com.tungsten.fclcore.util.Lang;
 
+import java.io.File;
 import java.util.List;
 
 public interface ModAdviser {
@@ -41,21 +42,21 @@ public interface ModAdviser {
             "optionsof.txt" /* OptiFine */,
             "journeymap" /* JourneyMap */,
             "optionsshaders.txt",
-            "mods/VoxelMods");
+            "mods" + File.separator + "VoxelMods");
 
-    static ModSuggestion suggestMod(String fileName, boolean isDirectory) {
+    static ModAdviser.ModSuggestion suggestMod(String fileName, boolean isDirectory) {
         if (match(MODPACK_BLACK_LIST, fileName, isDirectory))
-            return ModSuggestion.HIDDEN;
+            return ModAdviser.ModSuggestion.HIDDEN;
         if (match(MODPACK_SUGGESTED_BLACK_LIST, fileName, isDirectory))
-            return ModSuggestion.NORMAL;
+            return ModAdviser.ModSuggestion.NORMAL;
         else
-            return ModSuggestion.SUGGESTED;
+            return ModAdviser.ModSuggestion.SUGGESTED;
     }
 
     static boolean match(List<String> l, String fileName, boolean isDirectory) {
         for (String s : l)
             if (isDirectory) {
-                if (fileName.startsWith(s + "/"))
+                if (fileName.startsWith(s + File.separator))
                     return true;
             } else {
                 if (s.startsWith("regex:")) {

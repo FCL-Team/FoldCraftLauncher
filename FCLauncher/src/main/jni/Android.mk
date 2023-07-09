@@ -81,6 +81,11 @@ LOCAL_SRC_FILES         := awt_xawt/xawt_fake.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE            := fcl_awt
+LOCAL_SRC_FILES         := awt/awt_bridge.c
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE            := lwjgl2
 LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := lwjgl2/common/common_tools.c \
@@ -326,8 +331,10 @@ LOCAL_MODULE            := lwjgl
 LOCAL_STATIC_LIBRARIES  := dyncall \
 						   dyncallback \
 						   dynload
-LOCAL_SHARED_LIBRARIES  := byopen
-LOCAL_SRC_FILES         := lwjgl3/common_tools.c \
+LOCAL_SHARED_LIBRARIES  := byopen \
+						   fcl
+LOCAL_SRC_FILES         := lwjgl3/fcl_hook.c \
+						   lwjgl3/common_tools.c \
                            lwjgl3/org_lwjgl_opengl_AMDDebugOutput.c \
                            lwjgl3/org_lwjgl_opengl_AMDDrawBuffersBlend.c \
                            lwjgl3/org_lwjgl_opengl_AMDFramebufferMultisampleAdvanced.c \

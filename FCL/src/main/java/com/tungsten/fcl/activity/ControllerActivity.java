@@ -26,4 +26,9 @@ public class ControllerActivity extends FCLActivity {
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
 }

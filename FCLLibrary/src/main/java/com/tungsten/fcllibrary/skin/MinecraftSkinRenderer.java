@@ -20,7 +20,7 @@ public class MinecraftSkinRenderer implements GLSurfaceView.Renderer {
     public static float[] light0Position;
     public boolean changeSkinImage;
     public GameCharacter character;
-    private int[] characterTexData;
+    private int[] characterTexData = new int[2];
     private final Context context;
     public String path;
     public float[] plane_texcoords;

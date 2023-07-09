@@ -27,6 +27,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLPath;
@@ -168,7 +169,10 @@ public class AccountListItem {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".png");
         builder.setSuffix(suffix);
-        builder.create().browse(MainActivity.getInstance(), RequestCodes.SELECT_SKIN_CODE, (requestCode, resultCode, data) -> {
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Schedulers.androidUIThread().execute(() -> builder.create().browse(MainActivity.getInstance(), RequestCodes.SELECT_SKIN_CODE, (requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_SKIN_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String selectedFile = FileBrowser.getSelectedFiles(data).get(0);
                 if (selectedFile == null) {
@@ -205,9 +209,25 @@ public class AccountListItem {
             } else {
                 completableFuture.complete(null);
             }
-        });
+            latch.countDown();
+        }));
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         return completableFuture;
+    }
+
+    public void refreshSkinBinding() {
+        image.unbind();
+        texture.unbind();
+        image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
+        texture.bind(TexturesLoader.textureBinding(account));
+        MainActivity.getInstance().refreshAvatar(account);
+        UIManager.getInstance().getMainUI().refreshSkin(account);
     }
 
     public static AuthInfo logIn(Account account) throws CancellationException, AuthenticationException, InterruptedException {

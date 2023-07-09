@@ -23,6 +23,11 @@ public class ConvertUtils {
         return (int) (pxValue / scare + 0.5f);
     }
 
+    public static double radian2Angle(double radian) {
+        double tmp = Math.round(radian / Math.PI * 180);
+        return tmp >= 0 ? tmp : 360 + tmp;
+    }
+
     public static Bitmap stringToBitmap(String string) {
         if (string == null)
             return null;

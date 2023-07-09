@@ -7,7 +7,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,24 +24,24 @@ public final class Logging {
     public static final Logger LOG = Logger.getLogger("FCL");
     private static final ByteArrayOutputStream storedLogs = new ByteArrayOutputStream(IOUtils.DEFAULT_BUFFER_SIZE);
 
-    private static final ConcurrentMap<String, String> forbiddenTokens = new ConcurrentHashMap<>();
+    private static volatile String[] accessTokens = new String[0];
 
-    public static void registerForbiddenToken(String token, String replacement) {
-        forbiddenTokens.put(token, replacement);
-    }
+    public static synchronized void registerAccessToken(String token) {
+        final String[] oldAccessTokens = accessTokens;
+        final String[] newAccessTokens = Arrays.copyOf(oldAccessTokens, oldAccessTokens.length + 1);
 
-    public static void registerAccessToken(String accessToken) {
-        registerForbiddenToken(accessToken, "<access token>");
+        newAccessTokens[oldAccessTokens.length] = token;
+
+        accessTokens = newAccessTokens;
     }
 
     public static String filterForbiddenToken(String message) {
-        for (Map.Entry<String, String> entry : forbiddenTokens.entrySet()) {
-            message = message.replace(entry.getKey(), entry.getValue());
-        }
+        for (String token : accessTokens)
+            message = message.replace(token, "<access token>");
         return message;
     }
 
-    public static void start(File logFolder) {
+    public static void start(Path logFolder) {
         LOG.setLevel(Level.ALL);
         LOG.setUseParentHandlers(false);
         LOG.setFilter(record -> {
@@ -47,14 +50,17 @@ public final class Logging {
         });
 
         try {
-            FileUtils.makeDirectory(logFolder);
-            FileHandler fileHandler = new FileHandler(logFolder + "/fcl.log");
+            if (Files.isRegularFile(logFolder))
+                Files.delete(logFolder);
+
+            Files.createDirectories(logFolder);
+            FileHandler fileHandler = new FileHandler(logFolder.resolve("fcl.log").toAbsolutePath().toString());
             fileHandler.setLevel(Level.FINEST);
             fileHandler.setFormatter(DefaultFormatter.INSTANCE);
             fileHandler.setEncoding("UTF-8");
             LOG.addHandler(fileHandler);
         } catch (IOException e) {
-            System.err.println("Unable to create fcl.log, " + e.getMessage());
+            System.err.println("Unable to create fcl.log\n" + StringUtils.getStackTrace(e));
         }
 
         ConsoleHandler consoleHandler = new ConsoleHandler();
@@ -96,7 +102,7 @@ public final class Logging {
         try {
             return storedLogs.toString("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            return e.getMessage();
+            throw new InternalError(e);
         }
     }
 

@@ -9,11 +9,11 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.MapProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleMapProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
@@ -38,7 +38,7 @@ public final class Config implements Cloneable, Observable {
 
     public static final int CURRENT_UI_VERSION = 0;
 
-    private static final Gson CONFIG_GSON = new GsonBuilder()
+    public static final Gson CONFIG_GSON = new GsonBuilder()
             .registerTypeAdapter(File.class, FileTypeAdapter.INSTANCE)
             .registerTypeAdapter(ObservableList.class, new ObservableListCreator())
             .registerTypeAdapter(ObservableSet.class, new ObservableSetCreator())
@@ -80,7 +80,10 @@ public final class Config implements Cloneable, Observable {
     private StringProperty versionListSource = new SimpleStringProperty("balanced");
 
     @SerializedName("configurations")
-    private ObservableMap<String, Profile> configurations = FXCollections.observableMap(new TreeMap<>());
+    private SimpleMapProperty<String, Profile> configurations = new SimpleMapProperty<>(FXCollections.observableMap(new TreeMap<>()));
+
+    @SerializedName("selectedAccount")
+    private StringProperty selectedAccount = new SimpleStringProperty();
 
     @SerializedName("accounts")
     private ObservableList<Map<Object, Object>> accountStorages = FXCollections.observableArrayList();
@@ -220,8 +223,20 @@ public final class Config implements Cloneable, Observable {
         return versionListSource;
     }
 
-    public ObservableMap<String, Profile> getConfigurations() {
+    public MapProperty<String, Profile> getConfigurations() {
         return configurations;
+    }
+
+    public String getSelectedAccount() {
+        return selectedAccount.get();
+    }
+
+    public void setSelectedAccount(String selectedAccount) {
+        this.selectedAccount.set(selectedAccount);
+    }
+
+    public StringProperty selectedAccountProperty() {
+        return selectedAccount;
     }
 
     public ObservableList<Map<Object, Object>> getAccountStorages() {

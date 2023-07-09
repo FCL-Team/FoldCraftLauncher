@@ -174,6 +174,17 @@ public class Controller implements Cloneable, Observable {
         }
     }
 
+    public void updateViewGroup(ControlViewGroup viewGroup) {
+        for (ControlViewGroup group : viewGroups()) {
+            if (viewGroup.getId().equals(group.getId())) {
+                group.setName(viewGroup.getName());
+                group.setVisibility(viewGroup.getVisibility());
+                group.setViewData(viewGroup.getViewData());
+                break;
+            }
+        }
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -192,6 +203,11 @@ public class Controller implements Cloneable, Observable {
         author.addListener(listener);
         description.addListener(listener);
         viewGroups.addListener(listener);
+        viewGroups.forEach(it -> it.addListener(listener));
+        viewGroups.addListener((InvalidationListener) observable -> {
+            viewGroups.forEach(it -> it.removeListener(listener));
+            viewGroups.forEach(it -> it.addListener(listener));
+        });
         controllerVersion.addListener(listener);
     }
 

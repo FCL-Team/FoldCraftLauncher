@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 public class FCLService extends Service {
 

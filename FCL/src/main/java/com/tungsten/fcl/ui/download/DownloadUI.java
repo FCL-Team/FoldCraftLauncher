@@ -6,6 +6,8 @@ import android.content.Context;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
@@ -38,6 +40,11 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();
@@ -65,6 +72,8 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     @Override
     public void initPages() {
         pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME, null);
+
+        Profiles.registerVersionsListener(this::loadVersions);
     }
 
     @Override
@@ -80,6 +89,13 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     @Override
     public Task<?> refresh(Object... param) {
         return null;
+    }
+
+    private void loadVersions(Profile profile) {
+        if (profile == Profiles.getSelectedProfile()) {
+            pageManager.loadVersion(profile, null);
+            profile.selectedVersionProperty().addListener(observable -> pageManager.loadVersion(profile, null));
+        }
     }
 
     @Override

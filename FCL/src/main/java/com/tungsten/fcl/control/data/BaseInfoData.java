@@ -260,7 +260,7 @@ public class BaseInfoData implements Cloneable, Observable {
             data.setAbsoluteWidth(Optional.ofNullable(obj.get("absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
             data.setAbsoluteHeight(Optional.ofNullable(obj.get("absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
             data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
-            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
+            data.setPercentageHeight(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
 
             return data;
         }
@@ -375,7 +375,7 @@ public class BaseInfoData implements Cloneable, Observable {
                 PercentageSize size = new PercentageSize();
 
                 size.setReference(Optional.ofNullable(obj.get("reference")).map(JsonElement::getAsString).orElse(Reference.SCREEN_WIDTH.toString()).equals(Reference.SCREEN_HEIGHT.toString()) ? Reference.SCREEN_HEIGHT : Reference.SCREEN_WIDTH);
-                size.setSize(Optional.ofNullable(obj.get("size")).map(JsonElement::getAsInt).orElse(5));
+                size.setSize(Optional.ofNullable(obj.get("size")).map(JsonElement::getAsInt).orElse(50));
 
                 return size;
             }

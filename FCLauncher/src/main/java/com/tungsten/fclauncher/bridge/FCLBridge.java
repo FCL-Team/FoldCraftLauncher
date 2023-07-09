@@ -1,8 +1,12 @@
 package com.tungsten.fclauncher.bridge;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
@@ -66,6 +70,7 @@ public class FCLBridge implements Serializable {
         System.loadLibrary("xhook");
         System.loadLibrary("fcl");
         System.loadLibrary("glfw");
+        System.loadLibrary("fcl_awt");
     }
 
     public FCLBridge() {
@@ -173,6 +178,26 @@ public class FCLBridge implements Serializable {
         }
         ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
         return item.getText().toString();
+    }
+
+    public static void openLink(final String link) {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                String targetLink = link;
+                if (targetLink.startsWith("file:")) {
+                    targetLink = targetLink.replace("file:","");
+                    if (targetLink.startsWith("//")) {
+                        targetLink = targetLink.replace("//","/");
+                    }
+                }
+                intent.setDataAndType(Uri.parse(targetLink), "*/*");
+                context.startActivity(intent);
+            } catch (Exception e) {
+                Log.e("openLink error", e.toString());
+            }
+        });
     }
 
     public void setScaleFactor(double scaleFactor) {

@@ -1,8 +1,5 @@
 package com.tungsten.fclcore.mod.server;
 
-import static com.tungsten.fclcore.util.DigestUtils.digest;
-import static com.tungsten.fclcore.util.Hex.encodeHex;
-
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
@@ -12,6 +9,7 @@ import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.GetTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -132,7 +130,7 @@ public class ServerModpackCompletionTask extends Task<Void> {
                 download = true;
             } else {
                 // If user modified this entry file, we will not replace this file since this modified file is that user expects.
-                String fileHash = encodeHex(digest("SHA-1", actualPath));
+                String fileHash = DigestUtils.digestToString("SHA-1", actualPath);
                 String oldHash = files.get(file.getPath()).getHash();
                 download = !Objects.equals(oldHash, file.getHash()) && Objects.equals(oldHash, fileHash);
             }

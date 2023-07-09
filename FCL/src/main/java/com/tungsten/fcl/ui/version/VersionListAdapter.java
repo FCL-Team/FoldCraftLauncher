@@ -28,6 +28,7 @@ public class VersionListAdapter extends FCLAdapter {
         FCLRadioButton radioButton;
         AppCompatImageView icon;
         FCLTextView title;
+        FCLTextView tag;
         FCLTextView subtitle;
         FCLImageButton delete;
     }
@@ -51,11 +52,11 @@ public class VersionListAdapter extends FCLAdapter {
             viewHolder.radioButton = view.findViewById(R.id.radio);
             viewHolder.icon = view.findViewById(R.id.icon);
             viewHolder.title = view.findViewById(R.id.title);
+            viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.subtitle = view.findViewById(R.id.subtitle);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         VersionListItem versionListItem = list.get(i);
@@ -63,6 +64,10 @@ public class VersionListAdapter extends FCLAdapter {
         viewHolder.radioButton.checkProperty().bind(versionListItem.selectedProperty());
         viewHolder.icon.setBackground(versionListItem.getDrawable());
         viewHolder.title.setText(versionListItem.getVersion());
+        viewHolder.tag.setVisibility(versionListItem.getTag() == null ? View.GONE : View.VISIBLE);
+        if (versionListItem.getTag() != null) {
+            viewHolder.tag.setText(versionListItem.getTag());
+        }
         viewHolder.subtitle.setText(versionListItem.getLibraries());
         viewHolder.radioButton.setOnClickListener(view1 -> versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion()));
         viewHolder.delete.setOnClickListener(view1 -> Versions.deleteVersion(getContext(), versionListItem.getProfile(), versionListItem.getVersion()));

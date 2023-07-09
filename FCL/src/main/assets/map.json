@@ -97,22 +97,6 @@
       }
     },
     {
-      "id": "1.7.3",
-      "argument": {
-        "vanilla": null,
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
-        "fabric": null
-      }
-    },
-    {
-      "id": "1.7.4",
-      "argument": {
-        "vanilla": null,
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
-        "fabric": null
-      }
-    },
-    {
       "id": "1.7.10",
       "argument": {
         "vanilla": "true:bao:B:t:a",
@@ -236,6 +220,22 @@
       "id": "2",
       "argument": {
         "vanilla": "true:ejf:N:w:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "3",
+      "argument": {
+        "vanilla": "true:emh:N:w:c",
+        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "5",
+      "argument": {
+        "vanilla": "true:enn:N:w:c",
         "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
         "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }

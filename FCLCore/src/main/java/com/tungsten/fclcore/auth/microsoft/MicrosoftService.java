@@ -187,7 +187,7 @@ public class MicrosoftService {
         Map<TextureType, Texture> textures = new EnumMap<>(TextureType.class);
 
         if (!profile.skins.isEmpty()) {
-            textures.put(TextureType.SKIN, new Texture(profile.skins.get(0).url, null, null));
+            textures.put(TextureType.SKIN, new Texture(profile.skins.get(0).url, null));
         }
         // if (!profile.capes.isEmpty()) {
         // textures.put(TextureType.CAPE, new Texture(profile.capes.get(0).url, null);

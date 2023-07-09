@@ -2,7 +2,6 @@ package com.tungsten.fclcore.util.io;
 
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.Hex;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -33,7 +32,7 @@ public class ChecksumMismatchException extends ArtifactMalformedException {
     }
 
     public static void verifyChecksum(Path file, String algorithm, String expectedChecksum) throws IOException {
-        String checksum = Hex.encodeHex(DigestUtils.digest(algorithm, file));
+        String checksum = DigestUtils.digestToString(algorithm, file);
         if (!checksum.equalsIgnoreCase(expectedChecksum)) {
             throw new ChecksumMismatchException(algorithm, expectedChecksum, checksum);
         }

@@ -6,6 +6,7 @@
     android:orientation="horizontal">
 
     <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:tint="@android:color/darker_gray"
         android:id="@+id/icon"
         android:layout_width="16dp"
         android:layout_height="16dp"
