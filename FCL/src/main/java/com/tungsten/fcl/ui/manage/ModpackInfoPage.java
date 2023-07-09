@@ -182,7 +182,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
             map.put("", null);
             config().getAuthlibInjectorServers().forEach(it -> map.put(it.getName(), it.getUrl()));
             serverSpinner.setDataList(list);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, list);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, list);
             adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             serverSpinner.setAdapter(adapter);
             SimpleStringProperty serverName = new SimpleStringProperty("");

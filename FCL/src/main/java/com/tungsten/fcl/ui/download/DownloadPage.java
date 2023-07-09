@@ -208,7 +208,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         if (downloadSources.getSize() > 1) {
             sourceSpinner.setDataList(new ArrayList<>(downloadSources));
-            ArrayAdapter<String> sourceAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, new ArrayList<>(downloadSources));
+            ArrayAdapter<String> sourceAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(downloadSources));
             sourceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             sourceSpinner.setAdapter(sourceAdapter);
             sourceSpinner.setSelection(downloadSource.get().equals(getContext().getString(R.string.mods_modrinth)) ? 1 : 0);
@@ -216,7 +216,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         }
 
         gameVersionSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList())));
-        ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, new ArrayList<>(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList())));
+        ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList())));
         gameVersionAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         gameVersionSpinner.setAdapter(gameVersionAdapter);
         gameVersionSpinner.setSelection(0);
@@ -226,7 +226,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         categoryDataList.add(new CategoryIndented(0, null));
         categorySpinner.setDataList(categoryDataList);
         ArrayList<String> categoryStringList = categoryDataList.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, categoryStringList);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, categoryStringList);
         categoryAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(0);
@@ -242,7 +242,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             }
             categorySpinner.setDataList(result);
             ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, resultStr);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
             adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             categorySpinner.setAdapter(adapter);
             FXUtils.unbindSelection(categorySpinner, category);
@@ -260,7 +260,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         sorts.add(getContext().getString(R.string.curse_sort_last_updated));
         sorts.add(getContext().getString(R.string.curse_sort_author));
         sorts.add(getContext().getString(R.string.curse_sort_total_downloads));
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, sorts);
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, sorts);
         sortAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         sortSpinner.setAdapter(sortAdapter);
         sortSpinner.setSelection(0);

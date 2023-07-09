@@ -85,6 +85,7 @@ public class FCLEditText extends AppCompatEditText {
             }
             if (autoTint) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                setHintTextColor(ThemeEngine.getInstance().getTheme().getAutoHintTint());
             }
         }
 

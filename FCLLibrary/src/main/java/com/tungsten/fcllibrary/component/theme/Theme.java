@@ -67,6 +67,10 @@ public class Theme {
         return autoTint.get();
     }
 
+    public int getAutoHintTint() {
+        return ColorUtils.calculateLuminance(getColor()) >= 0.5 ? Color.parseColor("#99000000") : Color.parseColor("#99FFFFFF");
+    }
+
     public boolean isFullscreen() {
         return fullscreen.get();
     }

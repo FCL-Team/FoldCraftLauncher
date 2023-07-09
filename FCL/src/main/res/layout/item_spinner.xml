@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.tungsten.fcllibrary.component.view.FCLTextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fclTextView"
     android:padding="8dp"
     style="?android:attr/spinnerItemStyle"
@@ -11,5 +10,5 @@
     android:singleLine="true"
     android:textAlignment="inherit"
     android:background="@android:color/transparent"
-    app:auto_text_tint="true"
+    android:textColor="@android:color/darker_gray"
     android:textSize="14sp"/>
