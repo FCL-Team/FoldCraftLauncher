@@ -101,6 +101,7 @@
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
     <string name="button_cancel">Cancel</string>
+    <string name="button_export">Export</string>
     <string name="button_install">Install</string>
     <string name="button_next">Next</string>
     <string name="button_prev">Prev</string>

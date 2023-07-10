@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/parent"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/check"
+            android:layout_gravity="center"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:id="@+id/name"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:id="@+id/source"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    app:auto_text_tint="true"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:id="@+id/desc"
+                android:singleLine="true"
+                app:auto_text_tint="true"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

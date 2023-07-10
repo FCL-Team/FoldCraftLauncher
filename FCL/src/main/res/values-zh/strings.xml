@@ -90,6 +90,7 @@
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
     <string name="button_cancel">取消</string>
+    <string name="button_export">导出</string>
     <string name="button_install">安装</string>
     <string name="button_next">下一步</string>
     <string name="button_prev">上一步</string>

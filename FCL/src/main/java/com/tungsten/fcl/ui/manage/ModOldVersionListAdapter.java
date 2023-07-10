@@ -16,11 +16,13 @@ import java.util.List;
 
 public class ModOldVersionListAdapter extends FCLAdapter {
 
+    private final ModRollbackDialog dialog;
     private final List<LocalModFile> list;
     private final ModRollbackDialog.Callback callback;
 
-    public ModOldVersionListAdapter(Context context, List<LocalModFile> list, ModRollbackDialog.Callback callback) {
+    public ModOldVersionListAdapter(Context context, ModRollbackDialog dialog, List<LocalModFile> list, ModRollbackDialog.Callback callback) {
         super(context);
+        this.dialog = dialog;
         this.list = list;
         this.callback = callback;
     }
@@ -60,7 +62,10 @@ public class ModOldVersionListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         LocalModFile localModFile = list.get(i);
-        viewHolder.parent.setOnClickListener(v -> callback.onOldVersionSelect(localModFile));
+        viewHolder.parent.setOnClickListener(v -> {
+            dialog.dismiss();
+            callback.onOldVersionSelect(localModFile);
+        });
         viewHolder.version.setText(localModFile.getVersion());
         return view;
     }

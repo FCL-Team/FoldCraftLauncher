@@ -355,7 +355,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
-                            ModUpdatesPage page = new ModUpdatesPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, modManager, result);
+                            ModUpdatesPage page = new ModUpdatesPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);
                             ManagePageManager.getInstance().showTempPage(page);
                         }
                     })
