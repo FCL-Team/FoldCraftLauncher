@@ -26,13 +26,13 @@ public class ModCheckUpdatesTask extends Task<List<LocalModFile.ModUpdate>> {
                                 .map(type ->
                                         Task.supplyAsync(() -> mod.checkUpdates(gameVersion, type.getRemoteModRepository()))
                                                 .setSignificance(TaskSignificance.MAJOR)
-                                                .setName(String.format("%s (%s)", mod.getFileName(), type.name())).withCounter("mods_check_updates")
+                                                .setName(String.format("%s (%s)", mod.getFileName(), type.name())).withCounter("mods.check_updates")
                                 )
                                 .collect(Collectors.toList())
                 )
                 .collect(Collectors.toList());
 
-        setStage("mods_check_updates");
+        setStage("mods.check_updates");
         getProperties().put("total", dependents.size() * RemoteMod.Type.values().length);
     }
 

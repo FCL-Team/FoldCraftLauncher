@@ -522,6 +522,7 @@
     <string name="mods_category">类别</string>
     <string name="mods_check_updates">检查更新</string>
     <string name="mods_check_updates_current_version">当前版本</string>
+    <string name="mods_check_updates_empty">没有需要更新的模组</string>
     <string name="mods_check_updates_failed">无法下载部分文件。</string>
     <string name="mods_check_updates_file">文件</string>
     <string name="mods_check_updates_source">下载源</string>

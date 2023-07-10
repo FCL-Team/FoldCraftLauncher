@@ -541,6 +541,7 @@
     <string name="mods_category">Category</string>
     <string name="mods_check_updates">Check for Updates</string>
     <string name="mods_check_updates_current_version">Current Version</string>
+    <string name="mods_check_updates_empty">No mods need to be updated</string>
     <string name="mods_check_updates_failed">Unable to download some of the files.</string>
     <string name="mods_check_updates_file">File</string>
     <string name="mods_check_updates_source">Source</string>

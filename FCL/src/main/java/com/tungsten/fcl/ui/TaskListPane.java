@@ -183,20 +183,22 @@ public final class TaskListPane extends FCLAdapter {
             @Override
             public void onPropertiesUpdate(Task<?> task) {
                 if (task instanceof Task.CountTask) {
-                    stageNodes.stream()
+                    Schedulers.androidUIThread().execute(() -> stageNodes.stream()
                             .filter(x -> x.stage.equals(((Task<?>.CountTask) task).getCountStage()))
                             .findAny()
-                            .ifPresent(StageNode::count);
+                            .ifPresent(StageNode::count));
 
                     return;
                 }
 
                 if (task.getStage() != null) {
-                    int total = tryCast(task.getProperties().get("total"), Integer.class).orElse(0);
-                    stageNodes.stream()
-                            .filter(x -> x.stage.equals(task.getStage()))
-                            .findAny()
-                            .ifPresent(stageNode -> stageNode.setTotal(total));
+                    Schedulers.androidUIThread().execute(() -> {
+                        int total = tryCast(task.getProperties().get("total"), Integer.class).orElse(0);
+                        stageNodes.stream()
+                                .filter(x -> x.stage.equals(task.getStage()))
+                                .findAny()
+                                .ifPresent(stageNode -> stageNode.setTotal(total));
+                    });
                 }
             }
         });
