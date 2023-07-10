@@ -35,6 +35,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     private FCLImageButton browseMod;
     private FCLImageButton browseConfig;
     private FCLImageButton browseResourcepack;
+    private FCLImageButton browseShaderPack;
     private FCLImageButton browseScreenshot;
     private FCLImageButton browseSave;
     private FCLImageButton update;
@@ -72,6 +73,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         browseMod = findViewById(R.id.browse_mods);
         browseConfig = findViewById(R.id.browse_config);
         browseResourcepack = findViewById(R.id.browse_resourcepacks);
+        browseShaderPack = findViewById(R.id.browse_shader_packs);
         browseScreenshot = findViewById(R.id.browse_screenshots);
         browseSave = findViewById(R.id.browse_saves);
         update = findViewById(R.id.update);
@@ -85,6 +87,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         browseMod.setOnClickListener(this);
         browseConfig.setOnClickListener(this);
         browseResourcepack.setOnClickListener(this);
+        browseShaderPack.setOnClickListener(this);
         browseScreenshot.setOnClickListener(this);
         browseSave.setOnClickListener(this);
         update.setOnClickListener(this);
@@ -156,6 +159,9 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         }
         if (view == browseResourcepack) {
             onBrowse("resourcepacks");
+        }
+        if (view == browseShaderPack) {
+            onBrowse("shaderpacks");
         }
         if (view == browseScreenshot) {
             onBrowse("screenshots");

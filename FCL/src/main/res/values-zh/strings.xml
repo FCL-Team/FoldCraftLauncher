@@ -280,6 +280,7 @@
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
     <string name="folder_screenshots">浏览截屏文件夹</string>
+    <string name="folder_shaderpacks">浏览光影文件夹</string>
 
     <string name="help">帮助</string>
 

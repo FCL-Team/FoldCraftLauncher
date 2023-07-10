@@ -291,6 +291,7 @@
     <string name="folder_resourcepacks">Browse resource packs</string>
     <string name="folder_saves">Browse saves</string>
     <string name="folder_screenshots">Browse screenshots</string>
+    <string name="folder_shaderpacks">Browse shader packs</string>
 
     <string name="help">Help</string>
 
