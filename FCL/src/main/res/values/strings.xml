@@ -44,6 +44,7 @@
     <string name="account_injector_server">Authentication Server</string>
     <string name="account_login">Login</string>
     <string name="account_methods_offline">Offline Account</string>
+    <string name="account_methods_offline_name_invalid">Under normal circumstances, the game username can only contain English characters, numbers and underscores, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
     <string name="account_methods_yggdrasil">Mojang Account</string>
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
@@ -412,6 +413,7 @@
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_copy">Copy successfully!</string>
     <string name="message_doing">Please wait</string>
     <string name="message_downloading">Downloading</string>
     <string name="message_error">Error</string>
@@ -419,7 +421,7 @@
     <string name="message_file_exist">File already exist</string>
     <string name="message_success">Operation completed successfully</string>
     <string name="message_unknown">Unknown</string>
-    <string name="message_copy">Copy successfully!</string>
+    <string name="message_warning">Warning</string>
 
     <string name="modpack">Modpack</string>
     <string name="modpack_choose">Select a modpack</string>
