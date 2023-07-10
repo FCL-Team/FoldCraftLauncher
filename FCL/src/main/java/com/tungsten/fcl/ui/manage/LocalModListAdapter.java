@@ -100,8 +100,8 @@ public class LocalModListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         ModListPage.ModInfoObject modInfoObject = listProperty.get(i);
-        viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getDkColor() : ThemeEngine.getInstance().getTheme().getLtColor() }));
-        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getDkColor() : ThemeEngine.getInstance().getTheme().getLtColor() })));
+        viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() }));
+        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() })));
         viewHolder.parent.setOnClickListener(v -> {
             if (selectedItemsProperty.contains(modInfoObject)) {
                 fromSelf = true;
@@ -112,7 +112,7 @@ public class LocalModListAdapter extends FCLAdapter {
                 fromSelf = true;
                 selectedItemsProperty.add(modInfoObject);
                 fromSelf = false;
-                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getDkColor() }));
+                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getColor() }));
             }
         });
         viewHolder.checkBox.addCheckedChangeListener();
