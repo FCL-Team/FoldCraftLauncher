@@ -186,11 +186,10 @@ public class FCLBridge implements Serializable {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 String targetLink = link;
-                if (targetLink.startsWith("file:")) {
+                if (targetLink.startsWith("file://")) {
+                    targetLink = targetLink.replace("file://","");
+                } else if (targetLink.startsWith("file:")){
                     targetLink = targetLink.replace("file:","");
-                    if (targetLink.startsWith("//")) {
-                        targetLink = targetLink.replace("//","/");
-                    }
                 }
                 intent.setDataAndType(Uri.parse(targetLink), "*/*");
                 context.startActivity(intent);
