@@ -38,6 +38,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     private FCLImageButton browseShaderPack;
     private FCLImageButton browseScreenshot;
     private FCLImageButton browseSave;
+    private FCLImageButton browseLog;
     private FCLImageButton update;
     private FCLImageButton rename;
     private FCLImageButton duplicate;
@@ -76,6 +77,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         browseShaderPack = findViewById(R.id.browse_shader_packs);
         browseScreenshot = findViewById(R.id.browse_screenshots);
         browseSave = findViewById(R.id.browse_saves);
+        browseLog = findViewById(R.id.browse_logs);
         update = findViewById(R.id.update);
         rename = findViewById(R.id.rename);
         duplicate = findViewById(R.id.duplicate);
@@ -90,6 +92,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         browseShaderPack.setOnClickListener(this);
         browseScreenshot.setOnClickListener(this);
         browseSave.setOnClickListener(this);
+        browseLog.setOnClickListener(this);
         update.setOnClickListener(this);
         rename.setOnClickListener(this);
         duplicate.setOnClickListener(this);
@@ -168,6 +171,9 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         }
         if (view == browseSave) {
             onBrowse("saves");
+        }
+        if (view == browseLog) {
+            onBrowse("logs");
         }
         if (view == update) {
             updateGame();
