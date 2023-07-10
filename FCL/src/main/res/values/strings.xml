@@ -99,9 +99,13 @@
     <string name="assets_download_all">Validating assets integrity</string>
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
+    <string name="button_cancel">Cancel</string>
     <string name="button_install">Install</string>
     <string name="button_next">Next</string>
     <string name="button_prev">Prev</string>
+    <string name="button_remove">Remove</string>
+    <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
+    <string name="button_select_all">Select All</string>
 
     <string name="community">Community</string>
 
@@ -555,6 +559,7 @@
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
     <string name="mods_restore">Rollback</string>
     <string name="mods_url">Official Page</string>
+    <string name="mods_update_modpack_mod_warning">Updating mods in a modpack can lead to irreparable results, possibly corrupting the modpack so that it cannot start. Are you sure you want to update?</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
@@ -653,6 +658,8 @@
     <string name="style_rocker_stroke_color">Rocker Stroke Color</string>
     <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
+
+    <string name="update_checking">Checking for Updates</string>
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>

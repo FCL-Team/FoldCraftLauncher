@@ -88,9 +88,13 @@
     <string name="assets_download_all">检查资源文件完整性</string>
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
+    <string name="button_cancel">取消</string>
     <string name="button_install">安装</string>
     <string name="button_next">下一步</string>
     <string name="button_prev">上一步</string>
+    <string name="button_remove">删除</string>
+    <string name="button_remove_confirm">您确定要删除吗？此操作无法撤销！</string>
+    <string name="button_select_all">全选</string>
 
     <string name="community">社区</string>
 
@@ -536,6 +540,7 @@
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="mods_restore">回滚</string>
     <string name="mods_url">官方页面</string>
+    <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
@@ -630,6 +635,8 @@
     <string name="style_rocker_stroke_color">摇杆边框颜色</string>
     <string name="style_rocker_corner_radius">摇杆圆角半径</string>
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
+
+    <string name="update_checking">正在检查更新</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
