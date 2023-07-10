@@ -23,12 +23,19 @@ public class ModRollbackDialog extends FCLDialog implements View.OnClickListener
         super(context);
         setCancelable(false);
         setContentView(R.layout.dialog_rollback_mod);
+
+        listView = findViewById(R.id.list);
+        negative = findViewById(R.id.negative);
+        negative.setOnClickListener(this);
+
+        ModOldVersionListAdapter adapter = new ModOldVersionListAdapter(getContext(), list, callback);
+        listView.setAdapter(adapter);
     }
 
     @Override
     public void onClick(View v) {
         if (v == negative) {
-
+            dismiss();
         }
     }
 
