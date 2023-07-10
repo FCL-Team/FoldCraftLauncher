@@ -41,7 +41,7 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
         (*androidVm)->AttachCurrentThread(androidVm, &androidEnv, NULL);
         detachable = 1;
     }
-    if (!androidEnv){
+    if (!androidEnv) {
         FCL_INTERNAL_LOG("forkAndExec error:androidEnv in null");
     }
     jmethodID method_OpenLink = (*androidEnv)->GetStaticMethodID(androidEnv, fcl.class_FCLBridge, "openLink",

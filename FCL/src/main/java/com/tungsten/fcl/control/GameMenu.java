@@ -537,7 +537,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onLog(String log) {
         if (fclBridge != null) {
-            if (log.contains("OR:") || log.contains("ERROR:") || log.contains("INTERNAL ERROR:")){
+            if (log.contains("OR:") || log.contains("ERROR:") || log.contains("INTERNAL ERROR:")) {
                 return;
             }
             logWindow.appendLog(log);
