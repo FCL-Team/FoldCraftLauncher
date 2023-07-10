@@ -25,7 +25,7 @@ public class DownloadPageManager extends PageManager {
     private InstallVersionPage installVersionPage;
     private ModpackDownloadPage downloadModpackPage;
     private ModDownloadPage downloadModPage;
-    private DownloadPage downloadResourcePackPage;
+    private ResourcePackDownloadPage downloadResourcePackPage;
     private DownloadPage downloadWorldPage;
 
     public static DownloadPageManager getInstance() {
@@ -45,7 +45,7 @@ public class DownloadPageManager extends PageManager {
         installVersionPage = new InstallVersionPage(getContext(), PAGE_ID_DOWNLOAD_GAME, getParent(), R.layout.page_install_version);
         downloadModpackPage = new ModpackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, getParent(), R.layout.page_download);
         downloadModPage = new ModDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, getParent(), R.layout.page_download);
-        downloadResourcePackPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, getParent(), R.layout.page_download, CurseForgeRemoteModRepository.RESOURCE_PACKS);
+        downloadResourcePackPage = new ResourcePackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, getParent(), R.layout.page_download);
         downloadWorldPage = new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_WORLD, getParent(), R.layout.page_download, CurseForgeRemoteModRepository.WORLDS);
 
         if (listener != null) {
