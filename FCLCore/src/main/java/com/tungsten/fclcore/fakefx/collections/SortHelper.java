@@ -232,8 +232,8 @@ public class SortHelper {
         // Insertion sort on smallest arrays
         if (length < INSERTIONSORT_THRESHOLD) {
             for (int i=low; i<high; i++)
-            for (int j=i; j>low && c.compare(dest[j-1], dest[j])>0; j--)
-                swap(dest, j, j-1);
+                for (int j=i; j>low && c.compare(dest[j-1], dest[j])>0; j--)
+                    swap(dest, j, j-1);
             return;
         }
 
