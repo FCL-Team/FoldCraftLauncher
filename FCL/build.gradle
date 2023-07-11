@@ -33,7 +33,6 @@ dependencies {
     implementation project(path: ':FCLCore')
     implementation project(path: ':FCLLibrary')
     implementation project(path: ':FCLauncher')
-    implementation project(path: ':MioCustom')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.apache.commons:commons-compress:1.23.0'
     implementation 'org.tukaani:xz:1.9'
