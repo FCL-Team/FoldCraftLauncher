@@ -78,6 +78,16 @@
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/clone"
+        android:text="@string/edit_view_clone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
         android:text="@string/dialog_positive"
         android:layout_width="wrap_content"

@@ -22,6 +22,7 @@ import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
@@ -102,7 +103,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
-    private FCLButton openSearchTable;
     private FCLButton forceExit;
 
     public FCLActivity getActivity() {
@@ -307,7 +307,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
-        openSearchTable = findViewById(R.id.open_search_table);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -360,7 +359,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
-        openSearchTable.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -583,7 +581,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             if (getViewGroup() == null) {
                 Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             } else {
-                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                    @Override
+                    public void onPositive(CustomControl view) {
+                        viewManager.addView(view);
+                    }
+
+                    @Override
+                    public void onClone(CustomControl view) {
+                        // Ignore
+                    }
+                }, false);
                 dialog.show();
             }
         }
@@ -591,7 +599,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             if (getViewGroup() == null) {
                 Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             } else {
-                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, view -> viewManager.addView(view));
+                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                    @Override
+                    public void onPositive(CustomControl view) {
+                        viewManager.addView(view);
+                    }
+
+                    @Override
+                    public void onClone(CustomControl view) {
+                        // Ignore
+                    }
+                }, false);
                 dialog.show();
             }
         }
@@ -609,9 +627,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == manageQuickInput) {
             openQuickInput();
-        }
-        if (v == openSearchTable) {
-
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);

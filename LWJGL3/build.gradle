@@ -7,13 +7,15 @@ group 'org.lwjgl'
 //configurations.default.setCanBeResolved(true)
 
 task buildLwjgl3(type:Jar) {
-    archiveFileName = 'lwjgl.jar'
-    manifest {
-        attributes 'Manifest-Version': '3.2.3'
+    doLast {
+        archiveFileName = 'lwjgl.jar'
+        manifest {
+            attributes 'Manifest-Version': '3.2.3'
+        }
+        destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl3"))
+        File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl3/version")
+        versionFile.write(String.valueOf(new Date().getTime()))
     }
-    destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl3"))
-    File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl3/version")
-    versionFile.write(String.valueOf(new Date().getTime()))
 }
 
 java {

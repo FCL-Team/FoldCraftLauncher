@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
+    private final CustomControl customControl;
     private final Callback callback;
 
     private FCLTextView title;
@@ -47,16 +48,19 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
     private FCLImageButton event;
     private FCLButton positive;
     private FCLButton negative;
+    private FCLButton clone;
 
     private FCLLinearLayout container;
     private Details details;
 
     public interface Callback {
         void onPositive(CustomControl view);
+        void onClone(CustomControl view);
     }
 
-    public EditViewDialog(@NonNull Context context, CustomControl cloneView, GameMenu menu, Callback callback) {
+    public EditViewDialog(@NonNull Context context, CustomControl cloneView, GameMenu menu, Callback callback, boolean cloneable) {
         super(context);
+        this.customControl = cloneView;
         this.callback = callback;
         setCancelable(false);
         setContentView(R.layout.dialog_edit_view);
@@ -70,8 +74,12 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         event.setOnClickListener(this);
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
+        clone = findViewById(R.id.clone);
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+        clone.setOnClickListener(this);
+
+        clone.setVisibility(cloneable ? View.VISIBLE : View.GONE);
 
         container = findViewById(R.id.container);
         assert container != null;
@@ -89,6 +97,10 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == event) {
             details.onLayoutChange(1);
+        }
+        if (v == clone) {
+            callback.onClone(customControl.cloneView());
+            dismiss();
         }
         if (v == positive) {
             callback.onPositive(details.getView());

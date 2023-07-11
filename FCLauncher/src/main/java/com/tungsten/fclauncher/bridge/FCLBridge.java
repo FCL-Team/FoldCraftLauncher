@@ -11,9 +11,11 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.tungsten.fclauncher.FCLPath;
 
+import java.io.File;
 import java.io.Serializable;
 
 public class FCLBridge implements Serializable {
@@ -191,7 +193,14 @@ public class FCLBridge implements Serializable {
                 } else if (targetLink.startsWith("file:")) {
                     targetLink = targetLink.replace("file:", "");
                 }
-                intent.setDataAndType(Uri.parse(targetLink), "*/*");
+                Uri uri;
+                if (targetLink.startsWith("http")) {
+                    uri = Uri.parse(targetLink);
+                } else {
+                    //can`t get authority by R.string.file_browser_provider
+                    uri = FileProvider.getUriForFile(context, "com.tungsten.fcl.provider", new File(targetLink));
+                }
+                intent.setDataAndType(uri, "*/*");
                 context.startActivity(intent);
             } catch (Exception e) {
                 Log.e("openLink error", e.toString());

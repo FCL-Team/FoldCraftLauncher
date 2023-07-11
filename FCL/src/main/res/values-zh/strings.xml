@@ -233,6 +233,7 @@
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
 
+    <string name="edit_view_clone">复制控件</string>
     <string name="edit_view_event">控件事件</string>
     <string name="edit_view_info">控件基本信息</string>
     <string name="edit_view_no_group">请先添加或选择一个控件组！</string>
@@ -391,7 +392,6 @@
     <string name="menu_settings_multiplayer_button">打开</string>
     <string name="menu_settings_quick_input">快捷输入</string>
     <string name="menu_settings_quick_input_button">管理</string>
-    <string name="menu_settings_search_table">中英对照表</string>
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>

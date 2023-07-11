@@ -82,6 +82,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE            := fcl_awt
+LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := awt/awt_bridge.c
 include $(BUILD_SHARED_LIBRARY)
 

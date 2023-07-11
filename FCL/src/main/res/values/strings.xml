@@ -244,6 +244,7 @@
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
 
+    <string name="edit_view_clone">Clone View</string>
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
     <string name="edit_view_no_group">Please add or select a view group first!</string>
@@ -410,7 +411,6 @@
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
     <string name="menu_settings_quick_input_button">Manage</string>
-    <string name="menu_settings_search_table">Chinese-English Table</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>

@@ -139,6 +139,14 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
         return getId();
     }
 
+    @Override
+    public CustomControl cloneView() {
+        ControlDirectionData clone = clone();
+        clone.getBaseInfo().setXPosition(0);
+        clone.getBaseInfo().setYPosition(0);
+        return clone;
+    }
+
     public static class Serializer implements JsonSerializer<ControlDirectionData>, JsonDeserializer<ControlDirectionData> {
         @Override
         public JsonElement serialize(ControlDirectionData src, Type typeOfSrc, JsonSerializationContext context) {
