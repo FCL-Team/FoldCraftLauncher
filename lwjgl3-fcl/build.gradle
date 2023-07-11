@@ -4,9 +4,9 @@ plugins {
 
 group 'org.lwjgl'
 
-configurations.default.setCanBeResolved(true)
+//configurations.default.setCanBeResolved(true)
 
-jar {
+task buildLwjgl3(type:Jar) {
     archiveFileName = 'lwjgl.jar'
     manifest {
         attributes 'Manifest-Version': '3.2.3'
