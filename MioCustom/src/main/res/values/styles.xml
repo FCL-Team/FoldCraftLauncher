@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	    <style name="selecterButtonStyle">
+        <item name="android:background">@drawable/selecter_button</item>
+        <item name="android:textSize">8sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+    </style>
+        <style name="FullDialog">
+        <!-- 是否没有标题 -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

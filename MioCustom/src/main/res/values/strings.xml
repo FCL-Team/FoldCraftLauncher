@@ -1,0 +1,14 @@
+<resources>
+    <string name="lfile_NotFoundBooks">Please select a file at least</string>
+    <string name="lfile_NotFoundPath">The sd card is not available</string>
+    <string name="lfile_UpOneLevel">Up</string>
+    <string name="lfile_Selected">selected</string>
+    <string name="lfile_LItem">item</string>
+    <string name="lfile_Detail">detail</string>
+    <string name="lfile_FileSize">size : </string>
+    <string name="lfile_OutSize">Has reached the maximum number</string>
+    <string name="lfile_SelectAll">SelectAll</string>
+    <string name="lfile_Cancel">Cancel</string>
+    <string name="lfile_OK">OK</string>
+    <string name="lfile_ChooseTip">Please select folders path</string>
+</resources>

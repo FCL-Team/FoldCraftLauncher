@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:id="@+id/selecter_keyboard"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="ESC"
+            custom:key="ESC" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F1"
+            custom:key="F1" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F2"
+            custom:key="F2" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F3"
+            custom:key="F3" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F4"
+            custom:key="F4" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F5"
+            custom:key="F5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F6"
+            custom:key="F6" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F7"
+            custom:key="F7" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F8"
+            custom:key="F8" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F9"
+            custom:key="F9" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F10"
+            custom:key="F10" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F11"
+            custom:key="F11" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F12"
+            custom:key="F12" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Prt"
+            custom:key="PRINT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Scr"
+            custom:key="SCROLL" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Pau"
+            custom:key="PAUSE" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4.5" />
+
+    </LinearLayout>
+
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="0.5" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="`"
+            custom:key="`"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="1"
+            custom:key="1"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="2"
+            custom:key="2"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="3"
+            custom:key="3"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="4"
+            custom:key="4"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="5"
+            custom:key="5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="6"
+            custom:key="6"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="7"
+            custom:key="7"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="8"
+            custom:key="8"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="9"
+            custom:key="9"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="0"
+            custom:key="0"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="-"
+            custom:key="-"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="="
+            custom:key="="/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="\"
+            custom:key="\"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="←--"
+            custom:key="BACK" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Ins"
+            custom:key="INSERT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Hom"
+            custom:key="HOME" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Pau"
+            custom:key="PGUP" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Num"
+            custom:key="NUMLOCK" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="/"
+            custom:key="NUMPAD/" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="*"
+            custom:key="NUMPAD*" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="-"
+            custom:key="NUMPAD-" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:text="TAB"
+            custom:key="TAB" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Q"
+            custom:key="Q"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="W"
+            custom:key="W"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="E"
+            custom:key="E"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="R"
+            custom:key="R"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="T"
+            custom:key="T"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Y"
+            custom:key="Y"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="U"
+            custom:key="U"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="I"
+            custom:key="I"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="O"
+            custom:key="O"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="P"
+            custom:key="P"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="["
+            custom:key="["/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="]"
+            custom:key="]"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"
+            android:text="Enter"
+            custom:key="ENTER" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Del"
+            custom:key="DELETE" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="End"
+            custom:key="END" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="PaD"
+            custom:key="PGDN" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="7"
+            custom:key="NUMPAD7" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="8"
+            custom:key="NUMPAD8" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="9"
+            custom:key="NUMPAD9" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="+"
+            custom:key="NUMPAD+" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.6"
+            android:text="Caps L"
+            custom:key="CAPITAL" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="A"
+            custom:key="A"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="S"
+            custom:key="S"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="D"
+            custom:key="D"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="F"
+            custom:key="F"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="G"
+            custom:key="G"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="H"
+            custom:key="H"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="J"
+            custom:key="J"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="K"
+            custom:key="K"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="L"
+            custom:key="L"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=";"
+            custom:key=";"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="'"
+            custom:key="'"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.4"
+            android:text=""
+            custom:key="ENTER" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="4"
+            custom:key="NUMPAD4" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="5"
+            custom:key="NUMPAD5" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="6"
+            custom:key="NUMPAD6" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=""
+            custom:key="NUMPAD+" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.1"
+            android:text="Shift"
+            custom:key="LSHIFT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Z"
+            custom:key="Z"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="X"
+            custom:key="X"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="C"
+            custom:key="C"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="V"
+            custom:key="V"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="B"
+            custom:key="B"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="N"
+            custom:key="N"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="M"
+            custom:key="M"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=","
+            custom:key=","/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="."
+            custom:key="."/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="/"
+            custom:key="/"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.9"
+            android:text="Shift"
+            custom:key="RSHIFT" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="↑"
+            custom:key="UP" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="1"
+            custom:key="NUMPAD1" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="2"
+            custom:key="NUMPAD2" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="3"
+            custom:key="NUMPAD3" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Ent"
+            custom:key="NUMPADENTER" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Ctrl"
+            custom:key="LCTRL" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Win"
+            custom:key="LWIN" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Alt"
+            custom:key="LALT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5.2"
+            android:text="Space"
+            custom:key="SPACE"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Alt"
+            custom:key="RALT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Win"
+            custom:key="RWIN" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="RightK"
+            custom:key="RIGHTK" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.4"
+            android:text="Ctrl"
+            custom:key="RCTRL" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="←"
+            custom:key="LEFT" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="↓"
+            custom:key="DOWN" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="→"
+            custom:key="RIGHT" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="0"
+            custom:key="NUMPAD0" />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="."
+            custom:key="NUMPAD." />
+
+        <com.mio.customcontrol.MioSelectButton
+            style="@style/selecterButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text=""
+            custom:key="NUMPADENTER" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

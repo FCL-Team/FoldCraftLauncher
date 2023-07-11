@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:padding="10dp"
+	android:layout_height="match_parent"
+	android:background="@drawable/background_layout_item">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="通用属性"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="名称:"
+				android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			<EditText
+				android:id="@+id/alert_miocustom_main_edit_name"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:maxLines="1"/>
+
+		</LinearLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="高:"
+				android:layout_centerVertical="true"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="20dp"
+				android:gravity="center">
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_height_left"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="←"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:background="#FFF6F6F6"/>
+
+				<EditText
+					android:id="@+id/alert_miocustom_main_edit_height"
+					android:layout_width="70dp"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:inputType="number"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"
+					android:gravity="center"
+					android:text="50"/>
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_height_right"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="→"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="宽:"
+				android:layout_centerVertical="true"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="20dp"
+				android:gravity="center">
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_width_left"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="←"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+				<EditText
+					android:id="@+id/alert_miocustom_main_edit_width"
+					android:layout_width="70dp"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:inputType="number"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"
+					android:gravity="center"
+					android:text="50"/>
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_width_right"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="→"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="圆角:"
+				android:layout_centerVertical="true"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="20dp"
+				android:gravity="center">
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_round_left"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="←"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+				<EditText
+					android:id="@+id/alert_miocustom_main_edit_round"
+					android:layout_width="70dp"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:inputType="number"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"
+					android:gravity="center"
+					android:text="25"/>
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_round_right"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="→"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="文本大小:"
+				android:layout_centerVertical="true"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				android:layout_marginRight="20dp"
+				android:gravity="center">
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_textsize_left"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="←"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+				<EditText
+					android:id="@+id/alert_miocustom_main_edit_textsize"
+					android:layout_width="70dp"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:inputType="number"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"
+					android:gravity="center"
+					android:text="15"/>
+
+				<TextView
+					android:id="@+id/alert_miocustom_main_tv_textsize_right"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="→"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="边框颜色:"
+				android:layout_centerVertical="true"
+				android:id="@+id/alertmiocustommainTextView1"/>
+
+			<EditText
+				android:id="@+id/alert_miocustom_main_edit_strokecolor"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/alertmiocustommainTextView1"
+				android:layout_marginLeft="30dp"
+				android:text="#FFFFFFFF"
+				android:maxLines="1"/>
+
+			<View
+				android:id="@+id/alert_miocustom_main_view_strokecolor"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:background="#FFFFFFFF"
+				android:layout_alignParentRight="true"/>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="文本颜色:"
+				android:layout_centerVertical="true"
+				android:id="@+id/alertmiocustommainTextView2"/>
+
+			<EditText
+				android:id="@+id/alert_miocustom_main_edit_textcolor"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/alertmiocustommainTextView2"
+				android:layout_marginLeft="30dp"
+				android:text="#FFFFFFFF"
+				android:maxLines="1"/>
+
+			<View
+				android:id="@+id/alert_miocustom_main_view_textcolor"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:background="#FFFFFFFF"
+				android:layout_alignParentRight="true"/>
+
+		</RelativeLayout>
+
+		<View
+			android:background="?android:attr/dividerVertical"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="高级属性"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<RadioGroup
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<RadioButton
+				android:checked="true"
+				android:id="@+id/alert_miocustom_main_radio_normalbtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="普通按键"/>
+
+			<RadioButton
+				android:id="@+id/alert_miocustom_main_radio_cmdbtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="命令按键"/>
+
+			<RadioButton
+				android:id="@+id/alert_miocustom_main_radio_vsbbtn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="显隐控制按键"/>
+
+		</RadioGroup>
+
+		<View
+			android:background="?android:attr/dividerVertical"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"/>
+
+		<LinearLayout
+			android:id="@+id/alert_miocustom_main_layout_normalbtn"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="普通按键"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:gravity="center_vertical">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="键值:"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+				<EditText
+					android:focusable="false"
+					android:id="@+id/alert_miocustom_main_edit_key1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:layout_marginLeft="5dp"
+					android:textIsSelectable="false"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="+"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"/>
+
+				<EditText
+					android:focusable="false"
+					android:id="@+id/alert_miocustom_main_edit_key2"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:textIsSelectable="false"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="+"
+					android:layout_marginLeft="15dp"
+					android:layout_marginRight="15dp"/>
+
+				<EditText
+					android:focusable="false"
+					android:id="@+id/alert_miocustom_main_edit_key3"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:maxLines="1"
+					android:textIsSelectable="false"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+
+				<CheckBox
+					android:id="@+id/alert_miocustom_main_check_autokeep"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:hint="自动保持"/>
+
+				<CheckBox
+					android:id="@+id/alert_miocustom_main_check_mousectrl"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:hint="控制视角(指针)移动"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/alert_miocustom_main_layout_cmdbtn"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="命令按键"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="命令:"
+					android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+				<EditText
+					android:id="@+id/alert_miocustom_main_edit_cmd"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/alert_miocustom_main_layout_vsbbtn"
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="显隐控制按键"
+				android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+			<Button
+				android:id="@+id/alert_miocustom_main_btn_btnselect"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="选择按键"
+				android:background="@drawable/background_button"
+				android:textColor="#FFFFFFFF"
+				android:layout_margin="5dp"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:padding="10dp">
+
+			<Button
+				android:id="@+id/alert_miocustom_main_btn_ok"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="确定"
+				android:background="@drawable/background_button"
+				android:layout_marginRight="10dp"
+				android:textColor="#FFFFFFFF"
+				android:layout_weight="1.0"/>
+
+			<Button
+				android:id="@+id/alert_miocustom_main_btn_cancle"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="取消"
+				android:background="@drawable/background_button"
+				android:textColor="#FFFFFFFF"
+				android:layout_weight="1.0"/>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</ScrollView>
+
