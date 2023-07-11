@@ -18,25 +18,28 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintWidth_percent="0.3">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            app:ripple="true"
+            android:id="@+id/delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="@string/button_remove"/>
 
-            <com.tungsten.fcllibrary.component.view.FCLCheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/show_all"/>
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            app:ripple="true"
+            android:id="@+id/enable"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mods_enable"/>
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/world_show_all"/>
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            app:ripple="true"
+            android:id="@+id/disable"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/mods_disable"/>
 
         <View
             android:layout_width="0dp"
@@ -49,7 +52,7 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/world_add"/>
+            android:text="@string/datapack_add"/>
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             app:ripple="true"

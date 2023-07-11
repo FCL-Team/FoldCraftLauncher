@@ -229,6 +229,9 @@
     <string name="curse_sort_popularity">热度</string>
     <string name="curse_sort_total_downloads">下载量</string>
 
+    <string name="datapack_add">添加数据包</string>
+    <string name="datapack_choose_datapack">选择一个数据包导入</string>
+
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
