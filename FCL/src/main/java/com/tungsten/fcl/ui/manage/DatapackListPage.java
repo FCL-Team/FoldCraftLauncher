@@ -192,7 +192,9 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     }
 
     void removeSelected(ObservableList<DatapackInfoObject> selectedItems) {
-        selectedItems.stream()
+        ObservableList<DatapackInfoObject> items = FXCollections.observableArrayList();
+        items.setAll(selectedItems);
+        items.stream()
                 .map(DatapackInfoObject::getPackInfo)
                 .forEach(pack -> {
                     try {

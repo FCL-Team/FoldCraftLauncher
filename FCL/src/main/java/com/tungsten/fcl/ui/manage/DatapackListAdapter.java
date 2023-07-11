@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,15 +37,17 @@ public class DatapackListAdapter extends FCLAdapter {
     public DatapackListAdapter(Context context) {
         super(context);
 
+        Handler handler = new Handler();
+
         this.listProperty.addListener((InvalidationListener) observable -> {
             fromSelf = true;
             selectedItemsProperty.clear();
             fromSelf = false;
-            notifyDataSetChanged();
+            handler.post(this::notifyDataSetChanged);
         });
         selectedItemsProperty.addListener((InvalidationListener) observable -> {
             if (!fromSelf) {
-                notifyDataSetChanged();
+                handler.post(this::notifyDataSetChanged);
             }
         });
     }

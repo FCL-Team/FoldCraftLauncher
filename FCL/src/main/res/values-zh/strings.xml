@@ -538,7 +538,7 @@
     <string name="mods_disable">禁用</string>
     <string name="mods_download">模组下载</string>
     <string name="mods_download_title">模组下载 - %1s</string>
-    <string name="mods_enable">启动</string>
+    <string name="mods_enable">启用</string>
     <string name="mods_manage">管理模组</string>
     <string name="mods_mcbbs">MCBBS</string>
     <string name="mods_mcmod">MCMOD</string>
