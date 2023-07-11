@@ -160,9 +160,6 @@ public class DefaultLauncher extends Launcher {
             throw new IOException("Minecraft jar does not exist");
         classpath.add(jar.getAbsolutePath());
 
-        //To find some fixed libraries
-        classpath.add(context.getApplicationInfo().nativeLibraryDir);
-
         // Provided Minecraft arguments
         Path gameAssets = repository.getActualAssetDirectory(version.getId(), version.getAssetIndex().getId());
         Map<String, String> configuration = getConfigurations();
