@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
@@ -16,7 +17,6 @@ import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JavaGuiMenu;
-import com.tungsten.fcl.control.MioMainCustom;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.Logging;
@@ -69,6 +69,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             }
         });
     }
+
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
@@ -77,7 +78,6 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         gameOption.set("overrideWidth", "" + i);
         gameOption.set("overrideHeight", "" + i1);
         gameOption.save();
-        MioMainCustom.getInstance().init((GameMenu) menu,i,i1);
         surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
         fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));

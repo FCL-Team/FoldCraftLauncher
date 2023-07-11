@@ -44,7 +44,7 @@ public class FCLInput {
     }
 
     public void setPointer(int x, int y, String id) {
-        if (id.equals(pointerId) || id.equals("Gyro") || id.equals("miocustom")) {
+        if (id.equals(pointerId) || id.equals("Gyro")) {
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
                 menu.getCursor().setX(x);
                 menu.getCursor().setY(y);
