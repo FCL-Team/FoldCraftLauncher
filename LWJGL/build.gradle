@@ -7,7 +7,7 @@ group 'org.lwjgl'
 configurations.default.setCanBeResolved(true)
 
 task buildLwjgl2(type:Jar) {
-    doLast{
+    doLast {
         archiveFileName = 'lwjgl.jar'
         manifest {
             attributes 'Manifest-Version': '2.9.3'
