@@ -319,14 +319,22 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, view -> {
-                            ControlButtonData newData = ((ControlButtonData) view).clone();
-                            getData().setText(newData.getText());
-                            getData().setBaseInfo(newData.getBaseInfo());
-                            getData().setStyle(newData.getStyle());
-                            getData().setEvent(newData.getEvent());
-                            menu.getViewManager().saveController();
-                        });
+                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, new EditViewDialog.Callback() {
+                            @Override
+                            public void onPositive(CustomControl view) {
+                                ControlButtonData newData = ((ControlButtonData) view).clone();
+                                getData().setText(newData.getText());
+                                getData().setBaseInfo(newData.getBaseInfo());
+                                getData().setStyle(newData.getStyle());
+                                getData().setEvent(newData.getEvent());
+                                menu.getViewManager().saveController();
+                            }
+
+                            @Override
+                            public void onClone(CustomControl view) {
+                                menu.getViewManager().addView(view);
+                            }
+                        }, true);
                         dialog.show();
                     } else {
                         getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
