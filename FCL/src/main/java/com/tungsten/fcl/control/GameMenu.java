@@ -103,7 +103,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
-    private FCLButton openSearchTable;
     private FCLButton forceExit;
 
     public FCLActivity getActivity() {
@@ -308,7 +307,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
-        openSearchTable = findViewById(R.id.open_search_table);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -361,7 +359,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
-        openSearchTable.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -630,9 +627,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == manageQuickInput) {
             openQuickInput();
-        }
-        if (v == openSearchTable) {
-
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
