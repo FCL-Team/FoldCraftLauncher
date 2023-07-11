@@ -6,10 +6,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class SkinGLSurfaceView extends GLSurfaceView {
-    private float mDensity;
-    private float mPreviousX;
-    private float mPreviousY;
-    private MinecraftSkinRenderer mRenderer;
+    private float density;
+    private float previousX;
+    private float previousY;
+    private MinecraftSkinRenderer renderer;
     
     public SkinGLSurfaceView(final Context context) {
         super(context);
@@ -23,11 +23,11 @@ public class SkinGLSurfaceView extends GLSurfaceView {
         if (motionEvent.getPointerCount() == 1) {
             final float x = motionEvent.getX();
             final float y = motionEvent.getY();
-            if (motionEvent.getAction() == 2 && this.mRenderer != null) {
-                this.mRenderer.character.setRotateStep((x - this.mPreviousX) / (this.mDensity), (y - this.mPreviousY) / (this.mDensity));
+            if (motionEvent.getAction() == 2 && this.renderer != null) {
+                this.renderer.character.setRotateStep((x - this.previousX) / (this.density), (y - this.previousY) / (this.density));
             }
-            this.mPreviousX = x;
-            this.mPreviousY = y;
+            this.previousX = x;
+            this.previousY = y;
         }
         if (motionEvent.getPointerCount() == 2) {
             switch (motionEvent.getActionMasked()) {
@@ -39,7 +39,7 @@ public class SkinGLSurfaceView extends GLSurfaceView {
                     float deltaX = motionEvent.getX(motionEvent.findPointerIndex(priId)) - motionEvent.getX(motionEvent.findPointerIndex(secId));
                     float deltaY = motionEvent.getY(motionEvent.findPointerIndex(priId)) - motionEvent.getY(motionEvent.findPointerIndex(secId));
                     initDist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                    initScale = mRenderer.character.scale;
+                    initScale = renderer.character.scale;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     float dX = motionEvent.getX(motionEvent.findPointerIndex(priId)) - motionEvent.getX(motionEvent.findPointerIndex(secId));
@@ -48,7 +48,7 @@ public class SkinGLSurfaceView extends GLSurfaceView {
                     double delta = dist - initDist;
                     if (initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))) <= 2 && initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))) >= 0.7) {
                         float scale = (float) (initScale + (delta / (1 * Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()))));
-                        mRenderer.character.setScale(scale);
+                        renderer.character.setScale(scale);
                     }
                     break;
             }
@@ -63,8 +63,8 @@ public class SkinGLSurfaceView extends GLSurfaceView {
     private float initScale;
 
     public void setRenderer(final MinecraftSkinRenderer minecraftSkinRenderer, final float mDensity) {
-        this.mRenderer = minecraftSkinRenderer;
-        this.mDensity = mDensity;
+        this.renderer = minecraftSkinRenderer;
+        this.density = mDensity;
         super.setRenderer((Renderer)minecraftSkinRenderer);
     }
 }

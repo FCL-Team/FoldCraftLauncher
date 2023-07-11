@@ -5,8 +5,8 @@
     android:padding="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.tungsten.fcllibrary.skin.SkinGLSurfaceView
-        android:id="@+id/skin_view"
+    <RelativeLayout
+        android:id="@+id/skin_container"
         android:layout_width="0dp"
         android:layout_height="300dp"
         app:layout_constraintHorizontal_bias="1"

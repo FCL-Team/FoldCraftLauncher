@@ -42,8 +42,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:singleLine="true"
                     android:textSize="13sp"
-                    android:id="@+id/name"/>
+                    android:id="@+id/name"
+                    app:auto_edit_tint="true"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     android:layout_marginTop="10dp"

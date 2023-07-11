@@ -68,9 +68,7 @@
                     android:id="@+id/tag"
                     android:layout_gravity="center"
                     android:singleLine="true"
-                    android:background="@drawable/bg_container_white"
-                    app:auto_text_tint="true"
-                    app:auto_text_background_tint="true"/>
+                    app:auto_text_tint="true"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -44,6 +44,7 @@
     <string name="account_injector_server">Authentication Server</string>
     <string name="account_login">Login</string>
     <string name="account_methods_offline">Offline Account</string>
+    <string name="account_methods_offline_name_invalid">Under normal circumstances, the game username can only contain English characters, numbers and underscores, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
     <string name="account_methods_yggdrasil">Mojang Account</string>
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
@@ -99,9 +100,14 @@
     <string name="assets_download_all">Validating assets integrity</string>
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
+    <string name="button_cancel">Cancel</string>
+    <string name="button_export">Export</string>
     <string name="button_install">Install</string>
     <string name="button_next">Next</string>
     <string name="button_prev">Prev</string>
+    <string name="button_remove">Remove</string>
+    <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
+    <string name="button_select_all">Select All</string>
 
     <string name="community">Community</string>
 
@@ -283,10 +289,12 @@
 
     <string name="folder_config">Browse configs</string>
     <string name="folder_game">Browse game directory</string>
+    <string name="folder_log">Browse log directory</string>
     <string name="folder_mod">Browse mods</string>
     <string name="folder_resourcepacks">Browse resource packs</string>
     <string name="folder_saves">Browse saves</string>
     <string name="folder_screenshots">Browse screenshots</string>
+    <string name="folder_shaderpacks">Browse shader packs</string>
 
     <string name="help">Help</string>
 
@@ -406,6 +414,7 @@
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
+    <string name="message_copy">Copy successfully!</string>
     <string name="message_doing">Please wait</string>
     <string name="message_downloading">Downloading</string>
     <string name="message_error">Error</string>
@@ -413,7 +422,7 @@
     <string name="message_file_exist">File already exist</string>
     <string name="message_success">Operation completed successfully</string>
     <string name="message_unknown">Unknown</string>
-    <string name="message_copy">Copy successfully!</string>
+    <string name="message_warning">Warning</string>
 
     <string name="modpack">Modpack</string>
     <string name="modpack_choose">Select a modpack</string>
@@ -533,6 +542,7 @@
     <string name="mods_category">Category</string>
     <string name="mods_check_updates">Check for Updates</string>
     <string name="mods_check_updates_current_version">Current Version</string>
+    <string name="mods_check_updates_empty">No mods need to be updated</string>
     <string name="mods_check_updates_failed">Unable to download some of the files.</string>
     <string name="mods_check_updates_file">File</string>
     <string name="mods_check_updates_source">Source</string>
@@ -555,6 +565,7 @@
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
     <string name="mods_restore">Rollback</string>
     <string name="mods_url">Official Page</string>
+    <string name="mods_update_modpack_mod_warning">Updating mods in a modpack can lead to irreparable results, possibly corrupting the modpack so that it cannot start. Are you sure you want to update?</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
@@ -653,6 +664,8 @@
     <string name="style_rocker_stroke_color">Rocker Stroke Color</string>
     <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
+
+    <string name="update_checking">Checking for Updates</string>
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>

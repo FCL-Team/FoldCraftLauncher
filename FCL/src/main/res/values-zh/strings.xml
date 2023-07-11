@@ -36,6 +36,7 @@
     <string name="account_create_server_not_select">没有认证服务器</string>
     <string name="account_login">登录</string>
     <string name="account_methods_offline">离线账户</string>
+    <string name="account_methods_offline_name_invalid">通常情况下，用户名只能包含英文字符，数字和下划线，且长度不得超过 16 个字符。\n一些有效的名称：Tungsten，Tungsten_123；\n一些无效的名称：Exam ple，Exam-a_%%%，Tungsten_hello_world_hello_world。\n如果你有相关模组或插件可以解除此限制，你可以忽略此警告。</string>
     <string name="account_methods_yggdrasil">Mojang 账户</string>
     <string name="account_methods_authlib_injector">外置账户</string>
     <string name="account_methods_microsoft">微软账户</string>
@@ -88,9 +89,14 @@
     <string name="assets_download_all">检查资源文件完整性</string>
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
+    <string name="button_cancel">取消</string>
+    <string name="button_export">导出</string>
     <string name="button_install">安装</string>
     <string name="button_next">下一步</string>
     <string name="button_prev">上一步</string>
+    <string name="button_remove">删除</string>
+    <string name="button_remove_confirm">您确定要删除吗？此操作无法撤销！</string>
+    <string name="button_select_all">全选</string>
 
     <string name="community">社区</string>
 
@@ -272,10 +278,12 @@
 
     <string name="folder_config">浏览配置文件夹</string>
     <string name="folder_game">浏览游戏文件夹</string>
+    <string name="folder_log">浏览日志文件夹</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
     <string name="folder_screenshots">浏览截屏文件夹</string>
+    <string name="folder_shaderpacks">浏览光影文件夹</string>
 
     <string name="help">帮助</string>
 
@@ -387,6 +395,7 @@
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
+    <string name="message_copy">复制成功！</string>
     <string name="message_doing">请耐心等待</string>
     <string name="message_downloading">正在下载</string>
     <string name="message_error">错误</string>
@@ -394,7 +403,7 @@
     <string name="message_file_exist">文件已存在</string>
     <string name="message_success">已完成</string>
     <string name="message_unknown">未知</string>
-    <string name="message_copy">复制成功！</string>
+    <string name="message_warning">警告</string>
 
     <string name="modpack">整合包</string>
     <string name="modpack_choose">选择要安装的游戏整合包文件</string>
@@ -514,6 +523,7 @@
     <string name="mods_category">类别</string>
     <string name="mods_check_updates">检查更新</string>
     <string name="mods_check_updates_current_version">当前版本</string>
+    <string name="mods_check_updates_empty">没有需要更新的模组</string>
     <string name="mods_check_updates_failed">无法下载部分文件。</string>
     <string name="mods_check_updates_file">文件</string>
     <string name="mods_check_updates_source">下载源</string>
@@ -536,6 +546,7 @@
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="mods_restore">回滚</string>
     <string name="mods_url">官方页面</string>
+    <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
@@ -630,6 +641,8 @@
     <string name="style_rocker_stroke_color">摇杆边框颜色</string>
     <string name="style_rocker_corner_radius">摇杆圆角半径</string>
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
+
+    <string name="update_checking">正在检查更新</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>

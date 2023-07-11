@@ -58,10 +58,13 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
 
 public class CreateAccountDialog extends FCLDialog implements View.OnClickListener, TabLayout.OnTabSelectedListener {
 
     private static CreateAccountDialog instance;
+
+    private static final Pattern USERNAME_CHECKER_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
 
     private FCLTextView title;
     private FCLTabLayout tabLayout;
@@ -166,42 +169,60 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             return;
         }
 
-        deviceCode.set(null);
+        Runnable doCreate = () -> {
+            deviceCode.set(null);
 
-        CharacterSelector selector = new DialogCharacterSelector(getContext());
-        loginTask = Task.supplyAsync(() -> factory.create(selector, username, password, null, additionalData))
-                .whenComplete(Schedulers.androidUIThread(), account -> {
-                    int oldIndex = Accounts.getAccounts().indexOf(account);
-                    if (oldIndex == -1) {
-                        Accounts.getAccounts().add(account);
-                    } else {
-                        // adding an already-added account
-                        // instead of discarding the new account, we first remove the existing one then add the new one
-                        Accounts.getAccounts().remove(oldIndex);
-                        Accounts.getAccounts().add(oldIndex, account);
-                    }
+            CharacterSelector selector = new DialogCharacterSelector(getContext());
+            loginTask = Task.supplyAsync(() -> factory.create(selector, username, password, null, additionalData))
+                    .whenComplete(Schedulers.androidUIThread(), account -> {
+                        int oldIndex = Accounts.getAccounts().indexOf(account);
+                        if (oldIndex == -1) {
+                            Accounts.getAccounts().add(account);
+                        } else {
+                            // adding an already-added account
+                            // instead of discarding the new account, we first remove the existing one then add the new one
+                            Accounts.getAccounts().remove(oldIndex);
+                            Accounts.getAccounts().add(oldIndex, account);
+                        }
 
-                    // select the new account
-                    Accounts.setSelectedAccount(account);
+                        // select the new account
+                        Accounts.setSelectedAccount(account);
 
-                    login.setEnabled(true);
-                    cancel.setEnabled(true);
-                    UIManager.getInstance().getAccountUI().refresh().start();
-                    dismiss();
-                }, exception -> {
-                    if (exception instanceof NoSelectedCharacterException) {
+                        login.setEnabled(true);
+                        cancel.setEnabled(true);
+                        UIManager.getInstance().getAccountUI().refresh().start();
                         dismiss();
-                    } else {
-                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                        builder.setMessage(Accounts.localizeErrorMessage(getContext(), exception));
-                        builder.setCancelable(false);
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                        builder.create().show();
-                    }
-                    login.setEnabled(true);
-                    cancel.setEnabled(true);
-                }).executor(true);
+                    }, exception -> {
+                        if (exception instanceof NoSelectedCharacterException) {
+                            dismiss();
+                        } else {
+                            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                            builder.setMessage(Accounts.localizeErrorMessage(getContext(), exception));
+                            builder.setCancelable(false);
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.create().show();
+                        }
+                        login.setEnabled(true);
+                        cancel.setEnabled(true);
+                    }).executor(true);
+        };
+
+        if (factory instanceof OfflineAccountFactory && username != null && !USERNAME_CHECKER_PATTERN.matcher(username).matches()) {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setTitle(getContext().getString(R.string.message_warning));
+            builder.setMessage(getContext().getString(R.string.account_methods_offline_name_invalid));
+            builder.setCancelable(false);
+            builder.setPositiveButton(doCreate::run);
+            builder.setNegativeButton(() -> {
+                login.setEnabled(true);
+                cancel.setEnabled(true);
+            });
+            builder.create().show();
+        } else {
+            doCreate.run();
+        }
     }
 
     private void onCancel() {

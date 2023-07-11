@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
@@ -21,8 +23,10 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     private ButtonListener positiveListener;
     private ButtonListener negativeListener;
 
+    private View parent;
     private ImageFilterView icon;
     private FCLTextView title;
+    private ScrollView scrollView;
     private FCLTextView message;
     private FCLButton positive;
     private FCLButton negative;
@@ -33,24 +37,16 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         setContentView(R.layout.dialog_alert);
 
-        View parent = findViewById(R.id.parent);
-        parent.post(() -> {
-            WindowManager wm = getWindow().getWindowManager();
-            Point point = new Point();
-            wm.getDefaultDisplay().getSize(point);
-            int maxHeight = point.y - ConvertUtils.dip2px(getContext(), 30);
-            if (parent.getMeasuredHeight() < maxHeight) {
-                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-            } else {
-                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, maxHeight);
-            }
-        });
+        parent = findViewById(R.id.parent);
 
         icon = findViewById(R.id.image);
         title = findViewById(R.id.title);
+        scrollView = findViewById(R.id.text_scroll);
         message = findViewById(R.id.text);
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
+
+        checkHeight();
 
         positive.setVisibility(View.GONE);
         negative.setVisibility(View.GONE);
@@ -60,6 +56,23 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_info_24));
         title.setText(getContext().getString(R.string.dialog_info));
+    }
+
+    private void checkHeight() {
+        parent.post(() -> message.post(() -> {
+            WindowManager wm = getWindow().getWindowManager();
+            Point point = new Point();
+            wm.getDefaultDisplay().getSize(point);
+            int maxHeight = point.y - ConvertUtils.dip2px(getContext(), 30);
+            if (parent.getMeasuredHeight() < maxHeight) {
+                ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
+                layoutParams.height = message.getMeasuredHeight();
+                scrollView.setLayoutParams(layoutParams);
+                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            } else {
+                getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, maxHeight);
+            }
+        }));
     }
 
     @Override
@@ -103,10 +116,12 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
     public void setMessage(String message) {
         this.message.setText(message);
+        checkHeight();
     }
 
     public void setMessage(CharSequence message) {
         this.message.setText(message);
+        checkHeight();
     }
 
     public void setPositiveButton(String text, ButtonListener listener) {

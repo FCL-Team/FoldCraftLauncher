@@ -183,6 +183,42 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_application_24"
+                        app:auto_src_tint="true"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_marginStart="10dp"
+                        android:text="@string/folder_shaderpacks"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        app:auto_text_tint="true"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageButton
+                        app:no_padding="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:auto_tint="true"
+                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:id="@+id/browse_shader_packs"/>
+
+                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:src="@drawable/ic_baseline_screenshot_24"
                         app:auto_src_tint="true"/>
 
@@ -210,7 +246,6 @@
 
                 <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -242,6 +277,43 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:id="@+id/browse_saves"/>
+
+                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_baseline_script_24"
+                        app:auto_src_tint="true"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_marginStart="10dp"
+                        android:text="@string/folder_log"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        app:auto_text_tint="true"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageButton
+                        app:no_padding="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:auto_tint="true"
+                        android:src="@drawable/ic_baseline_arrow_forward_24"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:id="@+id/browse_logs"/>
 
                 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

@@ -22,9 +22,9 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
-            android:min="0"
-            android:max="200"
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            app:min_value="0"
+            app:max_value="200"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
