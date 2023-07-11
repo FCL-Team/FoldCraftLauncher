@@ -28,7 +28,7 @@ import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
+import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
@@ -142,10 +142,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         1 : 2));
                 FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
 
-                FCLSeekBar xPosition = findInfoView(R.id.x_position);
-                FCLSeekBar yPosition = findInfoView(R.id.y_position);
-                xPosition.addProgressListener();
-                yPosition.addProgressListener();
+                FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
+                FCLPreciseSeekBar yPosition = findInfoView(R.id.y_position);
 
                 FCLTextView xPositionText = findInfoView(R.id.x_position_text);
                 FCLTextView yPositionText = findInfoView(R.id.y_position_text);
@@ -200,10 +198,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 heightReferenceSpinner.setSelection(data.getBaseInfo().getPercentageHeight().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? 0 : 1);
                 FXUtils.bindSelection(heightReferenceSpinner, data.getBaseInfo().getPercentageHeight().referenceProperty());
 
-                FCLSeekBar width = findInfoView(R.id.width);
-                FCLSeekBar height = findInfoView(R.id.height);
-                width.addProgressListener();
-                height.addProgressListener();
+                FCLPreciseSeekBar width = findInfoView(R.id.width);
+                FCLPreciseSeekBar height = findInfoView(R.id.height);
 
                 FCLTextView widthText = findInfoView(R.id.width_text);
                 FCLTextView heightText = findInfoView(R.id.height_text);
@@ -425,10 +421,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         1 : 2));
                 FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
 
-                FCLSeekBar xPosition = findInfoView(R.id.x_position);
-                FCLSeekBar yPosition = findInfoView(R.id.y_position);
-                xPosition.addProgressListener();
-                yPosition.addProgressListener();
+                FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
+                FCLPreciseSeekBar yPosition = findInfoView(R.id.y_position);
 
                 FCLTextView xPositionText = findInfoView(R.id.x_position_text);
                 FCLTextView yPositionText = findInfoView(R.id.y_position_text);
@@ -473,8 +467,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 sizeReferenceSpinner.setSelection(data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? 0 : 1);
                 FXUtils.bindSelection(sizeReferenceSpinner, data.getBaseInfo().getPercentageWidth().referenceProperty());
 
-                FCLSeekBar size = findInfoView(R.id.size);
-                size.addProgressListener();
+                FCLPreciseSeekBar size = findInfoView(R.id.size);
 
                 FCLTextView sizeText = findInfoView(R.id.size_text);
 

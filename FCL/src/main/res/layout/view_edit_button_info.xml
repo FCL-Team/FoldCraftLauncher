@@ -91,11 +91,11 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
             android:id="@+id/x_position"
-            android:min="0"
-            android:max="1000"
-            android:layout_width="200dp"
+            app:min_value="0"
+            app:max_value="1000"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
@@ -127,11 +127,11 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
             android:id="@+id/y_position"
-            android:min="0"
-            android:max="1000"
-            android:layout_width="200dp"
+            app:min_value="0"
+            app:max_value="1000"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
@@ -216,10 +216,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
             android:id="@+id/width"
-            android:min="1"
-            android:layout_width="200dp"
+            app:min_value="1"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
@@ -278,10 +278,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
             android:id="@+id/height"
-            android:min="1"
-            android:layout_width="200dp"
+            app:min_value="1"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 

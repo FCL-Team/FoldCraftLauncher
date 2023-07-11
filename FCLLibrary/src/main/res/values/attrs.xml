@@ -32,6 +32,11 @@
     <declare-styleable name="FCLTabLayout">
         <attr name="follow_theme" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="FCLPreciseSeekBar">
+        <attr name="auto_button_tint" format="boolean"/>
+        <attr name="min_value" format="integer"/>
+        <attr name="max_value" format="integer"/>
+    </declare-styleable>
     <declare-styleable name="FCLLinearLayout">
         <attr name="auto_linear_background_tint" format="boolean"/>
     </declare-styleable>

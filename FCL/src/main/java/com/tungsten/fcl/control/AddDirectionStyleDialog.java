@@ -22,7 +22,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
+import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -82,8 +82,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         style.nameProperty().bind(editName.stringProperty());
 
         {
-            FCLSeekBar interval = buttonStyleLayout.findViewById(R.id.interval);
-            interval.addProgressListener();
+            FCLPreciseSeekBar interval = buttonStyleLayout.findViewById(R.id.interval);
 
             FCLTextView intervalText = buttonStyleLayout.findViewById(R.id.interval_text);
 
@@ -132,16 +131,11 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         }
 
         {
-            FCLSeekBar rockerSize = rockerStyleLayout.findViewById(R.id.rocker_size);
-            FCLSeekBar bgStrokeWidth = rockerStyleLayout.findViewById(R.id.bg_stroke_width);
-            FCLSeekBar bgCornerRadius = rockerStyleLayout.findViewById(R.id.bg_corner_radius);
-            FCLSeekBar strokeWidth = rockerStyleLayout.findViewById(R.id.stroke_width);
-            FCLSeekBar cornerRadius = rockerStyleLayout.findViewById(R.id.corner_radius);
-            rockerSize.addProgressListener();
-            bgStrokeWidth.addProgressListener();
-            bgCornerRadius.addProgressListener();
-            strokeWidth.addProgressListener();
-            cornerRadius.addProgressListener();
+            FCLPreciseSeekBar rockerSize = rockerStyleLayout.findViewById(R.id.rocker_size);
+            FCLPreciseSeekBar bgStrokeWidth = rockerStyleLayout.findViewById(R.id.bg_stroke_width);
+            FCLPreciseSeekBar bgCornerRadius = rockerStyleLayout.findViewById(R.id.bg_corner_radius);
+            FCLPreciseSeekBar strokeWidth = rockerStyleLayout.findViewById(R.id.stroke_width);
+            FCLPreciseSeekBar cornerRadius = rockerStyleLayout.findViewById(R.id.corner_radius);
 
             FCLTextView rockerSizeText = rockerStyleLayout.findViewById(R.id.rocker_size_text);
             FCLTextView bgStrokeWidthText = rockerStyleLayout.findViewById(R.id.bg_stroke_width_text);

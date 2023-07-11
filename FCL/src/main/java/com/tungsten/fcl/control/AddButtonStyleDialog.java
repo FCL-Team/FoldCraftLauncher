@@ -19,7 +19,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
+import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -66,12 +66,9 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         style.nameProperty().bind(editName.stringProperty());
 
         {
-            FCLSeekBar textSize = normalStyleLayout.findViewById(R.id.text_size);
-            FCLSeekBar strokeWidth = normalStyleLayout.findViewById(R.id.stroke_width);
-            FCLSeekBar cornerRadius = normalStyleLayout.findViewById(R.id.corner_radius);
-            textSize.addProgressListener();
-            strokeWidth.addProgressListener();
-            cornerRadius.addProgressListener();
+            FCLPreciseSeekBar textSize = normalStyleLayout.findViewById(R.id.text_size);
+            FCLPreciseSeekBar strokeWidth = normalStyleLayout.findViewById(R.id.stroke_width);
+            FCLPreciseSeekBar cornerRadius = normalStyleLayout.findViewById(R.id.corner_radius);
 
             FCLTextView textSizeText = normalStyleLayout.findViewById(R.id.text_size_text);
             FCLTextView strokeWidthText = normalStyleLayout.findViewById(R.id.stroke_width_text);
@@ -179,12 +176,9 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         }
 
         {
-            FCLSeekBar textSize = pressedStyleLayout.findViewById(R.id.text_size);
-            FCLSeekBar strokeWidth = pressedStyleLayout.findViewById(R.id.stroke_width);
-            FCLSeekBar cornerRadius = pressedStyleLayout.findViewById(R.id.corner_radius);
-            textSize.addProgressListener();
-            strokeWidth.addProgressListener();
-            cornerRadius.addProgressListener();
+            FCLPreciseSeekBar textSize = pressedStyleLayout.findViewById(R.id.text_size);
+            FCLPreciseSeekBar strokeWidth = pressedStyleLayout.findViewById(R.id.stroke_width);
+            FCLPreciseSeekBar cornerRadius = pressedStyleLayout.findViewById(R.id.corner_radius);
 
             FCLTextView textSizeText = pressedStyleLayout.findViewById(R.id.text_size_text);
             FCLTextView strokeWidthText = pressedStyleLayout.findViewById(R.id.stroke_width_text);

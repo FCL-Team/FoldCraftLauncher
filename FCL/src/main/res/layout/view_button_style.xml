@@ -24,9 +24,9 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
-            android:min="2"
-            android:max="30"
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            app:min_value="2"
+            app:max_value="30"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -60,9 +60,9 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
-            android:min="0"
-            android:max="100"
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            app:min_value="0"
+            app:max_value="100"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -96,9 +96,9 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLSeekBar
-            android:min="0"
-            android:max="500"
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            app:min_value="0"
+            app:max_value="500"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
