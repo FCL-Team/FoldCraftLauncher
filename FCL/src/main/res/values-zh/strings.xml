@@ -99,6 +99,8 @@
     <string name="button_select_all">全选</string>
 
     <string name="community">社区</string>
+    <string name="community_hint">加入社区以获取最新版本，反馈 bug 等。如果你要加入社区，请遵守社区规定。\n注：由于 QQ 群聊人数有限，加入 QQ 群需先赞助10元或以上金额。</string>
+    <string name="community_qq">QQ 群</string>
 
     <string name="control_create">创建新布局</string>
     <string name="control_delete">你确定要删除该布局吗？</string>

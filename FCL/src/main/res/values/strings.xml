@@ -110,6 +110,9 @@
     <string name="button_select_all">Select All</string>
 
     <string name="community">Community</string>
+    <string name="community_hint">Join our community to get latest version, report bugs, etc. Please follow the community rules if you join.</string>
+    <string name="community_discord" translatable="false">Discord</string>
+    <string name="community_qq">QQ-Group</string>
 
     <string name="control_create">Create Controller</string>
     <string name="control_delete">Are you sure to delete this controller?</string>
