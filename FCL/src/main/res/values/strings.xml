@@ -5,7 +5,7 @@
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
 
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
-    <string name="splash_eula_error">Cannot get EULA, please check the network_</string>
+    <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
     <string name="splash_eula_next">Agree and Continue</string>
     <string name="splash_runtime_title">Install or update app runtime</string>
     <string name="splash_runtime_lwjgl2" translatable="false">LWJGL 2</string>
@@ -110,6 +110,9 @@
     <string name="button_select_all">Select All</string>
 
     <string name="community">Community</string>
+    <string name="community_hint">Join our community to get latest version, report bugs, etc. Please follow the community rules if you join.</string>
+    <string name="community_discord" translatable="false">Discord</string>
+    <string name="community_qq">QQ-Group</string>
 
     <string name="control_create">Create Controller</string>
     <string name="control_delete">Are you sure to delete this controller?</string>
@@ -299,6 +302,64 @@
     <string name="folder_saves">Browse saves</string>
     <string name="folder_screenshots">Browse screenshots</string>
     <string name="folder_shaderpacks">Browse shader packs</string>
+
+    <string name="game_crash_info">Crash Info</string>
+    <string name="game_crash_reason">Crash Cause</string>
+    <string name="game_crash_reason_multiple">Multiple reasons detected:\n\n</string>
+    <string name="game_crash_reason_block">The game crashed due to a block.\n\nYou can try removing this block using MCEdit or delete that mod that added it.\n\nBlock Type: %1$s\nLocation: %2$s</string>
+    <string name="game_crash_reason_bootstrap_failed">The game crashed due to mod %1$s.\n\nYou can try deleting or updating it.</string>
+    <string name="game_crash_reason_config">The game crashed because a mod %1$s cannot parse its config file %2$s.</string>
+    <string name="game_crash_reason_debug_crash">The game crashed because you manually triggered it.\n\nSo, you probably know why.</string>
+    <string name="game_crash_reason_duplicated_mod">The game cannot launch due to duplicate mods: %1$s.\n\n%2$s\n\nEach mod can only be installed once, please delete the duplicate mod and try again.</string>
+    <string name="game_crash_reason_entity">The game crashed due to an entity.\n\nYou can try removing this entity using MCEdit or delete that mod that added it.\n\nBlock Type: %1$s\nLocation: %2$s</string>
+    <string name="game_crash_reason_modmixin_failure">The current game cannot continue to run because some Mod injection failed.\nThis generally means that the Mod has a bug or is incompatible with the current environment.\nYou can check the log to find the error module.</string>
+    <string name="game_crash_reason_mod_repeat_installation">Because the current game has repeatedly installed multiple identical Mods, each Mod can only appear once. Please delete the duplicate Mods and then restart the game.</string>
+    <string name="game_crash_reason_forge_error">Forge may have provided error information.\nYou can view the log and make corresponding processing according to the log information in the error report.\nIf you do not see the error message, you can view the error report to understand how the error occurred.\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution0">The current game cannot continue to run because of some Mod problems.\nYou can check the log to find the error module.</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">The current game cannot continue to run because of a problem with the Mod configuration file.\nYou can check the log to find the error module and its configuration file.</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">Forge may have provided error information.\nYou can view the log and make corresponding processing according to the log information in the error report.\nIf you do not see the error message, you can view the error report to understand how the error occurred.</string>
+    <string name="game_crash_reason_need_jdk11">The current game cannot continue to run due to an inappropriate version of the Java virtual machine.\nThe version needs java 11.</string>
+    <string name="game_crash_reason_mod_name">The current game cannot continue to run because of Mod file name problems.\nMod file names should use only upper and lower case letters (Aa~Zz), numbers (0~9), horizontal lines (-), underscores (_), and dots (.) in full half-angle English.\nPlease go to the Mod folder and add all non-compliant Mod file names with one of the above compliant characters.</string>
+    <string name="game_crash_reason_incomplete_forge_installation">The current game cannot continue due to an incomplete installation of Forge.\nPlease uninstall and reinstall Forge.</string>
+    <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 or above are incompatible with currently installed mods. You need to downgrade it to 0.11.7.</string>
+    <string name="game_crash_reason_fabric_warnings">The Fabric modloader warned:\n%1$s</string>
+    <string name="game_crash_reason_file_already_exists">The game crashed because file %1$s already exists.\n\nYou can try backing up and delete that file, then relaunch the game.</string>
+    <string name="game_crash_reason_file_changed">The game crashed because it did not pass the integrity checks.\n\nIf you modified the Minecraft jar, you will need to rollback the changes, or redownload the game.</string>
+    <string name="game_crash_reason_gl_operation_failure">The game crashed due to some mods, shader packs, and resource packs.\n\nPlease disable the mods/shaderpacks/resource packs you are using and then try again.</string>
+    <string name="game_crash_reason_illegal_access_error">The game crashed due to some mods.\nIf you know: %1$s, you can delete the mod and try again.</string>
+    <string name="game_crash_reason_optifine_is_not_compatible_with_forge">The current game crashes because OptiFine is incompatible with the current version of Forge.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">The current game cannot continue to run because the Mod file has been decompressed.\nPlease put the entire Mod file directly into the Mod folder!\nIf unzipping will cause errors in the game, please delete the unzipped Mod in the Mod folder, and then start the game.</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">The current game cannot be found because Forge is not installed completely.\nYou can try to uninstall Forge and reinstall it.</string>
+    <string name="game_crash_reason_shaders_mod">The current game cannot continue to run because both Optifine and Shaders Mod are installed.\nBecause Optifine has integrated Shaders Mod\'s functions, just remove Shaders Mod.</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">The current game cannot continue to run because you have installed too many Mods, which exceeds the ID limit of the game.\nPlease try installing JEID, or delete some large Mods.</string>
+    <string name="game_crash_reason_night_config_fixes">The current game cannot continue to run due to some problems with Night Config.\nYou can try to install the Night Config Fixes mod, which may help you this problem.\nFor more information, visit the mod\'s Github repository.</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">The current game may not continue to run because of OptiFine.\nThis problem only occurs in a specific version of OptiFine. You can try changing the version of OptiFine.</string>
+    <string name="game_crash_reason_jvm_32bit">The game crashed because the current memory allocation exceeds the limit of the 32-bit Java VM.</string>
+    <string name="game_crash_reason_loading_crashed_forge">The game crashed due to mod %1$s (%2$s).\n\nYou can try deleting or updating it.</string>
+    <string name="game_crash_reason_loading_crashed_fabric">The game crashed due to mod %1$s.\n\nYou can try deleting or updating it.</string>
+    <string name="game_crash_reason_forge_repeat_installation">The current game cannot continue to run due to a duplicate installation of Forge. This is a known issue.\nIt is recommended to upload the log feedback to Github so that we can find more clues and fix this question.\nCurrently you can uninstall Forge and reinstall it.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">The current game cannot continue to run due to repeated installation of Optifine. \nPlease delete Optifine under the Mod folder or uninstall Optifine that is automatically installed.</string>
+    <string name="game_crash_reason_memory_exceeded">The game crashed due to too much memory allocated.</string>
+    <string name="game_crash_reason_mod">The game crashed due to mod %1$s.\n\nYou may update or delete the mod and then try again.</string>
+    <string name="game_crash_reason_mod_resolution">The game crashed due to mod resolution failure.\n\nFabric provided the following details:\n%1$s</string>
+    <string name="game_crash_reason_forgemod_resolution">The game crashed due to mod resolution failure.\n\nForge provided the following details:\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution_collection">The game crashed because the mod version is not compatible.\n\n%1$s requires %2$s.\n\nYou need to upgrade or downgrade %3$s before continuing.</string>
+    <string name="game_crash_reason_mod_resolution_conflict">The game crashed because of conflicting mods.\n\n%1$s is incompatible with %2$s.</string>
+    <string name="game_crash_reason_mod_resolution_missing">The game crashed because some dependency mods are not installed.\n\n%1$s requires mod: %2$s.\n\nThis means that you have to download and install %2$s first to continue playing.</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">The game crashed because a mod is incompatible with the current Minecraft version.\n\n%1$s requires Minecraft version %2$s.\n\nIf you want to play with this version of the mod installed, you should change the instance version.\nOtherwise, you should install a version that is compatible with this Minecraft version.</string>
+    <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Version: %2$s)</string>
+    <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Any Version)</string>
+    <string name="game_crash_reason_modlauncher_8">The game crashed because your current Forge version is not compatible with your Java installation, please try updating Forge.</string>
+    <string name="game_crash_reason_no_class_def_found_error">The game cannot run because of incomplete code.\n\nYour game instance is missing %1$s, this might be due to a mod missing, an incompatible mod installed, or some files might be corrupted.\n\nYou may need to reinstall the game and all mods or ask someone for help.</string>
+    <string name="game_crash_reason_no_such_method_error">The game cannot run because of incomplete code.\n\nYour game instance might be missing a mod, installed an incompatible mod, or some files might be corrupted.\n\nYou may need to reinstall the game and all mods or ask someone for help.</string>
+    <string name="game_crash_reason_opengl_not_supported">The game crashed because OpenGL is not supported by your renderer.</string>
+    <string name="game_crash_reason_out_of_memory">The game crashed because it ran out of memory.\n\nThis may be because there is not enough memory available, or too many mods installed. You can try fixing it by increasing the allocated memory under the game settings.\n\nIf you still encounter these problems, well, you may need a better device.</string>
+    <string name="game_crash_reason_resolution_too_high">The game crashed because you are using a resource pack whose texture resolution was too high.\n\nYou should switch to a resource pack with lower resolution.</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">The current game crashed because processing of -javaagent failed.\nIf you add relevant parameters to the Java virtual machine parameters, please check whether they are legal and correct.</string>
+    <string name="game_crash_reason_stacktrace">The crash reason is unknown.\n\nThere are some keywords that might contain some Mod IDs. You can search them online to figure out the issue yourself.\n\n%s</string>
+    <string name="game_crash_reason_unknown">We are not able to figure out why the game crashed, please refer to the game logs.\n\nWhen asking someone else for help, please share the full game log and related crash report file with them!</string>
+    <string name="game_crash_reason_unsatisfied_link_error">Unable to launch Minecraft due to missing libraries: %1$s.</string>
+    <string name="game_crash_title">Game Crashed</string>
 
     <string name="help">Help</string>
 

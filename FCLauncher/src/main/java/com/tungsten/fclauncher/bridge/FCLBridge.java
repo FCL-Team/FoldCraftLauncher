@@ -64,6 +64,8 @@ public class FCLBridge implements Serializable {
     private String controller = "Default";
     private String gameDir;
     private String logPath;
+    private String renderer;
+    private String java;
     private Thread thread;
     private Thread fclLogThread;
     private boolean isLogPipeReady = false;
@@ -231,6 +233,22 @@ public class FCLBridge implements Serializable {
     @Nullable
     public String getGameDir() {
         return gameDir;
+    }
+
+    public void setRenderer(String renderer) {
+        this.renderer = renderer;
+    }
+
+    public String getRenderer() {
+        return renderer;
+    }
+
+    public void setJava(String java) {
+        this.java = java;
+    }
+
+    public String getJava() {
+        return java;
     }
 
     @NonNull
