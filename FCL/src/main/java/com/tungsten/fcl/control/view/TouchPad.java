@@ -166,8 +166,10 @@ public class TouchPad extends View {
                         downY = (int) event.getY();
                         break;
                     }
-                    int deltaX = (int) ((event.getX(pointerIndex) - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
-                    int deltaY = (int) ((event.getY(pointerIndex) - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
+                    int newDownX = (int) event.getX(pointerIndex);
+                    int newDownY = (int) event.getY(pointerIndex);
+                    int deltaX = (int) ((newDownX - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
+                    int deltaY = (int) ((newDownY - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
                     if (gameMenu.getMenuSetting().isEnableGyroscope()) {
                         gameMenu.setPointerX(initialX + deltaX);
                         gameMenu.setPointerY(initialY + deltaY);
@@ -178,8 +180,8 @@ public class TouchPad extends View {
                     if ((Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }
-                    downX = (int) event.getX(pointerIndex);
-                    downY = (int) event.getY(pointerIndex);
+                    downX = newDownX;
+                    downY = newDownY;
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
