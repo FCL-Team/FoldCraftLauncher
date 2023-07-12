@@ -135,6 +135,8 @@ public final class LauncherHelper {
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
                     fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                     fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
+                    fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
+                    fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
                     JVMActivity.setFClBridge(fclBridge, MenuType.GAME);
                     Bundle bundle = new Bundle();
                     bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());

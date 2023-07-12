@@ -1,12 +1,5 @@
 package com.tungsten.fclcore.game;
 
-import com.tungsten.fclcore.util.io.FileUtils;
-
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,7 +48,7 @@ public final class CrashReportAnalyzer {
         MOD_RESOLUTION(Pattern.compile("ModResolutionException: (?<reason>(.*)[\\n\\r]*( - (.*)[\\n\\r]*)+)"), "reason"),
         MOD_RESOLUTION_CONFLICT(Pattern.compile("ModResolutionException: Found conflicting mods: (?<sourcemod>.*) conflicts with (?<destmod>.*)"), "sourcemod", "destmod"),
         MOD_RESOLUTION_MISSING(Pattern.compile("ModResolutionException: Could not find required mod: (?<sourcemod>.*) requires (?<destmod>.*)"), "sourcemod", "destmod"),
-        MOD_RESOLUTION_MISSING_MINECRAFT(Pattern.compile("ModResolutionException: Could not find required mod: (?<mod>.*) requires \\{minecraft @ (?<version>.*)}"), "mod", "version"),
+        MOD_RESOLUTION_MISSING_MINECRAFT(Pattern.compile("ModResolutionException: Could not find required mod: (?<mod>.*) requires \\{minecraft @ (?<version>.*)\\}"), "mod", "version"),
         MOD_RESOLUTION_COLLECTION(Pattern.compile("ModResolutionException: Could not resolve valid mod collection \\(at: (?<sourcemod>.*) requires (?<destmod>.*)\\)"), "sourcemod", "destmod"),
         // Some mods require a file not existing, asking user to manually delete it
         FILE_ALREADY_EXISTS(Pattern.compile("java\\.nio\\.file\\.FileAlreadyExistsException: (?<file>.*)"), "file"),
@@ -105,8 +98,12 @@ public final class CrashReportAnalyzer {
         //Forge 安装不完整
         INCOMPLETE_FORGE_INSTALLATION(Pattern.compile("(java\\.io\\.UncheckedIOException: java\\.io\\.IOException: Invalid paths argument, contained no existing paths: \\[(.*?)\\\\libraries\\\\net\\\\minecraftforge\\\\forge\\\\(.*?)\\\\forge-(.*?)-client\\.jar\\]|Failed to find Minecraft resource version (.*?) at (.*?)\\\\libraries\\\\net\\\\minecraftforge\\\\forge\\\\(.*?)\\\\forge-(.*?)-client\\.jar|Cannot find launch target fmlclient, unable to launch)")),
 
+        // PERFORMANT is not compatible with OptiFine
+        PERFORMANT_FOREST_OPTIFINE(Pattern.compile("org\\.spongepowered\\.asm\\.mixin\\.injection\\.throwables\\.InjectionError: Critical injection failure: Redirector OnisOnLadder\\(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/LivingEntity;\\)Z in performant\\.mixins\\.json:entity\\.LivingEntityMixin failed injection check, \\(0/1\\) succeeded\\. Scanned 1 target\\(s\\)\\. Using refmap performant\\.refmap\\.json")),
         // TwilightForest is not compatible with OptiFine on Minecraft 1.16
-        TWILIGHT_FOREST_OPTIFINE(Pattern.compile("java.lang.IllegalArgumentException: (.*) outside of image bounds (.*)"));
+        TWILIGHT_FOREST_OPTIFINE(Pattern.compile("java\\.lang\\.IllegalArgumentException: (.*) outside of image bounds (.*)")),
+        // Jade is not compatible with OptiFine on Minecraft 1.20+
+        JADE_FOREST_OPTIFINE(Pattern.compile("Critical injection failure: LVT in net/minecraft/client/renderer/GameRenderer::m_109093_\\(FJZ\\)V has incompatible changes at opcode 760 in callback jade\\.mixins\\.json:GameRendererMixin-\\>@Inject::jade\\$runTick\\(FJZLorg/spongepowered/asm/mixin/injection/callback/CallbackInfo;IILcom/mojang/blaze3d/platform/Window;Lorg/joml/Matrix4f;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/gui/GuiGraphics;\\)V\\."));
 
         private final Pattern pattern;
         private final String[] groupNames;
@@ -160,18 +157,6 @@ public final class CrashReportAnalyzer {
         return results;
     }
 
-    private static final Pattern CRASH_REPORT_LOCATION_PATTERN = Pattern.compile("#@!@# Game crashed! Crash report saved to: #@!@# (?<location>.*)");
-
-    @Nullable
-    public static String findCrashReport(String log) throws IOException, InvalidPathException {
-        Matcher matcher = CRASH_REPORT_LOCATION_PATTERN.matcher(log);
-        if (matcher.find()) {
-            return FileUtils.readText(Paths.get(matcher.group("location")));
-        } else {
-            return null;
-        }
-    }
-
     public static String extractCrashReport(String rawLog) {
         int begin = rawLog.lastIndexOf("---- Minecraft Crash Report ----");
         int end = rawLog.lastIndexOf("#@!@# Game crashed! Crash report saved to");
@@ -180,8 +165,8 @@ public final class CrashReportAnalyzer {
     }
 
     private static final Pattern CRASH_REPORT_STACK_TRACE_PATTERN = Pattern.compile("Description: (.*?)[\\n\\r]+(?<stacktrace>[\\w\\W\\n\\r]+)A detailed walkthrough of the error");
-    private static final Pattern STACK_TRACE_LINE_PATTERN = Pattern.compile("at (?<method>.*?)\\((?<sourcefile>.*?)\\)");
-    private static final Pattern STACK_TRACE_LINE_MODULE_PATTERN = Pattern.compile("\\{(?<tokens>.*)}");
+    private static final Pattern STACK_TRACE_LINE_PATTERN = Pattern.compile("at (?<method>.*\\?)\\((?<sourcefile>.*?)\\)");
+    private static final Pattern STACK_TRACE_LINE_MODULE_PATTERN = Pattern.compile("\\{(?<tokens>.*)\\}");
     private static final Set<String> PACKAGE_KEYWORD_BLACK_LIST = new HashSet<>(Arrays.asList(
             "net", "minecraft", "item", "setup", "block", "assist", "optifine", "player", "unimi", "fastutil", "tileentity", "events", "common", "blockentity", "client", "entity", "mojang", "main", "gui", "world", "server", "dedicated", // minecraft
             "renderer", "chunk", "model", "loading", "color", "pipeline", "inventory", "launcher", "physics", "particle", "gen", "registry", "worldgen", "texture", "biomes", "biome",

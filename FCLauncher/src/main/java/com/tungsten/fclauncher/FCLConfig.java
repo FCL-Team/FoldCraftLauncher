@@ -2,15 +2,17 @@ package com.tungsten.fclauncher;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 
 public class FCLConfig implements Serializable {
 
     public enum Renderer implements Serializable {
-        RENDERER_GL4ES("libgl4es.so:libEGL.so"),
-        RENDERER_ZINK("libGL.so:libEGL.so"),
-        RENDERER_ANGLE("libtinywrapper.so:libEGL_angle.so"),
-        RENDERER_VGPU("libvgpu.so:libEGL.so");
+        RENDERER_GL4ES("Holy-GL4ES:libgl4es.so:libEGL.so"),
+        RENDERER_ZINK("VirGLRenderer:libGL.so:libEGL.so"),
+        RENDERER_ANGLE("ANGLE:libtinywrapper.so:libEGL_angle.so"),
+        RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so");
 
         private final String glInfo;
         private String glVersion;
@@ -20,11 +22,11 @@ public class FCLConfig implements Serializable {
         }
 
         public String getGlLibName() {
-            return glInfo.split(":")[0];
+            return glInfo.split(":")[1];
         }
 
         public String getEglLibName() {
-            return glInfo.split(":")[1];
+            return glInfo.split(":")[2];
         }
 
         public String getGlInfo() {
@@ -37,6 +39,12 @@ public class FCLConfig implements Serializable {
 
         public String getGlVersion() {
             return glVersion;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return glInfo.split(":")[0];
         }
     }
 
