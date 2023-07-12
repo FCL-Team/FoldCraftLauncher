@@ -72,4 +72,9 @@ public class ManagePageManager extends PageManager {
         modListPage.loadVersion(profile, version);
         worldListPage.loadVersion(profile, version);
     }
+
+    public void onRunDirectoryChange(Profile profile, String version) {
+        modListPage.loadVersion(profile, version);
+        worldListPage.loadVersion(profile, version);
+    }
 }

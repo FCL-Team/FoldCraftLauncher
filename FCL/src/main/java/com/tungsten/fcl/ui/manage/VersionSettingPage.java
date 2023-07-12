@@ -281,8 +281,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         modpack.set(versionId != null && profile.getRepository().isModpack(versionId));
         usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));
 
+        InvalidationListener listener = observable -> ManagePageManager.getInstance().onRunDirectoryChange(profile, versionId);
+
         // unbind data fields
         if (lastVersionSetting != null) {
+            lastVersionSetting.isolateGameDirProperty().removeListener(listener);
             FXUtils.unbind(txtJVMArgs, lastVersionSetting.javaArgsProperty());
             FXUtils.unbind(txtGameArgs, lastVersionSetting.minecraftArgsProperty());
             FXUtils.unbind(txtMetaspace, lastVersionSetting.permSizeProperty());
@@ -302,6 +305,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         }
 
         // bind new data fields
+        if (getId() == ManagePageManager.PAGE_ID_MANAGE_SETTING) {
+            versionSetting.isolateGameDirProperty().addListener(listener);
+        }
         FXUtils.bindString(txtJVMArgs, versionSetting.javaArgsProperty());
         FXUtils.bindString(txtGameArgs, versionSetting.minecraftArgsProperty());
         FXUtils.bindString(txtMetaspace, versionSetting.permSizeProperty());
