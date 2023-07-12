@@ -68,6 +68,7 @@
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:visibility="gone"
                 android:padding="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
