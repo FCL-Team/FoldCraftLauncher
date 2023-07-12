@@ -58,7 +58,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_refresh_24"
             android:layout_gravity="center"
-            android:id="@+id/refresh"/>
+            android:id="@+id/refresh"
+            app:auto_tint="true"/>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
