@@ -26,7 +26,7 @@ public class Pack200Utils {
                 Process process = processBuilder.command("./libunpack200.so", "-r", jarFile.getAbsolutePath(), jarFile.getAbsolutePath().replace(".pack", "")).start();
                 process.waitFor();
             } catch (InterruptedException | IOException e) {
-                Logging.LOG.log(Level.WARNING, "Failed to unpack files in " + dir + " Error: " + e);
+                Logging.LOG.log(Level.WARNING, "Failed to unpack files in " + dir, e);
             }
         }
     }
@@ -43,7 +43,7 @@ public class Pack200Utils {
             Process process = processBuilder.command("./libunpack200.so", "-r", in, out).start();
             process.waitFor();
         } catch (InterruptedException | IOException e) {
-            Logging.LOG.log(Level.WARNING, "Failed to unpack file: " + in + " Error: " + e);
+            Logging.LOG.log(Level.WARNING, "Failed to unpack file: " + in, e);
         }
     }
 
