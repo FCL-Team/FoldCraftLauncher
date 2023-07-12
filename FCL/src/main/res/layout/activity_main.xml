@@ -94,7 +94,6 @@
         app:layout_constraintWidth_percent="0.25">
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
-            app:auto_text_tint="true"
             android:singleLine="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
@@ -138,7 +137,6 @@
                 android:orientation="vertical">
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
                     android:singleLine="true"
                     android:id="@+id/account_name"
                     android:layout_width="match_parent"
@@ -146,7 +144,6 @@
                     android:text="@string/account_state_no_account"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
                     android:singleLine="true"
                     android:id="@+id/account_hint"
                     android:layout_width="match_parent"
@@ -165,7 +162,6 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
-            app:auto_text_tint="true"
             android:singleLine="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
@@ -209,7 +205,6 @@
                 android:orientation="vertical">
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
                     android:singleLine="true"
                     android:id="@+id/version_name"
                     android:layout_width="match_parent"
@@ -217,7 +212,6 @@
                     android:text="@string/version_no_version"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
                     android:singleLine="true"
                     android:id="@+id/version_hint"
                     android:layout_width="match_parent"
