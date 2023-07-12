@@ -25,6 +25,10 @@
     <string name="setting">Setting</string>
     
     <string name="about">About</string>
+    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
+    <string name="about_developer" translatable="false">FCL-Team</string>
+    <string name="about_sponsor">Sponsor</string>
+    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe game startup part borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
 
     <string name="account_add_server">Add Authentication Server</string>
     <string name="account_add_server_url">Server URL</string>
