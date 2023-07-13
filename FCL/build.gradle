@@ -16,6 +16,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+        signingConfigs {
+        release {
+            storeFile file("key-store.jks")
+            storePassword "666666"
+            keyAlias "HMCL-PE-Key"
+            keyPassword "666666"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
