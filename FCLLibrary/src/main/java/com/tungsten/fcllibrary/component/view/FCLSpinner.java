@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -21,6 +23,7 @@ public class FCLSpinner<T> extends AppCompatSpinner {
     private boolean fromUserOrSystem = false;
     private ArrayList<T> dataList;
     private ObjectProperty<T> selectedItemProperty;
+    private BooleanProperty visibilityProperty;
 
     public void addSelectListener() {
         setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -100,5 +103,37 @@ public class FCLSpinner<T> extends AppCompatSpinner {
         }
 
         return selectedItemProperty;
+    }
+
+    public final void setVisibilityValue(boolean visibility) {
+        visibilityProperty().set(visibility);
+    }
+
+    public final boolean getVisibilityValue() {
+        return visibilityProperty == null || visibilityProperty.get();
+    }
+
+    public final BooleanProperty visibilityProperty() {
+        if (visibilityProperty == null) {
+            visibilityProperty = new BooleanPropertyBase() {
+
+                public void invalidated() {
+                    Schedulers.androidUIThread().execute(() -> {
+                        boolean visible = get();
+                        setVisibility(visible ? VISIBLE : GONE);
+                    });
+                }
+
+                public Object getBean() {
+                    return this;
+                }
+
+                public String getName() {
+                    return "visibility";
+                }
+            };
+        }
+
+        return visibilityProperty;
     }
 }

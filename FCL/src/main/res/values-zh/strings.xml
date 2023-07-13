@@ -99,6 +99,8 @@
     <string name="button_remove">删除</string>
     <string name="button_remove_confirm">您确定要删除吗？此操作无法撤销！</string>
     <string name="button_select_all">全选</string>
+    <string name="button_set">设置</string>
+    <string name="button_reset">重置</string>
 
     <string name="community">社区</string>
     <string name="community_hint">加入社区以获取最新版本，反馈 bug 等。如果你要加入社区，请遵守社区规定。\n注：由于 QQ 群聊人数有限，加入 QQ 群需先赞助10元或以上金额，赞助方式见关于页面。</string>
@@ -239,6 +241,13 @@
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
+
+    <string name="download_provider_mcbbs">我的世界中文论坛 (https://www.mcbbs.net/)</string>
+    <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
+    <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 BMCLAPI 下载源)</string>
+    <string name="download_provider_official">尽量使用官方源</string>
+    <string name="download_provider_balanced">选择加载速度快的下载源</string>
+    <string name="download_provider_mirror">尽量使用镜像源</string>
 
     <string name="edit_view_clone">复制控件</string>
     <string name="edit_view_event">控件事件</string>
@@ -664,7 +673,24 @@
     <string name="settings_icon">版本图标</string>
 
     <string name="settings_launcher">启动器设置</string>
+    <string name="settings_launcher_debug">调试</string>
+    <string name="settings_launcher_cache">缓存文件夹</string>
+    <string name="settings_launcher_clear_cache">清理缓存</string>
+    <string name="settings_launcher_download">下载</string>
+    <string name="settings_launcher_download_threads">并发数</string>
+    <string name="settings_launcher_download_threads_auto">自动选择并发数</string>
     <string name="settings_launcher_download_source">下载源</string>
+    <string name="settings_launcher_download_source_auto">自动选择下载源</string>
+    <string name="settings_launcher_language">语言</string>
+    <string name="settings_launcher_language_system">跟随系统语言</string>
+    <string name="settings_launcher_launcher_log_export">导出启动器日志</string>
+    <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
+    <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
+    <string name="settings_launcher_theme">主题</string>
+    <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
+    <string name="settings_launcher_background_dk">暗色模式启动器背景图片</string>
+    <string name="settings_launcher_ignore_notch">忽略刘海屏</string>
+    <string name="settings_launcher_animation_speed">动画速度</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>

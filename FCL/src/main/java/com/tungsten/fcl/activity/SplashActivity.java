@@ -22,10 +22,13 @@ import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.ResultListener;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.io.File;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends FCLActivity {
@@ -84,6 +87,7 @@ public class SplashActivity extends FCLActivity {
 
     private void init() {
         FCLPath.loadPaths(this);
+        Logging.start(new File(FCLPath.FILES_DIR, "logs").toPath());
         initFragments();
         start();
     }
