@@ -31,5 +31,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: app-release
-        path: FCL/build/outputs/apk/debug/*
+        path: FCL/build/outputs/apk/release/*
         retention-days: 1
