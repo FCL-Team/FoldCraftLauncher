@@ -63,6 +63,7 @@ public class FCLDynamicIsland extends AppCompatTextView {
     };
 
     private void init() {
+        setTextSize(13);
         anim = new DynamicIslandAnim(this);
         setGravity(Gravity.CENTER);
         int tb = ConvertUtils.dip2px(getContext(), 8f);

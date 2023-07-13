@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class FCLConfig implements Serializable {
 
     public enum Renderer implements Serializable {
-        RENDERER_GL4ES("Holy-GL4ES:libgl4es.so:libEGL.so"),
+        RENDERER_GL4ES("Holy-GL4ES:libgl4es_114.so:libEGL.so"),
         RENDERER_ZINK("VirGLRenderer:libGL.so:libEGL.so"),
         RENDERER_ANGLE("ANGLE:libtinywrapper.so:libEGL_angle.so"),
         RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so");
