@@ -24,6 +24,11 @@ public class LocaleUtils {
         return lang == 2 || (lang == 0 && getSystemLocale().toString().equals(Locale.CHINA.toString()));
     }
 
+    public static int getLanguage(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("lang", 0);
+    }
+
     public static Context setLanguage(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         return updateResources(context, sharedPreferences.getInt("lang", 0));

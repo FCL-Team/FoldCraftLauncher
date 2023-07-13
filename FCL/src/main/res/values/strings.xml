@@ -28,7 +28,7 @@
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Sponsor</string>
-    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe game startup part borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
+    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
 
     <string name="account_add_server">Add Authentication Server</string>
     <string name="account_add_server_url">Server URL</string>
@@ -112,6 +112,8 @@
     <string name="button_remove">Remove</string>
     <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
     <string name="button_select_all">Select All</string>
+    <string name="button_set">Set</string>
+    <string name="button_reset">Reset</string>
 
     <string name="community">Community</string>
     <string name="community_hint">Join our community to get latest version, report bugs, etc. Please follow the community rules if you join.</string>
@@ -253,6 +255,13 @@
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
+
+    <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
+    <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
+    <string name="download_provider_mojang">Mojang (OptiFine is provided by BMCLAPI)</string>
+    <string name="download_provider_official">From Official Sources</string>
+    <string name="download_provider_balanced">From Fastest Available</string>
+    <string name="download_provider_mirror">From Mirror</string>
 
     <string name="edit_view_clone">Clone View</string>
     <string name="edit_view_event">View Event</string>
@@ -690,7 +699,26 @@
     <string name="settings_icon">Icon</string>
 
     <string name="settings_launcher">Launcher Settings</string>
+    <string name="settings_launcher_debug">Debug</string>
+    <string name="settings_launcher_cache">Cache Directory</string>
+    <string name="settings_launcher_clear_cache">Clear cache</string>
+    <string name="settings_launcher_download">Download</string>
+    <string name="settings_launcher_download_threads">Threads</string>
+    <string name="settings_launcher_download_threads_auto">Automatically Determine</string>
     <string name="settings_launcher_download_source">Download Source</string>
+    <string name="settings_launcher_download_source_auto">Auto Choose Download Mirror</string>
+    <string name="settings_launcher_language">Language</string>
+    <string name="settings_launcher_language_system">Use System Language</string>
+    <string name="settings_launcher_language_english" translatable="false">English</string>
+    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
+    <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
+    <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
+    <string name="settings_launcher_theme">Theme</string>
+    <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
+    <string name="settings_launcher_background_dk">Dark Mode Launcher Background</string>
+    <string name="settings_launcher_ignore_notch">Ignore Notch</string>
+    <string name="settings_launcher_animation_speed">Animation Speed</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
