@@ -4,9 +4,12 @@ plugins {
 
 group 'org.lwjgl'
 
-//configurations.default.setCanBeResolved(true)
+configurations.default.setCanBeResolved(true)
+project.setArchivesBaseName('lwjgl')
+project.setLibsDirName("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl3")
 
-task buildLwjgl3(type:Jar) {
+task buildLwjgl3(dependsOn:'jar')
+jar {
     doLast {
         archiveFileName = 'lwjgl.jar'
         manifest {
