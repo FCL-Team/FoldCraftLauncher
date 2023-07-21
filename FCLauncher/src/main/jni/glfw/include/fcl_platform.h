@@ -11,7 +11,6 @@
 #include <dlfcn.h>
 
 #include <internal.h>
-#include "byopen/byopen.h"
 
 typedef VkFlags VkAndroidSurfaceCreateFlagsKHR;
 

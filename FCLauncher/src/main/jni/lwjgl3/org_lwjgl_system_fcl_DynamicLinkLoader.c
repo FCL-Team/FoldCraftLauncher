@@ -6,7 +6,6 @@
 #include "common_tools.h"
 #include "FCLLWJGL.h"
 #include <dlfcn.h>
-#include "byopen/byopen.h"
 
 EXTERN_C_ENTER
 
