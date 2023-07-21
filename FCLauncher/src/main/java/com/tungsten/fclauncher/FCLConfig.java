@@ -54,14 +54,16 @@ public class FCLConfig implements Serializable {
     private final String workingDir;
     private final Renderer renderer;
     private final String[] args;
+    private final boolean isLwjgl3;
 
-    public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
+    public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args, boolean isLwjgl3) {
         this.context = context;
         this.logDir = logDir;
         this.javaPath = javaPath;
         this.workingDir = workingDir;
         this.renderer = renderer;
         this.args = args;
+        this.isLwjgl3 = isLwjgl3;
     }
 
     public Context getContext() {
@@ -88,4 +90,7 @@ public class FCLConfig implements Serializable {
         return args;
     }
 
+    public boolean isLwjgl3() {
+        return isLwjgl3;
+    }
 }

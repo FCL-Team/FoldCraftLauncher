@@ -211,13 +211,15 @@ public class FCLauncher {
         bridge.dlopen(nativeDir + "/libopenal.so");
 
         // Todo : mesa
-        FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
-        bridge.dlopen(nativeDir + "/" + renderer.getGlLibName());
-        bridge.dlopen(nativeDir + "/" + renderer.getEglLibName());
-        if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
-            bridge.dlopen(nativeDir + "/libglapi.so");
-            bridge.dlopen(nativeDir + "/libexpat.so");
-            bridge.dlopen(nativeDir + "/zink_dri.so");
+        if (!config.isLwjgl3()) {
+            FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
+            bridge.dlopen(nativeDir + "/" + renderer.getGlLibName());
+            bridge.dlopen(nativeDir + "/" + renderer.getEglLibName());
+            if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
+                bridge.dlopen(nativeDir + "/libglapi.so");
+                bridge.dlopen(nativeDir + "/libexpat.so");
+                bridge.dlopen(nativeDir + "/zink_dri.so");
+            }
         }
     }
 

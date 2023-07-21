@@ -73,7 +73,6 @@ public class FCLBridge implements Serializable {
     static {
         System.loadLibrary("xhook");
         System.loadLibrary("fcl");
-        System.loadLibrary("glfw");
         System.loadLibrary("fcl_awt");
     }
 

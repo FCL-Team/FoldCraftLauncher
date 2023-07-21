@@ -68,7 +68,7 @@ int fclGetInjectorMode() {
 }
 
 void fclSetHitResultType(int type) {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return;
     }
     PrepareFCLBridgeJNI();
@@ -76,7 +76,7 @@ void fclSetHitResultType(int type) {
 }
 
 void fclSetCursorMode(int mode) {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return;
     }
     PrepareFCLBridgeJNI();
@@ -84,18 +84,18 @@ void fclSetCursorMode(int mode) {
 }
 
 int fclGetEventFd() {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return -1;
     }
-    return fcl.event_pipe_fd[0];
+    return fcl->event_pipe_fd[0];
 }
 
 int fclWaitForEvent(int timeout) {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return 0;
     }
     struct epoll_event ev;
-    int ret = epoll_wait(fcl.epoll_fd, &ev, 1, timeout);
+    int ret = epoll_wait(fcl->epoll_fd, &ev, 1, timeout);
     if (ret > 0 && (ev.events & EPOLLIN)) {
         return 1;
     }
@@ -103,19 +103,19 @@ int fclWaitForEvent(int timeout) {
 }
 
 int fclPollEvent(FCLEvent* event) {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return 0;
     }
-    if (pthread_mutex_lock(&fcl.event_queue_mutex)) {
+    if (pthread_mutex_lock(&fcl->event_queue_mutex)) {
         FCL_INTERNAL_LOG("Failed to acquire mutex");
         return 0;
     }
     char c;
     int ret = 0;
-    if (read(fcl.event_pipe_fd[0], &c, 1) > 0) {
-        ret = EventQueue_take(&fcl.event_queue, event);
+    if (read(fcl->event_pipe_fd[0], &c, 1) > 0) {
+        ret = EventQueue_take(&fcl->event_queue, event);
     }
-    if (pthread_mutex_unlock(&fcl.event_queue_mutex)) {
+    if (pthread_mutex_unlock(&fcl->event_queue_mutex)) {
         FCL_INTERNAL_LOG("Failed to release mutex");
         return 0;
     }
@@ -127,14 +127,14 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_refreshHitR
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(JNIEnv* env, jclass clazz, jlong time, jint type, jint p1, jint p2) {
-    if (!fcl.has_event_pipe) {
+    if (!fcl->has_event_pipe) {
         return;
     }
-    if (pthread_mutex_lock(&fcl.event_queue_mutex)) {
+    if (pthread_mutex_lock(&fcl->event_queue_mutex)) {
         FCL_INTERNAL_LOG("Failed to acquire mutex");
         return;
     }
-    FCLEvent* event = EventQueue_add(&fcl.event_queue);
+    FCLEvent* event = EventQueue_add(&fcl->event_queue);
     if (event == NULL) {
         FCL_INTERNAL_LOG("Failed to add event to event queue");
         return;
@@ -164,31 +164,31 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(J
             event->message = p1;
             break;
     }
-    write(fcl.event_pipe_fd[1], "E", 1);
-    if (pthread_mutex_unlock(&fcl.event_queue_mutex)) {
+    write(fcl->event_pipe_fd[1], "E", 1);
+    if (pthread_mutex_unlock(&fcl->event_queue_mutex)) {
         FCL_INTERNAL_LOG("Failed to release mutex");
     }
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setEventPipe(JNIEnv* env, jclass clazz) {
-    if (pipe(fcl.event_pipe_fd) == -1) {
+    if (pipe(fcl->event_pipe_fd) == -1) {
         FCL_INTERNAL_LOG("Failed to create event pipe : %s", strerror(errno));
         return;
     }
-    fcl.epoll_fd = epoll_create(3);
-    if (fcl.epoll_fd == -1) {
+    fcl->epoll_fd = epoll_create(3);
+    if (fcl->epoll_fd == -1) {
         FCL_INTERNAL_LOG("Failed to get epoll fd : %s", strerror(errno));
         return;
     }
     struct epoll_event ev;
     ev.events = EPOLLIN;
-    ev.data.fd = fcl.event_pipe_fd[0];
-    if (epoll_ctl(fcl.epoll_fd, EPOLL_CTL_ADD, fcl.event_pipe_fd[0], &ev) == -1) {
+    ev.data.fd = fcl->event_pipe_fd[0];
+    if (epoll_ctl(fcl->epoll_fd, EPOLL_CTL_ADD, fcl->event_pipe_fd[0], &ev) == -1) {
         FCL_INTERNAL_LOG("Failed to add epoll event : %s", strerror(errno));
         return;
     }
-    EventQueue_init(&fcl.event_queue);
-    pthread_mutex_init(&fcl.event_queue_mutex, NULL);
-    fcl.has_event_pipe = 1;
+    EventQueue_init(&fcl->event_queue);
+    pthread_mutex_init(&fcl->event_queue_mutex, NULL);
+    fcl->has_event_pipe = 1;
     FCL_INTERNAL_LOG("Succeeded to set event pipe");
 }

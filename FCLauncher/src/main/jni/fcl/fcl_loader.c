@@ -70,7 +70,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
     if (!method_setLogPipeReady) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find setLogPipeReady method!");
     }
-    fcl.logFile = fdopen(fclFd[1],"a");
+    fcl->logFile = fdopen(fclFd[1], "a");
     FCL_INTERNAL_LOG("Log pipe ready.");
     (*env) -> CallVoidMethod(env, jobject, method_setLogPipeReady);
     log_method = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");

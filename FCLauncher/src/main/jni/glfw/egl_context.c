@@ -343,6 +343,7 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 //    eglGetConfigAttrib(_glfw.egl.display, config, EGL_NATIVE_VISUAL_ID, 0);
     int client = 0;
     const char* render = getenv("LIBGL_NAME");
+    _glfw_dlopen(render);
     if (strcmp(render, "libgl4es_114.so") == 0) {
         client = 0;
     } else if (strcmp(render, "libtinywrapper.so") == 0) {

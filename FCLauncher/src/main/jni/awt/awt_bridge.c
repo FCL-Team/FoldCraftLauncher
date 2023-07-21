@@ -14,7 +14,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         dalvikJavaVMPtr = vm;
         JNIEnv *env = NULL;
         (*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_4);
-        class_FCLBridge = fcl.class_FCLBridge;
+        class_FCLBridge = fcl->class_FCLBridge;
         method_OpenLink = (*env)->GetStaticMethodID(env, class_FCLBridge, "openLink",
                                                     "(Ljava/lang/String;)V");
     }

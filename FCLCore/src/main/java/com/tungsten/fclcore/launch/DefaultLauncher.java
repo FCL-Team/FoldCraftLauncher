@@ -396,7 +396,8 @@ public class DefaultLauncher extends Launcher {
                 options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
                 repository.getRunDirectory(version.getId()).getAbsolutePath(),
                 renderer,
-                finalArgs);
+                finalArgs,
+                version.getMinimumLauncherVersion() >= 21);
         return FCLauncher.launchMinecraft(config);
     }
 }

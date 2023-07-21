@@ -34,7 +34,7 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
     (*env)->DeleteLocalRef(env, argBlock);
 
     FCL_INTERNAL_LOG("forkAndExec:%s", cs);
-    JavaVM *androidVm = fcl.android_jvm;
+    JavaVM *androidVm = fcl->android_jvm;
     JNIEnv *androidEnv = NULL;
     char detachable = 0;
     if ((*androidVm)->GetEnv(androidVm, (void **) &androidEnv, JNI_VERSION_1_2) == JNI_EDETACHED) {
@@ -44,9 +44,9 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
     if (!androidEnv) {
         FCL_INTERNAL_LOG("forkAndExec error:androidEnv in null");
     }
-    jmethodID method_OpenLink = (*androidEnv)->GetStaticMethodID(androidEnv, fcl.class_FCLBridge, "openLink",
+    jmethodID method_OpenLink = (*androidEnv)->GetStaticMethodID(androidEnv, fcl->class_FCLBridge, "openLink",
                                                           "(Ljava/lang/String;)V");
-    (*androidEnv)->CallStaticVoidMethod(androidEnv, fcl.class_FCLBridge, method_OpenLink,
+    (*androidEnv)->CallStaticVoidMethod(androidEnv, fcl->class_FCLBridge, method_OpenLink,
                                         (*androidEnv)->NewStringUTF(androidEnv, cs));
     if (detachable) (*androidVm)->DetachCurrentThread(androidVm);
 
