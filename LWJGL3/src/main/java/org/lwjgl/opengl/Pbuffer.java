@@ -52,7 +52,7 @@ public final class Pbuffer extends DrawableGL {
 	/**
 	 * Indicates that Pbuffers can be created.
 	 */
-	public static final int PBUFFER_SUPPORTED = 1 << 0;
+	public static final int PBUFFER_SUPPORTED = 0;
 
 	/**
 	 * Indicates that Pbuffers can be used as render-textures.
@@ -222,7 +222,6 @@ public final class Pbuffer extends DrawableGL {
 			shared_drawable = Display.getDrawable(); // May be null
 		if (shared_drawable != null)
 			shared_context = ((DrawableLWJGL)shared_drawable).getContext();
-		this.context = new ContextGL(peer_info, attribs, (ContextGL)shared_context);
 	}
 
 	private static PeerInfo createPbuffer(int width, int height, PixelFormat pixel_format, ContextAttribs attribs, RenderTexture renderTexture) throws LWJGLException {
