@@ -5,15 +5,19 @@
  */
 package org.lwjgl.opengl;
 
-import javax.annotation.*;
+import static org.lwjgl.system.Checks.checkFunctions;
 
-import java.nio.*;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.NativeType;
 
-import org.lwjgl.*;
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 
-import org.lwjgl.system.*;
-
-import static org.lwjgl.system.Checks.*;
+import javax.annotation.Nullable;
 
 /**
  * The OpenGL functionality up to version 1.5. Includes the deprecated symbols of the Compatibility Profile.
@@ -124,7 +128,7 @@ public class GL15 extends GL14 {
             caps.glIsQuery, caps.glBeginQuery, caps.glEndQuery, caps.glGetQueryiv, caps.glGetQueryObjectiv, caps.glGetQueryObjectuiv
         );
     }
-
+    
     // --- [ glBindBuffer ] ---
 
     /**

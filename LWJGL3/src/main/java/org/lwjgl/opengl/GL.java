@@ -630,8 +630,14 @@ public final class GL {
             throw new IllegalStateException("OpenGL library has not been loaded.");
         }
 
-        int majorVersion;
-        int minorVersion;
+        int majorVersion = 1;
+        int minorVersion = 4;
+
+		Set<String> supportedExtensions = new HashSet<>(32);
+		
+		int[][] GLX_VERSIONS = {
+			{1, 2, 3, 4}
+		};
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer piMajor = stack.ints(0);
@@ -647,23 +653,17 @@ public final class GL {
                 throw new IllegalStateException("Invalid GLX major version: " + majorVersion);
             }
         }
+		
+		for (int major = 1; major <= GLX_VERSIONS.length; major++) {
+			int[] minors = GLX_VERSIONS[major - 1];
+			for (int minor : minors) {
+				if (major < majorVersion || (major == majorVersion && minor <= minorVersion)) {
+					supportedExtensions.add("GLX" + major + minor);
+				}
+			}
+		}
 
-        Set<String> supportedExtensions = new HashSet<>(32);
-
-        int[][] GLX_VERSIONS = {
-            {1, 2, 3, 4}
-        };
-
-        for (int major = 1; major <= GLX_VERSIONS.length; major++) {
-            int[] minors = GLX_VERSIONS[major - 1];
-            for (int minor : minors) {
-                if (major < majorVersion || (major == majorVersion && minor <= minorVersion)) {
-                    supportedExtensions.add("GLX" + major + minor);
-                }
-            }
-        }
-
-        if (1 <= minorVersion) {
+		if (1 <= minorVersion) {
             String extensionsString;
 
             if (screen == -1) {

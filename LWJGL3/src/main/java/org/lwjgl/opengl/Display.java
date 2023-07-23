@@ -898,16 +898,6 @@ public class Display {
     }
 
     public static int setIcon(ByteBuffer[] icons) {
-        try {
-            if (Window.handle == MemoryUtil.NULL) {
-                Display.icons = new GLFWImage.Buffer(icons[1]);
-            } else {
-                glfwSetWindowIcon(Window.handle, new GLFWImage.Buffer(icons[0]));
-            }
-        } catch (Exception e) {
-            LWJGLUtil.log("Couldn't set icon");
-            e.printStackTrace();
-        }
         return 0;
     }
 

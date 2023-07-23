@@ -245,11 +245,10 @@ public class Keyboard {
 					keyMap.put(name, key);
 					counter++;
 				}
-
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 	}
 
 	/** The number of keys supported */
@@ -477,7 +476,7 @@ public class Keyboard {
 	 * @see Keyboard#getEventKey()
 	 */
 	public static void enableRepeatEvents(boolean enable) {
-			repeat_enabled = enable;
+		repeat_enabled = enable;
 	}
 
 	/**
@@ -487,7 +486,7 @@ public class Keyboard {
 	 * @see Keyboard#getEventKey()
 	 */
 	public static boolean areRepeatEventsEnabled() {
-			return repeat_enabled;
+		return repeat_enabled;
 	}
 
 	private static boolean readNext(KeyEvent event) {
@@ -513,7 +512,7 @@ public class Keyboard {
 	 * @return The character from the current event
 	 */
 	public static char getEventCharacter() {
-			return (char)current_event.character;
+		return (char)current_event.character;
 	}
 
 	/**
@@ -524,7 +523,7 @@ public class Keyboard {
 	 * @return The key from the current event
 	 */
 	public static int getEventKey() {
-			return current_event.key;
+		return current_event.key;
 	}
 
 	/**
@@ -534,7 +533,7 @@ public class Keyboard {
 	 * @return True if key was down, or false if released
 	 */
 	public static boolean getEventKeyState() {
-			return current_event.state;
+		return current_event.state;
 	}
 
 	/**
@@ -545,7 +544,7 @@ public class Keyboard {
 	 * @return The time in nanoseconds of the current event
 	 */
 	public static long getEventNanoseconds() {
-			return current_event.nanos;
+		return current_event.nanos;
 	}
 
 	/**
@@ -554,7 +553,7 @@ public class Keyboard {
 	 * the current event is not a repeat even or if repeat events are disabled.
 	 */
 	public static boolean isRepeatEvent() {
-			return current_event.repeat;
+		return current_event.repeat;
 	}
 
 	private static final class KeyEvent {

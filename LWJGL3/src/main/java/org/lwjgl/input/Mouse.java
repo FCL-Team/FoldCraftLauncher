@@ -65,7 +65,7 @@ import java.util.Map;
  */
 public class Mouse {
     /** Internal use - event size in bytes */
-    public static final int	EVENT_SIZE									= 1 + 1 + 4 + 4 + 4 + 8;
+    public static final int	EVENT_SIZE = 1 + 1 + 4 + 4 + 4 + 8;
 
     /** Has the mouse been created? */
     private static boolean		created;
@@ -110,7 +110,7 @@ public class Mouse {
     private static String[]		buttonName;
 
     /** hashmap of button names, for fast lookup */
-    private static final Map<String, Integer>	buttonMap									= new HashMap<String, Integer>(16);
+    private static final Map<String, Integer> buttonMap = new HashMap<String, Integer>(16);
 
     /** Lazy initialization */
     private static boolean		initialized;
@@ -147,10 +147,6 @@ public class Mouse {
     private static InputImplementation implementation;
     private static EmptyCursorGrabListener grabListener = null;
 
-    /** Whether we need cursor animation emulation */
-    private static final boolean emulateCursorAnimation = 	LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_WINDOWS ||
-            LWJGLUtil.getPlatform() == LWJGLUtil.PLATFORM_MACOSX;
-
     private static  boolean clipMouseCoordinatesToWindow = !getPrivilegedBoolean("org.lwjgl.input.Mouse.allowNegativeMouseCoords");
 
     static {
@@ -158,7 +154,7 @@ public class Mouse {
             Class infdevMouse = Class.forName("org.lwjgl.input.InfdevMouse");
             Constructor constructor = infdevMouse.getConstructor();
             grabListener = (EmptyCursorGrabListener) constructor.newInstance();
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -175,7 +171,7 @@ public class Mouse {
      * @return the currently bound native cursor, if any.
      */
     public static Cursor getNativeCursor() {
-            return currentCursor;
+        return currentCursor;
     }
 
     /**
@@ -192,11 +188,11 @@ public class Mouse {
      */
     public static Cursor setNativeCursor(Cursor cursor) throws LWJGLException {
         //dummy
-        if(cursor == null && currentCursor.isEmpty()) {
+        if (cursor == null && currentCursor.isEmpty()) {
             Mouse.setGrabbed(false);
             if(grabListener != null) grabListener.onGrab(false);
         }
-        if(cursor != null && cursor.isEmpty()) {
+        if (cursor != null && cursor.isEmpty()) {
             Mouse.setGrabbed(true);
             if(grabListener != null) grabListener.onGrab(true);
         }
@@ -222,7 +218,8 @@ public class Mouse {
      *			to the window origin.
      */
     public static void setCursorPosition(int new_x, int new_y) {
-            //dummy
+        //dummy
+        LWJGLUtil.log("setCursorPosition");
     }
 
     /**
@@ -285,28 +282,28 @@ public class Mouse {
      * @throws LWJGLException if the mouse could not be created for any reason
      */
     public static void create() throws LWJGLException {
-            if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
+        if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
 
-            create((InputImplementation) GLFWInputImplementation.singleton);
+        create((InputImplementation) GLFWInputImplementation.singleton);
     }
 
     /**
      * @return true if the mouse has been created
      */
     public static boolean isCreated() {
-            return created;
+        return created;
     }
 
     /**
      * "Destroy" the mouse.
      */
     public static void destroy() {
-            if (!created) return;
-            created = false;
-            buttons = null;
-            coord_buffer = null;
+        if (!created) return;
+        created = false;
+        buttons = null;
+        coord_buffer = null;
 
-            implementation.destroyMouse();
+        implementation.destroyMouse();
     }
 
     /**
@@ -334,36 +331,36 @@ public class Mouse {
      * @see Mouse#getDWheel()
      */
     public static void poll() {
-            if (!created) throw new IllegalStateException("Mouse must be created before you can poll it");
-            implementation.pollMouse(coord_buffer, buttons);
+        if (!created) throw new IllegalStateException("Mouse must be created before you can poll it");
+        implementation.pollMouse(coord_buffer, buttons);
 
-            /* If we're grabbed, poll returns mouse deltas, if not it returns absolute coordinates */
-            int poll_coord1 = coord_buffer.get(0);
-            int poll_coord2 = coord_buffer.get(1);
-            /* The wheel is always relative */
-            int poll_dwheel = coord_buffer.get(2);
+        /* If we're grabbed, poll returns mouse deltas, if not it returns absolute coordinates */
+        int poll_coord1 = coord_buffer.get(0);
+        int poll_coord2 = coord_buffer.get(1);
+        /* The wheel is always relative */
+        int poll_dwheel = coord_buffer.get(2);
 
-            if (isGrabbed()) {
-                dx += poll_coord1;
-                dy += poll_coord2;
-                x += poll_coord1;
-                y += poll_coord2;
-                absolute_x += poll_coord1;
-                absolute_y += poll_coord2;
-            } else {
-                dx = poll_coord1 - absolute_x;
-                dy = poll_coord2 - absolute_y;
-                absolute_x = x = poll_coord1;
-                absolute_y = y = poll_coord2;
-            }
+        if (isGrabbed()) {
+            dx += poll_coord1;
+            dy += poll_coord2;
+            x += poll_coord1;
+            y += poll_coord2;
+            absolute_x += poll_coord1;
+            absolute_y += poll_coord2;
+        } else {
+            dx = poll_coord1 - absolute_x;
+            dy = poll_coord2 - absolute_y;
+            absolute_x = x = poll_coord1;
+            absolute_y = y = poll_coord2;
+        }
 
-            if(clipMouseCoordinatesToWindow) {
-                x = Math.min(Display.getWidth() - 1, Math.max(0, x));
-                y = Math.min(Display.getHeight() - 1, Math.max(0, y));
-            }
+        if (clipMouseCoordinatesToWindow) {
+            x = Math.min(Display.getWidth() - 1, Math.max(0, x));
+            y = Math.min(Display.getHeight() - 1, Math.max(0, y));
+        }
 
-            dwheel += poll_dwheel;
-            read();
+        dwheel += poll_dwheel;
+        read();
     }
 
     private static void read() {
@@ -379,11 +376,11 @@ public class Mouse {
      * @return true if the specified button is down
      */
     public static boolean isButtonDown(int button) {
-            if (!created) throw new IllegalStateException("Mouse must be created before you can poll the button state");
-            if (button >= buttonCount || button < 0)
-                return false;
-            else
-                return buttons.get(button) == 1;
+        if (!created) throw new IllegalStateException("Mouse must be created before you can poll the button state");
+        if (button >= buttonCount || button < 0)
+            return false;
+        else
+            return buttons.get(button) == 1;
     }
 
     /**
@@ -392,10 +389,10 @@ public class Mouse {
      * @return a String with the button's human readable name in it or null if the button is unnamed
      */
     public static String getButtonName(int button) {
-            if (button >= buttonName.length || button < 0)
-                return null;
-            else
-                return buttonName[button];
+        if (button >= buttonName.length || button < 0)
+            return null;
+        else
+            return buttonName[button];
     }
 
     /**
@@ -403,11 +400,11 @@ public class Mouse {
      * @param buttonName The button name
      */
     public static int getButtonIndex(String buttonName) {
-            Integer ret = buttonMap.get(buttonName);
-            if (ret == null)
-                return -1;
-            else
-                return ret;
+        Integer ret = buttonMap.get(buttonName);
+        if (ret == null)
+            return -1;
+        else
+            return ret;
     }
 
     /**
@@ -420,44 +417,44 @@ public class Mouse {
      * @return true if a mouse event was read, false otherwise
      */
     public static boolean next() {
-            if (!created) throw new IllegalStateException("Mouse must be created before you can read events");
-            if (readBuffer.hasRemaining()) {
+        if (!created) throw new IllegalStateException("Mouse must be created before you can read events");
+        if (readBuffer.hasRemaining()) {
 
-                eventButton = readBuffer.get();
-                eventState = readBuffer.get() != 0;
-                if (isGrabbed()) {
-                    event_dx = readBuffer.getInt();
-                    event_dy = readBuffer.getInt();
-                    event_x += event_dx;
-                    event_y += event_dy;
-                    last_event_raw_x = event_x;
-                    last_event_raw_y = event_y;
-                } else {
-                    int new_event_x = readBuffer.getInt();
-                    int new_event_y = readBuffer.getInt();
-                    event_dx = new_event_x - last_event_raw_x;
-                    event_dy = new_event_y - last_event_raw_y;
-                    event_x = new_event_x;
-                    event_y = new_event_y;
-                    last_event_raw_x = new_event_x;
-                    last_event_raw_y = new_event_y;
-                }
-                if(clipMouseCoordinatesToWindow) {
-                    event_x = Math.min(Display.getWidth() - 1, Math.max(0, event_x));
-                    event_y = Math.min(Display.getHeight() - 1, Math.max(0, event_y));
-                }
-                event_dwheel = readBuffer.getInt();
-                event_nanos = readBuffer.getLong();
-                return true;
-            } else
-                return false;
+            eventButton = readBuffer.get();
+            eventState = readBuffer.get() != 0;
+            if (isGrabbed()) {
+                event_dx = readBuffer.getInt();
+                event_dy = readBuffer.getInt();
+                event_x += event_dx;
+                event_y += event_dy;
+                last_event_raw_x = event_x;
+                last_event_raw_y = event_y;
+            } else {
+                int new_event_x = readBuffer.getInt();
+                int new_event_y = readBuffer.getInt();
+                event_dx = new_event_x - last_event_raw_x;
+                event_dy = new_event_y - last_event_raw_y;
+                event_x = new_event_x;
+                event_y = new_event_y;
+                last_event_raw_x = new_event_x;
+                last_event_raw_y = new_event_y;
+            }
+            if(clipMouseCoordinatesToWindow) {
+                event_x = Math.min(Display.getWidth() - 1, Math.max(0, event_x));
+                event_y = Math.min(Display.getHeight() - 1, Math.max(0, event_y));
+            }
+            event_dwheel = readBuffer.getInt();
+            event_nanos = readBuffer.getLong();
+            return true;
+        } else
+            return false;
     }
 
     /**
      * @return Current events button. Returns -1 if no button state was changed
      */
     public static int getEventButton() {
-            return eventButton;
+        return eventButton;
     }
 
     /**
@@ -465,42 +462,42 @@ public class Mouse {
      * @return Current events button state.
      */
     public static boolean getEventButtonState() {
-            return eventState;
+        return eventState;
     }
 
     /**
      * @return Current events delta x.
      */
     public static int getEventDX() {
-            return event_dx;
+        return event_dx;
     }
 
     /**
      * @return Current events delta y.
      */
     public static int getEventDY() {
-            return event_dy;
+        return event_dy;
     }
 
     /**
      * @return Current events absolute x.
      */
     public static int getEventX() {
-            return event_x;
+        return event_x;
     }
 
     /**
      * @return Current events absolute y.
      */
     public static int getEventY() {
-            return event_y;
+        return event_y;
     }
 
     /**
      * @return Current events delta z
      */
     public static int getEventDWheel() {
-            return event_dwheel;
+        return event_dwheel;
     }
 
     /**
@@ -512,7 +509,7 @@ public class Mouse {
      * @return The time in nanoseconds of the current event
      */
     public static long getEventNanoseconds() {
-            return event_nanos;
+        return event_nanos;
     }
 
     /**
@@ -522,7 +519,7 @@ public class Mouse {
      * @return Absolute x axis position of mouse
      */
     public static int getX() {
-            return x;
+        return x;
     }
 
     /**
@@ -532,55 +529,55 @@ public class Mouse {
      * @return Absolute y axis position of mouse
      */
     public static int getY() {
-            return y;
+        return y;
     }
 
     /**
      * @return Movement on the x axis since last time getDX() was called.
      */
     public static int getDX() {
-            int result = dx;
-            dx = 0;
-            return result;
+        int result = dx;
+        dx = 0;
+        return result;
     }
 
     /**
      * @return Movement on the y axis since last time getDY() was called.
      */
     public static int getDY() {
-            int result = dy;
-            dy = 0;
-            return result;
+        int result = dy;
+        dy = 0;
+        return result;
     }
 
     /**
      * @return Movement of the wheel since last time getDWheel() was called
      */
     public static int getDWheel() {
-            int result = dwheel;
-            dwheel = 0;
-            return result;
+        int result = dwheel;
+        dwheel = 0;
+        return result;
     }
 
     /**
      * @return Number of buttons on this mouse
      */
     public static int getButtonCount() {
-            return buttonCount;
+        return buttonCount;
     }
 
     /**
      * @return Whether or not this mouse has wheel support
      */
     public static boolean hasWheel() {
-            return hasWheel;
+        return hasWheel;
     }
 
     /**
      * @return whether or not the mouse has grabbed the cursor
      */
     public static boolean isGrabbed() {
-            return isGrabbed;
+        return isGrabbed;
     }
 
     /**
@@ -592,29 +589,29 @@ public class Mouse {
      * @param grab whether the mouse should be grabbed
      */
     public static void setGrabbed(boolean grab) {
-            boolean grabbed = isGrabbed;
-            isGrabbed = grab;
-            if (isCreated()) {
-                //if (grab && !grabbed) {
-                    // store location mouse was grabbed
-                //    grab_x = x;
-                //    grab_y = y;
-                }
-                //else if (!grab && grabbed) {
-                //    // move mouse back to location it was grabbed before ungrabbing
-                //    if ((Cursor.getCapabilities() & Cursor.CURSOR_ONE_BIT_TRANSPARENCY) != 0)
-                //        implementation.setCursorPosition(grab_x, grab_y);
-                //}
+        boolean grabbed = isGrabbed;
+        isGrabbed = grab;
+        if (isCreated()) {
+            //if (grab && !grabbed) {
+            // store location mouse was grabbed
+            //    grab_x = x;
+            //    grab_y = y;
+        }
+        //else if (!grab && grabbed) {
+        //    // move mouse back to location it was grabbed before ungrabbing
+        //    if ((Cursor.getCapabilities() & Cursor.CURSOR_ONE_BIT_TRANSPARENCY) != 0)
+        //        implementation.setCursorPosition(grab_x, grab_y);
+        //}
 
-                implementation.grabMouse(grab);
-                // Get latest values from native side
-                poll();
-                event_x = x;
-                event_y = y;
-                last_event_raw_x = x;
-                last_event_raw_y = y;
-                resetMouse();
-            }
+        implementation.grabMouse(grab);
+        // Get latest values from native side
+        poll();
+        event_x = x;
+        event_y = y;
+        last_event_raw_x = x;
+        last_event_raw_y = y;
+        resetMouse();
+    }
 
     /**
      * Updates the cursor, so that animation can be changed if needed.
@@ -622,7 +619,7 @@ public class Mouse {
      * shouldn't be called otherwise
      */
     public static void updateCursor() {
-            //dummy
+        //dummy
     }
 
     /** Gets a boolean property as a privileged action. */
