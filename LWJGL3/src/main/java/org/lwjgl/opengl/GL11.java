@@ -35,6 +35,226 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class GL11 {
 
+    public static void glColorPointer(int size, boolean unsigned, int stride, java.nio.ByteBuffer pointer) {
+        glColorPointer(size, unsigned ? GL11.GL_UNSIGNED_BYTE : GL11.GL_BYTE, stride, pointer);
+    }
+
+    public static void glColorPointer(int size, int stride, FloatBuffer pointer) {
+        glColorPointer(size, GL11.GL_FLOAT, stride, pointer);
+    }
+
+    public static void glFog(int p1, java.nio.FloatBuffer p2) {
+        glFogfv(p1, p2);
+    }
+
+    public static void glFog(int p1, java.nio.IntBuffer p2) {
+        glFogiv(p1, p2);
+    }
+
+    public static void glGetBoolean(int p1, java.nio.ByteBuffer p2) {
+        glGetBooleanv(p1, p2);
+    }
+
+    public static void glGetDouble(int p1, java.nio.DoubleBuffer p2) {
+        glGetDoublev(p1, p2);
+    }
+
+    public static void glGetFloat(int p1, FloatBuffer p2) {
+        glGetFloatv(p1, p2);
+    }
+
+    public static void glGetInteger(int p1, IntBuffer p2) {
+        glGetIntegerv(p1, p2);
+    }
+
+    public static void glGetLight(int p1, int p2, FloatBuffer p3) {
+        glGetLightfv(p1, p2, p3);
+    }
+
+    public static void glGetLight(int p1, int p2, IntBuffer p3) {
+        glGetLightiv(p1, p2, p3);
+    }
+
+    public static void glGetMap(int p1, int p2, DoubleBuffer p3) {
+        glGetMapdv(p1, p2, p3);
+    }
+
+    public static void glGetMap(int p1, int p2, FloatBuffer p3) {
+        glGetMapfv(p1, p2, p3);
+    }
+
+    public static void glGetMap(int p1, int p2, IntBuffer p3) {
+        glGetMapiv(p1, p2, p3);
+    }
+
+    public static void glGetMaterial(int p1, int p2, FloatBuffer p3) {
+        glGetMaterialfv(p1, p2, p3);
+    }
+
+    public static void glGetMaterial(int p1, int p2, IntBuffer p3) {
+        glGetMaterialiv(p1, p2, p3);
+    }
+
+    public static void glGetPixelMap(int p1, FloatBuffer p2) {
+        glGetPixelMapfv(p1, p2);
+    }
+
+    public static void glGetPixelMapu(int p1, IntBuffer p2) {
+        glGetPixelMapuiv(p1, p2);
+    }
+
+    public static void glGetPixelMapu(int p1, ShortBuffer p2) {
+        glGetPixelMapusv(p1, p2);
+    }
+
+    public static void glGetTexEnv(int p1, int p2, FloatBuffer p3) {
+        glGetTexEnvfv(p1, p2, p3);
+    }
+
+    public static void glGetTexEnv(int p1, int p2, IntBuffer p3) {
+        glGetTexEnviv(p1, p2, p3);
+    }
+
+    public static void glGetTexGen(int p1, int p2, DoubleBuffer p3) {
+        glGetTexGendv(p1, p2, p3);
+    }
+
+    public static void glGetTexGen(int p1, int p2, FloatBuffer p3) {
+        glGetTexGenfv(p1, p2, p3);
+    }
+
+    public static void glGetTexGen(int p1, int p2, IntBuffer p3) {
+        glGetTexGeniv(p1, p2, p3);
+    }
+
+    public static void glGetTexLevelParameter(int target, int level, int pname, FloatBuffer params) {
+        glGetTexLevelParameterfv(target, level, pname, params);
+    }
+
+    public static void glGetTexLevelParameter(int target, int level, int pname, IntBuffer params) {
+        glGetTexLevelParameteriv(target, level, pname, params);
+    }
+
+    public static void glGetTexParameter(int target, int pname, FloatBuffer params) {
+        glGetTexParameterfv(target, pname, params);
+    }
+
+    public static void glGetTexParameter(int target, int pname, IntBuffer params) {
+        glGetTexParameteriv(target, pname, params);
+    }
+
+    public static void glLight(int light, int pname, FloatBuffer params) {
+        glLightfv(light, pname, params);
+    }
+
+    public static void glLight(int light, int pname, IntBuffer params) {
+        glLightiv(light, pname, params);
+    }
+
+    public static void glLightModel(int pname, FloatBuffer params) {
+        glLightModelfv(pname, params);
+    }
+
+    public static void glLightModel(int pname, IntBuffer params) {
+        glLightModeliv(pname, params);
+    }
+
+    public static void glLoadMatrix(DoubleBuffer m) {
+        glLoadMatrixd(m);
+    }
+
+    public static void glLoadMatrix(FloatBuffer m) {
+        glLoadMatrixf(m);
+    }
+
+    public static void glMaterial(int p1, int p2, java.nio.FloatBuffer p3) {
+        glMaterialfv(p1, p2, p3);
+    }
+
+    public static void glMaterial(int p1, int p2, java.nio.IntBuffer p3) {
+        glMaterialiv(p1, p2, p3);
+    }
+
+    public static void glMultMatrix(java.nio.DoubleBuffer p1) {
+        glMultMatrixd(p1);
+    }
+
+    public static void glMultMatrix(java.nio.FloatBuffer p1) {
+        glMultMatrixf(p1);
+    }
+
+    public static void glNormalPointer(int stride, ByteBuffer pointer) {
+        glNormalPointer(GL11.GL_BYTE, stride, pointer);
+    }
+
+    public static void glNormalPointer(int stride, FloatBuffer pointer) {
+        glNormalPointer(GL11.GL_FLOAT, stride, pointer);
+    }
+
+    public static void glNormalPointer(int stride, IntBuffer pointer) {
+        glNormalPointer(GL11.GL_INT, stride, pointer);
+    }
+
+    public static void glNormalPointer(int stride, ShortBuffer pointer) {
+        glNormalPointer(GL11.GL_SHORT, stride, pointer);
+    }
+
+    public static void glPixelMap(int p1, java.nio.FloatBuffer p2) {
+        glPixelMapfv(p1, p2);
+    }
+
+    public static void glPixelMapu(int p1, java.nio.IntBuffer p2) {
+        glPixelMapuiv(p1, p2);
+    }
+
+    public static void glPixelMapu(int p1, java.nio.ShortBuffer p2) {
+        glPixelMapusv(p1, p2);
+    }
+
+    public static void glTexCoordPointer(int size, int stride, FloatBuffer pointer) {
+        glTexCoordPointer(size, GL11.GL_FLOAT, stride, pointer);
+    }
+
+    public static void glTexCoordPointer(int size, int stride, IntBuffer pointer) {
+        glTexCoordPointer(size, GL11.GL_INT, stride, pointer);
+    }
+
+    public static void glTexCoordPointer(int size, int stride, ShortBuffer pointer) {
+        glTexCoordPointer(size, GL11.GL_SHORT, stride, pointer);
+    }
+
+    public static void glTexEnv(int p1, int p2, java.nio.FloatBuffer p3) {
+        glTexEnvfv(p1, p2, p3);
+    }
+
+    public static void glTexEnv(int p1, int p2, java.nio.IntBuffer p3) {
+        glTexEnviv(p1, p2, p3);
+    }
+
+    public static void glTexGen(int p1, int p2, java.nio.DoubleBuffer p3) {
+        glTexGendv(p1, p2, p3);
+    }
+
+    public static void glTexGen(int p1, int p2, java.nio.FloatBuffer p3) {
+        glTexGenfv(p1, p2, p3);
+    }
+
+    public static void glTexGen(int p1, int p2, java.nio.IntBuffer p3) {
+        glTexGeniv(p1, p2, p3);
+    }
+
+    public static void glVertexPointer(int size, int stride, FloatBuffer pointer) {
+        glVertexPointer(size, GL11.GL_FLOAT, stride, pointer);
+    }
+
+    public static void glVertexPointer(int size, int stride, IntBuffer pointer) {
+        glVertexPointer(size, GL11.GL_INT, stride, pointer);
+    }
+
+    public static void glVertexPointer(int size, int stride, ShortBuffer pointer) {
+        glVertexPointer(size, GL11.GL_SHORT, stride, pointer);
+    }
+
     /** AccumOp */
     public static final int
         GL_ACCUM  = 0x100,

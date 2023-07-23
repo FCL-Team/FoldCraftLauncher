@@ -19,6 +19,50 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Native bindings to AL 1.0 functionality. */
 public class AL10 {
 
+    public static void alGetDouble(int p1, DoubleBuffer p2) {
+        alGetDoublev(p1, p2);
+    }
+
+    public static void alGetFloat(int p1, FloatBuffer p2) {
+        alGetFloatv(p1, p2);
+    }
+
+    public static void alGetInteger(int p1, IntBuffer p2) {
+        alGetIntegerv(p1, p2);
+    }
+
+    public static void alGetListener(int p1, FloatBuffer p2) {
+        alGetListenerfv(p1, p2);
+    }
+
+    public static void alGetSource(int p1, int p2, FloatBuffer p3) {
+        alGetSourcefv(p1, p2, p3);
+    }
+
+    public static void alListener(int pname, FloatBuffer value) {
+        alListenerfv(pname, value);
+    }
+
+    public static void alSource(int p1, int p2, FloatBuffer p3) {
+        alSourcefv(p1, p2, p3);
+    }
+
+    public static void alSourcePause(IntBuffer p1) {
+        alSourcePausev(p1);
+    }
+
+    public static void alSourcePlay(IntBuffer p1) {
+        alSourcePlayv(p1);
+    }
+
+    public static void alSourceRewind(IntBuffer p1) {
+        alSourceRewindv(p1);
+    }
+
+    public static void alSourceStop(IntBuffer p1) {
+        alSourceStopv(p1);
+    }
+
     /** General tokens. */
     public static final int
         AL_INVALID = 0xFFFFFFFF,

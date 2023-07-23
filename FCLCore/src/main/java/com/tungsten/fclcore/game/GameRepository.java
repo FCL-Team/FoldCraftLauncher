@@ -219,11 +219,15 @@ public interface GameRepository extends VersionProvider {
 
     default Set<String> getClasspath(Version version) {
         Set<String> classpath = new LinkedHashSet<>();
+        classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl.jar");
+        /*
         if (version.getMinimumLauncherVersion() >= 21) {
             classpath.add(FCLPath.LWJGL3_DIR + "/lwjgl.jar");
         } else {
             classpath.add(FCLPath.LWJGL2_DIR + "/lwjgl.jar");
         }
+
+         */
         for (Library library : version.getLibraries())
             if (library.appliesToCurrentEnvironment() && !library.isNative()) {
                 File f = getLibraryFile(version, library);

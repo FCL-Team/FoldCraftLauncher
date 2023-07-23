@@ -16,6 +16,136 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** This class is a container for architecture-independent pointer data. Its interface mirrors the {@link LongBuffer} API for convenience. */
 public class PointerBuffer extends CustomBuffer<PointerBuffer> implements Comparable<PointerBuffer> {
 
+    public PointerBuffer(final int capacity) {
+        this(allocateDirect(capacity));
+    }
+
+    public PointerBuffer(final ByteBuffer source) {
+        this(create(source));
+    }
+
+    protected PointerBuffer(PointerBuffer copy) {
+        this(copy.address0(), copy.container, copy.mark, copy.position, copy.limit, copy.capacity);
+    }
+
+    /**
+     * Returns the ByteBuffer that backs this PointerBuffer.
+     *
+     * @return the pointer ByteBuffer
+     */
+    public ByteBuffer getBuffer() {
+        return container;
+    }
+
+    /** Returns true if the underlying architecture is 64bit. */
+    public static boolean is64Bit() {
+        return POINTER_SIZE == 8;
+    }
+
+    /**
+     * Returns the pointer size in bytes, based on the underlying architecture.
+     *
+     * @return The pointer size in bytes
+     */
+    public static int getPointerSize() {
+        return POINTER_SIZE;
+    }
+
+    /**
+     * Returns this buffer's position, in bytes. </p>
+     *
+     * @return The position of this buffer in bytes.
+     */
+    public final int positionByte() {
+        return position() * getPointerSize();
+    }
+
+    /**
+     * Returns the number of bytes between the current position and the
+     * limit. </p>
+     *
+     * @return The number of bytes remaining in this buffer
+     */
+    public final int remainingByte() {
+        return remaining() * getPointerSize();
+    }
+
+    /**
+     * Creates a new, read-only pointer buffer that shares this buffer's
+     * content.
+     * <p/>
+     * <p> The content of the new buffer will be that of this buffer.  Changes
+     * to this buffer's content will be visible in the new buffer; the new
+     * buffer itself, however, will be read-only and will not allow the shared
+     * content to be modified.  The two buffers' position, limit, and mark
+     * values will be independent.
+     * <p/>
+     * <p> The new buffer's capacity, limit and position will be
+     * identical to those of this buffer.
+     * <p/>
+     * <p> If this buffer is itself read-only then this method behaves in
+     * exactly the same way as the {@link #duplicate duplicate} method.  </p>
+     *
+     * @return The new, read-only pointer buffer
+     */
+    public PointerBuffer asReadOnlyBuffer() {
+        final PointerBuffer buffer = new PointerBufferR(container);
+
+        buffer.position(position());
+        buffer.limit(limit());
+
+        return buffer;
+    }
+
+    public boolean isReadOnly() {
+        return false;
+    }
+
+    /**
+     * Read-only version of PointerBuffer.
+     *
+     * @author Spasi
+     */
+    private static final class PointerBufferR extends PointerBuffer {
+
+        PointerBufferR(final ByteBuffer source) {
+            super(source);
+        }
+
+        public boolean isReadOnly() {
+            return true;
+        }
+
+        protected PointerBuffer newInstance(final ByteBuffer source) {
+            return new PointerBufferR(source);
+        }
+
+        public PointerBuffer asReadOnlyBuffer() {
+            return duplicate();
+        }
+
+        public PointerBuffer put(final long l) {
+            throw new ReadOnlyBufferException();
+        }
+
+        public PointerBuffer put(final int index, final long l) {
+            throw new ReadOnlyBufferException();
+        }
+
+        public PointerBuffer put(final PointerBuffer src) {
+            throw new ReadOnlyBufferException();
+        }
+
+        public PointerBuffer put(final long[] src, final int offset, final int length) {
+            throw new ReadOnlyBufferException();
+        }
+
+        public PointerBuffer compact() {
+            throw new ReadOnlyBufferException();
+        }
+
+    }
+
     protected PointerBuffer(long address, @Nullable ByteBuffer container, int mark, int position, int limit, int capacity) {
         super(address, container, mark, position, limit, capacity);
     }

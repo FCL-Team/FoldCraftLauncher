@@ -38,7 +38,6 @@ public final class JNI {
 
     // Pointer API
 
-    public static native String invokeString(int param0, long __functionAddress);
     public static native double invokeD(long __functionAddress);
     public static native double invokeD(int param0, long __functionAddress);
     public static native double invokePD(long param0, int param1, long __functionAddress);
@@ -175,6 +174,7 @@ public final class JNI {
     public static native int callPPI(long param0, long param1, long __functionAddress);
     public static native int callPJI(long param0, int param1, long param2, long __functionAddress);
     public static native int callPJI(long param0, long param1, int param2, long __functionAddress);
+    public static native int callJPI(long param0, long param1, int param2, int param3, int param4, long __functionAddress);
     public static native int callPPI(int param0, long param1, long param2, long __functionAddress);
     public static native int callPPI(long param0, int param1, long param2, long __functionAddress);
     public static native int callPPI(long param0, long param1, float param2, long __functionAddress);

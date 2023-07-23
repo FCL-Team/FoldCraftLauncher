@@ -65,6 +65,44 @@ public final class BufferUtils {
     private BufferUtils() {}
 
     /**
+     * @return n, where buffer_element_size=2^n.
+     */
+    public static int getElementSizeExponent(Buffer buf) {
+        if (buf instanceof ByteBuffer)
+            return 0;
+        else if (buf instanceof ShortBuffer || buf instanceof CharBuffer)
+            return 1;
+        else if (buf instanceof FloatBuffer || buf instanceof IntBuffer)
+            return 2;
+        else if (buf instanceof LongBuffer || buf instanceof DoubleBuffer)
+            return 3;
+        else
+            throw new IllegalStateException("Unsupported buffer type: " + buf);
+    }
+
+    /**
+     * A helper function which is used to get the byte offset in an arbitrary buffer
+     * based on its position
+     * @return the position of the buffer, in BYTES
+     */
+    public static int getOffset(Buffer buffer) {
+        return buffer.position() << getElementSizeExponent(buffer);
+    }
+
+    /**
+     * Returns the memory address of the specified buffer.
+     *
+     * @param buffer
+     *            the buffer
+     *
+     * @return the memory address
+     */
+    static long getBufferAddress(Buffer buffer) {
+        // Should be below or memAddress0() ?
+        return memAddress(buffer);
+    }
+
+    /**
      * Allocates a direct native-ordered {@code ByteBuffer} with the specified capacity.
      *
      * @param capacity the capacity, in bytes

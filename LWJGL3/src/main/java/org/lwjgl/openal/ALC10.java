@@ -65,6 +65,23 @@ public class ALC10 {
         );
 	}
 
+    static ALCcontext alcContext;
+
+    public static ALCcontext alcCreateContext(ALCdevice device, java.nio.IntBuffer attrList) {
+        long alContextHandle = alcCreateContext(device.device, attrList);
+        alcContext = new ALCcontext(alContextHandle);
+        return alcContext;
+    }
+
+    public static ALCdevice alcGetContextsDevice(ALCcontext context) {
+        return AL.alcDevice;
+    }
+
+    public static void alcGetInteger(ALCdevice device, int pname, java.nio.IntBuffer integerdata) {
+        int res = alcGetInteger(device.device, pname);
+        integerdata.put(0, res);
+    }
+
     // --- [ alcOpenDevice ] ---
 
     /** Unsafe version of: {@link #alcOpenDevice OpenDevice} */

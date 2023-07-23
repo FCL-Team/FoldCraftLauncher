@@ -29,4 +29,6 @@ java {
 
 dependencies {
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'patch', include: ['*.jar'])
 }
