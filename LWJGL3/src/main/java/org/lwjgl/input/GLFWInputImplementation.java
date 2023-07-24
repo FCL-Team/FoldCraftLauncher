@@ -17,10 +17,10 @@ public class GLFWInputImplementation implements InputImplementation {
     private final ByteBuffer keyboardEvent = ByteBuffer.allocate(Keyboard.EVENT_SIZE);
     public final byte[] keyDownBuffer = new byte[Keyboard.KEYBOARD_SIZE];
     public final byte[] mouseBuffer = new byte[3];
-    private int last_x;
-    private int last_y;
-    public int accum_dx;
-    public int accum_dy;
+    public int mouseX = 0;
+    public int mouseY = 0;
+    public int mouseLastX = 0;
+    public int mouseLastY = 0;
     public boolean grab;
     public boolean correctCursor;
 
@@ -46,11 +46,12 @@ public class GLFWInputImplementation implements InputImplementation {
 
     @Override
     public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons) {
-        coord_buffer.put(0, grab ? accum_dx : last_x);
-        coord_buffer.put(1, grab ? accum_dy : last_y);
+        coord_buffer.put(0, grab ? mouseX - mouseLastX : mouseX);
+        coord_buffer.put(1, grab ? mouseY - mouseLastY : mouseY);
         buttons.rewind();
         buttons.put(mouseBuffer);
-        accum_dx = accum_dy = 0;
+        mouseLastX = mouseX;
+        mouseLastY = mouseY;
     }
 
     @Override
@@ -61,7 +62,7 @@ public class GLFWInputImplementation implements InputImplementation {
     @Override
     public void grabMouse(boolean newGrab) {
         grab = newGrab;
-        correctCursor = grab;
+        correctCursor = newGrab;
         GLFW.glfwSetInputMode(Display.getWindow(), GLFW.GLFW_CURSOR, grab ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
 
@@ -136,45 +137,39 @@ public class GLFWInputImplementation implements InputImplementation {
         return true;
     }
 
-    private int transformY(int y) {
-        return Display.getHeight() - 1 - y;
-    }
-
-    public void setCursorPos(int x, int y, long nanos) {
-        y = transformY(y);
-        if (correctCursor) {
-            last_x = x;
-            last_y = y;
-            correctCursor = false;
-            return;
-        }
-        int dx = x - last_x;
-        int dy = y - last_y;
-        if (dx != 0 || dy != 0) {
-            accum_dx += dx;
-            accum_dy += dy;
-            last_x = x;
-            last_y = y;
-            if (grab) {
-                putMouseEventWithCoords((byte)-1, (byte)0, dx, dy, 0, nanos * 1000000);
-            } else {
-                putMouseEventWithCoords((byte)-1, (byte)0, x, y, 0, nanos * 1000000);
+    public void putMouseEventWithCoords(byte button, byte state, int x, int y, int dz, long nanos) {
+        int rebaseX;
+        int rebaseY;
+        if (x == -1 && y == -1) {
+            rebaseX = mouseX;
+            rebaseY = mouseY;
+        } else {
+            rebaseX = x;
+            rebaseY = y;
+            if (correctCursor) {
+                mouseX = x;
+                mouseY = y;
+                mouseLastX = mouseX;
+                mouseLastY = mouseY;
+                correctCursor = false;
+                return;
             }
         }
-    }
-
-    private void putMouseEventWithCoords(byte button, byte state, int x, int y, int z, long nanos) {
         eventBuffer.clear();
-        eventBuffer.put(button).put(state).putInt(x).putInt(y).putInt(z).putLong(nanos);
+        eventBuffer.put(button).put(state);
+        if (grab) {
+            eventBuffer.putInt(rebaseX - mouseX).putInt(rebaseY - mouseY);
+        } else {
+            eventBuffer.putInt(rebaseX).putInt(rebaseY);
+        }
+        if (button != -1) {
+            mouseBuffer[button] = state;
+        }
+        eventBuffer.putInt(dz).putLong(nanos);
         eventBuffer.flip();
         eventQueue.putEvent(eventBuffer);
-    }
-
-    public void putMouseEvent(byte button, byte state, int dz, long nanos) {
-        if (grab)
-            putMouseEventWithCoords(button, state, 0, 0, dz, nanos);
-        else
-            putMouseEventWithCoords(button, state, last_x, last_y, dz, nanos);
+        mouseX = rebaseX;
+        mouseY = rebaseY;
     }
 
     public void putKeyboardEvent(int keycode, byte state, int ch, long nanos, boolean repeat) {
@@ -185,3 +180,4 @@ public class GLFWInputImplementation implements InputImplementation {
         keyboardEventQueue.putEvent(keyboardEvent);
     }
 }
+

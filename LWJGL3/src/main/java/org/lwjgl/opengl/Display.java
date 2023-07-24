@@ -332,14 +332,14 @@ public class Display {
         Window.cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                GLFWInputImplementation.singleton.setCursorPos((int) xpos, (int) ypos, Sys.getNanoTime());
+                GLFWInputImplementation.singleton.putMouseEventWithCoords((byte) -1, (byte) 0, (int) xpos, (int) ((ypos - Display.getHeight()) * -1), 0, Sys.getNanoTime());
             }
         };
 
         Window.mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                GLFWInputImplementation.singleton.putMouseEvent((byte) button, (byte) action, 0, Sys.getNanoTime());
+                GLFWInputImplementation.singleton.putMouseEventWithCoords((byte) button, (byte) action, -1, -1, 0, Sys.getNanoTime());
             }
         };
 
@@ -395,7 +395,7 @@ public class Display {
         Window.scrollCallback = new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                GLFWInputImplementation.singleton.putMouseEvent((byte) -1, (byte) 0, (int) (yoffset * 120), Sys.getNanoTime());
+                GLFWInputImplementation.singleton.putMouseEventWithCoords((byte) -1, (byte) 0, -1, -1, (int) (yoffset * 120), Sys.getNanoTime());
             }
         };
 
