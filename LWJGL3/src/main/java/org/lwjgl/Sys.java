@@ -91,7 +91,7 @@ public final class Sys {
 	 * @return the current hires time, in ticks (always >= 0)
 	 */
 	public static long getTime() {
-		return System.currentTimeMillis();
+		return GLFW.glfwGetTimerValue();
 	}
 
 	public static long getNanoTime() {

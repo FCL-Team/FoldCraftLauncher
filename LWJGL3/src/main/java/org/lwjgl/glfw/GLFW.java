@@ -667,6 +667,7 @@ public class GLFW {
         GLFW_EGL_CONTEXT_API    = 0x36002,
         GLFW_OSMESA_CONTEXT_API = 0x36003;
 
+    private static double glfwInitialTime;
     private static final GLFWVidMode glfwVidMode;
     public static int glfwWindowWidth;
     public static int glfwWindowHeight;
@@ -827,6 +828,7 @@ public class GLFW {
      */
     @NativeType("int")
     public static boolean glfwInit() {
+        glfwInitialTime = (double) System.nanoTime();
         long __functionAddress = Functions.Init;
         return invokeI(__functionAddress) != 0;
     }
@@ -4320,8 +4322,7 @@ public class GLFW {
      * @since version 1.0
      */
     public static double glfwGetTime() {
-        long __functionAddress = Functions.GetTime;
-        return invokeD(__functionAddress);
+        return (System.nanoTime() - glfwInitialTime) / 1.e9;
     }
 
     // --- [ glfwSetTime ] ---
@@ -4341,8 +4342,7 @@ public class GLFW {
      * @since version 2.2
      */
     public static void glfwSetTime(double time) {
-        long __functionAddress = Functions.SetTime;
-        invokeV(time, __functionAddress);
+        glfwInitialTime = System.nanoTime() - (long) time;
     }
 
     // --- [ glfwGetTimerValue ] ---
@@ -4360,8 +4360,7 @@ public class GLFW {
      */
     @NativeType("uint64_t")
     public static long glfwGetTimerValue() {
-        long __functionAddress = Functions.GetTimerValue;
-        return invokeJ(__functionAddress);
+        return System.currentTimeMillis();
     }
 
     // --- [ glfwGetTimerFrequency ] ---
@@ -4377,8 +4376,7 @@ public class GLFW {
      */
     @NativeType("uint64_t")
     public static long glfwGetTimerFrequency() {
-        long __functionAddress = Functions.GetTimerFrequency;
-        return invokeJ(__functionAddress);
+        return 60;
     }
 
     // --- [ glfwMakeContextCurrent ] ---
