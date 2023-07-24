@@ -4376,7 +4376,8 @@ public class GLFW {
      */
     @NativeType("uint64_t")
     public static long glfwGetTimerFrequency() {
-        return 60;
+        long __functionAddress = Functions.GetTimerFrequency;
+        return invokeJ(__functionAddress);
     }
 
     // --- [ glfwMakeContextCurrent ] ---

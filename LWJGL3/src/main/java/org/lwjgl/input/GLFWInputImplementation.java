@@ -141,24 +141,24 @@ public class GLFWInputImplementation implements InputImplementation {
     }
 
     public void setCursorPos(int x, int y, long nanos) {
+        y = transformY(y);
         if (correctCursor) {
             last_x = x;
-            last_y = transformY(y);
+            last_y = y;
             correctCursor = false;
-        } else {
-            y = transformY(y);
-            int dx = x - last_x;
-            int dy = y - last_y;
-            if (dx != 0 || dy != 0) {
-                accum_dx += dx;
-                accum_dy += dy;
-                last_x = x;
-                last_y = y;
-                if (grab) {
-                    putMouseEventWithCoords((byte)-1, (byte)0, dx, dy, 0, nanos * 1000000);
-                } else {
-                    putMouseEventWithCoords((byte)-1, (byte)0, x, y, 0, nanos * 1000000);
-                }
+            return;
+        }
+        int dx = x - last_x;
+        int dy = y - last_y;
+        if (dx != 0 || dy != 0) {
+            accum_dx += dx;
+            accum_dy += dy;
+            last_x = x;
+            last_y = y;
+            if (grab) {
+                putMouseEventWithCoords((byte)-1, (byte)0, dx, dy, 0, nanos * 1000000);
+            } else {
+                putMouseEventWithCoords((byte)-1, (byte)0, x, y, 0, nanos * 1000000);
             }
         }
     }
