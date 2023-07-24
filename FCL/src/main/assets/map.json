@@ -3,241 +3,241 @@
     {
       "id": "1.3.1",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.3.2",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.4.2",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.4.4",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.4.5",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.4.7",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:x:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.5.1",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:y:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:y:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.5.2",
       "argument": {
-        "vanilla": "false:net.minecraft.client.Minecraft:x:y:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:net.minecraft.client.Minecraft:x:y:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.6.1",
       "argument": {
-        "vanilla": "false:atn:w:s:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:atn:w:s:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.6.2",
       "argument": {
-        "vanilla": "false:ats:w:t:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:ats:w:t:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.6.4",
       "argument": {
-        "vanilla": "false:atv:w:t:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "2:atv:w:t:a",
+        "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.7.2",
       "argument": {
-        "vanilla": "true:azd:A:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:azd:A:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.7.10",
       "argument": {
-        "vanilla": "true:bao:B:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bao:B:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.8",
       "argument": {
-        "vanilla": "true:bsu:z:s:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bsu:z:s:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.8.8",
       "argument": {
-        "vanilla": "true:ave:A:s:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:ave:A:s:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.9",
       "argument": {
-        "vanilla": "true:bcf:z:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bcf:z:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.9.4",
       "argument": {
-        "vanilla": "true:bcd:z:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bcd:z:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.10",
       "argument": {
-        "vanilla": "true:bcx:z:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bcx:z:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.11",
       "argument": {
-        "vanilla": "true:bes:z:t:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bes:z:t:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.12",
       "argument": {
-        "vanilla": "true:bib:z:s:a",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:bib:z:s:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.13.1",
       "argument": {
-        "vanilla": "false:cft:s:s:a",
-        "forge": "false:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "vanilla": "3:cft:s:s:a",
+        "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
         "fabric": null
       }
     },
     {
       "id": "1.14",
       "argument": {
-        "vanilla": "true:cyc:u:u:c",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:cyc:u:u:c",
+        "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "1.15",
       "argument": {
-        "vanilla": "true:dbn:x:u:c",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:dbn:x:u:c",
+        "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "1.16",
       "argument": {
-        "vanilla": "true:djz:C:v:c",
-        "forge": "true:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:djz:C:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "1.17",
       "argument": {
-        "vanilla": "true:dvp:C:v:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:dvp:C:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "1.18",
       "argument": {
-        "vanilla": "true:dyr:D:v:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:dyr:D:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "1.19",
       "argument": {
-        "vanilla": "true:eev:G:v:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:eev:G:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "2",
       "argument": {
-        "vanilla": "true:ejf:N:w:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:ejf:N:w:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "3",
       "argument": {
-        "vanilla": "true:emh:N:w:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:emh:N:w:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
     {
       "id": "5",
       "argument": {
-        "vanilla": "true:enn:N:w:c",
-        "forge": "true:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
-        "fabric": "true:net.minecraft.class_310:method_1551:field_1765:method_17783"
+        "vanilla": "4:enn:N:w:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     }
   ]

@@ -26,12 +26,19 @@ public class FCLInjector {
     private static final String HIT_RESULT_TYPE_UNKNOWN      = "UNKNOWN";
     private static final String HIT_RESULT_TYPE_MISS         = "MISS";
     private static final String HIT_RESULT_TYPE_BLOCK        = "BLOCK";
+    private static final String HIT_RESULT_TYPE_BLOCK_OLD    = "TILE";
     private static final String HIT_RESULT_TYPE_ENTITY       = "ENTITY";
+
+    private static final int INJECTOR_LEVEL_0                = 0; // unknown
+    private static final int INJECTOR_LEVEL_1                = 1; // 1.0 - 1.2
+    private static final int INJECTOR_LEVEL_2                = 2; // 1.3 - 1.6
+    private static final int INJECTOR_LEVEL_3                = 3; // 1.7 - 1.13
+    private static final int INJECTOR_LEVEL_4                = 4; // 1.13+
 
     private static final int INJECTOR_MODE_ENABLE            = 1;
     private static final int INJECTOR_MODE_DISABLE           = 0;
 
-    private static boolean highVersion = false;
+    private static int level = 0;
     @Nullable
     private static String param0 = null;
     @Nullable
@@ -46,19 +53,19 @@ public class FCLInjector {
         if (!get && prop != null && !prop.isEmpty()) {
             FCLInjector.classLoader = classLoader;
             String[] props = prop.split(":");
-            if (props.length == 5 && (props[0].equals("true") || props[0].equals("false"))) {
-                boolean highVersion = Boolean.parseBoolean(props[0]);
+            if (props.length == 5 && (props[0].equals("0") || props[0].equals("1") || props[0].equals("2") || props[0].equals("3") || props[0].equals("4"))) {
+                int level = Integer.parseInt(props[0]);
                 String param0 = props[1];
                 String param1 = props[2];
                 String param2 = props[3];
                 String param3 = props[4];
-                setup(highVersion, param0, param1, param2, param3);
+                setup(level, param0, param1, param2, param3);
             }
         }
     }
 
-    public static void setup(boolean highVersion, String param0, String param1, String param2, String param3) {
-        FCLInjector.highVersion = highVersion;
+    public static void setup(int level, String param0, String param1, String param2, String param3) {
+        FCLInjector.level = level;
         FCLInjector.param0 = param0;
         FCLInjector.param1 = param1;
         FCLInjector.param2 = param2;
@@ -89,6 +96,7 @@ public class FCLInjector {
                 typeInt = 1;
                 break;
             case HIT_RESULT_TYPE_BLOCK:
+            case HIT_RESULT_TYPE_BLOCK_OLD:
                 typeInt = 2;
                 break;
             case HIT_RESULT_TYPE_ENTITY:
@@ -109,6 +117,7 @@ public class FCLInjector {
         }
         if (param0 != null && param1 != null && param2 != null && param3 != null) {
             Object type = null;
+            boolean success = false;
             try {
                 Class<?> minecraftClass = Class.forName(param0, true, classLoader);
                 Method method = minecraftClass.getDeclaredMethod(param1);
@@ -118,23 +127,41 @@ public class FCLInjector {
                 targetField.setAccessible(true);
                 Object target = targetField.get(minecraft);
                 if (target != null) {
-                    if (!highVersion) {
-                        Field typeField = target.getClass().getDeclaredField(param3);
-                        typeField.setAccessible(true);
-                        type = typeField.get(target);
-                    } else {
-                        Method typeMethod = target.getClass().getDeclaredMethod(param3);
-                        typeMethod.setAccessible(true);
-                        type = typeMethod.invoke(target);
+                    switch (level) {
+                        case INJECTOR_LEVEL_2:
+                        case INJECTOR_LEVEL_3:
+                            Field typeField = target.getClass().getDeclaredField(param3);
+                            typeField.setAccessible(true);
+                            type = typeField.get(target);
+                            success = true;
+                            break;
+                        case INJECTOR_LEVEL_4:
+                            Method typeMethod = target.getClass().getDeclaredMethod(param3);
+                            typeMethod.setAccessible(true);
+                            type = typeMethod.invoke(target);
+                            success = true;
+                            break;
+                        default:
+                            break;
                     }
                 }
             } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 apiLog(e.getMessage());
             }
-            if (type != null && (type.toString().equals(HIT_RESULT_TYPE_MISS) || type.toString().equals(HIT_RESULT_TYPE_BLOCK) || type.toString().equals(HIT_RESULT_TYPE_ENTITY))) {
-                nglfwSetHitResultType(type.toString());
+            if (level == INJECTOR_LEVEL_2) {
+                if (success && type == null) {
+                    nglfwSetHitResultType(HIT_RESULT_TYPE_MISS);
+                } else if (success && (type.toString().equals(HIT_RESULT_TYPE_BLOCK_OLD) || type.toString().equals(HIT_RESULT_TYPE_ENTITY))) {
+                    nglfwSetHitResultType(type.toString());
+                } else {
+                    nglfwSetHitResultType(HIT_RESULT_TYPE_UNKNOWN);
+                }
             } else {
-                nglfwSetHitResultType(HIT_RESULT_TYPE_UNKNOWN);
+                if (type != null && (type.toString().equals(HIT_RESULT_TYPE_MISS) || type.toString().equals(HIT_RESULT_TYPE_BLOCK) || type.toString().equals(HIT_RESULT_TYPE_ENTITY))) {
+                    nglfwSetHitResultType(type.toString());
+                } else {
+                    nglfwSetHitResultType(HIT_RESULT_TYPE_UNKNOWN);
+                }
             }
         }
     }
