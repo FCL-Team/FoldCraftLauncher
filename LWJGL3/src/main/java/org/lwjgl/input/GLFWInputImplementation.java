@@ -45,8 +45,8 @@ public class GLFWInputImplementation implements InputImplementation {
 
     @Override
     public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons) {
-        coord_buffer.put(0, grab ? mouseX - mouseLastX: mouseX);
-        coord_buffer.put(1, grab ? mouseY - mouseLastY: mouseY);
+        coord_buffer.put(0, grab ? mouseX - mouseLastX : mouseX);
+        coord_buffer.put(1, grab ? mouseY - mouseLastY : mouseY);
         buttons.rewind();
         buttons.put(mouseBuffer);
         mouseLastX = mouseX;
@@ -137,24 +137,24 @@ public class GLFWInputImplementation implements InputImplementation {
     }
 
     public void putMouseEventWithCoords(byte button, byte state, int coord1, int coord2, int dz, long nanos) {
-        int acoord1=0;
-        int acoord2=0;
-        if(coord1 == -1 && coord2 == -1) {
+        int acoord1 = 0;
+        int acoord2 = 0;
+        if (coord1 == -1 && coord2 == -1) {
             acoord1 = mouseX;
             acoord2 = mouseY;
-        }else{
+        } else {
             acoord1 = coord1;
-            acoord2= coord2;
+            acoord2 = coord2;
         }
         eventBuffer.clear();
         eventBuffer.put(button).put(state);
         if (grab) {
-            eventBuffer.putInt(acoord1-mouseX).putInt(acoord2-mouseY);
-        }else{
+            eventBuffer.putInt(acoord1 - mouseX).putInt(acoord2 - mouseY);
+        } else {
             eventBuffer.putInt(acoord1).putInt(acoord2);
         }
-        if(button != -1) {
-            mouseBuffer[button]=state;
+        if (button != -1) {
+            mouseBuffer[button] = state;
         }
         eventBuffer.putInt(dz).putLong(nanos);
         eventBuffer.flip();

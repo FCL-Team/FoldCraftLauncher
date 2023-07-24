@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,37 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Spasi
- */
-
-/**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
+ * This annotation can be used on fields of {@link MappedObject} subclasses,
+ * to manually specify byte offsets and lengths. This is useful when the
+ * mapped fields require custom alignment. {@link java.nio.ByteBuffer}
+ * fields are required to have this annotation with a hardcoded byte length.
  *
- * @author Spasi
+ * @author Riven
  */
-public final class SharedDrawable extends DrawableGL {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface MappedField {
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
+	/**
+	 * Specifies the field byte offset within the mapped object.
+	 *
+	 * @return the field byte offset
+	 */
+	long byteOffset() default -1;
 
-    public ContextGL createSharedContext() {
-        return context;
-    }
+	/**
+	 * Specifies the field byte length. Required for {@link java.nio.ByteBuffer} fields.
+	 *
+	 * @return the field byte length
+	 */
+	long byteLength() default -1;
 
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,22 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Spasi
- */
-
-/**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
+ * This annotation can be used on long fields of {@link MappedObject} subclasses,
+ * to specify that the long value should be interpreted as a pointer. This
+ * will determine the actual byte size of the field at runtime (4 or 8 bytes).
  *
  * @author Spasi
  */
-public final class SharedDrawable extends DrawableGL {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Pointer {
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
-
-    public ContextGL createSharedContext() {
-        return context;
-    }
-
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
 }

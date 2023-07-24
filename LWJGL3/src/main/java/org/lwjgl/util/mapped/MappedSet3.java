@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,31 +29,31 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
+/** <code>MappedSet</code> implementation for three <code>MappedObject</code>s. */
+public class MappedSet3 {
 
-import java.awt.Canvas;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
+	private final MappedObject a, b, c;
 
-/**
- *
- * @author elias_naur <elias_naur@users.sourceforge.net>
- * @version $Revision$
- * $Id$
- */
-interface AWTCanvasImplementation {
-	/**
-	 * Return an opaque handle to the canvas peer information required to create a context from it.
-	 */
-	PeerInfo createPeerInfo(Canvas component, PixelFormat pixel_format, ContextAttribs attribs) throws LWJGLException;
+	MappedSet3(MappedObject a, MappedObject b, MappedObject c) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
+	}
 
-	/**
-	 * Find a proper GraphicsConfiguration from the given GraphicsDevice and PixelFormat.
-	 *
-	 * @return A GraphicsConfiguration matching the given GraphicsConfiguration and PixelFormat.
-	 * @throws LWJGLException if no suitable configuration could be found.
-	 */
-	GraphicsConfiguration findConfiguration(GraphicsDevice device, PixelFormat pixel_format) throws LWJGLException;
+	public int view;
+
+	void view(int view) {
+		a.setViewAddress(a.getViewAddress(view));
+		b.setViewAddress(b.getViewAddress(view));
+		c.setViewAddress(c.getViewAddress(view));
+	}
+
+	public void next() {
+		this.a.next();
+		this.b.next();
+		this.c.next();
+	}
+
 }

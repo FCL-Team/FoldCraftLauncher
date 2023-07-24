@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,38 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Spasi
- */
-
-/**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
+ * When this annotation is used on a field, automatic cache-line-sized padding
+ * will be inserted around the field. This is useful in multi-threaded algorithms
+ * to avoid cache line false sharing. The annotation defaults to padding after
+ * the field, but can be changed to before or both before and after. It can be
+ * applied to both mapped object fields and POJO primitive fields.
  *
  * @author Spasi
  */
-public final class SharedDrawable extends DrawableGL {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface CacheLinePad {
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
+	/**
+	 * When true, cache-line padding will be inserted before the field.
+	 *
+	 * @return true if cache-line padding will be inserted before the field
+	 */
+	boolean before() default false;
 
-    public ContextGL createSharedContext() {
-        return context;
-    }
+	/**
+	 * When true, cache-line padding will be inserted after the field.
+	 *
+	 * @return true if cache-line padding will be inserted after the field
+	 */
+	boolean after() default true;
 
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
 }

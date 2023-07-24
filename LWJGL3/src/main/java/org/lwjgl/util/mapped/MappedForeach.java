@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,43 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
-
-/**
- * @author Spasi
- */
+import java.util.Iterator;
 
 /**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
+ * Iterable implementation for {@link MappedObject}.
  *
- * @author Spasi
+ * @author Riven
  */
-public final class SharedDrawable extends DrawableGL {
+final class MappedForeach<T extends MappedObject> implements Iterable<T> {
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
+	final T   mapped;
+	final int elementCount;
 
-    public ContextGL createSharedContext() {
-        return context;
-    }
+	MappedForeach(T mapped, int elementCount) {
+		this.mapped = mapped;
+		this.elementCount = elementCount;
+	}
 
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
+	public Iterator<T> iterator() {
+		return new Iterator<T>() {
+
+			private int index;
+
+			public boolean hasNext() {
+				return this.index < (MappedForeach.this.elementCount);
+			}
+
+			public T next() {
+				mapped.setViewAddress(mapped.getViewAddress(this.index++));
+				return mapped;
+			}
+
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,41 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
-
-import org.lwjgl.LWJGLException;
+package org.lwjgl.util.mapped;
 
 /**
- * @author Spasi
+ * Factory for mapped sets. A mapped set can be used as a Structure of Arrays by
+ * linking together the view of two or more mapped objects. Changing the view
+ * of the mapped set, changes the corresponding view of all the mapped objects in
+ * the set.
  */
+public class MappedSet {
 
-/**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
- *
- * @author Spasi
- */
-public final class SharedDrawable extends DrawableGL {
+	/**
+	 * Creates a <code>MappedSet</code> by linking the specified <code>MappedObject</code>s.
+	 *
+	 * @return the mapped set.
+	 */
+	public static MappedSet2 create(MappedObject a, MappedObject b) {
+		return new MappedSet2(a, b);
+	}
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
+	/**
+	 * Creates a <code>MappedSet</code> by linking the specified <code>MappedObject</code>s.
+	 *
+	 * @return the mapped set.
+	 */
+	public static MappedSet3 create(MappedObject a, MappedObject b, MappedObject c) {
+		return new MappedSet3(a, b, c);
+	}
 
-    public ContextGL createSharedContext() {
-        return context;
-    }
+	/**
+	 * Creates a <code>MappedSet</code> by linking the specified <code>MappedObject</code>s.
+	 *
+	 * @return the mapped set.
+	 */
+	public static MappedSet4 create(MappedObject a, MappedObject b, MappedObject c, MappedObject d) {
+		return new MappedSet4(a, b, c, d);
+	}
 
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
 }

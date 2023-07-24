@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
+ * Copyright (c) 2002-2011 LWJGL Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,37 +29,33 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.opengl;
+package org.lwjgl.util.mapped;
 
-import org.lwjgl.LWJGLException;
+/** <code>MappedSet</code> implementation for four <code>MappedObject</code>s. */
+public class MappedSet4 {
 
-/**
- * @author Spasi
- */
+	private final MappedObject a, b, c, d;
 
-/**
- * A Drawable implementation that shares its context with another Drawable. This is useful
- * for background loading of resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad
- * for an example.
- *
- * @author Spasi
- */
-public final class SharedDrawable extends DrawableGL {
+	MappedSet4(MappedObject a, MappedObject b, MappedObject c, MappedObject d) {
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.d = d;
+	}
 
-    public SharedDrawable(final Drawable drawable) throws LWJGLException {
-        if (drawable != null) {
-            this.context = (ContextGL)((DrawableLWJGL)drawable).createSharedContext();
-        } else {
-            this.context = (ContextGL)((DrawableLWJGL)Display.getDrawable()).createSharedContext();
-        }
-    }
+	public int view;
 
-    public ContextGL createSharedContext() {
-        return context;
-    }
+	void view(int view) {
+		a.setViewAddress(a.getViewAddress(view));
+		b.setViewAddress(b.getViewAddress(view));
+		c.setViewAddress(c.getViewAddress(view));
+		d.setViewAddress(d.getViewAddress(view));
+	}
 
-    @Override
-    public void makeCurrent() throws LWJGLException {
-        //stub
-    }
+	public void next() {
+		this.a.next();
+		this.b.next();
+		this.c.next();
+		this.d.next();
+	}
 }
