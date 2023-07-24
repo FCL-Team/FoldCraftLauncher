@@ -34,7 +34,7 @@ package org.lwjgl.opengl;
 import org.lwjgl.Sys;
 
 /**
-* A highly accurate sync method that continually adapts to the system
+* A highly accurate sync method that continually adapts to the system 
 * it runs on to provide reliable results.
 *
 * @author Riven
@@ -47,20 +47,15 @@ class Sync {
 
 	/** The time to sleep/yield until the next frame */
 	private static long nextFrame = 0;
-
-	/** The time since last frame **/
-	private static long lastFrameTime = 0;
-	private static long lastDelay = 0;
-
+	
 	/** whether the initialisation code has run */
 	private static boolean initialised = false;
-
-	/**
-	 * for calculating the averages the previous sleep/yield times are stored
-	 */
+	
+	/** for calculating the averages the previous sleep/yield times are stored */
 	private static RunningAvg sleepDurations = new RunningAvg(10);
 	private static RunningAvg yieldDurations = new RunningAvg(10);
-
+	
+	
 	/**
 	 * An accurate sync method that will attempt to run at a constant frame rate.
 	 * It should be called once every frame.
@@ -68,65 +63,32 @@ class Sync {
 	 * @param fps - the desired frame rate, in frames per second
 	 */
 	public static void sync(int fps) {
-		if (fps <= 0)
-			return;
-
-		preciseSync(fps);
-	}
-
-	/** Fast, more cpu friendly way of syncing, although can be off the mark at times */
-	private static void fastSync(int fps) {
-		if (!initialised) {
-			initialised = true;
-			lastFrameTime = getTime();
-		}
-
-		// Dumbass implementation I guess
-		long currentFrameTime = getTime();
-		long deltaMs = (currentFrameTime - lastFrameTime) / 1000000;
-		long deltaFrame = 1000 / fps;
-		if (deltaMs < deltaFrame) {  // skip the Thread sleep if the opportunity is available
-			try {
-				Thread.sleep(Math.min((deltaFrame - deltaMs) + lastDelay, deltaFrame));
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			lastDelay = 0;
-		} else {
-			// Store how late the device is I guess
-			lastDelay = deltaMs - deltaFrame;
-		}
-		lastFrameTime = getTime();
-	}
-
-	/** Precise, more cpu intensive way of syncing */
-	private static void preciseSync(int fps) {
-		if (!initialised)
-			initialise();
-
+		if (fps <= 0) return;
+		if (!initialised) initialise();
+		
 		try {
 			// sleep until the average sleep time is greater than the time remaining till nextFrame
 			for (long t0 = getTime(), t1; (nextFrame - t0) > sleepDurations.avg(); t0 = t1) {
 				Thread.sleep(1);
 				sleepDurations.add((t1 = getTime()) - t0); // update average sleep time
 			}
-
+	
 			// slowly dampen sleep average if too high to avoid yielding too much
 			sleepDurations.dampenForLowResTicker();
-
+	
 			// yield until the average yield time is greater than the time remaining till nextFrame
 			for (long t0 = getTime(), t1; (nextFrame - t0) > yieldDurations.avg(); t0 = t1) {
 				Thread.yield();
 				yieldDurations.add((t1 = getTime()) - t0); // update average yield time
 			}
 		} catch (InterruptedException e) {
-
+			
 		}
-
+		
 		// schedule next frame, drop frame(s) if already too late for next frame
 		nextFrame = Math.max(nextFrame + NANOS_IN_SECOND / fps, getTime());
 	}
-
+	
 	/**
 	 * This method will initialise the sync method by setting initial
 	 * values for sleepDurations/yieldDurations and nextFrame.
@@ -135,11 +97,31 @@ class Sync {
 	 */
 	private static void initialise() {
 		initialised = true;
-
+		
 		sleepDurations.init(1000 * 1000);
 		yieldDurations.init((int) (-(getTime() - getTime()) * 1.333));
-
+		
 		nextFrame = getTime();
+		
+		String osName = System.getProperty("os.name");
+		
+		if (osName.startsWith("Win")) {
+			// On windows the sleep functions can be highly inaccurate by 
+			// over 10ms making in unusable. However it can be forced to 
+			// be a bit more accurate by running a separate sleeping daemon
+			// thread.
+			Thread timerAccuracyThread = new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(Long.MAX_VALUE);
+					} catch (Exception e) {}
+				}
+			});
+			
+			timerAccuracyThread.setName("LWJGL Timer");
+			timerAccuracyThread.setDaemon(true);
+			timerAccuracyThread.start();
+		}
 	}
 
 	/**
@@ -154,7 +136,7 @@ class Sync {
 	private static class RunningAvg {
 		private final long[] slots;
 		private int offset;
-
+		
 		private static final long DAMPEN_THRESHOLD = 10 * 1000L * 1000L; // 10ms
 		private static final float DAMPEN_FACTOR = 0.9f; // don't change: 0.9f is exactly right!
 
@@ -181,7 +163,7 @@ class Sync {
 			}
 			return sum / this.slots.length;
 		}
-
+		
 		public void dampenForLowResTicker() {
 			if (this.avg() > DAMPEN_THRESHOLD) {
 				for (int i = 0; i < this.slots.length; i++) {
