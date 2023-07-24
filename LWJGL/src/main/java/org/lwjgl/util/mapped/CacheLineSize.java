@@ -1,5 +1,8 @@
 package org.lwjgl.util.mapped;
 
+import static org.lwjgl.util.mapped.MappedHelper.ivget;
+import static org.lwjgl.util.mapped.MappedHelper.ivput;
+
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.MemoryUtil;
 
@@ -10,8 +13,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static org.lwjgl.util.mapped.MappedHelper.*;
 
 /**
  * This micro-benchmark tries to detect the CPU's cache line size. This is

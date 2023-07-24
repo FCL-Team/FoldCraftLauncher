@@ -31,11 +31,11 @@
  */
 package org.lwjgl.opengl;
 
-import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 import org.lwjgl.BufferUtils;
 
-import static org.lwjgl.opengl.GL11.*;
+import java.nio.IntBuffer;
 
 /** This class represents the state necessary for render-to-texture. */
 public final class RenderTexture {

@@ -5,18 +5,20 @@ plugins {
 group 'org.lwjgl'
 
 configurations.default.setCanBeResolved(true)
-project.setArchivesBaseName('lwjgl')
-project.setLibsDirName("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl2")
 
-task buildLwjgl2(dependsOn:'jar')
+project.setArchivesBaseName('lwjgl')
+
+project.setLibsDirName("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl")
+
+task buildLwjgl(dependsOn:'jar')
 jar {
     doLast {
         archiveFileName = 'lwjgl.jar'
         manifest {
-            attributes 'Manifest-Version': '2.9.3'
+            attributes 'Manifest-Version': '3.2.3'
         }
-        destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl2"))
-        File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl2/version")
+        destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl"))
+        File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl/version")
         versionFile.write(String.valueOf(new Date().getTime()))
     }
 }
@@ -28,5 +30,6 @@ java {
 }
 
 dependencies {
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }

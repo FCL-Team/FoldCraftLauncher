@@ -1,289 +1,433 @@
-/* MACHINE GENERATED FILE, DO NOT EDIT */
-
+/*
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
+ * MACHINE GENERATED FILE, DO NOT EDIT
+ */
 package org.lwjgl.openal;
 
-import org.lwjgl.*;
 import java.nio.*;
 
-/**
- *  <br>
- *  This is the core OpenAL class. This class implements
- *  AL.h version 1.1
- * <p>
- *  @author Brian Matzon <brian@matzon.dk>
- *  @version $Revision: 2286 $
- *  $Id: AL10.java 2286 2006-03-23 19:32:21Z matzon $
- */
-public final class AL11 {
+import org.lwjgl.system.*;
 
-	/**
-	 * Source buffer position information in seconds 
-	 */
-	public static final int AL_SEC_OFFSET = 0x1024;
+import static org.lwjgl.system.Checks.*;
+import static org.lwjgl.system.JNI.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
-	/**
-	 * Source buffer position information in samples 
-	 */
-	public static final int AL_SAMPLE_OFFSET = 0x1025;
+/** Native bindings to AL 1.1 functionality. */
+public class AL11 extends AL10 {
 
-	/**
-	 * Source buffer position information in bytes 
-	 */
-	public static final int AL_BYTE_OFFSET = 0x1026;
+    /** General tokens. */
+    public static final int
+        AL_SEC_OFFSET                = 0x1024,
+        AL_SAMPLE_OFFSET             = 0x1025,
+        AL_BYTE_OFFSET               = 0x1026,
+        AL_STATIC                    = 0x1028,
+        AL_STREAMING                 = 0x1029,
+        AL_UNDETERMINED              = 0x1030,
+        AL_ILLEGAL_COMMAND           = 0xA004,
+        AL_SPEED_OF_SOUND            = 0xC003,
+        AL_LINEAR_DISTANCE           = 0xD003,
+        AL_LINEAR_DISTANCE_CLAMPED   = 0xD004,
+        AL_EXPONENT_DISTANCE         = 0xD005,
+        AL_EXPONENT_DISTANCE_CLAMPED = 0xD006;
 
-	/**
-	 * Type of source: Buffer has been attached using AL_BUFFER 
-	 */
-	public static final int AL_STATIC = 0x1028;
+    protected AL11() {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Type of source: if one or more Buffers have been attached using alSourceQueueBuffers 
-	 */
-	public static final int AL_STREAMING = 0x1029;
+    static boolean isAvailable(ALCapabilities caps) {
+        return checkFunctions(
+            caps.alListener3i, caps.alGetListeneriv, caps.alSource3i, caps.alListeneriv, caps.alSourceiv, caps.alBufferf, caps.alBuffer3f, caps.alBufferfv, 
+            caps.alBufferi, caps.alBuffer3i, caps.alBufferiv, caps.alGetBufferiv, caps.alGetBufferfv, caps.alSpeedOfSound
+        );
+    }
 
-	/**
-	 * Type of source: when it has the NULL buffer attached 
-	 */
-	public static final int AL_UNDETERMINED = 0x1030;
+    // --- [ alListener3i ] ---
 
-	/**
-	 * @see AL10#AL_INVALID_OPERATION 
-	 */
-	public static final int AL_ILLEGAL_COMMAND = 0xA004;
+    /**
+     * Sets the 3 dimensional integer values of a listener parameter.
+     *
+     * @param paramName the parameter to modify
+     * @param value1    the first value
+     * @param value2    the second value
+     * @param value3    the third value
+     */
+    @NativeType("ALvoid")
+    public static void alListener3i(@NativeType("ALenum") int paramName, @NativeType("ALint") int value1, @NativeType("ALint") int value2, @NativeType("ALint") int value3) {
+        long __functionAddress = AL.getICD().alListener3i;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(paramName, value1, value2, value3, __functionAddress);
+    }
 
-	/**
-	 * Speed of Sound in units per second 
-	 */
-	public static final int AL_SPEED_OF_SOUND = 0xC003,
-		AL_LINEAR_DISTANCE = 0xD003,
-		AL_LINEAR_DISTANCE_CLAMPED = 0xD004,
-		AL_EXPONENT_DISTANCE = 0xD005,
-		AL_EXPONENT_DISTANCE_CLAMPED = 0xD006;
+    // --- [ alGetListeneriv ] ---
 
-	private AL11() {}
+    /** Unsafe version of: {@link #alGetListeneriv GetListeneriv} */
+    public static void nalGetListeneriv(int param, long values) {
+        long __functionAddress = AL.getICD().alGetListeneriv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(param, values, __functionAddress);
+    }
 
-	static native void initNativeStubs() throws LWJGLException;
+    /**
+     * Returns the integer values of the specified listener parameter.
+     *
+     * @param param  the parameter to query
+     * @param values the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alGetListeneriv(@NativeType("ALenum") int param, @NativeType("ALint *") IntBuffer values) {
+        if (CHECKS) {
+            check(values, 1);
+        }
+        nalGetListeneriv(param, memAddress(values));
+    }
 
-	/**
-	 *  Listener attributes are changed using the Listener group of commands.
-	 * <p>
-	 *  @param pname name of the attribute to be set
-	 *  @param v1 value value 1
-	 *  @param v2 value value 2
-	 *  @param v3 value value 3
-	 */
-	public static void alListener3i(int pname, int v1, int v2, int v3) {
-		nalListener3i(pname, v1, v2, v3);
-	}
-	static native void nalListener3i(int pname, int v1, int v2, int v3);
+    // --- [ alSource3i ] ---
 
-	/**
-	 *  Listener state is maintained inside the AL implementation and can be queried in
-	 *  full.
-	 * <p>
-	 *  @param pname name of the attribute to be retrieved
-	 *  @param intdata Buffer to write ints to
-	 */
-	public static void alGetListeneri(int pname, FloatBuffer intdata) {
-		BufferChecks.checkBuffer(intdata, 1);
-		nalGetListeneriv(pname, MemoryUtil.getAddress(intdata));
-	}
-	static native void nalGetListeneriv(int pname, long intdata);
+    /**
+     * Sets the 3 dimensional integer values of a source parameter.
+     *
+     * @param source    the source to modify
+     * @param paramName the parameter to modify
+     * @param value1    the first value
+     * @param value2    the second value
+     * @param value3    the third value
+     */
+    @NativeType("ALvoid")
+    public static void alSource3i(@NativeType("ALuint") int source, @NativeType("ALenum") int paramName, @NativeType("ALint") int value1, @NativeType("ALint") int value2, @NativeType("ALint") int value3) {
+        long __functionAddress = AL.getICD().alSource3i;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(source, paramName, value1, value2, value3, __functionAddress);
+    }
 
-	/**
-	 *  Specifies the position and other properties as taken into account during
-	 *  sound processing.
-	 * <p>
-	 *  @param source Source to set property on
-	 *  @param pname property to set
-	 *  @param v1 value 1 of property
-	 *  @param v2 value 2 of property
-	 *  @param v3 value 3 of property
-	 */
-	public static void alSource3i(int source, int pname, int v1, int v2, int v3) {
-		nalSource3i(source, pname, v1, v2, v3);
-	}
-	static native void nalSource3i(int source, int pname, int v1, int v2, int v3);
+    // --- [ alListeneriv ] ---
 
-	/**
-	 *  Specifies the position and other properties as taken into account during
-	 *  sound processing.
-	 * <p>
-	 *  @param source Source to set property on
-	 *  @param pname property to set
-	 *  @param value IntBuffer containing value of property
-	 */
-	public static void alSource(int source, int pname, IntBuffer value) {
-		BufferChecks.checkBuffer(value, 1);
-		nalSourceiv(source, pname, MemoryUtil.getAddress(value));
-	}
-	static native void nalSourceiv(int source, int pname, long value);
+    /** Unsafe version of: {@link #alListeneriv Listeneriv} */
+    public static void nalListeneriv(int listener, long value) {
+        long __functionAddress = AL.getICD().alListeneriv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(listener, value, __functionAddress);
+    }
 
-	/**
-	 *  This function sets a floating point property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param value value of property
-	 */
-	public static void alBufferf(int buffer, int pname, float value) {
-		nalBufferf(buffer, pname, value);
-	}
-	static native void nalBufferf(int buffer, int pname, float value);
+    /**
+     * Pointer version.
+     *
+     * @param listener the parameter to modify
+     * @param value    the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alListeneriv(@NativeType("ALenum") int listener, @NativeType("ALint const *") IntBuffer value) {
+        if (CHECKS) {
+            check(value, 1);
+        }
+        nalListeneriv(listener, memAddress(value));
+    }
 
-	/**
-	 *  This function sets a floating point property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param v1 value of property
-	 *  @param v2 value of property
-	 *  @param v3 value of property
-	 */
-	public static void alBuffer3f(int buffer, int pname, float v1, float v2, float v3) {
-		nalBuffer3f(buffer, pname, v1, v2, v3);
-	}
-	static native void nalBuffer3f(int buffer, int pname, float v1, float v2, float v3);
+    // --- [ alSourceiv ] ---
 
-	/**
-	 *  This function sets a floating point property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param value FloatBuffer containing value of property
-	 */
-	public static void alBuffer(int buffer, int pname, FloatBuffer value) {
-		BufferChecks.checkBuffer(value, 1);
-		nalBufferfv(buffer, pname, MemoryUtil.getAddress(value));
-	}
-	static native void nalBufferfv(int buffer, int pname, long value);
+    /** Unsafe version of: {@link #alSourceiv Sourceiv} */
+    public static void nalSourceiv(int source, int paramName, long value) {
+        long __functionAddress = AL.getICD().alSourceiv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(source, paramName, value, __functionAddress);
+    }
 
-	/**
-	 *  This function sets an integer property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param value value of property
-	 */
-	public static void alBufferi(int buffer, int pname, int value) {
-		nalBufferi(buffer, pname, value);
-	}
-	static native void nalBufferi(int buffer, int pname, int value);
+    /**
+     * Pointer version.
+     *
+     * @param source    the source to modify
+     * @param paramName the parameter to modify
+     * @param value     the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alSourceiv(@NativeType("ALuint") int source, @NativeType("ALenum") int paramName, @NativeType("ALint const *") IntBuffer value) {
+        if (CHECKS) {
+            check(value, 1);
+        }
+        nalSourceiv(source, paramName, memAddress(value));
+    }
 
-	/**
-	 *  This function sets an integer property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param v1 value of property
-	 *  @param v2 value of property
-	 *  @param v3 value of property
-	 */
-	public static void alBuffer3i(int buffer, int pname, int v1, int v2, int v3) {
-		nalBuffer3i(buffer, pname, v1, v2, v3);
-	}
-	static native void nalBuffer3i(int buffer, int pname, int v1, int v2, int v3);
+    // --- [ alBufferf ] ---
 
-	/**
-	 *  This function sets an integer property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to set property on
-	 *  @param pname property to set
-	 *  @param value IntBuffer containing value of property
-	 */
-	public static void alBuffer(int buffer, int pname, IntBuffer value) {
-		BufferChecks.checkBuffer(value, 1);
-		nalBufferiv(buffer, pname, MemoryUtil.getAddress(value));
-	}
-	static native void nalBufferiv(int buffer, int pname, long value);
+    /**
+     * Sets the float value of a buffer parameter.
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value     the value
+     */
+    @NativeType("ALvoid")
+    public static void alBufferf(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALfloat") float value) {
+        long __functionAddress = AL.getICD().alBufferf;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(buffer, paramName, value, __functionAddress);
+    }
 
-	/**
-	 *  This function retrieves an integer property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to get property from
-	 *  @param pname name of property
-	 *  @return int
-	 */
-	public static int alGetBufferi(int buffer, int pname) {
-		int __result = nalGetBufferi(buffer, pname);
-		return __result;
-	}
-	static native int nalGetBufferi(int buffer, int pname);
+    // --- [ alBuffer3f ] ---
 
-	/**
-	 *  This function retrieves an integer property of a buffer.
-	 * <p>
-	 *  @param buffer Buffer to get property from
-	 *  @param pname name of property
-	 */
-	public static void alGetBuffer(int buffer, int pname, IntBuffer values) {
-		BufferChecks.checkBuffer(values, 1);
-		nalGetBufferiv(buffer, pname, MemoryUtil.getAddress(values));
-	}
-	static native void nalGetBufferiv(int buffer, int pname, long values);
+    /**
+     * Sets the dimensional value of a buffer parameter.
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value1    the first value
+     * @param value2    the second value
+     * @param value3    the third value
+     */
+    @NativeType("ALvoid")
+    public static void alBuffer3f(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALfloat") float value1, @NativeType("ALfloat") float value2, @NativeType("ALfloat") float value3) {
+        long __functionAddress = AL.getICD().alBuffer3f;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(buffer, paramName, value1, value2, value3, __functionAddress);
+    }
 
-	/**
-	 *  This function retrieves a floating point property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to get property from
-	 *  @param pname name of property
-	 *  @return floating point property
-	 */
-	public static float alGetBufferf(int buffer, int pname) {
-		float __result = nalGetBufferf(buffer, pname);
-		return __result;
-	}
-	static native float nalGetBufferf(int buffer, int pname);
+    // --- [ alBufferfv ] ---
 
-	/**
-	 *  This function retrieves a floating point property of a buffer.
-	 *  <i>note: There are no relevant buffer properties defined in OpenAL 1.1 which can be affected by
-	 *  this call, but this function may be used by OpenAL extensions.</i>
-	 * <p>
-	 *  @param buffer Buffer to get property from
-	 *  @param pname name of property
-	 */
-	public static void alGetBuffer(int buffer, int pname, FloatBuffer values) {
-		BufferChecks.checkBuffer(values, 1);
-		nalGetBufferfv(buffer, pname, MemoryUtil.getAddress(values));
-	}
-	static native void nalGetBufferfv(int buffer, int pname, long values);
+    /** Unsafe version of: {@link #alBufferfv Bufferfv} */
+    public static void nalBufferfv(int buffer, int paramName, long value) {
+        long __functionAddress = AL.getICD().alBufferfv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(buffer, paramName, value, __functionAddress);
+    }
 
-	/**
-	 *  <p>
-	 *  AL_SPEED_OF_SOUND allows the application to change the reference (propagation)
-	 *  speed used in the Doppler calculation. The source and listener velocities should be
-	 *  expressed in the same units as the speed of sound.
-	 *  </p>
-	 *  <p>
-	 *  A negative or zero value will result in an AL_INVALID_VALUE error, and the
-	 *  command is ignored. The default value is 343.3 (appropriate for velocity units of meters
-	 *  and air as the propagation medium). The current setting can be queried using
-	 *  alGetFloat{v} and AL_SPEED_OF_SOUND.
-	 *  Distance and velocity units are completely independent of one another (so you could use
-	 *  different units for each if desired).
-	 *  </p>
-	 * <p>
-	 *  @param value distance model to be set
-	 */
-	public static void alSpeedOfSound(float value) {
-		nalSpeedOfSound(value);
-	}
-	static native void nalSpeedOfSound(float value);
+    /**
+     * the pointer version of {@link #alBufferf Bufferf}
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value     the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alBufferfv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALfloat const *") FloatBuffer value) {
+        if (CHECKS) {
+            check(value, 1);
+        }
+        nalBufferfv(buffer, paramName, memAddress(value));
+    }
+
+    // --- [ alBufferi ] ---
+
+    /**
+     * Sets the integer value of a buffer parameter.
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value     the value
+     */
+    @NativeType("ALvoid")
+    public static void alBufferi(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALint") int value) {
+        long __functionAddress = AL.getICD().alBufferi;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(buffer, paramName, value, __functionAddress);
+    }
+
+    // --- [ alBuffer3i ] ---
+
+    /**
+     * Sets the integer 3 dimensional value of a buffer parameter.
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value1    the first value
+     * @param value2    the second value
+     * @param value3    the third value
+     */
+    @NativeType("ALvoid")
+    public static void alBuffer3i(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALint") int value1, @NativeType("ALint") int value2, @NativeType("ALint") int value3) {
+        long __functionAddress = AL.getICD().alBuffer3i;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(buffer, paramName, value1, value2, value3, __functionAddress);
+    }
+
+    // --- [ alBufferiv ] ---
+
+    /** Unsafe version of: {@link #alBufferiv Bufferiv} */
+    public static void nalBufferiv(int buffer, int paramName, long value) {
+        long __functionAddress = AL.getICD().alBufferiv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(buffer, paramName, value, __functionAddress);
+    }
+
+    /**
+     * the pointer version of {@link #alBufferi Bufferi}
+     *
+     * @param buffer    the buffer to modify
+     * @param paramName the parameter to modify
+     * @param value     the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alBufferiv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALint const *") IntBuffer value) {
+        if (CHECKS) {
+            check(value, 1);
+        }
+        nalBufferiv(buffer, paramName, memAddress(value));
+    }
+
+    // --- [ alGetBufferiv ] ---
+
+    /** Unsafe version of: {@link #alGetBufferiv GetBufferiv} */
+    public static void nalGetBufferiv(int buffer, int param, long values) {
+        long __functionAddress = AL.getICD().alGetBufferiv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(buffer, param, values, __functionAddress);
+    }
+
+    /**
+     * Returns the integer values of the specified buffer parameter.
+     *
+     * @param buffer the buffer to query
+     * @param param  the parameter to query
+     * @param values the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alGetBufferiv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int param, @NativeType("ALint *") IntBuffer values) {
+        if (CHECKS) {
+            check(values, 1);
+        }
+        nalGetBufferiv(buffer, param, memAddress(values));
+    }
+
+    // --- [ alGetBufferfv ] ---
+
+    /** Unsafe version of: {@link #alGetBufferfv GetBufferfv} */
+    public static void nalGetBufferfv(int buffer, int param, long values) {
+        long __functionAddress = AL.getICD().alGetBufferfv;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokePV(buffer, param, values, __functionAddress);
+    }
+
+    /**
+     * Returns the float values of the specified buffer parameter.
+     *
+     * @param buffer the buffer to query
+     * @param param  the parameter to query
+     * @param values the parameter values
+     */
+    @NativeType("ALvoid")
+    public static void alGetBufferfv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int param, @NativeType("ALfloat *") FloatBuffer values) {
+        if (CHECKS) {
+            check(values, 1);
+        }
+        nalGetBufferfv(buffer, param, memAddress(values));
+    }
+
+    // --- [ alSpeedOfSound ] ---
+
+    /**
+     * Sets the speed of sound.
+     *
+     * @param value the speed of sound
+     */
+    @NativeType("ALvoid")
+    public static void alSpeedOfSound(@NativeType("ALfloat") float value) {
+        long __functionAddress = AL.getICD().alSpeedOfSound;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        invokeV(value, __functionAddress);
+    }
+
+    /** Array version of: {@link #alGetListeneriv GetListeneriv} */
+    @NativeType("ALvoid")
+    public static void alGetListeneriv(@NativeType("ALenum") int param, @NativeType("ALint *") int[] values) {
+        long __functionAddress = AL.getICD().alGetListeneriv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(values, 1);
+        }
+        invokePV(param, values, __functionAddress);
+    }
+
+    /** Array version of: {@link #alListeneriv Listeneriv} */
+    @NativeType("ALvoid")
+    public static void alListeneriv(@NativeType("ALenum") int listener, @NativeType("ALint const *") int[] value) {
+        long __functionAddress = AL.getICD().alListeneriv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(value, 1);
+        }
+        invokePV(listener, value, __functionAddress);
+    }
+
+    /** Array version of: {@link #alSourceiv Sourceiv} */
+    @NativeType("ALvoid")
+    public static void alSourceiv(@NativeType("ALuint") int source, @NativeType("ALenum") int paramName, @NativeType("ALint const *") int[] value) {
+        long __functionAddress = AL.getICD().alSourceiv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(value, 1);
+        }
+        invokePV(source, paramName, value, __functionAddress);
+    }
+
+    /** Array version of: {@link #alBufferfv Bufferfv} */
+    @NativeType("ALvoid")
+    public static void alBufferfv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALfloat const *") float[] value) {
+        long __functionAddress = AL.getICD().alBufferfv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(value, 1);
+        }
+        invokePV(buffer, paramName, value, __functionAddress);
+    }
+
+    /** Array version of: {@link #alBufferiv Bufferiv} */
+    @NativeType("ALvoid")
+    public static void alBufferiv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int paramName, @NativeType("ALint const *") int[] value) {
+        long __functionAddress = AL.getICD().alBufferiv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(value, 1);
+        }
+        invokePV(buffer, paramName, value, __functionAddress);
+    }
+
+    /** Array version of: {@link #alGetBufferiv GetBufferiv} */
+    @NativeType("ALvoid")
+    public static void alGetBufferiv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int param, @NativeType("ALint *") int[] values) {
+        long __functionAddress = AL.getICD().alGetBufferiv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(values, 1);
+        }
+        invokePV(buffer, param, values, __functionAddress);
+    }
+
+    /** Array version of: {@link #alGetBufferfv GetBufferfv} */
+    @NativeType("ALvoid")
+    public static void alGetBufferfv(@NativeType("ALuint") int buffer, @NativeType("ALenum") int param, @NativeType("ALfloat *") float[] values) {
+        long __functionAddress = AL.getICD().alGetBufferfv;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(values, 1);
+        }
+        invokePV(buffer, param, values, __functionAddress);
+    }
+
 }

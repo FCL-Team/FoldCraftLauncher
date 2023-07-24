@@ -34,8 +34,6 @@ package org.lwjgl.util.vector;
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
-import org.lwjgl.util.vector.Vector2f;
-
 /**
  *
  * Holds a 2-tuple vector.

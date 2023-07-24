@@ -32,7 +32,6 @@
 package org.lwjgl.openal;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * The ALCdevice class represents a device opened in OpenAL space.

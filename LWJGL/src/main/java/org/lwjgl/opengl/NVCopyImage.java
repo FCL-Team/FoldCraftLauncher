@@ -1,19 +1,38 @@
-/* MACHINE GENERATED FILE, DO NOT EDIT */
-
+/*
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
+ * MACHINE GENERATED FILE, DO NOT EDIT
+ */
 package org.lwjgl.opengl;
 
-import org.lwjgl.*;
-import java.nio.*;
+import org.lwjgl.system.*;
 
-public final class NVCopyImage {
+import static org.lwjgl.system.Checks.*;
 
-	private NVCopyImage() {}
+/**
+ * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_copy_image.txt">NV_copy_image</a> extension.
+ * 
+ * <p>This extension enables efficient image data transfer between image objects (i.e. textures and renderbuffers) without the need to bind the objects or
+ * otherwise configure the rendering pipeline. The WGL and GLX versions allow copying between images in different contexts, even if those contexts are in
+ * different sharelists or even on different physical devices.</p>
+ */
+public class NVCopyImage {
 
-	public static void glCopyImageSubDataNV(int srcName, int srcTarget, int srcLevel, int srcX, int srcY, int srcZ, int dstName, int dstTarget, int dstLevel, int dstX, int dstY, int dstZ, int width, int height, int depth) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glCopyImageSubDataNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglCopyImageSubDataNV(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, width, height, depth, function_pointer);
-	}
-	static native void nglCopyImageSubDataNV(int srcName, int srcTarget, int srcLevel, int srcX, int srcY, int srcZ, int dstName, int dstTarget, int dstLevel, int dstX, int dstY, int dstZ, int width, int height, int depth, long function_pointer);
+    static { GL.initialize(); }
+
+    protected NVCopyImage() {
+        throw new UnsupportedOperationException();
+    }
+
+    static boolean isAvailable(GLCapabilities caps) {
+        return checkFunctions(
+            caps.glCopyImageSubDataNV
+        );
+    }
+
+    // --- [ glCopyImageSubDataNV ] ---
+
+    /** Copies a region of texel data between two image objects. An image object may be either a texture or a renderbuffer. */
+    public static native void glCopyImageSubDataNV(@NativeType("GLuint") int srcName, @NativeType("GLenum") int srcTarget, @NativeType("GLint") int srcLevel, @NativeType("GLint") int srcX, @NativeType("GLint") int srcY, @NativeType("GLint") int srcZ, @NativeType("GLuint") int dstName, @NativeType("GLenum") int dstTarget, @NativeType("GLint") int dstLevel, @NativeType("GLint") int dstX, @NativeType("GLint") int dstY, @NativeType("GLint") int dstZ, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLsizei") int depth);
+
 }

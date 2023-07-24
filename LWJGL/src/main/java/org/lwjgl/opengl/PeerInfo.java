@@ -31,10 +31,10 @@
  */
 package org.lwjgl.opengl;
 
-import java.nio.ByteBuffer;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
+
+import java.nio.ByteBuffer;
 
 /**
  *

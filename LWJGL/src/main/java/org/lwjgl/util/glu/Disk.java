@@ -31,8 +31,21 @@
  */
 package org.lwjgl.util.glu;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
+import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_POINTS;
+import static org.lwjgl.opengl.GL11.GL_QUAD_STRIP;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glNormal3f;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.util.glu.GLU.GLU_FILL;
+import static org.lwjgl.util.glu.GLU.GLU_LINE;
+import static org.lwjgl.util.glu.GLU.GLU_NONE;
+import static org.lwjgl.util.glu.GLU.GLU_OUTSIDE;
+import static org.lwjgl.util.glu.GLU.GLU_POINT;
+import static org.lwjgl.util.glu.GLU.GLU_SILHOUETTE;
+import static org.lwjgl.util.glu.GLU.PI;
 
 /**
  * Disk.java

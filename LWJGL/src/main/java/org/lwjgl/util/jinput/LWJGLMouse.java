@@ -31,14 +31,14 @@
  */
 package org.lwjgl.util.jinput;
 
-import java.io.IOException;
-
 import net.java.games.input.AbstractComponent;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 import net.java.games.input.Mouse;
 import net.java.games.input.Rumbler;
+
+import java.io.IOException;
 
 /**
  * @author elias

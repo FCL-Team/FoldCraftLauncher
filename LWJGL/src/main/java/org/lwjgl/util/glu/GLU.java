@@ -31,14 +31,14 @@
  */
 package org.lwjgl.util.glu;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL11.glOrtho;
 
 import org.lwjgl.opengl.Util;
 import org.lwjgl.util.glu.tessellation.GLUtessellatorImpl;
 
-import static org.lwjgl.opengl.GL11.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  * GLU.java

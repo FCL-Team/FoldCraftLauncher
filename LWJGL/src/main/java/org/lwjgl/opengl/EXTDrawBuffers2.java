@@ -1,82 +1,116 @@
-/* MACHINE GENERATED FILE, DO NOT EDIT */
-
+/*
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
+ * MACHINE GENERATED FILE, DO NOT EDIT
+ */
 package org.lwjgl.opengl;
 
-import org.lwjgl.*;
 import java.nio.*;
 
-public final class EXTDrawBuffers2 {
+import org.lwjgl.system.*;
 
-	private EXTDrawBuffers2() {}
+import static org.lwjgl.system.Checks.*;
+import static org.lwjgl.system.JNI.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
-	public static void glColorMaskIndexedEXT(int buf, boolean r, boolean g, boolean b, boolean a) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glColorMaskIndexedEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglColorMaskIndexedEXT(buf, r, g, b, a, function_pointer);
-	}
-	static native void nglColorMaskIndexedEXT(int buf, boolean r, boolean g, boolean b, boolean a, long function_pointer);
+/**
+ * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_draw_buffers2.txt">EXT_draw_buffers2</a> extension.
+ * 
+ * <p>This extension builds upon the ARB_draw_buffers extension and provides separate blend enables and color write masks for each color output. In
+ * ARB_draw_buffers (part of OpenGL 2.0), separate values can be written to each color buffer, but the blend enable and color write mask are global and
+ * apply to all color outputs.</p>
+ * 
+ * <p>While this extension does provide separate blend enables, it does not provide separate blend functions or blend equations per color output.</p>
+ * 
+ * <p>Requires {@link GL20 OpenGL 2.0}.</p>
+ */
+public class EXTDrawBuffers2 {
 
-	public static void glGetBooleanIndexedEXT(int value, int index, ByteBuffer data) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGetBooleanIndexedvEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		BufferChecks.checkBuffer(data, 4);
-		nglGetBooleanIndexedvEXT(value, index, MemoryUtil.getAddress(data), function_pointer);
-	}
-	static native void nglGetBooleanIndexedvEXT(int value, int index, long data, long function_pointer);
+    static { GL.initialize(); }
 
-	/** Overloads glGetBooleanIndexedvEXT. */
-	public static boolean glGetBooleanIndexedEXT(int value, int index) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGetBooleanIndexedvEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		ByteBuffer data = APIUtil.getBufferByte(caps, 1);
-		nglGetBooleanIndexedvEXT(value, index, MemoryUtil.getAddress(data), function_pointer);
-		return data.get(0) == 1;
-	}
+    protected EXTDrawBuffers2() {
+        throw new UnsupportedOperationException();
+    }
 
-	public static void glGetIntegerIndexedEXT(int value, int index, IntBuffer data) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGetIntegerIndexedvEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		BufferChecks.checkBuffer(data, 4);
-		nglGetIntegerIndexedvEXT(value, index, MemoryUtil.getAddress(data), function_pointer);
-	}
-	static native void nglGetIntegerIndexedvEXT(int value, int index, long data, long function_pointer);
+    static boolean isAvailable(GLCapabilities caps) {
+        return checkFunctions(
+            caps.glColorMaskIndexedEXT, caps.glGetBooleanIndexedvEXT, caps.glGetIntegerIndexedvEXT, caps.glEnableIndexedEXT, caps.glDisableIndexedEXT, 
+            caps.glIsEnabledIndexedEXT
+        );
+    }
 
-	/** Overloads glGetIntegerIndexedvEXT. */
-	public static int glGetIntegerIndexedEXT(int value, int index) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGetIntegerIndexedvEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		IntBuffer data = APIUtil.getBufferInt(caps);
-		nglGetIntegerIndexedvEXT(value, index, MemoryUtil.getAddress(data), function_pointer);
-		return data.get(0);
-	}
+    // --- [ glColorMaskIndexedEXT ] ---
 
-	public static void glEnableIndexedEXT(int target, int index) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glEnableIndexedEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglEnableIndexedEXT(target, index, function_pointer);
-	}
-	static native void nglEnableIndexedEXT(int target, int index, long function_pointer);
+    public static native void glColorMaskIndexedEXT(@NativeType("GLuint") int index, @NativeType("GLboolean") boolean r, @NativeType("GLboolean") boolean g, @NativeType("GLboolean") boolean b, @NativeType("GLboolean") boolean a);
 
-	public static void glDisableIndexedEXT(int target, int index) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glDisableIndexedEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglDisableIndexedEXT(target, index, function_pointer);
-	}
-	static native void nglDisableIndexedEXT(int target, int index, long function_pointer);
+    // --- [ glGetBooleanIndexedvEXT ] ---
 
-	public static boolean glIsEnabledIndexedEXT(int target, int index) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glIsEnabledIndexedEXT;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		boolean __result = nglIsEnabledIndexedEXT(target, index, function_pointer);
-		return __result;
-	}
-	static native boolean nglIsEnabledIndexedEXT(int target, int index, long function_pointer);
+    public static native void nglGetBooleanIndexedvEXT(int target, int index, long data);
+
+    public static void glGetBooleanIndexedvEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLboolean *") ByteBuffer data) {
+        if (CHECKS) {
+            check(data, 1);
+        }
+        nglGetBooleanIndexedvEXT(target, index, memAddress(data));
+    }
+
+    @NativeType("void")
+    public static boolean glGetBooleanIndexedEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            ByteBuffer data = stack.calloc(1);
+            nglGetBooleanIndexedvEXT(target, index, memAddress(data));
+            return data.get(0) != 0;
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ glGetIntegerIndexedvEXT ] ---
+
+    public static native void nglGetIntegerIndexedvEXT(int target, int index, long data);
+
+    public static void glGetIntegerIndexedvEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLint *") IntBuffer data) {
+        if (CHECKS) {
+            check(data, 1);
+        }
+        nglGetIntegerIndexedvEXT(target, index, memAddress(data));
+    }
+
+    @NativeType("void")
+    public static int glGetIntegerIndexedEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            IntBuffer data = stack.callocInt(1);
+            nglGetIntegerIndexedvEXT(target, index, memAddress(data));
+            return data.get(0);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ glEnableIndexedEXT ] ---
+
+    public static native void glEnableIndexedEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index);
+
+    // --- [ glDisableIndexedEXT ] ---
+
+    public static native void glDisableIndexedEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index);
+
+    // --- [ glIsEnabledIndexedEXT ] ---
+
+    @NativeType("GLboolean")
+    public static native boolean glIsEnabledIndexedEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index);
+
+    /** Array version of: {@link #glGetIntegerIndexedvEXT GetIntegerIndexedvEXT} */
+    public static void glGetIntegerIndexedvEXT(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLint *") int[] data) {
+        long __functionAddress = GL.getICD().glGetIntegerIndexedvEXT;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(data, 1);
+        }
+        callPV(target, index, data, __functionAddress);
+    }
+
 }

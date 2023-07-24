@@ -84,7 +84,13 @@
 */
 package org.lwjgl.util.glu.tessellation;
 
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MAX_COORD;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_NEED_COMBINE_CALLBACK;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ABS_GEQ_TWO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NEGATIVE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NONZERO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ODD;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_POSITIVE;
 
 class Sweep {
     private Sweep() {

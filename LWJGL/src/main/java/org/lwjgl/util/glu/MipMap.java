@@ -31,12 +31,26 @@
  */
 package org.lwjgl.util.glu;
 
-import java.nio.ByteBuffer;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_INVALID_ENUM;
+import static org.lwjgl.opengl.GL11.GL_MAX_TEXTURE_SIZE;
+import static org.lwjgl.opengl.GL11.GL_PACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.GL_PACK_ROW_LENGTH;
+import static org.lwjgl.opengl.GL11.GL_PACK_SKIP_PIXELS;
+import static org.lwjgl.opengl.GL11.GL_PACK_SKIP_ROWS;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ROW_LENGTH;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_SKIP_PIXELS;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_SKIP_ROWS;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glPixelStorei;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
+import static org.lwjgl.util.glu.GLU.GLU_INVALID_ENUM;
+import static org.lwjgl.util.glu.GLU.GLU_INVALID_VALUE;
 
 import org.lwjgl.BufferUtils;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import java.nio.ByteBuffer;
 
 /**
  * MipMap.java

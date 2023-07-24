@@ -31,11 +31,13 @@
  */
 package org.lwjgl.opengl;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.PointerBuffer;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /** @author Spasi */
 abstract class DrawableGL implements DrawableLWJGL {

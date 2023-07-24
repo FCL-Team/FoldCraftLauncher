@@ -52,8 +52,7 @@ public class MappedObjectClassLoader extends URLClassLoader {
 	static boolean FORKED;
 
 	/**
-	 * Forks the specified class containing a main method, passing the specified arguments. See
-	 * {@link org.lwjgl.test.mapped.TestMappedObject} for example usage.
+	 * Forks the specified class containing a main method, passing the specified arguments.
 	 *
 	 * @param mainClass the class containing the main method
 	 * @param args      the arguments to pass

@@ -31,8 +31,9 @@
  */
 package org.lwjgl.util.jinput;
 
-import org.lwjgl.input.Keyboard;
 import net.java.games.input.Component;
+
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author elias

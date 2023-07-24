@@ -1,205 +1,267 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- *
- * * Neither the name of 'LWJGL' nor the names of
- *   its contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
  */
 package org.lwjgl;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
+import org.lwjgl.system.*;
+
+import java.nio.*;
+
+import static org.lwjgl.system.APIUtil.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Some often-used Buffer code for creating native buffers of the appropriate size.
+ * <p>This class makes it easy and safe to work with direct buffers. It is the recommended way to allocate memory to use with LWJGL.</p>
  *
- * @author $Author$
- * @version $Revision$
- * $Id$
+ * <h3>Direct buffers</h3>
+ *
+ * <p>LWJGL requires that all NIO buffers passed to it are direct buffers. Direct buffers essentially wrap an address that points to off-heap memory, i.e. a
+ * native pointer. This is the only way LWJGL can safely pass data from Java code to native code, and vice-versa, without a performance penalty. It does not
+ * support on-heap Java arrays (or plain NIO buffers, which wrap them) because arrays may be moved around in memory by the JVM's garbage collector while native
+ * code is accessing them. In addition, Java arrays have an unspecified layout, i.e. they are not necessarily contiguous in memory.</p>
+ *
+ * <h3>Usage</h3>
+ *
+ * <p>When a direct buffer is passed as an argument to an LWJGL method, no data is copied. Instead, the current buffer position is added to the buffer's memory
+ * address and the resulting value is passed to native code. The native code interprets that value as a pointer and reads or copies from it as necessary. LWJGL
+ * will often also use the current buffer limit (via {@link Buffer#remaining()}) to automatically pass length/maxlength arguments. This means that, just like
+ * other APIs that use NIO buffers, the current {@link Buffer#position()} and {@link Buffer#limit()} at the time of the call is very important. Contrary to
+ * other APIs, LWJGL never modifies the current position, it will be the same value before and after the call.</p>
+ *
+ * <h3>Arrays of pointers</h3>
+ *
+ * <p>In addition to the standard NIO buffer classes, LWJGL provides a {@link PointerBuffer} class for storing pointer data in an architecture independent way.
+ * It is used in bindings for pointer-to-pointers arguments, usually to provide arrays of data (input parameter) or to store returned pointer values (output
+ * parameter). Also, there's the {@link CLongBuffer} class which is similar to {@code PointerBuffer}, but for C {@code long} data.</p>
+ *
+ * <h3>Memory management</h3>
+ *
+ * <p>Using NIO buffers for off-heap memory has some drawbacks:</p>
+ * <ul>
+ * <li>Memory blocks bigger than {@link Integer#MAX_VALUE} bytes cannot be allocated.</li>
+ * <li>Memory blocks are zeroed-out on allocation, for safety. This has (sometimes unwanted) performance implications.</li>
+ * <li>There is no way to free a buffer explicitly (without JVM specific reflection). Buffer objects are subject to GC and it usually takes two GC cycles to
+ * free the off-heap memory after the buffer object becomes unreachable.</li>
+ * </ul>
+ *
+ * <p>An alternative API for allocating off-heap memory can be found in the {@link MemoryUtil} class. This has none of the above drawbacks,
+ * but requires allocated memory to be explictly freed when not used anymore.</p>
+ *
+ * <h3>Memory alignment</h3>
+ *
+ * <p>Allocations done via this class have a guaranteed alignment of 8 bytes. If higher alignment values are required, use the explicit memory management API
+ * or pad the requested memory with extra bytes and align manually.</p>
+ *
+ * <h3>Structs and arrays of structs</h3>
+ *
+ * <p>Java does not support struct value types, so LWJGL requires struct values that are backed by off-heap memory. Each struct type defined in a binding
+ * has a corresponding class in LWJGL that can be used to access its members. Each struct class also has a {@code Buffer} inner class that can be used to
+ * access (packed) arrays of struct values. Both struct and struct buffer classes may be backed by direct {@link ByteBuffer}s allocated from this class, but it
+ * is highly recommended to use explicit memory management for performance.</p>
  */
-
 public final class BufferUtils {
 
-	/**
-	 * Construct a direct native-ordered bytebuffer with the specified size.
-	 * @param size The size, in bytes
-	 * @return a ByteBuffer
-	 */
-	public static ByteBuffer createByteBuffer(int size) {
-		return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
-	}
+    private BufferUtils() {}
 
-	/**
-	 * Construct a direct native-order shortbuffer with the specified number
-	 * of elements.
-	 * @param size The size, in shorts
-	 * @return a ShortBuffer
-	 */
-	public static ShortBuffer createShortBuffer(int size) {
-		return createByteBuffer(size << 1).asShortBuffer();
-	}
+    /**
+     * @return n, where buffer_element_size=2^n.
+     */
+    public static int getElementSizeExponent(Buffer buf) {
+        if (buf instanceof ByteBuffer)
+            return 0;
+        else if (buf instanceof ShortBuffer || buf instanceof CharBuffer)
+            return 1;
+        else if (buf instanceof FloatBuffer || buf instanceof IntBuffer)
+            return 2;
+        else if (buf instanceof LongBuffer || buf instanceof DoubleBuffer)
+            return 3;
+        else
+            throw new IllegalStateException("Unsupported buffer type: " + buf);
+    }
 
-	/**
-	 * Construct a direct native-order charbuffer with the specified number
-	 * of elements.
-	 * @param size The size, in chars
-	 * @return an CharBuffer
-	 */
-	public static CharBuffer createCharBuffer(int size) {
-		return createByteBuffer(size << 1).asCharBuffer();
-	}
+    /**
+     * A helper function which is used to get the byte offset in an arbitrary buffer
+     * based on its position
+     * @return the position of the buffer, in BYTES
+     */
+    public static int getOffset(Buffer buffer) {
+        return buffer.position() << getElementSizeExponent(buffer);
+    }
 
-	/**
-	 * Construct a direct native-order intbuffer with the specified number
-	 * of elements.
-	 * @param size The size, in ints
-	 * @return an IntBuffer
-	 */
-	public static IntBuffer createIntBuffer(int size) {
-		return createByteBuffer(size << 2).asIntBuffer();
-	}
+    /**
+     * Returns the memory address of the specified buffer.
+     *
+     * @param buffer
+     *            the buffer
+     *
+     * @return the memory address
+     */
+    static long getBufferAddress(Buffer buffer) {
+        // Should be below or memAddress0() ?
+        return memAddress(buffer);
+    }
 
-	/**
-	 * Construct a direct native-order longbuffer with the specified number
-	 * of elements.
-	 * @param size The size, in longs
-	 * @return an LongBuffer
-	 */
-	public static LongBuffer createLongBuffer(int size) {
-		return createByteBuffer(size << 3).asLongBuffer();
-	}
+    /**
+     * Allocates a direct native-ordered {@code ByteBuffer} with the specified capacity.
+     *
+     * @param capacity the capacity, in bytes
+     *
+     * @return a {@code ByteBuffer}
+     */
+    public static ByteBuffer createByteBuffer(int capacity) {
+        return ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder());
+    }
 
-	/**
-	 * Construct a direct native-order floatbuffer with the specified number
-	 * of elements.
-	 * @param size The size, in floats
-	 * @return a FloatBuffer
-	 */
-	public static FloatBuffer createFloatBuffer(int size) {
-		return createByteBuffer(size << 2).asFloatBuffer();
-	}
+    static int getAllocationSize(int elements, int elementShift) {
+        apiCheckAllocation(elements, apiGetBytes(elements, elementShift), 0x7FFF_FFFFL);
+        return elements << elementShift;
+    }
 
-	/**
-	 * Construct a direct native-order doublebuffer with the specified number
-	 * of elements.
-	 * @param size The size, in floats
-	 * @return a FloatBuffer
-	 */
-	public static DoubleBuffer createDoubleBuffer(int size) {
-		return createByteBuffer(size << 3).asDoubleBuffer();
-	}
+    /**
+     * Allocates a direct native-order {@code ShortBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in shorts
+     *
+     * @return a {@code ShortBuffer}
+     */
+    public static ShortBuffer createShortBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 1)).asShortBuffer();
+    }
 
-	/**
-	 * Construct a PointerBuffer with the specified number
-	 * of elements.
-	 * @param size The size, in memory addresses
-	 * @return a PointerBuffer
-	 */
-	public static PointerBuffer createPointerBuffer(int size) {
-		return PointerBuffer.allocateDirect(size);
-	}
+    /**
+     * Allocates a direct native-order {@code CharBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in chars
+     *
+     * @return a {@code CharBuffer}
+     */
+    public static CharBuffer createCharBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 1)).asCharBuffer();
+    }
 
-	/**
-	 * @return n, where buffer_element_size=2^n.
-	 */
-	public static int getElementSizeExponent(Buffer buf) {
-		if (buf instanceof ByteBuffer)
-			return 0;
-		else if (buf instanceof ShortBuffer || buf instanceof CharBuffer)
-			return 1;
-		else if (buf instanceof FloatBuffer || buf instanceof IntBuffer)
-			return 2;
-		else if (buf instanceof LongBuffer || buf instanceof DoubleBuffer)
-			return 3;
-		else
-			throw new IllegalStateException("Unsupported buffer type: " + buf);
-	}
+    /**
+     * Allocates a direct native-order {@code IntBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in ints
+     *
+     * @return an {@code IntBuffer}
+     */
+    public static IntBuffer createIntBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 2)).asIntBuffer();
+    }
 
-	/**
-	 * A helper function which is used to get the byte offset in an arbitrary buffer
-	 * based on its position
-	 * @return the position of the buffer, in BYTES
-	 */
-	public static int getOffset(Buffer buffer) {
-		return buffer.position() << getElementSizeExponent(buffer);
-	}
+    /**
+     * Allocates a direct native-order {@code LongBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in longs
+     *
+     * @return a {@code LongBuffer}
+     */
+    public static LongBuffer createLongBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 3)).asLongBuffer();
+    }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(ByteBuffer b) {
-	    zeroBuffer0(b, b.position(), b.remaining());
-	}
+    /**
+     * Allocates a {@code CLongBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in memory addresses
+     *
+     * @return a {@code CLongBuffer}
+     */
+    public static CLongBuffer createCLongBuffer(int capacity) {
+        return CLongBuffer.allocateDirect(capacity);
+    }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(ShortBuffer b) {
-	    zeroBuffer0(b, b.position()*2L, b.remaining()*2L);
-	}
+    /**
+     * Allocates a direct native-order {@code FloatBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in floats
+     *
+     * @return a FloatBuffer
+     */
+    public static FloatBuffer createFloatBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 2)).asFloatBuffer();
+    }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(CharBuffer b) {
-	    zeroBuffer0(b, b.position()*2L, b.remaining()*2L);
-	}
+    /**
+     * Allocates a direct native-order {@code DoubleBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in doubles
+     *
+     * @return a {@code DoubleBuffer}
+     */
+    public static DoubleBuffer createDoubleBuffer(int capacity) {
+        return createByteBuffer(getAllocationSize(capacity, 3)).asDoubleBuffer();
+    }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(IntBuffer b) {
-	    zeroBuffer0(b, b.position()*4L, b.remaining()*4L);
-	}
+    /**
+     * Allocates a {@code PointerBuffer} with the specified number of elements.
+     *
+     * @param capacity the capacity, in memory addresses
+     *
+     * @return a {@code PointerBuffer}
+     */
+    public static PointerBuffer createPointerBuffer(int capacity) {
+        return PointerBuffer.allocateDirect(capacity);
+    }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(FloatBuffer b) {
-	    zeroBuffer0(b, b.position()*4L, b.remaining()*4L);
-	}
+    // memsets
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(LongBuffer b) {
-	    zeroBuffer0(b, b.position()*8L, b.remaining()*8L);
-	}
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(ByteBuffer buffer) { memSet(buffer, 0); }
 
-	/** Fill buffer with zeros from position to remaining */
-	public static void zeroBuffer(DoubleBuffer b) {
-	    zeroBuffer0(b, b.position()*8L, b.remaining()*8L);
-	}
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(ShortBuffer buffer) { memSet(buffer, 0); }
 
-	/** Fill buffer with zeros from position to remaining */
-	private static native void zeroBuffer0(Buffer b, long off, long size);
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(CharBuffer buffer) { memSet(buffer, 0); }
 
-	/**
-	 * Returns the memory address of the specified buffer.
-	 *
-	 * @param buffer the buffer
-	 *
-	 * @return the memory address
-	 */
-	static native long getBufferAddress(Buffer buffer);
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(IntBuffer buffer) { memSet(buffer, 0); }
+
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(FloatBuffer buffer) { memSet(buffer, 0); }
+
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(LongBuffer buffer) { memSet(buffer, 0); }
+
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static void zeroBuffer(DoubleBuffer buffer) { memSet(buffer, 0); }
+
+    /**
+     * Fills the specified buffer with zeros from the current position to the current limit.
+     *
+     * @param buffer the buffer to fill with zeros
+     */
+    public static <T extends CustomBuffer<T>> void zeroBuffer(T buffer) { memSet(buffer, 0); }
 
 }

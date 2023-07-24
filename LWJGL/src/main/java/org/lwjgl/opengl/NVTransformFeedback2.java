@@ -1,101 +1,140 @@
-/* MACHINE GENERATED FILE, DO NOT EDIT */
-
+/*
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
+ * MACHINE GENERATED FILE, DO NOT EDIT
+ */
 package org.lwjgl.opengl;
 
-import org.lwjgl.*;
 import java.nio.*;
 
-public final class NVTransformFeedback2 {
+import org.lwjgl.system.*;
 
-	/**
-	 * Accepted by the &lt;target&gt; parameter of BindTransformFeedbackNV: 
-	 */
-	public static final int GL_TRANSFORM_FEEDBACK_NV = 0x8E22;
+import static org.lwjgl.system.Checks.*;
+import static org.lwjgl.system.JNI.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
-	/**
-	 *  Accepted by the &lt;pname&gt; parameter of GetBooleanv, GetDoublev, GetIntegerv,
-	 *  and GetFloatv:
-	 */
-	public static final int GL_TRANSFORM_FEEDBACK_BUFFER_PAUSED_NV = 0x8E23,
-		GL_TRANSFORM_FEEDBACK_BUFFER_ACTIVE_NV = 0x8E24,
-		GL_TRANSFORM_FEEDBACK_BINDING_NV = 0x8E25;
+/**
+ * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_transform_feedback2.txt">NV_transform_feedback2</a> extension.
+ * 
+ * <p>The NV_transform_feedback and EXT_transform_feedback extensions allow applications to capture primitives to one or more buffer objects when transformed
+ * by the GL. This extension provides a few additional capabilities to these extensions, making transform feedback mode more useful.</p>
+ * 
+ * <p>First, it provides transform feedback objects encapsulating transform feedback-related state, allowing applications to replace the entire transform
+ * feedback configuration in a single bind call. Second, it provides the ability to pause and resume transform feedback operations. When transform
+ * feedback is paused, applications may render without transform feedback or may use transform feedback with different state and a different transform
+ * feedback object. When transform feedback is resumed, additional primitives are captured and appended to previously captured primitives for the object.</p>
+ * 
+ * <p>Additionally, this extension provides the ability to draw primitives captured in transform feedback mode without querying the captured primitive count.
+ * The command DrawTransformFeedbackNV() is equivalent to {@code glDrawArrays(<mode>, 0, <count>)}, where {@code count} is the number of vertices captured
+ * to buffer objects during the last transform feedback capture operation on the transform feedback object used. This draw operation only provides a
+ * vertex count -- it does not automatically set up vertex array state or vertex buffer object bindings, which must be done separately by the application.</p>
+ * 
+ * <p>Requires {@link GL15 OpenGL 1.5} and {@link NVTransformFeedback NV_transform_feedback} or {@link EXTTransformFeedback EXT_transform_feedback}.</p>
+ */
+public class NVTransformFeedback2 {
 
-	private NVTransformFeedback2() {}
+    /** Accepted by the {@code target} parameter of BindTransformFeedbackNV. */
+    public static final int GL_TRANSFORM_FEEDBACK_NV = 0x8E22;
 
-	public static void glBindTransformFeedbackNV(int target, int id) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glBindTransformFeedbackNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglBindTransformFeedbackNV(target, id, function_pointer);
-	}
-	static native void nglBindTransformFeedbackNV(int target, int id, long function_pointer);
+    /** Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetIntegerv, and GetFloatv. */
+    public static final int
+        GL_TRANSFORM_FEEDBACK_BUFFER_PAUSED_NV = 0x8E23,
+        GL_TRANSFORM_FEEDBACK_BUFFER_ACTIVE_NV = 0x8E24,
+        GL_TRANSFORM_FEEDBACK_BINDING_NV       = 0x8E25;
 
-	public static void glDeleteTransformFeedbacksNV(IntBuffer ids) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glDeleteTransformFeedbacksNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		BufferChecks.checkDirect(ids);
-		nglDeleteTransformFeedbacksNV(ids.remaining(), MemoryUtil.getAddress(ids), function_pointer);
-	}
-	static native void nglDeleteTransformFeedbacksNV(int ids_n, long ids, long function_pointer);
+    static { GL.initialize(); }
 
-	/** Overloads glDeleteTransformFeedbacksNV. */
-	public static void glDeleteTransformFeedbacksNV(int id) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glDeleteTransformFeedbacksNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglDeleteTransformFeedbacksNV(1, APIUtil.getInt(caps, id), function_pointer);
-	}
+    protected NVTransformFeedback2() {
+        throw new UnsupportedOperationException();
+    }
 
-	public static void glGenTransformFeedbacksNV(IntBuffer ids) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGenTransformFeedbacksNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		BufferChecks.checkDirect(ids);
-		nglGenTransformFeedbacksNV(ids.remaining(), MemoryUtil.getAddress(ids), function_pointer);
-	}
-	static native void nglGenTransformFeedbacksNV(int ids_n, long ids, long function_pointer);
+    static boolean isAvailable(GLCapabilities caps) {
+        return checkFunctions(
+            caps.glBindTransformFeedbackNV, caps.glDeleteTransformFeedbacksNV, caps.glGenTransformFeedbacksNV, caps.glIsTransformFeedbackNV, 
+            caps.glPauseTransformFeedbackNV, caps.glResumeTransformFeedbackNV, caps.glDrawTransformFeedbackNV
+        );
+    }
 
-	/** Overloads glGenTransformFeedbacksNV. */
-	public static int glGenTransformFeedbacksNV() {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glGenTransformFeedbacksNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		IntBuffer ids = APIUtil.getBufferInt(caps);
-		nglGenTransformFeedbacksNV(1, MemoryUtil.getAddress(ids), function_pointer);
-		return ids.get(0);
-	}
+    // --- [ glBindTransformFeedbackNV ] ---
 
-	public static boolean glIsTransformFeedbackNV(int id) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glIsTransformFeedbackNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		boolean __result = nglIsTransformFeedbackNV(id, function_pointer);
-		return __result;
-	}
-	static native boolean nglIsTransformFeedbackNV(int id, long function_pointer);
+    public static native void glBindTransformFeedbackNV(@NativeType("GLenum") int target, @NativeType("GLuint") int id);
 
-	public static void glPauseTransformFeedbackNV() {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glPauseTransformFeedbackNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglPauseTransformFeedbackNV(function_pointer);
-	}
-	static native void nglPauseTransformFeedbackNV(long function_pointer);
+    // --- [ glDeleteTransformFeedbacksNV ] ---
 
-	public static void glResumeTransformFeedbackNV() {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glResumeTransformFeedbackNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglResumeTransformFeedbackNV(function_pointer);
-	}
-	static native void nglResumeTransformFeedbackNV(long function_pointer);
+    public static native void nglDeleteTransformFeedbacksNV(int n, long ids);
 
-	public static void glDrawTransformFeedbackNV(int mode, int id) {
-		ContextCapabilities caps = GLContext.getCapabilities();
-		long function_pointer = caps.glDrawTransformFeedbackNV;
-		BufferChecks.checkFunctionAddress(function_pointer);
-		nglDrawTransformFeedbackNV(mode, id, function_pointer);
-	}
-	static native void nglDrawTransformFeedbackNV(int mode, int id, long function_pointer);
+    public static void glDeleteTransformFeedbacksNV(@NativeType("GLuint const *") IntBuffer ids) {
+        nglDeleteTransformFeedbacksNV(ids.remaining(), memAddress(ids));
+    }
+
+    public static void glDeleteTransformFeedbacksNV(@NativeType("GLuint const *") int id) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            IntBuffer ids = stack.ints(id);
+            nglDeleteTransformFeedbacksNV(1, memAddress(ids));
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ glGenTransformFeedbacksNV ] ---
+
+    public static native void nglGenTransformFeedbacksNV(int n, long ids);
+
+    public static void glGenTransformFeedbacksNV(@NativeType("GLuint *") IntBuffer ids) {
+        if (CHECKS) {
+            check(ids, 1);
+        }
+        nglGenTransformFeedbacksNV(ids.remaining(), memAddress(ids));
+    }
+
+    @NativeType("void")
+    public static int glGenTransformFeedbacksNV() {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            IntBuffer ids = stack.callocInt(1);
+            nglGenTransformFeedbacksNV(1, memAddress(ids));
+            return ids.get(0);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ glIsTransformFeedbackNV ] ---
+
+    @NativeType("GLboolean")
+    public static native boolean glIsTransformFeedbackNV(@NativeType("GLuint") int id);
+
+    // --- [ glPauseTransformFeedbackNV ] ---
+
+    public static native void glPauseTransformFeedbackNV();
+
+    // --- [ glResumeTransformFeedbackNV ] ---
+
+    public static native void glResumeTransformFeedbackNV();
+
+    // --- [ glDrawTransformFeedbackNV ] ---
+
+    public static native void glDrawTransformFeedbackNV(@NativeType("GLenum") int mode, @NativeType("GLuint") int id);
+
+    /** Array version of: {@link #glDeleteTransformFeedbacksNV DeleteTransformFeedbacksNV} */
+    public static void glDeleteTransformFeedbacksNV(@NativeType("GLuint const *") int[] ids) {
+        long __functionAddress = GL.getICD().glDeleteTransformFeedbacksNV;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        callPV(ids.length, ids, __functionAddress);
+    }
+
+    /** Array version of: {@link #glGenTransformFeedbacksNV GenTransformFeedbacksNV} */
+    public static void glGenTransformFeedbacksNV(@NativeType("GLuint *") int[] ids) {
+        long __functionAddress = GL.getICD().glGenTransformFeedbacksNV;
+        if (CHECKS) {
+            check(__functionAddress);
+            check(ids, 1);
+        }
+        callPV(ids.length, ids, __functionAddress);
+    }
+
 }

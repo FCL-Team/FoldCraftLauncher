@@ -84,8 +84,15 @@
 */
 package org.lwjgl.util.glu.tessellation;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ABS_GEQ_TWO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NEGATIVE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NONZERO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ODD;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_POSITIVE;
 
 class Render {
     private static final boolean USE_OPTIMIZED_CODE_PATH = false;

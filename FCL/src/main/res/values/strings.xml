@@ -8,8 +8,7 @@
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
     <string name="splash_eula_next">Agree and Continue</string>
     <string name="splash_runtime_title">Install or update app runtime</string>
-    <string name="splash_runtime_lwjgl2" translatable="false">LWJGL 2</string>
-    <string name="splash_runtime_lwjgl3" translatable="false">LWJGL 3</string>
+    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
     <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
     <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
     <string name="splash_runtime_java8" translatable="false">JRE 8</string>

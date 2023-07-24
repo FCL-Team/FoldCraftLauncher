@@ -31,12 +31,12 @@
  */
 package org.lwjgl.util.mapped;
 
+import static org.lwjgl.util.mapped.MappedObjectUnsafe.INSTANCE;
+
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.MemoryUtil;
 
 import java.nio.ByteBuffer;
-
-import static org.lwjgl.util.mapped.MappedObjectUnsafe.*;
 
 /**
  * [INTERNAL USE ONLY]

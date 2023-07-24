@@ -31,9 +31,16 @@
  */
 package org.lwjgl.opengl;
 
-import static org.lwjgl.opengl.ARBImaging.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
+import static org.lwjgl.opengl.GL11.GL_INVALID_ENUM;
+import static org.lwjgl.opengl.GL11.GL_INVALID_OPERATION;
+import static org.lwjgl.opengl.GL11.GL_INVALID_VALUE;
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.GL_OUT_OF_MEMORY;
+import static org.lwjgl.opengl.GL11.GL_STACK_OVERFLOW;
+import static org.lwjgl.opengl.GL11.GL_STACK_UNDERFLOW;
+import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 /**
  * Simple utility class.
@@ -52,8 +59,6 @@ public final class Util {
 	 *
 	 */
 	public static void checkGLError() throws OpenGLException {
-		if ( ContextCapabilities.DEBUG && GLContext.getCapabilities().tracker.isBeginEnd() ) // Do not call GetError inside a Begin/End pair.
-			return;
 		int err = glGetError();
 		if ( err != GL_NO_ERROR ) {
 			throw new OpenGLException(err);

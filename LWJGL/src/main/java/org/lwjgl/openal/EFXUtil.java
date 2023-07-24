@@ -31,8 +31,37 @@
  */
 package org.lwjgl.openal;
 
-import static org.lwjgl.openal.AL10.*;
-import static org.lwjgl.openal.EFX10.*;
+import static org.lwjgl.openal.AL10.AL_INVALID_OPERATION;
+import static org.lwjgl.openal.AL10.AL_INVALID_VALUE;
+import static org.lwjgl.openal.AL10.AL_NO_ERROR;
+import static org.lwjgl.openal.AL10.AL_OUT_OF_MEMORY;
+import static org.lwjgl.openal.AL10.alGetError;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_AUTOWAH;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_CHORUS;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_COMPRESSOR;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_DISTORTION;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_EAXREVERB;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_ECHO;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_EQUALIZER;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_FLANGER;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_FREQUENCY_SHIFTER;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_NULL;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_PITCH_SHIFTER;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_REVERB;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_RING_MODULATOR;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_TYPE;
+import static org.lwjgl.openal.EFX10.AL_EFFECT_VOCAL_MORPHER;
+import static org.lwjgl.openal.EFX10.AL_FILTER_BANDPASS;
+import static org.lwjgl.openal.EFX10.AL_FILTER_HIGHPASS;
+import static org.lwjgl.openal.EFX10.AL_FILTER_LOWPASS;
+import static org.lwjgl.openal.EFX10.AL_FILTER_NULL;
+import static org.lwjgl.openal.EFX10.AL_FILTER_TYPE;
+import static org.lwjgl.openal.EFX10.alDeleteEffects;
+import static org.lwjgl.openal.EFX10.alDeleteFilters;
+import static org.lwjgl.openal.EFX10.alEffecti;
+import static org.lwjgl.openal.EFX10.alFilteri;
+import static org.lwjgl.openal.EFX10.alGenEffects;
+import static org.lwjgl.openal.EFX10.alGenFilters;
 
 /**
  * Utility class for the OpenAL extension ALC_EXT_EFX. Provides functions to check for the extension
@@ -62,10 +91,7 @@ public final class EFXUtil {
      * @throws OpenALException If OpenAL has not been created yet.
      */
     public static boolean isEfxSupported() {
-        if (!AL.isCreated()) {
-            throw new OpenALException("OpenAL has not been created.");
-        }
-        return ALC10.alcIsExtensionPresent(AL.getDevice(), ALC_EXT_EFX_NAME);
+        return ALC.createCapabilities(AL.alcDevice.device).ALC_EXT_EFX;
     }
 
     /**

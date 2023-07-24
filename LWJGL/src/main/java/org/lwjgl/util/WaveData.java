@@ -31,6 +31,10 @@
  */
 package org.lwjgl.util;
 
+import com.sun.media.sound.WaveFileReader;
+
+import org.lwjgl.openal.AL10;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,10 +47,6 @@ import java.nio.ShortBuffer;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-
-import org.lwjgl.openal.AL10;
-
-import com.sun.media.sound.WaveFileReader;
 
 /**
  *

@@ -28,22 +28,19 @@ import java.util.Locale;
 
 public class RuntimeFragment extends FCLFragment implements View.OnClickListener {
 
-    boolean lwjgl2 = false;
-    boolean lwjgl3 = false;
+    boolean lwjgl = false;
     boolean cacio = false;
     boolean cacio17 = false;
     boolean java8 = false;
     boolean java17 = false;
 
-    private ProgressBar lwjgl2Progress;
-    private ProgressBar lwjgl3Progress;
+    private ProgressBar lwjglProgress;
     private ProgressBar cacioProgress;
     private ProgressBar cacio17Progress;
     private ProgressBar java8Progress;
     private ProgressBar java17Progress;
 
-    private FCLImageView lwjgl2State;
-    private FCLImageView lwjgl3State;
+    private FCLImageView lwjglState;
     private FCLImageView cacioState;
     private FCLImageView cacio17State;
     private FCLImageView java8State;
@@ -56,15 +53,13 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_runtime, container, false);
 
-        lwjgl2Progress = findViewById(view, R.id.lwjgl2_progress);
-        lwjgl3Progress = findViewById(view, R.id.lwjgl3_progress);
+        lwjglProgress = findViewById(view, R.id.lwjgl_progress);
         cacioProgress = findViewById(view, R.id.cacio_progress);
         cacio17Progress = findViewById(view, R.id.cacio17_progress);
         java8Progress = findViewById(view, R.id.java8_progress);
         java17Progress = findViewById(view, R.id.java17_progress);
 
-        lwjgl2State = findViewById(view, R.id.lwjgl2_state);
-        lwjgl3State = findViewById(view, R.id.lwjgl3_state);
+        lwjglState = findViewById(view, R.id.lwjgl_state);
         cacioState = findViewById(view, R.id.cacio_state);
         cacio17State = findViewById(view, R.id.cacio17_state);
         java8State = findViewById(view, R.id.java8_state);
@@ -84,12 +79,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
     private void initState() {
         try {
-            lwjgl2 = RuntimeUtils.isLatest(FCLPath.LWJGL2_DIR, "/assets/app_runtime/lwjgl2");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            lwjgl3 = RuntimeUtils.isLatest(FCLPath.LWJGL3_DIR, "/assets/app_runtime/lwjgl3");
+            lwjgl = RuntimeUtils.isLatest(FCLPath.LWJGL_DIR, "/assets/app_runtime/lwjgl");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,8 +113,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             stateUpdate.setTint(Color.GRAY);
             stateDone.setTint(Color.GRAY);
 
-            lwjgl2State.setBackgroundDrawable(lwjgl2 ? stateDone : stateUpdate);
-            lwjgl3State.setBackgroundDrawable(lwjgl3 ? stateDone : stateUpdate);
+            lwjglState.setBackgroundDrawable(lwjgl ? stateDone : stateUpdate);
             cacioState.setBackgroundDrawable(cacio ? stateDone : stateUpdate);
             cacio17State.setBackgroundDrawable(cacio17 ? stateDone : stateUpdate);
             java8State.setBackgroundDrawable(java8 ? stateDone : stateUpdate);
@@ -133,7 +122,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     }
 
     private boolean isLatest() {
-        return lwjgl2 && lwjgl3 && cacio && cacio17 && java8 && java17;
+        return lwjgl && cacio && cacio17 && java8 && java17;
     }
 
     private void check() {
@@ -151,40 +140,20 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             return;
 
         installing = true;
-        if (!lwjgl2) {
-            lwjgl2State.setVisibility(View.GONE);
-            lwjgl2Progress.setVisibility(View.VISIBLE);
+        if (!lwjgl) {
+            lwjglState.setVisibility(View.GONE);
+            lwjglProgress.setVisibility(View.VISIBLE);
             new Thread(() -> {
                 try {
-                    RuntimeUtils.install(getContext(), FCLPath.LWJGL2_DIR, "app_runtime/lwjgl2");
-                    lwjgl2 = true;
+                    RuntimeUtils.install(getContext(), FCLPath.LWJGL_DIR, "app_runtime/lwjgl");
+                    lwjgl = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
-                        lwjgl2State.setVisibility(View.VISIBLE);
-                        lwjgl2Progress.setVisibility(View.GONE);
-                        refreshDrawables();
-                        check();
-                    });
-                }
-            }).start();
-        }
-        if (!lwjgl3) {
-            lwjgl3State.setVisibility(View.GONE);
-            lwjgl3Progress.setVisibility(View.VISIBLE);
-            new Thread(() -> {
-                try {
-                    RuntimeUtils.install(getContext(), FCLPath.LWJGL3_DIR, "app_runtime/lwjgl3");
-                    lwjgl3 = true;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        lwjgl3State.setVisibility(View.VISIBLE);
-                        lwjgl3Progress.setVisibility(View.GONE);
+                        lwjglState.setVisibility(View.VISIBLE);
+                        lwjglProgress.setVisibility(View.GONE);
                         refreshDrawables();
                         check();
                     });

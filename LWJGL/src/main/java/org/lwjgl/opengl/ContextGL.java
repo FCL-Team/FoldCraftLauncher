@@ -31,17 +31,17 @@
  */
 package org.lwjgl.opengl;
 
+import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
+import static org.lwjgl.opengl.GL11.glGetError;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.Sys;
-import org.lwjgl.opencl.KHRGLSharing;
-import org.lwjgl.opencl.APPLEGLSharing;
+import org.lwjgl.glfw.GLFW;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * <p/>
@@ -56,14 +56,11 @@ import static org.lwjgl.opengl.GL11.*;
  */
 final class ContextGL implements Context {
 
-	/** The platform specific implementation of context methods */
-	private static final ContextImplementation implementation;
-
 	/** The current Context */
 	private static final ThreadLocal<ContextGL> current_context_local = new ThreadLocal<ContextGL>();
 
 	/** Handle to the native GL rendering context */
-	private final ByteBuffer handle;
+	private final long handle;
 	private final PeerInfo peer_info;
 
 	private final ContextAttribs contextAttribs;
@@ -77,18 +74,10 @@ final class ContextGL implements Context {
 	/** The thread that has this context current, or null. */
 	private Thread thread;
 
+	private boolean isCurrent;
+
 	static {
 		Sys.initialize();
-		implementation = createImplementation();
-	}
-
-	private static ContextImplementation createImplementation() {
-		switch ( LWJGLUtil.getPlatform() ) {
-			case LWJGLUtil.PLATFORM_FCL:
-				return new FCLContextImplementation();
-			default:
-				throw new IllegalStateException("Unsupported platform");
-		}
 	}
 
 	PeerInfo getPeerInfo() {
@@ -103,6 +92,14 @@ final class ContextGL implements Context {
 		return current_context_local.get();
 	}
 
+	ContextGL(long handle) {
+		this.peer_info = null;
+		this.contextAttribs = null;
+		this.forwardCompatible = false;
+		this.handle = handle;
+		System.out.println("LWJGL: ready-handle context created");
+	}
+
 	/** Create a context with the specified peer info and shared context */
 	ContextGL(PeerInfo peer_info, ContextAttribs attribs, ContextGL shared_context) throws LWJGLException {
 		ContextGL context_lock = shared_context != null ? shared_context : this;
@@ -111,25 +108,18 @@ final class ContextGL implements Context {
 		synchronized ( context_lock ) {
 			if ( shared_context != null && shared_context.destroyed )
 				throw new IllegalArgumentException("Shared context is destroyed");
-			GLContext.loadOpenGLLibrary();
-			try {
-				this.peer_info = peer_info;
-				this.contextAttribs = attribs;
 
-				IntBuffer attribList;
-				if ( attribs != null ) {
-					attribList = attribs.getAttribList();
-					forwardCompatible = attribs.isForwardCompatible();
-				} else {
-					attribList = null;
-					forwardCompatible = false;
-				}
+			this.peer_info = peer_info;
+			this.contextAttribs = attribs;
 
-				this.handle = implementation.create(peer_info, attribList, shared_context != null ? shared_context.handle : null);
-			} catch (LWJGLException e) {
-				GLContext.unloadOpenGLLibrary();
-				throw e;
+			forwardCompatible = false;
+			long share = 0;
+			if(shared_context != null) {
+				share = shared_context.handle;
 			}
+			int width = Integer.parseInt(System.getProperty("window.width") == null ? "-1" : System.getProperty("window.width"));
+			int height = Integer.parseInt(System.getProperty("window.height") == null ? "-1" : System.getProperty("window.height"));
+			this.handle = GLFW.glfwCreateWindow(width, height, "Game", GLFW.glfwGetPrimaryMonitor(), share);
 		}
 	}
 
@@ -137,8 +127,8 @@ final class ContextGL implements Context {
 	public void releaseCurrent() throws LWJGLException {
 		ContextGL current_context = getCurrentContext();
 		if ( current_context != null ) {
-			implementation.releaseCurrentContext();
-			GLContext.useContext(null);
+			GLFW.glfwMakeContextCurrent(0L);
+			isCurrent = false;
 			current_context_local.set(null);
 			synchronized ( current_context ) {
 				current_context.thread = null;
@@ -156,19 +146,17 @@ final class ContextGL implements Context {
 	public synchronized void releaseDrawable() throws LWJGLException {
 		if ( destroyed )
 			throw new IllegalStateException("Context is destroyed");
-		implementation.releaseDrawable(getHandle());
 	}
 
 	/** Update the context. Should be called whenever it's drawable is moved or resized */
 	public synchronized void update() {
 		if ( destroyed )
 			throw new IllegalStateException("Context is destroyed");
-		implementation.update(getHandle());
 	}
 
 	/** Swap the buffers on the current context. Only valid for double-buffered contexts */
 	public static void swapBuffers() throws LWJGLException {
-		implementation.swapBuffers();
+		Display.swapBuffers();
 	}
 
 	private boolean canAccess() {
@@ -179,40 +167,37 @@ final class ContextGL implements Context {
 		if ( !canAccess() )
 			throw new IllegalStateException("From thread " + Thread.currentThread() + ": " + thread + " already has the context current");
 	}
-	static int a=0;
+
 	/** Make the context current */
 	public synchronized void makeCurrent() throws LWJGLException {
-		a++;
 		checkAccess();
 		if ( destroyed )
 			throw new IllegalStateException("Context is destroyed");
 		thread = Thread.currentThread();
 		current_context_local.set(this);
-		LWJGLUtil.log("测试："+a);
-		implementation.makeCurrent(peer_info, handle);
-		GLContext.useContext(this, forwardCompatible);
+		GLFW.glfwMakeContextCurrent(handle);
+		GLContext.initCapabilities();
+		isCurrent = true;
 	}
 
 	ByteBuffer getHandle() {
-		return handle;
+		return null;
 	}
 
 	/** Query whether the context is current */
 	public synchronized boolean isCurrent() throws LWJGLException {
 		if ( destroyed )
 			throw new IllegalStateException("Context is destroyed");
-		return implementation.isCurrent(handle);
+		return isCurrent;
 	}
 
 	private void checkDestroy() {
 		if ( !destroyed && destroy_requested ) {
 			try {
 				releaseDrawable();
-				implementation.destroy(peer_info, handle);
-				CallbackUtil.unregisterCallbacks(this);
 				destroyed = true;
 				thread = null;
-				GLContext.unloadOpenGLLibrary();
+				Display.destroy();
 			} catch (LWJGLException e) {
 				LWJGLUtil.log("Exception occurred while destroying context: " + e);
 			}
@@ -227,7 +212,7 @@ final class ContextGL implements Context {
 	 * A video frame period is the time required to display a full frame of video data.
 	 */
 	public static void setSwapInterval(int value) {
-		implementation.setSwapInterval(value);
+		GLFW.glfwSwapInterval(value);
 	}
 
 	/**

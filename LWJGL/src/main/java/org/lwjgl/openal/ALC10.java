@@ -1,439 +1,522 @@
 /*
- * Copyright (c) 2002-2008 LWJGL Project
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- * * Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- *
- * * Neither the name of 'LWJGL' nor the names of
- *   its contributors may be used to endorse or promote products derived
- *   from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright LWJGL. All rights reserved.
+ * License terms: https://www.lwjgl.org/license
+ * MACHINE GENERATED FILE, DO NOT EDIT
  */
 package org.lwjgl.openal;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.util.HashMap;
+import javax.annotation.*;
 
-import org.lwjgl.BufferChecks;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.MemoryUtil;
+import java.nio.*;
 
-/**
- *
- * <p>
- * ALC introduces the notion of a Device. A Device can be, depending on the
- * implementation, a hardware device, or a daemon/OS service/actual server. This
- * mechanism also permits different drivers (and hardware) to coexist within the same
- * system, as well as allowing several applications to share system resources for audio,
- * including a single hardware output device. The details are left to the
- * implementation, which has to map the available backends to unique device
- * specifiers (represented as strings).
- * </p>
- *
- * @author Brian Matzon <brian@matzon.dk>
- * @version $Revision: 2286 $
- * $Id: ALC.java 2286 2006-03-23 19:32:21 +0000 (to, 23 mar 2006) matzon $
- */
-public final class ALC10 {
+import org.lwjgl.system.*;
 
-	/** List of active contexts */
-	static final HashMap<Long, ALCcontext> contexts = new HashMap<Long, ALCcontext>();
+import static org.lwjgl.system.Checks.*;
+import static org.lwjgl.system.JNI.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
-	/** List of active devices */
-	static final HashMap<Long, ALCdevice> devices = new HashMap<Long, ALCdevice>();
+/** Native bindings to ALC 1.0 functionality. */
+public class ALC10 {
 
-	/** Bad value */
-	public static final int ALC_INVALID = 0;
+    /** General tokens. */
+    public static final int
+        ALC_INVALID = 0xFFFFFFFF,
+        ALC_FALSE   = 0x0,
+        ALC_TRUE    = 0x1;
 
-	/** Boolean False */
-	public static final int ALC_FALSE = 0;
+    /** Context creation attributes. */
+    public static final int
+        ALC_FREQUENCY = 0x1007,
+        ALC_REFRESH   = 0x1008,
+        ALC_SYNC      = 0x1009;
 
-	/** Boolean True */
-	public static final int ALC_TRUE = 1;
+    /** Error conditions. */
+    public static final int
+        ALC_NO_ERROR        = 0x0,
+        ALC_INVALID_DEVICE  = 0xA001,
+        ALC_INVALID_CONTEXT = 0xA002,
+        ALC_INVALID_ENUM    = 0xA003,
+        ALC_INVALID_VALUE   = 0xA004,
+        ALC_OUT_OF_MEMORY   = 0xA005;
 
-	/** Errors: No Error */
-	public static final int ALC_NO_ERROR = ALC_FALSE;
+    /** String queries. */
+    public static final int
+        ALC_DEFAULT_DEVICE_SPECIFIER = 0x1004,
+        ALC_DEVICE_SPECIFIER         = 0x1005,
+        ALC_EXTENSIONS               = 0x1006;
 
-	/** Major version query. */
-	public static final int ALC_MAJOR_VERSION = 0x1000;
+    /** Integer queries. */
+    public static final int
+        ALC_MAJOR_VERSION   = 0x1000,
+        ALC_MINOR_VERSION   = 0x1001,
+        ALC_ATTRIBUTES_SIZE = 0x1002,
+        ALC_ALL_ATTRIBUTES  = 0x1003;
 
-	/** Minor version query. */
-	public static final int ALC_MINOR_VERSION = 0x1001;
+    protected ALC10() {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * The size required for the zero-terminated attributes list, for the current context.
-	 **/
-	public static final int ALC_ATTRIBUTES_SIZE = 0x1002;
-
-	/**
-	 * Expects a destination of ALC_CURRENT_ATTRIBUTES_SIZE,
-	 * and provides the attribute list for the current context of the specified device.
-	 */
-	public static final int ALC_ALL_ATTRIBUTES = 0x1003;
-
-	/** The specifier string for the default device */
-	public static final int ALC_DEFAULT_DEVICE_SPECIFIER = 0x1004;
-
-	/** The specifier string for the device */
-	public static final int ALC_DEVICE_SPECIFIER = 0x1005;
-
-	/** The extensions string for diagnostics and printing */
-	public static final int ALC_EXTENSIONS = 0x1006;
-
-	/** Frequency for mixing output buffer, in units of Hz. */
-	public static final int ALC_FREQUENCY = 0x1007;
-
-	/** Refresh intervalls, in units of Hz. */
-	public static final int ALC_REFRESH = 0x1008;
-
-	/** Flag, indicating a synchronous context. */
-	public static final int ALC_SYNC = 0x1009;
-
-	/** The device argument does not name a valid device */
-	public static final int ALC_INVALID_DEVICE = 0xA001;
-
-	/** The context argument does not name a valid context */
-	public static final int ALC_INVALID_CONTEXT = 0xA002;
-
-	/**
-	 * A function was called at inappropriate time, or in an inappropriate way,
-	 * causing an illegal state. This can be an incompatible ALenum, object ID,
-	 * and/or function.
-	 */
-	public static final int ALC_INVALID_ENUM = 0xA003;
-
-	/**
-	 * Illegal value passed as an argument to an AL call.
-	 * Applies to parameter values, but not to enumerations.
-	 */
-	public static final int ALC_INVALID_VALUE = 0xA004;
-
-	/**
-	 * A function could not be completed, because there is not enough
-	 * memory available.
-	 */
-	public static final int ALC_OUT_OF_MEMORY = 0xA005;
-
-	static native void initNativeStubs() throws LWJGLException;
-
-	/**
-	 * The application can obtain certain strings from ALC.
-	 *
-	 * <code>ALC_DEFAULT_DEVICE_SPECIFIER</code> - The specifer string for the default device
-	 * <code>ALC_DEVICE_SPECIFIER</code> - The specifer string for the device
-	 * <code>ALC_EXTENSIONS</code> - The extensions string for diagnostics and printing.
-	 *
-	 * In addition, printable error message strings are provided for all valid error tokens,
-	 * including <code>ALC_NO_ERROR</code>,<code>ALC_INVALID_DEVICE</code>, <code>ALC_INVALID_CONTEXT</code>,
-	 * <code>ALC_INVALID_ENUM</code>, <code>ALC_INVALID_VALUE</code>.
-	 *
-	 * @param pname Property to get
-	 * @return String property from device
-	 */
-	public static String alcGetString(ALCdevice device, int pname) {
-		ByteBuffer buffer = nalcGetString(getDevice(device), pname);
-		Util.checkALCError(device);
-		return MemoryUtil.decodeUTF8(buffer);
-	}
-	static native ByteBuffer nalcGetString(long device, int pname);
-
-	/**
-	 * The application can query ALC for information using an integer query function.
-	* For some tokens, <code>null</code> is a legal deviceHandle. In other cases, specifying a <code>null</code>
-	* device will generate an <code>ALC_INVALID_DEVICE</code> error. The application has to
-	* specify the size of the destination buffer provided. A <code>null</code> destination or a zero
-	* size parameter will cause ALC to ignore the query.
-	*
-	* <code>ALC_MAJOR_VERSION</code> - Major version query.
-	* <code>ALC_MINOR_VERSION</code> - Minor version query.
-	* <code>ALC_ATTRIBUTES_SIZE</code> - The size required for the zero-terminated attributes list,
-	* for the current context. <code>null</code> is an invalid device. <code>null</code> (no current context
-	* for the specified device) is legal.
-	* <code>ALC_ALL_ATTRIBUTES</code> - Expects a destination of <code>ALC_CURRENT_ATTRIBUTES_SIZE</code>,
-	* and provides the attribute list for the current context of the specified device.
-	* <code>null</code> is an invalid device. <code>null</code> (no current context for the specified device)
-	* will return the default attributes defined by the specified device.
-	 *
-	 * @param pname Property to get
-	 * @param integerdata ByteBuffer to write integers to
-	 */
-	public static void alcGetInteger(ALCdevice device, int pname, IntBuffer integerdata) {
-		BufferChecks.checkDirect(integerdata);
-		nalcGetIntegerv(getDevice(device), pname, integerdata.remaining(), MemoryUtil.getAddress(integerdata));
-		Util.checkALCError(device);
-	}
-	static native void nalcGetIntegerv(long device, int pname, int size, long integerdata);
-
-	/**
-	 * The <code>alcOpenDevice</code> function allows the application (i.e. the client program) to
-	* connect to a device (i.e. the server).
-	*
-	* If the function returns <code>null</code>, then no sound driver/device has been found. The
-	* argument is a null terminated string that requests a certain device or device
-	* configuration. If <code>null</code> is specified, the implementation will provide an
-	* implementation specific default.
-	 *
-	 * @param devicename name of device to open
-	 * @return opened device, or null
-	 */
-	public static ALCdevice alcOpenDevice(String devicename) {
-		ByteBuffer buffer = MemoryUtil.encodeUTF8(devicename);
-		long device_address = nalcOpenDevice(MemoryUtil.getAddressSafe(buffer));
-		if(device_address != 0) {
-			ALCdevice device = new ALCdevice(device_address);
-			synchronized (ALC10.devices) {
-				devices.put(device_address, device);
-			}
-			return device;
-		}
-		return null;
-	}
-	static native long nalcOpenDevice(long devicename);
-
-	/**
-	 * The <code>alcCloseDevice</code> function allows the application (i.e. the client program) to
-	* disconnect from a device (i.e. the server).
-	*
-	* If deviceHandle is <code>null</code> or invalid, an <code>ALC_INVALID_DEVICE</code> error will be
-	* generated. Once closed, a deviceHandle is invalid.
-	 *
-	 * @param device address of native device to close
-	 */
-	public static boolean alcCloseDevice(ALCdevice device) {
-		boolean result = nalcCloseDevice(getDevice(device));
-		synchronized (devices) {
-			device.setInvalid();
-			devices.remove(new Long(device.device));
-		}
-		return result;
-
-	}
-	static native boolean nalcCloseDevice(long device);
-
-	/**
-	 * A context is created using <code>alcCreateContext</code>. The device parameter has to be a valid
-	* device. The attribute list can be <code>null</code>, or a zero terminated list of integer pairs
-	* composed of valid ALC attribute tokens and requested values.
-	*
-	* Context creation will fail if the application requests attributes that, by themselves,
-	* can not be provided. Context creation will fail if the combination of specified
-	* attributes can not be provided. Context creation will fail if a specified attribute, or
-	* the combination of attributes, does not match the default values for unspecified
-	* attributes.
-	 *
-	 * @param device address of device to associate context to
-	 * @param attrList Buffer to read attributes from
-	 * @return New context, or null if creation failed
-	 */
-	public static ALCcontext alcCreateContext(ALCdevice device, IntBuffer attrList) {
-		long context_address = nalcCreateContext(getDevice(device), MemoryUtil.getAddressSafe(attrList));
-		Util.checkALCError(device);
-
-		if(context_address != 0) {
-			ALCcontext context = new ALCcontext(context_address);
-			synchronized (ALC10.contexts) {
-				contexts.put(context_address, context);
-				device.addContext(context);
-			}
-			return context;
-		}
-		return null;
-	}
-	static native long nalcCreateContext(long device, long attrList);
-
-	/**
-	 * To make a Context current with respect to AL Operation (state changes by issueing
-	* commands), <code>alcMakeContextCurrent</code> is used. The context parameter can be <code>null</code>
-	* or a valid context pointer. The operation will apply to the device that the context
-	* was created for.
-	*
-	* For each OS process (usually this means for each application), only one context can
-	* be current at any given time. All AL commands apply to the current context.
-	* Commands that affect objects shared among contexts (e.g. buffers) have side effects
-	* on other contexts.
-	 *
-	 * @param context address of context to make current
-	 * @return true if successfull, false if not
-	 */
-	public static int alcMakeContextCurrent(ALCcontext context) {
-		return nalcMakeContextCurrent(getContext(context));
-	}
-	static native int nalcMakeContextCurrent(long context);
-
-	/**
-	 * The current context is the only context accessible to state changes by AL commands
-	 * (aside from state changes affecting shared objects). However, multiple contexts can
-	 * be processed at the same time. To indicate that a context should be processed (i.e.
-	 * that internal execution state like offset increments are supposed to be performed),
-	 * the application has to use <code>alcProcessContext</code>.
-	 *
-	 * Repeated calls to <code>alcProcessContext</code> are legal, and do not affect a context that is
-	 * already marked as processing. The default state of a context created by
-	 * alcCreateContext is that it is not marked as processing.
-	 */
-	public static void alcProcessContext(ALCcontext context) {
-		nalcProcessContext(getContext(context));
-	}
-	static native void nalcProcessContext(long context);
-
-	/**
-	 * The application can query for, and obtain an handle to, the current context for the
-	* application. If there is no current context, <code>null</code> is returned.
-	 *
-	 * @return Current ALCcontext
-	 */
-	public static ALCcontext alcGetCurrentContext() {
-		ALCcontext context = null;
-		long context_address = nalcGetCurrentContext();
-		if(context_address != 0) {
-			synchronized (ALC10.contexts) {
-				context = ALC10.contexts.get(context_address);
-			}
-		}
-		return context;
-	}
-	static native long nalcGetCurrentContext();
-
-	/**
-	 * The application can query for, and obtain an handle to, the device of a given context.
-	 *
-	 * @param context address of context to get device for
-	 */
-	public static ALCdevice alcGetContextsDevice(ALCcontext context) {
-		ALCdevice device = null;
-		long device_address = nalcGetContextsDevice(getContext(context));
-		if (device_address != 0) {
-			synchronized (ALC10.devices) {
-				device = ALC10.devices.get(device_address);
-			}
-		}
-		return device;
-	}
-	static native long nalcGetContextsDevice(long context);
-
-	/**
-	 * The application can suspend any context from processing (including the current
-	 * one). To indicate that a context should be suspended from processing (i.e. that
-	 * internal execution state like offset increments is not supposed to be changed), the
-	 * application has to use <code>alcSuspendContext</code>.
-	 *
-	 * Repeated calls to <code>alcSuspendContext</code> are legal, and do not affect a context that is
-	 * already marked as suspended. The default state of a context created by
-	 * <code>alcCreateContext</code> is that it is marked as suspended.
-	 *
-	 * @param context address of context to suspend
-	 */
-	public static void alcSuspendContext(ALCcontext context) {
-		nalcSuspendContext(getContext(context));
-	}
-	static native void nalcSuspendContext(long context);
-
-	/**
-	 * The correct way to destroy a context is to first release it using <code>alcMakeCurrent</code> and
-	* <code>null</code>. Applications should not attempt to destroy a current context.
-	 *
-	 * @param context address of context to Destroy
-	 */
-	public static void alcDestroyContext(ALCcontext context) {
-		synchronized(ALC10.contexts) {
-			ALCdevice device = alcGetContextsDevice(context);
-			nalcDestroyContext(getContext(context));
-			device.removeContext(context);
-			context.setInvalid();
-		}
-	}
-	static native void nalcDestroyContext(long context);
-
-	/**
-	 * ALC uses the same conventions and mechanisms as AL for error handling. In
-	* particular, ALC does not use conventions derived from X11 (GLX) or Windows
-	* (WGL). The <code>alcGetError</code> function can be used to query ALC errors.
-	*
-	* Error conditions are specific to the device.
-	*
-	* ALC_NO_ERROR - The device handle or specifier does name an accessible driver/server.
-	* <code>ALC_INVALID_DEVICE</code> - The Context argument does not name a valid context.
-	* <code>ALC_INVALID_CONTEXT</code> - The Context argument does not name a valid context.
-	* <code>ALC_INVALID_ENUM</code> - A token used is not valid, or not applicable.
-	* <code>ALC_INVALID_VALUE</code> - An value (e.g. attribute) is not valid, or not applicable.
-	 *
-	 * @return Errorcode from ALC statemachine
-	 */
-	public static int alcGetError(ALCdevice device) {
-		return nalcGetError(getDevice(device));
-	}
-	static native int nalcGetError(long device);
-
-	/**
-	* Verify that a given extension is available for the current context and the device it
-	* is associated with.
-	* A <code>null</code> name argument returns <code>ALC_FALSE</code>, as do invalid and unsupported string
-	* tokens.
-	 *
-	 * @param extName name of extension to find
-	 * @return true if extension is available, false if not
-	 */
-	public static boolean alcIsExtensionPresent(ALCdevice device, String extName) {
-		ByteBuffer buffer = MemoryUtil.encodeASCII(extName);
-		boolean result = nalcIsExtensionPresent(getDevice(device), MemoryUtil.getAddress(buffer));
-		Util.checkALCError(device);
-		return result;
-	}
-	private static native boolean nalcIsExtensionPresent(long device, long extName);
-
-	/**
-	 * Enumeration/token values are device independend, but tokens defined for
-	* extensions might not be present for a given device. But only the tokens defined
-	* by the AL core are guaranteed. Availability of extension tokens dependends on the ALC extension.
-	*
-	* Specifying a <code>null</code> name parameter will cause an <code>ALC_INVALID_VALUE</code> error.
-	 *
-	 * @param enumName name of enum to find
-	 * @return value of enumeration
-	 */
-	public static int alcGetEnumValue(ALCdevice device, String enumName) {
-		ByteBuffer buffer = MemoryUtil.encodeASCII(enumName);
-		int result = nalcGetEnumValue(getDevice(device), MemoryUtil.getAddress(buffer));
-		Util.checkALCError(device);
-		return result;
-	}
-	private static native int nalcGetEnumValue(long device, long enumName);
-
-	static long getDevice(ALCdevice device) {
-		if(device != null) {
-			Util.checkALCValidDevice(device);
-			return device.device;
-		}
-		return 0L;
+	static boolean isAvailable(ALCCapabilities caps) {
+		return checkFunctions(
+            caps.alcOpenDevice, caps.alcCloseDevice, caps.alcCreateContext, caps.alcMakeContextCurrent, caps.alcProcessContext, caps.alcSuspendContext, 
+            caps.alcDestroyContext, caps.alcGetCurrentContext, caps.alcGetContextsDevice, caps.alcIsExtensionPresent, caps.alcGetProcAddress, 
+            caps.alcGetEnumValue, caps.alcGetError, caps.alcGetString, caps.alcGetIntegerv
+        );
 	}
 
-	static long getContext(ALCcontext context) {
-		if(context != null) {
-			Util.checkALCValidContext(context);
-			return context.context;
-		}
-		return 0L;
-	}
+    static ALCcontext alcContext;
+
+    public static ALCcontext alcCreateContext(ALCdevice device, java.nio.IntBuffer attrList) {
+        long alContextHandle = alcCreateContext(device.device, attrList);
+        alcContext = new ALCcontext(alContextHandle);
+        return alcContext;
+    }
+
+    public static ALCdevice alcGetContextsDevice(ALCcontext context) {
+        return AL.alcDevice;
+    }
+
+    public static void alcGetInteger(ALCdevice device, int pname, java.nio.IntBuffer integerdata) {
+        int res = alcGetInteger(device.device, pname);
+        integerdata.put(0, res);
+    }
+
+    // --- [ alcOpenDevice ] ---
+
+    /** Unsafe version of: {@link #alcOpenDevice OpenDevice} */
+    public static long nalcOpenDevice(long deviceSpecifier) {
+		long __functionAddress = ALC.getICD().alcOpenDevice;
+        return invokePP(deviceSpecifier, __functionAddress);
+    }
+
+    /**
+     * Allows the application to connect to a device.
+     * 
+     * <p>If the function returns {@code NULL}, then no sound driver/device has been found. The argument is a null terminated string that requests a certain device or
+     * device configuration. If {@code NULL} is specified, the implementation will provide an implementation specific default.</p>
+     *
+     * @param deviceSpecifier the requested device or device configuration
+     */
+    @NativeType("ALCdevice *")
+    public static long alcOpenDevice(@Nullable @NativeType("ALCchar const *") ByteBuffer deviceSpecifier) {
+        if (CHECKS) {
+            checkNT1Safe(deviceSpecifier);
+        }
+        return nalcOpenDevice(memAddressSafe(deviceSpecifier));
+    }
+
+    /**
+     * Allows the application to connect to a device.
+     * 
+     * <p>If the function returns {@code NULL}, then no sound driver/device has been found. The argument is a null terminated string that requests a certain device or
+     * device configuration. If {@code NULL} is specified, the implementation will provide an implementation specific default.</p>
+     *
+     * @param deviceSpecifier the requested device or device configuration
+     */
+    @NativeType("ALCdevice *")
+    public static long alcOpenDevice(@Nullable @NativeType("ALCchar const *") CharSequence deviceSpecifier) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            stack.nUTF8Safe(deviceSpecifier, true);
+            long deviceSpecifierEncoded = deviceSpecifier == null ? NULL : stack.getPointerAddress();
+            return nalcOpenDevice(deviceSpecifierEncoded);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ alcCloseDevice ] ---
+
+    /**
+     * Allows the application to disconnect from a device.
+     * 
+     * <p>The return code will be ALC_TRUE or ALC_FALSE, indicating success or failure. Failure will occur if all the device's contexts and buffers have not been
+     * destroyed. Once closed, the {@code deviceHandle} is invalid.</p>
+     *
+     * @param deviceHandle the device to close
+     */
+    @NativeType("ALCboolean")
+    public static boolean alcCloseDevice(@NativeType("ALCdevice const *") long deviceHandle) {
+		long __functionAddress = ALC.getICD().alcCloseDevice;
+        if (CHECKS) {
+            check(deviceHandle);
+        }
+        return invokePZ(deviceHandle, __functionAddress);
+    }
+
+    // --- [ alcCreateContext ] ---
+
+    /** Unsafe version of: {@link #alcCreateContext CreateContext} */
+    public static long nalcCreateContext(long deviceHandle, long attrList) {
+		long __functionAddress = ALC.getICD().alcCreateContext;
+        if (CHECKS) {
+            check(deviceHandle);
+        }
+        return invokePPP(deviceHandle, attrList, __functionAddress);
+    }
+
+    /**
+     * Creates an AL context.
+     *
+     * @param deviceHandle a valid device
+     * @param attrList     null or a zero terminated list of integer pairs composed of valid ALC attribute tokens and requested values. One of:<br><table><tr><td>{@link #ALC_FREQUENCY FREQUENCY}</td><td>{@link #ALC_REFRESH REFRESH}</td><td>{@link #ALC_SYNC SYNC}</td><td>{@link ALC11#ALC_MONO_SOURCES MONO_SOURCES}</td><td>{@link ALC11#ALC_STEREO_SOURCES STEREO_SOURCES}</td></tr></table>
+     */
+    @NativeType("ALCcontext *")
+    public static long alcCreateContext(@NativeType("ALCdevice const *") long deviceHandle, @Nullable @NativeType("ALCint const *") IntBuffer attrList) {
+        if (CHECKS) {
+            checkNTSafe(attrList);
+        }
+        return nalcCreateContext(deviceHandle, memAddressSafe(attrList));
+    }
+
+    // --- [ alcMakeContextCurrent ] ---
+
+    /**
+     * Makes a context current with respect to OpenAL operation.
+     * 
+     * <p>The context parameter can be {@code NULL} or a valid context pointer. Using {@code NULL} results in no context being current, which is useful when shutting OpenAL down.
+     * The operation will apply to the device that the context was created for.</p>
+     * 
+     * <p>For each OS process (usually this means for each application), only one context can be current at any given time. All AL commands apply to the current
+     * context. Commands that affect objects shared among contexts (e.g. buffers) have side effects on other contexts.</p>
+     *
+     * @param context the context to make current
+     */
+    @NativeType("ALCboolean")
+    public static boolean alcMakeContextCurrent(@NativeType("ALCcontext *") long context) {
+		long __functionAddress = ALC.getICD().alcMakeContextCurrent;
+        return invokePZ(context, __functionAddress);
+    }
+
+    // --- [ alcProcessContext ] ---
+
+    /**
+     * The current context is the only context accessible to state changes by AL commands (aside from state changes affecting shared objects). However,
+     * multiple contexts can be processed at the same time. To indicate that a context should be processed (i.e. that internal execution state such as the
+     * offset increments are to be performed), the application uses {@code alcProcessContext}.
+     * 
+     * <p>Repeated calls to alcProcessContext are legal, and do not affect a context that is already marked as processing. The default state of a context created
+     * by alcCreateContext is that it is processing.</p>
+     *
+     * @param context the context to mark for processing
+     */
+    @NativeType("ALCvoid")
+    public static void alcProcessContext(@NativeType("ALCcontext *") long context) {
+		long __functionAddress = ALC.getICD().alcProcessContext;
+        if (CHECKS) {
+            check(context);
+        }
+        invokePV(context, __functionAddress);
+    }
+
+    // --- [ alcSuspendContext ] ---
+
+    /**
+     * The application can suspend any context from processing (including the current one). To indicate that a context should be suspended from processing
+     * (i.e. that internal execution state such as offset increments are not to be changed), the application uses {@code alcSuspendContext}.
+     * 
+     * <p>Repeated calls to alcSuspendContext are legal, and do not affect a context that is already marked as suspended.</p>
+     *
+     * @param context the context to mark as suspended
+     */
+    @NativeType("ALCvoid")
+    public static void alcSuspendContext(@NativeType("ALCcontext *") long context) {
+		long __functionAddress = ALC.getICD().alcSuspendContext;
+        if (CHECKS) {
+            check(context);
+        }
+        invokePV(context, __functionAddress);
+    }
+
+    // --- [ alcDestroyContext ] ---
+
+    /**
+     * Destroys a context.
+     * 
+     * <p>The correct way to destroy a context is to first release it using alcMakeCurrent with a {@code NULL} context. Applications should not attempt to destroy a
+     * current context – doing so will not work and will result in an ALC_INVALID_OPERATION error. All sources within a context will automatically be deleted
+     * during context destruction.</p>
+     *
+     * @param context the context to destroy
+     */
+    @NativeType("ALCvoid")
+    public static void alcDestroyContext(@NativeType("ALCcontext *") long context) {
+		long __functionAddress = ALC.getICD().alcDestroyContext;
+        if (CHECKS) {
+            check(context);
+        }
+        invokePV(context, __functionAddress);
+    }
+
+    // --- [ alcGetCurrentContext ] ---
+
+    /** Queries for, and obtains a handle to, the current context for the application. If there is no current context, {@code NULL} is returned. */
+    @NativeType("ALCcontext *")
+    public static long alcGetCurrentContext() {
+		long __functionAddress = ALC.getICD().alcGetCurrentContext;
+        return invokeP(__functionAddress);
+    }
+
+    // --- [ alcGetContextsDevice ] ---
+
+    /**
+     * Queries for, and obtains a handle to, the device of a given context.
+     *
+     * @param context the context to query
+     */
+    @NativeType("ALCdevice *")
+    public static long alcGetContextsDevice(@NativeType("ALCcontext *") long context) {
+		long __functionAddress = ALC.getICD().alcGetContextsDevice;
+        if (CHECKS) {
+            check(context);
+        }
+        return invokePP(context, __functionAddress);
+    }
+
+    // --- [ alcIsExtensionPresent ] ---
+
+    /** Unsafe version of: {@link #alcIsExtensionPresent IsExtensionPresent} */
+    public static boolean nalcIsExtensionPresent(long deviceHandle, long extName) {
+		long __functionAddress = ALC.getICD().alcIsExtensionPresent;
+        return invokePPZ(deviceHandle, extName, __functionAddress);
+    }
+
+    /**
+     * Verifies that a given extension is available for the current context and the device it is associated with.
+     * 
+     * <p>Invalid and unsupported string tokens return ALC_FALSE. A {@code NULL} deviceHandle is acceptable. {@code extName} is not case sensitive – the implementation
+     * will convert the name to all upper-case internally (and will express extension names in upper-case).</p>
+     *
+     * @param deviceHandle the device to query
+     * @param extName      the extension name
+     */
+    @NativeType("ALCboolean")
+    public static boolean alcIsExtensionPresent(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALCchar const *") ByteBuffer extName) {
+        if (CHECKS) {
+            checkNT1(extName);
+        }
+        return nalcIsExtensionPresent(deviceHandle, memAddress(extName));
+    }
+
+    /**
+     * Verifies that a given extension is available for the current context and the device it is associated with.
+     * 
+     * <p>Invalid and unsupported string tokens return ALC_FALSE. A {@code NULL} deviceHandle is acceptable. {@code extName} is not case sensitive – the implementation
+     * will convert the name to all upper-case internally (and will express extension names in upper-case).</p>
+     *
+     * @param deviceHandle the device to query
+     * @param extName      the extension name
+     */
+    @NativeType("ALCboolean")
+    public static boolean alcIsExtensionPresent(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALCchar const *") CharSequence extName) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            stack.nASCII(extName, true);
+            long extNameEncoded = stack.getPointerAddress();
+            return nalcIsExtensionPresent(deviceHandle, extNameEncoded);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ alcGetProcAddress ] ---
+
+    /** Unsafe version of: {@link #alcGetProcAddress GetProcAddress} */
+    public static long nalcGetProcAddress(long deviceHandle, long funcName) {
+		long __functionAddress = ALC.getICD().alcGetProcAddress;
+        return invokePPP(deviceHandle, funcName, __functionAddress);
+    }
+
+    /**
+     * Retrieves extension entry points.
+     * 
+     * <p>The application is expected to verify the applicability of an extension or core function entry point before requesting it by name, by use of
+     * {@link #alcIsExtensionPresent IsExtensionPresent}.</p>
+     * 
+     * <p>Entry points can be device specific, but are not context specific. Using a {@code NULL} device handle does not guarantee that the entry point is returned,
+     * even if available for one of the available devices.</p>
+     *
+     * @param deviceHandle the device to query
+     * @param funcName     the function name
+     */
+    @NativeType("void *")
+    public static long alcGetProcAddress(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALchar const *") ByteBuffer funcName) {
+        if (CHECKS) {
+            checkNT1(funcName);
+        }
+        return nalcGetProcAddress(deviceHandle, memAddress(funcName));
+    }
+
+    /**
+     * Retrieves extension entry points.
+     * 
+     * <p>The application is expected to verify the applicability of an extension or core function entry point before requesting it by name, by use of
+     * {@link #alcIsExtensionPresent IsExtensionPresent}.</p>
+     * 
+     * <p>Entry points can be device specific, but are not context specific. Using a {@code NULL} device handle does not guarantee that the entry point is returned,
+     * even if available for one of the available devices.</p>
+     *
+     * @param deviceHandle the device to query
+     * @param funcName     the function name
+     */
+    @NativeType("void *")
+    public static long alcGetProcAddress(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALchar const *") CharSequence funcName) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            stack.nASCII(funcName, true);
+            long funcNameEncoded = stack.getPointerAddress();
+            return nalcGetProcAddress(deviceHandle, funcNameEncoded);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ alcGetEnumValue ] ---
+
+    /** Unsafe version of: {@link #alcGetEnumValue GetEnumValue} */
+    public static int nalcGetEnumValue(long deviceHandle, long enumName) {
+		long __functionAddress = ALC.getICD().alcGetEnumValue;
+        return invokePPI(deviceHandle, enumName, __functionAddress);
+    }
+
+    /**
+     * Returns extension enum values.
+     * 
+     * <p>Enumeration/token values are device independent, but tokens defined for extensions might not be present for a given device. Using a {@code NULL} handle is
+     * legal, but only the tokens defined by the AL core are guaranteed. Availability of extension tokens depends on the ALC extension.</p>
+     *
+     * @param deviceHandle the device to query
+     * @param enumName     the enum name
+     */
+    @NativeType("ALCenum")
+    public static int alcGetEnumValue(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALCchar const *") ByteBuffer enumName) {
+        if (CHECKS) {
+            checkNT1(enumName);
+        }
+        return nalcGetEnumValue(deviceHandle, memAddress(enumName));
+    }
+
+    /**
+     * Returns extension enum values.
+     * 
+     * <p>Enumeration/token values are device independent, but tokens defined for extensions might not be present for a given device. Using a {@code NULL} handle is
+     * legal, but only the tokens defined by the AL core are guaranteed. Availability of extension tokens depends on the ALC extension.</p>
+     *
+     * @param deviceHandle the device to query
+     * @param enumName     the enum name
+     */
+    @NativeType("ALCenum")
+    public static int alcGetEnumValue(@NativeType("ALCdevice const *") long deviceHandle, @NativeType("ALCchar const *") CharSequence enumName) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            stack.nASCII(enumName, true);
+            long enumNameEncoded = stack.getPointerAddress();
+            return nalcGetEnumValue(deviceHandle, enumNameEncoded);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    // --- [ alcGetError ] ---
+
+    /**
+     * Queries ALC errors.
+     * 
+     * <p>ALC uses the same conventions and mechanisms as AL for error handling. In particular, ALC does not use conventions derived from X11 (GLX) or Windows
+     * (WGL).</p>
+     * 
+     * <p>Error conditions are specific to the device, and (like AL) a call to alcGetError resets the error state.</p>
+     *
+     * @param deviceHandle the device to query
+     */
+    @NativeType("ALCenum")
+    public static int alcGetError(@NativeType("ALCdevice *") long deviceHandle) {
+		long __functionAddress = ALC.getICD().alcGetError;
+        return invokePI(deviceHandle, __functionAddress);
+    }
+
+    // --- [ alcGetString ] ---
+
+    /** Unsafe version of: {@link #alcGetString GetString} */
+    public static long nalcGetString(long deviceHandle, int token) {
+		long __functionAddress = ALC.getICD().alcGetString;
+        return invokePP(deviceHandle, token, __functionAddress);
+    }
+
+    /**
+     * Obtains string value(s) from ALC.
+     * 
+     * <p><b>LWJGL note</b>: Use {@link ALUtil#getStringList} for those tokens that return multiple values.</p>
+     *
+     * @param deviceHandle the device to query
+     * @param token        the information to query. One of:<br><table><tr><td>{@link #ALC_DEFAULT_DEVICE_SPECIFIER DEFAULT_DEVICE_SPECIFIER}</td><td>{@link #ALC_DEVICE_SPECIFIER DEVICE_SPECIFIER}</td><td>{@link #ALC_EXTENSIONS EXTENSIONS}</td></tr><tr><td>{@link ALC11#ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER CAPTURE_DEFAULT_DEVICE_SPECIFIER}</td><td>{@link ALC11#ALC_CAPTURE_DEVICE_SPECIFIER CAPTURE_DEVICE_SPECIFIER}</td></tr></table>
+     */
+    @Nullable
+    @NativeType("ALCchar const *")
+    public static String alcGetString(@NativeType("ALCdevice *") long deviceHandle, @NativeType("ALCenum") int token) {
+        long __result = nalcGetString(deviceHandle, token);
+        return memUTF8Safe(__result);
+    }
+
+    // --- [ alcGetIntegerv ] ---
+
+    /**
+     * Unsafe version of: {@link #alcGetIntegerv GetIntegerv}
+     *
+     * @param size the size of the {@code dest} buffer
+     */
+    public static void nalcGetIntegerv(long deviceHandle, int token, int size, long dest) {
+		long __functionAddress = ALC.getICD().alcGetIntegerv;
+        invokePPV(deviceHandle, token, size, dest, __functionAddress);
+    }
+
+    /**
+     * Obtains integer value(s) from ALC.
+     *
+     * @param deviceHandle the device to query
+     * @param token        the information to query. One of:<br><table><tr><td>{@link #ALC_MAJOR_VERSION MAJOR_VERSION}</td><td>{@link #ALC_MINOR_VERSION MINOR_VERSION}</td><td>{@link #ALC_ATTRIBUTES_SIZE ATTRIBUTES_SIZE}</td><td>{@link #ALC_ALL_ATTRIBUTES ALL_ATTRIBUTES}</td><td>{@link ALC11#ALC_CAPTURE_SAMPLES CAPTURE_SAMPLES}</td></tr></table>
+     * @param dest         the destination buffer
+     */
+    @NativeType("ALCvoid")
+    public static void alcGetIntegerv(@NativeType("ALCdevice *") long deviceHandle, @NativeType("ALCenum") int token, @NativeType("ALCint *") IntBuffer dest) {
+        nalcGetIntegerv(deviceHandle, token, dest.remaining(), memAddress(dest));
+    }
+
+    /**
+     * Obtains integer value(s) from ALC.
+     *
+     * @param deviceHandle the device to query
+     * @param token        the information to query. One of:<br><table><tr><td>{@link #ALC_MAJOR_VERSION MAJOR_VERSION}</td><td>{@link #ALC_MINOR_VERSION MINOR_VERSION}</td><td>{@link #ALC_ATTRIBUTES_SIZE ATTRIBUTES_SIZE}</td><td>{@link #ALC_ALL_ATTRIBUTES ALL_ATTRIBUTES}</td><td>{@link ALC11#ALC_CAPTURE_SAMPLES CAPTURE_SAMPLES}</td></tr></table>
+     */
+    @NativeType("ALCvoid")
+    public static int alcGetInteger(@NativeType("ALCdevice *") long deviceHandle, @NativeType("ALCenum") int token) {
+        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        try {
+            IntBuffer dest = stack.callocInt(1);
+            nalcGetIntegerv(deviceHandle, token, 1, memAddress(dest));
+            return dest.get(0);
+        } finally {
+            stack.setPointer(stackPointer);
+        }
+    }
+
+    /** Array version of: {@link #alcCreateContext CreateContext} */
+    @NativeType("ALCcontext *")
+    public static long alcCreateContext(@NativeType("ALCdevice const *") long deviceHandle, @Nullable @NativeType("ALCint const *") int[] attrList) {
+		long __functionAddress = ALC.getICD().alcCreateContext;
+        if (CHECKS) {
+            check(deviceHandle);
+            checkNTSafe(attrList);
+        }
+        return invokePPP(deviceHandle, attrList, __functionAddress);
+    }
+
+    /** Array version of: {@link #alcGetIntegerv GetIntegerv} */
+    @NativeType("ALCvoid")
+    public static void alcGetIntegerv(@NativeType("ALCdevice *") long deviceHandle, @NativeType("ALCenum") int token, @NativeType("ALCint *") int[] dest) {
+		long __functionAddress = ALC.getICD().alcGetIntegerv;
+        invokePPV(deviceHandle, token, dest.length, dest, __functionAddress);
+    }
 
 }

@@ -84,11 +84,39 @@
 */
 package org.lwjgl.util.glu.tessellation;
 
+import static org.lwjgl.util.glu.GLU.GLU_INVALID_ENUM;
+import static org.lwjgl.util.glu.GLU.GLU_INVALID_VALUE;
+import static org.lwjgl.util.glu.GLU.GLU_OUT_OF_MEMORY;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_BEGIN;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_BEGIN_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_BOUNDARY_ONLY;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_COMBINE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_COMBINE_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_COORD_TOO_LARGE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_EDGE_FLAG;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_EDGE_FLAG_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_END;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_END_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_ERROR;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_ERROR_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MAX_COORD;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MISSING_BEGIN_CONTOUR;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MISSING_BEGIN_POLYGON;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MISSING_END_CONTOUR;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_MISSING_END_POLYGON;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_TOLERANCE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_VERTEX;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_VERTEX_DATA;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ABS_GEQ_TWO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NEGATIVE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_NONZERO;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_ODD;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_POSITIVE;
+import static org.lwjgl.util.glu.GLU.GLU_TESS_WINDING_RULE;
+
 import org.lwjgl.util.glu.GLUtessellator;
 import org.lwjgl.util.glu.GLUtessellatorCallback;
 import org.lwjgl.util.glu.GLUtessellatorCallbackAdapter;
-
-import static org.lwjgl.util.glu.GLU.*;
 
 public class GLUtessellatorImpl implements GLUtessellator {
     public static final int TESS_MAX_CACHE = 100;

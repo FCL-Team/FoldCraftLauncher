@@ -32,18 +32,17 @@
 package org.lwjgl.util.jinput;
 
 import net.java.games.input.AbstractComponent;
-import net.java.games.input.Keyboard;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
-import net.java.games.input.Rumbler;
 import net.java.games.input.Event;
-import java.util.List;
-import java.util.ArrayList;
+import net.java.games.input.Keyboard;
+import net.java.games.input.Rumbler;
 
 import java.io.IOException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author elias

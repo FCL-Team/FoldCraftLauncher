@@ -31,11 +31,11 @@
  */
 package org.lwjgl.input;
 
-import java.util.ArrayList;
-
 import net.java.games.input.ControllerEnvironment;
 
 import org.lwjgl.LWJGLException;
+
+import java.util.ArrayList;
 
 /**
  * The collection of controllers currently connected.

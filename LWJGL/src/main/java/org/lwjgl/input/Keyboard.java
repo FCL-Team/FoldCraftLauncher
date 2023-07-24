@@ -31,17 +31,17 @@
  */
 package org.lwjgl.input;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.InputImplementation;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <br>
@@ -213,10 +213,10 @@ public class Keyboard {
 	public static final int KEY_POWER           = 0xDE;
 	public static final int KEY_SLEEP           = 0xDF;
 
-/*	public static final int STATE_ON							= 0;
-	public static final int STATE_OFF						 = 1;
-	public static final int STATE_UNKNOWN				 = 2;
-*/
+	/*	public static final int STATE_ON							= 0;
+        public static final int STATE_OFF						 = 1;
+        public static final int STATE_UNKNOWN				 = 2;
+    */
 	public static final int KEYBOARD_SIZE = 256;
 
 	/** Buffer size in events */
@@ -233,11 +233,11 @@ public class Keyboard {
 		try {
 			for ( Field field : fields ) {
 				if ( Modifier.isStatic(field.getModifiers())
-				     && Modifier.isPublic(field.getModifiers())
-				     && Modifier.isFinal(field.getModifiers())
-				     && field.getType().equals(int.class)
-				     && field.getName().startsWith("KEY_")
-				     && !field.getName().endsWith("WIN") ) { /* Don't use deprecated names */
+						&& Modifier.isPublic(field.getModifiers())
+						&& Modifier.isFinal(field.getModifiers())
+						&& field.getType().equals(int.class)
+						&& field.getName().startsWith("KEY_")
+						&& !field.getName().endsWith("WIN") ) { /* Don't use deprecated names */
 
 					int key = field.getInt(null);
 					String name = field.getName().substring(4);
@@ -245,11 +245,10 @@ public class Keyboard {
 					keyMap.put(name, key);
 					counter++;
 				}
-
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 	}
 
 	/** The number of keys supported */
@@ -323,11 +322,9 @@ public class Keyboard {
 	 * @throws LWJGLException if the keyboard could not be created for any reason
 	 */
 	public static void create() throws LWJGLException {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
+		if (!Display.isCreated()) throw new IllegalStateException("Display must be created.");
 
-			create(OpenGLPackageAccess.createImplementation());
-		}
+		create((InputImplementation) GLFWInputImplementation.singleton);
 	}
 
 	private static void reset() {
@@ -341,22 +338,18 @@ public class Keyboard {
 	 * @return true if the keyboard has been created
 	 */
 	public static boolean isCreated() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return created;
-		}
+		return created;
 	}
 
 	/**
 	 * "Destroy" the keyboard
 	 */
 	public static void destroy() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!created)
-				return;
-			created = false;
-			implementation.destroyKeyboard();
-			reset();
-		}
+		if (!created)
+			return;
+		created = false;
+		implementation.destroyKeyboard();
+		reset();
 	}
 
 	/**
@@ -381,12 +374,10 @@ public class Keyboard {
 	 * @see Keyboard#getEventCharacter()
 	 */
 	public static void poll() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!created)
-				throw new IllegalStateException("Keyboard must be created before you can poll the device");
-			implementation.pollKeyboard(keyDownBuffer);
-			read();
-		}
+		if (!created)
+			throw new IllegalStateException("Keyboard must be created before you can poll the device");
+		implementation.pollKeyboard(keyDownBuffer);
+		read();
 	}
 
 	private static void read() {
@@ -401,11 +392,10 @@ public class Keyboard {
 	 * @return true if the key is down according to the last poll()
 	 */
 	public static boolean isKeyDown(int key) {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!created)
-				throw new IllegalStateException("Keyboard must be created before you can query key state");
-			return keyDownBuffer.get(key) != 0;
-		}
+		if (!created)
+			throw new IllegalStateException("Keyboard must be created before you can query key state");
+		if(key >= KEYBOARD_SIZE) return false;
+		return keyDownBuffer.get(key) != 0;
 	}
 
 	/**
@@ -446,16 +436,14 @@ public class Keyboard {
 	 * @return the number of keyboard events
 	 */
 	public static int getNumKeyboardEvents() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!created)
-				throw new IllegalStateException("Keyboard must be created before you can read events");
-			int old_position = readBuffer.position();
-			int num_events = 0;
-			while (readNext(tmp_event) && (!tmp_event.repeat || repeat_enabled))
-				num_events++;
-			readBuffer.position(old_position);
-			return num_events;
-		}
+		if (!created)
+			throw new IllegalStateException("Keyboard must be created before you can read events");
+		int old_position = readBuffer.position();
+		int num_events = 0;
+		while (readNext(tmp_event) && (!tmp_event.repeat || repeat_enabled))
+			num_events++;
+		readBuffer.position(old_position);
+		return num_events;
 	}
 
 	/**
@@ -470,19 +458,17 @@ public class Keyboard {
 	 * @return true if a keyboard event was read, false otherwise
 	 */
 	public static boolean next() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			if (!created)
-				throw new IllegalStateException("Keyboard must be created before you can read events");
+		if (!created)
+			throw new IllegalStateException("Keyboard must be created before you can read events");
 
-			boolean result;
-			while ((result = readNext(current_event)) && current_event.repeat && !repeat_enabled)
-				;
-			return result;
-		}
+		boolean result;
+		while ((result = readNext(current_event)) && current_event.repeat && !repeat_enabled)
+			;
+		return result;
 	}
 
 	/**
-     * Controls whether repeat events are reported or not. If repeat events
+	 * Controls whether repeat events are reported or not. If repeat events
 	 * are enabled, key down events are reported when a key is pressed and held for
 	 * a OS dependent amount of time. To distinguish a repeat event from a normal event,
 	 * use isRepeatEvent().
@@ -490,21 +476,17 @@ public class Keyboard {
 	 * @see Keyboard#getEventKey()
 	 */
 	public static void enableRepeatEvents(boolean enable) {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			repeat_enabled = enable;
-		}
+		repeat_enabled = enable;
 	}
 
 	/**
-     * Check whether repeat events are currently reported or not.
+	 * Check whether repeat events are currently reported or not.
 	 *
 	 * @return true is repeat events are reported, false if not.
 	 * @see Keyboard#getEventKey()
 	 */
 	public static boolean areRepeatEventsEnabled() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return repeat_enabled;
-		}
+		return repeat_enabled;
 	}
 
 	private static boolean readNext(KeyEvent event) {
@@ -530,22 +512,18 @@ public class Keyboard {
 	 * @return The character from the current event
 	 */
 	public static char getEventCharacter() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return (char)current_event.character;
-		}
+		return (char)current_event.character;
 	}
 
 	/**
-   * Please note that the key code returned is NOT valid against the
-   * current keyboard layout. To get the actual character pressed call
-   * getEventCharacter
-   *
+	 * Please note that the key code returned is NOT valid against the
+	 * current keyboard layout. To get the actual character pressed call
+	 * getEventCharacter
+	 *
 	 * @return The key from the current event
 	 */
 	public static int getEventKey() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return current_event.key;
-		}
+		return current_event.key;
 	}
 
 	/**
@@ -555,9 +533,7 @@ public class Keyboard {
 	 * @return True if key was down, or false if released
 	 */
 	public static boolean getEventKeyState() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return current_event.state;
-		}
+		return current_event.state;
 	}
 
 	/**
@@ -568,9 +544,7 @@ public class Keyboard {
 	 * @return The time in nanoseconds of the current event
 	 */
 	public static long getEventNanoseconds() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return current_event.nanos;
-		}
+		return current_event.nanos;
 	}
 
 	/**
@@ -579,9 +553,7 @@ public class Keyboard {
 	 * the current event is not a repeat even or if repeat events are disabled.
 	 */
 	public static boolean isRepeatEvent() {
-		synchronized (OpenGLPackageAccess.global_lock) {
-			return current_event.repeat;
-		}
+		return current_event.repeat;
 	}
 
 	private static final class KeyEvent {

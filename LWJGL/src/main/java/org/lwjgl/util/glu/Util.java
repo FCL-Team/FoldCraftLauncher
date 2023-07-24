@@ -31,12 +31,32 @@
  */
 package org.lwjgl.util.glu;
 
-import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL11.GL_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_BITMAP;
+import static org.lwjgl.opengl.GL11.GL_BLUE;
+import static org.lwjgl.opengl.GL11.GL_BYTE;
+import static org.lwjgl.opengl.GL11.GL_COLOR_INDEX;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_GREEN;
+import static org.lwjgl.opengl.GL11.GL_INT;
+import static org.lwjgl.opengl.GL11.GL_LUMINANCE;
+import static org.lwjgl.opengl.GL11.GL_LUMINANCE_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_RED;
+import static org.lwjgl.opengl.GL11.GL_RGB;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_SHORT;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_INDEX;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_SHORT;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL12.GL_BGR;
+import static org.lwjgl.opengl.GL12.GL_BGRA;
 
 import org.lwjgl.BufferUtils;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
+import java.nio.IntBuffer;
 
 /**
  * Util.java

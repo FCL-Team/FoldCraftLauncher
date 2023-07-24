@@ -31,7 +31,15 @@
  */
 package org.lwjgl.util.glu;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_PACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.GL_PACK_ROW_LENGTH;
+import static org.lwjgl.opengl.GL11.GL_PACK_SKIP_PIXELS;
+import static org.lwjgl.opengl.GL11.GL_PACK_SKIP_ROWS;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ROW_LENGTH;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_SKIP_PIXELS;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_SKIP_ROWS;
+import static org.lwjgl.opengl.GL11.glPixelStorei;
 
 /**
  * PixelStoreState.java

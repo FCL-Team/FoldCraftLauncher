@@ -31,15 +31,16 @@
  */
 package org.lwjgl;
 
-import java.io.File;
+import org.lwjgl.glfw.GLFW;
+
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
 
-import org.lwjgl.input.Mouse;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  * <p>
@@ -50,95 +51,6 @@ import org.lwjgl.input.Mouse;
  * $Id$
  */
 public final class Sys {
-	/** The native library name */
-	private static final String JNI_LIBRARY_NAME = "lwjgl2";
-
-	/** Current version of library */
-	private static final String VERSION = "2.9.3";
-
-	private static final String POSTFIX64BIT = "64";
-
-	/** The implementation instance to delegate platform specific behavior to */
-	private static final SysImplementation implementation;
-	private static final boolean is64Bit;
-
-	private static void doLoadLibrary(final String lib_name) {
-		AccessController.doPrivileged(new PrivilegedAction<Object>() {
-			public Object run() {
-				String library_path = System.getProperty("org.lwjgl.librarypath");
-				if (library_path != null) {
-					System.load(library_path + File.separator + LWJGLUtil.mapLibraryName(lib_name));
-				} else {
-					System.loadLibrary(lib_name);
-				}
-				return null;
-			}
-		});
-	}
-
-	private static void loadLibrary(final String lib_name) {
-		// actively try to load 64bit libs on 64bit architectures first
-		String osArch = System.getProperty("os.arch");
-		boolean try64First = LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_MACOSX && ("amd64".equals(osArch) || "x86_64".equals(osArch));
-
-		Error err = null;
-		if ( try64First ) {
-			try {
-				doLoadLibrary(lib_name + POSTFIX64BIT);
-				return;
-			} catch (UnsatisfiedLinkError e) {
-				err = e;
-			}
-		}
-		
-		// fallback to loading the "old way"
-		try {
-			doLoadLibrary(lib_name);
-		} catch (UnsatisfiedLinkError e) {
-			if ( try64First )
-				throw err;
-
-			if (implementation.has64Bit()) {
-				try {
-					doLoadLibrary(lib_name + POSTFIX64BIT);
-					return;
-				} catch (UnsatisfiedLinkError e2) {
-					LWJGLUtil.log("Failed to load 64 bit library: " + e2.getMessage());
-				}
-			}
-
-			// Throw original error
-			throw e;
-		}
-	}
-
-	static {
-		implementation = createImplementation();
-		loadLibrary(JNI_LIBRARY_NAME);
-		is64Bit = implementation.getPointerSize() == 8;
-
-		int native_jni_version = implementation.getJNIVersion();
-		int required_version = implementation.getRequiredJNIVersion();
-		if (native_jni_version != required_version)
-			throw new LinkageError("Version mismatch: jar version is '" + required_version +
-                             "', native library version is '" + native_jni_version + "'");
-		implementation.setDebug(LWJGLUtil.DEBUG);
-	}
-
-	private static SysImplementation createImplementation() {
-		switch (LWJGLUtil.getPlatform()) {
-			case LWJGLUtil.PLATFORM_LINUX:
-				return new LinuxSysImplementation();
-			case LWJGLUtil.PLATFORM_WINDOWS:
-				return new WindowsSysImplementation();
-			case LWJGLUtil.PLATFORM_MACOSX:
-				return new MacOSXSysImplementation();
-			case LWJGLUtil.PLATFORM_FCL:
-				return new FCLSysImplementation();
-			default:
-				throw new IllegalStateException("Unsupported platform");
-		}
-	}
 
 	/**
 	 * No constructor for Sys.
@@ -150,18 +62,15 @@ public final class Sys {
 	 * Return the version of the core LWJGL libraries as a String.
 	 */
 	public static String getVersion() {
-		return VERSION;
+		return Version.getVersion();
 	}
 
 	/**
 	 * Initialization. This is just a dummy method to trigger the static constructor.
 	 */
 	public static void initialize() {
-	}
-
-	/** Returns true if a 64bit implementation was loaded. */
-	public static boolean is64Bit() {
-		return is64Bit;
+		if (!GLFW.glfwInit())
+			throw new IllegalStateException("Unable to initialize GLFW");
 	}
 
 	/**
@@ -171,7 +80,7 @@ public final class Sys {
 	 * @return timer resolution in ticks per second or 0 if no timer is present.
 	 */
 	public static long getTimerResolution() {
-		return implementation.getTimerResolution();
+		return 1000;
 	}
 
 	/**
@@ -182,7 +91,11 @@ public final class Sys {
 	 * @return the current hires time, in ticks (always >= 0)
 	 */
 	public static long getTime() {
-		return implementation.getTime() & 0x7FFFFFFFFFFFFFFFL;
+		return GLFW.glfwGetTimerValue();
+	}
+
+	public static long getNanoTime() {
+		return System.nanoTime();
 	}
 
 	/**
@@ -204,18 +117,12 @@ public final class Sys {
 	 * @param message The message text for the alert.
 	 */
 	public static void alert(String title, String message) {
-		boolean grabbed = Mouse.isGrabbed();
-		if (grabbed) {
-			Mouse.setGrabbed(false);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			LWJGLUtil.log("Caught exception while setting Look-and-Feel: " + e);
 		}
-		if (title == null)
-			title = "";
-		if (message == null)
-			message = "";
-		implementation.alert(title, message);
-		if (grabbed) {
-			Mouse.setGrabbed(true);
-		}
+		JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
 	}
 
 	/**
@@ -249,14 +156,14 @@ public final class Sys {
 				}
 			});
 			try {
-				Boolean ret = (Boolean)showDocumentMethod.invoke(basicService, new URL(url));
+				Boolean ret = (Boolean) showDocumentMethod.invoke(basicService, new URL(url));
 				return ret;
 			} catch (MalformedURLException e) {
 				e.printStackTrace(System.err);
 				return false;
 			}
 		} catch (Exception ue) {
-			return implementation.openURL(url);
+			return false;
 		}
 	}
 
@@ -269,6 +176,6 @@ public final class Sys {
 	 * @return a String, or null if there is no system clipboard.
 	 */
 	public static String getClipboard() {
-		return implementation.getClipboard();
+		return GLFW.glfwGetClipboardString(GLFW.glfwGetPrimaryMonitor());
 	}
 }

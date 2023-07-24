@@ -31,13 +31,13 @@
  */
 package org.lwjgl.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.DisplayMode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * Display initialization utility, that can be used to find display modes and pick

@@ -31,8 +31,11 @@
  */
 package org.lwjgl.util.glu;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.opengl.GL11.glNormal3f;
+import static org.lwjgl.opengl.GL11.glTexCoord2f;
+import static org.lwjgl.util.glu.GLU.GLU_FILL;
+import static org.lwjgl.util.glu.GLU.GLU_OUTSIDE;
+import static org.lwjgl.util.glu.GLU.GLU_SMOOTH;
 
 /**
  * Quadric.java

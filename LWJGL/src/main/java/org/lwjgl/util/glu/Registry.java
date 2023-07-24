@@ -31,7 +31,8 @@
  */
 package org.lwjgl.util.glu;
 
-import static org.lwjgl.util.glu.GLU.*;
+import static org.lwjgl.util.glu.GLU.GLU_EXTENSIONS;
+import static org.lwjgl.util.glu.GLU.GLU_VERSION;
 
 /**
  * Registry.java

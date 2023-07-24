@@ -31,13 +31,14 @@
  */
 package org.lwjgl.util.glu;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import static org.lwjgl.opengl.GL11.glMultMatrix;
+import static org.lwjgl.opengl.GL11.glScalef;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.*;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 /**
  * Project.java
@@ -79,7 +80,7 @@ public class Project extends Util {
 	/**
 	 * Method __gluMultMatrixVecf
 	 *
-	 * @param finalMatrix
+	 * @param m
 	 * @param in
 	 * @param out
 	 */

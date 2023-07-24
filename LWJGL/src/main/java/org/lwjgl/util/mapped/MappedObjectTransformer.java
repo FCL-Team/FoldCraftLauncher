@@ -31,13 +31,37 @@
  */
 package org.lwjgl.util.mapped;
 
+import static org.objectweb.asm.ClassWriter.*;
+import static org.objectweb.asm.Opcodes.*;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.MemoryUtil;
-import org.objectweb.asm.*;
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.tree.analysis.*;
+import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.tree.analysis.Frame;
+import org.objectweb.asm.tree.analysis.SimpleVerifier;
 import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
@@ -48,9 +72,6 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.objectweb.asm.ClassWriter.*;
-import static org.objectweb.asm.Opcodes.*;
 
 /**
  * This class implements the bytecode transformation that mapped object go through.

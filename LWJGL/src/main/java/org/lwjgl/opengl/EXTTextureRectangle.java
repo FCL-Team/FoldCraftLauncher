@@ -2,9 +2,6 @@
 
 package org.lwjgl.opengl;
 
-import org.lwjgl.*;
-import java.nio.*;
-
 public final class EXTTextureRectangle {
 
 	public static final int GL_TEXTURE_RECTANGLE_EXT = 0x84F5,

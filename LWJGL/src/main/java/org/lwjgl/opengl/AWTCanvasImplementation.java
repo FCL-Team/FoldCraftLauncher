@@ -31,11 +31,11 @@
  */
 package org.lwjgl.opengl;
 
+import org.lwjgl.LWJGLException;
+
+import java.awt.Canvas;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
-import java.awt.Canvas;
-
-import org.lwjgl.LWJGLException;
 
 /**
  *

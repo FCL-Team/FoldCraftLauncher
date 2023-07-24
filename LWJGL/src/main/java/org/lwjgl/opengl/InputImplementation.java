@@ -38,10 +38,10 @@ package org.lwjgl.opengl;
  * @author elias_naur
  */
 
+import org.lwjgl.LWJGLException;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-
-import org.lwjgl.LWJGLException;
 
 public interface InputImplementation {
 	/*

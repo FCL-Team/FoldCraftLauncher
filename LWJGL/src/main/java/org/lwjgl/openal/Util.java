@@ -50,9 +50,9 @@ public final class Util {
 	 * @param device Device for which to check ALC errors 
 	 */
 	public static void checkALCError(ALCdevice device) {
-		int err = ALC10.alcGetError(device);
+		int err = ALC10.alcGetError(device.device);
 		if (err != ALC10.ALC_NO_ERROR)
-			throw new OpenALException(ALC10.alcGetString(AL.getDevice(), err));
+			throw new OpenALException(ALC10.alcGetString(AL.getDevice().device, err));
 	}
 	
 	/**

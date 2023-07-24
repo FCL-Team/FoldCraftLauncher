@@ -31,14 +31,14 @@
  */
 package org.lwjgl.input;
 
-import java.util.ArrayList;
-
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier.Axis;
 import net.java.games.input.Component.Identifier.Button;
 import net.java.games.input.Event;
 import net.java.games.input.EventQueue;
 import net.java.games.input.Rumbler;
+
+import java.util.ArrayList;
 
 /**
  * A wrapper round a JInput controller that attempts to make the interface

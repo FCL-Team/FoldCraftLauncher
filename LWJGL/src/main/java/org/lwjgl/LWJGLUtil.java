@@ -40,7 +40,12 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * <p>
@@ -514,14 +519,12 @@ public class LWJGLUtil {
 		});
 	}
 
-	public static native void nLog(String msg);
-
 	/**
 	 * @param msg Message to print
 	 */
 	public static void log(CharSequence msg) {
 		if (DEBUG) {
-			nLog("[LWJGL] " + msg);
+			System.err.println("[LWJGL] " + msg);
 		}
 	}
 
