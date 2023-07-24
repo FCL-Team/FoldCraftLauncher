@@ -96,7 +96,6 @@ public final class Sys {
 
 	public static long getNanoTime() {
 		return System.nanoTime();
-		// return getTime() * 1000L * 1000L;
 	}
 
 	/**

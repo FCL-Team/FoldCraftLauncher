@@ -190,11 +190,11 @@ public class Mouse {
         //dummy
         if (cursor == null && currentCursor.isEmpty()) {
             Mouse.setGrabbed(false);
-            if(grabListener != null) grabListener.onGrab(false);
+            if (grabListener != null) grabListener.onGrab(false);
         }
         if (cursor != null && cursor.isEmpty()) {
             Mouse.setGrabbed(true);
-            if(grabListener != null) grabListener.onGrab(true);
+            if (grabListener != null) grabListener.onGrab(true);
         }
         currentCursor = cursor;
         return currentCursor;
@@ -592,25 +592,26 @@ public class Mouse {
         boolean grabbed = isGrabbed;
         isGrabbed = grab;
         if (isCreated()) {
-            //if (grab && !grabbed) {
-            // store location mouse was grabbed
-            //    grab_x = x;
-            //    grab_y = y;
-        }
-        //else if (!grab && grabbed) {
-        //    // move mouse back to location it was grabbed before ungrabbing
-        //    if ((Cursor.getCapabilities() & Cursor.CURSOR_ONE_BIT_TRANSPARENCY) != 0)
-        //        implementation.setCursorPosition(grab_x, grab_y);
-        //}
+            if (grab && !grabbed) {
+                // store location mouse was grabbed
+                grab_x = x;
+                grab_y = y;
+            }
+            else if (!grab && grabbed) {
+                // move mouse back to location it was grabbed before ungrabbing
+                if ((Cursor.getCapabilities() & Cursor.CURSOR_ONE_BIT_TRANSPARENCY) != 0)
+                    implementation.setCursorPosition(grab_x, grab_y);
+            }
 
-        implementation.grabMouse(grab);
-        // Get latest values from native side
-        poll();
-        event_x = x;
-        event_y = y;
-        last_event_raw_x = x;
-        last_event_raw_y = y;
-        resetMouse();
+            implementation.grabMouse(grab);
+            // Get latest values from native side
+            poll();
+            event_x = x;
+            event_y = y;
+            last_event_raw_x = x;
+            last_event_raw_y = y;
+            resetMouse();
+        }
     }
 
     /**
