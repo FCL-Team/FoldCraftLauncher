@@ -105,7 +105,7 @@ public class FCLInjector {
             default:
                 typeInt = 0;
                 break;
-        };
+        }
         JNI.invokeV(typeInt, FCLInjector.SetHitResultType);
     }
 
@@ -133,18 +133,17 @@ public class FCLInjector {
                             Field typeField = target.getClass().getDeclaredField(param3);
                             typeField.setAccessible(true);
                             type = typeField.get(target);
-                            success = true;
                             break;
                         case INJECTOR_LEVEL_4:
                             Method typeMethod = target.getClass().getDeclaredMethod(param3);
                             typeMethod.setAccessible(true);
                             type = typeMethod.invoke(target);
-                            success = true;
                             break;
                         default:
                             break;
                     }
                 }
+                success = true;
             } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                 apiLog(e.getMessage());
             }
