@@ -40,8 +40,7 @@ public class ProcessService extends Service {
                 getApplicationContext().getDir("runtime", 0).getAbsolutePath() + "/java/jre8",
                 getApplicationContext().getCacheDir() + "/fclauncher",
                 null,
-                command,
-                false);
+                command);
         startProcess(config);
         return super.onStartCommand(intent, flags, startId);
     }

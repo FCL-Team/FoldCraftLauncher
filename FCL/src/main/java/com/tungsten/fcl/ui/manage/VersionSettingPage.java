@@ -150,7 +150,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
         rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
+        rendererDataList.add(FCLConfig.Renderer.RENDERER_VIRGL);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_ANGLE);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
         rendererSpinner.setDataList(rendererDataList);

@@ -15,19 +15,24 @@
 #define OSMESA_CONTEXT_MAJOR_VERSION 0x36
 #define OSMESA_CONTEXT_MINOR_VERSION 0x37
 
+#define OSMESA_ROW_LENGTH	0x10
+#define OSMESA_Y_UP		0x11
+
 typedef void* OSMesaContext;
 typedef void (*OSMESAproc)(void);
 
-typedef OSMesaContext (GLAPIENTRY * PFN_OSMesaCreateContextExt)(GLenum,GLint,GLint,GLint,OSMesaContext);
-typedef OSMesaContext (GLAPIENTRY * PFN_OSMesaCreateContextAttribs)(const int*,OSMesaContext);
+typedef OSMesaContext (GLAPIENTRY * PFN_OSMesaCreateContext)(GLenum,OSMesaContext);
+typedef OSMesaContext (GLAPIENTRY * PFN_OSMesaGetCurrentContext)(void);
 typedef void (GLAPIENTRY * PFN_OSMesaDestroyContext)(OSMesaContext);
+typedef void (GLAPIENTRY * PFN_OSMesaPixelStore)(GLint,GLint);
 typedef int (GLAPIENTRY * PFN_OSMesaMakeCurrent)(OSMesaContext,void*,int,int,int);
 typedef int (GLAPIENTRY * PFN_OSMesaGetColorBuffer)(OSMesaContext,int*,int*,int*,void**);
 typedef int (GLAPIENTRY * PFN_OSMesaGetDepthBuffer)(OSMesaContext,int*,int*,int*,void**);
 typedef GLFWglproc (GLAPIENTRY * PFN_OSMesaGetProcAddress)(const char*);
-#define OSMesaCreateContextExt _glfw.osmesa.CreateContextExt
-#define OSMesaCreateContextAttribs _glfw.osmesa.CreateContextAttribs
+#define OSMesaCreateContext _glfw.osmesa.CreateContext
+#define OSMesaGetCurrentContext _glfw.osmesa.GetCurrentContext
 #define OSMesaDestroyContext _glfw.osmesa.DestroyContext
+#define OSMesaPixelStore _glfw.osmesa.PixelStore
 #define OSMesaMakeCurrent _glfw.osmesa.MakeCurrent
 #define OSMesaGetColorBuffer _glfw.osmesa.GetColorBuffer
 #define OSMesaGetDepthBuffer _glfw.osmesa.GetDepthBuffer
@@ -54,9 +59,10 @@ typedef struct _GLFWlibraryOSMesa
 {
     void*           handle;
 
-    PFN_OSMesaCreateContextExt      CreateContextExt;
-    PFN_OSMesaCreateContextAttribs  CreateContextAttribs;
+    PFN_OSMesaCreateContext         CreateContext;
+    PFN_OSMesaGetCurrentContext     GetCurrentContext;
     PFN_OSMesaDestroyContext        DestroyContext;
+    PFN_OSMesaPixelStore            PixelStore;
     PFN_OSMesaMakeCurrent           MakeCurrent;
     PFN_OSMesaGetColorBuffer        GetColorBuffer;
     PFN_OSMesaGetDepthBuffer        GetDepthBuffer;

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <dlfcn.h>
 
-#include "gl.h"
+#include "gl/gl.h"
 #include "GLES3/gl32.h"
-#include "string_utils.h"
+#include "include/string_utils.h"
 
 #define LOOKUP_FUNC(func) \
     if (!gles_##func) { \

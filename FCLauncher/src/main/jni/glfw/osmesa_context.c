@@ -7,6 +7,30 @@
 #include <assert.h>
 
 #include <internal.h>
+#include <android/native_window.h>
+
+int (*vtest_main) (int argc, char** argv);
+void (*vtest_swap_buffers) (void);
+
+ANativeWindow_Buffer buf;
+int32_t stride;
+
+void* makeContextCurrentEGL(void* win) {
+    _GLFWwindow* window = win;
+    if (!eglMakeCurrent(_glfw.egl.display,
+                        window->context.egl.handle == 0 ? (EGLSurface *) 0 : window->context.egl.surface,
+                        window->context.egl.handle == 0 ? (EGLSurface *) 0 : window->context.egl.surface,
+                        window->context.egl.handle))
+    {
+        _glfwInputError(GLFW_PLATFORM_ERROR,
+                        "EGL: Failed to make context current: %04x",
+                        eglGetError());
+    }
+
+    if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
+        vtest_main(3, (const char*[]) {"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+    }
+}
 
 static void makeContextCurrentOSMesa(_GLFWwindow* window)
 {
@@ -37,6 +61,29 @@ static void makeContextCurrentOSMesa(_GLFWwindow* window)
                             "OSMesa: Failed to make context current");
             return;
         }
+
+        if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") != 0) {
+            ANativeWindow_lock(window->fcl.handle, &buf, NULL);
+            OSMesaPixelStore(OSMESA_ROW_LENGTH, buf.stride);
+            stride = buf.stride;
+            OSMesaPixelStore(OSMESA_Y_UP, 0);
+        }
+
+        window->context.Clear = (PFNGLCLEAR) window->context.getProcAddress("glClear");
+        window->context.ClearColor = (PFNGLCLEARCOLOR) window->context.getProcAddress("glClearColor");
+        window->context.ReadPixels = (PFNGLREADPIXELS) window->context.getProcAddress("glReadPixels");
+        if (!window->context.Clear || !window->context.ClearColor || !window->context.ReadPixels) {
+            _glfwInputError(GLFW_PLATFORM_ERROR, "Entry point retrieval is broken");
+            return;
+        }
+
+        window->context.Clear(GL_COLOR_BUFFER_BIT);
+        window->context.ClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+
+        int pixelsArr[4];
+        window->context.ReadPixels(0, 0, 1, 1, GL_RGB, GL_INT, &pixelsArr);
+
+        window->context.swapBuffers(window);
     }
 
     _glfwPlatformSetTls(&_glfw.contextSlot, window);
@@ -65,12 +112,32 @@ static void destroyContextOSMesa(_GLFWwindow* window)
 
 static void swapBuffersOSMesa(_GLFWwindow* window)
 {
-    // No double buffering on OSMesa
+    window->context.Finish = (PFNGLFINISH) window->context.getProcAddress("glFinish");
+    if (!window->context.Finish) {
+        _glfwInputError(GLFW_PLATFORM_ERROR, "Entry point retrieval is broken");
+        return;
+    }
+    if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
+        window->context.Finish();
+        vtest_swap_buffers();
+    } else {
+        OSMesaContext context = OSMesaGetCurrentContext();
+        if (context == NULL) {
+            printf("Zink: attempted to swap buffers without context!");
+            return;
+        }
+        OSMesaMakeCurrent(context, buf.bits, GL_UNSIGNED_BYTE, window->context.osmesa.width, window->context.osmesa.height);
+        window->context.Finish();
+        ANativeWindow_unlockAndPost(window->fcl.handle);
+        ANativeWindow_lock(window->fcl.handle, &buf, NULL);
+    }
 }
 
 static void swapIntervalOSMesa(int interval)
 {
-    // No swap interval on OSMesa
+    if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
+        eglSwapInterval(_glfw.egl.display, interval);
+    }
 }
 
 static int extensionSupportedOSMesa(const char* extension)
@@ -86,34 +153,10 @@ static int extensionSupportedOSMesa(const char* extension)
 
 GLFWbool _glfwInitOSMesa(void)
 {
-    int i;
-    const char* sonames[] =
-    {
-#if defined(_GLFW_OSMESA_LIBRARY)
-        _GLFW_OSMESA_LIBRARY,
-#elif defined(_WIN32)
-        "libOSMesa.dll",
-        "OSMesa.dll",
-#elif defined(__APPLE__)
-        "libOSMesa.8.dylib",
-#elif defined(__CYGWIN__)
-        "libOSMesa-8.so",
-#else
-        "libOSMesa.so.8",
-        "libOSMesa.so.6",
-#endif
-        NULL
-    };
-
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
 
-    for (i = 0;  sonames[i];  i++)
-    {
-        _glfw.osmesa.handle = _glfw_dlopen(sonames[i]);
-        if (_glfw.osmesa.handle)
-            break;
-    }
+    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
 
     if (!_glfw.osmesa.handle)
     {
@@ -121,12 +164,14 @@ GLFWbool _glfwInitOSMesa(void)
         return GLFW_FALSE;
     }
 
-    _glfw.osmesa.CreateContextExt = (PFN_OSMesaCreateContextExt)
-        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaCreateContextExt");
-    _glfw.osmesa.CreateContextAttribs = (PFN_OSMesaCreateContextAttribs)
-        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaCreateContextAttribs");
+    _glfw.osmesa.CreateContext = (PFN_OSMesaCreateContext)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaCreateContext");
+    _glfw.osmesa.GetCurrentContext = (PFN_OSMesaGetCurrentContext)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetCurrentContext");
     _glfw.osmesa.DestroyContext = (PFN_OSMesaDestroyContext)
         _glfw_dlsym(_glfw.osmesa.handle, "OSMesaDestroyContext");
+    _glfw.osmesa.PixelStore = (PFN_OSMesaPixelStore)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaPixelStore");
     _glfw.osmesa.MakeCurrent = (PFN_OSMesaMakeCurrent)
         _glfw_dlsym(_glfw.osmesa.handle, "OSMesaMakeCurrent");
     _glfw.osmesa.GetColorBuffer = (PFN_OSMesaGetColorBuffer)
@@ -136,16 +181,35 @@ GLFWbool _glfwInitOSMesa(void)
     _glfw.osmesa.GetProcAddress = (PFN_OSMesaGetProcAddress)
         _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetProcAddress");
 
-    if (!_glfw.osmesa.CreateContextExt ||
+    const char *renderer = getenv("LIBGL_STRING");
+    if (strcmp(renderer, "VirGLRenderer") == 0) {
+        char* fileName = calloc(1, 1024);
+        sprintf(fileName, "%s/libvirgl_test_server.so", getenv("FCL_NATIVEDIR"));
+        void *handle = _glfw_dlopen(fileName);
+        if (!handle) {
+            printf("VirGL: %s\n", dlerror());
+            return GLFW_FALSE;
+        }
+        vtest_main = _glfw_dlsym(handle, "vtest_main");
+        vtest_swap_buffers = _glfw_dlsym(handle, "vtest_swap_buffers");
+        free(fileName);
+        if (!vtest_main || !vtest_swap_buffers) {
+            _glfwInputError(GLFW_PLATFORM_ERROR, "OSMesa: Failed to load required entry points");
+            _glfwTerminateOSMesa();
+            return GLFW_FALSE;
+        }
+    }
+
+    if (!_glfw.osmesa.CreateContext ||
+        !_glfw.osmesa.GetCurrentContext ||
         !_glfw.osmesa.DestroyContext ||
+        !_glfw.osmesa.PixelStore ||
         !_glfw.osmesa.MakeCurrent ||
         !_glfw.osmesa.GetColorBuffer ||
         !_glfw.osmesa.GetDepthBuffer ||
         !_glfw.osmesa.GetProcAddress)
     {
-        _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "OSMesa: Failed to load required entry points");
-
+        _glfwInputError(GLFW_PLATFORM_ERROR, "OSMesa: Failed to load required entry points");
         _glfwTerminateOSMesa();
         return GLFW_FALSE;
     }
@@ -173,11 +237,84 @@ GLFWbool _glfwCreateContextOSMesa(_GLFWwindow* window,
                                   const _GLFWctxconfig* ctxconfig,
                                   const _GLFWfbconfig* fbconfig)
 {
+    const char *renderer = getenv("LIBGL_STRING");
+    if (strcmp(renderer, "VirGLRenderer") == 0) {
+        EGLConfig config = malloc(sizeof(EGLConfig));
+        EGLint egl_attributes[] = {
+                EGL_BLUE_SIZE, 8,
+                EGL_GREEN_SIZE, 8,
+                EGL_RED_SIZE, 8,
+                EGL_ALPHA_SIZE, 8,
+                EGL_DEPTH_SIZE, 24,
+                EGL_SURFACE_TYPE, EGL_WINDOW_BIT|0x0001,
+                EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                EGL_NONE
+        };
+
+        EGLint num_configs = 0;
+        EGLint vid;
+
+        if (eglChooseConfig(_glfw.egl.display, egl_attributes, &config, 1, &num_configs) != GLFW_TRUE) {
+            _glfwInputError(GLFW_API_UNAVAILABLE, "eglChooseConfig() failed: %04x",
+                            eglGetError());
+            return GLFW_FALSE;
+        }
+
+        if (num_configs == 0) {
+            _glfwInputError(GLFW_API_UNAVAILABLE, "%s",
+                            "eglChooseConfig() found no matching config");
+            return GLFW_FALSE;
+        }
+
+        if (eglGetConfigAttrib(_glfw.egl.display, config, EGL_NATIVE_VISUAL_ID, &vid) != GLFW_TRUE) {
+            _glfwInputError(GLFW_API_UNAVAILABLE, "eglGetConfigAttrib() failed: %04x",
+                            eglGetError());
+            return GLFW_FALSE;
+        }
+
+        ANativeWindow_setBuffersGeometry(window->fcl.handle, 0, 0, vid);
+
+        eglBindAPI(EGL_OPENGL_ES_API);
+
+        window->context.egl.surface = eglCreateWindowSurface(_glfw.egl.display,
+                                       config,
+                                       _GLFW_EGL_NATIVE_WINDOW,
+                                       NULL);
+        if (window->context.egl.surface == EGL_NO_SURFACE)
+        {
+            _glfwInputError(GLFW_PLATFORM_ERROR,
+                            "EGL: Failed to create window surface: %04x",
+                            eglGetError());
+            return GLFW_FALSE;
+        }
+        window->context.egl.config = config;
+
+        {
+            EGLint val;
+            assert(eglGetConfigAttrib(_glfw.egl.display, config, EGL_SURFACE_TYPE, &val));
+            assert(val & EGL_WINDOW_BIT);
+        }
+
+        const EGLint virgl_context_attrib[] = {
+                EGL_CONTEXT_CLIENT_VERSION, 3,
+                EGL_NONE
+        };
+        window->context.egl.handle = eglCreateContext(_glfw.egl.display, config, NULL, virgl_context_attrib);
+
+        if (window->context.egl.handle == EGL_NO_CONTEXT)
+        {
+            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
+                            "EGL: Failed to create context: %04x",
+                            eglGetError());
+            return GLFW_FALSE;
+        }
+
+        pthread_t t;
+        pthread_create(&t, NULL, makeContextCurrentEGL, (void*) window);
+        usleep(100 * 1000);
+    }
+
     OSMesaContext share = NULL;
-    const int accumBits = fbconfig->accumRedBits +
-                          fbconfig->accumGreenBits +
-                          fbconfig->accumBlueBits +
-                          fbconfig->accumAlphaBits;
 
     if (ctxconfig->client == GLFW_OPENGL_ES_API)
     {
@@ -189,58 +326,7 @@ GLFWbool _glfwCreateContextOSMesa(_GLFWwindow* window,
     if (ctxconfig->share)
         share = ctxconfig->share->context.osmesa.handle;
 
-    if (OSMesaCreateContextAttribs)
-    {
-        int index = 0, attribs[40];
-
-        setAttrib(OSMESA_FORMAT, OSMESA_RGBA);
-        setAttrib(OSMESA_DEPTH_BITS, fbconfig->depthBits);
-        setAttrib(OSMESA_STENCIL_BITS, fbconfig->stencilBits);
-        setAttrib(OSMESA_ACCUM_BITS, accumBits);
-
-        if (ctxconfig->profile == GLFW_OPENGL_CORE_PROFILE)
-        {
-            setAttrib(OSMESA_PROFILE, OSMESA_CORE_PROFILE);
-        }
-        else if (ctxconfig->profile == GLFW_OPENGL_COMPAT_PROFILE)
-        {
-            setAttrib(OSMESA_PROFILE, OSMESA_COMPAT_PROFILE);
-        }
-
-        if (ctxconfig->major != 1 || ctxconfig->minor != 0)
-        {
-            setAttrib(OSMESA_CONTEXT_MAJOR_VERSION, ctxconfig->major);
-            setAttrib(OSMESA_CONTEXT_MINOR_VERSION, ctxconfig->minor);
-        }
-
-        if (ctxconfig->forward)
-        {
-            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
-                            "OSMesa: Forward-compatible contexts not supported");
-            return GLFW_FALSE;
-        }
-
-        setAttrib(0, 0);
-
-        window->context.osmesa.handle =
-            OSMesaCreateContextAttribs(attribs, share);
-    }
-    else
-    {
-        if (ctxconfig->profile)
-        {
-            _glfwInputError(GLFW_VERSION_UNAVAILABLE,
-                            "OSMesa: OpenGL profiles unavailable");
-            return GLFW_FALSE;
-        }
-
-        window->context.osmesa.handle =
-            OSMesaCreateContextExt(OSMESA_RGBA,
-                                   fbconfig->depthBits,
-                                   fbconfig->stencilBits,
-                                   accumBits,
-                                   share);
-    }
+    window->context.osmesa.handle = OSMesaCreateContext(OSMESA_RGBA, share);
 
     if (window->context.osmesa.handle == NULL)
     {

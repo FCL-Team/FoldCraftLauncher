@@ -181,6 +181,9 @@ GLFWbool _glfwInitEGL(void)
         return GLFW_FALSE;
     }
 
+    const char* lib = getenv("LIBGL_NAME");
+    _glfw_dlopen(lib);
+
     _glfw.egl.prefix = (strncmp(sonames[i], "lib", 3) == 0);
 
     _glfw.egl.GetConfigAttrib = (PFN_eglGetConfigAttrib)
@@ -325,7 +328,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
     };
     EGLint num_configs = 0;
     int libgl_es = strtol(getenv("LIBGL_ES"), NULL, 0);
-    if(libgl_es < 0 || libgl_es > INT16_MAX) libgl_es = 2;
+    if (libgl_es < 0 || libgl_es > INT16_MAX)
+        libgl_es = 2;
     const EGLint egl_context_attributes[] = { EGL_CONTEXT_CLIENT_VERSION, libgl_es, EGL_NONE };
     if (eglChooseConfig(_glfw.egl.display, egl_attributes, NULL, 0, &num_configs) != GLFW_TRUE) {
         _glfwInputError(GLFW_API_UNAVAILABLE, "eglChooseConfig() failed: %04x",
@@ -340,13 +344,11 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
     }
 
     eglChooseConfig(_glfw.egl.display, egl_attributes, &config, 1, &num_configs);
-//    eglGetConfigAttrib(_glfw.egl.display, config, EGL_NATIVE_VISUAL_ID, 0);
     int client = 0;
-    const char* render = getenv("LIBGL_NAME");
-    _glfw_dlopen(render);
-    if (strcmp(render, "libgl4es_114.so") == 0) {
+    const char* renderer = getenv("LIBGL_NAME");
+    if (strcmp(renderer, "libgl4es_114.so") == 0) {
         client = 0;
-    } else if (strcmp(render, "libtinywrapper.so") == 0) {
+    } else if (strcmp(renderer, "libtinywrapper.so") == 0) {
         client = 1;
     }
 

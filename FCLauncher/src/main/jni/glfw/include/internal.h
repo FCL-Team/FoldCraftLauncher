@@ -46,6 +46,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <glfw3.h>
+#include "gl/gl.h"
 
 #define _GLFW_INSERT_FIRST      0
 #define _GLFW_INSERT_LAST       1
@@ -111,6 +112,10 @@ typedef void (APIENTRY * PFNGLCLEARPROC)(GLbitfield);
 typedef const GLubyte* (APIENTRY * PFNGLGETSTRINGPROC)(GLenum);
 typedef void (APIENTRY * PFNGLGETINTEGERVPROC)(GLenum,GLint*);
 typedef const GLubyte* (APIENTRY * PFNGLGETSTRINGIPROC)(GLenum,GLuint);
+typedef void (APIENTRY * PFNGLFINISH) (void);
+typedef void (APIENTRY * PFNGLCLEARCOLOR) (GLclampf,GLclampf,GLclampf,GLclampf);
+typedef void (APIENTRY * PFNGLCLEAR) (GLbitfield);
+typedef void (APIENTRY * PFNGLREADPIXELS) (GLint,GLint,GLsizei,GLsizei,GLenum,GLenum,void*);
 
 #define VK_NULL_HANDLE 0
 
@@ -333,6 +338,10 @@ struct _GLFWcontext
     PFNGLGETSTRINGIPROC  GetStringi;
     PFNGLGETINTEGERVPROC GetIntegerv;
     PFNGLGETSTRINGPROC   GetString;
+    PFNGLFINISH          Finish;
+    PFNGLCLEARCOLOR      ClearColor;
+    PFNGLCLEAR           Clear;
+    PFNGLREADPIXELS      ReadPixels;
 
     _GLFWmakecontextcurrentfun  makeCurrent;
     _GLFWswapbuffersfun         swapBuffers;
