@@ -355,7 +355,7 @@ GLFWAPI void glfwWindowHint(int hint, int value)
             _glfw.hints.context.client = value;
             return;
         case GLFW_CONTEXT_CREATION_API:
-            _glfw.hints.context.source = value;
+            _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_8.so") == 0 ? GLFW_OSMESA_CONTEXT_API : value;
             return;
         case GLFW_CONTEXT_VERSION_MAJOR:
             _glfw.hints.context.major = value;
