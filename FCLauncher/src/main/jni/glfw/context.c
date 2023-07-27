@@ -9,6 +9,7 @@
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
+#include "fcl_bridge.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -388,6 +389,31 @@ GLFWbool _glfwStringInExtensionString(const char* string, const char* extensions
 //////////////////////////////////////////////////////////////////////////
 //////                        GLFW public API                       //////
 //////////////////////////////////////////////////////////////////////////
+
+GLFWAPI int glfwGetOSMesaWidth() {
+    struct ANativeWindow* window = fclGetNativeWindow();
+    return ANativeWindow_getWidth(window);
+}
+
+GLFWAPI int glfwGetOSMesaHeight() {
+    struct ANativeWindow* window = fclGetNativeWindow();
+    return ANativeWindow_getHeight(window);
+}
+
+GLFWAPI void* glfwGetOSMesaCurrentContext() {
+    if (!_glfw.osmesa.GetCurrentContext)
+    {
+        _glfwInputError(GLFW_PLATFORM_ERROR, "OSMesa: Failed to load required entry points");
+        _glfwTerminateOSMesa();
+        return GLFW_FALSE;
+    }
+    return OSMesaGetCurrentContext();
+}
+
+GLFWAPI long glfwGetGraphicBuffersAddr(GLFWwindow* handle) {
+    _GLFWwindow* window = (_GLFWwindow*) handle;
+    return &window->context.osmesa.buffer;
+}
 
 GLFWAPI void glfwMakeContextCurrent(GLFWwindow* handle)
 {

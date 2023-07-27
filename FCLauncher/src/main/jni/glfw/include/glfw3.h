@@ -5435,6 +5435,26 @@ GLFWAPI uint64_t glfwGetTimerValue(void);
  */
 GLFWAPI uint64_t glfwGetTimerFrequency(void);
 
+/*!
+ *  This function is to get OSMesa width
+ */
+GLFWAPI int glfwGetOSMesaWidth();
+
+/*!
+ *  This function is to get OSMesa height
+ */
+GLFWAPI int glfwGetOSMesaHeight();
+
+/*!
+ *  This function is to get OSMesa Current Context
+ */
+GLFWAPI void* glfwGetOSMesaCurrentContext();
+
+/*!
+ *  This function is to get Graphic Buffers Addr
+ */
+GLFWAPI long glfwGetGraphicBuffersAddr(GLFWwindow* window);
+
 /*! @brief Makes the context of the specified window current for the calling
  *  thread.
  *

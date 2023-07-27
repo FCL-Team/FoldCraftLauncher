@@ -790,6 +790,10 @@ public class GLFW {
             SetTime                       = apiGetFunctionAddress(GLFW, "glfwSetTime"),
             GetTimerValue                 = apiGetFunctionAddress(GLFW, "glfwGetTimerValue"),
             GetTimerFrequency             = apiGetFunctionAddress(GLFW, "glfwGetTimerFrequency"),
+            GetOSMesaWidth                = apiGetFunctionAddress(GLFW, "glfwGetOSMesaWidth"),
+            GetOSMesaHeight               = apiGetFunctionAddress(GLFW, "glfwGetOSMesaHeight"),
+            GetOSMesaCurrentContext       = apiGetFunctionAddress(GLFW, "glfwGetOSMesaCurrentContext"),
+            GetGraphicBuffersAddr         = apiGetFunctionAddress(GLFW, "glfwGetGraphicBuffersAddr"),
             MakeContextCurrent            = apiGetFunctionAddress(GLFW, "glfwMakeContextCurrent"),
             GetCurrentContext             = apiGetFunctionAddress(GLFW, "glfwGetCurrentContext"),
             SwapBuffers                   = apiGetFunctionAddress(GLFW, "glfwSwapBuffers"),
@@ -4378,6 +4382,46 @@ public class GLFW {
     public static long glfwGetTimerFrequency() {
         long __functionAddress = Functions.GetTimerFrequency;
         return invokeJ(__functionAddress);
+    }
+
+    // --- [ glfwGetOSMesaWidth ] ---
+
+    /**
+     * Get OSMesa width
+     */
+    public static int glfwGetOSMesaWidth() {
+        long __functionAddress = Functions.GetOSMesaWidth;
+        return invokeI(__functionAddress);
+    }
+
+    // --- [ glfwGetOSMesaHeight ] ---
+
+    /**
+     * Get OSMesa height
+     */
+    public static int glfwGetOSMesaHeight() {
+        long __functionAddress = Functions.GetOSMesaHeight;
+        return invokeI(__functionAddress);
+    }
+
+    // --- [ glfwGetOSMesaContext ] ---
+
+    /**
+     * Get OSMesa Context
+     */
+    public static long glfwGetOSMesaCurrentContext() {
+        long __functionAddress = Functions.GetOSMesaCurrentContext;
+        return invokeJ(__functionAddress);
+    }
+
+    // --- [ glfwGetGraphicBuffersAddr ] ---
+
+    /**
+     * Get Graphic Buffers Addr
+     */
+    public static long glfwGetGraphicBuffersAddr(@NativeType("GLFWwindow *") long window) {
+        long __functionAddress = Functions.GetGraphicBuffersAddr;
+        return invokePJ(window, __functionAddress);
     }
 
     // --- [ glfwMakeContextCurrent ] ---

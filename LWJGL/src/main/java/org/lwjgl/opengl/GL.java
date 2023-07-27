@@ -4,6 +4,7 @@
  */
 package org.lwjgl.opengl;
 
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.*;
 import org.lwjgl.system.macosx.*;
 import org.lwjgl.system.windows.*;
@@ -20,6 +21,7 @@ import static org.lwjgl.opengl.WGL.*;
 import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
+import static org.lwjgl.system.JNI.callJPI;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.linux.X11.*;
@@ -346,6 +348,11 @@ public final class GL {
         GLCapabilities caps = null;
 
         try {
+            if (System.getProperty("org.lwjgl.opengl.libname", "").equals("libOSMesa_8.so")) {
+                long window = GLFW.glfwGetCurrentContext();
+                callJPI(GLFW.glfwGetOSMesaCurrentContext(), GLFW.glfwGetGraphicBuffersAddr(window), GL_UNSIGNED_BYTE, GLFW.glfwGetOSMesaWidth(), GLFW.glfwGetOSMesaHeight(), functionProvider.getFunctionAddress("OSMesaMakeCurrent"));
+            }
+
             // We don't have a current ContextCapabilities when this method is called
             // so we have to use the native bindings directly.
             long GetError    = functionProvider.getFunctionAddress("glGetError");
