@@ -16,6 +16,7 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
     private FCLLinearLayout launcher;
     private FCLLinearLayout developer;
     private FCLLinearLayout sponsor;
+    private FCLLinearLayout source;
 
     public AboutPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
@@ -27,9 +28,11 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
         launcher = findViewById(R.id.launcher);
         developer = findViewById(R.id.developer);
         sponsor = findViewById(R.id.sponsor);
+        source = findViewById(R.id.source);
         launcher.setOnClickListener(this);
         developer.setOnClickListener(this);
         sponsor.setOnClickListener(this);
+        source.setOnClickListener(this);
     }
 
     @Override
@@ -42,13 +45,16 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
         Uri uri = null;
 
         if (v == launcher) {
-            uri = Uri.parse("https://github.com/FCL-Team/FoldCraftLauncher");
+            uri = Uri.parse("https://fcl-team.github.io/");
         }
         if (v == developer) {
             uri = Uri.parse("https://github.com/FCL-Team");
         }
         if (v == sponsor) {
             uri = Uri.parse("https://afdian.net/@tungs");
+        }
+        if (v == source) {
+            uri = Uri.parse("https://github.com/FCL-Team/FoldCraftLauncher");
         }
 
         if (uri != null) {
