@@ -686,6 +686,7 @@
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
+    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
