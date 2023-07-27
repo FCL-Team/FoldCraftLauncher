@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class FCLauncher {
 
-    // Todo : mesa
-
     private static void printTaskTitle(FCLBridge bridge, String task) {
         bridge.getCallback().onLog("==================== " + task + " ====================");
     }
@@ -127,7 +125,6 @@ public class FCLauncher {
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
-        // Todo : mesa env
         FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
         envMap.put("LIBGL_STRING", renderer.toString());
         envMap.put("LIBGL_NAME", renderer.getGlLibName());
