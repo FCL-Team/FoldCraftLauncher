@@ -375,6 +375,8 @@
     <string name="game_crash_title">Game Crashed</string>
 
     <string name="help">Help</string>
+    <string name="help_category">Category</string>
+    <string name="help_website">Website</string>
 
     <string name="input_hint_not_empty">Required</string>
     <string name="input_hint_optional">Optional</string>

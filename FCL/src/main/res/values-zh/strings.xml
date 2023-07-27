@@ -362,6 +362,8 @@
     <string name="game_crash_title">游戏意外退出</string>
 
     <string name="help">帮助</string>
+    <string name="help_category">类别</string>
+    <string name="help_website">网站</string>
 
     <string name="input_hint_not_empty">必填</string>
     <string name="input_hint_optional">选填</string>

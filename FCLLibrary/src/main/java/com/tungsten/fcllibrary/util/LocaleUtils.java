@@ -49,7 +49,7 @@ public class LocaleUtils {
         return context.createConfigurationContext(configuration);
     }
 
-    private static Locale getLocale(int lang) {
+    public static Locale getLocale(int lang) {
         switch (lang) {
             case 1:
                 return Locale.ENGLISH;
