@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
@@ -90,6 +91,9 @@ public class DirectionStyleAdapter extends FCLAdapter {
         }
         ControlDirectionStyle style = list.get(i);
         viewHolder.direction.getData().setStyle(style);
+        viewHolder.direction.getData().getBaseInfo().setSizeType(BaseInfoData.SizeType.ABSOLUTE);
+        viewHolder.direction.getData().getBaseInfo().setAbsoluteWidth(60);
+        viewHolder.direction.getData().getBaseInfo().setAbsoluteHeight(60);
         viewHolder.name.setText(style.getName());
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
