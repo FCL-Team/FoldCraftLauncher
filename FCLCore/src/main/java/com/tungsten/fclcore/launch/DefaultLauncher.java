@@ -141,6 +141,11 @@ public class DefaultLauncher extends Launcher {
             res.addDefault("-Dsort.patch=", "true");
         }
 
+        // Fix 1.16.x multiplayer
+        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
+            res.add("-javaagent:" + FCLPath.MULTIPLAYER_FIX_PATH);
+        }
+
         Set<String> classpath = repository.getClasspath(version);
 
         File jar = repository.getVersionJar(version);

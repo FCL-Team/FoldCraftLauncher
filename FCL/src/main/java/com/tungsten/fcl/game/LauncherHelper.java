@@ -19,6 +19,7 @@ import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.AccountListItem;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;
@@ -43,17 +44,22 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.LibFilter;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -117,6 +123,16 @@ public final class LauncherHelper {
                             Task.composeAsync(() -> null)
                     );
                 }).withStage("launch.state.dependencies")
+                .thenComposeAsync(() -> {
+                    if (!new File(FCLPath.MULTIPLAYER_FIX_PATH).exists()) {
+                        try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MultiplayerFix.jar")) {
+                            Files.copy(input, new File(FCLPath.MULTIPLAYER_FIX_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException e) {
+                            Logging.LOG.log(Level.WARNING, "Unable to unpack MultiplayerFix.jar", e);
+                        }
+                    }
+                    return null;
+                })
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
