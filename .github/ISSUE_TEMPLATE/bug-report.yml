@@ -21,7 +21,7 @@ body:
   - type: input
     id: device
     attributes:
-      label: Device information
+      label: Device Information
       description: Please enter the information of the device on which you encountered the bug.
       placeholder: e.g. OPPO Find X3 Pro, Android 13, arm64
     validations:
