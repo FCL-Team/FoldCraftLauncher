@@ -70,13 +70,15 @@ public class MainUI extends FCLCommonUI {
     @Override
     public void onPause() {
         super.onPause();
-        skinGLSurfaceView.onPause();
+        if (skinGLSurfaceView != null) {
+            skinGLSurfaceView.onPause();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isShowing()) {
+        if (isShowing() && skinGLSurfaceView != null) {
             skinGLSurfaceView.onResume();
         }
     }
@@ -84,7 +86,9 @@ public class MainUI extends FCLCommonUI {
     @Override
     public void onStop() {
         super.onStop();
-        skinGLSurfaceView.onPause();
+        if (skinGLSurfaceView != null) {
+            skinGLSurfaceView.onPause();
+        }
         skinContainer.removeView(skinGLSurfaceView);
     }
 
