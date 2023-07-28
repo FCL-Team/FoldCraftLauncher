@@ -1,19 +1,19 @@
 [
   {
     "type": "release",
-    "versionCode": 1,
+    "versionCode": 2,
     "versionName": "1.0.0",
-    "date": "2023.7.28",
+    "date": "2023.7.29",
     "description": [
       {
         "lang": "en",
-        "text": "Support all Minecraft versions, download, version management, etc."
+        "text": "Launch all Minecraft versions (Vanilla, Forge, LiteLoader, OptiFine, Fabric, Quilt)\nMicrosoft/Offline/Authlib-Injector login\nCustom game directory\nVersion management (settings, mods, worlds, datapacks)\nVersion/Mod/Modpack/ResourcePack/Worlds download, install and update\nCustom controllers\nCustom launcher theme\nOther features"
       },
       {
         "lang": "zh_CN",
-        "text": "支持全版本 Minecraft 启动，及其下载，管理等。"
+        "text": "支持全版本 Minecraft 启动（Vanilla，Forge，LiteLoader，OptiFine，Fabric，Quilt）\n微软/离线/Authlib-Injector 登录\n自定义游戏目录\n版本管理（设置，模组，存档，数据包）\nMinecraft/模组/整合包/资源包/存档下载，安装和升级\n自定义控件\n自定义启动器主题\n其他功能"
       }
     ],
-    "url": ""
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.0/FCL-release.apk"
   }
 ]
