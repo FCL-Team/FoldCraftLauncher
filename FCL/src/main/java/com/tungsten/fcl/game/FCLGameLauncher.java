@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.RuntimeUtils;
+import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -87,6 +88,49 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
     }
 
+    private void modifyIfConfigDetected(String config, String option, String replacement, FCLConfig.Renderer... renderers) {
+        boolean patch = false;
+        if (renderers.length == 0) {
+            patch = true;
+        } else {
+            for (FCLConfig.Renderer renderer : renderers) {
+                if (renderer == options.getRenderer()) {
+                    patch = true;
+                    break;
+                }
+            }
+        }
+        File configFolder = new File(repository.getRunDirectory(version.getId()), "config");
+        if (patch && configFolder.exists() && new File(configFolder, config).exists()) {
+            File configFile = new File(configFolder, config);
+            StringBuilder str = new StringBuilder();
+            try (BufferedReader bfr = new BufferedReader(new FileReader(configFile))) {
+                String line;
+                boolean overwrite = false;
+                while ((line = bfr.readLine()) != null) {
+                    if (line.contains(option)) {
+                        str.append(replacement).append("\n");
+                        overwrite = true;
+                    } else {
+                        str.append(line).append("\n");
+                    }
+                }
+                if (!overwrite) {
+                    str.append(replacement);
+                }
+            } catch (Exception e) {
+                Logging.LOG.log(Level.WARNING, "Unable to read " + config + ".", e);
+            }
+            if (!"".equals(str.toString())) {
+                try (FileWriter fw = new FileWriter(configFile)) {
+                    fw.write(str.toString());
+                } catch (IOException e) {
+                    Logging.LOG.log(Level.WARNING, "Unable to write " + config + ".", e);
+                }
+            }
+        }
+    }
+
     private boolean findFiles(File folder, String fileName) {
         File[] fs = folder.listFiles();
         if (fs != null) {
@@ -105,6 +149,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
     public FCLBridge launch() throws IOException, InterruptedException {
         FileUtils.deleteDirectoryQuietly(new File("/data/user_de/0/com.tungsten.fcl/code_cache"));
         generateOptionsTxt();
+        modifyIfConfigDetected("sodium-mixins.properties", "mixin.features.chunk_rendering=", "mixin.features.chunk_rendering=false", FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         return super.launch();
     }
 }
