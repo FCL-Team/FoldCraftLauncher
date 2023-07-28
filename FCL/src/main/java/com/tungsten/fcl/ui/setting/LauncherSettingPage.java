@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.DownloadProviders;
+import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -54,6 +55,7 @@ import java.util.logging.Level;
 public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
 
     private FCLSpinner<String> language;
+    private FCLButton checkUpdate;
     private FCLButton clearCache;
     private FCLButton exportLog;
     private FCLButton theme;
@@ -78,6 +80,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     public void onCreate() {
         super.onCreate();
         language = findViewById(R.id.language);
+        checkUpdate = findViewById(R.id.check_update);
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
         theme = findViewById(R.id.theme);
@@ -94,6 +97,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         threads = findViewById(R.id.threads);
         threadsText = findViewById(R.id.threads_text);
 
+        checkUpdate.setOnClickListener(this);
         clearCache.setOnClickListener(this);
         exportLog.setOnClickListener(this);
         theme.setOnClickListener(this);
@@ -175,6 +179,18 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        if (v == checkUpdate && !UpdateChecker.getInstance().isChecking()) {
+            UpdateChecker.getInstance().checkManually(getContext()).whenComplete(Schedulers.androidUIThread(), e -> {
+                if (e != null) {
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                    builder.setCancelable(false);
+                    builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                    builder.setMessage(getContext().getString(R.string.update_check_failed) + "\n" + e);
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                    builder.create().show();
+                }
+            }).start();
+        }
         if (v == clearCache) {
             FileUtils.cleanDirectoryQuietly(new File(FCLPath.CACHE_DIR).getParentFile());
         }

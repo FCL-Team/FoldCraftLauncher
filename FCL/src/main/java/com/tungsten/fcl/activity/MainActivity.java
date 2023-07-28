@@ -23,6 +23,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.version.Versions;
+import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
@@ -174,6 +175,8 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
                 setupAccountDisplay();
                 setupVersionDisplay();
+
+                UpdateChecker.getInstance().checkAuto(this).start();
             });
         });
     }

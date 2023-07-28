@@ -762,10 +762,17 @@
     <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
 
+    <string name="update">Update</string>
     <string name="update_checking">Checking for Updates</string>
     <string name="update_check_failed">Failed to check update</string>
+    <string name="update_date">Date: %s</string>
+    <string name="update_description">Description: %s</string>
     <string name="update_exist">Updatable version detected</string>
+    <string name="update_ignore">Ignore this version</string>
+    <string name="update_launcher">Updating launcher</string>
     <string name="update_not_exist">No update available</string>
+    <string name="update_type">Type: %s</string>
+    <string name="update_version">Version: %s</string>
     <string name="update_version_release">Release</string>
     <string name="update_version_beta">Beta</string>
 

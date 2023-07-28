@@ -734,10 +734,17 @@
     <string name="style_rocker_corner_radius">摇杆圆角半径</string>
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
+    <string name="update">更新</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
+    <string name="update_date">日期：%s</string>
+    <string name="update_description">描述：%s</string>
     <string name="update_exist">检测到可更新的版本</string>
+    <string name="update_ignore">忽略此版本</string>
+    <string name="update_launcher">更新启动器</string>
     <string name="update_not_exist">没有可更新的版本</string>
+    <string name="update_type">类型：%s</string>
+    <string name="update_version">版本：%s</string>
     <string name="update_version_release">正式版</string>
     <string name="update_version_beta">测试版</string>
 

@@ -4,7 +4,16 @@
     "versionCode": 1,
     "versionName": "1.0.0",
     "date": "2023.7.28",
-    "update": "Support all Minecraft versions, download, version management, etc.",
+    "description": [
+      {
+        "lang": "en",
+        "text": "Support all Minecraft versions, download, version management, etc."
+      },
+      {
+        "lang": "zh_CN",
+        "text": "支持全版本 Minecraft 启动，及其下载，管理等。"
+      }
+    ],
     "url": ""
   }
 ]
