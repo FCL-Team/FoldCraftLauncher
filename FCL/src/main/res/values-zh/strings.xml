@@ -597,6 +597,8 @@
     <string name="mods_add">添加模组</string>
     <string name="mods_add_failed">无法安装模组 %s。</string>
     <string name="mods_add_success">%s 成功安装。</string>
+    <string name="mods_broken_dependency_title">损坏前置模组</string>
+    <string name="mods_broken_dependency_desc">该前置模组曾经在该模组仓库上存在过，但现在被删除了。换个下载源试试吧。</string>
     <string name="mods_category">类别</string>
     <string name="mods_check_updates">检查更新</string>
     <string name="mods_check_updates_current_version">当前版本</string>

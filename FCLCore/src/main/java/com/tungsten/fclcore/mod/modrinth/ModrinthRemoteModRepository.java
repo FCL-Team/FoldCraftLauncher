@@ -277,6 +277,9 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     .collect(Collectors.toSet());
             List<RemoteMod> mods = new ArrayList<>();
             for (String dependencyId : dependencies) {
+                if (dependencyId == null) {
+                    mods.add(RemoteMod.getEmptyRemoteMod());
+                }
                 if (StringUtils.isNotBlank(dependencyId)) {
                     mods.add(modRepository.getModById(dependencyId));
                 }
@@ -478,7 +481,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     datePublished,
                     type,
                     files.get(0).toFile(),
-                    dependencies.stream().map(Dependency::getProjectId).filter(Objects::nonNull).collect(Collectors.toList()),
+                    dependencies.stream().map(dependency -> dependency.getVersionId() == null ? null : dependency.getProjectId()).collect(Collectors.toList()),
                     gameVersions,
                     loaders.stream().flatMap(loader -> {
                         if ("fabric".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FABRIC);
@@ -638,6 +641,9 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     .collect(Collectors.toSet());
             List<RemoteMod> mods = new ArrayList<>();
             for (String dependencyId : dependencies) {
+                if (dependencyId == null) {
+                    mods.add(RemoteMod.getEmptyRemoteMod());
+                }
                 if (StringUtils.isNotBlank(dependencyId)) {
                     mods.add(modRepository.getModById(dependencyId));
                 }

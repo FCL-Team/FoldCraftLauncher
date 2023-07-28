@@ -13,6 +13,19 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class RemoteMod {
+    private static RemoteMod EMPTY = null;
+
+    public static void registerEmptyRemoteMod(RemoteMod empty) {
+        EMPTY = empty;
+    }
+
+    public static RemoteMod getEmptyRemoteMod() {
+        if (EMPTY == null) {
+            throw new NullPointerException();
+        }
+        return EMPTY;
+    }
+
     private final String slug;
     private final String author;
     private final String title;

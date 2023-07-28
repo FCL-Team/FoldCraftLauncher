@@ -37,6 +37,8 @@ import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
+import com.tungsten.fclcore.mod.RemoteMod;
+import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
@@ -51,8 +53,11 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectListener, View.OnClickListener {
 
@@ -127,6 +132,18 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                     return null;
             }
         });
+
+        RemoteMod.registerEmptyRemoteMod(new RemoteMod("", "", getString(R.string.mods_broken_dependency_title), getString(R.string.mods_broken_dependency_desc), new ArrayList<>(), "", "", new RemoteMod.IMod() {
+            @Override
+            public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
+                throw new IOException();
+            }
+
+            @Override
+            public Stream<RemoteMod.Version> loadVersions(RemoteModRepository modRepository) throws IOException {
+                throw new IOException();
+            }
+        }));
 
         try {
             ConfigHolder.init();

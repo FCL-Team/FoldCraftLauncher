@@ -618,6 +618,8 @@
     <string name="mods_add">Add Mods</string>
     <string name="mods_add_failed">Failed to install mod %s.</string>
     <string name="mods_add_success">%s was installed successfully.</string>
+    <string name="mods_broken_dependency_title">Broken dependency</string>
+    <string name="mods_broken_dependency_desc">This dependency existed before. However, it doesn\'t exist now. Try using another download source.</string>
     <string name="mods_category">Category</string>
     <string name="mods_check_updates">Check for Updates</string>
     <string name="mods_check_updates_current_version">Current Version</string>
