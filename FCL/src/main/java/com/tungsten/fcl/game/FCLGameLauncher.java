@@ -63,7 +63,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
         }
 
-        // TODO: Dirty implementation here
         if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
             StringBuilder str = new StringBuilder();
             try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
