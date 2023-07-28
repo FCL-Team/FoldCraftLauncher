@@ -675,10 +675,6 @@
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
-    <string name="settings_advanced_process_priority">Process Priority</string>
-    <string name="settings_advanced_process_priority_low">Low</string>
-    <string name="settings_advanced_process_priority_normal">Normal</string>
-    <string name="settings_advanced_process_priority_high">High</string>
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
 
@@ -703,6 +699,8 @@
 
     <string name="settings_launcher">Launcher Settings</string>
     <string name="settings_launcher_debug">Debug</string>
+    <string name="settings_launcher_upgrade">Update Launcher</string>
+    <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>
     <string name="settings_launcher_clear_cache">Clear cache</string>
     <string name="settings_launcher_download">Download</string>
@@ -765,6 +763,11 @@
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
 
     <string name="update_checking">Checking for Updates</string>
+    <string name="update_check_failed">Failed to check update</string>
+    <string name="update_exist">Updatable version detected</string>
+    <string name="update_not_exist">No update available</string>
+    <string name="update_version_release">Release</string>
+    <string name="update_version_beta">Beta</string>
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>

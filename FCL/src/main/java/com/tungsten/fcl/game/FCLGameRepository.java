@@ -326,7 +326,6 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
                 .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
                 .setServerIp(vs.getServerIp())
-                .setProcessPriority(vs.getProcessPriority())
                 .setJavaAgents(javaAgents)
                 .setBEGesture(vs.isBeGesture())
                 .setRenderer(vs.getRenderer());

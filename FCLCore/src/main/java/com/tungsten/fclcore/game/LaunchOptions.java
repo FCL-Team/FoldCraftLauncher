@@ -28,7 +28,6 @@ public class LaunchOptions implements Serializable {
     private Integer width;
     private Integer height;
     private String serverIp;
-    private ProcessPriority processPriority = ProcessPriority.NORMAL;
     private boolean beGesture;
     private FCLConfig.Renderer renderer;
 
@@ -140,13 +139,6 @@ public class LaunchOptions implements Serializable {
      */
     public String getServerIp() {
         return serverIp;
-    }
-
-    /**
-     * Process priority
-     */
-    public ProcessPriority getProcessPriority() {
-        return processPriority;
     }
 
     /**
@@ -278,13 +270,6 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
-         * Process priority
-         */
-        public ProcessPriority getProcessPriority() {
-            return options.processPriority;
-        }
-
-        /**
          * BE Gesture
          */
         public boolean isBeGesture() {
@@ -374,11 +359,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setServerIp(String serverIp) {
             options.serverIp = serverIp;
-            return this;
-        }
-
-        public Builder setProcessPriority(@NotNull ProcessPriority processPriority) {
-            options.processPriority = processPriority;
             return this;
         }
 

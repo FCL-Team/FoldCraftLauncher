@@ -45,18 +45,6 @@ public class DefaultLauncher extends Launcher {
 
         getCacioJavaArgs(res, version, options);
 
-        switch (options.getProcessPriority()) {
-            case HIGH:
-                // res.add("nice", "-n", "-5");
-                break;
-            case NORMAL:
-                // do nothing
-                break;
-            case LOW:
-                // res.add("nice", "-n", "5");
-                break;
-        }
-
         res.addAllWithoutParsing(options.getOverrideJavaArguments());
 
         if (options.getMaxMemory() != null && options.getMaxMemory() > 0)

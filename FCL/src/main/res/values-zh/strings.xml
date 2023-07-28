@@ -654,10 +654,6 @@
     <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>
     <string name="settings_advanced_minecraft_arguments">游戏参数</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
-    <string name="settings_advanced_process_priority">进程优先级</string>
-    <string name="settings_advanced_process_priority_low">低（节省游戏占用资源）</string>
-    <string name="settings_advanced_process_priority_normal">中（平衡）</string>
-    <string name="settings_advanced_process_priority_high">高（优先保障游戏进程）</string>
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
 
@@ -677,6 +673,8 @@
 
     <string name="settings_launcher">启动器设置</string>
     <string name="settings_launcher_debug">调试</string>
+    <string name="settings_launcher_upgrade">启动器更新</string>
+    <string name="settings_launcher_upgrade_check">检测</string>
     <string name="settings_launcher_cache">缓存文件夹</string>
     <string name="settings_launcher_clear_cache">清理缓存</string>
     <string name="settings_launcher_download">下载</string>
@@ -737,6 +735,11 @@
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
     <string name="update_checking">正在检查更新</string>
+    <string name="update_check_failed">无法检测更新</string>
+    <string name="update_exist">检测到可更新的版本</string>
+    <string name="update_not_exist">没有可更新的版本</string>
+    <string name="update_version_release">正式版</string>
+    <string name="update_version_beta">测试版</string>
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>

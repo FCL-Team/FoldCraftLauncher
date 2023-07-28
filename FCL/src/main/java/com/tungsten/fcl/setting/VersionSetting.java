@@ -16,7 +16,6 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.game.JavaVersion;
-import com.tungsten.fclcore.game.ProcessPriority;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -297,20 +296,6 @@ public final class VersionSetting implements Cloneable {
         controllerProperty.set(controller);
     }
 
-    private final ObjectProperty<ProcessPriority> processPriorityProperty = new SimpleObjectProperty<>(this, "processPriority", ProcessPriority.NORMAL);
-
-    public ObjectProperty<ProcessPriority> processPriorityProperty() {
-        return processPriorityProperty;
-    }
-
-    public ProcessPriority getProcessPriority() {
-        return processPriorityProperty.get();
-    }
-
-    public void setProcessPriority(ProcessPriority processPriority) {
-        processPriorityProperty.set(processPriority);
-    }
-
     private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_GL4ES);
 
     public ObjectProperty<FCLConfig.Renderer> rendererProperty() {
@@ -368,7 +353,6 @@ public final class VersionSetting implements Cloneable {
         isolateGameDirProperty.addListener(listener);
         beGestureProperty.addListener(listener);
         controllerProperty.addListener(listener);
-        processPriorityProperty.addListener(listener);
         rendererProperty.addListener(listener);
     }
 
@@ -390,7 +374,6 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setIsolateGameDir(isIsolateGameDir());
         versionSetting.setBeGesture(isBeGesture());
         versionSetting.setController(getController());
-        versionSetting.setProcessPriority(getProcessPriority());
         versionSetting.setRenderer(getRenderer());
         return versionSetting;
     }
@@ -415,7 +398,6 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
             obj.addProperty("beGesture", src.isBeGesture());
             obj.addProperty("controller", src.getController());
-            obj.addProperty("processPriority", src.getProcessPriority().ordinal());
             obj.addProperty("renderer", src.getRenderer().ordinal());
             obj.addProperty("isolateGameDir", src.isIsolateGameDir());
 
@@ -447,7 +429,6 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("Default"));
-            vs.setProcessPriority(ProcessPriority.values()[Optional.ofNullable(obj.get("processPriority")).map(JsonElement::getAsInt).orElse(ProcessPriority.NORMAL.ordinal())]);
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
 
