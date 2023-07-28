@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
 
-    public static void setFClBridge(FCLBridge fclBridge, MenuType menuType) {
+    public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
         JVMActivity.menuType = menuType;
     }
