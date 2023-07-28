@@ -130,9 +130,12 @@ public class LibraryDownloadTask extends Task<Void> {
     private boolean testURLExistence(String rawUrl) {
         List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(rawUrl);
         for (URL url : urls) {
-            URL xzURL = NetworkUtils.toURL(url.toString() + ".pack.xz");
+            URL rawURL = NetworkUtils.toURL(url.toString());
+            URL xzURL = NetworkUtils.toURL(url + ".pack.xz");
             for (int retry = 0; retry < 3; retry++) {
                 try {
+                    if (NetworkUtils.urlExists(rawURL))
+                        return false;
                     return NetworkUtils.urlExists(xzURL);
                 } catch (IOException e) {
                     LOG.log(Level.WARNING, "Failed to test for url existence: " + url + ".pack.xz", e);
