@@ -58,6 +58,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private final InvalidationListener dataChangeListener;
     private final InvalidationListener boundaryListener;
     private final InvalidationListener visibilityListener;
+    private final InvalidationListener alphaListener;
 
     private final GameMenu menu;
     private Path boundaryPath;
@@ -126,6 +127,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 cancelAllEvent();
             }
         });
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> setAlpha(menu.isHideAllViews() ? 0 : 1));
 
         post(() -> {
             notifyData();
@@ -133,6 +135,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
             dataProperty.addListener(dataChangeListener);
             getData().addListener(notifyListener);
             menu.showViewBoundariesProperty().addListener(boundaryListener);
+            setAlpha(menu.isHideAllViews() ? 0 : 1);
+            menu.hideAllViewsProperty().addListener(alphaListener);
             if (listener != null) {
                 listener.onReady(this);
             }
@@ -635,5 +639,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
         getData().removeListener(notifyListener);
         menu.showViewBoundariesProperty().removeListener(boundaryListener);
         visibilityProperty().removeListener(visibilityListener);
+        menu.hideAllViewsProperty().removeListener(alphaListener);
     }
 }

@@ -208,6 +208,20 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         return showViewBoundariesProperty.get();
     }
 
+    private final BooleanProperty hideAllViewsProperty = new SimpleBooleanProperty(this, "hideAllViews", false);
+
+    public BooleanProperty hideAllViewsProperty() {
+        return hideAllViewsProperty;
+    }
+
+    public void setHideAllViews(boolean viewVisible) {
+        hideAllViewsProperty.set(viewVisible);
+    }
+
+    public boolean isHideAllViews() {
+        return hideAllViewsProperty.get();
+    }
+
     private final ObjectProperty<Controller> controllerProperty = new SimpleObjectProperty<>(this, "controller", null);
 
     public ObjectProperty<Controller> controllerProperty() {
@@ -240,6 +254,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private void initLeftMenu() {
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
+        FCLSwitch hideAllViews = findViewById(R.id.hide_all);
         
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
         FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
@@ -254,6 +269,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
+        FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
 
         ArrayList<String> controllerNameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toCollection(ArrayList::new));
         currentControllerSpinner.setDataList(new ArrayList<>(Controllers.getControllers()));

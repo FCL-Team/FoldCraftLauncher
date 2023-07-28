@@ -54,6 +54,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private final InvalidationListener dataChangeListener;
     private final InvalidationListener boundaryListener;
     private final InvalidationListener visibilityListener;
+    private final InvalidationListener alphaListener;
 
     @Nullable
     private final GameMenu menu;
@@ -139,6 +140,11 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 cancelAllEvent();
             }
         });
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+            if (menu != null) {
+                setAlpha(menu.isHideAllViews() ? 0 : 1);
+            }
+        });
 
         post(() -> {
             notifyData();
@@ -149,6 +155,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             getData().addListener(notifyListener);
             if (menu != null) {
                 menu.showViewBoundariesProperty().addListener(boundaryListener);
+                setAlpha(menu.isHideAllViews() ? 0 : 1);
+                menu.hideAllViewsProperty().addListener(alphaListener);
             }
             if (listener != null) {
                 listener.onReady(this);
@@ -178,6 +186,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         });
         boundaryListener = null;
         visibilityListener = null;
+        alphaListener = null;
 
         post(() -> {
             notifyData();
@@ -818,6 +827,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             menu.editModeProperty().removeListener(notifyListener);
             menu.showViewBoundariesProperty().removeListener(boundaryListener);
             visibilityProperty().removeListener(visibilityListener);
+            menu.hideAllViewsProperty().removeListener(alphaListener);
         }
         dataProperty.removeListener(dataChangeListener);
         getData().removeListener(notifyListener);

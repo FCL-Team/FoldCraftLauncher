@@ -118,6 +118,31 @@
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    app:auto_text_tint="true"
+                    android:singleLine="true"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="@string/menu_controls_hide_all"
+                    android:textSize="12sp"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSwitch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/hide_all"/>
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:id="@+id/edit_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

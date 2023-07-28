@@ -415,6 +415,7 @@
     <string name="menu_controls_current">当前布局方案</string>
     <string name="menu_controls_edit_mode">编辑模式</string>
     <string name="menu_controls_show_boundary">显示控件边缘</string>
+    <string name="menu_controls_hide_all">隐藏所有控件</string>
     <string name="menu_controls_groups">控件组</string>
     <string name="menu_controls_manage">管理</string>
     <string name="menu_controls_current_view_group">当前控件组</string>
