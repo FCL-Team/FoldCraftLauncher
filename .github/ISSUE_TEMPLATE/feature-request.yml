@@ -1,0 +1,21 @@
+name: "Feature Request"
+description: "Propose new features for Fold Craft Launcher"
+labels: feature request
+body:
+- type: markdown
+  attributes:
+    value: "Make sure to check the issues list for duplicates before submitting!"
+- type: textarea
+  id: "feature"
+  attributes:
+    label: Description
+    description: "Describe in detail the new features you would like to add."
+  validations:
+    required: true
+- type: textarea
+  id: "reason"
+  attributes:
+    label: Why
+    description: "Describe the benefits of this feature and why."
+  validations:
+    required: true
