@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.anim.DynamicIslandAnim;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -21,6 +23,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 public class FCLDynamicIsland extends AppCompatTextView {
 
     private DynamicIslandAnim anim;
+    private String text = "";
 
     private Path outlinePath;
     private Paint outlinePaint;
@@ -66,8 +69,8 @@ public class FCLDynamicIsland extends AppCompatTextView {
         setTextSize(13);
         anim = new DynamicIslandAnim(this);
         setGravity(Gravity.CENTER);
-        int tb = ConvertUtils.dip2px(getContext(), 8f);
-        int lr = ConvertUtils.dip2px(getContext(), 18f);
+        int tb = ConvertUtils.dip2px(getContext(), 10f);
+        int lr = ConvertUtils.dip2px(getContext(), 20f);
         setPadding(lr, tb, lr, tb);
         outlinePath = new Path();
         outlinePaint = new Paint();
@@ -120,12 +123,19 @@ public class FCLDynamicIsland extends AppCompatTextView {
         outlinePath.lineTo(offset + (height / 2), offset);
         canvas.drawPath(outlinePath, insidePaint);
         canvas.drawPath(outlinePath, outlinePaint);
-        canvas.drawText(getText().toString(), getWidth() / 2f, (getHeight() / 2f) + 21, textPaint);
+        float baseline = (getMeasuredHeight() / 2f) - ((textPaint.getFontMetrics().top + textPaint.getFontMetrics().bottom) / 2);
+        canvas.drawText(text, getMeasuredWidth() / 2f, baseline, textPaint);
     }
 
     public void refresh(String text) {
-        setText(text);
-        invalidate();
+        Schedulers.androidUIThread().execute(() -> {
+            this.text = text;
+            ViewGroup.LayoutParams params = getLayoutParams();
+            params.width = (int) textPaint.measureText(text) + ConvertUtils.dip2px(getContext(), 40f);
+            params.height = ConvertUtils.dip2px(getContext(), 33f);
+            setLayoutParams(params);
+            post(this::invalidate);
+        });
     }
 
     public void setTextWithAnim(String text) {
