@@ -4,8 +4,10 @@ import static com.tungsten.fcl.setting.ConfigHolder.config;
 import static com.tungsten.fclcore.util.Lang.thread;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -53,6 +55,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+
+    public static final long ONE_DAY = 1000 * 60 * 60 * 24;
 
     private FCLSpinner<String> language;
     private FCLButton checkUpdate;
@@ -157,6 +161,23 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         threads.addProgressListener();
         threads.progressProperty().bindBidirectional(config().downloadThreadsProperty());
         threadsText.stringProperty().bind(Bindings.createStringBinding(() -> threads.getProgress() + "", threads.progressProperty()));
+
+        if (System.currentTimeMillis() - getLastClearCacheTime() >= 3 * ONE_DAY) {
+            FileUtils.cleanDirectoryQuietly(new File(FCLPath.CACHE_DIR).getParentFile());
+            setLastClearCacheTime(System.currentTimeMillis());
+        }
+    }
+
+    public long getLastClearCacheTime() {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
+        return sharedPreferences.getLong("clear_cache", 0L);
+    }
+
+    public void setLastClearCacheTime(long time) {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong("clear_cache", time);
+        editor.apply();
     }
 
     private int getSourcePosition(String source) {
