@@ -1,0 +1,74 @@
+name: Bug Feedback
+description:
+  Report a bug.
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please ensure you are using the **latest bata version** before you submit, you can get the latest beta version by checking update in launcher setting page.
+        
+        To improve communication efficiency, we suggest you join our community to report bugs.
+        You can find our community in community page of the launcher.
+  - type: input
+    id: fcl-version
+    attributes:
+      label: Launcher Version
+      description: Please enter the Fold Craft Launcher version you are using.
+      placeholder: e.g. 1.0.1
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device information
+      description: Please enter the information of the device on which you encountered the bug.
+      placeholder: e.g. OPPO Find X3 Pro, Android 13, arm64
+    validations:
+      required: true
+  - type: textarea
+    id: bug-report
+    attributes:
+      label: Problem Description
+      description: Please describe the problem in as much detail as possible, especially how you encountered this bug.
+    validations:
+      required: true
+  - type: input
+    id: java-version
+    attributes:
+      label: Java
+      description: Please enter the version of Java you are using.
+      placeholder: e.g. Java 17
+  - type: input
+    id: renderer
+    attributes:
+      label: Renderer
+      description: Please enter the renderer you are using.
+      placeholder: e.g. Holy-GL4ES
+  - type: input
+    id: game-version
+    attributes:
+      label: Game Version
+      description: If you are having trouble launching a game that was automatically downloaded through the Fold Craft Launcher, please enter the version of the game you are launching.
+      placeholder: e.g. 1.19
+  - type: input
+    id: game-modify
+    attributes:
+      label: Modifications Made to the Game
+      description: If you have OptiFine, Forge, or other mods installed for the game, please enter your modifications below.
+      placeholder: e.g. OptiFine HD_U_G9, Rift
+  - type: textarea
+    id: game-crash-report
+    attributes:
+      label: Game Crash Report
+      description: If there is a game crash report, please upload it below.
+  - type: textarea
+    id: fcl-crash-report
+    attributes:
+      label: Launcher Crash Report
+      description: If there is a launcher crash report, please upload it below.
+  - type: textarea
+    id: fcl-logs
+    attributes:
+      label: Launcher Log File
+      description: After encountering a problem, please click "Export Launcher Log" in the launcher setting page, and upload the exported log to the input field below.
