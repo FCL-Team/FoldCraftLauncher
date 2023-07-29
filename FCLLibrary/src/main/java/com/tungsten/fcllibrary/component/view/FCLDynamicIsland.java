@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 
@@ -140,7 +141,11 @@ public class FCLDynamicIsland extends AppCompatTextView {
 
     public void setTextWithAnim(String text) {
         post(() -> {
-            anim.refresh((float) getMeasuredHeight() / (float) getMeasuredWidth());
+            float scale = (float) getMeasuredHeight() / (float) getMeasuredWidth();
+            if (Float.isNaN(scale)){
+                return;
+            }
+            anim.refresh(scale);
             anim.run(text);
         });
     }
