@@ -22,6 +22,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -112,12 +113,21 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                     FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(version.getUrl()), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
                     task.setName("FoldCraftLauncher");
                     return task.whenComplete(Schedulers.androidUIThread(), exception -> {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri apkUri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-                        getContext().startActivity(intent);
+                        if (exception == null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            Uri apkUri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                            getContext().startActivity(intent);
+                        } else {
+                            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                            builder.setCancelable(false);
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                            builder.setMessage(getContext().getString(R.string.update_failed) + "\n" + exception.getMessage());
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.create().show();
+                        }
                     });
                 }).executor();
                 dialog.setExecutor(executor);

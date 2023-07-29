@@ -743,6 +743,7 @@
     <string name="update_date">日期：%s</string>
     <string name="update_description">描述：\n%s</string>
     <string name="update_exist">检测到可更新的版本</string>
+    <string name="update_failed">无法下载最新版，请重试或从官网下载。</string>
     <string name="update_ignore">忽略此版本</string>
     <string name="update_launcher">更新启动器</string>
     <string name="update_not_exist">没有可更新的版本</string>

@@ -771,6 +771,7 @@
     <string name="update_date">Date: %s</string>
     <string name="update_description">Description:\n%s</string>
     <string name="update_exist">Updatable version detected</string>
+    <string name="update_failed">Failed to download latest version, please retry or download it from official website.</string>
     <string name="update_ignore">Ignore this version</string>
     <string name="update_launcher">Updating launcher</string>
     <string name="update_not_exist">No update available</string>
