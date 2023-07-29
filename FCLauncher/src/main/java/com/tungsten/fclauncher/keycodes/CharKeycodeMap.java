@@ -17,10 +17,6 @@ public class CharKeycodeMap {
         return KEYCODE_MAP.containsKey(fclKeycode);
     }
 
-    public static char getInputChar(int fclKeycode) {
-        return getInputChar(fclKeycode, false, false);
-    }
-
     public static char getInputChar(int fclKeycode, boolean shift, boolean caps) {
         if (KEYCODE_MAP.containsKey(fclKeycode)) {
             InputChar inputChar = KEYCODE_MAP.get(fclKeycode);
