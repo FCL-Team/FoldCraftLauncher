@@ -21,7 +21,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.ResultListener;

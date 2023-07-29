@@ -28,7 +28,7 @@ import android.content.Context;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.OAuthServer;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.AuthenticationException;

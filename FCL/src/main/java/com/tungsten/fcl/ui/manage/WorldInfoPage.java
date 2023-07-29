@@ -23,7 +23,7 @@ import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;

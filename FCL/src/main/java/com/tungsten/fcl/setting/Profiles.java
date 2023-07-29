@@ -6,7 +6,7 @@ import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableAr
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.WeakListenerHolder;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
 import com.tungsten.fclcore.fakefx.beans.Observable;

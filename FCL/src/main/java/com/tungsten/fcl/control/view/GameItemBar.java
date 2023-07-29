@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.task.Schedulers;
 
 public class GameItemBar extends RelativeLayout {

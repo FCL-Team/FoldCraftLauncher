@@ -11,7 +11,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;

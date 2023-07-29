@@ -1,7 +1,7 @@
 package com.tungsten.fcl.control.keyboard;
 
 import com.tungsten.fcl.control.GameMenu;
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 
 public class LwjglCharSender implements CharacterSenderStrategy {
 

@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.File;
 import java.io.Serializable;

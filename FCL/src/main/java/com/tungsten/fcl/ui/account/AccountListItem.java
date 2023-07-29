@@ -30,7 +30,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;

@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
 import com.tungsten.fcl.util.RuntimeUtils;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
 import com.tungsten.fcllibrary.util.LocaleUtils;

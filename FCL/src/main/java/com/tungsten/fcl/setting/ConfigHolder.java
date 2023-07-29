@@ -3,7 +3,7 @@ package com.tungsten.fcl.setting;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.io.FileUtils;

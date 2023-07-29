@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.util.ShellUtil;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.Theme;
 import com.tungsten.fcllibrary.component.view.FCLEditText;

@@ -30,7 +30,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.tungsten.fcl.util.ResourceNotFoundError;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;

@@ -21,7 +21,7 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;

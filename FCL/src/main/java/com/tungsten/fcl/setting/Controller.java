@@ -19,7 +19,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.util.Constants;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;

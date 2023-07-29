@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.util.ConvertUtils;

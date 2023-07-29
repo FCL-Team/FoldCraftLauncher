@@ -1,4 +1,4 @@
-package com.tungsten.fclauncher;
+package com.tungsten.fclauncher.utils;
 
 import android.content.Context;
 import android.os.Environment;

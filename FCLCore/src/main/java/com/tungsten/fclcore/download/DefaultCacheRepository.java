@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.download;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.game.LibraryDownloadTask;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.LibraryDownloadInfo;

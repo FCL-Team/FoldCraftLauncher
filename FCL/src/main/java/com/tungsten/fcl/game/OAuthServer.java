@@ -5,7 +5,7 @@ import static com.tungsten.fclcore.util.Lang.thread;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.OAuth;
 import com.tungsten.fclcore.event.Event;

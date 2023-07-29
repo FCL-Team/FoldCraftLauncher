@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.ProcessService;

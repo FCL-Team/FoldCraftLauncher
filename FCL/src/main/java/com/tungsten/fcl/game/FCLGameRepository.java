@@ -14,7 +14,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.event.EventManager;

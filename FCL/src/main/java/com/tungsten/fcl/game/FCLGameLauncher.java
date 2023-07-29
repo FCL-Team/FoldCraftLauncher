@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.game.GameRepository;

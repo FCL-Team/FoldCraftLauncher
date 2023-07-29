@@ -31,7 +31,7 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;

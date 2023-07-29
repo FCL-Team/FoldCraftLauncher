@@ -3,7 +3,7 @@ package com.tungsten.fcl.setting;
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;

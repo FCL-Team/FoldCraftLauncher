@@ -22,7 +22,7 @@ import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.task.Schedulers;

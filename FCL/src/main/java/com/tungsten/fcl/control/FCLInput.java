@@ -1,6 +1,6 @@
 package com.tungsten.fcl.control;
 
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
 import java.util.HashMap;

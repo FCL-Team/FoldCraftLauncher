@@ -6,7 +6,7 @@ import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableAr
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;

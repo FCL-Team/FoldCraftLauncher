@@ -4,7 +4,7 @@ import static com.tungsten.fcl.setting.ConfigHolder.config;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;

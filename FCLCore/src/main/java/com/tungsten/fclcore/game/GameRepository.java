@@ -1,6 +1,6 @@
 package com.tungsten.fclcore.game;
 
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Task;
 
 import java.io.File;

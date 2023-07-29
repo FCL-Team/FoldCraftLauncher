@@ -12,7 +12,7 @@ import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.auth.AuthInfo;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.game.Argument;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.GameRepository;

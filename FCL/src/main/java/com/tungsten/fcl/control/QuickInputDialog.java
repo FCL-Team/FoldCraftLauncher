@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.QuickInputTexts;
-import com.tungsten.fclauncher.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;

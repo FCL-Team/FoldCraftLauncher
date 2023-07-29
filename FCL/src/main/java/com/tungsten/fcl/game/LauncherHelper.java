@@ -19,7 +19,7 @@ import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.AccountListItem;
 import com.tungsten.fcl.util.TaskCancellationAction;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;

@@ -1,4 +1,4 @@
-package com.tungsten.fclauncher;
+package com.tungsten.fclauncher.keycodes;
 
 public final class FCLKeycodes {
     public static final int  KEY_RESERVED        = 0;

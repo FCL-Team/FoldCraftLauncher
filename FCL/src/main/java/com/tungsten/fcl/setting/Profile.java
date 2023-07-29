@@ -7,7 +7,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fcl.game.FCLCacheRepository;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.util.WeakListenerHolder;
-import com.tungsten.fclauncher.FCLPath;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.event.EventBus;
