@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JavaGuiMenu;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
@@ -52,6 +54,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         menu.setup(this, fclBridge);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
+        menu.getInput().initExternalController(textureView);
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -122,8 +125,20 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     }
 
     @Override
-    public void onBackPressed() {
-        menu.onBackPressed();
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        boolean handleEvent = true;
+        if (menu != null) {
+            if (!(handleEvent = menu.getInput().handleKeyEvent(event))) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
+                    if (event.getAction() != KeyEvent.ACTION_UP)
+                        return true;
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, true);
+                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, false);
+                    return true;
+                }
+            }
+        }
+        return handleEvent;
     }
 
     @Override

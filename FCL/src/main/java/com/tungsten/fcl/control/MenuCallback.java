@@ -31,8 +31,6 @@ public interface MenuCallback {
 
     void onResume();
 
-    void onBackPressed();
-
     void onGraphicOutput();
 
     void onCursorModeChange(int mode);

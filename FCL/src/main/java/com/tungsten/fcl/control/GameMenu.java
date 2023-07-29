@@ -1,9 +1,5 @@
 package com.tungsten.fcl.control;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -430,6 +426,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         touchCharInput = findViewById(R.id.input_scanner);
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
+
         if (!isSimulated()) {
             baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
@@ -506,29 +503,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     @Override
-    public void onBackPressed() {
-        boolean mouse = false;
-        final int[] devices = InputDevice.getDeviceIds();
-        for (int j : devices) {
-            InputDevice device = InputDevice.getDevice(j);
-            if (device != null && !device.isVirtual()) {
-                if (device.getName().contains("Mouse") || (touchCharInput != null && !touchCharInput.isEnabled())) {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || device.isExternal()) {
-                        mouse = true;
-                        break;
-                    }
-                }
-            }
-        }
-        if (!mouse) {
-            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
-            fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
-        }
-    }
-
-    @Override
     public void onGraphicOutput() {
-        baseLayout.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        baseLayout.setBackground(null);
         baseLayout.removeView(launchProgress);
     }
 

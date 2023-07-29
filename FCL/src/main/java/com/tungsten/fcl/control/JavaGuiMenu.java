@@ -58,11 +58,6 @@ public class JavaGuiMenu implements MenuCallback {
     }
 
     @Override
-    public void onBackPressed() {
-
-    }
-
-    @Override
     public void onGraphicOutput() {
 
     }
