@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 public class AndroidKeycodeMap {
 
-    private static final int[] ANDROID_KEYCODES = new int[99];
-    private static final int[] FCL_KEYCODES = new int[99];
+    private static final int[] ANDROID_KEYCODES = new int[98];
+    private static final int[] FCL_KEYCODES = new int[98];
 
     private static int count = 0;
 
@@ -26,7 +26,6 @@ public class AndroidKeycodeMap {
 
     static {
         add(KeyEvent.KEYCODE_HOME,                           FCLKeycodes.KEY_HOME);
-        add(KeyEvent.KEYCODE_BACK,                           FCLKeycodes.KEY_ESC);
 
         add(KeyEvent.KEYCODE_0,                              FCLKeycodes.KEY_0);
         add(KeyEvent.KEYCODE_1,                              FCLKeycodes.KEY_1);
