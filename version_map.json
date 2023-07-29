@@ -1,19 +1,19 @@
 [
   {
     "type": "release",
-    "versionCode": 3,
-    "versionName": "1.0.1",
-    "date": "2023.7.29",
+    "versionCode": 4,
+    "versionName": "1.0.2",
+    "date": "2023.7.30",
     "description": [
       {
         "lang": "en",
-        "text": "Launch all Minecraft versions (Vanilla, Forge, LiteLoader, OptiFine, Fabric, Quilt)\nMicrosoft/Offline/Authlib-Injector login\nCustom game directory\nVersion management (settings, mods, worlds, datapacks)\nVersion/Mod/Modpack/ResourcePack/Worlds download, install and update\nCustom controllers\nCustom launcher theme\nOther features"
+        "text": "Support external mouse and keyboard."
       },
       {
         "lang": "zh_CN",
-        "text": "支持全版本 Minecraft 启动（Vanilla，Forge，LiteLoader，OptiFine，Fabric，Quilt）\n微软/离线/Authlib-Injector 登录\n自定义游戏目录\n版本管理（设置，模组，存档，数据包）\nMinecraft/模组/整合包/资源包/存档下载，安装和升级\n自定义控件\n自定义启动器主题\n其他功能"
+        "text": "支持外接键盘鼠标。"
       }
     ],
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.1/FCL-release.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.2/FCL-release.apk"
   }
 ]
