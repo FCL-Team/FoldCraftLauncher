@@ -3,7 +3,6 @@ package com.tungsten.fclauncher.keycodes;
 import android.view.KeyEvent;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class CharKeycodeMap {
 
@@ -17,7 +16,7 @@ public class CharKeycodeMap {
         return KEYCODE_MAP.containsKey(fclKeycode);
     }
 
-    public static char getInputChar(int fclKeycode, boolean shift, boolean caps) {
+    public static char getInputChar(int fclKeycode, KeyEvent event) {
         if (KEYCODE_MAP.containsKey(fclKeycode)) {
             InputChar inputChar = KEYCODE_MAP.get(fclKeycode);
             if (inputChar == null)
@@ -26,10 +25,10 @@ public class CharKeycodeMap {
                 return inputChar.getNormalChar();
             }
             if (inputChar.getCapsChar() != null) {
-                return caps ? (shift ? inputChar.getNormalChar() : inputChar.getCapsChar()) : (shift ? inputChar.getCapsChar() : inputChar.getNormalChar());
+                return event.isCapsLockOn() ? (event.isShiftPressed() ? inputChar.getNormalChar() : inputChar.getCapsChar()) : (event.isShiftPressed() ? inputChar.getCapsChar() : inputChar.getNormalChar());
             }
             if (inputChar.getSpecialChar() != null) {
-                return shift ? inputChar.getSpecialChar() : inputChar.getNormalChar();
+                return event.isShiftPressed() ? inputChar.getSpecialChar() : inputChar.getNormalChar();
             }
         }
         throw new IllegalArgumentException("FCL Keycode: " + fclKeycode + " has no paired char!");
