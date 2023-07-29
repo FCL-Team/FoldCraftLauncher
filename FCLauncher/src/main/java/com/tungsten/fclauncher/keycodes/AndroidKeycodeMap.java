@@ -2,20 +2,25 @@ package com.tungsten.fclauncher.keycodes;
 
 import android.view.KeyEvent;
 
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.Arrays;
 
 public class AndroidKeycodeMap {
 
-    private static final HashMap<Integer, Integer> KEYCODE_MAP = new HashMap<>();
+    private static final int[] ANDROID_KEYCODES = new int[99];
+    private static final int[] FCL_KEYCODES = new int[99];
+
+    private static int count = 0;
 
     private static void add(int androidKeycode, int fclKeycode) {
-        KEYCODE_MAP.put(androidKeycode, fclKeycode);
+        ANDROID_KEYCODES[count] = androidKeycode;
+        FCL_KEYCODES[count] = fclKeycode;
+        count++;
     }
 
     public static int convertKeycode(int androidKeycode) {
-        if (KEYCODE_MAP.containsKey(androidKeycode))
-            return Objects.isNull(KEYCODE_MAP.get(androidKeycode)) ? FCLKeycodes.KEY_UNKNOWN : KEYCODE_MAP.get(androidKeycode);
+        int index = Arrays.binarySearch(ANDROID_KEYCODES, androidKeycode);
+        if (index >= 0)
+            return FCL_KEYCODES[index];
         return FCLKeycodes.KEY_UNKNOWN;
     }
 

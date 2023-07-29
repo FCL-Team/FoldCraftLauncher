@@ -2,25 +2,30 @@ package com.tungsten.fclauncher.keycodes;
 
 import android.view.KeyEvent;
 
-import java.util.HashMap;
+import java.util.Arrays;
 
 public class CharKeycodeMap {
 
-    private static final HashMap<Integer, InputChar> KEYCODE_MAP = new HashMap<>();
+    private static final int[] FCL_KEYCODES = new int[60];
+    private static final InputChar[] INPUT_CHARS = new InputChar[60];
+
+    private static int count = 0;
 
     private static void add(int fclKeycode, InputChar inputChar) {
-        KEYCODE_MAP.put(fclKeycode, inputChar);
+        FCL_KEYCODES[count] = fclKeycode;
+        INPUT_CHARS[count] = inputChar;
+        count++;
     }
 
     public static boolean hasChar(int fclKeycode) {
-        return KEYCODE_MAP.containsKey(fclKeycode);
+        int index = Arrays.binarySearch(FCL_KEYCODES, fclKeycode);
+        return index >= 0;
     }
 
     public static char getInputChar(int fclKeycode, KeyEvent event) {
-        if (KEYCODE_MAP.containsKey(fclKeycode)) {
-            InputChar inputChar = KEYCODE_MAP.get(fclKeycode);
-            if (inputChar == null)
-                throw new IllegalArgumentException("FCL Keycode: " + fclKeycode + " has no paired char!");
+        int index = Arrays.binarySearch(FCL_KEYCODES, fclKeycode);
+        if (index >= 0) {
+            InputChar inputChar = INPUT_CHARS[index];
             if (inputChar.getCapsChar() == null && inputChar.getSpecialChar() == null) {
                 return inputChar.getNormalChar();
             }
