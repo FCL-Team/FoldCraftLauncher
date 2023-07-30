@@ -55,20 +55,23 @@ void fclLog(const char *buffer) {
     }
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
+JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
     int fclFd[2];
     if  (pipe(fclFd) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
+        return 1;
     }
 
     if (dup2(fclFd[1], STDOUT_FILENO) != STDOUT_FILENO && dup2(fclFd[1], STDERR_FILENO) != STDERR_FILENO) {
-        __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio !");
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio!");
+        return 2;
     }
     char buffer[1024];
     jclass bridge = (*env) -> FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
-    jmethodID method_setLogPipeReady = (*env) -> GetMethodID(env, bridge,"setLogPipeReady", "()V");
+    jmethodID method_setLogPipeReady = (*env) -> GetMethodID(env, bridge, "setLogPipeReady", "()V");
     if (!method_setLogPipeReady) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find setLogPipeReady method!");
+        return 3;
     }
     fcl->logFile = fdopen(fclFd[1], "a");
     FCL_INTERNAL_LOG("Log pipe ready.");
@@ -76,7 +79,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
     log_method = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
     if (!log_method) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
-        return;
+        return 4;
     }
     log_bridge = (*env)->NewGlobalRef(env, jobject);
     (*env)->GetJavaVM(env, &log_pipe_jvm);
@@ -88,7 +91,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
             __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
             close(fclFd[0]);
             close(fclFd[1]);
-            return;
+            return 5;
         } else {
             buffer[_s] = '\0';
         }
@@ -98,7 +101,6 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
             (*env)->CallVoidMethod(env, jobject, log_method, CStr2Jstring(env, buffer));
         }
     }
-
 }
 
 JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_chdir(JNIEnv* env, jobject jobject, jstring path) {
