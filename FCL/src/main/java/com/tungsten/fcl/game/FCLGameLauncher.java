@@ -88,7 +88,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
     }
 
-    private void modifyIfConfigDetected(String config, String option, String replacement, FCLConfig.Renderer... renderers) {
+    private void modifyIfConfigDetected(String config, String option, String replacement, boolean overwrite, FCLConfig.Renderer... renderers) {
         boolean patch = false;
         if (renderers.length == 0) {
             patch = true;
@@ -106,11 +106,9 @@ public final class FCLGameLauncher extends DefaultLauncher {
             StringBuilder str = new StringBuilder();
             try (BufferedReader bfr = new BufferedReader(new FileReader(configFile))) {
                 String line;
-                boolean overwrite = false;
                 while ((line = bfr.readLine()) != null) {
-                    if (line.contains(option)) {
+                    if (overwrite && line.contains(option)) {
                         str.append(replacement).append("\n");
-                        overwrite = true;
                     } else {
                         str.append(line).append("\n");
                     }
@@ -149,7 +147,21 @@ public final class FCLGameLauncher extends DefaultLauncher {
     public FCLBridge launch() throws IOException, InterruptedException {
         FileUtils.deleteDirectoryQuietly(new File("/data/user_de/0/com.tungsten.fcl/code_cache"));
         generateOptionsTxt();
-        modifyIfConfigDetected("sodium-mixins.properties", "mixin.features.chunk_rendering=", "mixin.features.chunk_rendering=false", FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        //Sodium
+        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        //Rubidium
+        modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        //DraconicEvolution
+        String config = "brandon3055/DraconicEvolution.cfg";
+        modifyIfConfigDetected(config,"B:useShaders=","B:useShaders=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config,"B:\"crystalShaders\"=","B:\"crystalShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config,"B:\"reactorShaders\"=","B:\"reactorShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config,"B:\"guardianShaders\"=","B:\"guardianShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config,"B:\"otherShaders\"=","B:\"otherShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        //Pixelmon
+        modifyIfConfigDetected("pixelmon/config.yml","use-discord-rich-presence:","use-discord-rich-presence: false",true);
+        //ImmersiveEngineering
+        modifyIfConfigDetected("immersiveengineering-client.toml","stencilBufferEnabled","stencilBufferEnabled = false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         return super.launch();
     }
 }
