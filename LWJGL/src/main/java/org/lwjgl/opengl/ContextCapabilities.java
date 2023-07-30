@@ -25,7 +25,7 @@ public class ContextCapabilities {
 					} catch (Exception e) {
 					}
 				}
-				if (name.equals("glGetBufferSubData") || name.equals("glBufferSubData")){
+				if (name.equals("glGetBufferSubData") || name.equals("glBufferSubData")) {
 					Field f = this.getClass().getField(name);
 					f.setLong(this, field.getLong(cap));
 				}
