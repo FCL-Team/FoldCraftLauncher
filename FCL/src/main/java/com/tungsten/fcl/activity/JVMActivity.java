@@ -75,20 +75,24 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
+        int width = (int) (i * fclBridge.getScaleFactor());
+        int height = (int) (i1 * fclBridge.getScaleFactor());
         GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
         gameOption.set("fullscreen", "false");
-        gameOption.set("overrideWidth", "" + i);
-        gameOption.set("overrideHeight", "" + i1);
+        gameOption.set("overrideWidth", "" + width);
+        gameOption.set("overrideHeight", "" + height);
         gameOption.save();
-        surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
+        surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
-        fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
+        fclBridge.pushEventWindow(width, height);
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-        surfaceTexture.setDefaultBufferSize((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
-        fclBridge.pushEventWindow((int) (i * fclBridge.getScaleFactor()), (int) (i1 * fclBridge.getScaleFactor()));
+        int width = (int) (i * fclBridge.getScaleFactor());
+        int height = (int) (i1 * fclBridge.getScaleFactor());
+        surfaceTexture.setDefaultBufferSize(width, height);
+        fclBridge.pushEventWindow(width, height);
     }
 
     @Override
