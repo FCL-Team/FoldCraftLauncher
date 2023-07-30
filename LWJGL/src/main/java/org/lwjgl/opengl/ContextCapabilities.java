@@ -25,6 +25,10 @@ public class ContextCapabilities {
 					} catch (Exception e) {
 					}
 				}
+				if (name.equals("glGetBufferSubData") || name.equals("glBufferSubData")){
+					Field f = this.getClass().getField(name);
+					f.setLong(this, field.getLong(cap));
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e);
@@ -393,6 +397,9 @@ public class ContextCapabilities {
 	public boolean GL_SGIS_generate_mipmap;
 	public boolean GL_SGIS_texture_lod;
 	public boolean GL_SUN_slice_accum;
+
+	public long glGetBufferSubData;
+	public long glBufferSubData;
 	
 	public static void main(String[] arg) {
 		System.out.println("START!");
