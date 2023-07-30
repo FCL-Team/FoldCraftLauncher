@@ -1,19 +1,19 @@
 [
   {
     "type": "release",
-    "versionCode": 4,
-    "versionName": "1.0.2",
-    "date": "2023.7.30",
+    "versionCode": 5,
+    "versionName": "1.0.3",
+    "date": "2023.7.31",
     "description": [
       {
         "lang": "en",
-        "text": "Support external mouse and keyboard."
+        "text": "Fix some bugs, see github for details."
       },
       {
         "lang": "zh_CN",
-        "text": "支持外接键盘鼠标。"
+        "text": "修复一些错误，详情见 Github。"
       }
     ],
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.2/FCL-release.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.3/FCL-release.apk"
   }
 ]
