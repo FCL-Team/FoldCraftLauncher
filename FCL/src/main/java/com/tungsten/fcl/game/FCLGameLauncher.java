@@ -77,7 +77,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
                 if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite) {
                     str.append("lang:zh_CN\n");
                 } else if (line.contains("forceUnicodeFont:")) {
-                    str.append("forceUnicodeFont:true\n");
+                    str.append("forceUnicodeFont:false\n");
                 } else {
                     str.append(line).append("\n");
                 }
