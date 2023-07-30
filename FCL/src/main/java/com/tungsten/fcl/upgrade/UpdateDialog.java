@@ -30,6 +30,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;
+import java.util.concurrent.CancellationException;
 
 public class UpdateDialog extends FCLDialog implements View.OnClickListener {
 
@@ -120,7 +121,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
                             getContext().startActivity(intent);
-                        } else {
+                        } else if (!(exception instanceof CancellationException)) {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                             builder.setCancelable(false);
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
