@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Surface;
 
@@ -67,6 +68,7 @@ public class FCLBridge implements Serializable {
     private String renderer;
     private String java;
     private Surface surface;
+    private Handler handler;
     private Thread thread;
     private Thread fclLogThread;
 
@@ -107,6 +109,7 @@ public class FCLBridge implements Serializable {
     }
 
     public void execute(Surface surface, FCLBridgeCallback callback) {
+        this.handler = new Handler();
         this.callback = callback;
         this.surface = surface;
         fclLogThread = new Thread(() -> {
@@ -251,17 +254,19 @@ public class FCLBridge implements Serializable {
     }
 
     public void setLogPipeReady() {
-        setFCLBridge(this);
-        // set graphic output and event pipe
-        if (surface != null) {
-            setFCLNativeWindow(surface);
-        }
-        setEventPipe();
+        handler.post(() -> {
+            setFCLBridge(this);
+            // set graphic output and event pipe
+            if (surface != null) {
+                setFCLNativeWindow(surface);
+            }
+            setEventPipe();
 
-        // start
-        if (thread != null) {
-            thread.start();
-        }
+            // start
+            if (thread != null) {
+                thread.start();
+            }
+        });
     }
 
     public void receiveLog(String log) {
