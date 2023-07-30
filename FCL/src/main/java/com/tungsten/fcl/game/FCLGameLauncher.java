@@ -53,8 +53,10 @@ public final class FCLGameLauncher extends DefaultLauncher {
             Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
         }
 
-        if (optionsFile.exists())
+        if (optionsFile.exists()) {
+            modifyOptions(optionsFile, false);
             return;
+        }
         if (configFolder.isDirectory())
             if (findFiles(configFolder, "options.txt"))
                 return;
@@ -64,26 +66,30 @@ public final class FCLGameLauncher extends DefaultLauncher {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
         }
 
-        if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
-            StringBuilder str = new StringBuilder();
-            try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
-                String line;
-                while ((line = bfr.readLine()) != null) {
-                    if (line.contains("lang:")) {
-                        str.append("lang:en_us\n");
-                    } else {
-                        str.append(line).append("\n");
-                    }
+        modifyOptions(optionsFile, true);
+    }
+
+    private void modifyOptions(File optionsFile, boolean overwrite) {
+        StringBuilder str = new StringBuilder();
+        try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite) {
+                    str.append("lang:zh_CN\n");
+                } else if (line.contains("forceUnicodeFont:")) {
+                    str.append("forceUnicodeFont:true\n");
+                } else {
+                    str.append(line).append("\n");
                 }
-            } catch (Exception e) {
-                Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
             }
-            if (!"".equals(str.toString())) {
-                try (FileWriter fw = new FileWriter(optionsFile)) {
-                    fw.write(str.toString());
-                } catch (IOException e) {
-                    Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
-                }
+        } catch (Exception e) {
+            Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
+        }
+        if (!"".equals(str.toString())) {
+            try (FileWriter fw = new FileWriter(optionsFile)) {
+                fw.write(str.toString());
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
             }
         }
     }

@@ -17,7 +17,7 @@ ao:0
 clouds:true
 resourcePacks:[]
 lastServer:
-lang:zh_CN
+lang:en_us
 chatVisibility:0
 chatColors:true
 chatLinks:true
@@ -52,7 +52,7 @@ streamPreferredServer:
 streamChatEnabled:0
 streamChatUserFilter:0
 streamMicToggleBehavior:0
-forceUnicodeFont:false
+forceUnicodeFont:true
 key_key.attack:-100
 key_key.use:-99
 key_key.forward:17

@@ -126,6 +126,10 @@ public class GameOption {
             guiScale = scale;
         }
 
+        if (guiScale % 2 != 0 && guiScale != 1) {
+            --guiScale;
+        }
+
         return guiScale;
     }
 
