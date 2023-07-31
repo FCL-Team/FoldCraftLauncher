@@ -53,21 +53,6 @@ public class ShellActivity extends FCLActivity {
                     if (cmd.contains("clear")) {
                         logWindow.cleanLog();
                         return;
-                    } else if (cmd.contains("启用隐藏主题")) {
-
-                        return;
-                    } else if (cmd.contains("fullscreen")) {
-                        Theme theme = Theme.getTheme(ShellActivity.this);
-                        if (cmd.contains("true")) {
-                            theme.setFullscreen(true);
-                            Theme.saveTheme(ShellActivity.this, theme);
-                            logWindow.appendLog("fullscreen=true\n");
-                        } else if (cmd.contains("false")) {
-                            theme.setFullscreen(false);
-                            Theme.saveTheme(ShellActivity.this, theme);
-                            logWindow.appendLog("fullscreen=false\n");
-                        }
-                        return;
                     }
                     shellUtil.append(cmd);
                 }
