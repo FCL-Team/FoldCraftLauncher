@@ -1,6 +1,8 @@
 //#import <Foundation/Foundation.h>
 #include <stdio.h>
 #include <dlfcn.h>
+#include <malloc.h>
+#include <string.h>
 
 #include "gl/gl.h"
 #include "GLES3/gl32.h"
@@ -48,7 +50,7 @@ void *glMapBuffer(GLenum target, GLenum access) {
             printf("ERROR: glMapBuffer unsupported target=0x%x", target);
             break; // not supported for now
 
-	     case GL_DRAW_INDIRECT_BUFFER:
+        case GL_DRAW_INDIRECT_BUFFER:
         case GL_TEXTURE_BUFFER:
             printf("ERROR: glMapBuffer unimplemented target=0x%x", target);
             break;
@@ -81,18 +83,18 @@ void glShaderSource(GLuint shader, GLsizei count, const GLchar * const *string, 
 
     // get the size of the shader sources and than concatenate in a single string
     int l = 0;
-    for (int i=0; i<count; i++) l+=(length && length[i] >= 0)?length[i]:strlen(string[i]);
+    for (int i = 0; i < count; i++) l += (length && length[i] >= 0) ? length[i] : strlen(string[i]);
     if (source) free(source);
-    source = calloc(1, l+1);
-    if(length) {
-        for (int i=0; i<count; i++) {
-            if(length[i] >= 0)
+    source = calloc(1, l + 1);
+    if (length) {
+        for (int i = 0; i < count; i++) {
+            if (length[i] >= 0)
                 strncat(source, string[i], length[i]);
             else
                 strcat(source, string[i]);
         }
     } else {
-        for (int i=0; i<count; i++)
+        for (int i = 0; i < count; i++)
             strcat(source, string[i]);
     }
 
@@ -124,13 +126,6 @@ void glShaderSource(GLuint shader, GLsizei count, const GLchar * const *string, 
 
     int convertedLen = strlen(converted);
 
-#ifdef __APPLE__
-    // patch OptiFine 1.17.x
-    if (FindString(converted, "\nuniform mat4 textureMatrix = mat4(1.0);")) {
-        InplaceReplace(converted, &convertedLen, "\nuniform mat4 textureMatrix = mat4(1.0);", "\n#define textureMatrix mat4(1.0)");
-    }
-#endif
-
     // some needed exts
     const char* extensions =
         "#extension GL_EXT_blend_func_extended : enable\n"
@@ -138,7 +133,7 @@ void glShaderSource(GLuint shader, GLsizei count, const GLchar * const *string, 
         "#extension GL_EXT_shader_non_constant_global_initializers : enable\n";
     converted = InplaceInsert(GetLine(converted, 1), extensions, converted, &convertedLen);
 
-    gles_glShaderSource(shader, 1, (const GLchar * const*)((converted)?(&converted):(&source)), NULL);
+    gles_glShaderSource(shader, 1, (const GLchar * const*)((converted) ? (&converted) : (&source)), NULL);
 
     free(source);
     free(converted);
@@ -156,9 +151,9 @@ int isProxyTexture(GLenum target) {
 }
 
 static int inline nlevel(int size, int level) {
-    if(size) {
-        size>>=level;
-        if(!size) size=1;
+    if (size) {
+        size >>= level;
+        if (!size) size = 1;
     }
     return size;
 }
@@ -169,10 +164,10 @@ void glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *p
     if (isProxyTexture(target)) {
         switch (pname) {
             case GL_TEXTURE_WIDTH:
-                (*params) = nlevel(proxy_width,level);
+                (*params) = nlevel(proxy_width, level);
                 break;
             case GL_TEXTURE_HEIGHT: 
-                (*params) = nlevel(proxy_height,level);
+                (*params) = nlevel(proxy_height, level);
                 break;
             case GL_TEXTURE_INTERNAL_FORMAT:
                 (*params) = proxy_intformat;
@@ -191,8 +186,8 @@ void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei widt
             // maxTextureSize = 16384;
             // NSLog(@"Maximum texture size: %d", maxTextureSize);
         }
-        proxy_width = ((width<<level)>maxTextureSize)?0:width;
-        proxy_height = ((height<<level)>maxTextureSize)?0:height;
+        proxy_width = ((width << level) > maxTextureSize) ? 0 : width;
+        proxy_height = ((height << level) > maxTextureSize) ? 0 : height;
         proxy_intformat = internalformat;
         // swizzle_internalformat((GLenum *) &internalformat, format, type);
     } else {
