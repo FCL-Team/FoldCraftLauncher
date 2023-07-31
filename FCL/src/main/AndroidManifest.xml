@@ -88,7 +88,7 @@
             android:name=".activity.ShellActivity"
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
-            android:screenOrientation="sensorLandscape"/>
+            android:screenOrientation="sensorPortrait"/>
         <activity
             android:process=":game"
             android:launchMode="standard"
