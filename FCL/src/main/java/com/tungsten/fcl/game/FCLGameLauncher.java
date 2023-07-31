@@ -119,7 +119,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
                         str.append(line).append("\n");
                     }
                 }
-                if (!overwrite) {
+                if (!overwrite && !str.toString().contains(replacement)) {
                     str.append(replacement);
                 }
             } catch (Exception e) {
