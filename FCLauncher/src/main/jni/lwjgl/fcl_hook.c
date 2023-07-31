@@ -67,5 +67,5 @@ void hookExec(JNIEnv *env) {
             {"forkAndExec", "(I[B[B[BI[BI[B[IZ)I", (void *) &hooked_ProcessImpl_forkAndExec}
     };
     (*env)->RegisterNatives(env, cls, methods, 1);
-    FCL_INTERNAL_LOG("Registered forkAndExec\n");
+    FCL_INTERNAL_LOG("Registered forkAndExec");
 }
