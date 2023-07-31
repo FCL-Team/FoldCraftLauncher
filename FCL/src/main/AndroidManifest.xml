@@ -58,7 +58,6 @@
         android:isGame="true"
         android:appCategory="game"
         android:theme="@style/Theme.FoldCraftLauncher"
-        android:extractNativeLibs="true"
         android:allowNativeHeapPointerTagging="false"
         tools:targetApi="33">
         <activity
