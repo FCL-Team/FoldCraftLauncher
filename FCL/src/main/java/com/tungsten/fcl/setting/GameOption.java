@@ -126,7 +126,8 @@ public class GameOption {
             guiScale = scale;
         }
 
-        boolean isUnicode = get("lang").equals("zh_CN");
+        String lang = get("lang");
+        boolean isUnicode = lang != null && lang.equals("zh_CN");
         if (isUnicode && guiScale % 2 != 0 && guiScale != 1) {
             --guiScale;
         }
