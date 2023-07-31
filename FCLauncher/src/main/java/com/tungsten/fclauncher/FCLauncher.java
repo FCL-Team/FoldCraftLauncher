@@ -9,6 +9,7 @@ import android.util.ArrayMap;
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -236,7 +237,7 @@ public class FCLauncher {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(config.getLogDir() + "/latest_game.log");
+        bridge.setLogPath(new File(FCLPath.SHARED_COMMON_DIR).getParent() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
                 logStartInfo(bridge, "Minecraft");

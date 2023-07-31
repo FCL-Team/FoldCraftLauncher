@@ -113,6 +113,7 @@ public class FCLBridge implements Serializable {
         this.callback = callback;
         this.surface = surface;
         fclLogThread = new Thread(() -> {
+            receiveLog("invoke redirectStdio");
             int errorCode = redirectStdio(getLogPath());
             if (errorCode != 0) {
                 receiveLog("Can't exec redirectStdio! Error code: " + errorCode);
@@ -254,12 +255,16 @@ public class FCLBridge implements Serializable {
     }
 
     public void setLogPipeReady() {
+        receiveLog("invoke setLogPipeReady");
         handler.post(() -> {
+            receiveLog("invoke setFCLBridge");
             setFCLBridge(this);
             // set graphic output and event pipe
             if (surface != null) {
+                receiveLog("invoke setFCLNativeWindow");
                 setFCLNativeWindow(surface);
             }
+            receiveLog("invoke setEventPipe");
             setEventPipe();
 
             // start
