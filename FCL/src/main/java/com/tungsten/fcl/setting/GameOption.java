@@ -39,7 +39,7 @@ public class GameOption {
         void onOptionChanged();
     }
 
-    private void load(@NonNull String path) {
+    private synchronized void load(@NonNull String path) {
         File optionFile = new File(path);
         if (!optionFile.exists()) {
             try {
