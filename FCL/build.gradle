@@ -41,6 +41,36 @@ android {
     }
 }
 
+tasks.whenTaskAdded { Task task ->
+    if (task.name.contentEquals("assembleRelease")) {
+        task.dependsOn(updateMap)
+    }
+}
+tasks.register('updateMap') {
+    doLast {
+        def list = []
+        new File("${rootDir}/version_map.json").withReader("UTF-8") { reader ->
+            reader.eachLine {
+                if (it.contains('versionCode')) {
+                    it = it.replaceAll('[0-9]+', "${android.defaultConfig.versionCode}")
+                } else if (it.contains("versionName")) {
+                    it = it.replaceAll(': ".+', ": \"${android.defaultConfig.versionName}\",")
+                } else if (it.contains("date")) {
+                    def date = new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
+                    it = it.replaceAll(': ".+', ": \"${date}\",")
+                } else if (it.contains("url")) {
+                    it = it.replaceAll('download/.+"',"download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}.apk\"")
+                }
+                list.add(it + "\n")
+            }
+        }
+        new File("${rootDir}/version_map.json").withWriter("UTF-8") { writer ->
+            list.each {
+                writer.write(it)
+            }
+        }
+    }
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':FCLCore')
