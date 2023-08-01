@@ -738,6 +738,7 @@
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
     <string name="update">更新</string>
+    <string name="update_netdisk">网盘</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
     <string name="update_date">日期：%s</string>

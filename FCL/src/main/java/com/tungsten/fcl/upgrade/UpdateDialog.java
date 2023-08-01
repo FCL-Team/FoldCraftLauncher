@@ -1,5 +1,7 @@
 package com.tungsten.fcl.upgrade;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -16,6 +18,7 @@ import androidx.core.content.FileProvider;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
@@ -48,6 +51,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
     private FCLButton ignore;
     private FCLButton positive;
     private FCLButton negative;
+    private FCLButton netdisk;
 
     public UpdateDialog(@NonNull Context context, RemoteVersion version) {
         super(context);
@@ -76,9 +80,11 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
         ignore = findViewById(R.id.ignore);
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
+        netdisk = findViewById(R.id.netdisk);
         ignore.setOnClickListener(this);
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+        netdisk.setOnClickListener(this);
 
         checkHeight();
     }
@@ -138,6 +144,13 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
             dismiss();
         }
         if (v == negative) {
+            dismiss();
+        }
+        if (v == netdisk) {
+            FCLBridge.openLink(version.getNetdiskUrl());
+            ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("FCL Clipboard", "1145");
+            clipboard.setPrimaryClip(clip);
             dismiss();
         }
     }

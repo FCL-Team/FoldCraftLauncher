@@ -15,14 +15,16 @@ public class RemoteVersion {
     private final String date;
     private final ArrayList<Description> description;
     private final String url;
+    private final String netdiskUrl;
 
-    public RemoteVersion(String type, int versionCode, String versionName, String date, ArrayList<Description> description, String url) {
+    public RemoteVersion(String type, int versionCode, String versionName, String date, ArrayList<Description> description, String url, String netdiskUrl) {
         this.type = type;
         this.versionCode = versionCode;
         this.versionName = versionName;
         this.date = date;
         this.description = description;
         this.url = url;
+        this.netdiskUrl = netdiskUrl;
     }
 
     public String getType() {
@@ -47,6 +49,10 @@ public class RemoteVersion {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getNetdiskUrl() {
+        return netdiskUrl;
     }
 
     public boolean isBeta() {

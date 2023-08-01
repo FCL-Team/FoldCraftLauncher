@@ -88,6 +88,13 @@
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:layout_marginStart="10dp"
+            android:id="@+id/netdisk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_netdisk" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:layout_marginStart="10dp"
             android:id="@+id/positive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

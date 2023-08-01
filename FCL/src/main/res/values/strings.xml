@@ -766,6 +766,7 @@
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
 
     <string name="update">Update</string>
+    <string name="update_netdisk">Netdisk</string>
     <string name="update_checking">Checking for Updates</string>
     <string name="update_check_failed">Failed to check update</string>
     <string name="update_date">Date: %s</string>
