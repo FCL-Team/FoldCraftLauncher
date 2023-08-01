@@ -21,6 +21,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        configureEach {
+            resValue "string", "app_version", "${defaultConfig.versionName}"
+        }
     }
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
