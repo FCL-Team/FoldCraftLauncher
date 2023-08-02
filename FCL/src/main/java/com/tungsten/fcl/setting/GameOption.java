@@ -39,35 +39,37 @@ public class GameOption {
         void onOptionChanged();
     }
 
-    private synchronized void load(@NonNull String path) {
-        File optionFile = new File(path);
-        if (!optionFile.exists()) {
-            try {
-                optionFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (fileObserver == null) {
-            setupFileObserver();
-        }
-        parameterMap.clear();
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(optionFile));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                int firstColonIndex = line.indexOf(':');
-                if (firstColonIndex < 0) {
-                    Logging.LOG.log(Level.INFO, "No colon on line \"" + line + "\", skipping");
-                    continue;
+    private void load(@NonNull String path) {
+        synchronized(this) {
+            File optionFile = new File(path);
+            if (!optionFile.exists()) {
+                try {
+                    optionFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                parameterMap.put(line.substring(0, firstColonIndex), line.substring(firstColonIndex + 1));
             }
-            reader.close();
-        } catch (IOException e) {
-            Logging.LOG.log(Level.WARNING, "Could not load options.txt", e);
+
+            if (fileObserver == null) {
+                setupFileObserver();
+            }
+            parameterMap.clear();
+
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(optionFile));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    int firstColonIndex = line.indexOf(':');
+                    if (firstColonIndex < 0) {
+                        Logging.LOG.log(Level.INFO, "No colon on line \"" + line + "\", skipping");
+                        continue;
+                    }
+                    parameterMap.put(line.substring(0, firstColonIndex), line.substring(firstColonIndex + 1));
+                }
+                reader.close();
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Could not load options.txt", e);
+            }
         }
     }
 
@@ -100,19 +102,21 @@ public class GameOption {
     }
 
     public void save() {
-        StringBuilder result = new StringBuilder();
-        for(String key : parameterMap.keySet())
-            result.append(key)
-                    .append(':')
-                    .append(parameterMap.get(key))
-                    .append('\n');
+        synchronized(this) {
+            StringBuilder result = new StringBuilder();
+            for(String key : parameterMap.keySet())
+                result.append(key)
+                        .append(':')
+                        .append(parameterMap.get(key))
+                        .append('\n');
 
-        try {
-            fileObserver.stopWatching();
-            FileUtils.writeText(new File(optionPath), result.toString());
-            fileObserver.startWatching();
-        } catch (IOException e) {
-            Logging.LOG.log(Level.WARNING, "Could not save options.txt", e);
+            try {
+                fileObserver.stopWatching();
+                FileUtils.writeText(new File(optionPath), result.toString());
+                fileObserver.startWatching();
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Could not save options.txt", e);
+            }
         }
     }
 
