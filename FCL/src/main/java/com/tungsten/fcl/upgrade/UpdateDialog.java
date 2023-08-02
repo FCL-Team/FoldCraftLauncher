@@ -148,7 +148,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == netdisk) {
             FCLBridge.openLink(version.getNetdiskUrl());
-            ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("FCL Clipboard", "1145");
             clipboard.setPrimaryClip(clip);
             dismiss();

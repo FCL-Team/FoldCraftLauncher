@@ -46,6 +46,7 @@ tasks.whenTaskAdded { Task task ->
         task.dependsOn(updateMap)
     }
 }
+
 tasks.register('updateMap') {
     doLast {
         def list = []
@@ -59,7 +60,7 @@ tasks.register('updateMap') {
                     def date = new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
                     it = it.replaceAll(': ".+', ": \"${date}\",")
                 } else if (it.contains("url")) {
-                    it = it.replaceAll('download/.+"',"download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}.apk\"")
+                    it = it.replaceAll('download/.+"', "download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}.apk\"")
                 }
                 list.add(it + "\n")
             }
@@ -71,6 +72,7 @@ tasks.register('updateMap') {
         }
     }
 }
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':FCLCore')
