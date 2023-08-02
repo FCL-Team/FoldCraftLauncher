@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id "org.hidetake.ssh" version "2.11.2"
 }
 
 android {
@@ -43,7 +44,7 @@ android {
 
 tasks.whenTaskAdded { Task task ->
     if (task.name.contentEquals("assembleRelease")) {
-        task.dependsOn(updateMap)
+        task.dependsOn(uploadMap)
     }
 }
 
@@ -73,6 +74,17 @@ tasks.register('updateMap') {
     }
 }
 
+task uploadMap(dependsOn:'updateMap') {
+    doLast {
+        ssh.run {
+            session(remotes.debugServer) {
+                File file = file "${rootDir}/version_map.json"
+                put from: file.getAbsolutePath(), into: "/www/wwwroot/FCLApi/public/files"
+            }
+        }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':FCLCore')
@@ -89,4 +101,17 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+ssh.settings {
+    knownHosts = allowAnyHosts
+}
+remotes {
+    Properties prop =new Properties()
+    prop.load(new FileInputStream("${rootDir}/local.properties"))
+    debugServer {
+        host = prop.getProperty("sftp.host")
+        port = prop.getProperty("sftp.port").toInteger()
+        user = prop.getProperty("sftp.username")
+        password = prop.getProperty("sftp.password")
+    }
 }
