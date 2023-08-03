@@ -203,18 +203,21 @@ public final class AL {
         }
         
         // LWJGL2 code
-        if (created_lwjgl2) {
+        if (created_lwjgl2 && alContext != MemoryUtil.NULL) {
             ALC10.alcMakeContextCurrent(MemoryUtil.NULL);
             ALC10.alcDestroyContext(alContext);
-            ALC10.alcCloseDevice(alcDevice.device);
             alContext = -1;
+        }
+
+        if (alcDevice.device != MemoryUtil.NULL) {
+            ALC10.alcCloseDevice(alcDevice.device);
             alcDevice = null;
-            created_lwjgl2 = false;
         }
 
         setCurrentProcess(null);
 
         functionProvider = null;
+        created_lwjgl2 = false;
     }
 
     /**
@@ -276,6 +279,9 @@ public final class AL {
      * @return the ALCapabilities instance
      */
     public static ALCapabilities createCapabilities(ALCCapabilities alcCaps) {
+        if (AL.functionProvider == null) {
+            AL.init();
+        }
         FunctionProvider functionProvider = ALC.check(AL.functionProvider);
 
         ALCapabilities caps = null;

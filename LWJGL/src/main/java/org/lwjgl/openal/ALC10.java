@@ -459,6 +459,13 @@ public class ALC10 {
         return memUTF8Safe(__result);
     }
 
+    @Nullable
+    @NativeType("ALCchar const *")
+    public static String alcGetString(@NativeType("ALCdevice *") ALCdevice device, @NativeType("ALCenum") int token) {
+        long __result = nalcGetString(device == null ? MemoryUtil.NULL : device.device, token);
+        return memUTF8Safe(__result);
+    }
+
     // --- [ alcGetIntegerv ] ---
 
     /**
