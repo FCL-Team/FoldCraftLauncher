@@ -4,6 +4,7 @@ import static com.tungsten.fclauncher.utils.Architecture.ARCH_X86;
 import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
@@ -30,6 +31,7 @@ public class FCLauncher {
         printTaskTitle(bridge, "Start " + task);
         bridge.getCallback().onLog("Device: " + DeviceName.getDeviceName());
         bridge.getCallback().onLog("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
+        bridge.getCallback().onLog("CPU:" + Build.HARDWARE);
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {

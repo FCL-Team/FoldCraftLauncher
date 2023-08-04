@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
+import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.data.ButtonStyles;
@@ -531,6 +533,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 return;
             }
             logWindow.appendLog(log);
+            if (BuildConfig.DEBUG) {
+                Log.d("FCL Debug", log);
+            }
             try {
                 if (firstLog) {
                     FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");
