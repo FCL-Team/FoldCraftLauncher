@@ -233,7 +233,7 @@ public class FCLauncher {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(new File(FCLPath.SHARED_COMMON_DIR).getParent() + "/latest_game.log");
+        bridge.setLogPath(config.getLogDir() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
                 logStartInfo(bridge, "Minecraft");

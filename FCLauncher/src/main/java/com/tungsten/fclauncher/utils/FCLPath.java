@@ -39,7 +39,7 @@ public class FCLPath {
 
         NATIVE_LIB_DIR = context.getApplicationInfo().nativeLibraryDir;
 
-        LOG_DIR = context.getExternalFilesDir("log").getAbsolutePath();
+        LOG_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/log";
         CACHE_DIR = context.getCacheDir() + "/fclauncher";
 
         RUNTIME_DIR = context.getDir("runtime", 0).getAbsolutePath();

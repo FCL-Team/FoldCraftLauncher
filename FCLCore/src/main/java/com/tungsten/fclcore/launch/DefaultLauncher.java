@@ -148,9 +148,9 @@ public class DefaultLauncher extends Launcher {
 
         Set<String> classpath = repository.getClasspath(version);
 
-        File jar = repository.getVersionJar(version);
-        if (!jar.exists() || !jar.isFile())
-            throw new IOException("Minecraft jar does not exist");
+        File jar = new File(repository.getVersionRoot(version.getId()), version.getId() + ".jar");
+//        if (!jar.exists() || !jar.isFile())
+//            throw new IOException("Minecraft jar does not exist");
         classpath.add(jar.getAbsolutePath());
 
         // Provided Minecraft arguments
