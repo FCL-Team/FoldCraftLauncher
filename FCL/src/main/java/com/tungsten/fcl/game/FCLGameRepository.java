@@ -316,7 +316,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setProfileName(FCLPath.CONTEXT.getString(R.string.app_name))
                 .setGameArguments(StringUtils.tokenize(vs.getMinecraftArgs()))
                 .setOverrideJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
-                .setMaxMemory(vs.isAutoMemory() ? null : (int)(getAllocatedMemory(
+                .setMaxMemory((int)(getAllocatedMemory(
                         vs.getMaxMemory() * 1024L * 1024L,
                         MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT),
                         vs.isAutoMemory()
