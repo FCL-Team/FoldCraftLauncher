@@ -179,6 +179,12 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
                 return true;
             }
         }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ALT_RIGHT && menu.getCursorMode() == FCLBridge.CursorEnabled) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN){
+                ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
+            }
+            return true;
+        }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 return true;
