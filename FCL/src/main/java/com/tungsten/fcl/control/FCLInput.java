@@ -194,7 +194,7 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
         sendKeyEvent(fclKeycode, event.getAction() == KeyEvent.ACTION_DOWN);
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && menu.getCursorMode() == FCLBridge.CursorEnabled) {
             sendChar((char) (event.getUnicodeChar() != 0 ? event.getUnicodeChar() : '\u0000'));
         }
         return true;
