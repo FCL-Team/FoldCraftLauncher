@@ -151,7 +151,7 @@ static int extensionSupportedOSMesa(const char* extension)
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWbool _glfwInitOSMesa(void)
+GLFWbool _glfwInitOSMesa1(void)
 {
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
@@ -200,6 +200,54 @@ GLFWbool _glfwInitOSMesa(void)
         }
     }
 
+    if (!_glfw.osmesa.CreateContext ||
+        !_glfw.osmesa.GetCurrentContext ||
+        !_glfw.osmesa.DestroyContext ||
+        !_glfw.osmesa.PixelStore ||
+        !_glfw.osmesa.MakeCurrent ||
+        !_glfw.osmesa.GetColorBuffer ||
+        !_glfw.osmesa.GetDepthBuffer ||
+        !_glfw.osmesa.GetProcAddress)
+    {
+        _glfwInputError(GLFW_PLATFORM_ERROR, "OSMesa: Failed to load required entry points");
+        _glfwTerminateOSMesa();
+        return GLFW_FALSE;
+    }
+
+    return GLFW_TRUE;
+}
+
+GLFWbool _glfwInitOSMesa(void)
+{
+    if (_glfw.osmesa.handle)
+        return GLFW_TRUE;
+
+    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
+
+    if (!_glfw.osmesa.handle)
+    {
+        _glfwInputError(GLFW_API_UNAVAILABLE, "OSMesa: Library not found");
+        return GLFW_FALSE;
+    }
+
+    _glfw.osmesa.CreateContext = (PFN_OSMesaCreateContext)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaCreateContext");
+    _glfw.osmesa.GetCurrentContext = (PFN_OSMesaGetCurrentContext)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetCurrentContext");
+    _glfw.osmesa.DestroyContext = (PFN_OSMesaDestroyContext)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaDestroyContext");
+    _glfw.osmesa.PixelStore = (PFN_OSMesaPixelStore)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaPixelStore");
+    _glfw.osmesa.MakeCurrent = (PFN_OSMesaMakeCurrent)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaMakeCurrent");
+    _glfw.osmesa.GetColorBuffer = (PFN_OSMesaGetColorBuffer)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetColorBuffer");
+    _glfw.osmesa.GetDepthBuffer = (PFN_OSMesaGetDepthBuffer)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetDepthBuffer");
+    _glfw.osmesa.GetProcAddress = (PFN_OSMesaGetProcAddress)
+        _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetProcAddress");
+
+    const char *renderer = getenv("LIBGL_STRING");
     if (!_glfw.osmesa.CreateContext ||
         !_glfw.osmesa.GetCurrentContext ||
         !_glfw.osmesa.DestroyContext ||

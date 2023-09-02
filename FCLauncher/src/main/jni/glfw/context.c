@@ -36,6 +36,7 @@ GLFWbool _glfwIsValidContextConfig(const _GLFWctxconfig* ctxconfig)
 
     if (ctxconfig->source != GLFW_NATIVE_CONTEXT_API &&
         ctxconfig->source != GLFW_EGL_CONTEXT_API &&
+        ctxconfig->source != GLFW_OSMESA_CONTEXT_API_1 &&
         ctxconfig->source != GLFW_OSMESA_CONTEXT_API)
     {
         _glfwInputError(GLFW_INVALID_ENUM,

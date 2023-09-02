@@ -330,10 +330,22 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
             if (!_glfwCreateContextEGL(window, ctxconfig, fbconfig))
                 return GLFW_FALSE;
         }
-        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
+        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API_1)
         {
             const char *renderer = getenv("LIBGL_STRING");
             if (strcmp(renderer, "VirGLRenderer") == 0) {
+                if (!_glfwInitEGL())
+                    return GLFW_FALSE;
+            }
+            if (!_glfwInitOSMesa1())
+                return GLFW_FALSE;
+            if (!_glfwCreateContextOSMesa(window, ctxconfig, fbconfig))
+                return GLFW_FALSE;
+        }
+        else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
+        {
+            const char *renderer = getenv("LIBGL_STRING");
+            if (strcmp(renderer, "Zink") == 0) {
                 if (!_glfwInitEGL())
                     return GLFW_FALSE;
             }
