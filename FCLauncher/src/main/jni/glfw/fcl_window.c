@@ -345,7 +345,7 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
         else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
         {
             const char *renderer = getenv("LIBGL_STRING");
-            if (strcmp(renderer, "Zink") == 0) {
+            if (strcmp(renderer, "Zink") == 1) {
                 if (!_glfwInitEGL())
                     return GLFW_FALSE;
             }
