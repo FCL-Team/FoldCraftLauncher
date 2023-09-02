@@ -989,6 +989,7 @@ extern "C" {
  *  [attribute](@ref GLFW_CONTEXT_CREATION_API_attrib).
  */
 #define GLFW_CONTEXT_CREATION_API   0x0002200B
+#define GLFW_CONTEXT_CREATION_API_1   0x0002200D
 /*! @brief Window content area scaling window
  *  [window hint](@ref GLFW_SCALE_TO_MONITOR).
  */
