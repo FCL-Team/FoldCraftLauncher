@@ -156,7 +156,7 @@ GLFWbool _glfwInitOSMesa(void)
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
 
-    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
+    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
 
     if (!_glfw.osmesa.handle)
     {
