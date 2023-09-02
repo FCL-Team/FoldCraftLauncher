@@ -230,7 +230,7 @@ void glfwDefaultWindowHints(void)
     memset(&_glfw.hints.context, 0, sizeof(_glfw.hints.context));
     _glfw.hints.context.client = GLFW_OPENGL_API;
     _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_81.so") == 0 ? GLFW_OSMESA_CONTEXT_API_1 : GLFW_NATIVE_CONTEXT_API;
-    _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_8.so") == 1 ? GLFW_OSMESA_CONTEXT_API : GLFW_NATIVE_CONTEXT_API;
+    _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_8.so") == 0 ? GLFW_OSMESA_CONTEXT_API : GLFW_NATIVE_CONTEXT_API;
     _glfw.hints.context.major  = 1;
     _glfw.hints.context.minor  = 0;
 
@@ -359,7 +359,7 @@ GLFWAPI void glfwWindowHint(int hint, int value)
             _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_81.so") == 0 ? GLFW_OSMESA_CONTEXT_API_1 : value;
             return;
         case GLFW_CONTEXT_CREATION_API:
-            _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_8.so") == 1 ? GLFW_OSMESA_CONTEXT_API : value;
+            _glfw.hints.context.source = strcmp(getenv("LIBGL_NAME"), "libOSMesa_8.so") == 0 ? GLFW_OSMESA_CONTEXT_API : value;
             return;
         case GLFW_CONTEXT_VERSION_MAJOR:
             _glfw.hints.context.major = value;
