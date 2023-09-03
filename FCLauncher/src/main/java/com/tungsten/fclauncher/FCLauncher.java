@@ -149,7 +149,7 @@ public class FCLauncher {
             envMap.put("allow_glsl_extension_directive_midshader", "true");
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
-        if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
+        if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
                 envMap.put("GALLIUM_DRIVER", "virpipe");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "0");
 		envMap.put("LIBGL_ES","2");
