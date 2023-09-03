@@ -1070,6 +1070,7 @@ extern "C" {
  *  The crosshair shape.
  */
 #define GLFW_CROSSHAIR_CURSOR       0x00036003
+#define GLFW_CROSSHAIR_CURSOR_1       0x00036007
 /*! @brief The hand shape.
  *
  *  The hand shape.
