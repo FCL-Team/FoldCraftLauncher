@@ -444,6 +444,7 @@ GLFWAPI GLFWcursor* glfwCreateStandardCursor(int shape)
     if (shape != GLFW_ARROW_CURSOR &&
         shape != GLFW_IBEAM_CURSOR &&
         shape != GLFW_CROSSHAIR_CURSOR &&
+        shape != GLFW_CROSSHAIR_CURSOR_1 &&
         shape != GLFW_HAND_CURSOR &&
         shape != GLFW_HRESIZE_CURSOR &&
         shape != GLFW_VRESIZE_CURSOR)
