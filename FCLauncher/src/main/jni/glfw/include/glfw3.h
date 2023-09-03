@@ -1046,7 +1046,6 @@ extern "C" {
 #define GLFW_EGL_CONTEXT_API        0x00036002
 #define GLFW_OSMESA_CONTEXT_API     0x00036003
 #define GLFW_OSMESA_CONTEXT_API_1     0x00036007
-#define GLFW_NATIVE_CONTEXT_API_1     0x00036008
 
 /*! @defgroup shapes Standard cursor shapes
  *  @brief Standard system cursor shapes.
@@ -1061,7 +1060,6 @@ extern "C" {
  *  The regular arrow cursor.
  */
 #define GLFW_ARROW_CURSOR           0x00036001
-#define GLFW_ARROW_CURSOR_1           0x00036008
 /*! @brief The text input I-beam cursor shape.
  *
  *  The text input I-beam cursor shape.
