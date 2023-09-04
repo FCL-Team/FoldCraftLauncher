@@ -140,7 +140,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaSpinner.setDataList(javaVersionDataList);
 
         ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_HOLY-GL4ES);
+        rendererDataList.add(FCLConfig.Renderer.RENDERER_HOLYGL4ES);
 		//rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES112); //todo
 		rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES114);
 		//rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES115); //todo
@@ -160,7 +160,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaSpinner.setAdapter(javaAdapter);
 
         ArrayList<String> rendererList = new ArrayList<>();
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_holy-gl4es));
+        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_holygl4es));
 		rendererList.add(getContext().getString(R.string.settings_fcl_renderer_gl4es114));
 		//rendererList.add(getContext().getString(R.string.settings_fcl_renderer_gl4es115)); //todo
 		//rendererList.add(getContext().getString(R.string.settings_fcl_renderer_gl4es112)); //todo

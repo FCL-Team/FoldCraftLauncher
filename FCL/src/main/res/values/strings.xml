@@ -684,7 +684,7 @@
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="settings_fcl_renderer">Renderer</string>
-    <string name="settings_fcl_renderer_holly-gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, only support 1.17+)</string>
+    <string name="settings_fcl_renderer_holygl4es" translatable="false">Holy GL4ES (OpenGL 2.1, only support 1.17+)</string>
 	<string name="settings_fcl_renderer_gl4es112" translatable="false">GL4ES 1.1.2 (OpenGL 2.1, only support 1.17-)</string>
 	<string name="settings_fcl_renderer_gl4es114" translatable="false">GL4ES extra 1.1.4 (OpenGL 2.1, only support 1.17+)</string>
 	<string name="settings_fcl_renderer_gl4es115" translatable="false">GL4ES 1.1.5(OpenGL 2.1, only support 1.17+)</string>
