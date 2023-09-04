@@ -12,6 +12,7 @@ public class FCLConfig implements Serializable {
         RENDERER_HOLY-GL4ES("Holy-GL4ES:libgl4es_holy.so:libEGL.so"),
         RENDERER_GL4ES114("GL4ES114:libgl4es_114.so:libEGL.so"),
 		RENDERER_GL4ES112("GL4ES112:libgl4es_112.so:libEGL.so"),
+		RENDERER_GL4ES115("GL4ES115:libgl4es_112.so:libEGL.so"),
         RENDERER_VIRGL("VirGLRenderer:libOSMesa_8.so:libEGL.so"),
         RENDERER_ANGLE("ANGLE:libtinywrapper.so:libEGL_angle.so"),
         RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so"),
