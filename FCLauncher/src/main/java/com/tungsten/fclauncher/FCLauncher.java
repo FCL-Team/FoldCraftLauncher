@@ -132,7 +132,7 @@ public class FCLauncher {
         envMap.put("LIBGL_STRING", renderer.toString());
         envMap.put("LIBGL_NAME", renderer.getGlLibName());
         envMap.put("LIBEGL_NAME", renderer.getEglLibName());
-        if (renderer == FCLConfig.Renderer.RENDERER_GL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU) {
+        if (renderer == FCLConfig.Renderer.RENDERER_HOLYGL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU  || renderer == FCLConfig.Renderer.RENDERER_GL4ES114) {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
