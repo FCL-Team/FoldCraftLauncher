@@ -684,7 +684,10 @@
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="settings_fcl_renderer">Renderer</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_holly-gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, only support 1.17+)</string>
+	<string name="settings_fcl_renderer_gl4es112" translatable="false">GL4ES 1.1.2 (OpenGL 2.1, only support 1.17-)</string>
+	<string name="settings_fcl_renderer_gl4es114" translatable="false">GL4ES extra 1.1.4 (OpenGL 2.1, only support 1.17+)</string>
+	<string name="settings_fcl_renderer_gl4es115" translatable="false">GL4ES 1.1.5(OpenGL 2.1, only support 1.17+)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
@@ -803,7 +806,7 @@
     <string name="version_manage_rename">Rename Instance</string>
     <string name="version_manage_rename_message">Rename version</string>
     <string name="version_manage_rename_new">New name</string>
-    <string name="version_manage_rename_fail">Rename failed</string>
+    <string name="version_manage_rename_fail">Rename failed</string> 
     <string name="version_new_profile">New Directory</string>
     <string name="version_update">Update Modpack</string>
 
