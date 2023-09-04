@@ -296,7 +296,7 @@ public final class VersionSetting implements Cloneable {
         controllerProperty.set(controller);
     }
 
-    private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_GL4ES);
+    private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_HOLYGL4ES);
 
     public ObjectProperty<FCLConfig.Renderer> rendererProperty() {
         return rendererProperty;
@@ -429,7 +429,7 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("Default"));
-            vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
+            vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_HOLYGL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
 
             return vs;

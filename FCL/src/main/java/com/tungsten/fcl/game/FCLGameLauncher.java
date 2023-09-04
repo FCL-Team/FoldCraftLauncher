@@ -22,7 +22,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Map; //RENDERER_GL4ES
 import java.util.logging.Level;
 
 public final class FCLGameLauncher extends DefaultLauncher {
@@ -154,23 +154,23 @@ public final class FCLGameLauncher extends DefaultLauncher {
         FileUtils.deleteDirectoryQuietly(new File("/data/user_de/0/com.tungsten.fcl/code_cache"));
         generateOptionsTxt();
         // Sodium
-        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         // Rubidium
-        modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         // DraconicEvolution
         String config = "brandon3055/DraconicEvolution.cfg";
-        modifyIfConfigDetected(config, "B:useShaders=", "B:useShaders=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"crystalShaders\"=", "B:\"crystalShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"reactorShaders\"=", "B:\"reactorShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"guardianShaders\"=", "B:\"guardianShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"otherShaders\"=", "B:\"otherShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:useShaders=", "B:useShaders=false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"crystalShaders\"=", "B:\"crystalShaders\"=false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"reactorShaders\"=", "B:\"reactorShaders\"=false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"guardianShaders\"=", "B:\"guardianShaders\"=false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"otherShaders\"=", "B:\"otherShaders\"=false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         // Pixelmon
         modifyIfConfigDetected("pixelmon/config.yml", "use-discord-rich-presence:", "use-discord-rich-presence: false", true);
         // ImmersiveEngineering
-        modifyIfConfigDetected("immersiveengineering-client.toml", "stencilBufferEnabled", "stencilBufferEnabled = false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("immersiveengineering-client.toml", "stencilBufferEnabled", "stencilBufferEnabled = false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES, FCLConfig.Renderer.RENDERER_VGPU);
         // Create
-        modifyIfConfigDetected("flywheel-client.toml", "enabled", "enabled = false", true, FCLConfig.Renderer.RENDERER_GL4ES);
-        modifyIfConfigDetected("flywheel-client.toml", "backend =", "backend = \"OFF\"", true, FCLConfig.Renderer.RENDERER_GL4ES);
+        modifyIfConfigDetected("flywheel-client.toml", "enabled", "enabled = false", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES);
+        modifyIfConfigDetected("flywheel-client.toml", "backend =", "backend = \"OFF\"", true, FCLConfig.Renderer.RENDERER_HOLYGL4ES);
         return super.launch();
     }
 }
