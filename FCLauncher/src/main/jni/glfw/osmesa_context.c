@@ -153,6 +153,7 @@ static int extensionSupportedOSMesa(const char* extension)
 
 GLFWbool _glfwInitOSMesa(void)
 {
+    const char *renderer = getenv("LIBGL_STRING");
     if (strcmp(renderer, "VirGLRenderer") == 0) {
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
