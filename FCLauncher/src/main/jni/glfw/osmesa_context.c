@@ -153,16 +153,13 @@ static int extensionSupportedOSMesa(const char* extension)
 
 GLFWbool _glfwInitOSMesa(void)
 {
+    if (_glfw.osmesa.handle)
+        return GLFW_TRUE;
+    
     const char *renderer = getenv("LIBGL_STRING");
     if (strcmp(renderer, "VirGLRenderer") == 0) {
-    if (_glfw.osmesa.handle)
-        return GLFW_TRUE;
-
     _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
     } else if (strcmp(renderer, "Zink") == 0) {
-    if (_glfw.osmesa.handle)
-        return GLFW_TRUE;
-
     _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
     }
 
@@ -189,7 +186,6 @@ GLFWbool _glfwInitOSMesa(void)
     _glfw.osmesa.GetProcAddress = (PFN_OSMesaGetProcAddress)
         _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetProcAddress");
 
-    const char *renderer = getenv("LIBGL_STRING");
     if (strcmp(renderer, "VirGLRenderer") == 0) {
         char* fileName = calloc(1, 1024);
         sprintf(fileName, "%s/libvirgl_test_server.so", getenv("FCL_NATIVEDIR"));
