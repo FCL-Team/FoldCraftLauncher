@@ -107,3 +107,13 @@ ssh.settings {
     knownHosts = allowAnyHosts
 }
 
+remotes {
+    Properties prop = new Properties()
+    prop.load(new FileInputStream("${rootDir}/local.properties"))
+    debugServer {
+        host = prop.getProperty("sftp.host")
+        port = prop.getProperty("sftp.port").toInteger()
+        user = prop.getProperty("sftp.username")
+        password = prop.getProperty("sftp.password")
+    }
+}
