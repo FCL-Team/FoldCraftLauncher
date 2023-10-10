@@ -8,12 +8,20 @@
 
 #include <internal.h>
 #include <android/native_window.h>
+#include <android/log.h>
 
 int (*vtest_main) (int argc, char** argv);
 void (*vtest_swap_buffers) (void);
 
 ANativeWindow_Buffer buf;
 int32_t stride;
+
+#ifndef FCL_NSBYPASS_H
+#define FCL_NSBYPASS_H
+
+void* load_turnip_vulkan();
+
+#endif
 
 void* makeContextCurrentEGL(void* win) {
     _GLFWwindow* window = win;
@@ -120,7 +128,7 @@ static void swapBuffersOSMesa(_GLFWwindow* window)
     if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
         window->context.Finish();
         vtest_swap_buffers();
-    } else {
+    } else if (strcmp(getenv("LIBGL_STRING"), "Zink") == 0) {
         OSMesaContext context = OSMesaGetCurrentContext();
         if (context == NULL) {
             printf("Zink: attempted to swap buffers without context!");
@@ -151,12 +159,43 @@ static int extensionSupportedOSMesa(const char* extension)
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
+static void set_vulkan_ptr(void* ptr) {
+    char envval[64];
+    sprintf(envval, "%"PRIxPTR, (uintptr_t)ptr);
+    setenv("VULKAN_PTR", envval, 1);
+}
+
+void load_vulkan() {
+    if(getenv("FCL_ZINK_PREFER_SYSTEM_DRIVER") == NULL && android_get_device_api_level() >= 28) {
+    // the loader does not support below that
+#ifdef ADRENO_POSSIBLE
+        void* result = load_turnip_vulkan();
+        if(result != NULL) {
+            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+            set_vulkan_ptr(result);
+            return;
+        }
+#endif
+    }
+    printf("OSMDroid: loading vulkan regularly...\n");
+    void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
+    printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
+    set_vulkan_ptr(vulkan_ptr);
+}
+
 GLFWbool _glfwInitOSMesa(void)
 {
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
-
+    
+    const char *renderer = getenv("LIBGL_STRING");
+    
+    if (strcmp(renderer, "VirGLRenderer") == 0) {
+    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
+    } else if (strcmp(renderer, "Zink") == 0) {
+    load_vulkan();
     _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
+    }
 
     if (!_glfw.osmesa.handle)
     {
@@ -181,7 +220,6 @@ GLFWbool _glfwInitOSMesa(void)
     _glfw.osmesa.GetProcAddress = (PFN_OSMesaGetProcAddress)
         _glfw_dlsym(_glfw.osmesa.handle, "OSMesaGetProcAddress");
 
-    const char *renderer = getenv("LIBGL_STRING");
     if (strcmp(renderer, "VirGLRenderer") == 0) {
         char* fileName = calloc(1, 1024);
         sprintf(fileName, "%s/libvirgl_test_server.so", getenv("FCL_NATIVEDIR"));

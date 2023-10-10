@@ -125,6 +125,7 @@ public class FCLauncher {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
+        envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -153,7 +154,7 @@ public class FCLauncher {
                 envMap.put("GALLIUM_DRIVER", "virpipe");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "0");
 		envMap.put("LIBGL_ES","2");
-       } else {
+       } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
                 envMap.put("GALLIUM_DRIVER", "zink");
             }
         }
