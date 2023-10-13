@@ -4798,4 +4798,8 @@ public class GLFW {
         invokePPPV(window, xpos, ypos, __functionAddress);
     }
 
+    public static int glfwGetPlatform() {
+        return 393220;
+    }
+
 }
