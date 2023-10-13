@@ -139,23 +139,26 @@ public class FCLauncher {
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
+	    envMap.put("LIBGL_NOERROR", "1");
+
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
             envMap.put("LIBGL_ES","3");
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
-            envMap.put("MESA_GL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "4.3" : "4.6");
-            envMap.put("MESA_GLSL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "430" : "460");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "3.2" : "3.2");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "320" : "320");
             envMap.put("force_glsl_extensions_warn", "true");
             envMap.put("allow_higher_compat_version", "true");
             envMap.put("allow_glsl_extension_directive_midshader", "true");
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
         if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
-                envMap.put("GALLIUM_DRIVER", "virpipe");
-                envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "0");
-		envMap.put("LIBGL_ES","2");
+            envMap.put("GALLIUM_DRIVER", "virpipe");
+            envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
        } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
-                envMap.put("GALLIUM_DRIVER", "zink");
+            envMap.put("GALLIUM_DRIVER", "zink");
+	    envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
+
             }
         }
     }
