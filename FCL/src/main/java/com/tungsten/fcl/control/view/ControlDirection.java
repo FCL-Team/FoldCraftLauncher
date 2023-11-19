@@ -495,14 +495,20 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                         downX = event.getX();
                         downY = event.getY();
                         downTime = System.currentTimeMillis();
-                        handleButtonEvent((int) event.getX(), (int) event.getY());
+                        int size = (getSize() * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
+                        int p1 = size + ((getSize() * getData().getStyle().getButtonStyle().getInterval()) / 1000);
+                        int x = (int) event.getX();
+                        int y = (int) event.getY();
+                        handleButtonEvent(x, y);
+                        startClick = x >= p1 && x <= p1 + size && y >= p1 && y <= p1 + size;
                         break;
                     case MotionEvent.ACTION_MOVE:
                         handleButtonEvent((int) event.getX(), (int) event.getY());
                         break;
                     case MotionEvent.ACTION_UP:
                     case MotionEvent.ACTION_CANCEL:
-                        if (System.currentTimeMillis() - downTime <= 100
+                        if (startClick &&
+                                System.currentTimeMillis() - downTime <= 100
                                 && Math.abs(event.getX() - downX) <= 10
                                 && Math.abs(event.getY() - downY) <= 10) {
                             clickCount++;
