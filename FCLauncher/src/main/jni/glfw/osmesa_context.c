@@ -191,10 +191,10 @@ GLFWbool _glfwInitOSMesa(void)
     const char *renderer = getenv("LIBGL_STRING");
     
     if (strcmp(renderer, "VirGLRenderer") == 0) {
-    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
+        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
     } else if (strcmp(renderer, "Zink") == 0) {
-    load_vulkan();
-    _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
+        load_vulkan();
+        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
     }
 
     if (!_glfw.osmesa.handle)
