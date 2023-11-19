@@ -511,6 +511,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                                 System.currentTimeMillis() - downTime <= 100
                                 && Math.abs(event.getX() - downX) <= 10
                                 && Math.abs(event.getY() - downY) <= 10) {
+                            startClick = false;
                             clickCount++;
                             if (clickCount == 1) {
                                 firstClickTime = System.currentTimeMillis();
