@@ -125,6 +125,7 @@ public class FCLauncher {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
+        envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -138,6 +139,7 @@ public class FCLauncher {
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_VSYNC", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
+            envMap.put("LIBGL_NOERROR", "1");
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
             envMap.put("LIBGL_ES","3");
         } else {
@@ -149,11 +151,10 @@ public class FCLauncher {
             envMap.put("allow_glsl_extension_directive_midshader", "true");
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
-        if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
+            if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
                 envMap.put("GALLIUM_DRIVER", "virpipe");
-                envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "0");
-		envMap.put("LIBGL_ES","2");
-       } else {
+                envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
+            } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
                 envMap.put("GALLIUM_DRIVER", "zink");
             }
         }

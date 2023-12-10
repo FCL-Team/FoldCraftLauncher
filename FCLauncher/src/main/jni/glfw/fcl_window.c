@@ -337,6 +337,10 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
                 if (!_glfwInitEGL())
                     return GLFW_FALSE;
             }
+            if (strcmp(renderer, "Zink") == 0) {
+                if (!_glfwInitEGL())
+                    return GLFW_FALSE;
+            }
             if (!_glfwInitOSMesa())
                 return GLFW_FALSE;
             if (!_glfwCreateContextOSMesa(window, ctxconfig, fbconfig))

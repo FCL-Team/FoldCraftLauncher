@@ -180,7 +180,7 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
             }
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_ALT_RIGHT && menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN){
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
             }
             return true;

@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 11,
-    "versionName": "1.0.7",
-    "date": "2023.08.20",
+    "versionCode": 12,
+    "versionName": "1.1.0",
+    "date": "2023.10.13",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "修复一些错误，详情见 Github。"
+        "text": "增加zink，修复一些错误，详情见 Github。"
       }
     ],
     "netdiskUrl": "https://www.123pan.com/s/0cC7Vv-7htov.html",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.0.7/FCL-release-1.0.7.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.0/FCL-release-1.1.0.apk"
   }
 ]

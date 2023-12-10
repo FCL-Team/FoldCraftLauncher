@@ -144,7 +144,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VIRGL);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_ANGLE);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
-        // rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
+        rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
         rendererSpinner.setDataList(rendererDataList);
 
         // add spinner text
@@ -161,7 +161,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_virgl));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_angle));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_vgpu));
-        // rendererList.add(getContext().getString(R.string.settings_fcl_renderer_zink));
+        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_zink));
         ArrayAdapter<String> rendererAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, rendererList);
         rendererAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         rendererSpinner.setAdapter(rendererAdapter);
