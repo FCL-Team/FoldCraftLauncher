@@ -339,7 +339,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                         return null;
                     })
                     .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
-                        if (exception != null) {
+                        if (exception != null || result == null) {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                             builder.setCancelable(false);
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
