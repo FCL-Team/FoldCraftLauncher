@@ -118,13 +118,17 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     protected void onPause() {
-        menu.onPause();
+        if (menu != null) {
+            menu.onPause();
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        menu.onResume();
+        if (menu != null) {
+            menu.onResume();
+        }
         super.onResume();
     }
 
