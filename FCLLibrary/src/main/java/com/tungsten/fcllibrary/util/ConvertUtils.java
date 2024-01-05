@@ -23,6 +23,10 @@ public class ConvertUtils {
         return (int) (pxValue / scare + 0.5f);
     }
 
+    public static float d2r(final float n) {
+        return 3.1415927f * n / 180.0f;
+    }
+
     public static double radian2Angle(double radian) {
         double tmp = Math.round(radian / Math.PI * 180);
         return tmp >= 0 ? tmp : 360 + tmp;

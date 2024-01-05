@@ -18,14 +18,14 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-import com.tungsten.fcllibrary.skin.MinecraftSkinRenderer;
-import com.tungsten.fcllibrary.skin.SkinGLSurfaceView;
+import com.tungsten.fcllibrary.skin.SkinCanvas;
+import com.tungsten.fcllibrary.skin.SkinRenderer;
 
 public class MainUI extends FCLCommonUI {
 
     private RelativeLayout skinContainer;
-    private SkinGLSurfaceView skinGLSurfaceView;
-    private MinecraftSkinRenderer renderer;
+    private SkinCanvas skinCanvas;
+    private SkinRenderer renderer;
 
     private ObjectProperty<Account> currentAccount;
 
@@ -38,8 +38,7 @@ public class MainUI extends FCLCommonUI {
         super.onCreate();
 
         skinContainer = findViewById(R.id.skin_container);
-        renderer = new MinecraftSkinRenderer(getContext(), true);
-        renderer.character.setRunning(true);
+        renderer = new SkinRenderer();
         ViewGroup.LayoutParams layoutParamsSkin = skinContainer.getLayoutParams();
         layoutParamsSkin.width = (int) (((View) skinContainer.getParent().getParent()).getMeasuredWidth() * 0.5f);
         layoutParamsSkin.height = (int) Math.min(((View) skinContainer.getParent().getParent()).getMeasuredWidth() * 0.5f, ((View) skinContainer.getParent().getParent()).getMeasuredHeight());
@@ -51,45 +50,45 @@ public class MainUI extends FCLCommonUI {
     @Override
     public void onStart() {
         super.onStart();
-        if (skinGLSurfaceView == null) {
-            skinGLSurfaceView = new SkinGLSurfaceView(getContext());
-            skinGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-            skinGLSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
-            skinGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-            skinGLSurfaceView.setZOrderOnTop(true);
-            skinGLSurfaceView.setRenderer(renderer, 5f);
-            skinGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-            skinGLSurfaceView.setPreserveEGLContextOnPause(true);
+        if (skinCanvas == null) {
+            skinCanvas = new SkinCanvas(getContext());
+            skinCanvas.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+            skinCanvas.getHolder().setFormat(PixelFormat.RGBA_8888);
+            skinCanvas.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+            skinCanvas.setZOrderOnTop(true);
+            skinCanvas.setRenderer(renderer, 5f);
+            skinCanvas.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            skinCanvas.setPreserveEGLContextOnPause(true);
         } else {
-            skinGLSurfaceView.onResume();
-            renderer.refresh(renderer.getTexture());
+            skinCanvas.onResume();
+            renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
         }
-        skinContainer.addView(skinGLSurfaceView);
+        skinContainer.addView(skinCanvas);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (skinGLSurfaceView != null) {
-            skinGLSurfaceView.onPause();
+        if (skinCanvas != null) {
+            skinCanvas.onPause();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isShowing() && skinGLSurfaceView != null) {
-            skinGLSurfaceView.onResume();
+        if (isShowing() && skinCanvas != null) {
+            skinCanvas.onResume();
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (skinGLSurfaceView != null) {
-            skinGLSurfaceView.onPause();
+        if (skinCanvas != null) {
+            skinCanvas.onPause();
         }
-        skinContainer.removeView(skinGLSurfaceView);
+        skinContainer.removeView(skinCanvas);
     }
 
     @Override

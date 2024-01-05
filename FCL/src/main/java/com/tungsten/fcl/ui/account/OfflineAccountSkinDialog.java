@@ -38,8 +38,8 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.skin.MinecraftSkinRenderer;
-import com.tungsten.fcllibrary.skin.SkinGLSurfaceView;
+import com.tungsten.fcllibrary.skin.SkinCanvas;
+import com.tungsten.fcllibrary.skin.SkinRenderer;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
@@ -51,8 +51,8 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
     private final OfflineAccount account;
 
     private ConstraintLayout root;
-    private SkinGLSurfaceView skinGLSurfaceView;
-    private MinecraftSkinRenderer renderer;
+    private SkinCanvas skinCanvas;
+    private SkinRenderer renderer;
 
     private FCLTextView title;
     private FCLButton positive;
@@ -90,16 +90,15 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
 
-        renderer = new MinecraftSkinRenderer(getContext(), true);
-        renderer.character.setRunning(true);
-        skinGLSurfaceView = findViewById(R.id.skin_view);
-        skinGLSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        skinGLSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
-        skinGLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        skinGLSurfaceView.setZOrderOnTop(true);
-        skinGLSurfaceView.setRenderer(renderer, 5f);
-        skinGLSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        skinGLSurfaceView.setPreserveEGLContextOnPause(true);
+        renderer = new SkinRenderer();
+        skinCanvas = findViewById(R.id.skin_view);
+        skinCanvas.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        skinCanvas.getHolder().setFormat(PixelFormat.RGBA_8888);
+        skinCanvas.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        skinCanvas.setZOrderOnTop(true);
+        skinCanvas.setRenderer(renderer, 5f);
+        skinCanvas.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        skinCanvas.setPreserveEGLContextOnPause(true);
 
         root = findViewById(R.id.root);
         title = findViewById(R.id.title);
@@ -132,10 +131,10 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         negative = findViewById(R.id.negative);
         negative.post(() -> {
             int size = root.getHeight() - title.getHeight() - positive.getHeight() - ConvertUtils.dip2px(getContext(), 40);
-            ViewGroup.LayoutParams layoutParams = skinGLSurfaceView.getLayoutParams();
+            ViewGroup.LayoutParams layoutParams = skinCanvas.getLayoutParams();
             layoutParams.width = size;
             layoutParams.height = size;
-            skinGLSurfaceView.setLayoutParams(layoutParams);
+            skinCanvas.setLayoutParams(layoutParams);
 
             positive.setOnClickListener(this);
             negative.setOnClickListener(this);

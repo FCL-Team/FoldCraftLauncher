@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toTopOf="@+id/positive"
         app:layout_constraintTop_toBottomOf="@+id/title">
 
-        <com.tungsten.fcllibrary.skin.SkinGLSurfaceView
+        <com.tungsten.fcllibrary.skin.SkinCanvas
             android:id="@+id/skin_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
