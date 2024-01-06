@@ -92,13 +92,7 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
 
         renderer = new SkinRenderer();
         skinCanvas = findViewById(R.id.skin_view);
-        skinCanvas.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        skinCanvas.getHolder().setFormat(PixelFormat.RGBA_8888);
-        skinCanvas.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-        skinCanvas.setZOrderOnTop(true);
         skinCanvas.setRenderer(renderer, 5f);
-        skinCanvas.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-        skinCanvas.setPreserveEGLContextOnPause(true);
 
         root = findViewById(R.id.root);
         title = findViewById(R.id.title);
