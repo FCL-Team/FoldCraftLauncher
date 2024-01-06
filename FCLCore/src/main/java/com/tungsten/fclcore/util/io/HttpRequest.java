@@ -219,16 +219,21 @@ public abstract class HttpRequest {
     }
 
     private static String getStringWithRetry(ExceptionalSupplier<String, IOException> supplier, int retryTimes) throws IOException {
-        SocketTimeoutException exception = null;
+        Throwable exception = null;
         for (int i = 0; i < retryTimes; i++) {
             try {
                 return supplier.get();
-            } catch (SocketTimeoutException e) {
+            } catch (Throwable e) {
                 exception = e;
             }
         }
-        if (exception != null)
-            throw exception;
+        if (exception != null) {
+            if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else {
+                throw new IOException(exception);
+            }
+        }
         throw new IOException("retry 0");
     }
 
