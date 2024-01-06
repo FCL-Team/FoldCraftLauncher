@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2021  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@ package com.tungsten.fcl.util;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
-import com.tungsten.fcl.upgrade.resource.RemoteResourceManager;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
@@ -28,7 +27,7 @@ import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -39,19 +38,19 @@ import java.util.stream.Collectors;
  * @see <a href="https://www.mcmod.cn">mcmod.cn</a>
  */
 public enum ModTranslations {
-    MOD("/assets/mod_data.txt", "translation", "mod_data", "1") {
+    MOD("/assets/mod_data.txt") {
         @Override
         public String getMcmodUrl(Mod mod) {
             return String.format("https://www.mcmod.cn/class/%s.html", mod.getMcmod());
         }
     },
-    MODPACK("/assets/modpack_data.txt", "translation", "modpack_data", "1") {
+    MODPACK("/assets/modpack_data.txt") {
         @Override
         public String getMcmodUrl(Mod mod) {
             return String.format("https://www.mcmod.cn/modpack/%s.html", mod.getMcmod());
         }
     },
-    EMPTY("", "", "", "") {
+    EMPTY("") {
         @Override
         public String getMcmodUrl(Mod mod) {
             return "";
@@ -69,18 +68,15 @@ public enum ModTranslations {
         }
     }
 
-    private final String defaultResourceName;
-    private final RemoteResourceManager.RemoteResourceKey remoteResourceKey;
+    private final String resourceName;
     private List<Mod> mods;
     private Map<String, Mod> modIdMap; // mod id -> mod
     private Map<String, Mod> curseForgeMap; // curseforge id -> mod
     private List<Pair<String, Mod>> keywords;
     private int maxKeywordLength = -1;
 
-    ModTranslations(String defaultResourceName, String namespace, String name, String version) {
-        this.defaultResourceName = defaultResourceName;
-
-        remoteResourceKey = RemoteResourceManager.get(namespace, name, version, () -> ModTranslations.class.getResourceAsStream(defaultResourceName));
+    ModTranslations(String resourceName) {
+        this.resourceName = resourceName;
     }
 
     @Nullable
@@ -102,9 +98,9 @@ public enum ModTranslations {
     public List<Mod> searchMod(String query) {
         if (!loadKeywords()) return Collections.emptyList();
 
-        StringBuilder newQuery = ((CharSequence) query).chars()
+        StringBuilder newQuery = query.chars()
                 .filter(ch -> !Character.isSpaceChar(ch))
-                .collect(StringBuilder::new, (sb, value) -> sb.append((char) value), StringBuilder::append);
+                .collect(StringBuilder::new, (sb, value) -> sb.append((char)value), StringBuilder::append);
         query = newQuery.toString();
 
         StringUtils.LongestCommonSubsequence lcs = new StringUtils.LongestCommonSubsequence(query.length(), maxKeywordLength);
@@ -121,24 +117,18 @@ public enum ModTranslations {
                 .collect(Collectors.toList());
     }
 
-    private boolean loaded() {
+    private boolean loadFromResource() {
         if (mods != null) return true;
-        if (StringUtils.isBlank(defaultResourceName)) {
+        if (StringUtils.isBlank(resourceName)) {
             mods = Collections.emptyList();
             return true;
         }
-
         try {
-            InputStream inputStream = remoteResourceKey.getResource();
-            if (inputStream == null) {
-                return false;
-            }
-
-            String modData = IOUtils.readFullyAsString(inputStream);
+            String modData = IOUtils.readFullyAsString(ModTranslations.class.getResourceAsStream(resourceName));
             mods = Arrays.stream(modData.split("\n")).filter(line -> !line.startsWith("#")).map(Mod::new).collect(Collectors.toList());
             return true;
         } catch (Exception e) {
-            LOG.log(Level.WARNING, "Failed to load " + defaultResourceName, e);
+            LOG.log(Level.WARNING, "Failed to load " + resourceName, e);
             return false;
         }
     }
@@ -149,7 +139,7 @@ public enum ModTranslations {
         }
 
         if (mods == null) {
-            if (!loaded()) return false;
+            if (!loadFromResource()) return false;
         }
 
         curseForgeMap = new HashMap<>();
@@ -167,7 +157,7 @@ public enum ModTranslations {
         }
 
         if (mods == null) {
-            if (!loaded()) return false;
+            if (!loadFromResource()) return false;
         }
 
         modIdMap = new HashMap<>();
@@ -187,7 +177,7 @@ public enum ModTranslations {
         }
 
         if (mods == null) {
-            if (!loaded()) return false;
+            if (!loadFromResource()) return false;
         }
 
         keywords = new ArrayList<>();
