@@ -7,28 +7,28 @@ public class DisplayAnimUtils {
 
     public static void showViewFromLeft(View view, boolean animation) {
         view.setVisibility(View.VISIBLE);
-        if (animation){
+        if (animation) {
             view.setAnimation(AnimationUtils.makeInAnimation(view.getContext(), true));
         }
     }
 
     public static void hideViewToLeft(View view, boolean animation) {
         view.setVisibility(View.GONE);
-        if (animation){
+        if (animation) {
             view.setAnimation(AnimationUtils.makeOutAnimation(view.getContext(), false));
         }
     }
 
     public static void showViewFromRight(View view, boolean animation) {
         view.setVisibility(View.VISIBLE);
-        if (animation){
+        if (animation) {
             view.setAnimation(AnimationUtils.makeInAnimation(view.getContext(), false));
         }
     }
 
     public static void hideViewToRight(View view, boolean animation) {
         view.setVisibility(View.GONE);
-        if (animation){
+        if (animation) {
             view.setAnimation(AnimationUtils.makeOutAnimation(view.getContext(), true));
         }
     }
