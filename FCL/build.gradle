@@ -108,9 +108,9 @@ ssh.settings {
 }
 
 remotes {
-    Properties prop = new Properties()
-    prop.load(new FileInputStream("${rootDir}/local.properties"))
     try {
+        Properties prop = new Properties()
+        prop.load(new FileInputStream("${rootDir}/local.properties"))
         debugServer {
             host = prop.getProperty("sftp.host")
             port = prop.getProperty("sftp.port").toInteger()
