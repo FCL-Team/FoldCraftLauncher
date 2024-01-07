@@ -10,7 +10,6 @@ import com.tungsten.fcl.R;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -36,7 +35,6 @@ public class ModVersionAdapter extends FCLAdapter {
         FCLTextView name;
         FCLTextView tag;
         FCLTextView date;
-        FCLImageButton save;
     }
 
     @Override
@@ -59,7 +57,6 @@ public class ModVersionAdapter extends FCLAdapter {
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.date = view.findViewById(R.id.date);
-            viewHolder.save = view.findViewById(R.id.save);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -67,36 +64,35 @@ public class ModVersionAdapter extends FCLAdapter {
         RemoteMod.Version version = list.get(i);
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(version));
         viewHolder.name.setText(version.getName());
-        viewHolder.tag.setText(getTag(version));
+        viewHolder.tag.setText(getTag(getContext(), version));
         viewHolder.date.setText(FORMATTER.format(version.getDatePublished().toInstant()));
-        viewHolder.save.setOnClickListener(v -> callback.saveAs(version));
         return view;
     }
 
-    private String getTag(RemoteMod.Version version) {
+    public static String getTag(Context context, RemoteMod.Version version) {
         StringBuilder stringBuilder = new StringBuilder();
         switch (version.getVersionType()) {
             case Beta:
             case Alpha:
-                stringBuilder.append(getContext().getString(R.string.version_game_snapshot));
+                stringBuilder.append(context.getString(R.string.version_game_snapshot));
                 break;
             default:
-                stringBuilder.append(getContext().getString(R.string.version_game_release));
+                stringBuilder.append(context.getString(R.string.version_game_release));
                 break;
         }
         for (ModLoaderType modLoaderType : version.getLoaders()) {
             switch (modLoaderType) {
                 case FORGE:
-                    stringBuilder.append("   ").append(getContext().getString(R.string.install_installer_forge));
+                    stringBuilder.append("   ").append(context.getString(R.string.install_installer_forge));
                     break;
                 case FABRIC:
-                    stringBuilder.append("   ").append(getContext().getString(R.string.install_installer_fabric));
+                    stringBuilder.append("   ").append(context.getString(R.string.install_installer_fabric));
                     break;
                 case LITE_LOADER:
-                    stringBuilder.append("   ").append(getContext().getString(R.string.install_installer_liteloader));
+                    stringBuilder.append("   ").append(context.getString(R.string.install_installer_liteloader));
                     break;
                 case QUILT:
-                    stringBuilder.append("   ").append(getContext().getString(R.string.install_installer_quilt));
+                    stringBuilder.append("   ").append(context.getString(R.string.install_installer_quilt));
                     break;
             }
         }
@@ -104,10 +100,9 @@ public class ModVersionAdapter extends FCLAdapter {
     }
 
     public interface Callback {
-        void saveAs(RemoteMod.Version version);
         void onItemSelect(RemoteMod.Version version);
     }
 
     @SuppressLint("ConstantLocale")
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault());
+    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL).withLocale(Locale.getDefault()).withZone(ZoneId.systemDefault());
 }

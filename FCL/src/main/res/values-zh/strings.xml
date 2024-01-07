@@ -93,12 +93,14 @@
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
     <string name="button_cancel">取消</string>
+    <string name="button_download">下载</string>
     <string name="button_export">导出</string>
     <string name="button_install">安装</string>
     <string name="button_next">下一步</string>
     <string name="button_prev">上一步</string>
     <string name="button_remove">删除</string>
     <string name="button_remove_confirm">您确定要删除吗？此操作无法撤销！</string>
+    <string name="button_save_as">另存为</string>
     <string name="button_select_all">全选</string>
     <string name="button_set">设置</string>
     <string name="button_reset">重置</string>
@@ -242,6 +244,7 @@
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
+    <string name="download_failed_refresh">加载版本列表失败，请重试</string>
 
     <string name="download_provider_mcbbs">我的世界中文论坛 (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
@@ -611,10 +614,18 @@
     <string name="mods_check_updates_update">更新</string>
     <string name="mods_choose_mod">选择模组</string>
     <string name="mods_curseforge">CurseForge</string>
-    <string name="mods_dependencies">依赖</string>
+    <string name="mods_dependency">依赖</string>
+    <string name="mods_dependency_embedded">内置的前置模组（已经由作者打包在模组文件中，无需另外下载）</string>
+    <string name="mods_dependency_optional">可选的前置模组（若缺失游戏能够正常运行，但模组功能可能缺失）</string>
+    <string name="mods_dependency_required">必须的前置模组（必须另外下载，缺失可能会导致游戏无法启动）</string>
+    <string name="mods_dependency_tool">前置库（必须另外下载，缺失可能会导致游戏无法启动）</string>
+    <string name="mods_dependency_include">内置的前置模组（已经由作者打包在模组文件中，无需另外下载）</string>
+    <string name="mods_dependency_incompatible">不兼容的模组（同时安装该模组和正在下载的模组会导致游戏无法启动）</string>
+    <string name="mods_dependency_broken">损坏的前置模组（该前置模组曾经在该模组仓库上存在过，但现在被删除了。换个下载源试试吧。）</string>
     <string name="mods_disable">禁用</string>
     <string name="mods_download">模组下载</string>
     <string name="mods_download_title">模组下载 - %1s</string>
+    <string name="mods_download_recommend">推荐版本 - Minecraft %1s</string>
     <string name="mods_enable">启用</string>
     <string name="mods_manage">管理模组</string>
     <string name="mods_mcbbs">MCBBS</string>
@@ -647,6 +658,8 @@
     <string name="search_hint_chinese">支持中英文搜索</string>
     <string name="search_hint_english">仅支持英文搜索</string>
     <string name="search_sort">排序</string>
+    <string name="search_first_page">第一页</string>
+    <string name="search_last_page">最后一页</string>
 
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>

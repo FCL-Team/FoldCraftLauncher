@@ -2,6 +2,7 @@ package com.tungsten.fcllibrary.skin;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -19,10 +20,12 @@ public class SkinCanvas extends GLSurfaceView {
 
     public SkinCanvas(Context context) {
         super(context);
+        init();
     }
 
     public SkinCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -65,9 +68,18 @@ public class SkinCanvas extends GLSurfaceView {
         return true;
     }
 
+    private void init() {
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+        getHolder().setFormat(PixelFormat.RGBA_8888);
+        getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        setZOrderOnTop(true);
+        setPreserveEGLContextOnPause(true);
+    }
+
     public void setRenderer(SkinRenderer renderer, float density) {
         this.renderer = renderer;
         this.density = density;
         super.setRenderer(renderer);
+        setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 }

@@ -52,13 +52,7 @@ public class MainUI extends FCLCommonUI {
         super.onStart();
         if (skinCanvas == null) {
             skinCanvas = new SkinCanvas(getContext());
-            skinCanvas.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-            skinCanvas.getHolder().setFormat(PixelFormat.RGBA_8888);
-            skinCanvas.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-            skinCanvas.setZOrderOnTop(true);
             skinCanvas.setRenderer(renderer, 5f);
-            skinCanvas.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
-            skinCanvas.setPreserveEGLContextOnPause(true);
         } else {
             skinCanvas.onResume();
             renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);

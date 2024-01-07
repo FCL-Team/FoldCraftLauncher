@@ -48,6 +48,8 @@ import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fclcore.util.io.HttpRequest;
+import com.tungsten.fclcore.util.io.IOUtils;
 
 @JsonAdapter(AuthlibInjectorServer.Deserializer.class)
 public class AuthlibInjectorServer implements Observable {
@@ -74,7 +76,7 @@ public class AuthlibInjectorServer implements Observable {
 
             try {
                 AuthlibInjectorServer server = new AuthlibInjectorServer(url);
-                server.refreshMetadata(readFullyWithoutClosing(conn.getInputStream()));
+                server.refreshMetadata(IOUtils.readFullyAsStringWithClosing(conn.getInputStream()));
                 return server;
             } finally {
                 conn.disconnect();
@@ -156,12 +158,11 @@ public class AuthlibInjectorServer implements Observable {
     }
 
     public void refreshMetadata() throws IOException {
-        refreshMetadata(readFullyAsByteArray(new URL(url).openStream()));
+        refreshMetadata(HttpRequest.GET(url).getString());
     }
 
-    private void refreshMetadata(byte[] rawResponse) throws IOException {
+    private void refreshMetadata(String text) throws IOException {
         long timestamp = System.currentTimeMillis();
-        String text = new String(rawResponse, UTF_8);
         try {
             setMetadataResponse(text, timestamp);
         } catch (JsonParseException e) {

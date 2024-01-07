@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2021  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,9 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.MurmurHash2;
+import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.io.HttpRequest;
-import com.tungsten.fclcore.util.io.JarUtils;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +43,8 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
 
     private static final String PREFIX = "https://api.curseforge.com";
     private static final String apiKey = "$2a$10$qqJ3zZFG5CDsVHk8eV5ft.2ywg2edBtHwS3gzFnw7CDe3X2cKpWZG";
+
+    private static final int WORD_PERFECT_MATCH_WEIGHT = 50;
 
     public static boolean isAvailable() {
         return true;
@@ -92,7 +95,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     }
 
     @Override
-    public Stream<RemoteMod> search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
+    public SearchResult search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
         if (category != null) categoryId = ((CurseAddon.Category) category.getSelf()).getId();
         Response<List<CurseAddon>> response = HttpRequest.GET(PREFIX + "/v1/mods/search",
@@ -103,12 +106,50 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                         pair("searchFilter", searchFilter),
                         pair("sortField", Integer.toString(toModsSearchSortField(sortType))),
                         pair("sortOrder", toSortOrder(sortOrder)),
-                        pair("index", Integer.toString(pageOffset)),
+                        pair("index", Integer.toString(pageOffset * pageSize)),
                         pair("pageSize", Integer.toString(pageSize)))
                 .header("X-API-KEY", apiKey)
                 .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                 }.getType());
-        return response.getData().stream().map(CurseAddon::toMod);
+        Stream<RemoteMod> res = response.getData().stream().map(CurseAddon::toMod);
+        if (sortType != SortType.NAME || searchFilter.length() == 0) {
+            return new SearchResult(res, (int)Math.ceil((double)response.pagination.totalCount / pageSize));
+        }
+
+        String lowerCaseSearchFilter = searchFilter.toLowerCase();
+        Map<String, Integer> searchFilterWords = new HashMap<>();
+        for (String s : StringUtils.tokenize(lowerCaseSearchFilter)) {
+            searchFilterWords.put(s, searchFilterWords.getOrDefault(s, 0) + 1);
+        }
+
+        return new SearchResult(res.map(remoteMod -> {
+            String lowerCaseResult = remoteMod.getTitle().toLowerCase();
+            int[][] lev = new int[lowerCaseSearchFilter.length() + 1][lowerCaseResult.length() + 1];
+            for (int i = 0; i < lowerCaseResult.length() + 1; i++) {
+                lev[0][i] = i;
+            }
+            for (int i = 0; i < lowerCaseSearchFilter.length() + 1; i++) {
+                lev[i][0] = i;
+            }
+            for (int i = 1; i < lowerCaseSearchFilter.length() + 1; i++) {
+                for (int j = 1; j < lowerCaseResult.length() + 1; j++) {
+                    int countByInsert = lev[i][j - 1] + 1;
+                    int countByDel = lev[i - 1][j] + 1;
+                    int countByReplace = lowerCaseSearchFilter.charAt(i - 1) == lowerCaseResult.charAt(j - 1) ? lev[i - 1][j - 1] : lev[i - 1][j - 1] + 1;
+                    lev[i][j] = Math.min(countByInsert, Math.min(countByDel, countByReplace));
+                }
+            }
+
+            int diff = lev[lowerCaseSearchFilter.length()][lowerCaseResult.length()];
+
+            for (String s : StringUtils.tokenize(lowerCaseResult)) {
+                if (searchFilterWords.containsKey(s)) {
+                    diff -= WORD_PERFECT_MATCH_WEIGHT * searchFilterWords.get(s) * s.length();
+                }
+            }
+
+            return pair(remoteMod, diff);
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), res, response.pagination.totalCount);
     }
 
     @Override
