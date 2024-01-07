@@ -117,7 +117,7 @@ remotes {
             user = prop.getProperty("sftp.username")
             password = prop.getProperty("sftp.password")
         }
-    }catch (Exception e){
+    } catch (Exception e) {
 
     }
 }
