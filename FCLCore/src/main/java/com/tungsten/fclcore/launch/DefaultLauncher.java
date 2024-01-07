@@ -387,7 +387,6 @@ public class DefaultLauncher extends Launcher {
     public FCLBridge launch() throws IOException, InterruptedException {
         final CommandBuilder command = generateCommandLine();
 
-        // To guarantee that when failed to generate launch command line, we will not call pre-launch command
         List<String> rawCommandLine = command.asList();
 
         if (rawCommandLine.stream().anyMatch(StringUtils::isBlank)) {
