@@ -92,6 +92,7 @@
     <string name="assets_download_all">检查资源文件完整性</string>
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
 
+    <string name="button_back">返回</string>
     <string name="button_cancel">取消</string>
     <string name="button_download">下载</string>
     <string name="button_export">导出</string>

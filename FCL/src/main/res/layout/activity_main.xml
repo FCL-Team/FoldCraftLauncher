@@ -233,9 +233,18 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_back"
+            android:layout_marginTop="10dp"
+            app:ripple="true"/>
         
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/launch"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/launch"

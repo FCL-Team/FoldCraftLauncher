@@ -85,6 +85,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     private FCLImageView icon;
     private FCLTextView versionName;
     private FCLTextView versionHint;
+    private FCLButton back;
     private FCLButton launch;
 
     private ObjectProperty<Account> currentAccount;
@@ -164,12 +165,14 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             icon = findViewById(R.id.icon);
             versionName = findViewById(R.id.version_name);
             versionHint = findViewById(R.id.version_hint);
+            back = findViewById(R.id.back);
             launch = findViewById(R.id.launch);
             account.setOnClickListener(this);
             version.setOnClickListener(this);
+            back.setOnClickListener(this);
             launch.setOnClickListener(this);
-            launch.setOnLongClickListener(view ->{
-                startActivity(new Intent(MainActivity.this,ShellActivity.class));
+            launch.setOnLongClickListener(view -> {
+                startActivity(new Intent(MainActivity.this, ShellActivity.class));
                 return true;
             });
 
@@ -297,6 +300,11 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             refreshMenuView(null);
             titleView.setTextWithAnim(getString(R.string.version));
             uiManager.switchUI(uiManager.getVersionUI());
+        }
+        if (view == back) {
+            if (uiManager != null) {
+                uiManager.onBackPressed();
+            }
         }
         if (view == launch) {
             Versions.launch(this, Profiles.getSelectedProfile());

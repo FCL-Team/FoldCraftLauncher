@@ -104,6 +104,7 @@
     <string name="assets_download_all">Validating assets integrity</string>
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
+    <string name="button_back">Back</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_download">Download</string>
     <string name="button_export">Export</string>
