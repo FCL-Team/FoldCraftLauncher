@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ListView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
@@ -21,12 +19,12 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.SimpleMultimap;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -50,25 +48,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private final ModTranslations translations;
     private final RemoteMod addon;
     private final Profile.ProfileVersion version;
-    private final RemoteModDownloadPage.DownloadCallback callback;
+    private final RemoteModVersionPage.DownloadCallback callback;
     private final DownloadPage page;
 
-    private List<RemoteMod> dependencies;
-    private SimpleMultimap<String, RemoteMod.Version> versions;
+    private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> versions;
 
-    private ConstraintLayout layout;
+    private FCLLinearLayout layout;
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
-    private FCLLinearLayout dependencyLayout;
     private ListView versionListView;
-    private ListView dependencyListView;
     private FCLImageView icon;
     private FCLTextView name;
     private FCLTextView tag;
     private FCLTextView description;
     private FCLImageButton website;
 
-    public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModDownloadPage.DownloadCallback callback) {
+    public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
 
         this.page = page;
@@ -86,9 +81,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
 
-        dependencyLayout = findViewById(R.id.dependency_layout);
         versionListView = findViewById(R.id.version_list);
-        dependencyListView = findViewById(R.id.dependency_list);
         icon = findViewById(R.id.icon);
         name = findViewById(R.id.name);
         tag = findViewById(R.id.tag);
@@ -131,20 +124,11 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         loadModVersions();
     }
 
-    private void loadDependencies() {
-        dependencyLayout.setVisibility(dependencies.size() > 0 ? View.VISIBLE : View.GONE);
-        DependencyAdapter adapter = new DependencyAdapter(getContext(), page, dependencies, mod -> {
-            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this.page, mod, version, callback);
-            DownloadPageManager.getInstance().showTempPage(page);
-        });
-        dependencyListView.setAdapter(adapter);
-    }
-
     private void loadGameVersions() {
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), versions.keys().stream()
                 .sorted(VersionNumber.VERSION_COMPARATOR.reversed())
                 .collect(Collectors.toList()), v -> {
-            RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, new ArrayList<>(versions.get(v)), version, callback);
+            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
             DownloadPageManager.getInstance().showTempPage(page);
         });
         versionListView.setAdapter(adapter);
@@ -153,33 +137,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private void loadModVersions() {
         setLoading(true);
 
-        Task.allOf(
-                        Task.supplyAsync(() -> addon.getData().loadDependencies(repository)),
-                        Task.supplyAsync(() -> {
-                            Stream<RemoteMod.Version> versions = addon.getData().loadVersions(repository);
-                            return sortVersions(versions);
-                        }))
-                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
-                    setLoading(false);
-                    if (exception == null) {
-                        @SuppressWarnings("unchecked")
-                        List<RemoteMod> dependencies = (List<RemoteMod>) result.get(0);
-                        @SuppressWarnings("unchecked")
-                        SimpleMultimap<String, RemoteMod.Version> versions = (SimpleMultimap<String, RemoteMod.Version>) result.get(1);
-
-                        this.dependencies = dependencies;
-                        this.versions = versions;
-
-                        loadDependencies();
-                        loadGameVersions();
-                    } else {
-                        setFailed();
-                    }
-                }).start();
+        Task.supplyAsync(() -> {
+            Stream<RemoteMod.Version> versions = addon.getData().loadVersions(repository);
+            return sortVersions(versions);
+        }).whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+            if (exception == null) {
+                this.versions = result;
+                loadGameVersions();
+            } else {
+                setFailed();
+            }
+            setLoading(false);
+        }).start();
     }
 
-    private SimpleMultimap<String, RemoteMod.Version> sortVersions(Stream<RemoteMod.Version> versions) {
-        SimpleMultimap<String, RemoteMod.Version> classifiedVersions
+    private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {
+        SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> classifiedVersions
                 = new SimpleMultimap<>(HashMap::new, ArrayList::new);
         versions.forEach(version -> {
             for (String gameVersion : version.getGameVersions()) {
@@ -188,7 +161,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         });
 
         for (String gameVersion : classifiedVersions.keys()) {
-            List<RemoteMod.Version> versionList = (List<RemoteMod.Version>) classifiedVersions.get(gameVersion);
+            List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
         }
         return classifiedVersions;

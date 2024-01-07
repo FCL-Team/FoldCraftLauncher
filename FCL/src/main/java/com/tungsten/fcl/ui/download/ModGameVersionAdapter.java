@@ -40,7 +40,7 @@ public class ModGameVersionAdapter extends FCLAdapter {
         return list.get(i);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
@@ -62,7 +62,7 @@ public class ModGameVersionAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         viewHolder.parent.setOnClickListener(v -> callback.onSelect(list.get(i)));
-        viewHolder.version.setText(list.get(i));
+        viewHolder.version.setText("Minecraft " + list.get(i));
         return view;
     }
 

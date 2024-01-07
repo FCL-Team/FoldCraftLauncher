@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/ui_bg_color"
     android:paddingTop="10dp"
     android:paddingStart="10dp"
@@ -7,11 +8,134 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"/>
+        android:orientation="vertical">
+
+        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            app:auto_linear_background_tint="true"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/bg_container_white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:id="@+id/name"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:id="@+id/tag"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    app:auto_text_tint="true"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:id="@+id/date"
+                android:singleLine="true"
+                app:auto_text_tint="true"/>
+
+        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp">
+
+            <com.tungsten.fcllibrary.component.view.FCLProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progress"
+                android:layout_centerInParent="true"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLImageButton
+                android:id="@+id/retry"
+                android:src="@drawable/ic_baseline_refresh_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
+
+            <ScrollView
+                android:background="@drawable/bg_container_white"
+                android:id="@+id/dependency_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/dependency_container"/>
+
+            </ScrollView>
+
+        </RelativeLayout>
+
+        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                app:ripple="true"
+                android:layout_marginEnd="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/button_download"
+                android:layout_weight="1"
+                android:id="@+id/download"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                app:ripple="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/button_save_as"
+                android:layout_weight="1"
+                android:id="@+id/save_as"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                app:ripple="true"
+                android:layout_marginStart="5dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/dialog_negative"
+                android:layout_weight="1"
+                android:id="@+id/cancel"/>
+
+        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

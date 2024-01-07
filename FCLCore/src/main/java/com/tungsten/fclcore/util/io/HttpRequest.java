@@ -143,7 +143,7 @@ public abstract class HttpRequest {
             return getStringWithRetry(() -> {
                 HttpURLConnection con = createConnection();
                 con = resolveConnection(con);
-                return IOUtils.readFullyAsString(con.getInputStream());
+                return IOUtils.readFullyAsString("gzip".equals(con.getContentEncoding()) ? IOUtils.wrapFromGZip(con.getInputStream()) : con.getInputStream());
             }, retryTimes);
         }
     }

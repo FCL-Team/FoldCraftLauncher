@@ -15,11 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tungsten.fclcore.mod;
+package com.tungsten.fclcore.mod.modinfo;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.tungsten.fclcore.mod.LocalModFile;
+import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.Validation;
 import com.tungsten.fclcore.util.io.FileUtils;

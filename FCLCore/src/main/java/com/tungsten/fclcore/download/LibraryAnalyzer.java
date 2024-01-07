@@ -22,6 +22,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.game.VersionProvider;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.util.Pair;
 
 import org.jetbrains.annotations.NotNull;
@@ -162,11 +163,20 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
                 || mainClass.startsWith("cpw.mods"));
     }
 
+    public Set<ModLoaderType> getModLoaders() {
+        return Arrays.stream(LibraryType.values())
+                .filter(LibraryType::isModLoader)
+                .filter(this::has)
+                .map(LibraryType::getModLoaderType)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
     public enum LibraryType {
-        MINECRAFT(true, "game", Pattern.compile("^$"), Pattern.compile("^$")),
-        FABRIC(true, "fabric", Pattern.compile("net\\.fabricmc"), Pattern.compile("fabric-loader")),
-        FABRIC_API(true, "fabric-api", Pattern.compile("net\\.fabricmc"), Pattern.compile("fabric-api")),
-        FORGE(true, "forge", Pattern.compile("net\\.minecraftforge"), Pattern.compile("(forge|fmlloader)")) {
+        MINECRAFT(true, "game", Pattern.compile("^$"), Pattern.compile("^$"), null),
+        FABRIC(true, "fabric", Pattern.compile("net\\.fabricmc"), Pattern.compile("fabric-loader"), ModLoaderType.FABRIC),
+        FABRIC_API(true, "fabric-api", Pattern.compile("net\\.fabricmc"), Pattern.compile("fabric-api"), null),
+        FORGE(true, "forge", Pattern.compile("net\\.minecraftforge"), Pattern.compile("(forge|fmlloader)"), ModLoaderType.FORGE) {
             private final Pattern FORGE_VERSION_MATCHER = Pattern.compile("^([0-9.]+)-(?<forge>[0-9.]+)(-([0-9.]+))?$");
 
             @Override
@@ -178,21 +188,23 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
                 return super.patchVersion(libraryVersion);
             }
         },
-        LITELOADER(true, "liteloader", Pattern.compile("com\\.mumfrey"), Pattern.compile("liteloader")),
-        OPTIFINE(false, "optifine", Pattern.compile("(net\\.)?optifine"), Pattern.compile("^(?!.*launchwrapper).*$")),
-        QUILT(true, "quilt", Pattern.compile("org\\.quiltmc"), Pattern.compile("quilt-loader")),
-        QUILT_API(true, "quilt-api", Pattern.compile("org\\.quiltmc"), Pattern.compile("quilt-api")),
-        BOOTSTRAP_LAUNCHER(false, "", Pattern.compile("cpw\\.mods"), Pattern.compile("bootstraplauncher"));
+        LITELOADER(true, "liteloader", Pattern.compile("com\\.mumfrey"), Pattern.compile("liteloader"), ModLoaderType.LITE_LOADER),
+        OPTIFINE(false, "optifine", Pattern.compile("(net\\.)?optifine"), Pattern.compile("^(?!.*launchwrapper).*$"), null),
+        QUILT(true, "quilt", Pattern.compile("org\\.quiltmc"), Pattern.compile("quilt-loader"), ModLoaderType.QUILT),
+        QUILT_API(true, "quilt-api", Pattern.compile("org\\.quiltmc"), Pattern.compile("quilt-api"), null),
+        BOOTSTRAP_LAUNCHER(false, "", Pattern.compile("cpw\\.mods"), Pattern.compile("bootstraplauncher"), null);
 
         private final boolean modLoader;
         private final String patchId;
         private final Pattern group, artifact;
+        private final ModLoaderType modLoaderType;
 
-        LibraryType(boolean modLoader, String patchId, Pattern group, Pattern artifact) {
+        LibraryType(boolean modLoader, String patchId, Pattern group, Pattern artifact, ModLoaderType modLoaderType) {
             this.modLoader = modLoader;
             this.patchId = patchId;
             this.group = group;
             this.artifact = artifact;
+            this.modLoaderType = modLoaderType;
         }
 
         public boolean isModLoader() {
@@ -201,6 +213,10 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
 
         public String getPatchId() {
             return patchId;
+        }
+
+        public ModLoaderType getModLoaderType() {
+            return modLoaderType;
         }
 
         public static LibraryType fromPatchId(String patchId) {
@@ -245,13 +261,13 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     public static final String BOOTSTRAP_LAUNCHER_MAIN = "cpw.mods.bootstraplauncher.BootstrapLauncher";
 
     public static final String[] FORGE_TWEAKERS = new String[] {
-            "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker", // 1.5.2
-            "cpw.mods.fml.common.launcher.FMLTweaker", // 1.6.1 ~ 1.7.10
-            "net.minecraftforge.fml.common.launcher.FMLTweaker" // 1.8 ~ 1.12.2
+        "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker", // 1.5.2
+        "cpw.mods.fml.common.launcher.FMLTweaker", // 1.6.1 ~ 1.7.10
+        "net.minecraftforge.fml.common.launcher.FMLTweaker" // 1.8 ~ 1.12.2
     };
     public static final String[] OPTIFINE_TWEAKERS = new String[] {
-            "optifine.OptiFineTweaker",
-            "optifine.OptiFineForgeTweaker"
+        "optifine.OptiFineTweaker",
+        "optifine.OptiFineForgeTweaker"
     };
     public static final String LITELOADER_TWEAKER = "com.mumfrey.liteloader.launch.LiteLoaderTweaker";
 }

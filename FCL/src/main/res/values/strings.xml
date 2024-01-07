@@ -105,12 +105,14 @@
     <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
 
     <string name="button_cancel">Cancel</string>
+    <string name="button_download">Download</string>
     <string name="button_export">Export</string>
     <string name="button_install">Install</string>
     <string name="button_next">Next</string>
     <string name="button_prev">Prev</string>
     <string name="button_remove">Remove</string>
     <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
+    <string name="button_save_as">Save As</string>
     <string name="button_select_all">Select All</string>
     <string name="button_set">Set</string>
     <string name="button_reset">Reset</string>
@@ -255,6 +257,7 @@
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
+    <string name="download_failed_refresh">Unable to fetch version list. Please retry.</string>
 
     <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
@@ -632,10 +635,18 @@
     <string name="mods_check_updates_update">Update</string>
     <string name="mods_choose_mod">Choose a mod</string>
     <string name="mods_curseforge">CurseForge</string>
-    <string name="mods_dependencies">Dependencies</string>
+    <string name="mods_dependency">Dependency</string>
+    <string name="mods_dependency_embedded">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
+    <string name="mods_dependency_optional">optional pre-mod (if the game is missing, but mod functionality may be missing)</string>
+    <string name="mods_dependency_required">required pre-mod (must be downloaded separately, missing may cause the game to fail to launch)</string>
+    <string name="mods_dependency_tool">precursor library (must be downloaded separately, missing may cause the game to fail to launch)</string>
+    <string name="mods_dependency_include">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
+    <string name="mods_dependency_incompatible">incompatible mod (installing both the mod and the mod being downloaded will cause the game to fail to launch)</string>
+    <string name="mods_dependency_broken">Broken pre-mod (This premod used to exist on the mod repository, but is now deleted.) Try a different download source.</string>
     <string name="mods_disable">Disable</string>
     <string name="mods_download">Mod Download</string>
     <string name="mods_download_title">Mod Download - %1s</string>
+    <string name="mods_download_recommend">Recommended Mod Version - Minecraft %1s</string>
     <string name="mods_enable">Enable</string>
     <string name="mods_manage">Manage Mods</string>
     <string name="mods_mcbbs">MCBBS</string>
@@ -668,6 +679,11 @@
     <string name="search_hint_chinese">Search queries support both Chinese and English</string>
     <string name="search_hint_english">Only English is supported</string>
     <string name="search_sort">Sort By</string>
+    <string name="search_first_page">The first page</string>
+    <string name="search_previous_page" translatable="false">◀</string>
+    <string name="search_next_page" translatable="false">▶</string>
+    <string name="search_last_page">The last page</string>
+    <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>

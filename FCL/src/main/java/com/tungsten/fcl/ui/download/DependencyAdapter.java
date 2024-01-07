@@ -45,7 +45,7 @@ public class DependencyAdapter extends FCLAdapter {
         return list.get(i);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
@@ -69,7 +69,7 @@ public class DependencyAdapter extends FCLAdapter {
         RemoteMod remoteMod = list.get(i);
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(remoteMod));
         ModTranslations.Mod mod = ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType()).getModByCurseForgeId(remoteMod.getSlug());
-        viewHolder.name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : remoteMod.getTitle());
+        viewHolder.name.setText(getContext().getString(R.string.mods_dependency) + ": " + (mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : remoteMod.getTitle()));
         return view;
     }
 
