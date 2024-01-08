@@ -5,6 +5,7 @@
 #include "fcl/include/fcl_internal.h"
 
 static JavaVM *dalvikJavaVMPtr;
+static JavaVM* runtimeJavaVMPtr;
 static JNIEnv* runtimeJNIEnvPtr_GRAPHICS;
 
 jclass class_FCLBridge;
@@ -20,6 +21,8 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         class_FCLBridge = fcl->class_FCLBridge;
         method_OpenLink = (*env)->GetStaticMethodID(env, class_FCLBridge, "openLink",
                                                     "(Ljava/lang/String;)V");
+    } else if (dalvikJavaVMPtr != vm) {
+        runtimeJavaVMPtr = vm;
     }
     return JNI_VERSION_1_4;
 }
@@ -66,10 +69,10 @@ Java_sun_awt_peer_cacio_FCLClipboard_clipboardCopy(JNIEnv *env, jclass clazz, js
 
 JNIEXPORT jintArray JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_renderAWTScreenFrame(JNIEnv* env, jclass clazz) {
     if (runtimeJNIEnvPtr_GRAPHICS == NULL) {
-        if (dalvikJavaVMPtr == NULL) {
+        if (runtimeJavaVMPtr == NULL) {
             return NULL;
         } else {
-            (*dalvikJavaVMPtr)->AttachCurrentThread(dalvikJavaVMPtr, &runtimeJNIEnvPtr_GRAPHICS, NULL);
+            (*runtimeJavaVMPtr)->AttachCurrentThread(runtimeJavaVMPtr, &runtimeJNIEnvPtr_GRAPHICS, NULL);
         }
     }
 
