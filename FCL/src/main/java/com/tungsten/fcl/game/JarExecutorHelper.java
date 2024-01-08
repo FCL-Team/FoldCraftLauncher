@@ -49,7 +49,8 @@ public class JarExecutorHelper {
     }
 
     private static void launchJarExecutor(Context context, File file) {
-        int javaVersion = getJavaVersion(file);
+        int version = getJavaVersion(file);
+        int javaVersion = getNearestJavaVersion(version);
         JarExecutorLauncher launcher = new JarExecutorLauncher(context);
         launcher.setInfo(file.getAbsolutePath(), javaVersion);
         try {
@@ -68,46 +69,53 @@ public class JarExecutorHelper {
         }
     }
 
+    private static int getNearestJavaVersion(int majorVersion) {
+        if (majorVersion == -1)
+            return 8;
+        int diffFactorFirst = Math.abs(8 - majorVersion);
+        int diffFactorSecond = Math.abs(17 - majorVersion);
+        return diffFactorFirst < diffFactorSecond ? 8 : 17;
+    }
+
     private static int getJavaVersion(File file) {
         try (ZipFile zipFile = new ZipFile(file)) {
             ZipEntry manifest = zipFile.getEntry("META-INF/MANIFEST.MF");
             if (manifest == null)
-                return 8;
+                return -1;
 
             String manifestString = IOUtils.readFullyAsStringWithClosing(zipFile.getInputStream(manifest));
             String mainClass = extractUntilCharacter(manifestString, "Main-Class:", '\n');
             if (mainClass == null)
-                return 8;
+                return -1;
 
             mainClass = mainClass.trim().replace('.', '/') + ".class";
             ZipEntry mainClassFile = zipFile.getEntry(mainClass);
             if (mainClassFile == null)
-                return 8;
+                return -1;
 
             InputStream classStream = zipFile.getInputStream(mainClassFile);
             byte[] bytesWeNeed = new byte[8];
             int readCount = classStream.read(bytesWeNeed);
             classStream.close();
             if (readCount < 8)
-                return 8;
+                return -1;
 
             ByteBuffer byteBuffer = ByteBuffer.wrap(bytesWeNeed);
             if (byteBuffer.getInt() != 0xCAFEBABE)
-                return 8;
+                return -1;
             short minorVersion = byteBuffer.getShort();
             short majorVersion = byteBuffer.getShort();
             Log.i("JavaGUILauncher", majorVersion + ", " + minorVersion);
             return classVersionToJavaVersion(majorVersion);
         } catch (Exception e) {
             e.printStackTrace();
-            return 8;
+            return -1;
         }
     }
-
     private static int classVersionToJavaVersion(int majorVersion) {
-        if (majorVersion <= 52)
-            return 8;
-        return 17;
+        if (majorVersion < 46)
+            return 2;
+        return majorVersion - 44;
     }
 
     public static String extractUntilCharacter(String input, String whatFor, char terminator) {
