@@ -12,6 +12,7 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -121,13 +122,9 @@ public class LocalModListAdapter extends FCLAdapter {
         }
         viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modInfoObject.getActive());
         viewHolder.name.setText(modInfoObject.getTitle());
-        if (modInfoObject.getMod() != null && LocaleUtils.isChinese(getContext())) {
-            viewHolder.tag.setText(modInfoObject.getMod().getDisplayName());
-            viewHolder.tag.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.tag.setText("");
-            viewHolder.tag.setVisibility(View.GONE);
-        }
+        String tag = getTag(modInfoObject);
+        viewHolder.tag.setText(tag);
+        viewHolder.tag.setVisibility(tag.equals("") ? View.GONE : View.VISIBLE);
         viewHolder.description.setText(modInfoObject.getSubtitle());
         viewHolder.restore.setVisibility(modInfoObject.getModInfo().getMod().getOldFiles().isEmpty() ? View.GONE : View.VISIBLE);
         viewHolder.restore.setOnClickListener(v -> {
@@ -142,5 +139,33 @@ public class LocalModListAdapter extends FCLAdapter {
             dialog.show();
         });
         return view;
+    }
+
+    private String getTag(ModListPage.ModInfoObject modInfoObject) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String modLoaderType = getModLoader(modInfoObject.getModInfo().getModLoaderType());
+        stringBuilder.append(modLoaderType);
+        if (modInfoObject.getMod() != null && LocaleUtils.isChinese(getContext())) {
+            String pre = modLoaderType.equals("") ? "" : "   ";
+            stringBuilder.append(pre).append(modInfoObject.getMod().getDisplayName());
+        }
+        return stringBuilder.toString();
+    }
+
+    private String getModLoader(ModLoaderType modLoaderType) {
+        switch (modLoaderType) {
+            case FORGE:
+                return getContext().getString(R.string.install_installer_forge);
+            case NEO_FORGED:
+                return getContext().getString(R.string.install_installer_neoforge);
+            case FABRIC:
+                return getContext().getString(R.string.install_installer_fabric);
+            case LITE_LOADER:
+                return getContext().getString(R.string.install_installer_liteloader);
+            case QUILT:
+                return getContext().getString(R.string.install_installer_quilt);
+            default:
+                return "";
+        }
     }
 }

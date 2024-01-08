@@ -15,6 +15,7 @@ import com.tungsten.fclcore.download.fabric.FabricRemoteVersion;
 import com.tungsten.fclcore.download.forge.ForgeRemoteVersion;
 import com.tungsten.fclcore.download.game.GameRemoteVersion;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderRemoteVersion;
+import com.tungsten.fclcore.download.neoforge.NeoForgeRemoteVersion;
 import com.tungsten.fclcore.download.optifine.OptiFineRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltAPIRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion;
@@ -94,6 +95,8 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             return getContext().getDrawable(R.drawable.img_command);
         else if (remoteVersion instanceof ForgeRemoteVersion)
             return getContext().getDrawable(R.drawable.img_forge);
+        else if (remoteVersion instanceof NeoForgeRemoteVersion)
+            return getContext().getDrawable(R.drawable.img_neoforge);
         else if (remoteVersion instanceof FabricRemoteVersion || remoteVersion instanceof FabricAPIRemoteVersion)
             return getContext().getDrawable(R.drawable.img_fabric);
         else if (remoteVersion instanceof QuiltRemoteVersion || remoteVersion instanceof QuiltAPIRemoteVersion)

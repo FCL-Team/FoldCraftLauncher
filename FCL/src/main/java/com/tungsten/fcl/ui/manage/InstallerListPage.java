@@ -101,7 +101,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
 
             InstallerItem.InstallerItemGroup group = new InstallerItem.InstallerItemGroup(getContext());
 
-            // Conventional libraries: game, fabric, quilt, forge, liteloader, optifine
+            // Conventional libraries: game, fabric, quilt, forge, neoforge, liteloader, optifine
             for (InstallerItem installerItem : group.getLibraries()) {
                 String libraryId = installerItem.getLibraryId();
                 String libraryVersion = analyzer.getVersion(libraryId).orElse(null);

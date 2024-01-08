@@ -59,9 +59,9 @@ public final class CurseInstallTask extends Task<Void> {
      * Constructor.
      *
      * @param dependencyManager the dependency manager.
-     * @param zipFile the CurseForge modpack file.
-     * @param manifest The manifest content of given CurseForge modpack.
-     * @param name the new version name
+     * @param zipFile           the CurseForge modpack file.
+     * @param manifest          The manifest content of given CurseForge modpack.
+     * @param name              the new version name
      */
     public CurseInstallTask(DefaultDependencyManager dependencyManager, File zipFile, Modpack modpack, CurseManifest manifest, String name) {
         this.dependencyManager = dependencyManager;
@@ -82,6 +82,8 @@ public final class CurseInstallTask extends Task<Void> {
                 builder.version("forge", modLoader.getId().substring("forge-".length()));
             } else if (modLoader.getId().startsWith("fabric-")) {
                 builder.version("fabric", modLoader.getId().substring("fabric-".length()));
+            } else if (modLoader.getId().startsWith("neoforge-")) {
+                builder.version("neoforge", modLoader.getId().substring("neoforge-".length()));
             }
         }
         dependents.add(builder.buildAsync());

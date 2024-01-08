@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
@@ -77,7 +78,7 @@ public class ModInfoDialog extends FCLDialog implements View.OnClickListener {
         }
 
         name.setText(modInfoObject.getModInfo().getName());
-        version.setText(modInfoObject.getModInfo().getVersion());
+        version.setText(getTag(modInfoObject));
         fileName.setText(FileUtils.getName(modInfoObject.getModInfo().getFile()));
         description.setText(modInfoObject.getModInfo().getDescription().toString());
 
@@ -91,6 +92,29 @@ public class ModInfoDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == positive) {
             dismiss();
+        }
+    }
+
+    private String getTag(ModListPage.ModInfoObject modInfoObject) {
+        String modLoaderType = getModLoader(modInfoObject.getModInfo().getModLoaderType());
+        String split = modLoaderType.equals("") ? "" : "   ";
+        return modLoaderType + split + modInfoObject.getModInfo().getVersion();
+    }
+
+    private String getModLoader(ModLoaderType modLoaderType) {
+        switch (modLoaderType) {
+            case FORGE:
+                return getContext().getString(R.string.install_installer_forge);
+            case NEO_FORGED:
+                return getContext().getString(R.string.install_installer_neoforge);
+            case FABRIC:
+                return getContext().getString(R.string.install_installer_fabric);
+            case LITE_LOADER:
+                return getContext().getString(R.string.install_installer_liteloader);
+            case QUILT:
+                return getContext().getString(R.string.install_installer_quilt);
+            default:
+                return "";
         }
     }
 }

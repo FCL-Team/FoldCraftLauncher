@@ -271,8 +271,10 @@ public class FCLGameRepository extends DefaultGameRepository {
         File iconFile = getVersionIconFile(id);
         if (iconFile.exists())
             return BitmapDrawable.createFromPath(iconFile.getAbsolutePath());
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.BOOTSTRAP_LAUNCHER))
+        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_forge);
+        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+            return FCLPath.CONTEXT.getDrawable(R.drawable.img_neoforge);
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.LITELOADER))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_chicken);
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.OPTIFINE))

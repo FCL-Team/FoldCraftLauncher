@@ -587,6 +587,7 @@
     <string name="modrinth_category_mobs">生物</string>
     <string name="modrinth_category_modloader">Modloader</string>
     <string name="modrinth_category_multiplayer">多人</string>
+    <string name="modrinth_category_neoforge">NeoForge</string>
     <string name="modrinth_category_optimization">优化</string>
     <string name="modrinth_category_paper">Paper</string>
     <string name="modrinth_category_purpur">Purpur</string>

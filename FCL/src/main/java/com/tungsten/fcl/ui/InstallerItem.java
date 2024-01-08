@@ -4,6 +4,7 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC_API;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOADER;
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.NEO_FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.OPTIFINE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT_API;
@@ -80,6 +81,8 @@ public class InstallerItem {
         switch (id) {
             case FORGE:
                 return context.getDrawable(R.drawable.img_forge);
+            case NEO_FORGE:
+                return context.getDrawable(R.drawable.img_neoforge);
             case LITELOADER:
                 return context.getDrawable(R.drawable.img_chicken);
             case OPTIFINE:
@@ -106,6 +109,7 @@ public class InstallerItem {
         public final InstallerItem fabric;
         public final InstallerItem fabricApi;
         public final InstallerItem forge;
+        public final InstallerItem neoForge;
         public final InstallerItem liteLoader;
         public final InstallerItem optiFine;
         public final InstallerItem quilt;
@@ -117,6 +121,7 @@ public class InstallerItem {
             fabric = new InstallerItem(context, FABRIC);
             fabricApi = new InstallerItem(context, FABRIC_API);
             forge = new InstallerItem(context, FORGE);
+            neoForge = new InstallerItem(context, NEO_FORGE);
             liteLoader = new InstallerItem(context, LITELOADER);
             optiFine = new InstallerItem(context, OPTIFINE);
             quilt = new InstallerItem(context, QUILT);
@@ -125,30 +130,41 @@ public class InstallerItem {
             forge.incompatibleLibraryName.bind(Bindings.createStringBinding(() -> {
                 if (fabric.libraryVersion.get() != null) return FABRIC.getPatchId();
                 if (quilt.libraryVersion.get() != null) return QUILT.getPatchId();
+                if (neoForge.libraryVersion.get() != null) return NEO_FORGE.getPatchId();
                 return null;
-            }, fabric.libraryVersion, quilt.libraryVersion));
+            }, fabric.libraryVersion, quilt.libraryVersion, neoForge.libraryVersion));
+
+            neoForge.incompatibleLibraryName.bind(Bindings.createStringBinding(() -> {
+                if (fabric.libraryVersion.get() != null) return FABRIC.getPatchId();
+                if (quilt.libraryVersion.get() != null) return QUILT.getPatchId();
+                if (forge.libraryVersion.get() != null) return FORGE.getPatchId();
+                return null;
+            }, fabric.libraryVersion, quilt.libraryVersion, forge.libraryVersion));
 
             liteLoader.incompatibleLibraryName.bind(Bindings.createStringBinding(() -> {
                 if (fabric.libraryVersion.get() != null) return FABRIC.getPatchId();
                 if (quilt.libraryVersion.get() != null) return QUILT.getPatchId();
+                if (neoForge.libraryVersion.get() != null) return NEO_FORGE.getPatchId();
                 return null;
-            }, fabric.libraryVersion, quilt.libraryVersion));
+            }, fabric.libraryVersion, quilt.libraryVersion, neoForge.libraryVersion));
 
             optiFine.incompatibleLibraryName.bind(Bindings.createStringBinding(() -> {
                 if (fabric.libraryVersion.get() != null) return FABRIC.getPatchId();
                 if (quilt.libraryVersion.get() != null) return QUILT.getPatchId();
+                if (neoForge.libraryVersion.get() != null) return NEO_FORGE.getPatchId();
                 return null;
-            }, fabric.libraryVersion, quilt.libraryVersion));
+            }, fabric.libraryVersion, quilt.libraryVersion, neoForge.libraryVersion));
 
             for (InstallerItem fabric : new InstallerItem[] { fabric, fabricApi }) {
                 fabric.incompatibleLibraryName.bind(Bindings.createStringBinding(() -> {
                     if (forge.libraryVersion.get() != null) return FORGE.getPatchId();
+                    if (neoForge.libraryVersion.get() != null) return NEO_FORGE.getPatchId();
                     if (liteLoader.libraryVersion.get() != null) return LITELOADER.getPatchId();
                     if (optiFine.libraryVersion.get() != null) return OPTIFINE.getPatchId();
                     if (quilt.libraryVersion.get() != null) return QUILT.getPatchId();
                     if (quiltApi.libraryVersion.get() != null) return QUILT_API.getPatchId();
                     return null;
-                }, forge.libraryVersion, liteLoader.libraryVersion, optiFine.libraryVersion, quilt.libraryVersion, quiltApi.libraryVersion));
+                }, forge.libraryVersion, neoForge.libraryVersion, liteLoader.libraryVersion, optiFine.libraryVersion, quilt.libraryVersion, quiltApi.libraryVersion));
             }
 
             fabricApi.dependencyName.bind(Bindings.createStringBinding(() -> {
@@ -161,10 +177,11 @@ public class InstallerItem {
                     if (fabric.libraryVersion.get() != null) return FABRIC.getPatchId();
                     if (fabricApi.libraryVersion.get() != null) return FABRIC_API.getPatchId();
                     if (forge.libraryVersion.get() != null) return FORGE.getPatchId();
+                    if (neoForge.libraryVersion.get() != null) return NEO_FORGE.getPatchId();
                     if (liteLoader.libraryVersion.get() != null) return LITELOADER.getPatchId();
                     if (optiFine.libraryVersion.get() != null) return OPTIFINE.getPatchId();
                     return null;
-                }, fabric.libraryVersion, fabricApi.libraryVersion, forge.libraryVersion, liteLoader.libraryVersion, optiFine.libraryVersion));
+                }, fabric.libraryVersion, fabricApi.libraryVersion, forge.libraryVersion, neoForge.libraryVersion, liteLoader.libraryVersion, optiFine.libraryVersion));
             }
 
             quiltApi.dependencyName.bind(Bindings.createStringBinding(() -> {
@@ -174,7 +191,7 @@ public class InstallerItem {
         }
 
         public InstallerItem[] getLibraries() {
-            return new InstallerItem[] { forge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi };
+            return new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi};
         }
 
         public View getView() {

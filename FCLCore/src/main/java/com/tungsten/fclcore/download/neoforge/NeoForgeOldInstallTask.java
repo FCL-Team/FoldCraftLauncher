@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2021  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tungsten.fclcore.download.forge;
+package com.tungsten.fclcore.download.neoforge;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
@@ -30,6 +30,7 @@ import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.ProcessService;
+import com.tungsten.fclcore.download.forge.ForgeNewInstallProfile;
 import com.tungsten.fclcore.download.game.GameLibrariesTask;
 import com.tungsten.fclcore.download.game.VersionJsonDownloadTask;
 import com.tungsten.fclcore.game.Artifact;
@@ -67,12 +68,12 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
-public class ForgeNewInstallTask extends Task<Version> {
+public class NeoForgeOldInstallTask extends Task<Version> {
 
     private class ProcessorTask extends Task<Void> {
 
-        private ForgeNewInstallProfile.Processor processor;
-        private Map<String, String> vars;
+        private final ForgeNewInstallProfile.Processor processor;
+        private final Map<String, String> vars;
 
         public ProcessorTask(@NotNull ForgeNewInstallProfile.Processor processor, @NotNull Map<String, String> vars) {
             this.processor = processor;
@@ -209,13 +210,13 @@ public class ForgeNewInstallTask extends Task<Version> {
 
     private ForgeNewInstallProfile profile;
     private List<ForgeNewInstallProfile.Processor> processors;
-    private Version forgeVersion;
+    private Version neoForgeVersion;
     private final String selfVersion;
 
     private Path tempDir;
     private AtomicInteger processorDoneCount = new AtomicInteger(0);
 
-    public ForgeNewInstallTask(DefaultDependencyManager dependencyManager, Version version, String selfVersion, Path installer) {
+    NeoForgeOldInstallTask(DefaultDependencyManager dependencyManager, Version version, String selfVersion, Path installer) {
         this.dependencyManager = dependencyManager;
         this.gameRepository = dependencyManager.getGameRepository();
         this.version = version;
@@ -304,7 +305,7 @@ public class ForgeNewInstallTask extends Task<Version> {
         try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(installer)) {
             profile = fromNonNullJson(FileUtils.readText(fs.getPath("install_profile.json")), ForgeNewInstallProfile.class);
             processors = profile.getProcessors();
-            forgeVersion = fromNonNullJson(FileUtils.readText(fs.getPath(profile.getJson())), Version.class);
+            neoForgeVersion = fromNonNullJson(FileUtils.readText(fs.getPath(profile.getJson())), Version.class);
 
             for (Library library : profile.getLibraries()) {
                 Path file = fs.getPath("maven").resolve(library.getPath());
@@ -394,7 +395,7 @@ public class ForgeNewInstallTask extends Task<Version> {
 
     @Override
     public void execute() throws Exception {
-        tempDir = Files.createTempDirectory("forge_installer");
+        tempDir = Files.createTempDirectory("neoforge_installer");
 
         Map<String, String> vars = new HashMap<>();
 
@@ -412,7 +413,7 @@ public class ForgeNewInstallTask extends Task<Version> {
                         }));
             }
         } catch (ZipException ex) {
-            throw new ArtifactMalformedException("Malformed forge installer file", ex);
+            throw new ArtifactMalformedException("Malformed neoforge installer file", ex);
         }
 
         vars.put("SIDE", "client");
@@ -431,11 +432,11 @@ public class ForgeNewInstallTask extends Task<Version> {
 
         dependencies.add(
                 processorsTask.thenComposeAsync(
-                        dependencyManager.checkLibraryCompletionAsync(forgeVersion, true)));
+                        dependencyManager.checkLibraryCompletionAsync(neoForgeVersion, true)));
 
-        setResult(forgeVersion
+        setResult(neoForgeVersion
                 .setPriority(30000)
-                .setId(LibraryAnalyzer.LibraryType.FORGE.getPatchId())
+                .setId(LibraryAnalyzer.LibraryType.NEO_FORGE.getPatchId())
                 .setVersion(selfVersion));
     }
 

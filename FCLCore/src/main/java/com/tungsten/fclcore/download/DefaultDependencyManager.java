@@ -21,6 +21,7 @@ import com.tungsten.fclcore.download.forge.ForgeInstallTask;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameDownloadTask;
 import com.tungsten.fclcore.download.game.GameLibrariesTask;
+import com.tungsten.fclcore.download.neoforge.NeoForgeInstallTask;
 import com.tungsten.fclcore.download.optifine.OptiFineInstallTask;
 import com.tungsten.fclcore.game.Artifact;
 import com.tungsten.fclcore.game.DefaultGameRepository;
@@ -177,6 +178,11 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
 
         return Task
                 .composeAsync(() -> {
+                    try {
+                        return NeoForgeInstallTask.install(this, oldVersion, installer);
+                    } catch (IOException ignore) {
+                    }
+
                     try {
                         return ForgeInstallTask.install(this, oldVersion, installer);
                     } catch (IOException ignore) {

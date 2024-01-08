@@ -414,6 +414,7 @@
     <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">Warning: Fabric API is a mod, and will be installed into the mod directory of the game instance. Please do not change the working directory of the game, or the Fabric API will not work. If you do want to change these settings, you should reinstall it.</string>
     <string name="install_installer_forge" translatable="false">Forge</string>
+    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
     <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">Incompatible with %s</string>
     <string name="install_installer_install">Install %s</string>
@@ -612,6 +613,7 @@
     <string name="modrinth_category_mobs">Mobs</string>
     <string name="modrinth_category_modloader">Modloader</string>
     <string name="modrinth_category_multiplayer">Multiplayer</string>
+    <string name="modrinth_category_neoforge">NeoForge</string>
     <string name="modrinth_category_optimization">Optimization</string>
     <string name="modrinth_category_paper">Paper</string>
     <string name="modrinth_category_purpur">Purpur</string>

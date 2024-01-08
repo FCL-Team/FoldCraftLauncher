@@ -85,6 +85,9 @@ public class ModVersionAdapter extends FCLAdapter {
                 case FORGE:
                     stringBuilder.append("   ").append(context.getString(R.string.install_installer_forge));
                     break;
+                case NEO_FORGED:
+                    stringBuilder.append("   ").append(context.getString(R.string.install_installer_neoforge));
+                    break;
                 case FABRIC:
                     stringBuilder.append("   ").append(context.getString(R.string.install_installer_fabric));
                     break;

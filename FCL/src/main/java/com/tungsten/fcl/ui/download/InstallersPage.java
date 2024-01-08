@@ -89,7 +89,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
             String libraryId = library.getLibraryId();
             if (libraryId.equals("game")) continue;
             library.action.set(() -> {
-                if ("fabric-api".equals(libraryId)) {
+                if (LibraryAnalyzer.LibraryType.FABRIC_API.getPatchId().equals(libraryId)) {
                     FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                     builder.setCancelable(false);
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);

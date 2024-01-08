@@ -19,6 +19,7 @@ import com.tungsten.fclcore.download.forge.ForgeOldInstallTask;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameInstallTask;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderInstallTask;
+import com.tungsten.fclcore.download.neoforge.NeoForgeInstallTask;
 import com.tungsten.fclcore.download.optifine.OptiFineInstallTask;
 import com.tungsten.fclcore.mod.MinecraftInstanceTask;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
@@ -114,6 +115,8 @@ public final class TaskListPane extends FCLAdapter {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_game")));
                 } else if (task instanceof ForgeNewInstallTask || task instanceof ForgeOldInstallTask) {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_forge")));
+                } else if (task instanceof NeoForgeInstallTask) {
+                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_neoforge")));
                 } else if (task instanceof LiteLoaderInstallTask) {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_liteloader")));
                 } else if (task instanceof OptiFineInstallTask) {
@@ -245,6 +248,7 @@ public final class TaskListPane extends FCLAdapter {
                 case "fcl.install.assets": message = getLocalizedText(context, "assets_download"); break;
                 case "fcl.install.game": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_game") + " " + stageValue); break;
                 case "fcl.install.forge": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_forge") + " " + stageValue); break;
+                case "fcl.install.neoforge": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_neoforge") + " " + stageValue); break;
                 case "fcl.install.liteloader": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_liteloader") + " " + stageValue); break;
                 case "fcl.install.optifine": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_optifine") + " " + stageValue); break;
                 case "fcl.install.fabric": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_fabric") + " " + stageValue); break;
