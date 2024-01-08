@@ -94,10 +94,14 @@
 
     <string name="button_back">返回</string>
     <string name="button_cancel">取消</string>
+    <string name="button_copy">复制</string>
     <string name="button_download">下载</string>
     <string name="button_export">导出</string>
     <string name="button_install">安装</string>
+    <string name="button_mouse_left">鼠标左键</string>
+    <string name="button_mouse_right">鼠标右键</string>
     <string name="button_next">下一步</string>
+    <string name="button_paste">粘贴</string>
     <string name="button_prev">上一步</string>
     <string name="button_remove">删除</string>
     <string name="button_remove_confirm">您确定要删除吗？此操作无法撤销！</string>

@@ -106,10 +106,14 @@
 
     <string name="button_back">Back</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_copy">Copy</string>
     <string name="button_download">Download</string>
     <string name="button_export">Export</string>
     <string name="button_install">Install</string>
+    <string name="button_mouse_left">Mouse Left</string>
+    <string name="button_mouse_right">Mouse Right</string>
     <string name="button_next">Next</string>
+    <string name="button_paste">Paste</string>
     <string name="button_prev">Prev</string>
     <string name="button_remove">Remove</string>
     <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
@@ -117,6 +121,10 @@
     <string name="button_select_all">Select All</string>
     <string name="button_set">Set</string>
     <string name="button_reset">Reset</string>
+    <string name="button_up" translatable="false">▲</string>
+    <string name="button_down" translatable="false">▼</string>
+    <string name="button_left" translatable="false">◀</string>
+    <string name="button_right" translatable="false">▶</string>
 
     <string name="community">Community</string>
     <string name="community_hint">Join our community to get latest version, report bugs, etc. Please follow the community rules if you join.</string>

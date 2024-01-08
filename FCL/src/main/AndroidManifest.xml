@@ -89,7 +89,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorPortrait"/>
         <activity
-            android:process=":game"
+            android:process=":jvm"
             android:launchMode="standard"
             android:multiprocess="true"
             android:alwaysRetainTaskState="true"

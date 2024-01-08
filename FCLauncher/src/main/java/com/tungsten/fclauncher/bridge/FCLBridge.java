@@ -88,7 +88,10 @@ public class FCLBridge implements Serializable {
     public FCLBridge() {
     }
 
-    public static native int[] renderAWTScreenFrame();
+    public native int[] renderAWTScreenFrame();
+    public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
+    public native void nativeMoveWindow(int x, int y);
+
     public native void setFCLNativeWindow(Surface surface);
     public native int redirectStdio(String path);
     public native int chdir(String path);
