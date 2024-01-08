@@ -10,7 +10,6 @@ import android.util.ArrayMap;
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
-import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -121,11 +120,12 @@ public class FCLauncher {
         return args;
     }
 
-    private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) {
+    private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) throws IOException {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getJavaPath()));
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -160,7 +160,7 @@ public class FCLauncher {
         }
     }
 
-    private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) {
+    private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) throws IOException {
         HashMap<String, String> envMap = new HashMap<>();
         addCommonEnv(config, envMap);
         if (render) {
@@ -265,15 +265,15 @@ public class FCLauncher {
         return bridge;
     }
 
-    public static FCLBridge launchJavaGUI(FCLConfig config) {
+    public static FCLBridge launchJarExecutor(FCLConfig config) {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(config.getLogDir() + "/latest_java_gui.log");
+        bridge.setLogPath(config.getLogDir() + "/latest_jar_executor.log");
         Thread javaGUIThread = new Thread(() -> {
             try {
 
-                logStartInfo(bridge, "Java GUI");
+                logStartInfo(bridge, "Jar Executor");
 
                 // env
                 setEnv(config, bridge, true);
@@ -288,8 +288,8 @@ public class FCLauncher {
                 bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
-                // launch java gui
-                launch(config, bridge, "Java GUI");
+                // launch jar executor
+                launch(config, bridge, "Jar Executor");
             } catch (IOException e) {
                 e.printStackTrace();
             }

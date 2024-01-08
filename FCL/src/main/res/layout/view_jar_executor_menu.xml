@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keepScreenOn="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.tungsten.fcl.control.view.LogWindow
+        android:background="@color/ui_bg_color"
+        android:id="@+id/log_window"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:clickable="false"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:id="@+id/cursor"
+        android:src="@drawable/img_cursor"/>
+
+</RelativeLayout>

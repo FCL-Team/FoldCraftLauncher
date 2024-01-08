@@ -392,6 +392,7 @@
     <string name="install_installer_fabric_api_warning">Fabric API 是一个模组, 并且将被安装至当前版本的模组文件夹。请不要修改此版本的版本隔离/游戏运行路径设置。如果你在之后修改了相关设置，Fabric API 需要被重新安装！</string>
     <string name="install_installer_incompatible">与 %s 不兼容</string>
     <string name="install_installer_install">安装 %s</string>
+    <string name="install_installer_install_jar">执行 Jar 文件</string>
     <string name="install_installer_install_offline">从本地文件安装/升级</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine 安装器</string>
     <string name="install_installer_not_installed">不安装</string>
@@ -400,6 +401,9 @@
     <string name="install_new_game_already_exists">当前版本已存在，请换一个名称。</string>
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
+
+    <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
+    <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
     <string name="launch">启动游戏</string>
     <string name="launch_error_java">错误的 Java 版本</string>
