@@ -160,29 +160,7 @@ public final class OptiFineInstallTask extends Task<Version> {
                         dest.toString(),
                         gameRepository.getLibraryFile(version, optiFineLibrary).toString()
                 };
-                int exitCode;
-                boolean listen = true;
-                while (listen) {
-                    if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
-                        listen = false;
-                    }
-                }
-                CountDownLatch latch = new CountDownLatch(1);
-                SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
-                    server1.setResult(msg);
-                    server1.stop();
-                    latch.countDown();
-                });
-                Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("command", command);
-                service.putExtras(bundle);
-                FCLPath.CONTEXT.startService(service);
-                server.start();
-                latch.await();
-                exitCode = Integer.parseInt((String) server.getResult());
-                if (exitCode != 0)
-                    throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
+                runJVMProcess(command, true);
             } else {
                 FileUtils.copyFile(dest, gameRepository.getLibraryFile(version, optiFineLibrary).toPath());
             }
@@ -242,6 +220,37 @@ public final class OptiFineInstallTask extends Task<Version> {
         ));
 
         dependencies.add(dependencyManager.checkLibraryCompletionAsync(getResult(), true));
+    }
+
+    private void runJVMProcess(String[] command, boolean first) throws Exception {
+        int exitCode;
+        boolean listen = true;
+        while (listen) {
+            if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
+                listen = false;
+            }
+        }
+        CountDownLatch latch = new CountDownLatch(1);
+        SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
+            server1.setResult(msg);
+            server1.stop();
+            latch.countDown();
+        });
+        Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("command", command);
+        service.putExtras(bundle);
+        FCLPath.CONTEXT.startService(service);
+        server.start();
+        latch.await();
+        exitCode = Integer.parseInt((String) server.getResult());
+        if (exitCode != 0) {
+            if (first) {
+                runJVMProcess(command, false);
+            } else {
+                throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
+            }
+        }
     }
 
     /**

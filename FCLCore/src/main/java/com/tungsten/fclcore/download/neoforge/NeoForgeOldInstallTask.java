@@ -158,30 +158,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
 
             command.addAll(args);
 
-            LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
-            int exitCode;
-            boolean listen = true;
-            while (listen) {
-                if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
-                    listen = false;
-                }
-            }
-            CountDownLatch latch = new CountDownLatch(1);
-            SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
-                server1.setResult(msg);
-                server1.stop();
-                latch.countDown();
-            });
-            Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
-            Bundle bundle = new Bundle();
-            bundle.putStringArray("command", command.toArray(new String[0]));
-            service.putExtras(bundle);
-            FCLPath.CONTEXT.startService(service);
-            server.start();
-            latch.await();
-            exitCode = Integer.parseInt((String) server.getResult());
-            if (exitCode != 0)
-                throw new IOException("Game processor exited abnormally with code " + exitCode);
+            runJVMProcess(processor, command, true);
 
             for (Map.Entry<String, String> entry : outputs.entrySet()) {
                 Path artifact = Paths.get(entry.getKey());
@@ -197,6 +174,39 @@ public class NeoForgeOldInstallTask extends Task<Version> {
                     Files.delete(artifact);
                     throw new ChecksumMismatchException("SHA-1", entry.getValue(), code);
                 }
+            }
+        }
+    }
+
+    private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, boolean first) throws Exception {
+        LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
+        int exitCode;
+        boolean listen = true;
+        while (listen) {
+            if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
+                listen = false;
+            }
+        }
+        CountDownLatch latch = new CountDownLatch(1);
+        SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
+            server1.setResult(msg);
+            server1.stop();
+            latch.countDown();
+        });
+        Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+        Bundle bundle = new Bundle();
+        bundle.putStringArray("command", command.toArray(new String[0]));
+        bundle.putBoolean("first", first);
+        service.putExtras(bundle);
+        FCLPath.CONTEXT.startService(service);
+        server.start();
+        latch.await();
+        exitCode = Integer.parseInt((String) server.getResult());
+        if (exitCode != 0) {
+            if (first) {
+                runJVMProcess(processor, command, false);
+            } else {
+                throw new IOException("Game processor exited abnormally with code " + exitCode);
             }
         }
     }
