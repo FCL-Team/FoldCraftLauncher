@@ -2,6 +2,7 @@ package com.tungsten.fcl.game;
 
 import android.content.Context;
 
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -38,6 +39,7 @@ public class JarExecutorLauncher extends Launcher {
         res.addDefault("-Xms", MemoryUtils.findBestRAMAllocation(context) + "m");
         res.addDefault("-Xmx", MemoryUtils.findBestRAMAllocation(context) + "m");
 
+        res.addDefault("-Duser.home=", Profiles.getSelectedProfile().getGameDir().getParent());
         res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
 
@@ -111,7 +113,7 @@ public class JarExecutorLauncher extends Launcher {
                 context,
                 FCLPath.LOG_DIR,
                 javaVersion == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
-                FCLPath.CACHE_DIR,
+                Profiles.getSelectedProfile().getGameDir().getAbsolutePath(),
                 FCLConfig.Renderer.RENDERER_GL4ES,
                 finalArgs
         );
