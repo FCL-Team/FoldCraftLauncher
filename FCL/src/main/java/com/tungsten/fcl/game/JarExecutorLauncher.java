@@ -38,6 +38,7 @@ public class JarExecutorLauncher extends Launcher {
         res.addDefault("-Xms", MemoryUtils.findBestRAMAllocation(context) + "m");
         res.addDefault("-Xmx", MemoryUtils.findBestRAMAllocation(context) + "m");
 
+        res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
 
         res.add("-jar");
