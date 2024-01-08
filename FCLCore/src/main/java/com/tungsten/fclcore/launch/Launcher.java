@@ -35,6 +35,10 @@ public abstract class Launcher {
     protected final AuthInfo authInfo;
     protected final LaunchOptions options;
 
+    public Launcher(Context context) {
+        this(context, null, null, null, null);
+    }
+
     public Launcher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
         this.context = context;
         this.repository = repository;

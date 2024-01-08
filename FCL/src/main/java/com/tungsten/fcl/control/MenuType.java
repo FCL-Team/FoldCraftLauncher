@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public enum MenuType implements Serializable {
     GAME,
-    JAVA_GUI
+    JAR_EXECUTOR
 }

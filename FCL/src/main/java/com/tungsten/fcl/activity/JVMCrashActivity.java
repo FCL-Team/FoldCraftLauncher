@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 
 public class JVMCrashActivity extends FCLActivity implements View.OnClickListener {
 
+    private boolean game;
     private int exitCode;
     private String logPath;
     private String renderer;
@@ -52,6 +53,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     private FCLButton close;
     private FCLButton share;
 
+    private FCLTextView title;
     private FCLTextView error;
     private FCLTextView hint;
     private ScrollView hintLayout;
@@ -71,16 +73,19 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         close.setOnClickListener(this);
         share.setOnClickListener(this);
 
+        title = findViewById(R.id.title);
         error = findViewById(R.id.error);
         hint = findViewById(R.id.hint);
         hintLayout = findViewById(R.id.hint_layout);
         progressBar = findViewById(R.id.progress);
 
+        game = getIntent().getExtras().getBoolean("isGame");
         exitCode = getIntent().getExtras().getInt("exitCode");
         logPath = getIntent().getExtras().getString("logPath");
         renderer = getIntent().getExtras().getString("renderer");
         java = getIntent().getExtras().getString("java");
 
+        title.setText(game ? getString(R.string.game_crash_title) : getString(R.string.jar_executor_crash_title));
         setLoading(true);
         try {
             init();
@@ -122,7 +127,12 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         errorLines.add(0, "==================== Basic Information ====================");
         errorLines.forEach(it -> error.append(it + "\n"));
 
-        analyzeCrashReport(FileUtils.readText(new File(logPath)));
+        if (game) {
+            analyzeCrashReport(FileUtils.readText(new File(logPath)));
+        } else {
+            setLoading(false);
+            hint.setText(getString(R.string.jar_executor_crash_reason));
+        }
     }
 
     private void analyzeCrashReport(String rawLog) {
@@ -265,9 +275,10 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         }
     }
 
-    public static void startCrashActivity(Context context, int exitCode, String logPath, String renderer, String java) {
+    public static void startCrashActivity(boolean game, Context context, int exitCode, String logPath, String renderer, String java) {
         Intent intent = new Intent(context, JVMCrashActivity.class);
         Bundle bundle = new Bundle();
+        bundle.putBoolean("isGame", game);
         bundle.putInt("exitCode", exitCode);
         bundle.putString("logPath", logPath);
         bundle.putString("renderer", renderer);

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:keepScreenOn="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/touch_pad"/>
+
+    <com.tungsten.fcl.control.view.LogWindow
+        android:background="@color/ui_bg_color"
+        android:id="@+id/log_window"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        android:clickable="false"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:id="@+id/cursor"
+        android:src="@drawable/img_cursor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.tungsten.fcl.control.keyboard.TouchCharInput
+        android:layout_width="1px"
+        android:layout_height="1px"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
+        android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
+        android:id="@+id/input_scanner"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/force_exit"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_settings_force_exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/show_log"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/menu_settings_show_log"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/force_exit"
+        app:layout_constraintTop_toBottomOf="@+id/force_exit"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/mouse_mode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/menu_settings_mouse_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/show_log"
+        app:layout_constraintTop_toBottomOf="@+id/show_log"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/input"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_button_event_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/copy"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/button_copy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/input"
+        app:layout_constraintTop_toBottomOf="@+id/input"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/paste"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/button_paste"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/copy"
+        app:layout_constraintTop_toBottomOf="@+id/copy"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/mouse_left"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/button_mouse_left"
+        app:layout_constraintBottom_toTopOf="@+id/mouse_right"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/mouse_right"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_mouse_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/mouse_left"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/move_left"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_left"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/move_right"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/button_right"
+        app:layout_constraintBottom_toTopOf="@+id/move_left"
+        app:layout_constraintStart_toStartOf="@+id/move_left"
+        app:layout_constraintEnd_toEndOf="@+id/move_left"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/move_up"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:text="@string/button_up"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/move_down"
+        app:layout_constraintEnd_toStartOf="@+id/move_left"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/move_down"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="@string/button_down"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/move_right"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

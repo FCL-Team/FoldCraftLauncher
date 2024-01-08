@@ -11,17 +11,36 @@
     <ScrollView
         android:id="@+id/scroll"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/install_offline"
+        app:layout_constraintBottom_toTopOf="@+id/button_layout"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
-    <com.tungsten.fcllibrary.component.view.FCLButton
-        android:id="@+id/install_offline"
-        android:text="@string/install_installer_install_offline"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:ripple="true"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/install_offline"
+            android:text="@string/install_installer_install_offline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            app:ripple="true"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/execute_jar"
+            android:text="@string/install_installer_install_jar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            app:ripple="true"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

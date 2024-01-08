@@ -16,7 +16,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.GameMenu;
-import com.tungsten.fcl.control.JavaGuiMenu;
+import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -50,11 +50,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             return;
         }
 
-        menu = menuType == MenuType.GAME ? new GameMenu() : new JavaGuiMenu();
+        menu = menuType == MenuType.GAME ? new GameMenu() : new JarExecutorMenu();
         menu.setup(this, fclBridge);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
-        menu.getInput().initExternalController(textureView);
+        if (menuType == MenuType.GAME) {
+            menu.getInput().initExternalController(textureView);
+        }
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -75,13 +77,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
-        int width = (int) (i * fclBridge.getScaleFactor());
-        int height = (int) (i1 * fclBridge.getScaleFactor());
-        GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
-        gameOption.set("fullscreen", "false");
-        gameOption.set("overrideWidth", "" + width);
-        gameOption.set("overrideHeight", "" + height);
-        gameOption.save();
+        fclBridge.setSurfaceDestroyed(false);
+        int width = menuType == MenuType.GAME ? (int) (i * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
+        int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
+        if (menuType == MenuType.GAME) {
+            GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
+            gameOption.set("fullscreen", "false");
+            gameOption.set("overrideWidth", "" + width);
+            gameOption.set("overrideHeight", "" + height);
+            gameOption.save();
+        }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
         fclBridge.pushEventWindow(width, height);
@@ -89,14 +94,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-        int width = (int) (i * fclBridge.getScaleFactor());
-        int height = (int) (i1 * fclBridge.getScaleFactor());
+        int width = menuType == MenuType.GAME ? (int) (i * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
+        int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.pushEventWindow(width, height);
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
+        fclBridge.setSurfaceDestroyed(true);
         return false;
     }
 
@@ -135,7 +141,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         boolean handleEvent = true;
-        if (menu != null) {
+        if (menu != null && menuType == MenuType.GAME) {
             if (!(handleEvent = menu.getInput().handleKeyEvent(event))) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
                     if (event.getAction() != KeyEvent.ACTION_UP)

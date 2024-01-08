@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.game.JarExecutorHelper;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
@@ -55,6 +56,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
     private LinearLayoutCompat parent;
 
     private FCLButton installOfflineButton;
+    private FCLButton executeJarButton;
 
     public InstallerListPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
@@ -64,7 +66,9 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
     private void create() {
         scrollView = findViewById(R.id.scroll);
         installOfflineButton = findViewById(R.id.install_offline);
+        executeJarButton = findViewById(R.id.execute_jar);
         installOfflineButton.setOnClickListener(this);
+        executeJarButton.setOnClickListener(this);
     }
 
     @Override
@@ -261,6 +265,9 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
     public void onClick(View view) {
         if (view == installOfflineButton) {
             installOffline();
+        }
+        if (view == executeJarButton) {
+            JarExecutorHelper.start(getActivity(), getContext());
         }
     }
 }
