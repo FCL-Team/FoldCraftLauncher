@@ -120,12 +120,11 @@ public class FCLauncher {
         return args;
     }
 
-    private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) throws IOException {
+    private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getJavaPath()));
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -160,7 +159,7 @@ public class FCLauncher {
         }
     }
 
-    private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) throws IOException {
+    private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) {
         HashMap<String, String> envMap = new HashMap<>();
         addCommonEnv(config, envMap);
         if (render) {

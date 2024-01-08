@@ -5,9 +5,12 @@
 #include "fcl/include/fcl_internal.h"
 
 static JavaVM *dalvikJavaVMPtr;
+static JNIEnv* runtimeJNIEnvPtr_GRAPHICS;
 
 jclass class_FCLBridge;
+jclass class_CTCScreen;
 jmethodID method_OpenLink;
+jmethodID method_GetRGB;
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (dalvikJavaVMPtr == NULL) {
@@ -59,4 +62,48 @@ Java_sun_awt_peer_cacio_FCLClipboard_clipboardCopy(JNIEnv *env, jclass clazz, js
     const char *stringChars = (*env)->GetStringUTFChars(env, str, NULL);
     fclSetPrimaryClipString(stringChars);
     (*env)->ReleaseStringUTFChars(env, str, stringChars);
+}
+
+JNIEXPORT jintArray JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_renderAWTScreenFrame(JNIEnv* env, jclass clazz) {
+    if (runtimeJNIEnvPtr_GRAPHICS == NULL) {
+        if (dalvikJavaVMPtr == NULL) {
+            return NULL;
+        } else {
+            (*dalvikJavaVMPtr)->AttachCurrentThread(dalvikJavaVMPtr, &runtimeJNIEnvPtr_GRAPHICS, NULL);
+        }
+    }
+
+    int *rgbArray;
+    jintArray jreRgbArray, androidRgbArray;
+
+    if (method_GetRGB == NULL) {
+        class_CTCScreen = (*runtimeJNIEnvPtr_GRAPHICS)->FindClass(runtimeJNIEnvPtr_GRAPHICS, "net/java/openjdk/cacio/ctc/CTCScreen");
+        if ((*runtimeJNIEnvPtr_GRAPHICS)->ExceptionCheck(runtimeJNIEnvPtr_GRAPHICS) == JNI_TRUE) {
+            (*runtimeJNIEnvPtr_GRAPHICS)->ExceptionClear(runtimeJNIEnvPtr_GRAPHICS);
+            class_CTCScreen = (*runtimeJNIEnvPtr_GRAPHICS)->FindClass(runtimeJNIEnvPtr_GRAPHICS, "com/github/caciocavallosilano/cacio/ctc/CTCScreen");
+        }
+        assert(class_CTCScreen != NULL);
+        method_GetRGB = (*runtimeJNIEnvPtr_GRAPHICS)->GetStaticMethodID(runtimeJNIEnvPtr_GRAPHICS, class_CTCScreen, "getCurrentScreenRGB", "()[I");
+        assert(method_GetRGB != NULL);
+    }
+    jreRgbArray = (jintArray) (*runtimeJNIEnvPtr_GRAPHICS)->CallStaticObjectMethod(
+            runtimeJNIEnvPtr_GRAPHICS,
+            class_CTCScreen,
+            method_GetRGB
+    );
+    if (jreRgbArray == NULL) {
+        return NULL;
+    }
+
+    // Copy JRE RGB array memory to Android.
+    int arrayLength = (*runtimeJNIEnvPtr_GRAPHICS)->GetArrayLength(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray);
+    rgbArray = (*runtimeJNIEnvPtr_GRAPHICS)->GetIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, 0);
+    androidRgbArray = (*env)->NewIntArray(env, arrayLength);
+    (*env)->SetIntArrayRegion(env, androidRgbArray, 0, arrayLength, rgbArray);
+
+    (*runtimeJNIEnvPtr_GRAPHICS)->ReleaseIntArrayElements(runtimeJNIEnvPtr_GRAPHICS, jreRgbArray, rgbArray, NULL);
+    // (*env)->DeleteLocalRef(env, androidRgbArray);
+    // free(rgbArray);
+
+    return androidRgbArray;
 }

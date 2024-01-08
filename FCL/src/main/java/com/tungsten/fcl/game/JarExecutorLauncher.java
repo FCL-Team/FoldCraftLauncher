@@ -18,9 +18,6 @@ import java.util.Objects;
 
 public class JarExecutorLauncher extends Launcher {
 
-    public static final int DEFAULT_WIDTH = 720;
-    public static final int DEFAULT_HEIGHT = 600;
-
     private String destJarPath;
     private int javaVersion;
 
@@ -51,7 +48,7 @@ public class JarExecutorLauncher extends Launcher {
 
     public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8) {
         res.addDefault("-Djava.awt.headless=", "false");
-        res.addDefault("-Dcacio.managed.screensize=", DEFAULT_WIDTH + "x" + DEFAULT_HEIGHT);
+        res.addDefault("-Dcacio.managed.screensize=", FCLBridge.DEFAULT_WIDTH + "x" + FCLBridge.DEFAULT_HEIGHT);
         res.addDefault("-Dcacio.font.fontmanager=", "sun.awt.X11FontManager");
         res.addDefault("-Dcacio.font.fontscaler=", "sun.font.FreetypeFontScaler");
         res.addDefault("-Dswing.defaultlaf=", "javax.swing.plaf.metal.MetalLookAndFeel");
