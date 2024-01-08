@@ -24,8 +24,8 @@ import java.io.Serializable;
 
 public class FCLBridge implements Serializable {
 
-    public static final int DEFAULT_WIDTH = 720;
-    public static final int DEFAULT_HEIGHT = 600;
+    public static final int DEFAULT_WIDTH = 1280;
+    public static final int DEFAULT_HEIGHT = 720;
 
     public static final int HIT_RESULT_TYPE_UNKNOWN          = 0;
     public static final int HIT_RESULT_TYPE_MISS             = 1;
