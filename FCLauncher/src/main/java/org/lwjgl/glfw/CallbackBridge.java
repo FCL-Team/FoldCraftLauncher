@@ -3,7 +3,6 @@ package org.lwjgl.glfw;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
 import android.view.Choreographer;
 import android.view.Surface;
 
