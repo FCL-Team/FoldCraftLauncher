@@ -67,7 +67,7 @@ along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 
 <h1 align="center">Third Party Components</h1>
 
-- [HMCL](https://github.com/huanghongxun/HMCL)
+- [HMCL](https://github.com/HMCL-dev/HMCL)
 
 - [Boat and related projects](https://github.com/AOF-Dev/Boat)
 
