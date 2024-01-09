@@ -3,6 +3,7 @@ package com.tungsten.fcl.control.view;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,6 +14,8 @@ import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 
@@ -100,11 +103,15 @@ public class TouchPad extends View {
                 gameMenu.getInput().setPointerId(null);
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
+                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
+                        },33);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
-                        gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
+                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
+                        },33);
                         break;
                     default:
                         break;
