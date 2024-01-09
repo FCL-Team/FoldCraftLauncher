@@ -195,6 +195,7 @@ public class ForgeNewInstallTask extends Task<Version> {
         Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command.toArray(new String[0]));
+        bundle.putBoolean("first", first);
         service.putExtras(bundle);
         FCLPath.CONTEXT.startService(service);
         server.start();

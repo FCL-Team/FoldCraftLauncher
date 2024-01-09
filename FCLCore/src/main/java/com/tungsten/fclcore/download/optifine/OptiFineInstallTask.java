@@ -239,6 +239,7 @@ public final class OptiFineInstallTask extends Task<Version> {
         Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command);
+        bundle.putBoolean("first", first);
         service.putExtras(bundle);
         FCLPath.CONTEXT.startService(service);
         server.start();
