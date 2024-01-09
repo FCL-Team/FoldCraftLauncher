@@ -28,12 +28,24 @@ LOCAL_LDLIBS            := -llog
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE            := fcl
+LOCAL_SHARED_LIBRARIES  := xhook
+LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
+                           fcl/fcl_event.c \
+                           fcl/fcl_loader.c
+LOCAL_C_INCLUDES        := $(LOCAL_PATH)/xhook/include \
+                           $(LOCAL_PATH)/fcl/include
+LOCAL_LDLIBS            := -llog -ldl -landroid
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_LDLIBS := -ldl -llog -landroid
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav \
                             $(LOCAL_PATH)/pojav/ctxbridges \
                             $(LOCAL_PATH)/pojav/environ \
                             $(LOCAL_PATH)/pojav/GL
 LOCAL_MODULE := pojavexec
+LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES := \
     pojav/bigcoreaffinity.c \
     pojav/egl_bridge.c \
@@ -51,18 +63,6 @@ ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_CFLAGS += -DADRENO_POSSIBLE
 LOCAL_LDLIBS += -lEGL -lGLESv2
 endif
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE            := fcl
-LOCAL_SHARED_LIBRARIES  := xhook \
-                           pojavexec
-LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
-                           fcl/fcl_event.c \
-                           fcl/fcl_loader.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/xhook/include \
-                           $(LOCAL_PATH)/fcl/include
-LOCAL_LDLIBS            := -llog -ldl -landroid
 include $(BUILD_SHARED_LIBRARY)
 
 #ifeq ($(TARGET_ARCH_ABI), arm64-v8a)

@@ -124,7 +124,9 @@ public class FCLauncher {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
+        envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
+        envMap.put("FORCE_VSYNC","false");
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -139,6 +141,7 @@ public class FCLauncher {
             envMap.put("LIBGL_VSYNC", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
+            envMap.put("POJAV_RENDERER","opengles2");
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
             envMap.put("LIBGL_ES","3");
         } else {

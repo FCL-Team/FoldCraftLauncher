@@ -13,7 +13,6 @@
 #include "GL/osmesa.h"
 #include "ctxbridges/osmesa_loader.h"
 #include "driver_helper/nsbypass.h"
-#include "pojav_cap.h"
 
 #ifdef GLES_TEST
 #include <GLES2/gl2.h>
@@ -83,7 +82,7 @@ EXTERNAL_API void pojavTerminate() {
     }
 }
 
-JNIEXPORT void JNICALL Java_net_kdt_pojavlaunch_utils_JREUtils_setupBridgeWindow(JNIEnv* env, ABI_COMPAT jclass clazz, jobject surface) {
+JNIEXPORT void JNICALL Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv* env, ABI_COMPAT jclass clazz, jobject surface) {
     pojav_environ->pojavWindow = ANativeWindow_fromSurface(env, surface);
     if(br_setup_window != NULL) br_setup_window();
 }
@@ -269,4 +268,3 @@ Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPA
 EXTERNAL_API void pojavSwapInterval(int interval) {
     br_swap_interval(interval);
 }
-

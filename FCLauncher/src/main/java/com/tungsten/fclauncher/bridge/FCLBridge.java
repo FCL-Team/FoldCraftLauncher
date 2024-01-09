@@ -19,6 +19,8 @@ import androidx.core.content.FileProvider;
 
 import com.tungsten.fclauncher.utils.FCLPath;
 
+import org.lwjgl.glfw.CallbackBridge;
+
 import java.io.File;
 import java.io.Serializable;
 
@@ -27,43 +29,43 @@ public class FCLBridge implements Serializable {
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
 
-    public static final int HIT_RESULT_TYPE_UNKNOWN          = 0;
-    public static final int HIT_RESULT_TYPE_MISS             = 1;
-    public static final int HIT_RESULT_TYPE_BLOCK            = 2;
-    public static final int HIT_RESULT_TYPE_ENTITY           = 3;
+    public static final int HIT_RESULT_TYPE_UNKNOWN = 0;
+    public static final int HIT_RESULT_TYPE_MISS = 1;
+    public static final int HIT_RESULT_TYPE_BLOCK = 2;
+    public static final int HIT_RESULT_TYPE_ENTITY = 3;
 
-    public static final int INJECTOR_MODE_ENABLE             = 1;
-    public static final int INJECTOR_MODE_DISABLE            = 0;
+    public static final int INJECTOR_MODE_ENABLE = 1;
+    public static final int INJECTOR_MODE_DISABLE = 0;
 
-    public static final int KeyPress                         = 2;
-    public static final int KeyRelease                       = 3;
-    public static final int ButtonPress                      = 4;
-    public static final int ButtonRelease                    = 5;
-    public static final int MotionNotify                     = 6;
-    public static final int ConfigureNotify                  = 22;
-    public static final int FCLMessage                       = 37;
+    public static final int KeyPress = 2;
+    public static final int KeyRelease = 3;
+    public static final int ButtonPress = 4;
+    public static final int ButtonRelease = 5;
+    public static final int MotionNotify = 6;
+    public static final int ConfigureNotify = 22;
+    public static final int FCLMessage = 37;
 
-    public static final int Button1                          = 1;
-    public static final int Button2                          = 2;
-    public static final int Button3                          = 3;
-    public static final int Button4                          = 4;
-    public static final int Button5                          = 5;
-    public static final int Button6                          = 6;
-    public static final int Button7                          = 7;
+    public static final int Button1 = 1;
+    public static final int Button2 = 2;
+    public static final int Button3 = 3;
+    public static final int Button4 = 4;
+    public static final int Button5 = 5;
+    public static final int Button6 = 6;
+    public static final int Button7 = 7;
 
-    public static final int CursorEnabled                    = 1;
-    public static final int CursorDisabled                   = 0;
+    public static final int CursorEnabled = 1;
+    public static final int CursorDisabled = 0;
 
-    public static final int ShiftMask                        = 1 << 0;
-    public static final int LockMask                         = 1 << 1;
-    public static final int ControlMask                      = 1 << 2;
-    public static final int Mod1Mask                         = 1 << 3;
-    public static final int Mod2Mask                         = 1 << 4;
-    public static final int Mod3Mask                         = 1 << 5;
-    public static final int Mod4Mask                         = 1 << 6;
-    public static final int Mod5Mask                         = 1 << 7;
+    public static final int ShiftMask = 1 << 0;
+    public static final int LockMask = 1 << 1;
+    public static final int ControlMask = 1 << 2;
+    public static final int Mod1Mask = 1 << 3;
+    public static final int Mod2Mask = 1 << 4;
+    public static final int Mod3Mask = 1 << 5;
+    public static final int Mod4Mask = 1 << 6;
+    public static final int Mod5Mask = 1 << 7;
 
-    public static final int CloseRequest                     = 0;
+    public static final int CloseRequest = 0;
 
     private FCLBridgeCallback callback;
 
@@ -89,23 +91,28 @@ public class FCLBridge implements Serializable {
     }
 
     public native int[] renderAWTScreenFrame();
+
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
+
     public native void nativeMoveWindow(int x, int y);
 
-    public native void setFCLNativeWindow(Surface surface);
     public native int redirectStdio(String path);
-    public native int chdir(String path);
-    public native void setenv(String key, String value);
-    public native int dlopen(String path);
-    public native void setLdLibraryPath(String path);
-    public native int setupExitTrap(FCLBridge bridge);
-    public native void setEventPipe();
-    public native void pushEvent(long time, int type, int keycode, int keyChar);
-    public native void refreshHitResultType();
-    public native void setupJLI();
-    public native int jliLaunch(String[] args);
 
-    public native void setFCLBridge(FCLBridge fclBridge);
+    public native int chdir(String path);
+
+    public native void setenv(String key, String value);
+
+    public native int dlopen(String path);
+
+    public native void setLdLibraryPath(String path);
+
+    public native int setupExitTrap(FCLBridge bridge);
+
+    public native void refreshHitResultType();
+
+    public native void setupJLI();
+
+    public native int jliLaunch(String[] args);
 
     public void setThread(Thread thread) {
         this.thread = thread;
@@ -135,23 +142,19 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button, 0);
+        CallbackBridge.sendMouseButton(button, press);
     }
 
     public void pushEventPointer(int x, int y) {
-        pushEvent(System.nanoTime(), MotionNotify, x, y);
+        CallbackBridge.sendCursorPos(x, y);
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
-        pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
+        CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
     }
 
     public void pushEventWindow(int width, int height) {
-        pushEvent(System.nanoTime(), ConfigureNotify, width, height);
-    }
-
-    public void pushEventMessage(int msg) {
-        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
+        CallbackBridge.sendUpdateWindowSize(width, height);
     }
 
     // FCLBridge callbacks
@@ -172,21 +175,6 @@ public class FCLBridge implements Serializable {
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }
-    }
-
-    public void setPrimaryClipString(String string) {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("FCL Clipboard", string);
-        clipboard.setPrimaryClip(clip);
-    }
-
-    public String getPrimaryClipString() {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
-        if (!clipboard.hasPrimaryClip()) {
-            return null;
-        }
-        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-        return item.getText().toString();
     }
 
     public static void openLink(final String link) {
@@ -277,13 +265,12 @@ public class FCLBridge implements Serializable {
         receiveLog("invoke setLogPipeReady");
         handler.post(() -> {
             receiveLog("invoke setFCLBridge");
-            setFCLBridge(this);
+            CallbackBridge.setFCLBridge(this);
             // set graphic output and event pipe
             if (surface != null) {
                 handleWindow();
             }
             receiveLog("invoke setEventPipe");
-            setEventPipe();
 
             // start
             if (thread != null) {
@@ -296,6 +283,10 @@ public class FCLBridge implements Serializable {
         if (callback != null) {
             callback.onLog(log);
         }
+    }
+
+    public void setFCLNativeWindow(Surface surface) {
+        CallbackBridge.setupBridgeWindow(surface);
     }
 
     private void handleWindow() {
