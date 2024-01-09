@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
-    <string name="app_version" translatable="false">1.1.1</string>
+    <string name="app_version" translatable="false">1.1.2</string>
 
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
 
@@ -418,7 +418,6 @@
     <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">Incompatible with %s</string>
     <string name="install_installer_install">Install %s</string>
-    <string name="install_installer_install_jar">Execute Jar File</string>
     <string name="install_installer_install_offline">Install/Update from Local File</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
     <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
@@ -432,6 +431,7 @@
     <string name="install_new_game_malformed">Invalid Name</string>
     <string name="install_success">Installed successfully.</string>
 
+    <string name="jar_execute">Execute Jar</string>
     <string name="jar_executor_crash_title">Jar Executor Crashed</string>
     <string name="jar_executor_crash_reason">Jar Executor crash reason analyse is not supported now.</string>
 
