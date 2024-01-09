@@ -4,7 +4,6 @@ import net.java.openjdk.cacio.ctc.ExternalMouseReader;
 import net.java.openjdk.cacio.ctc.InfdevGrabHandler;
 
 public class InfdevMouse implements ExternalMouseReader, Mouse.EmptyCursorGrabListener {
-
     static {
         InfdevGrabHandler.setMouseReader(new InfdevMouse());
     }
