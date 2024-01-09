@@ -12,10 +12,20 @@ public class LibFilter {
 
     private static final String ASM_ALL_5_2_STRING =
             "{\n" +
-            "  \"name\": \"org.ow2.asm:asm-all:5.2\"\n" +
-            "}";
+                    "  \"name\": \"org.ow2.asm:asm-all:5.2\"\n" +
+                    "}";
+    private static final String JNA_5_13_STRING =
+            "{\n" +
+                    "  \"name\": \"net.java.dev.jna:jna:5.13.0\"\n" +
+                    "}";
+    private static final String OSHI_6_3_STRING =
+            "{\n" +
+                    "  \"name\": \"com.github.oshi:oshi-core:6.3.0\"\n" +
+                    "}";
 
     private static final Library ASM_ALL_5_2 = GSON.fromJson(ASM_ALL_5_2_STRING, Library.class);
+    private static final Library JNA_5_13 = GSON.fromJson(JNA_5_13_STRING, Library.class);
+    private static final Library OSHI_6_3 = GSON.fromJson(OSHI_6_3_STRING, Library.class);
 
     public static Version filter(Version version) {
         return version.setLibraries(filterLibs(version.getLibraries()));
@@ -24,9 +34,13 @@ public class LibFilter {
     public static List<Library> filterLibs(List<Library> libraries) {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
-            if (!library.isNative() && !library.getName().contains("org.lwjgl") && (library.getName().contains("jna") || !library.getName().contains("platform"))) {
+            if (!library.getName().contains("org.lwjgl")) {
                 if (library.getArtifactId().equals("asm-all") && library.getVersion().equals("4.1")) {
                     newLibraries.add(ASM_ALL_5_2);
+                } else if (library.getName().startsWith("net.java.dev.jna:jna:")) {
+                    newLibraries.add(JNA_5_13);
+                } else if (library.getName().startsWith("com.github.oshi:oshi-core:")) {
+                    newLibraries.add(OSHI_6_3);
                 } else {
                     newLibraries.add(library);
                 }
