@@ -194,6 +194,8 @@ public class CallbackBridge {
     @CriticalNative
     private static native void nativeSendScreenSize(int width, int height);
 
+    public static native void nativeSetWindowAttrib(int attrib, int value);
+
     public static native void setupBridgeWindow(Surface surface);
 
     static {

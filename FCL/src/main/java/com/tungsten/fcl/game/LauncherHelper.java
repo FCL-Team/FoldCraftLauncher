@@ -68,6 +68,8 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
+import org.lwjgl.glfw.CallbackBridge;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -171,6 +173,9 @@ public final class LauncherHelper {
                     fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
                     fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
                     JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
+                    if (repository.getVersion(selectedVersion).getMinimumLauncherVersion() >= 21) {
+                        CallbackBridge.nativeSetUseInputStackQueue(true);
+                    }
                     Bundle bundle = new Bundle();
                     bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
                     intent.putExtras(bundle);
