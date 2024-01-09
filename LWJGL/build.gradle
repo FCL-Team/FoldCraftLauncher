@@ -12,21 +12,20 @@ project.setLibsDirName("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl")
 
 task buildLwjgl(dependsOn:'jar')
 jar {
-    doLast {
-        archiveFileName = 'lwjgl.jar'
-        manifest {
-            attributes 'Manifest-Version': '3.2.3'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.default.collect {
+            println(it.getName())
+            it.isDirectory() ? it : zipTree(it)
         }
-        destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl"))
+    }
+    exclude 'net/java/openjdk/cacio/ctc/**'
+    manifest {
+        attributes 'Manifest-Version': '3.3.1'
+    }
+    doLast {
         File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl/version")
         versionFile.write(String.valueOf(new Date().getTime()))
-        from {
-            configurations.default.collect {
-                println(it.getName())
-                it.isDirectory() ? it : zipTree(it)
-            }
-        }
-        exclude 'net/java/openjdk/cacio/ctc/**'
     }
 }
 
@@ -37,5 +36,5 @@ java {
 }
 
 dependencies {
-    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
