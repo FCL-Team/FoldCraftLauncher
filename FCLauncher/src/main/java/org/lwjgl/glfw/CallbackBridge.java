@@ -3,6 +3,7 @@ package org.lwjgl.glfw;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.util.Log;
 import android.view.Choreographer;
 import android.view.Surface;
 
@@ -10,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
+import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import com.tungsten.fclauncher.utils.FCLPath;
 
 import dalvik.annotation.optimization.CriticalNative;
@@ -24,12 +26,7 @@ public class CallbackBridge {
     public static float mouseX, mouseY;
     public volatile static boolean holdingAlt, holdingCapslock, holdingCtrl,
             holdingNumlock, holdingShift;
-    public static final int GLFW_MOD_SHIFT = 0x1;
-    public static final int GLFW_MOD_CONTROL = 0x2;
-    public static final int GLFW_MOD_ALT = 0x4;
-    public static final int GLFW_MOD_CAPS_LOCK = 0x10;
-    public static final int GLFW_MOD_NUM_LOCK = 0x20;
-
+    private static final GrabListener grabListener = isGrabbing -> CallbackBridge.fclBridge.setCursorMode(isGrabbing ? FCLBridge.CursorDisabled : FCLBridge.CursorEnabled);
 
     public static void putMouseEventWithCoords(int button, float x, float y) {
         putMouseEventWithCoords(button, true, x, y);
@@ -50,7 +47,7 @@ public class CallbackBridge {
     public static void sendKeycode(int keycode, char keychar, int scancode, int modifiers, boolean isDown) {
         // TODO CHECK: This may cause input issue, not receive input!
         if (keycode != 0) {
-            nativeSendKey(keycode, scancode, isDown ? 1 : 0, modifiers);
+            nativeSendKey(LwjglKeycodeMap.convertKeycode(keycode), scancode, isDown ? 1 : 0, modifiers);
         }
         if (isDown && keychar != '\u0000') {
             nativeSendCharMods(keychar, modifiers);
@@ -111,19 +108,19 @@ public class CallbackBridge {
     public static int getCurrentMods() {
         int currMods = 0;
         if (holdingAlt) {
-            currMods |= GLFW_MOD_ALT;
+            currMods |= LwjglGlfwKeycode.GLFW_MOD_ALT;
         }
         if (holdingCapslock) {
-            currMods |= GLFW_MOD_CAPS_LOCK;
+            currMods |= LwjglGlfwKeycode.GLFW_MOD_CAPS_LOCK;
         }
         if (holdingCtrl) {
-            currMods |= GLFW_MOD_CONTROL;
+            currMods |= LwjglGlfwKeycode.GLFW_MOD_CONTROL;
         }
         if (holdingNumlock) {
-            currMods |= GLFW_MOD_NUM_LOCK;
+            currMods |= LwjglGlfwKeycode.GLFW_MOD_NUM_LOCK;
         }
         if (holdingShift) {
-            currMods |= GLFW_MOD_SHIFT;
+            currMods |= LwjglGlfwKeycode.GLFW_MOD_SHIFT;
         }
         return currMods;
     }
@@ -159,7 +156,16 @@ public class CallbackBridge {
     @SuppressWarnings("unused")
     private static void onGrabStateChanged(final boolean grabbing) {
         isGrabbing = grabbing;
-        CallbackBridge.fclBridge.setCursorMode(grabbing ? FCLBridge.CursorDisabled : FCLBridge.CursorEnabled);
+        sChoreographer.postFrameCallbackDelayed((time) -> {
+            // If the grab re-changed, skip notify process
+            if (isGrabbing != grabbing) {
+                return;
+            }
+            synchronized (grabListener) {
+                grabListener.onGrabState(isGrabbing);
+            }
+
+        }, 16);
 
     }
 
@@ -193,6 +199,10 @@ public class CallbackBridge {
 
     static {
         System.loadLibrary("pojavexec");
+    }
+
+    public interface GrabListener {
+        void onGrabState(boolean isGrabbing);
     }
 }
 

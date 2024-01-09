@@ -1,8 +1,6 @@
 package com.tungsten.fclauncher.bridge;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.utils.FCLPath;
 
 import org.lwjgl.glfw.CallbackBridge;
@@ -45,13 +45,13 @@ public class FCLBridge implements Serializable {
     public static final int ConfigureNotify = 22;
     public static final int FCLMessage = 37;
 
-    public static final int Button1 = 1;
-    public static final int Button2 = 2;
-    public static final int Button3 = 3;
-    public static final int Button4 = 4;
-    public static final int Button5 = 5;
-    public static final int Button6 = 6;
-    public static final int Button7 = 7;
+    public static final int Button1 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_1;
+    public static final int Button2 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_2;
+    public static final int Button3 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_3;
+    public static final int Button4 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_4;
+    public static final int Button5 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_5;
+    public static final int Button6 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_6;
+    public static final int Button7 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_7;
 
     public static final int CursorEnabled = 1;
     public static final int CursorDisabled = 0;
@@ -142,7 +142,20 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        CallbackBridge.sendMouseButton(button, press);
+        switch (button) {
+            case Button4:
+                if (!press) {
+                    CallbackBridge.sendScroll(0, 1d);
+                }
+                break;
+            case Button5:
+                if (!press) {
+                    CallbackBridge.sendScroll(0, -1d);
+                }
+                break;
+            default:
+                CallbackBridge.sendMouseButton(button, press);
+        }
     }
 
     public void pushEventPointer(int x, int y) {

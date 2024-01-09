@@ -20,7 +20,7 @@ public class AndroidKeycodeMap {
     public static int convertKeycode(int androidKeycode) {
         int index = Arrays.binarySearch(ANDROID_KEYCODES, androidKeycode);
         if (index >= 0)
-            return FCL_KEYCODES[index];
+            return LwjglKeycodeMap.convertKeycode(FCL_KEYCODES[index]);
         return FCLKeycodes.KEY_UNKNOWN;
     }
 
