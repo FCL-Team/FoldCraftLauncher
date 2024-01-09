@@ -35,11 +35,18 @@ public class LibFilter {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
             if (!library.getName().contains("org.lwjgl")) {
+                String[] version = library.getName().split(":")[2].split("\\.");
                 if (library.getArtifactId().equals("asm-all") && library.getVersion().equals("4.1")) {
                     newLibraries.add(ASM_ALL_5_2);
                 } else if (library.getName().startsWith("net.java.dev.jna:jna:")) {
+                    if (Integer.parseInt(version[0]) >= 5 && Integer.parseInt(version[1]) >= 13) {
+                        continue;
+                    }
                     newLibraries.add(JNA_5_13);
                 } else if (library.getName().startsWith("com.github.oshi:oshi-core:")) {
+                    if (Integer.parseInt(version[0]) != 6 || Integer.parseInt(version[1]) != 2) {
+                        continue;
+                    }
                     newLibraries.add(OSHI_6_3);
                 } else {
                     newLibraries.add(library);
