@@ -8,6 +8,7 @@
 #include <jni.h>
 #include <android/log.h>
 #include <assert.h>
+#include "pojav/pojav_cap.h"
 
 struct FCLInternal *fcl;
 
@@ -56,7 +57,8 @@ const char* fclGetPrimaryClipString() {
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativeWindow(JNIEnv* env, jclass clazz, jobject surface) {
-    fcl->window = ANativeWindow_fromSurface(env, surface);
+//    fcl->window = ANativeWindow_fromSurface(env, surface);
+    Java_net_kdt_pojavlaunch_utils_JREUtils_setupBridgeWindow(env,clazz,surface);
     FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl->window, ANativeWindow_getWidth(fcl->window), ANativeWindow_getHeight(fcl->window));
 }
 
