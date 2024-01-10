@@ -252,7 +252,10 @@ EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
     if (pojav_environ->config_renderer == RENDERER_VULKAN) {
         return (void *) pojav_environ->pojavWindow;
     }
-    return br_init_context((basic_render_window_t*)contextSrc);
+    //to prevent internalWindowSizeChanged cause too much error
+    void *ptr=br_init_context((basic_render_window_t*)contextSrc);
+    pojav_environ->showingWindow = (long) ptr;
+    return ptr;
 }
 
 EXTERNAL_API JNIEXPORT jlong JNICALL
