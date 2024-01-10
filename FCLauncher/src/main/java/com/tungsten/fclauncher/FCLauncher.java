@@ -6,6 +6,7 @@ import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 import android.content.Context;
 import android.os.Build;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -125,7 +126,7 @@ public class FCLauncher {
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
-        //todo:
+        envMap.put("LIBGL_NOERROR", "1");
         envMap.put("FORCE_VSYNC","false");
     }
 
@@ -141,7 +142,12 @@ public class FCLauncher {
             envMap.put("LIBGL_VSYNC", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
-            envMap.put("POJAV_RENDERER","opengles2");
+            if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
+                envMap.put("POJAV_RENDERER","opengles2");
+            } else {
+                envMap.put("POJAV_RENDERER","opengles2_vgpu");
+            }
+
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
             envMap.put("POJAV_RENDERER","opengles3_desktopgl_angle_vulkan");
             envMap.put("LIBGL_ES","3");
@@ -219,6 +225,7 @@ public class FCLauncher {
     private static void setupGraphicAndSoundEngine(FCLConfig config, FCLBridge bridge) {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
+        bridge.dlopen(nativeDir +"/" + config.getRenderer().getGlLibName());
         bridge.dlopen(nativeDir + "/libopenal.so");
     }
 
