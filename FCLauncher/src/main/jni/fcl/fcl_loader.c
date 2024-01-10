@@ -66,6 +66,7 @@ static void *logger_thread() {
 }
 
 JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
+    fcl->object_FCLBridge = (*env)->NewGlobalRef(env, jobject);
     setvbuf(stdout, 0, _IOLBF, 0);
     setvbuf(stderr, 0, _IONBF, 0);
     if  (pipe(fclFd) < 0) {

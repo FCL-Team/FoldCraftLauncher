@@ -129,7 +129,7 @@ public class FCLBridge implements Serializable {
         this.handler = new Handler();
         this.callback = callback;
         this.surface = surface;
-        setFCLBridge(this);
+        CallbackBridge.setFCLBridge(this);
         receiveLog("invoke redirectStdio");
         int errorCode = redirectStdio(getLogPath());
         if (errorCode != 0) {
@@ -140,9 +140,6 @@ public class FCLBridge implements Serializable {
         if (surface != null) {
             handleWindow();
         }
-        receiveLog("invoke setEventPipe");
-        setEventPipe();
-
         // start
         if (thread != null) {
             thread.start();
