@@ -123,9 +123,9 @@ public class FCLauncher {
     private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) {
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
-        envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
+        //todo:
         envMap.put("FORCE_VSYNC","false");
     }
 
@@ -143,7 +143,9 @@ public class FCLauncher {
             envMap.put("LIBGL_NOERROR", "1");
             envMap.put("POJAV_RENDERER","opengles2");
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
+            envMap.put("POJAV_RENDERER","opengles3_desktopgl_angle_vulkan");
             envMap.put("LIBGL_ES","3");
+            envMap.put("POJAVEXEC_EGL","libEGL_angle.so");
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
             envMap.put("MESA_GL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "4.3" : "4.6");
@@ -153,6 +155,7 @@ public class FCLauncher {
             envMap.put("allow_glsl_extension_directive_midshader", "true");
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
+            envMap.put("POJAV_RENDERER","vulkan_zink");
             if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
                 envMap.put("GALLIUM_DRIVER", "virpipe");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");

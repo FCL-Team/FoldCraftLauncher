@@ -34,7 +34,7 @@ public class LibFilter {
     public static List<Library> filterLibs(List<Library> libraries) {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
-            if (!library.getName().contains("org.lwjgl")) {
+            if (!library.getName().contains("org.lwjgl") && !library.getName().contains("jinput-platform")) {
                 String[] version = library.getName().split(":")[2].split("\\.");
                 if (library.getArtifactId().equals("asm-all") && library.getVersion().equals("4.1")) {
                     newLibraries.add(ASM_ALL_5_2);
