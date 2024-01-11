@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.R;
 import com.tungsten.fclcore.util.Pair;
 
 public final class NetworkUtils {
@@ -87,7 +89,7 @@ public final class NetworkUtils {
     private static boolean endsWithDomainSuffix(String host, String domainSuffix) {
         return host.endsWith(domainSuffix.toLowerCase());
     }
-    
+
     public static URLConnection createConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         String host = url.getHost().toLowerCase();
@@ -96,7 +98,7 @@ public final class NetworkUtils {
             connection.setRequestProperty("User-Agent", "pan.baidu.com");
         } else {
             // Default
-            connection.setRequestProperty("User-Agent", "FCL/1.1.3");
+            connection.setRequestProperty("User-Agent", "FCL/" + FCLPath.CONTEXT.getString(R.string.app_version));
         }
         connection.setUseCaches(false);
         connection.setConnectTimeout(5000);
