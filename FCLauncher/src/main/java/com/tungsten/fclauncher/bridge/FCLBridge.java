@@ -77,7 +77,6 @@ public class FCLBridge implements Serializable {
     private boolean surfaceDestroyed;
     private Handler handler;
     private Thread thread;
-    private Thread fclLogThread;
 
     static {
         System.loadLibrary("xhook");
@@ -123,15 +122,24 @@ public class FCLBridge implements Serializable {
         this.handler = new Handler();
         this.callback = callback;
         this.surface = surface;
-        fclLogThread = new Thread(() -> {
-            receiveLog("invoke redirectStdio");
-            int errorCode = redirectStdio(getLogPath());
-            if (errorCode != 0) {
-                receiveLog("Can't exec redirectStdio! Error code: " + errorCode);
-            }
-        });
-        fclLogThread.setName("FCLLogThread");
-        fclLogThread.start();
+        setFCLBridge(this);
+        receiveLog("invoke redirectStdio");
+        int errorCode = redirectStdio(getLogPath());
+        if (errorCode != 0) {
+            receiveLog("Can't exec redirectStdio! Error code: " + errorCode);
+        }
+        receiveLog("invoke setLogPipeReady");
+        // set graphic output and event pipe
+        if (surface != null) {
+            handleWindow();
+        }
+        receiveLog("invoke setEventPipe");
+        setEventPipe();
+
+        // start
+        if (thread != null) {
+            thread.start();
+        }
     }
 
     public void pushEventMouseButton(int button, boolean press) {
@@ -271,25 +279,6 @@ public class FCLBridge implements Serializable {
 
     public void setLogPath(String logPath) {
         this.logPath = logPath;
-    }
-
-    public void setLogPipeReady() {
-        receiveLog("invoke setLogPipeReady");
-        handler.post(() -> {
-            receiveLog("invoke setFCLBridge");
-            setFCLBridge(this);
-            // set graphic output and event pipe
-            if (surface != null) {
-                handleWindow();
-            }
-            receiveLog("invoke setEventPipe");
-            setEventPipe();
-
-            // start
-            if (thread != null) {
-                thread.start();
-            }
-        });
     }
 
     public void receiveLog(String log) {
