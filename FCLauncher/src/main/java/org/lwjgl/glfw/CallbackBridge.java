@@ -46,7 +46,11 @@ public class CallbackBridge {
     public static void sendKeycode(int keycode, char keychar, int scancode, int modifiers, boolean isDown) {
         // TODO CHECK: This may cause input issue, not receive input!
         if (keycode != 0) {
-            nativeSendKey(LwjglKeycodeMap.convertKeycode(keycode), scancode, isDown ? 1 : 0, modifiers);
+            int code = LwjglKeycodeMap.convertKeycode(keycode);
+            if (code <= 0) {
+                return;
+            }
+            nativeSendKey(code, scancode, isDown ? 1 : 0, modifiers);
         }
         if (isDown && keychar != '\u0000') {
             nativeSendCharMods(keychar, modifiers);

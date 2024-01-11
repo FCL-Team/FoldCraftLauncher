@@ -149,12 +149,12 @@ public class FCLBridge implements Serializable {
     public void pushEventMouseButton(int button, boolean press) {
         switch (button) {
             case Button4:
-                if (!press) {
+                if (press) {
                     CallbackBridge.sendScroll(0, 1d);
                 }
                 break;
             case Button5:
-                if (!press) {
+                if (press) {
                     CallbackBridge.sendScroll(0, -1d);
                 }
                 break;

@@ -1,8 +1,5 @@
 package com.tungsten.fclauncher.keycodes;
 
-import android.util.Log;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,5 +123,6 @@ public class LwjglKeycodeMap {
         add(LwjglGlfwKeycode.KEY_KP_DIVIDE, FCLKeycodes.KEY_KPSLASH);
         add(LwjglGlfwKeycode.KEY_KP_ENTER, FCLKeycodes.KEY_KPENTER);
         add(LwjglGlfwKeycode.KEY_KP_EQUAL, FCLKeycodes.KEY_KPEQUAL);
+        add(LwjglGlfwKeycode.KEY_DELETE, FCLKeycodes.KEY_DELETE);
     }
 }
