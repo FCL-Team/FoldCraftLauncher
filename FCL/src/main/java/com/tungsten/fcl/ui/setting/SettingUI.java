@@ -41,7 +41,9 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     @Override
     public void onStart() {
         super.onStart();
-        ((VersionSettingPage) pageManager.getPageById(SettingPageManager.PAGE_ID_SETTING_GAME)).loadVersion(Profiles.getSelectedProfile(), null);
+        if (pageManager != null) {
+            ((VersionSettingPage) pageManager.getPageById(SettingPageManager.PAGE_ID_SETTING_GAME)).loadVersion(Profiles.getSelectedProfile(), null);
+        }
     }
 
     @Override
