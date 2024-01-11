@@ -1,10 +1,3 @@
-#
-# Fold Craft Launcher
-# Copyright (C) 2022  Tungsten and contributors
-#
-# mcmod.cn
-# Copyright (C) 2022. All Rights Reserved.
-#
 gt-new-horizons;1;818239;;格雷科技：新视野;GT:New Horizons;GTNH
 enigtech-2;2;920201;;玄理2;EnigTech 2;ET2
 ;3;808284;;飞翔之路3;Flying Road 3;
