@@ -24,9 +24,11 @@
 #include <string.h>
 #include <environ/environ.h>
 #include <android/dlext.h>
+#include <pthread.h>
 #include "utils.h"
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
+#include "fcl/include/fcl_internal.h"
 
 #define GLFW_CLIENT_API 0x22001
 /* Consider GLFW_NO_API as Vulkan API */
@@ -57,10 +59,15 @@ struct PotatoBridge potatoBridge;
 
 #define RENDERER_GL4ES 1
 #define RENDERER_VK_ZINK 2
+#define RENDERER_VIRGL 3
 #define RENDERER_VULKAN 4
 
+int (*vtest_main_p) (int argc, char** argv);
+void (*vtest_swap_buffers_p) (void);
+int initVirgl();
+
 EXTERNAL_API void pojavTerminate() {
-    printf("EGLBridge: Terminating\n");
+    FCL_INTERNAL_LOG("EGLBridge: Terminating");
 
     switch (pojav_environ->config_renderer) {
         case RENDERER_GL4ES: {
@@ -94,6 +101,9 @@ Java_net_kdt_pojavlaunch_utils_JREUtils_releaseBridgeWindow(ABI_COMPAT JNIEnv *e
 }
 
 EXTERNAL_API void* pojavGetCurrentContext() {
+    if(pojav_environ->config_renderer == RENDERER_VIRGL) {
+        return (void *)OSMesaGetCurrentContext_p();
+    }
     return br_get_current();
 }
 
@@ -141,7 +151,7 @@ void* load_turnip_vulkan() {
     if(linkerhook == NULL) return NULL;
     void* turnip_driver_handle = linker_ns_dlopen("libvulkan_freedreno.so", RTLD_LOCAL | RTLD_NOW);
     if(turnip_driver_handle == NULL) {
-        printf("AdrenoSupp: Failed to load Turnip!\n%s\n", dlerror());
+        FCL_INTERNAL_LOG("AdrenoSupp: Failed to load Turnip!\n%s", dlerror());
         dlclose(linkerhook);
         return NULL;
     }
@@ -177,16 +187,35 @@ void load_vulkan() {
 #ifdef ADRENO_POSSIBLE
         void* result = load_turnip_vulkan();
         if(result != NULL) {
-            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+            FCL_INTERNAL_LOG("AdrenoSupp: Loaded Turnip, loader address: %p", result);
             set_vulkan_ptr(result);
             return;
         }
 #endif
     }
-    printf("OSMDroid: loading vulkan regularly...\n");
+    FCL_INTERNAL_LOG("OSMDroid: loading vulkan regularly...");
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
-    printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
+    FCL_INTERNAL_LOG("OSMDroid: loaded vulkan, ptr=%p", vulkan_ptr);
     set_vulkan_ptr(vulkan_ptr);
+}
+
+bool loadSymbolsVirGL() {
+    pojav_environ->config_renderer = RENDERER_VIRGL;
+    dlsym_OSMesa();
+    dlsym_EGL();
+
+    char* fileName = calloc(1, 1024);
+
+    sprintf(fileName, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
+    void *handle = dlopen(fileName, RTLD_LAZY);
+    FCL_INTERNAL_LOG("VirGL: libvirgl_test_server = %p", handle);
+    if (!handle) {
+        FCL_INTERNAL_LOG("VirGL: %s", dlerror());
+    }
+    vtest_main_p = dlsym(handle, "vtest_main");
+    vtest_swap_buffers_p = dlsym(handle, "vtest_swap_buffers");
+
+    free(fileName);
 }
 
 int pojavInitOpenGL() {
@@ -198,16 +227,24 @@ int pojavInitOpenGL() {
     // NOTE: Override for now.
     const char *renderer = getenv("POJAV_RENDERER");
     if (strncmp("opengles", renderer, 8) == 0) {
-        pojav_environ->config_renderer = RENDERER_GL4ES;
-        set_gl_bridge_tbl();
+        if (strncmp("opengles3_virgl", renderer, 15) == 0) {
+            loadSymbolsVirGL();
+        } else {
+            pojav_environ->config_renderer = RENDERER_GL4ES;
+            set_gl_bridge_tbl();
+        }
     } else if (strcmp(renderer, "vulkan_zink") == 0) {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
         load_vulkan();
         setenv("GALLIUM_DRIVER","zink",1);
         set_osm_bridge_tbl();
     }
-    if(br_init()) {
-        br_setup_window();
+    if(pojav_environ->config_renderer == RENDERER_VK_ZINK || pojav_environ->config_renderer == RENDERER_GL4ES) {
+        if(br_init()) {
+            br_setup_window();
+        }
+    } else if (pojav_environ->config_renderer == RENDERER_VIRGL){
+        return initVirgl();
     }
     return 0;
 }
@@ -234,33 +271,58 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             // pojavInitOpenGL();
             break;
         default:
-            printf("GLFW: Unimplemented API 0x%x\n", value);
+            FCL_INTERNAL_LOG("GLFW: Unimplemented API 0x%x", value);
             abort();
     }
 }
 
 EXTERNAL_API void pojavSwapBuffers() {
-    br_swap_buffers();
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
+        glFinish_p();
+        vtest_swap_buffers_p();
+    } else {
+        br_swap_buffers();
+    }
 }
 
 
-EXTERNAL_API void pojavMakeCurrent(void* window) {
-    br_make_current((basic_render_window_t*)window);
+EXTERNAL_API void pojavMakeCurrent(void *window) {
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
+        FCL_INTERNAL_LOG("OSMDroid: making current");
+        OSMesaMakeCurrent_p((OSMesaContext) window, setbuffer, GL_UNSIGNED_BYTE,
+                            pojav_environ->savedWidth, pojav_environ->savedHeight);
+        FCL_INTERNAL_LOG("OSMDroid: vendor: %s", glGetString_p(GL_VENDOR));
+        FCL_INTERNAL_LOG("OSMDroid: renderer: %s", glGetString_p(GL_RENDERER));
+        glClear_p(GL_COLOR_BUFFER_BIT);
+        glClearColor_p(0.4f, 0.4f, 0.4f, 1.0f);
+        int pixelsArr[4];
+        glReadPixels_p(0, 0, 1, 1, GL_RGB, GL_INT, &pixelsArr);
+        pojavSwapBuffers();
+    } else {
+        br_make_current((basic_render_window_t *) window);
+    }
 }
 
-EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
+EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
+    void *ptr;
     if (pojav_environ->config_renderer == RENDERER_VULKAN) {
-        return (void *) pojav_environ->pojavWindow;
+        ptr = pojav_environ->pojavWindow;
+    } else if (pojav_environ->config_renderer == RENDERER_VIRGL) {
+        pojavInitOpenGL();
+        FCL_INTERNAL_LOG("OSMDroid: generating context");
+        ptr = OSMesaCreateContext_p(OSMESA_RGBA, contextSrc);
+        FCL_INTERNAL_LOG("OSMDroid: context=%p", ptr);
+    } else {
+        ptr = br_init_context((basic_render_window_t *) contextSrc);
     }
     //to prevent internalWindowSizeChanged cause too much error
-    void *ptr=br_init_context((basic_render_window_t*)contextSrc);
     pojav_environ->showingWindow = (long) ptr;
     return ptr;
 }
 
 EXTERNAL_API JNIEXPORT jlong JNICALL
 Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
-    printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");
+    FCL_INTERNAL_LOG("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle");
     // The code below still uses the env var because
     // 1. it's easier to do that
     // 2. it won't break if something will try to load vulkan and osmesa simultaneously
@@ -269,5 +331,117 @@ Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPA
 }
 
 EXTERNAL_API void pojavSwapInterval(int interval) {
-    br_swap_interval(interval);
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
+        eglSwapInterval_p(potatoBridge.eglDisplay, interval);
+    } else {
+        br_swap_interval(interval);
+    }
+}
+
+void *egl_make_current(void *window) {
+    EGLBoolean success = eglMakeCurrent_p(
+            potatoBridge.eglDisplay,
+            window == 0 ? (EGLSurface *) 0 : potatoBridge.eglSurface,
+            window == 0 ? (EGLSurface *) 0 : potatoBridge.eglSurface,
+            /* window==0 ? EGL_NO_CONTEXT : */ (EGLContext *) window
+    );
+
+    if (success == EGL_FALSE) {
+        FCL_INTERNAL_LOG("EGLBridge: Error: eglMakeCurrent() failed: %p", eglGetError_p());
+    } else {
+        FCL_INTERNAL_LOG("EGLBridge: eglMakeCurrent() succeed!");
+    }
+
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
+        FCL_INTERNAL_LOG("VirGL: vtest_main = %p", vtest_main_p);
+        FCL_INTERNAL_LOG("VirGL: Calling VTest server's main function");
+        vtest_main_p(3, (const char *[]) {"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
+    }
+}
+
+int initVirgl() {
+    if (potatoBridge.eglDisplay == NULL || potatoBridge.eglDisplay == EGL_NO_DISPLAY) {
+        potatoBridge.eglDisplay = eglGetDisplay_p(EGL_DEFAULT_DISPLAY);
+        if (potatoBridge.eglDisplay == EGL_NO_DISPLAY) {
+            FCL_INTERNAL_LOG("EGLBridge: Error eglGetDefaultDisplay() failed: %p",
+                             eglGetError_p());
+            return 0;
+        }
+    }
+    FCL_INTERNAL_LOG("EGLBridge: Initializing");
+    if (!eglInitialize_p(potatoBridge.eglDisplay, NULL, NULL)) {
+        FCL_INTERNAL_LOG("EGLBridge: Error eglInitialize() failed: %s", eglGetError_p());
+        return 0;
+    }
+
+    static const EGLint attribs[] = {
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_ALPHA_SIZE, 8,
+            // Minecraft required on initial 24
+            EGL_DEPTH_SIZE, 24,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_NONE
+    };
+
+    EGLint num_configs;
+    EGLint vid;
+
+    if (!eglChooseConfig_p(potatoBridge.eglDisplay, attribs, &config, 1, &num_configs)) {
+        FCL_INTERNAL_LOG("EGLBridge: Error couldn't get an EGL visual config: %s",
+                         eglGetError_p());
+        return 0;
+    }
+
+    assert(config);
+    assert(num_configs > 0);
+
+    if (!eglGetConfigAttrib_p(potatoBridge.eglDisplay, config, EGL_NATIVE_VISUAL_ID, &vid)) {
+        FCL_INTERNAL_LOG("EGLBridge: Error eglGetConfigAttrib() failed: %s", eglGetError_p());
+        return 0;
+    }
+
+    ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow, 0, 0, vid);
+
+    eglBindAPI_p(EGL_OPENGL_ES_API);
+
+    potatoBridge.eglSurface = eglCreateWindowSurface_p(potatoBridge.eglDisplay, config,
+                                                       pojav_environ->pojavWindow, NULL);
+
+    if (!potatoBridge.eglSurface) {
+        FCL_INTERNAL_LOG("EGLBridge: Error eglCreateWindowSurface failed: %p", eglGetError_p());
+        return 0;
+    }
+
+    // sanity checks
+    {
+        EGLint val;
+        assert(eglGetConfigAttrib_p(potatoBridge.eglDisplay, config, EGL_SURFACE_TYPE, &val));
+        assert(val & EGL_WINDOW_BIT);
+    }
+
+    FCL_INTERNAL_LOG("EGLBridge: Initialized!");
+    FCL_INTERNAL_LOG("EGLBridge: ThreadID=%d", gettid());
+    FCL_INTERNAL_LOG("EGLBridge: EGLDisplay=%p, EGLSurface=%p",
+                     potatoBridge.eglDisplay,
+                     potatoBridge.eglSurface
+    );
+
+    // Init EGL context and vtest server
+    const EGLint ctx_attribs[] = {
+            EGL_CONTEXT_CLIENT_VERSION, 3,
+            EGL_NONE
+    };
+    EGLContext *ctx = eglCreateContext_p(potatoBridge.eglDisplay, config, NULL, ctx_attribs);
+    FCL_INTERNAL_LOG("VirGL: created EGL context %p", ctx);
+
+    pthread_t t;
+    pthread_create(&t, NULL, egl_make_current, (void *) ctx);
+    usleep(100 * 1000); // need enough time for the server to init
+
+    if (OSMesaCreateContext_p == NULL) {
+        FCL_INTERNAL_LOG("OSMDroid: %s", dlerror());
+    }
+    return 0;
 }
