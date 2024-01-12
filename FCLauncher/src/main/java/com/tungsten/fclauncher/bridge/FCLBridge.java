@@ -1,6 +1,8 @@
 package com.tungsten.fclauncher.bridge;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -92,6 +94,8 @@ public class FCLBridge implements Serializable {
     public native int[] renderAWTScreenFrame();
 
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
+
+    public static native void nativeClipboardReceived(String data, String mimeTypeSub);
 
     public native void nativeMoveWindow(int x, int y);
 
@@ -287,6 +291,43 @@ public class FCLBridge implements Serializable {
 
     public void setFCLNativeWindow(Surface surface) {
         CallbackBridge.setupBridgeWindow(surface);
+    }
+
+    public static void querySystemClipboard() {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = clipboardManager.getPrimaryClip();
+            if (clipData == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            ClipData.Item firstClipItem = clipData.getItemAt(0);
+            CharSequence clipItemText = firstClipItem.getText();
+            if (clipItemText == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            nativeClipboardReceived(clipItemText.toString(), "plain");
+        });
+    }
+
+    public static void putClipboardData(String data, String mimeType) {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
+            ClipData clipData = null;
+            switch (mimeType) {
+                case "text/plain":
+                    clipData = ClipData.newPlainText("AWT Paste", data);
+                    break;
+                case "text/html":
+                    clipData = ClipData.newHtmlText("AWT Paste", data, data);
+            }
+            if (clipData != null) {
+                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(clipData);
+            }
+        });
     }
 
     private void handleWindow() {

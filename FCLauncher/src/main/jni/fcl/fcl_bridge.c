@@ -29,32 +29,6 @@ __attribute__((constructor)) void env_init() {
     __android_log_print(ANDROID_LOG_INFO, "Environ", "%p", fcl);
 }
 
-ANativeWindow* fclGetNativeWindow() {
-    return fcl->window;
-}
-
-void fclSetPrimaryClipString(const char* string) {
-    PrepareFCLBridgeJNI();
-    CallFCLBridgeJNIFunc( , Void, setPrimaryClipString, "(Ljava/lang/String;)V", (*env)->NewStringUTF(env, string));
-}
-
-const char* fclGetPrimaryClipString() {
-    PrepareFCLBridgeJNI();
-    if (fcl->clipboard_string != NULL) {
-        free(fcl->clipboard_string);
-        fcl->clipboard_string = NULL;
-    }
-    CallFCLBridgeJNIFunc(jstring clipstr = , Object, getPrimaryClipString, "()Ljava/lang/String;");
-    const char* string = NULL;
-    if (clipstr != NULL) {
-        string = (*env)->GetStringUTFChars(env, clipstr, NULL);
-        if (string != NULL) {
-            fcl->clipboard_string = strdup(string);
-        }
-    }
-    return fcl->clipboard_string;
-}
-
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     env_init();
     if (fcl->android_jvm == NULL) {

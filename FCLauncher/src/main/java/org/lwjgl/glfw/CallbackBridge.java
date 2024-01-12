@@ -1,6 +1,7 @@
 package org.lwjgl.glfw;
 
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.Choreographer;
@@ -12,6 +13,8 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import com.tungsten.fclauncher.utils.FCLPath;
+
+import java.util.Objects;
 
 import dalvik.annotation.optimization.CriticalNative;
 
@@ -94,11 +97,11 @@ public class CallbackBridge {
                 clipboard.setPrimaryClip(clip);
                 return null;
             case CLIPBOARD_PASTE:
-                if (!clipboard.hasPrimaryClip()) {
+                if (clipboard.hasPrimaryClip() && clipboard.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    return clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                } else {
                     return "";
                 }
-                ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-                return item.getText().toString();
             case CLIPBOARD_OPEN:
                 FCLBridge.openLink(copy);
                 return null;
