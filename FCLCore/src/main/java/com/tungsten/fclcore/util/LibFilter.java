@@ -40,14 +40,16 @@ public class LibFilter {
                     newLibraries.add(ASM_ALL_5_2);
                 } else if (library.getName().startsWith("net.java.dev.jna:jna:")) {
                     if (Integer.parseInt(version[0]) >= 5 && Integer.parseInt(version[1]) >= 13) {
-                        continue;
+                        newLibraries.add(library);
+                    } else {
+                        newLibraries.add(JNA_5_13);
                     }
-                    newLibraries.add(JNA_5_13);
                 } else if (library.getName().startsWith("com.github.oshi:oshi-core:")) {
                     if (Integer.parseInt(version[0]) != 6 || Integer.parseInt(version[1]) != 2) {
-                        continue;
+                        newLibraries.add(library);
+                    } else {
+                        newLibraries.add(OSHI_6_3);
                     }
-                    newLibraries.add(OSHI_6_3);
                 } else {
                     newLibraries.add(library);
                 }
