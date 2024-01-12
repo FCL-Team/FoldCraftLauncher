@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt">ARB_gpu_shader_int64</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gpu_shader_int64.txt">ARB_gpu_shader_int64</a> extension.
  * 
  * <p>The extension introduces the following features for all shader types:</p>
  * 
@@ -32,6 +32,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBGPUShaderInt64 {
 
+    static { GL.initialize(); }
+
     /** Returned by the {@code type} parameter of GetActiveAttrib, GetActiveUniform, and GetTransformFeedbackVarying. */
     public static final int
         GL_INT64_ARB               = 0x140E,
@@ -43,23 +45,8 @@ public class ARBGPUShaderInt64 {
         GL_UNSIGNED_INT64_VEC3_ARB = 0x8FF6,
         GL_UNSIGNED_INT64_VEC4_ARB = 0x8FF7;
 
-    static { GL.initialize(); }
-
     protected ARBGPUShaderInt64() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glUniform1i64ARB, caps.glUniform1i64vARB, caps.glProgramUniform1i64ARB, caps.glProgramUniform1i64vARB, caps.glUniform2i64ARB, 
-            caps.glUniform2i64vARB, caps.glProgramUniform2i64ARB, caps.glProgramUniform2i64vARB, caps.glUniform3i64ARB, caps.glUniform3i64vARB, 
-            caps.glProgramUniform3i64ARB, caps.glProgramUniform3i64vARB, caps.glUniform4i64ARB, caps.glUniform4i64vARB, caps.glProgramUniform4i64ARB, 
-            caps.glProgramUniform4i64vARB, caps.glUniform1ui64ARB, caps.glUniform1ui64vARB, caps.glProgramUniform1ui64ARB, caps.glProgramUniform1ui64vARB, 
-            caps.glUniform2ui64ARB, caps.glUniform2ui64vARB, caps.glProgramUniform2ui64ARB, caps.glProgramUniform2ui64vARB, caps.glUniform3ui64ARB, 
-            caps.glUniform3ui64vARB, caps.glProgramUniform3ui64ARB, caps.glProgramUniform3ui64vARB, caps.glUniform4ui64ARB, caps.glUniform4ui64vARB, 
-            caps.glProgramUniform4ui64ARB, caps.glProgramUniform4ui64vARB, caps.glGetUniformi64vARB, caps.glGetUniformui64vARB, caps.glGetnUniformi64vARB, 
-            caps.glGetnUniformui64vARB
-        );
     }
 
     // --- [ glUniform1i64ARB ] ---

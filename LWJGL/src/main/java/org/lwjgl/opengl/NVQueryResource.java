@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_query_resource.txt">NV_query_resource</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_query_resource.txt">NV_query_resource</a> extension.
  * 
  * <p>OpenGL implementations manage the residence of textures, shaders, and other graphical objects in GPU accessible memory (whether in on-board video
  * memory or addressable system memory is implementation dependent). With more insight into OpenGL's memory usage 1) applications could make educated
@@ -32,6 +32,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVQueryResource {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code queryType} parameter of {@link #glQueryResourceNV QueryResourceNV}. */
     public static final int GL_QUERY_RESOURCE_TYPE_VIDMEM_ALLOC_NV = 0x9540;
 
@@ -43,16 +45,8 @@ public class NVQueryResource {
         GL_QUERY_RESOURCE_RENDERBUFFER_NV   = 0x9546,
         GL_QUERY_RESOURCE_BUFFEROBJECT_NV   = 0x9547;
 
-    static { GL.initialize(); }
-
     protected NVQueryResource() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glQueryResourceNV
-        );
     }
 
     // --- [ glQueryResourceNV ] ---

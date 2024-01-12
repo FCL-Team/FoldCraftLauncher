@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_buffers.txt">ARB_draw_buffers</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_buffers.txt">ARB_draw_buffers</a> extension.
  * 
  * <p>This extension extends {@link ARBFragmentProgram ARB_fragment_program} and {@link ARBFragmentShader ARB_fragment_shader} to allow multiple output colors, and provides a mechanism for
  * directing those outputs to multiple color buffers.</p>
@@ -22,6 +22,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL13 OpenGL 1.3}. Promoted to core in {@link GL20 OpenGL 2.0}.</p>
  */
 public class ARBDrawBuffers {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameters of GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
@@ -43,16 +45,8 @@ public class ARBDrawBuffers {
         GL_DRAW_BUFFER14_ARB    = 0x8833,
         GL_DRAW_BUFFER15_ARB    = 0x8834;
 
-    static { GL.initialize(); }
-
     protected ARBDrawBuffers() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawBuffersARB
-        );
     }
 
     // --- [ glDrawBuffersARB ] ---

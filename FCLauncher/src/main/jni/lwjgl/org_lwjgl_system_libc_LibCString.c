@@ -3,36 +3,50 @@
  * License terms: https://www.lwjgl.org/license
  * MACHINE GENERATED FILE, DO NOT EDIT
  */
+#ifdef LWJGL_WINDOWS
+    #define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "common_tools.h"
 #include <string.h>
 
 EXTERN_C_ENTER
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset__JIJ(JNIEnv *__env, jclass clazz, jlong destAddress, jint c, jlong count) {
-    void *dest = (void *)(intptr_t)destAddress;
+    void *dest = (void *)(uintptr_t)destAddress;
     UNUSED_PARAMS(__env, clazz)
-    return (jlong)(intptr_t)memset(dest, c, (size_t)count);
+    return (jlong)(uintptr_t)memset(dest, c, (size_t)count);
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy__JJJ(JNIEnv *__env, jclass clazz, jlong destAddress, jlong srcAddress, jlong count) {
-    void *dest = (void *)(intptr_t)destAddress;
-    void const *src = (void const *)(intptr_t)srcAddress;
+    void *dest = (void *)(uintptr_t)destAddress;
+    void const *src = (void const *)(uintptr_t)srcAddress;
     UNUSED_PARAMS(__env, clazz)
-    return (jlong)(intptr_t)memcpy(dest, src, (size_t)count);
+    return (jlong)(uintptr_t)memcpy(dest, src, (size_t)count);
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove__JJJ(JNIEnv *__env, jclass clazz, jlong destAddress, jlong srcAddress, jlong count) {
-    void *dest = (void *)(intptr_t)destAddress;
-    void const *src = (void const *)(intptr_t)srcAddress;
+    void *dest = (void *)(uintptr_t)destAddress;
+    void const *src = (void const *)(uintptr_t)srcAddress;
     UNUSED_PARAMS(__env, clazz)
-    return (jlong)(intptr_t)memmove(dest, src, (size_t)count);
+    return (jlong)(uintptr_t)memmove(dest, src, (size_t)count);
+}
+
+JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nstrlen(JNIEnv *__env, jclass clazz, jlong strAddress) {
+    char const *str = (char const *)(uintptr_t)strAddress;
+    UNUSED_PARAMS(__env, clazz)
+    return (jlong)strlen(str);
+}
+
+JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nstrerror(JNIEnv *__env, jclass clazz, jint errnum) {
+    UNUSED_PARAMS(__env, clazz)
+    return (jlong)(uintptr_t)strerror(errnum);
 }
 
 JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3BIJ(JNIEnv *__env, jclass clazz, jbyteArray destAddress, jint c, jlong count) {
     jlong __result;
     jbyte *dest = (*__env)->GetByteArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseByteArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -41,7 +55,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3SIJ(JNI
     jlong __result;
     jshort *dest = (*__env)->GetShortArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseShortArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -50,7 +64,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3IIJ(JNI
     jlong __result;
     jint *dest = (*__env)->GetIntArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseIntArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -59,7 +73,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3JIJ(JNI
     jlong __result;
     jlong *dest = (*__env)->GetLongArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseLongArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -68,7 +82,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3FIJ(JNI
     jlong __result;
     jfloat *dest = (*__env)->GetFloatArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseFloatArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -77,7 +91,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemset___3DIJ(JNI
     jlong __result;
     jdouble *dest = (*__env)->GetDoubleArrayElements(__env, destAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memset((void *)dest, c, (size_t)count);
+    __result = (jlong)(uintptr_t)memset((void *)dest, c, (size_t)count);
     (*__env)->ReleaseDoubleArrayElements(__env, destAddress, dest, 0);
     return __result;
 }
@@ -87,7 +101,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3B_3BJ(J
     jbyte *dest = (*__env)->GetByteArrayElements(__env, destAddress, NULL);
     jbyte *src = (*__env)->GetByteArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseByteArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseByteArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -98,7 +112,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3S_3SJ(J
     jshort *dest = (*__env)->GetShortArrayElements(__env, destAddress, NULL);
     jshort *src = (*__env)->GetShortArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseShortArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseShortArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -109,7 +123,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3I_3IJ(J
     jint *dest = (*__env)->GetIntArrayElements(__env, destAddress, NULL);
     jint *src = (*__env)->GetIntArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseIntArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseIntArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -120,7 +134,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3J_3JJ(J
     jlong *dest = (*__env)->GetLongArrayElements(__env, destAddress, NULL);
     jlong *src = (*__env)->GetLongArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseLongArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseLongArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -131,7 +145,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3F_3FJ(J
     jfloat *dest = (*__env)->GetFloatArrayElements(__env, destAddress, NULL);
     jfloat *src = (*__env)->GetFloatArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseFloatArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseFloatArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -142,7 +156,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemcpy___3D_3DJ(J
     jdouble *dest = (*__env)->GetDoubleArrayElements(__env, destAddress, NULL);
     jdouble *src = (*__env)->GetDoubleArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memcpy((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseDoubleArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseDoubleArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -153,7 +167,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3B_3BJ(
     jbyte *dest = (*__env)->GetByteArrayElements(__env, destAddress, NULL);
     jbyte *src = (*__env)->GetByteArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseByteArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseByteArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -164,7 +178,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3S_3SJ(
     jshort *dest = (*__env)->GetShortArrayElements(__env, destAddress, NULL);
     jshort *src = (*__env)->GetShortArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseShortArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseShortArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -175,7 +189,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3I_3IJ(
     jint *dest = (*__env)->GetIntArrayElements(__env, destAddress, NULL);
     jint *src = (*__env)->GetIntArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseIntArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseIntArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -186,7 +200,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3J_3JJ(
     jlong *dest = (*__env)->GetLongArrayElements(__env, destAddress, NULL);
     jlong *src = (*__env)->GetLongArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseLongArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseLongArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -197,7 +211,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3F_3FJ(
     jfloat *dest = (*__env)->GetFloatArrayElements(__env, destAddress, NULL);
     jfloat *src = (*__env)->GetFloatArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseFloatArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseFloatArrayElements(__env, destAddress, dest, 0);
     return __result;
@@ -208,7 +222,7 @@ JNIEXPORT jlong JNICALL Java_org_lwjgl_system_libc_LibCString_nmemmove___3D_3DJ(
     jdouble *dest = (*__env)->GetDoubleArrayElements(__env, destAddress, NULL);
     jdouble *src = (*__env)->GetDoubleArrayElements(__env, srcAddress, NULL);
     UNUSED_PARAMS(__env, clazz)
-    __result = (jlong)(intptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
+    __result = (jlong)(uintptr_t)memmove((void *)dest, (void const *)src, (size_t)count);
     (*__env)->ReleaseDoubleArrayElements(__env, srcAddress, src, 0);
     (*__env)->ReleaseDoubleArrayElements(__env, destAddress, dest, 0);
     return __result;

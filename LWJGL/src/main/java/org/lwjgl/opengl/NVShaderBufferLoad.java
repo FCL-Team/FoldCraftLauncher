@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_buffer_load.txt">NV_shader_buffer_load</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_buffer_load.txt">NV_shader_buffer_load</a> extension.
  * 
  * <p>At a very coarse level, GL has evolved in a way that allows applications to replace many of the original state machine variables with blocks of
  * user-defined data. For example, the current vertex state has been augmented by vertex buffer objects, fixed-function shading state and parameters have
@@ -89,6 +89,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVShaderBufferLoad {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBufferParameterui64vNV, GetNamedBufferParameterui64vNV. */
     public static final int GL_BUFFER_GPU_ADDRESS_NV = 0x8F1D;
 
@@ -98,19 +100,8 @@ public class NVShaderBufferLoad {
     /** Accepted by the {@code value} parameter of GetIntegerui64vNV. */
     public static final int GL_MAX_SHADER_BUFFER_ADDRESS_NV = 0x8F35;
 
-    static { GL.initialize(); }
-
     protected NVShaderBufferLoad() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMakeBufferResidentNV, caps.glMakeBufferNonResidentNV, caps.glIsBufferResidentNV, caps.glMakeNamedBufferResidentNV, 
-            caps.glMakeNamedBufferNonResidentNV, caps.glIsNamedBufferResidentNV, caps.glGetBufferParameterui64vNV, caps.glGetNamedBufferParameterui64vNV, 
-            caps.glGetIntegerui64vNV, caps.glUniformui64NV, caps.glUniformui64vNV, caps.glGetUniformui64vNV, caps.glProgramUniformui64NV, 
-            caps.glProgramUniformui64vNV
-        );
     }
 
     // --- [ glMakeBufferResidentNV ] ---

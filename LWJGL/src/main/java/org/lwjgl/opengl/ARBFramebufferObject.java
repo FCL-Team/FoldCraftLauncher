@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_framebuffer_object.txt">ARB_framebuffer_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_framebuffer_object.txt">ARB_framebuffer_object</a> extension.
  * 
  * <p>ARB_framebuffer_object is an extension intended to address the following goals:</p>
  * 
@@ -196,6 +194,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBFramebufferObject {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code target} parameter of BindFramebuffer, CheckFramebufferStatus, FramebufferTexture{1D|2D|3D}, FramebufferRenderbuffer, and
      * GetFramebufferAttachmentParameteriv.
@@ -323,20 +323,8 @@ public class ARBFramebufferObject {
     /** Accepted by the {@code value} parameter of GetTexLevelParameter. */
     public static final int GL_TEXTURE_STENCIL_SIZE = 0x88F1;
 
-    static { GL.initialize(); }
-
     protected ARBFramebufferObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glIsRenderbuffer, caps.glBindRenderbuffer, caps.glDeleteRenderbuffers, caps.glGenRenderbuffers, caps.glRenderbufferStorage, 
-            caps.glRenderbufferStorageMultisample, caps.glGetRenderbufferParameteriv, caps.glIsFramebuffer, caps.glBindFramebuffer, caps.glDeleteFramebuffers, 
-            caps.glGenFramebuffers, caps.glCheckFramebufferStatus, caps.glFramebufferTexture1D, caps.glFramebufferTexture2D, caps.glFramebufferTexture3D, 
-            caps.glFramebufferTextureLayer, caps.glFramebufferRenderbuffer, caps.glGetFramebufferAttachmentParameteriv, caps.glBlitFramebuffer, 
-            caps.glGenerateMipmap
-        );
     }
 
     // --- [ glIsRenderbuffer ] ---

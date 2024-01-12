@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gl_spirv.txt">ARB_gl_spirv</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gl_spirv.txt">ARB_gl_spirv</a> extension.
  * 
  * <p>This is version 100 of the GL_ARB_gl_spirv extension.</p>
  * 
@@ -32,22 +32,16 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBGLSPIRV {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code binaryformat} parameter of {@link GL41C#glShaderBinary ShaderBinary}. */
     public static final int GL_SHADER_BINARY_FORMAT_SPIR_V_ARB = 0x9551;
 
     /** Accepted by the {@code pname} parameter of {@link GL20C#glGetShaderiv GetShaderiv}. */
     public static final int GL_SPIR_V_BINARY_ARB = 0x9552;
 
-    static { GL.initialize(); }
-
     protected ARBGLSPIRV() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSpecializeShaderARB
-        );
     }
 
     // --- [ glSpecializeShaderARB ] ---

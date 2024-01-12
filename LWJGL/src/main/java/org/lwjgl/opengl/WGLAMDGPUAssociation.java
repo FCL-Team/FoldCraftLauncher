@@ -16,7 +16,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/WGL_AMD_gpu_association.txt">WGL_AMD_gpu_association</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/WGL_AMD_gpu_association.txt">WGL_AMD_gpu_association</a> extension.
  * 
  * <p>There currently is no way for applications to efficiently use GPU resources in systems that contain more than one GPU. Vendors have provided methods
  * that attempt to split the workload for an application among the available GPU resources. This has proven to be very inefficient because most
@@ -44,14 +44,6 @@ public class WGLAMDGPUAssociation {
 
     protected WGLAMDGPUAssociation() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(WGLCapabilities caps) {
-        return checkFunctions(
-            caps.wglGetGPUIDsAMD, caps.wglGetGPUInfoAMD, caps.wglGetContextGPUIDAMD, caps.wglCreateAssociatedContextAMD, 
-            caps.wglCreateAssociatedContextAttribsAMD, caps.wglDeleteAssociatedContextAMD, caps.wglMakeAssociatedContextCurrentAMD, 
-            caps.wglGetCurrentAssociatedContextAMD
-        );
     }
 
     // --- [ wglGetGPUIDsAMD ] ---

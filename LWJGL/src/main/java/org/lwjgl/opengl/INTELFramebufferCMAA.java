@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_framebuffer_CMAA.txt">INTEL_framebuffer_CMAA</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_framebuffer_CMAA.txt">INTEL_framebuffer_CMAA</a> extension.
  * 
  * <p>Multisampling is a mechanism to antialias all GL primitives and is part of the GL specification.</p>
  * 
@@ -22,7 +20,7 @@ import static org.lwjgl.system.Checks.*;
  * 
  * <p>This extension incorporates an optimized CMAA algorithm implementation into the GL implementation.</p>
  * 
- * <p>For more information on CMAA refer to <a target="_blank" href="https://software.intel.com/">software.intel.com</a>.</p>
+ * <p>For more information on CMAA refer to <a href="https://software.intel.com/">software.intel.com</a>.</p>
  * 
  * <p>Requires {@link GL30 OpenGL 3.0}.</p>
  */
@@ -32,12 +30,6 @@ public class INTELFramebufferCMAA {
 
     protected INTELFramebufferCMAA() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glApplyFramebufferAttachmentCMAAINTEL
-        );
     }
 
     // --- [ glApplyFramebufferAttachmentCMAAINTEL ] ---

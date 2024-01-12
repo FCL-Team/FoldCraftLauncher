@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counters.txt">ARB_shader_atomic_counters</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counters.txt">ARB_shader_atomic_counters</a> extension.
  * 
  * <p>This extension provides a set of atomic counters.</p>
  * 
@@ -41,6 +39,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL30 OpenGL 3.0}. Promoted to core in {@link GL42 OpenGL 4.2}.</p>
  */
 public class ARBShaderAtomicCounters {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code target} parameter of BindBufferBase and BindBufferRange. */
     public static final int GL_ATOMIC_COUNTER_BUFFER = 0x92C0;
@@ -93,16 +93,8 @@ public class ARBShaderAtomicCounters {
     /** Returned in {@code params} by GetActiveUniform and GetActiveUniformsiv. */
     public static final int GL_UNSIGNED_INT_ATOMIC_COUNTER = 0x92DB;
 
-    static { GL.initialize(); }
-
     protected ARBShaderAtomicCounters() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetActiveAtomicCounterBufferiv
-        );
     }
 
     // --- [ glGetActiveAtomicCounterBufferiv ] ---

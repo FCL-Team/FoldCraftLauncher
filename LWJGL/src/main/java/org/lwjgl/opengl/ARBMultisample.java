@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_multisample.txt">ARB_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_multisample.txt">ARB_multisample</a> extension.
  * 
  * <p>This extension provides a mechanism to antialias all GL primitives: points, lines, polygons, bitmaps, and images. The technique is to sample all
  * primitives multiple times at each pixel. The color sample values are resolved to a single, displayable color each time a pixel is updated, so the
@@ -28,6 +26,8 @@ import static org.lwjgl.system.Checks.*;
  * techniques to be alternated during the rendering of a single scene.</p>
  */
 public class ARBMultisample {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, and by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
@@ -49,16 +49,8 @@ public class ARBMultisample {
         GL_SAMPLE_COVERAGE_VALUE_ARB  = 0x80AA,
         GL_SAMPLE_COVERAGE_INVERT_ARB = 0x80AB;
 
-    static { GL.initialize(); }
-
     protected ARBMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSampleCoverageARB
-        );
     }
 
     // --- [ glSampleCoverageARB ] ---

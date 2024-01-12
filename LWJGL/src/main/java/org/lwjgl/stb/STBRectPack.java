@@ -7,9 +7,8 @@ package org.lwjgl.stb;
 
 import org.lwjgl.system.*;
 
-
 /**
- * Native bindings to stb_rect_pack.h from the <a target="_blank" href="https://github.com/nothings/stb">stb library</a>.
+ * Native bindings to stb_rect_pack.h from the <a href="https://github.com/nothings/stb">stb library</a>.
  * 
  * <p>Useful for e.g. packing rectangular textures into an atlas. Does not do rotation.</p>
  * 
@@ -17,6 +16,11 @@ import org.lwjgl.system.*;
  * stb_truetype (which is primarily what this is meant to replace).</p>
  */
 public class STBRectPack {
+
+    static { LibSTB.initialize(); }
+
+    /** Mostly for internal use, but this is the maximum supported coordinate value. */
+    public static final int STBRP__MAXVAL = 0x7FFFFFFF;
 
     /**
      * Packing heuristics
@@ -33,8 +37,6 @@ public class STBRectPack {
         STBRP_HEURISTIC_Skyline_default       = 0,
         STBRP_HEURISTIC_Skyline_BL_sortHeight = STBRP_HEURISTIC_Skyline_default,
         STBRP_HEURISTIC_Skyline_BF_sortHeight = 1;
-
-    static { LibSTB.initialize(); }
 
     protected STBRectPack() {
         throw new UnsupportedOperationException();

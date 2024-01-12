@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_subroutine.txt">ARB_shader_subroutine</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_subroutine.txt">ARB_shader_subroutine</a> extension.
  * 
  * <p>This extension adds support to shaders for "indirect subroutine calls", where a single shader can include many subroutines and dynamically select
  * through the API which subroutine is called from each call site. Switching subroutines dynamically in this fashion can avoid the cost of recompiling and
@@ -23,6 +21,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link ARBGPUShader5 ARB_gpu_shader5}. Promoted to core in {@link GL40 OpenGL 4.0}.</p>
  */
 public class ARBShaderSubroutine {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of GetProgramStageiv. */
     public static final int
@@ -42,17 +42,8 @@ public class ARBShaderSubroutine {
         GL_NUM_COMPATIBLE_SUBROUTINES = 0x8E4A,
         GL_COMPATIBLE_SUBROUTINES     = 0x8E4B;
 
-    static { GL.initialize(); }
-
     protected ARBShaderSubroutine() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetSubroutineUniformLocation, caps.glGetSubroutineIndex, caps.glGetActiveSubroutineUniformiv, caps.glGetActiveSubroutineUniformName, 
-            caps.glGetActiveSubroutineName, caps.glUniformSubroutinesuiv, caps.glGetUniformSubroutineuiv, caps.glGetProgramStageiv
-        );
     }
 
     // --- [ glGetSubroutineUniformLocation ] ---

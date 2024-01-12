@@ -16,7 +16,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_window_rectangles.txt">EXT_window_rectangles</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_window_rectangles.txt">EXT_window_rectangles</a> extension.
  * 
  * <p>This extension provides additional orthogonally aligned "window rectangles" specified in window-space coordinates that restrict rasterization of all
  * primitive types (geometry, images, paths) and framebuffer clears.</p>
@@ -37,6 +37,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTWindowRectangles {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code mode} parameter of {@link #glWindowRectanglesEXT WindowRectanglesEXT}. */
     public static final int
         GL_INCLUSIVE_EXT = 0x8F10,
@@ -54,16 +56,8 @@ public class EXTWindowRectangles {
         GL_MAX_WINDOW_RECTANGLES_EXT = 0x8F14,
         GL_NUM_WINDOW_RECTANGLES_EXT = 0x8F15;
 
-    static { GL.initialize(); }
-
     protected EXTWindowRectangles() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glWindowRectanglesEXT
-        );
     }
 
     // --- [ glWindowRectanglesEXT ] ---
@@ -90,8 +84,8 @@ public class EXTWindowRectangles {
      * equations are satisfied for all {@code i} less than {@code n}:</p>
      * 
      * <pre><code>
-     * x_i &lt;= xw &lt; x_i+w_i
-     * y_i &lt;= yw &lt; y_i+h_i</code></pre>
+     * x_i &le; xw &lt; x_i+w_i
+     * y_i &le; yw &lt; y_i+h_i</code></pre>
      * 
      * <p>When the window rectangles mode is {@link #GL_INCLUSIVE_EXT INCLUSIVE_EXT} mode and the bound framebuffer object is non-zero, a fragment passes the window rectangles test if
      * the fragment's window-space position is within at least one of the current {@code n} active window rectangles; otherwise the window rectangles test

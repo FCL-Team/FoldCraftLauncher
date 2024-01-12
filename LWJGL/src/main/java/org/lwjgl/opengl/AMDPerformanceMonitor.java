@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_performance_monitor.txt">AMD_performance_monitor</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_performance_monitor.txt">AMD_performance_monitor</a> extension.
  * 
  * <p>This extension enables the capture and reporting of performance monitors. Performance monitors contain groups of counters which hold arbitrary counted
  * data. Typically, the counters hold information on performance-related counters in the underlying hardware. The extension is general enough to allow the
@@ -25,6 +25,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * on arbitrary boundaries during rendering.</p>
  */
 public class AMDPerformanceMonitor {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pame} parameter of GetPerfMonitorCounterInfoAMD. */
     public static final int
@@ -42,18 +44,8 @@ public class AMDPerformanceMonitor {
         GL_PERFMON_RESULT_SIZE_AMD      = 0x8BC5,
         GL_PERFMON_RESULT_AMD           = 0x8BC6;
 
-    static { GL.initialize(); }
-
     protected AMDPerformanceMonitor() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetPerfMonitorGroupsAMD, caps.glGetPerfMonitorCountersAMD, caps.glGetPerfMonitorGroupStringAMD, caps.glGetPerfMonitorCounterStringAMD, 
-            caps.glGetPerfMonitorCounterInfoAMD, caps.glGenPerfMonitorsAMD, caps.glDeletePerfMonitorsAMD, caps.glSelectPerfMonitorCountersAMD, 
-            caps.glBeginPerfMonitorAMD, caps.glEndPerfMonitorAMD, caps.glGetPerfMonitorCounterDataAMD
-        );
     }
 
     // --- [ glGetPerfMonitorGroupsAMD ] ---

@@ -19,6 +19,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Native bindings to the OpenGL 1.2 optional imaging subset. */
 public class ARBImaging {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
      * GetDoublev, and by the {@code target} parameter of ColorTable, CopyColorTable, ColorTableParameteriv, ColorTableParameterfv,
@@ -201,24 +203,8 @@ public class ARBImaging {
         GL_FUNC_SUBTRACT         = 0x800A,
         GL_FUNC_REVERSE_SUBTRACT = 0x800B;
 
-    static { GL.initialize(); }
-
     protected ARBImaging() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, boolean fc) {
-        return (fc || checkFunctions(
-            caps.glColorTable, caps.glCopyColorTable, caps.glColorTableParameteriv, caps.glColorTableParameterfv, caps.glGetColorTable, 
-            caps.glGetColorTableParameteriv, caps.glGetColorTableParameterfv, caps.glColorSubTable, caps.glCopyColorSubTable, caps.glConvolutionFilter1D, 
-            caps.glConvolutionFilter2D, caps.glCopyConvolutionFilter1D, caps.glCopyConvolutionFilter2D, caps.glGetConvolutionFilter, caps.glSeparableFilter2D, 
-            caps.glGetSeparableFilter, caps.glConvolutionParameteri, caps.glConvolutionParameteriv, caps.glConvolutionParameterf, caps.glConvolutionParameterfv, 
-            caps.glGetConvolutionParameteriv, caps.glGetConvolutionParameterfv, caps.glHistogram, caps.glResetHistogram, caps.glGetHistogram, 
-            caps.glGetHistogramParameteriv, caps.glGetHistogramParameterfv, caps.glMinmax, caps.glResetMinmax, caps.glGetMinmax, caps.glGetMinmaxParameteriv, 
-            caps.glGetMinmaxParameterfv
-        )) && checkFunctions(
-            caps.glBlendColor, caps.glBlendEquation
-        );
     }
 
     // --- [ glColorTable ] ---

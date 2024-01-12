@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_objects.txt">ARB_shader_objects</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_objects.txt">ARB_shader_objects</a> extension.
  * 
  * <p>This extension adds API calls that are necessary to manage shader objects and program objects as defined in the OpenGL 2.0 white papers by 3Dlabs.</p>
  * 
@@ -42,6 +42,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Promoted to core in {@link GL20 OpenGL 2.0}.</p>
  */
 public class ARBShaderObjects {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} argument of GetHandleARB. */
     public static final int GL_PROGRAM_OBJECT_ARB = 0x8B40;
@@ -87,22 +89,8 @@ public class ARBShaderObjects {
         GL_SAMPLER_2D_RECT_ARB        = 0x8B63,
         GL_SAMPLER_2D_RECT_SHADOW_ARB = 0x8B64;
 
-    static { GL.initialize(); }
-
     protected ARBShaderObjects() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDeleteObjectARB, caps.glGetHandleARB, caps.glDetachObjectARB, caps.glCreateShaderObjectARB, caps.glShaderSourceARB, caps.glCompileShaderARB, 
-            caps.glCreateProgramObjectARB, caps.glAttachObjectARB, caps.glLinkProgramARB, caps.glUseProgramObjectARB, caps.glValidateProgramARB, 
-            caps.glUniform1fARB, caps.glUniform2fARB, caps.glUniform3fARB, caps.glUniform4fARB, caps.glUniform1iARB, caps.glUniform2iARB, caps.glUniform3iARB, 
-            caps.glUniform4iARB, caps.glUniform1fvARB, caps.glUniform2fvARB, caps.glUniform3fvARB, caps.glUniform4fvARB, caps.glUniform1ivARB, 
-            caps.glUniform2ivARB, caps.glUniform3ivARB, caps.glUniform4ivARB, caps.glUniformMatrix2fvARB, caps.glUniformMatrix3fvARB, 
-            caps.glUniformMatrix4fvARB, caps.glGetObjectParameterfvARB, caps.glGetObjectParameterivARB, caps.glGetInfoLogARB, caps.glGetAttachedObjectsARB, 
-            caps.glGetUniformLocationARB, caps.glGetActiveUniformARB, caps.glGetUniformfvARB, caps.glGetUniformivARB, caps.glGetShaderSourceARB
-        );
     }
 
     public static void glShaderSourceARB(int shader, java.nio.ByteBuffer string) {
@@ -262,9 +250,9 @@ public class ARBShaderObjects {
     public static void glShaderSourceARB(@NativeType("GLhandleARB") int shaderObj, @NativeType("GLcharARB const **") CharSequence... string) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            long stringAddress = org.lwjgl.system.APIUtil.apiArrayi(stack, MemoryUtil::memUTF8, string);
+            long stringAddress = APIUtil.apiArrayi(stack, MemoryUtil::memUTF8, string);
             nglShaderSourceARB(shaderObj, string.length, stringAddress, stringAddress - (string.length << 2));
-            org.lwjgl.system.APIUtil.apiArrayFree(stringAddress, string.length);
+            APIUtil.apiArrayFree(stringAddress, string.length);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -283,9 +271,9 @@ public class ARBShaderObjects {
     public static void glShaderSourceARB(@NativeType("GLhandleARB") int shaderObj, @NativeType("GLcharARB const **") CharSequence string) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            long stringAddress = org.lwjgl.system.APIUtil.apiArrayi(stack, MemoryUtil::memUTF8, string);
+            long stringAddress = APIUtil.apiArrayi(stack, MemoryUtil::memUTF8, string);
             nglShaderSourceARB(shaderObj, 1, stringAddress, stringAddress - 4);
-            org.lwjgl.system.APIUtil.apiArrayFree(stringAddress, 1);
+            APIUtil.apiArrayFree(stringAddress, 1);
         } finally {
             stack.setPointer(stackPointer);
         }

@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_debug_label.txt">EXT_debug_label</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_debug_label.txt">EXT_debug_label</a> extension.
  * 
  * <p>This extension defines a mechanism for OpenGL and OpenGL ES applications to label their objects (textures, buffers, shaders, etc.) with a descriptive
  * string.</p>
@@ -28,6 +28,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTDebugLabel {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code type} parameter of LabelObjectEXT and GetObjectLabelEXT. */
     public static final int
         GL_BUFFER_OBJECT_EXT           = 0x9151,
@@ -37,16 +39,8 @@ public class EXTDebugLabel {
         GL_QUERY_OBJECT_EXT            = 0x9153,
         GL_PROGRAM_PIPELINE_OBJECT_EXT = 0x8A4F;
 
-    static { GL.initialize(); }
-
     protected EXTDebugLabel() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glLabelObjectEXT, caps.glGetObjectLabelEXT
-        );
     }
 
     // --- [ glLabelObjectEXT ] ---

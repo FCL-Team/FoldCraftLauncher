@@ -45,7 +45,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * free the off-heap memory after the buffer object becomes unreachable.</li>
  * </ul>
  *
- * <p>An alternative API for allocating off-heap memory can be found in the {@link MemoryUtil} class. This has none of the above drawbacks,
+ * <p>An alternative API for allocating off-heap memory can be found in the {@link org.lwjgl.system.MemoryUtil} class. This has none of the above drawbacks,
  * but requires allocated memory to be explictly freed when not used anymore.</p>
  *
  * <h3>Memory alignment</h3>

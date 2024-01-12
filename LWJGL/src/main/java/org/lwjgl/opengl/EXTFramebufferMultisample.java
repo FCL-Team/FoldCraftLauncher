@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_framebuffer_multisample.txt">EXT_framebuffer_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_framebuffer_multisample.txt">EXT_framebuffer_multisample</a> extension.
  * 
  * <p>This extension extends the EXT_framebuffer_object framework to enable multisample rendering.</p>
  * 
@@ -56,6 +54,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTFramebufferMultisample {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetRenderbufferParameterivEXT. */
     public static final int GL_RENDERBUFFER_SAMPLES_EXT = 0x8CAB;
 
@@ -65,16 +65,8 @@ public class EXTFramebufferMultisample {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_MAX_SAMPLES_EXT = 0x8D57;
 
-    static { GL.initialize(); }
-
     protected EXTFramebufferMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRenderbufferStorageMultisampleEXT
-        );
     }
 
     // --- [ glRenderbufferStorageMultisampleEXT ] ---

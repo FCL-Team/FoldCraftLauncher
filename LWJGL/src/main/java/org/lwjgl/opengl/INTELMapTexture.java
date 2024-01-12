@@ -17,7 +17,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_map_texture.txt">INTEL_map_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_map_texture.txt">INTEL_map_texture</a> extension.
  * 
  * <p>Systems with integrated GPUs can share the same physical memory between CPU and GPU. This feature, if exposed by API, can bring significant performance
  * benefits for graphics applications by reducing the complexity of uploading/accessing texture contents. This extension enables CPU direct access to the
@@ -33,6 +33,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class INTELMapTexture {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of TexParameteri, for target TEXTURE_2D. */
     public static final int GL_TEXTURE_MEMORY_LAYOUT_INTEL = 0x83FF;
 
@@ -42,16 +44,8 @@ public class INTELMapTexture {
         GL_LAYOUT_LINEAR_INTEL            = 1,
         GL_LAYOUT_LINEAR_CPU_CACHED_INTEL = 2;
 
-    static { GL.initialize(); }
-
     protected INTELMapTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSyncTextureINTEL, caps.glUnmapTexture2DINTEL, caps.glMapTexture2DINTEL
-        );
     }
 
     // --- [ glSyncTextureINTEL ] ---

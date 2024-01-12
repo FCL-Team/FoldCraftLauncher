@@ -19,7 +19,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_path_rendering.txt">NV_path_rendering</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_path_rendering.txt">NV_path_rendering</a> extension.
  * 
  * <p>Conventional OpenGL supports rendering images (pixel rectangles and bitmaps) and simple geometric primitives (points, lines, polygons).</p>
  * 
@@ -82,6 +82,8 @@ import static org.lwjgl.opengl.GL11.*;
  * path).</p>
  */
 public class NVPathRendering {
+
+    static { GL.initialize(); }
 
     /** Accepted in elements of the {@code commands} array parameter of PathCommandsNV and PathSubCommandsNV. */
     public static final byte
@@ -349,23 +351,8 @@ public class NVPathRendering {
         GL_OBJECT_LINEAR_NV = 0x2401,
         GL_CONSTANT_NV      = 0x8576;
 
-    static { GL.initialize(); }
-
     protected NVPathRendering() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPathCommandsNV, caps.glPathCoordsNV, caps.glPathSubCommandsNV, caps.glPathSubCoordsNV, caps.glPathStringNV, caps.glPathGlyphsNV, 
-            caps.glPathGlyphRangeNV, caps.glCopyPathNV, caps.glInterpolatePathsNV, caps.glTransformPathNV, caps.glPathParameterivNV, caps.glPathParameteriNV, 
-            caps.glPathParameterfvNV, caps.glPathParameterfNV, caps.glPathDashArrayNV, caps.glGenPathsNV, caps.glDeletePathsNV, caps.glIsPathNV, 
-            caps.glPathStencilFuncNV, caps.glPathStencilDepthOffsetNV, caps.glStencilFillPathNV, caps.glStencilStrokePathNV, caps.glStencilFillPathInstancedNV, 
-            caps.glStencilStrokePathInstancedNV, caps.glPathCoverDepthFuncNV, caps.glCoverFillPathNV, caps.glCoverStrokePathNV, caps.glCoverFillPathInstancedNV, 
-            caps.glCoverStrokePathInstancedNV, caps.glGetPathParameterivNV, caps.glGetPathParameterfvNV, caps.glGetPathCommandsNV, caps.glGetPathCoordsNV, 
-            caps.glGetPathDashArrayNV, caps.glGetPathMetricsNV, caps.glGetPathMetricRangeNV, caps.glGetPathSpacingNV, caps.glIsPointInFillPathNV, 
-            caps.glIsPointInStrokePathNV, caps.glGetPathLengthNV, caps.glPointAlongPathNV
-        );
     }
 
     // --- [ glPathCommandsNV ] ---
@@ -798,18 +785,19 @@ public class NVPathRendering {
     // --- [ glPathGlyphIndexRangeNV ] ---
 
     /** Unsafe version of: {@link #glPathGlyphIndexRangeNV PathGlyphIndexRangeNV} */
-    public static native int nglPathGlyphIndexRangeNV(int fontTarget, long fontName, int fontStyle, int pathParameterTemplate, float emScale, int baseAndCount);
+    public static native int nglPathGlyphIndexRangeNV(int fontTarget, long fontName, int fontStyle, int pathParameterTemplate, float emScale, long baseAndCount);
 
     /**
      * @param fontTarget one of:<br><table><tr><td>{@link #GL_STANDARD_FONT_NAME_NV STANDARD_FONT_NAME_NV}</td><td>{@link #GL_SYSTEM_FONT_NAME_NV SYSTEM_FONT_NAME_NV}</td><td>{@link #GL_FILE_NAME_NV FILE_NAME_NV}</td></tr></table>
      * @param fontStyle  one or more of:<br><table><tr><td>{@link #GL_BOLD_BIT_NV BOLD_BIT_NV}</td><td>{@link #GL_ITALIC_BIT_NV ITALIC_BIT_NV}</td></tr></table>
      */
     @NativeType("GLenum")
-    public static int glPathGlyphIndexRangeNV(@NativeType("GLenum") int fontTarget, @NativeType("void const *") ByteBuffer fontName, @NativeType("GLbitfield") int fontStyle, @NativeType("GLuint") int pathParameterTemplate, @NativeType("GLfloat") float emScale, @NativeType("GLuint") int baseAndCount) {
+    public static int glPathGlyphIndexRangeNV(@NativeType("GLenum") int fontTarget, @NativeType("void const *") ByteBuffer fontName, @NativeType("GLbitfield") int fontStyle, @NativeType("GLuint") int pathParameterTemplate, @NativeType("GLfloat") float emScale, @NativeType("GLuint *") IntBuffer baseAndCount) {
         if (CHECKS) {
             checkNT1(fontName);
+            check(baseAndCount, 2);
         }
-        return nglPathGlyphIndexRangeNV(fontTarget, memAddress(fontName), fontStyle, pathParameterTemplate, emScale, baseAndCount);
+        return nglPathGlyphIndexRangeNV(fontTarget, memAddress(fontName), fontStyle, pathParameterTemplate, emScale, memAddress(baseAndCount));
     }
 
     // --- [ glProgramPathFragmentInputGenNV ] ---
@@ -1402,6 +1390,18 @@ public class NVPathRendering {
             check(transformValues, numPaths * transformTypeToElements(transformType));
         }
         callPPV(numPaths, pathNameType, memAddress(paths), pathBase, reference, mask, coverMode, transformType, transformValues, __functionAddress);
+    }
+
+    /** Array version of: {@link #glPathGlyphIndexRangeNV PathGlyphIndexRangeNV} */
+    @NativeType("GLenum")
+    public static int glPathGlyphIndexRangeNV(@NativeType("GLenum") int fontTarget, @NativeType("void const *") ByteBuffer fontName, @NativeType("GLbitfield") int fontStyle, @NativeType("GLuint") int pathParameterTemplate, @NativeType("GLfloat") float emScale, @NativeType("GLuint *") int[] baseAndCount) {
+        long __functionAddress = GL.getICD().glPathGlyphIndexRangeNV;
+        if (CHECKS) {
+            check(__functionAddress);
+            checkNT1(fontName);
+            check(baseAndCount, 2);
+        }
+        return callPPI(fontTarget, memAddress(fontName), fontStyle, pathParameterTemplate, emScale, baseAndCount, __functionAddress);
     }
 
     /** Array version of: {@link #glProgramPathFragmentInputGenNV ProgramPathFragmentInputGenNV} */

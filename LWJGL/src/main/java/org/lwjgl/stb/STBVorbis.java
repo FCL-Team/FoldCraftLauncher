@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import org.lwjgl.system.libc.LibCStdlib;
 
 /**
- * Native bindings to stb_vorbis.c from the <a target="_blank" href="https://github.com/nothings/stb">stb library</a>.
+ * Native bindings to stb_vorbis.c from the <a href="https://github.com/nothings/stb">stb library</a>.
  * 
  * <p>Ogg Vorbis audio decoder.</p>
  * 
@@ -51,6 +51,8 @@ import org.lwjgl.system.libc.LibCStdlib;
  * code. (But if you don't support seeking, you may just want to go ahead and use pushdata.)</p>
  */
 public class STBVorbis {
+
+    static { LibSTB.initialize(); }
 
     /**
      * Error code.
@@ -104,8 +106,6 @@ public class STBVorbis {
         VORBIS_seek_failed                      = 37,
         VORBIS_ogg_skeleton_not_supported       = 38;
 
-    static { LibSTB.initialize(); }
-
     protected STBVorbis() {
         throw new UnsupportedOperationException();
     }
@@ -126,6 +126,25 @@ public class STBVorbis {
             check(f);
         }
         nstb_vorbis_get_info(f, __result.address());
+        return __result;
+    }
+
+    // --- [ stb_vorbis_get_comment ] ---
+
+    /** Unsafe version of: {@link #stb_vorbis_get_comment get_comment} */
+    public static native void nstb_vorbis_get_comment(long f, long __result);
+
+    /**
+     * Returns ogg comments.
+     *
+     * @param f an ogg vorbis file decoder
+     */
+    @NativeType("stb_vorbis_comment")
+    public static STBVorbisComment stb_vorbis_get_comment(@NativeType("stb_vorbis *") long f, @NativeType("stb_vorbis_comment") STBVorbisComment __result) {
+        if (CHECKS) {
+            check(f);
+        }
+        nstb_vorbis_get_comment(f, __result.address());
         return __result;
     }
 
@@ -252,6 +271,10 @@ public class STBVorbis {
      * <p>The number of channels returned are stored in *channels (which can be {@code NULL} -- it is always the same as the number of channels reported by {@link #stb_vorbis_get_info get_info}).
      * {@code *output} will contain an array of {@code float*} buffers, one per channel. In other words, {@code (*output)[0][0]} contains the first sample
      * from the first channel, and {@code (*output)[1][0]} contains the first sample from the second channel.</p>
+     * 
+     * <p>{@code *output} points into stb_vorbis's internal output buffer storage; these buffers are owned by stb_vorbis and application code should not free
+     * them or modify their contents. They are transient and will be overwritten once you ask for more data to get decoded, so be sure to grab any data you
+     * need before then.</p>
      *
      * @param f         an ogg vorbis file decoder
      * @param datablock the data block containing the audio sample data
@@ -655,7 +678,7 @@ public class STBVorbis {
      * 1    k      sum(Ck) for all k
      * 2    *      stereo L, stereo R
      * k    l      k &gt; l, the first l channels, then 0s
-     * k    l      k &lt;= l, the first k channels</code></pre>
+     * k    l      k &le; l, the first k channels</code></pre>
      * 
      * <p>Note that this is not <b>good</b> surround etc. mixing at all! It's just so you get something useful.</p>
      *

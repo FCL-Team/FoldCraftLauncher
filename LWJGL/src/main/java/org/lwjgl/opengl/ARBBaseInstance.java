@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_base_instance.txt">ARB_base_instance</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_base_instance.txt">ARB_base_instance</a> extension.
  * 
  * <p>This extension allows the offset within buffer objects used for instanced rendering to be specified. This is congruent with the {@code first} parameter
  * in {@link GL11C#glDrawArrays DrawArrays} and the {@code basevertex} parameter in {@link GL11C#glDrawElements DrawElements}. When instanced rendering is performed (for example, through
@@ -32,12 +30,6 @@ public class ARBBaseInstance {
 
     protected ARBBaseInstance() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawArraysInstancedBaseInstance, caps.glDrawElementsInstancedBaseInstance, caps.glDrawElementsInstancedBaseVertexBaseInstance
-        );
     }
 
     // --- [ glDrawArraysInstancedBaseInstance ] ---

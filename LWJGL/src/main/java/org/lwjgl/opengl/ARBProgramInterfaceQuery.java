@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_program_interface_query.txt">ARB_program_interface_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_program_interface_query.txt">ARB_program_interface_query</a> extension.
  * 
  * <p>This extension provides a single unified set of query commands that can be used by applications to determine properties of various interfaces and
  * resources used by program objects to communicate with application code, fixed-function OpenGL pipeline stages, and other programs. In unextended OpenGL
@@ -38,6 +36,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL20 OpenGL 2.0}. Promoted to core in {@link GL43 OpenGL 4.3}.</p>
  */
 public class ARBProgramInterfaceQuery {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code programInterface} parameter of GetProgramInterfaceiv, GetProgramResourceIndex, GetProgramResourceName, GetProgramResourceiv,
@@ -98,17 +98,8 @@ public class ARBProgramInterfaceQuery {
         GL_LOCATION_INDEX                       = 0x930F,
         GL_IS_PER_PATCH                         = 0x92E7;
 
-    static { GL.initialize(); }
-
     protected ARBProgramInterfaceQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetProgramInterfaceiv, caps.glGetProgramResourceIndex, caps.glGetProgramResourceName, caps.glGetProgramResourceiv, 
-            caps.glGetProgramResourceLocation, caps.glGetProgramResourceLocationIndex
-        );
     }
 
     // --- [ glGetProgramInterfaceiv ] ---

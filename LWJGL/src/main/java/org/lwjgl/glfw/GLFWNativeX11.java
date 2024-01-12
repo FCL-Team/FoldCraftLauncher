@@ -20,10 +20,6 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Native bindings to the GLFW library's X11 native access functions. */
 public class GLFWNativeX11 {
 
-    protected GLFWNativeX11() {
-        throw new UnsupportedOperationException();
-    }
-
     /** Contains the function pointers loaded from {@code GLFW.getLibrary()}. */
     public static final class Functions {
 
@@ -40,6 +36,10 @@ public class GLFWNativeX11 {
 
     }
 
+    protected GLFWNativeX11() {
+        throw new UnsupportedOperationException();
+    }
+
     // --- [ glfwGetX11Display ] ---
 
     /**
@@ -47,7 +47,9 @@ public class GLFWNativeX11 {
      * 
      * <p>Note: This function may be called from any thread. Access is not synchronized.</p>
      *
-     * @return The {@code Display} used by GLFW, or {@code NULL} if an error occurred.
+     * @return the {@code Display} used by GLFW, or {@code NULL} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.0
      */
@@ -66,7 +68,9 @@ public class GLFWNativeX11 {
      *
      * @param monitor the GLFW monitor
      *
-     * @return The {@code RRCrtc} of the specified monitor, or {@code None} if an error occurred.
+     * @return the {@code RRCrtc} of the specified monitor, or {@code None} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.1
      */
@@ -88,7 +92,9 @@ public class GLFWNativeX11 {
      *
      * @param monitor the GLFW monitor
      *
-     * @return The {@code RROutput} of the specified monitor, or {@code None} if an error occurred.
+     * @return the {@code RROutput} of the specified monitor, or {@code None} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.1
      */
@@ -110,7 +116,9 @@ public class GLFWNativeX11 {
      *
      * @param window a GLFW window
      *
-     * @return The {@code Window} of the specified window, or {@code None} if an error occurred.
+     * @return the {@code Window} of the specified window, or {@code None} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.0
      */

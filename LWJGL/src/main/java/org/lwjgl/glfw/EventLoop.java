@@ -7,78 +7,39 @@ package org.lwjgl.glfw;
 import org.lwjgl.system.*;
 import org.lwjgl.system.macosx.*;
 
-import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.macosx.LibC.*;
 import static org.lwjgl.system.macosx.ObjCRuntime.*;
 
 /**
  * Contains checks for the event loop issues on OS X.
  *
- * <p>On-screen GLFW windows can only be used in the main thread and only if that thread is the first thread in the process. This requires running the JVM with
+ * <p>GLFW can only be used on the main thread and only if that thread is the first thread in the process. This requires running the JVM with
  * {@code -XstartOnFirstThread}, which means that other window toolkits (AWT/Swing, JavaFX, etc.) cannot be used at the same time.</p>
  *
  * <p>Another window toolkit <em>can</em> be used if GLFW windows are never shown (created with {@link GLFW#GLFW_VISIBLE GLFW_VISIBLE} equal to
  * {@link GLFW#GLFW_FALSE GLFW_FALSE}) and only used as contexts for offscreen rendering. This is possible if the window toolkit has initialized and created
- * the shared application (NSApp) before a GLFW window is created.</p>
+ * the shared application (NSApp) before GLFW is initialized.</p>
  */
 final class EventLoop {
-
-    static final class OffScreen {
-        static {
-            if (Platform.get() == Platform.MACOSX && !isMainThread()) {
-                // The only way to avoid a crash is if the shared application (NSApp) has been created by something else
-                SharedLibrary AppKit = MacOSXLibrary.getWithIdentifier("com.apple.AppKit");
-                try {
-                    long NSApp = AppKit.getFunctionAddress("NSApp"); // The NSApp global variable is an exported symbol
-                    if (memGetAddress(NSApp) == NULL) {
-                        throw new IllegalStateException(
-                            isJavaStartedOnFirstThread()
-                                ? "GLFW windows may only be created on the main thread."
-                                : "GLFW windows may only be created on the main thread and that thread must be the first thread in the process. Please run " +
-                                  "the JVM with -XstartOnFirstThread. For offscreen rendering, make sure another window toolkit (e.g. AWT or JavaFX) is " +
-                                  "initialized before GLFW."
-                        );
-                    }
-
-                    apiLog("GLFW can only be used for offscreen rendering.");
-                } finally {
-                    AppKit.free();
-                }
-            }
-        }
-
-        private OffScreen() {
-        }
-
-        static void check() {
-            // intentionally empty to trigger the static initializer
-        }
-    }
-
-    static final class OnScreen {
-        static {
-            if (Platform.get() == Platform.MACOSX && !isMainThread()) {
-                throw new IllegalStateException(
-                    "Please run the JVM with -XstartOnFirstThread and make sure a window toolkit other than GLFW (e.g. AWT or JavaFX) is not initialized."
-                );
-            }
-        }
-
-        private OnScreen() {
-        }
-
-        static void check() {
-            // intentionally empty to trigger the static initializer
-        }
-    }
 
     private EventLoop() {
     }
 
+    static void check() {
+        if (Platform.get() == Platform.MACOSX && !isMainThread()) {
+            // The only way to avoid a crash is if the shared application (NSApp) has been created by something else
+            throw new IllegalStateException(
+                isJavaStartedOnFirstThread()
+                    ? "GLFW may only be used on the main thread. This check may be disabled with Configuration.GLFW_CHECK_THREAD0."
+                    : "GLFW may only be used on the main thread and that thread must be the first thread in the process. Please run " +
+                      "the JVM with -XstartOnFirstThread. This check may be disabled with Configuration.GLFW_CHECK_THREAD0."
+            );
+        }
+    }
+
     private static boolean isMainThread() {
-        if (!Configuration.GLFW_CHECK_THREAD0.get(true)) {
+        if (!Configuration.GLFW_CHECK_THREAD0.get(true) || Configuration.GLFW_LIBRARY_NAME.get("").contains("glfw_async")) {
             return true;
         }
 

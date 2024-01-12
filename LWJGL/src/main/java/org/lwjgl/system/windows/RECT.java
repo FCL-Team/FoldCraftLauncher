@@ -18,26 +18,17 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Defines the coordinates of the upper-left and lower-right corners of a rectangle.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code left} &ndash; the x-coordinate of the upper-left corner of the rectangle</li>
- * <li>{@code top} &ndash; the y-coordinate of the upper-left corner of the rectangle</li>
- * <li>{@code right} &ndash; the x-coordinate of the lower-right corner of the rectangle</li>
- * <li>{@code bottom} &ndash; the y-coordinate of the lower-right corner of the rectangle</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct RECT {
- *     LONG left;
- *     LONG top;
- *     LONG right;
- *     LONG bottom;
+ *     LONG {@link #left};
+ *     LONG {@link #top};
+ *     LONG {@link #right};
+ *     LONG {@link #bottom};
  * }</code></pre>
  */
-public class RECT extends Struct implements NativeResource {
+public class RECT extends Struct<RECT> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -69,6 +60,15 @@ public class RECT extends Struct implements NativeResource {
         BOTTOM = layout.offsetof(3);
     }
 
+    protected RECT(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected RECT create(long address, @Nullable ByteBuffer container) {
+        return new RECT(address, container);
+    }
+
     /**
      * Creates a {@code RECT} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -82,26 +82,26 @@ public class RECT extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code left} field. */
+    /** the x-coordinate of the upper-left corner of the rectangle */
     @NativeType("LONG")
     public int left() { return nleft(address()); }
-    /** Returns the value of the {@code top} field. */
+    /** the y-coordinate of the upper-left corner of the rectangle */
     @NativeType("LONG")
     public int top() { return ntop(address()); }
-    /** Returns the value of the {@code right} field. */
+    /** the x-coordinate of the lower-right corner of the rectangle */
     @NativeType("LONG")
     public int right() { return nright(address()); }
-    /** Returns the value of the {@code bottom} field. */
+    /** the y-coordinate of the lower-right corner of the rectangle */
     @NativeType("LONG")
     public int bottom() { return nbottom(address()); }
 
-    /** Sets the specified value to the {@code left} field. */
+    /** Sets the specified value to the {@link #left} field. */
     public RECT left(@NativeType("LONG") int value) { nleft(address(), value); return this; }
-    /** Sets the specified value to the {@code top} field. */
+    /** Sets the specified value to the {@link #top} field. */
     public RECT top(@NativeType("LONG") int value) { ntop(address(), value); return this; }
-    /** Sets the specified value to the {@code right} field. */
+    /** Sets the specified value to the {@link #right} field. */
     public RECT right(@NativeType("LONG") int value) { nright(address(), value); return this; }
-    /** Sets the specified value to the {@code bottom} field. */
+    /** Sets the specified value to the {@link #bottom} field. */
     public RECT bottom(@NativeType("LONG") int value) { nbottom(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -135,29 +135,29 @@ public class RECT extends Struct implements NativeResource {
 
     /** Returns a new {@code RECT} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static RECT malloc() {
-        return wrap(RECT.class, nmemAllocChecked(SIZEOF));
+        return new RECT(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code RECT} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static RECT calloc() {
-        return wrap(RECT.class, nmemCallocChecked(1, SIZEOF));
+        return new RECT(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code RECT} instance allocated with {@link BufferUtils}. */
     public static RECT create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(RECT.class, memAddress(container), container);
+        return new RECT(memAddress(container), container);
     }
 
     /** Returns a new {@code RECT} instance for the specified memory address. */
     public static RECT create(long address) {
-        return wrap(RECT.class, address);
+        return new RECT(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static RECT createSafe(long address) {
-        return address == NULL ? null : wrap(RECT.class, address);
+        return address == NULL ? null : new RECT(address, null);
     }
 
     /**
@@ -166,7 +166,7 @@ public class RECT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -175,7 +175,7 @@ public class RECT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -185,7 +185,7 @@ public class RECT extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -195,34 +195,41 @@ public class RECT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code RECT} instance allocated on the thread-local {@link MemoryStack}. */
-    public static RECT mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code RECT} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static RECT callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static RECT mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static RECT callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static RECT mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static RECT callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code RECT} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static RECT mallocStack(MemoryStack stack) {
-        return wrap(RECT.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static RECT malloc(MemoryStack stack) {
+        return new RECT(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -230,46 +237,28 @@ public class RECT extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static RECT callocStack(MemoryStack stack) {
-        return wrap(RECT.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static RECT calloc(MemoryStack stack) {
+        return new RECT(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -302,9 +291,9 @@ public class RECT extends Struct implements NativeResource {
         /**
          * Creates a new {@code RECT.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link RECT#SIZEOF}, and its mark will be undefined.
+         * by {@link RECT#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -330,26 +319,26 @@ public class RECT extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code left} field. */
+        /** @return the value of the {@link RECT#left} field. */
         @NativeType("LONG")
         public int left() { return RECT.nleft(address()); }
-        /** Returns the value of the {@code top} field. */
+        /** @return the value of the {@link RECT#top} field. */
         @NativeType("LONG")
         public int top() { return RECT.ntop(address()); }
-        /** Returns the value of the {@code right} field. */
+        /** @return the value of the {@link RECT#right} field. */
         @NativeType("LONG")
         public int right() { return RECT.nright(address()); }
-        /** Returns the value of the {@code bottom} field. */
+        /** @return the value of the {@link RECT#bottom} field. */
         @NativeType("LONG")
         public int bottom() { return RECT.nbottom(address()); }
 
-        /** Sets the specified value to the {@code left} field. */
+        /** Sets the specified value to the {@link RECT#left} field. */
         public Buffer left(@NativeType("LONG") int value) { RECT.nleft(address(), value); return this; }
-        /** Sets the specified value to the {@code top} field. */
+        /** Sets the specified value to the {@link RECT#top} field. */
         public Buffer top(@NativeType("LONG") int value) { RECT.ntop(address(), value); return this; }
-        /** Sets the specified value to the {@code right} field. */
+        /** Sets the specified value to the {@link RECT#right} field. */
         public Buffer right(@NativeType("LONG") int value) { RECT.nright(address(), value); return this; }
-        /** Sets the specified value to the {@code bottom} field. */
+        /** Sets the specified value to the {@link RECT#bottom} field. */
         public Buffer bottom(@NativeType("LONG") int value) { RECT.nbottom(address(), value); return this; }
 
     }

@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_image_load_store.txt">ARB_shader_image_load_store</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_image_load_store.txt">ARB_shader_image_load_store</a> extension.
  * 
  * <p>This extension provides GLSL built-in functions allowing shaders to load from, store to, and perform atomic read-modify-write operations to a single
  * level of a texture object from any shader stage. These built-in functions are named imageLoad(), imageStore(), and imageAtomic*(), respectively, and
@@ -38,6 +36,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL30 OpenGL 3.0} and GLSL 1.30. Promoted to core in {@link GL42 OpenGL 4.2}.</p>
  */
 public class ARBShaderImageLoadStore {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, GetDoublev, and GetInteger64v. */
     public static final int
@@ -123,16 +123,8 @@ public class ARBShaderImageLoadStore {
         GL_IMAGE_FORMAT_COMPATIBILITY_BY_SIZE  = 0x90C8,
         GL_IMAGE_FORMAT_COMPATIBILITY_BY_CLASS = 0x90C9;
 
-    static { GL.initialize(); }
-
     protected ARBShaderImageLoadStore() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindImageTexture, caps.glMemoryBarrier
-        );
     }
 
     // --- [ glBindImageTexture ] ---

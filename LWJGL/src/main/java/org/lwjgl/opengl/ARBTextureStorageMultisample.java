@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_storage_multisample.txt">ARB_texture_storage_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_storage_multisample.txt">ARB_texture_storage_multisample</a> extension.
  * 
  * <p>The {@link ARBTextureStorage ARB_texture_storage} extension and OpenGL 4.2 introduced the concept of immutable texture objects. With these objects, once their data store
  * has been sized and allocated, it could not be resized for the lifetime of the objects (although its content could be updated). OpenGL implementations
@@ -27,14 +25,6 @@ public class ARBTextureStorageMultisample {
 
     protected ARBTextureStorageMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glTexStorage2DMultisample, caps.glTexStorage3DMultisample, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glTextureStorage2DMultisampleEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glTextureStorage3DMultisampleEXT : -1L
-        );
     }
 
     // --- [ glTexStorage2DMultisample ] ---

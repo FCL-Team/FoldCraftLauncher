@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_indirect.txt">ARB_draw_indirect</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_indirect.txt">ARB_draw_indirect</a> extension.
  * 
  * <p>This extension provides a mechanism for supplying the arguments to a
  * DrawArraysInstanced or DrawElementsInstancedBaseVertex from buffer object
@@ -30,6 +28,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBDrawIndirect {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv,
      * MapBufferRange, FlushMappedBufferRange, GetBufferParameteriv, and CopyBufferSubData.
@@ -39,16 +39,8 @@ public class ARBDrawIndirect {
     /** Accepted by the {@code value} parameter of GetIntegerv, GetBooleanv, GetFloatv, and GetDoublev. */
     public static final int GL_DRAW_INDIRECT_BUFFER_BINDING = 0x8F43;
 
-    static { GL.initialize(); }
-
     protected ARBDrawIndirect() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawArraysIndirect, caps.glDrawElementsIndirect
-        );
     }
 
     // --- [ glDrawArraysIndirect ] ---

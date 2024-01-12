@@ -14,13 +14,15 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_multitexture.txt">ARB_multitexture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_multitexture.txt">ARB_multitexture</a> extension.
  * 
  * <p>This extension allows application of multiple textures to a fragment in one rendering pass.</p>
  * 
  * <p>Promoted to core in {@link GL13 OpenGL 1.3}.</p>
  */
 public class ARBMultitexture {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code texture} parameter of ActiveTexture and MultiTexCoord. */
     public static final int
@@ -63,22 +65,8 @@ public class ARBMultitexture {
         GL_CLIENT_ACTIVE_TEXTURE_ARB = 0x84E1,
         GL_MAX_TEXTURE_UNITS_ARB     = 0x84E2;
 
-    static { GL.initialize(); }
-
     protected ARBMultitexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glActiveTextureARB, caps.glClientActiveTextureARB, caps.glMultiTexCoord1fARB, caps.glMultiTexCoord1sARB, caps.glMultiTexCoord1iARB, 
-            caps.glMultiTexCoord1dARB, caps.glMultiTexCoord1fvARB, caps.glMultiTexCoord1svARB, caps.glMultiTexCoord1ivARB, caps.glMultiTexCoord1dvARB, 
-            caps.glMultiTexCoord2fARB, caps.glMultiTexCoord2sARB, caps.glMultiTexCoord2iARB, caps.glMultiTexCoord2dARB, caps.glMultiTexCoord2fvARB, 
-            caps.glMultiTexCoord2svARB, caps.glMultiTexCoord2ivARB, caps.glMultiTexCoord2dvARB, caps.glMultiTexCoord3fARB, caps.glMultiTexCoord3sARB, 
-            caps.glMultiTexCoord3iARB, caps.glMultiTexCoord3dARB, caps.glMultiTexCoord3fvARB, caps.glMultiTexCoord3svARB, caps.glMultiTexCoord3ivARB, 
-            caps.glMultiTexCoord3dvARB, caps.glMultiTexCoord4fARB, caps.glMultiTexCoord4sARB, caps.glMultiTexCoord4iARB, caps.glMultiTexCoord4dARB, 
-            caps.glMultiTexCoord4fvARB, caps.glMultiTexCoord4svARB, caps.glMultiTexCoord4ivARB, caps.glMultiTexCoord4dvARB
-        );
     }
 
     // --- [ glActiveTextureARB ] ---

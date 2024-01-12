@@ -36,7 +36,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * }</code></pre>
  */
 @NativeType("struct stbtt_pack_context")
-public class STBTTPackContext extends Struct implements NativeResource {
+public class STBTTPackContext extends Struct<STBTTPackContext> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -89,6 +89,15 @@ public class STBTTPackContext extends Struct implements NativeResource {
         NODES = layout.offsetof(10);
     }
 
+    protected STBTTPackContext(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected STBTTPackContext create(long address, @Nullable ByteBuffer container) {
+        return new STBTTPackContext(address, container);
+    }
+
     /**
      * Creates a {@code STBTTPackContext} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -102,38 +111,38 @@ public class STBTTPackContext extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code user_allocator_context} field. */
+    /** @return the value of the {@code user_allocator_context} field. */
     @NativeType("void *")
     public long user_allocator_context() { return nuser_allocator_context(address()); }
-    /** Returns a {@link STBRPContext} view of the struct pointed to by the {@code pack_info} field. */
+    /** @return a {@link STBRPContext} view of the struct pointed to by the {@code pack_info} field. */
     @NativeType("stbrp_context *")
     public STBRPContext pack_info() { return npack_info(address()); }
-    /** Returns the value of the {@code width} field. */
+    /** @return the value of the {@code width} field. */
     public int width() { return nwidth(address()); }
-    /** Returns the value of the {@code height} field. */
+    /** @return the value of the {@code height} field. */
     public int height() { return nheight(address()); }
-    /** Returns the value of the {@code stride_in_bytes} field. */
+    /** @return the value of the {@code stride_in_bytes} field. */
     public int stride_in_bytes() { return nstride_in_bytes(address()); }
-    /** Returns the value of the {@code padding} field. */
+    /** @return the value of the {@code padding} field. */
     public int padding() { return npadding(address()); }
-    /** Returns the value of the {@code skip_missing} field. */
+    /** @return the value of the {@code skip_missing} field. */
     @NativeType("int")
     public boolean skip_missing() { return nskip_missing(address()) != 0; }
-    /** Returns the value of the {@code h_oversample} field. */
+    /** @return the value of the {@code h_oversample} field. */
     @NativeType("unsigned int")
     public int h_oversample() { return nh_oversample(address()); }
-    /** Returns the value of the {@code v_oversample} field. */
+    /** @return the value of the {@code v_oversample} field. */
     @NativeType("unsigned int")
     public int v_oversample() { return nv_oversample(address()); }
     /**
-     * Returns a {@link ByteBuffer} view of the data pointed to by the {@code pixels} field.
+     * @return a {@link ByteBuffer} view of the data pointed to by the {@code pixels} field.
      *
      * @param capacity the number of elements in the returned buffer
      */
     @NativeType("unsigned char *")
     public ByteBuffer pixels(int capacity) { return npixels(address(), capacity); }
     /**
-     * Returns a {@link STBRPNode.Buffer} view of the struct array pointed to by the {@code nodes} field.
+     * @return a {@link STBRPNode.Buffer} view of the struct array pointed to by the {@code nodes} field.
      *
      * @param capacity the number of elements in the returned buffer
      */
@@ -144,29 +153,29 @@ public class STBTTPackContext extends Struct implements NativeResource {
 
     /** Returns a new {@code STBTTPackContext} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static STBTTPackContext malloc() {
-        return wrap(STBTTPackContext.class, nmemAllocChecked(SIZEOF));
+        return new STBTTPackContext(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code STBTTPackContext} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static STBTTPackContext calloc() {
-        return wrap(STBTTPackContext.class, nmemCallocChecked(1, SIZEOF));
+        return new STBTTPackContext(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code STBTTPackContext} instance allocated with {@link BufferUtils}. */
     public static STBTTPackContext create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(STBTTPackContext.class, memAddress(container), container);
+        return new STBTTPackContext(memAddress(container), container);
     }
 
     /** Returns a new {@code STBTTPackContext} instance for the specified memory address. */
     public static STBTTPackContext create(long address) {
-        return wrap(STBTTPackContext.class, address);
+        return new STBTTPackContext(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static STBTTPackContext createSafe(long address) {
-        return address == NULL ? null : wrap(STBTTPackContext.class, address);
+        return address == NULL ? null : new STBTTPackContext(address, null);
     }
 
     /**
@@ -175,7 +184,7 @@ public class STBTTPackContext extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -184,7 +193,7 @@ public class STBTTPackContext extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -194,7 +203,7 @@ public class STBTTPackContext extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -204,34 +213,41 @@ public class STBTTPackContext extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code STBTTPackContext} instance allocated on the thread-local {@link MemoryStack}. */
-    public static STBTTPackContext mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code STBTTPackContext} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static STBTTPackContext callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackContext mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackContext callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackContext mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackContext callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code STBTTPackContext} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static STBTTPackContext mallocStack(MemoryStack stack) {
-        return wrap(STBTTPackContext.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static STBTTPackContext malloc(MemoryStack stack) {
+        return new STBTTPackContext(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -239,46 +255,28 @@ public class STBTTPackContext extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static STBTTPackContext callocStack(MemoryStack stack) {
-        return wrap(STBTTPackContext.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static STBTTPackContext calloc(MemoryStack stack) {
+        return new STBTTPackContext(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -316,9 +314,9 @@ public class STBTTPackContext extends Struct implements NativeResource {
         /**
          * Creates a new {@code STBTTPackContext.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link STBTTPackContext#SIZEOF}, and its mark will be undefined.
+         * by {@link STBTTPackContext#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -344,38 +342,38 @@ public class STBTTPackContext extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code user_allocator_context} field. */
+        /** @return the value of the {@code user_allocator_context} field. */
         @NativeType("void *")
         public long user_allocator_context() { return STBTTPackContext.nuser_allocator_context(address()); }
-        /** Returns a {@link STBRPContext} view of the struct pointed to by the {@code pack_info} field. */
+        /** @return a {@link STBRPContext} view of the struct pointed to by the {@code pack_info} field. */
         @NativeType("stbrp_context *")
         public STBRPContext pack_info() { return STBTTPackContext.npack_info(address()); }
-        /** Returns the value of the {@code width} field. */
+        /** @return the value of the {@code width} field. */
         public int width() { return STBTTPackContext.nwidth(address()); }
-        /** Returns the value of the {@code height} field. */
+        /** @return the value of the {@code height} field. */
         public int height() { return STBTTPackContext.nheight(address()); }
-        /** Returns the value of the {@code stride_in_bytes} field. */
+        /** @return the value of the {@code stride_in_bytes} field. */
         public int stride_in_bytes() { return STBTTPackContext.nstride_in_bytes(address()); }
-        /** Returns the value of the {@code padding} field. */
+        /** @return the value of the {@code padding} field. */
         public int padding() { return STBTTPackContext.npadding(address()); }
-        /** Returns the value of the {@code skip_missing} field. */
+        /** @return the value of the {@code skip_missing} field. */
         @NativeType("int")
         public boolean skip_missing() { return STBTTPackContext.nskip_missing(address()) != 0; }
-        /** Returns the value of the {@code h_oversample} field. */
+        /** @return the value of the {@code h_oversample} field. */
         @NativeType("unsigned int")
         public int h_oversample() { return STBTTPackContext.nh_oversample(address()); }
-        /** Returns the value of the {@code v_oversample} field. */
+        /** @return the value of the {@code v_oversample} field. */
         @NativeType("unsigned int")
         public int v_oversample() { return STBTTPackContext.nv_oversample(address()); }
         /**
-         * Returns a {@link ByteBuffer} view of the data pointed to by the {@code pixels} field.
+         * @return a {@link ByteBuffer} view of the data pointed to by the {@code pixels} field.
          *
          * @param capacity the number of elements in the returned buffer
          */
         @NativeType("unsigned char *")
         public ByteBuffer pixels(int capacity) { return STBTTPackContext.npixels(address(), capacity); }
         /**
-         * Returns a {@link STBRPNode.Buffer} view of the struct array pointed to by the {@code nodes} field.
+         * @return a {@link STBRPNode.Buffer} view of the struct array pointed to by the {@code nodes} field.
          *
          * @param capacity the number of elements in the returned buffer
          */

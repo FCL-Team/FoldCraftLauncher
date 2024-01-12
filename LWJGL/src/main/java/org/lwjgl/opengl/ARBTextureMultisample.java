@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_multisample.txt">ARB_texture_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_multisample.txt">ARB_texture_multisample</a> extension.
  * 
  * <p>This extension provides support for two new types of "multisample textures" - two-dimensional and two-dimensional array - as well as mechanisms to
  * fetch a specific sample from such a texture in a shader, and to attach such textures to FBOs for rendering.</p>
@@ -27,6 +25,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL32 OpenGL 3.2}.</p>
  */
 public class ARBTextureMultisample {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of GetMultisamplefv. */
     public static final int GL_SAMPLE_POSITION = 0x8E50;
@@ -75,16 +75,8 @@ public class ARBTextureMultisample {
         GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY          = 0x910C,
         GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY = 0x910D;
 
-    static { GL.initialize(); }
-
     protected ARBTextureMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glTexImage2DMultisample, caps.glTexImage3DMultisample, caps.glGetMultisamplefv, caps.glSampleMaski
-        );
     }
 
     // --- [ glTexImage2DMultisample ] ---

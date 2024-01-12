@@ -11,7 +11,7 @@ import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
 
 /**
- * Native bindings to the <a target="_blank" href="http://kcat.strangesoft.net/openal-extensions/SOFT_deferred_updates.txt">SOFT_deferred_updates</a> extension.
+ * Native bindings to the <a href="https://openal-soft.org/openal-extensions/SOFT_deferred_updates.txt">SOFT_deferred_updates</a> extension.
  * 
  * <p>This extension allows applications to defer playback state updates. With unextended OpenAL, the playback state would respond to changes as soon as it
  * could handle them, which makes it effectively impossible to ensure multiple changes occur at the same time without the potential of a "partial" update
@@ -25,12 +25,6 @@ public class SOFTDeferredUpdates {
 
     protected SOFTDeferredUpdates() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(ALCapabilities caps) {
-        return checkFunctions(
-            caps.alDeferUpdatesSOFT, caps.alProcessUpdatesSOFT
-        );
     }
 
     // --- [ alDeferUpdatesSOFT ] ---

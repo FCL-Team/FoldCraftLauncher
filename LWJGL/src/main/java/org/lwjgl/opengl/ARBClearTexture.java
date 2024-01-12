@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_clear_texture.txt">ARB_clear_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_clear_texture.txt">ARB_clear_texture</a> extension.
  * 
  * <p>Texture objects are fundamental to the operation of OpenGL. They are used as a source for texture sampling and destination for rendering as well as
  * being accessed in shaders for image load/store operations. It is also possible to invalidate the contents of a texture. It is currently only possible to
@@ -35,19 +33,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBClearTexture {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter for {@link GL42C#glGetInternalformativ GetInternalformativ} and {@link GL43C#glGetInternalformati64v GetInternalformati64v}. */
     public static final int GL_CLEAR_TEXTURE = 0x9365;
 
-    static { GL.initialize(); }
-
     protected ARBClearTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glClearTexSubImage, caps.glClearTexImage
-        );
     }
 
     // --- [ glClearTexSubImage ] ---

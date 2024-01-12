@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_scissor_exclusive.txt">NV_scissor_exclusive</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_scissor_exclusive.txt">NV_scissor_exclusive</a> extension.
  * 
  * <p>In unextended OpenGL, applications can enable a per-viewport scissor test ({@link GL11#GL_SCISSOR_TEST SCISSOR_TEST}) where fragments are discarded if their (x,y) coordinates lie
  * outside the corresponding scissor rectangle. In this extension, we provide a separate per-viewport exclusive scissor test, where fragments are
@@ -27,6 +27,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL45 OpenGL 4.5}.</p>
  */
 public class NVScissorExclusive {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of {@link CGL#CGLEnable Enable}, {@link CGL#CGLDisable Disable}, and {@link CGL#CGLIsEnabled IsEnabled}, by the {@code target} parameter of {@link GL30C#glEnablei Enablei}, {@link GL30C#glDisablei Disablei},
@@ -43,16 +45,8 @@ public class NVScissorExclusive {
      */
     public static final int GL_SCISSOR_BOX_EXCLUSIVE_NV = 0x9556;
 
-    static { GL.initialize(); }
-
     protected NVScissorExclusive() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glScissorExclusiveArrayvNV, caps.glScissorExclusiveNV
-        );
     }
 
     // --- [ glScissorExclusiveArrayvNV ] ---

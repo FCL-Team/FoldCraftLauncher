@@ -7,8 +7,6 @@ package org.lwjgl.opengl;
 
 import javax.annotation.*;
 
-import java.nio.*;
-
 import org.lwjgl.*;
 
 import org.lwjgl.system.*;
@@ -18,31 +16,39 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
 /**
  * The OpenGL functionality up to version 1.1. Includes the deprecated symbols of the Compatibility Profile.
  * 
  * <p>Extensions promoted to core in this release:</p>
  * 
  * <ul>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_array.txt">EXT_vertex_array</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_polygon_offset.txt">EXT_polygon_offset</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_logic_op.txt">EXT_blend_logic_op</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture.txt">EXT_texture</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_copy_texture.txt">EXT_copy_texture</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_subtexture.txt">EXT_subtexture</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_object.txt">EXT_texture_object</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_array.txt">EXT_vertex_array</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_polygon_offset.txt">EXT_polygon_offset</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_logic_op.txt">EXT_blend_logic_op</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture.txt">EXT_texture</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_copy_texture.txt">EXT_copy_texture</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_subtexture.txt">EXT_subtexture</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_object.txt">EXT_texture_object</a></li>
  * </ul>
  */
 public class GL11 {
 
+    static { GL.initialize(); }
+
     public static void glColorPointer(int size, boolean unsigned, int stride, ByteBuffer pointer) {
         glColorPointer(size, unsigned ? GL11.GL_UNSIGNED_BYTE : GL11.GL_BYTE, stride, pointer);
     }
-    
+
     public static void glColorPointer(int size, int stride, FloatBuffer pointer) {
         glColorPointer(size, GL11.GL_FLOAT, stride, pointer);
     }
-    
+
     public static void glFog(int p1, FloatBuffer p2) {
         glFogfv(p1, p2);
     }
@@ -158,15 +164,15 @@ public class GL11 {
     public static void glLightModel(int pname, IntBuffer params) {
         glLightModeliv(pname, params);
     }
-    
+
     public static void glLoadMatrix(DoubleBuffer m) {
         glLoadMatrixd(m);
     }
-    
+
     public static void glLoadMatrix(FloatBuffer m) {
         glLoadMatrixf(m);
     }
-    
+
     public static void glMaterial(int p1, int p2, FloatBuffer p3) {
         glMaterialfv(p1, p2, p3);
     }
@@ -174,7 +180,7 @@ public class GL11 {
     public static void glMaterial(int p1, int p2, IntBuffer p3) {
         glMaterialiv(p1, p2, p3);
     }
-    
+
     public static void glMultMatrix(DoubleBuffer p1) {
         glMultMatrixd(p1);
     }
@@ -186,19 +192,19 @@ public class GL11 {
     public static void glNormalPointer(int stride, ByteBuffer pointer) {
         glNormalPointer(GL11.GL_BYTE, stride, pointer);
     }
-    
+
     public static void glNormalPointer(int stride, FloatBuffer pointer) {
         glNormalPointer(GL11.GL_FLOAT, stride, pointer);
     }
-    
+
     public static void glNormalPointer(int stride, IntBuffer pointer) {
         glNormalPointer(GL11.GL_INT, stride, pointer);
     }
-    
+
     public static void glNormalPointer(int stride, ShortBuffer pointer) {
         glNormalPointer(GL11.GL_SHORT, stride, pointer);
     }
-    
+
     public static void glPixelMap(int p1, FloatBuffer p2) {
         glPixelMapfv(p1, p2);
     }
@@ -214,15 +220,15 @@ public class GL11 {
     public static void glTexCoordPointer(int size, int stride, FloatBuffer pointer) {
         glTexCoordPointer(size, GL11.GL_FLOAT, stride, pointer);
     }
-    
+
     public static void glTexCoordPointer(int size, int stride, IntBuffer pointer) {
         glTexCoordPointer(size, GL11.GL_INT, stride, pointer);
     }
-    
+
     public static void glTexCoordPointer(int size, int stride, ShortBuffer pointer) {
         glTexCoordPointer(size, GL11.GL_SHORT, stride, pointer);
     }
-    
+
     public static void glTexEnv(int p1, int p2, FloatBuffer p3) {
         glTexEnvfv(p1, p2, p3);
     }
@@ -246,15 +252,15 @@ public class GL11 {
     public static void glVertexPointer(int size, int stride, FloatBuffer pointer) {
         glVertexPointer(size, GL11.GL_FLOAT, stride, pointer);
     }
-    
+
     public static void glVertexPointer(int size, int stride, IntBuffer pointer) {
         glVertexPointer(size, GL11.GL_INT, stride, pointer);
     }
-    
+
     public static void glVertexPointer(int size, int stride, ShortBuffer pointer) {
         glVertexPointer(size, GL11.GL_SHORT, stride, pointer);
     }
-    
+
     /** AccumOp */
     public static final int
         GL_ACCUM  = 0x100,
@@ -925,63 +931,8 @@ public class GL11 {
         GL_T2F_C4F_N3F_V3F             = 0x2A2C,
         GL_T4F_C4F_N3F_V4F             = 0x2A2D;
 
-    static { GL.initialize(); }
-
     protected GL11() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext, boolean fc) {
-        return (fc || checkFunctions(
-            caps.glAccum, caps.glAlphaFunc, caps.glAreTexturesResident, caps.glArrayElement, caps.glBegin, caps.glBitmap, caps.glCallList, caps.glCallLists, 
-            caps.glClearAccum, caps.glClearIndex, caps.glClipPlane, caps.glColor3b, caps.glColor3s, caps.glColor3i, caps.glColor3f, caps.glColor3d, 
-            caps.glColor3ub, caps.glColor3us, caps.glColor3ui, caps.glColor3bv, caps.glColor3sv, caps.glColor3iv, caps.glColor3fv, caps.glColor3dv, 
-            caps.glColor3ubv, caps.glColor3usv, caps.glColor3uiv, caps.glColor4b, caps.glColor4s, caps.glColor4i, caps.glColor4f, caps.glColor4d, 
-            caps.glColor4ub, caps.glColor4us, caps.glColor4ui, caps.glColor4bv, caps.glColor4sv, caps.glColor4iv, caps.glColor4fv, caps.glColor4dv, 
-            caps.glColor4ubv, caps.glColor4usv, caps.glColor4uiv, caps.glColorMaterial, caps.glColorPointer, caps.glCopyPixels, caps.glDeleteLists, 
-            caps.glDrawPixels, caps.glEdgeFlag, caps.glEdgeFlagv, caps.glEdgeFlagPointer, caps.glEnd, caps.glEvalCoord1f, caps.glEvalCoord1fv, 
-            caps.glEvalCoord1d, caps.glEvalCoord1dv, caps.glEvalCoord2f, caps.glEvalCoord2fv, caps.glEvalCoord2d, caps.glEvalCoord2dv, caps.glEvalMesh1, 
-            caps.glEvalMesh2, caps.glEvalPoint1, caps.glEvalPoint2, caps.glFeedbackBuffer, caps.glFogi, caps.glFogiv, caps.glFogf, caps.glFogfv, 
-            caps.glGenLists, caps.glGetClipPlane, caps.glGetLightiv, caps.glGetLightfv, caps.glGetMapiv, caps.glGetMapfv, caps.glGetMapdv, caps.glGetMaterialiv, 
-            caps.glGetMaterialfv, caps.glGetPixelMapfv, caps.glGetPixelMapusv, caps.glGetPixelMapuiv, caps.glGetPolygonStipple, caps.glGetTexEnviv, 
-            caps.glGetTexEnvfv, caps.glGetTexGeniv, caps.glGetTexGenfv, caps.glGetTexGendv, caps.glIndexi, caps.glIndexub, caps.glIndexs, caps.glIndexf, 
-            caps.glIndexd, caps.glIndexiv, caps.glIndexubv, caps.glIndexsv, caps.glIndexfv, caps.glIndexdv, caps.glIndexMask, caps.glIndexPointer, 
-            caps.glInitNames, caps.glInterleavedArrays, caps.glIsList, caps.glLightModeli, caps.glLightModelf, caps.glLightModeliv, caps.glLightModelfv, 
-            caps.glLighti, caps.glLightf, caps.glLightiv, caps.glLightfv, caps.glLineStipple, caps.glListBase, caps.glLoadMatrixf, caps.glLoadMatrixd, 
-            caps.glLoadIdentity, caps.glLoadName, caps.glMap1f, caps.glMap1d, caps.glMap2f, caps.glMap2d, caps.glMapGrid1f, caps.glMapGrid1d, caps.glMapGrid2f, 
-            caps.glMapGrid2d, caps.glMateriali, caps.glMaterialf, caps.glMaterialiv, caps.glMaterialfv, caps.glMatrixMode, caps.glMultMatrixf, 
-            caps.glMultMatrixd, caps.glFrustum, caps.glNewList, caps.glEndList, caps.glNormal3f, caps.glNormal3b, caps.glNormal3s, caps.glNormal3i, 
-            caps.glNormal3d, caps.glNormal3fv, caps.glNormal3bv, caps.glNormal3sv, caps.glNormal3iv, caps.glNormal3dv, caps.glNormalPointer, caps.glOrtho, 
-            caps.glPassThrough, caps.glPixelMapfv, caps.glPixelMapusv, caps.glPixelMapuiv, caps.glPixelTransferi, caps.glPixelTransferf, caps.glPixelZoom, 
-            caps.glPolygonStipple, caps.glPushAttrib, caps.glPushClientAttrib, caps.glPopAttrib, caps.glPopClientAttrib, caps.glPopMatrix, caps.glPopName, 
-            caps.glPrioritizeTextures, caps.glPushMatrix, caps.glPushName, caps.glRasterPos2i, caps.glRasterPos2s, caps.glRasterPos2f, caps.glRasterPos2d, 
-            caps.glRasterPos2iv, caps.glRasterPos2sv, caps.glRasterPos2fv, caps.glRasterPos2dv, caps.glRasterPos3i, caps.glRasterPos3s, caps.glRasterPos3f, 
-            caps.glRasterPos3d, caps.glRasterPos3iv, caps.glRasterPos3sv, caps.glRasterPos3fv, caps.glRasterPos3dv, caps.glRasterPos4i, caps.glRasterPos4s, 
-            caps.glRasterPos4f, caps.glRasterPos4d, caps.glRasterPos4iv, caps.glRasterPos4sv, caps.glRasterPos4fv, caps.glRasterPos4dv, caps.glRecti, 
-            caps.glRects, caps.glRectf, caps.glRectd, caps.glRectiv, caps.glRectsv, caps.glRectfv, caps.glRectdv, caps.glRenderMode, caps.glRotatef, 
-            caps.glRotated, caps.glScalef, caps.glScaled, caps.glSelectBuffer, caps.glShadeModel, caps.glTexCoord1f, caps.glTexCoord1s, caps.glTexCoord1i, 
-            caps.glTexCoord1d, caps.glTexCoord1fv, caps.glTexCoord1sv, caps.glTexCoord1iv, caps.glTexCoord1dv, caps.glTexCoord2f, caps.glTexCoord2s, 
-            caps.glTexCoord2i, caps.glTexCoord2d, caps.glTexCoord2fv, caps.glTexCoord2sv, caps.glTexCoord2iv, caps.glTexCoord2dv, caps.glTexCoord3f, 
-            caps.glTexCoord3s, caps.glTexCoord3i, caps.glTexCoord3d, caps.glTexCoord3fv, caps.glTexCoord3sv, caps.glTexCoord3iv, caps.glTexCoord3dv, 
-            caps.glTexCoord4f, caps.glTexCoord4s, caps.glTexCoord4i, caps.glTexCoord4d, caps.glTexCoord4fv, caps.glTexCoord4sv, caps.glTexCoord4iv, 
-            caps.glTexCoord4dv, caps.glTexCoordPointer, caps.glTexEnvi, caps.glTexEnviv, caps.glTexEnvf, caps.glTexEnvfv, caps.glTexGeni, caps.glTexGeniv, 
-            caps.glTexGenf, caps.glTexGenfv, caps.glTexGend, caps.glTexGendv, caps.glTranslatef, caps.glTranslated, caps.glVertex2f, caps.glVertex2s, 
-            caps.glVertex2i, caps.glVertex2d, caps.glVertex2fv, caps.glVertex2sv, caps.glVertex2iv, caps.glVertex2dv, caps.glVertex3f, caps.glVertex3s, 
-            caps.glVertex3i, caps.glVertex3d, caps.glVertex3fv, caps.glVertex3sv, caps.glVertex3iv, caps.glVertex3dv, caps.glVertex4f, caps.glVertex4s, 
-            caps.glVertex4i, caps.glVertex4d, caps.glVertex4fv, caps.glVertex4sv, caps.glVertex4iv, caps.glVertex4dv, caps.glVertexPointer
-        )) && checkFunctions(
-            caps.glEnable, caps.glDisable, caps.glBindTexture, caps.glBlendFunc, caps.glClear, caps.glClearColor, caps.glClearDepth, caps.glClearStencil, 
-            caps.glColorMask, caps.glCullFace, caps.glDepthFunc, caps.glDepthMask, caps.glDepthRange, 
-            ext.contains("GL_NV_vertex_buffer_unified_memory") ? caps.glDisableClientState : -1L, caps.glDrawArrays, caps.glDrawBuffer, caps.glDrawElements, 
-            ext.contains("GL_NV_vertex_buffer_unified_memory") ? caps.glEnableClientState : -1L, caps.glFinish, caps.glFlush, caps.glFrontFace, 
-            caps.glGenTextures, caps.glDeleteTextures, caps.glGetBooleanv, caps.glGetFloatv, caps.glGetIntegerv, caps.glGetDoublev, caps.glGetError, 
-            caps.glGetPointerv, caps.glGetString, caps.glGetTexImage, caps.glGetTexLevelParameteriv, caps.glGetTexLevelParameterfv, caps.glGetTexParameteriv, 
-            caps.glGetTexParameterfv, caps.glHint, caps.glIsEnabled, caps.glIsTexture, caps.glLineWidth, caps.glLogicOp, caps.glPixelStorei, caps.glPixelStoref, 
-            caps.glPointSize, caps.glPolygonMode, caps.glPolygonOffset, caps.glReadBuffer, caps.glReadPixels, caps.glScissor, caps.glStencilFunc, 
-            caps.glStencilMask, caps.glStencilOp, caps.glTexImage1D, caps.glTexImage2D, caps.glCopyTexImage1D, caps.glCopyTexImage2D, caps.glCopyTexSubImage1D, 
-            caps.glCopyTexSubImage2D, caps.glTexParameteri, caps.glTexParameteriv, caps.glTexParameterf, caps.glTexParameterfv, caps.glTexSubImage1D, 
-            caps.glTexSubImage2D, caps.glViewport
-        );
     }
 
     // --- [ glEnable ] ---
@@ -991,7 +942,7 @@ public class GL11 {
      *
      * @param target the OpenGL state to enable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glEnable">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glEnable">Reference Page</a>
      */
     public static void glEnable(@NativeType("GLenum") int target) {
         GL11C.glEnable(target);
@@ -1004,7 +955,7 @@ public class GL11 {
      *
      * @param target the OpenGL state to disable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDisable">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDisable">Reference Page</a>
      */
     public static void glDisable(@NativeType("GLenum") int target) {
         GL11C.glDisable(target);
@@ -1019,7 +970,7 @@ public class GL11 {
      * @param op    a symbolic constant indicating an accumulation buffer operation
      * @param value a floating-point value to be used in that operation. One of:<br><table><tr><td>{@link #GL_ACCUM ACCUM}</td><td>{@link #GL_LOAD LOAD}</td><td>{@link #GL_RETURN RETURN}</td><td>{@link #GL_MULT MULT}</td><td>{@link #GL_ADD ADD}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glAccum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glAccum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glAccum(@NativeType("GLenum") int op, @NativeType("GLfloat") float value);
 
@@ -1033,7 +984,7 @@ public class GL11 {
      * @param func a symbolic constant indicating the alpha test function. One of:<br><table><tr><td>{@link #GL_NEVER NEVER}</td><td>{@link #GL_ALWAYS ALWAYS}</td><td>{@link #GL_LESS LESS}</td><td>{@link #GL_LEQUAL LEQUAL}</td><td>{@link #GL_EQUAL EQUAL}</td><td>{@link #GL_GEQUAL GEQUAL}</td><td>{@link #GL_GREATER GREATER}</td><td>{@link #GL_NOTEQUAL NOTEQUAL}</td></tr></table>
      * @param ref  a reference value clamped to the range [0, 1]. When performing the alpha test, the GL will convert the reference value to the same representation as the fragment's alpha value (floating-point or fixed-point).
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glAlphaFunc">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glAlphaFunc">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glAlphaFunc(@NativeType("GLenum") int func, @NativeType("GLfloat") float ref);
 
@@ -1054,7 +1005,7 @@ public class GL11 {
      * @param textures   an array of texture objects
      * @param residences returns the residences of each texture object
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLboolean")
     public static boolean glAreTexturesResident(@NativeType("GLuint const *") IntBuffer textures, @NativeType("GLboolean *") ByteBuffer residences) {
@@ -1071,7 +1022,7 @@ public class GL11 {
      *
      * @param residences returns the residences of each texture object
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLboolean")
     public static boolean glAreTexturesResident(@NativeType("GLuint const *") int texture, @NativeType("GLboolean *") ByteBuffer residences) {
@@ -1094,7 +1045,7 @@ public class GL11 {
      *
      * @param i the element to transfer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glArrayElement">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glArrayElement">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glArrayElement(@NativeType("GLint") int i);
 
@@ -1105,7 +1056,7 @@ public class GL11 {
      *
      * @param mode the primitive type being defined. One of:<br><table><tr><td>{@link #GL_POINTS POINTS}</td><td>{@link #GL_LINE_STRIP LINE_STRIP}</td><td>{@link #GL_LINE_LOOP LINE_LOOP}</td><td>{@link #GL_LINES LINES}</td><td>{@link #GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link #GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link #GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40#GL_PATCHES PATCHES}</td><td>{@link #GL_POLYGON POLYGON}</td><td>{@link #GL_QUADS QUADS}</td></tr><tr><td>{@link #GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glBegin">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glBegin">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glBegin(@NativeType("GLenum") int mode);
 
@@ -1121,7 +1072,7 @@ public class GL11 {
      * @param target  the texture target. One of:<br><table><tr><td>{@link GL11C#GL_TEXTURE_1D TEXTURE_1D}</td><td>{@link GL11C#GL_TEXTURE_2D TEXTURE_2D}</td><td>{@link GL30#GL_TEXTURE_1D_ARRAY TEXTURE_1D_ARRAY}</td><td>{@link GL31#GL_TEXTURE_RECTANGLE TEXTURE_RECTANGLE}</td><td>{@link GL13#GL_TEXTURE_CUBE_MAP TEXTURE_CUBE_MAP}</td></tr><tr><td>{@link GL12#GL_TEXTURE_3D TEXTURE_3D}</td><td>{@link GL30#GL_TEXTURE_2D_ARRAY TEXTURE_2D_ARRAY}</td><td>{@link GL40#GL_TEXTURE_CUBE_MAP_ARRAY TEXTURE_CUBE_MAP_ARRAY}</td><td>{@link GL31#GL_TEXTURE_BUFFER TEXTURE_BUFFER}</td><td>{@link GL32#GL_TEXTURE_2D_MULTISAMPLE TEXTURE_2D_MULTISAMPLE}</td></tr><tr><td>{@link GL32#GL_TEXTURE_2D_MULTISAMPLE_ARRAY TEXTURE_2D_MULTISAMPLE_ARRAY}</td></tr></table>
      * @param texture the texture object to bind
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glBindTexture">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glBindTexture">Reference Page</a>
      */
     public static void glBindTexture(@NativeType("GLenum") int target, @NativeType("GLuint") int texture) {
         GL11C.glBindTexture(target, texture);
@@ -1144,7 +1095,7 @@ public class GL11 {
      * @param yInc  the y increment added to the raster position
      * @param data  the buffer containing the bitmap data.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glBitmap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glBitmap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glBitmap(@NativeType("GLsizei") int w, @NativeType("GLsizei") int h, @NativeType("GLfloat") float xOrig, @NativeType("GLfloat") float yOrig, @NativeType("GLfloat") float xInc, @NativeType("GLfloat") float yInc, @Nullable @NativeType("GLubyte const *") ByteBuffer data) {
         if (CHECKS) {
@@ -1165,9 +1116,9 @@ public class GL11 {
      * @param yInc  the y increment added to the raster position
      * @param data  the buffer containing the bitmap data.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glBitmap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glBitmap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
-    public static void glBitmap(@NativeType("GLsizei") int w, @NativeType("GLsizei") int h, @NativeType("GLfloat") float xOrig, @NativeType("GLfloat") float yOrig, @NativeType("GLfloat") float xInc, @NativeType("GLfloat") float yInc, @Nullable @NativeType("GLubyte const *") long data) {
+    public static void glBitmap(@NativeType("GLsizei") int w, @NativeType("GLsizei") int h, @NativeType("GLfloat") float xOrig, @NativeType("GLfloat") float yOrig, @NativeType("GLfloat") float xInc, @NativeType("GLfloat") float yInc, @NativeType("GLubyte const *") long data) {
         nglBitmap(w, h, xOrig, yOrig, xInc, yInc, data);
     }
 
@@ -1179,7 +1130,7 @@ public class GL11 {
      * @param sfactor the source weighting factor. One of:<br><table><tr><td>{@link GL11C#GL_ZERO ZERO}</td><td>{@link GL11C#GL_ONE ONE}</td><td>{@link GL11C#GL_SRC_COLOR SRC_COLOR}</td><td>{@link GL11C#GL_ONE_MINUS_SRC_COLOR ONE_MINUS_SRC_COLOR}</td><td>{@link GL11C#GL_DST_COLOR DST_COLOR}</td></tr><tr><td>{@link GL11C#GL_ONE_MINUS_DST_COLOR ONE_MINUS_DST_COLOR}</td><td>{@link GL11C#GL_SRC_ALPHA SRC_ALPHA}</td><td>{@link GL11C#GL_ONE_MINUS_SRC_ALPHA ONE_MINUS_SRC_ALPHA}</td><td>{@link GL11C#GL_DST_ALPHA DST_ALPHA}</td><td>{@link GL11C#GL_ONE_MINUS_DST_ALPHA ONE_MINUS_DST_ALPHA}</td></tr><tr><td>{@link GL14#GL_CONSTANT_COLOR CONSTANT_COLOR}</td><td>{@link GL14#GL_ONE_MINUS_CONSTANT_COLOR ONE_MINUS_CONSTANT_COLOR}</td><td>{@link GL14#GL_CONSTANT_ALPHA CONSTANT_ALPHA}</td><td>{@link GL14#GL_ONE_MINUS_CONSTANT_ALPHA ONE_MINUS_CONSTANT_ALPHA}</td><td>{@link GL11C#GL_SRC_ALPHA_SATURATE SRC_ALPHA_SATURATE}</td></tr><tr><td>{@link GL33#GL_SRC1_COLOR SRC1_COLOR}</td><td>{@link GL33#GL_ONE_MINUS_SRC1_COLOR ONE_MINUS_SRC1_COLOR}</td><td>{@link GL15#GL_SRC1_ALPHA SRC1_ALPHA}</td><td>{@link GL33#GL_ONE_MINUS_SRC1_ALPHA ONE_MINUS_SRC1_ALPHA}</td></tr></table>
      * @param dfactor the destination weighting factor
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glBlendFunc">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glBlendFunc">Reference Page</a>
      */
     public static void glBlendFunc(@NativeType("GLenum") int sfactor, @NativeType("GLenum") int dfactor) {
         GL11C.glBlendFunc(sfactor, dfactor);
@@ -1192,7 +1143,7 @@ public class GL11 {
      *
      * @param list the index of the display list to be called
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCallList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCallList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glCallList(@NativeType("GLuint") int list);
 
@@ -1212,7 +1163,7 @@ public class GL11 {
      * @param type  the data type of each element in {@code lists}. One of:<br><table><tr><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_SHORT SHORT}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_INT INT}</td><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_FLOAT FLOAT}</td><td>{@link #GL_2_BYTES 2_BYTES}</td><td>{@link #GL_3_BYTES 3_BYTES}</td><td>{@link #GL_4_BYTES 4_BYTES}</td></tr></table>
      * @param lists an array of offsets. Each offset is added to the display list base to obtain the display list number.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glCallLists(@NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer lists) {
         nglCallLists(lists.remaining() / GLChecks.typeToBytes(type), type, memAddress(lists));
@@ -1223,7 +1174,7 @@ public class GL11 {
      *
      * @param lists an array of offsets. Each offset is added to the display list base to obtain the display list number.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glCallLists(@NativeType("void const *") ByteBuffer lists) {
         nglCallLists(lists.remaining(), GL11.GL_UNSIGNED_BYTE, memAddress(lists));
@@ -1234,7 +1185,7 @@ public class GL11 {
      *
      * @param lists an array of offsets. Each offset is added to the display list base to obtain the display list number.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glCallLists(@NativeType("void const *") ShortBuffer lists) {
         nglCallLists(lists.remaining(), GL11.GL_UNSIGNED_SHORT, memAddress(lists));
@@ -1245,7 +1196,7 @@ public class GL11 {
      *
      * @param lists an array of offsets. Each offset is added to the display list base to obtain the display list number.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCallLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glCallLists(@NativeType("void const *") IntBuffer lists) {
         nglCallLists(lists.remaining(), GL11.GL_UNSIGNED_INT, memAddress(lists));
@@ -1259,7 +1210,7 @@ public class GL11 {
      *
      * @param mask Zero or the bitwise OR of one or more values indicating which buffers are to be cleared. One or more of:<br><table><tr><td>{@link GL11C#GL_COLOR_BUFFER_BIT COLOR_BUFFER_BIT}</td><td>{@link GL11C#GL_DEPTH_BUFFER_BIT DEPTH_BUFFER_BIT}</td><td>{@link GL11C#GL_STENCIL_BUFFER_BIT STENCIL_BUFFER_BIT}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glClear">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glClear">Reference Page</a>
      */
     public static void glClear(@NativeType("GLbitfield") int mask) {
         GL11C.glClear(mask);
@@ -1275,7 +1226,7 @@ public class GL11 {
      * @param blue  the value to which to clear the B values of the accumulation buffer
      * @param alpha the value to which to clear the A values of the accumulation buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glClearAccum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glClearAccum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glClearAccum(@NativeType("GLfloat") float red, @NativeType("GLfloat") float green, @NativeType("GLfloat") float blue, @NativeType("GLfloat") float alpha);
 
@@ -1289,7 +1240,7 @@ public class GL11 {
      * @param blue  the value to which to clear the B channel of the color buffer
      * @param alpha the value to which to clear the A channel of the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glClearColor">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glClearColor">Reference Page</a>
      */
     public static void glClearColor(@NativeType("GLfloat") float red, @NativeType("GLfloat") float green, @NativeType("GLfloat") float blue, @NativeType("GLfloat") float alpha) {
         GL11C.glClearColor(red, green, blue, alpha);
@@ -1303,7 +1254,7 @@ public class GL11 {
      *
      * @param depth the value to which to clear the depth buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glClearDepth">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glClearDepth">Reference Page</a>
      */
     public static void glClearDepth(@NativeType("GLdouble") double depth) {
         GL11C.glClearDepth(depth);
@@ -1318,7 +1269,7 @@ public class GL11 {
      *
      * @param index the value to which to clear the color buffer in color index mode
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glClearIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glClearIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glClearIndex(@NativeType("GLfloat") float index);
 
@@ -1329,7 +1280,7 @@ public class GL11 {
      *
      * @param s the value to which to clear the stencil buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glClearStencil">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glClearStencil">Reference Page</a>
      */
     public static void glClearStencil(@NativeType("GLint") int s) {
         GL11C.glClearStencil(s);
@@ -1350,7 +1301,7 @@ public class GL11 {
      * @param plane    the clip plane to define
      * @param equation the clip plane coefficients
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glClipPlane(@NativeType("GLenum") int plane, @NativeType("GLdouble const *") DoubleBuffer equation) {
         if (CHECKS) {
@@ -1368,7 +1319,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3b(@NativeType("GLbyte") byte red, @NativeType("GLbyte") byte green, @NativeType("GLbyte") byte blue);
 
@@ -1381,7 +1332,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3s(@NativeType("GLshort") short red, @NativeType("GLshort") short green, @NativeType("GLshort") short blue);
 
@@ -1394,7 +1345,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3i(@NativeType("GLint") int red, @NativeType("GLint") int green, @NativeType("GLint") int blue);
 
@@ -1407,7 +1358,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3f(@NativeType("GLfloat") float red, @NativeType("GLfloat") float green, @NativeType("GLfloat") float blue);
 
@@ -1420,7 +1371,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3d(@NativeType("GLdouble") double red, @NativeType("GLdouble") double green, @NativeType("GLdouble") double blue);
 
@@ -1433,7 +1384,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3ub(@NativeType("GLubyte") byte red, @NativeType("GLubyte") byte green, @NativeType("GLubyte") byte blue);
 
@@ -1446,7 +1397,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3us(@NativeType("GLushort") short red, @NativeType("GLushort") short green, @NativeType("GLushort") short blue);
 
@@ -1459,7 +1410,7 @@ public class GL11 {
      * @param green the green component of the current color
      * @param blue  the blue component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor3ui(@NativeType("GLint") int red, @NativeType("GLint") int green, @NativeType("GLint") int blue);
 
@@ -1473,7 +1424,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3bv(@NativeType("GLbyte const *") ByteBuffer v) {
         if (CHECKS) {
@@ -1492,7 +1443,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -1511,7 +1462,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -1530,7 +1481,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -1549,7 +1500,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -1568,7 +1519,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3ubv(@NativeType("GLubyte const *") ByteBuffer v) {
         if (CHECKS) {
@@ -1587,7 +1538,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3usv(@NativeType("GLushort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -1606,7 +1557,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3uiv(@NativeType("GLuint const *") IntBuffer v) {
         if (CHECKS) {
@@ -1625,7 +1576,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4b(@NativeType("GLbyte") byte red, @NativeType("GLbyte") byte green, @NativeType("GLbyte") byte blue, @NativeType("GLbyte") byte alpha);
 
@@ -1639,7 +1590,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4s(@NativeType("GLshort") short red, @NativeType("GLshort") short green, @NativeType("GLshort") short blue, @NativeType("GLshort") short alpha);
 
@@ -1653,7 +1604,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4i(@NativeType("GLint") int red, @NativeType("GLint") int green, @NativeType("GLint") int blue, @NativeType("GLint") int alpha);
 
@@ -1667,7 +1618,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4f(@NativeType("GLfloat") float red, @NativeType("GLfloat") float green, @NativeType("GLfloat") float blue, @NativeType("GLfloat") float alpha);
 
@@ -1681,7 +1632,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4d(@NativeType("GLdouble") double red, @NativeType("GLdouble") double green, @NativeType("GLdouble") double blue, @NativeType("GLdouble") double alpha);
 
@@ -1695,7 +1646,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4ub(@NativeType("GLubyte") byte red, @NativeType("GLubyte") byte green, @NativeType("GLubyte") byte blue, @NativeType("GLubyte") byte alpha);
 
@@ -1709,7 +1660,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4us(@NativeType("GLushort") short red, @NativeType("GLushort") short green, @NativeType("GLushort") short blue, @NativeType("GLushort") short alpha);
 
@@ -1723,7 +1674,7 @@ public class GL11 {
      * @param blue  the blue component of the current color
      * @param alpha the alpha component of the current color
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColor4ui(@NativeType("GLint") int red, @NativeType("GLint") int green, @NativeType("GLint") int blue, @NativeType("GLint") int alpha);
 
@@ -1737,7 +1688,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4bv(@NativeType("GLbyte const *") ByteBuffer v) {
         if (CHECKS) {
@@ -1756,7 +1707,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -1775,7 +1726,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -1794,7 +1745,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -1813,7 +1764,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -1832,7 +1783,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4ubv(@NativeType("GLubyte const *") ByteBuffer v) {
         if (CHECKS) {
@@ -1851,7 +1802,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4usv(@NativeType("GLushort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -1870,7 +1821,7 @@ public class GL11 {
      *
      * @param v the color buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4uiv(@NativeType("GLuint const *") IntBuffer v) {
         if (CHECKS) {
@@ -1889,7 +1840,7 @@ public class GL11 {
      * @param blue  whether B values are written or not
      * @param alpha whether A values are written or not
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glColorMask">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glColorMask">Reference Page</a>
      */
     public static void glColorMask(@NativeType("GLboolean") boolean red, @NativeType("GLboolean") boolean green, @NativeType("GLboolean") boolean blue, @NativeType("GLboolean") boolean alpha) {
         GL11C.glColorMask(red, green, blue, alpha);
@@ -1905,7 +1856,7 @@ public class GL11 {
      * @param face specifies which material face is affected by the current color. One of:<br><table><tr><td>{@link #GL_FRONT FRONT}</td><td>{@link #GL_BACK BACK}</td><td>{@link #GL_FRONT_AND_BACK FRONT_AND_BACK}</td></tr></table>
      * @param mode specifies which material property or properties track the current color. One of:<br><table><tr><td>{@link #GL_EMISSION EMISSION}</td><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_AMBIENT_AND_DIFFUSE AMBIENT_AND_DIFFUSE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColorMaterial(@NativeType("GLenum") int face, @NativeType("GLenum") int mode);
 
@@ -1922,7 +1873,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglColorPointer(size, type, stride, memAddress(pointer));
@@ -1936,7 +1887,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglColorPointer(size, type, stride, pointer);
@@ -1950,7 +1901,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglColorPointer(size, type, stride, memAddress(pointer));
@@ -1964,7 +1915,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglColorPointer(size, type, stride, memAddress(pointer));
@@ -1978,7 +1929,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColorPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") FloatBuffer pointer) {
         nglColorPointer(size, type, stride, memAddress(pointer));
@@ -1995,7 +1946,7 @@ public class GL11 {
      * @param height the rectangle height
      * @param type   Indicates the type of values to be transfered. One of:<br><table><tr><td>{@link #GL_COLOR COLOR}</td><td>{@link #GL_STENCIL STENCIL}</td><td>{@link #GL_DEPTH DEPTH}</td><td>{@link GL30#GL_DEPTH_STENCIL DEPTH_STENCIL}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glCopyPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glCopyPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glCopyPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int type);
 
@@ -2008,7 +1959,7 @@ public class GL11 {
      *
      * @param mode the CullFace mode. One of:<br><table><tr><td>{@link GL11C#GL_FRONT FRONT}</td><td>{@link GL11C#GL_BACK BACK}</td><td>{@link GL11C#GL_FRONT_AND_BACK FRONT_AND_BACK}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glCullFace">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glCullFace">Reference Page</a>
      */
     public static void glCullFace(@NativeType("GLenum") int mode) {
         GL11C.glCullFace(mode);
@@ -2023,7 +1974,7 @@ public class GL11 {
      * @param list  the index of the first display list to be deleted
      * @param range the number of display lists to be deleted
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDeleteLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDeleteLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glDeleteLists(@NativeType("GLuint") int list, @NativeType("GLsizei") int range);
 
@@ -2034,7 +1985,7 @@ public class GL11 {
      *
      * @param func the depth test comparison. One of:<br><table><tr><td>{@link GL11C#GL_NEVER NEVER}</td><td>{@link GL11C#GL_ALWAYS ALWAYS}</td><td>{@link GL11C#GL_LESS LESS}</td><td>{@link GL11C#GL_LEQUAL LEQUAL}</td><td>{@link GL11C#GL_EQUAL EQUAL}</td><td>{@link GL11C#GL_GREATER GREATER}</td><td>{@link GL11C#GL_GEQUAL GEQUAL}</td><td>{@link GL11C#GL_NOTEQUAL NOTEQUAL}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDepthFunc">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDepthFunc">Reference Page</a>
      */
     public static void glDepthFunc(@NativeType("GLenum") int func) {
         GL11C.glDepthFunc(func);
@@ -2047,7 +1998,7 @@ public class GL11 {
      *
      * @param flag whether depth values are written or not.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDepthMask">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDepthMask">Reference Page</a>
      */
     public static void glDepthMask(@NativeType("GLboolean") boolean flag) {
         GL11C.glDepthMask(flag);
@@ -2061,7 +2012,7 @@ public class GL11 {
      * @param zNear the near depth range
      * @param zFar  the far depth range
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDepthRange">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDepthRange">Reference Page</a>
      */
     public static void glDepthRange(@NativeType("GLdouble") double zNear, @NativeType("GLdouble") double zFar) {
         GL11C.glDepthRange(zNear, zFar);
@@ -2076,7 +2027,7 @@ public class GL11 {
      *
      * @param cap the capability to disable. One of:<br><table><tr><td>{@link #GL_COLOR_ARRAY COLOR_ARRAY}</td><td>{@link #GL_EDGE_FLAG_ARRAY EDGE_FLAG_ARRAY}</td><td>{@link GL15#GL_FOG_COORD_ARRAY FOG_COORD_ARRAY}</td><td>{@link #GL_INDEX_ARRAY INDEX_ARRAY}</td></tr><tr><td>{@link #GL_NORMAL_ARRAY NORMAL_ARRAY}</td><td>{@link GL14#GL_SECONDARY_COLOR_ARRAY SECONDARY_COLOR_ARRAY}</td><td>{@link #GL_TEXTURE_COORD_ARRAY TEXTURE_COORD_ARRAY}</td><td>{@link #GL_VERTEX_ARRAY VERTEX_ARRAY}</td></tr><tr><td>{@link NVVertexBufferUnifiedMemory#GL_VERTEX_ATTRIB_ARRAY_UNIFIED_NV VERTEX_ATTRIB_ARRAY_UNIFIED_NV}</td><td>{@link NVVertexBufferUnifiedMemory#GL_ELEMENT_ARRAY_UNIFIED_NV ELEMENT_ARRAY_UNIFIED_NV}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDisableClientState">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDisableClientState">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glDisableClientState(@NativeType("GLenum") int cap);
 
@@ -2093,7 +2044,7 @@ public class GL11 {
      * @param first the first vertex to transfer to the GL
      * @param count the number of vertices after {@code first} to transfer to the GL
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawArrays">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawArrays">Reference Page</a>
      */
     public static void glDrawArrays(@NativeType("GLenum") int mode, @NativeType("GLint") int first, @NativeType("GLsizei") int count) {
         GL11C.glDrawArrays(mode, first, count);
@@ -2109,7 +2060,7 @@ public class GL11 {
      *
      * @param buf the color buffer to draw to. One of:<br><table><tr><td>{@link GL11C#GL_NONE NONE}</td><td>{@link GL11C#GL_FRONT_LEFT FRONT_LEFT}</td><td>{@link GL11C#GL_FRONT_RIGHT FRONT_RIGHT}</td><td>{@link GL11C#GL_BACK_LEFT BACK_LEFT}</td><td>{@link GL11C#GL_BACK_RIGHT BACK_RIGHT}</td><td>{@link GL11C#GL_FRONT FRONT}</td><td>{@link GL11C#GL_BACK BACK}</td><td>{@link GL11C#GL_LEFT LEFT}</td></tr><tr><td>{@link GL11C#GL_RIGHT RIGHT}</td><td>{@link GL11C#GL_FRONT_AND_BACK FRONT_AND_BACK}</td><td>{@link GL30#GL_COLOR_ATTACHMENT0 COLOR_ATTACHMENT0}</td><td>GL30.GL_COLOR_ATTACHMENT[1-15]</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawBuffer">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawBuffer">Reference Page</a>
      */
     public static void glDrawBuffer(@NativeType("GLenum") int buf) {
         GL11C.glDrawBuffer(buf);
@@ -2137,7 +2088,7 @@ public class GL11 {
      * @param type    indicates the type of index values in {@code indices}. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td></tr></table>
      * @param indices the index values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawElements">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawElements">Reference Page</a>
      */
     public static void glDrawElements(@NativeType("GLenum") int mode, @NativeType("GLsizei") int count, @NativeType("GLenum") int type, @NativeType("void const *") long indices) {
         GL11C.glDrawElements(mode, count, type, indices);
@@ -2152,7 +2103,7 @@ public class GL11 {
      * @param type    indicates the type of index values in {@code indices}. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td></tr></table>
      * @param indices the index values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawElements">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawElements">Reference Page</a>
      */
     public static void glDrawElements(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer indices) {
         GL11C.glDrawElements(mode, type, indices);
@@ -2166,7 +2117,7 @@ public class GL11 {
      * @param mode    the kind of primitives being constructed. One of:<br><table><tr><td>{@link GL11C#GL_POINTS POINTS}</td><td>{@link GL11C#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11C#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11C#GL_LINES LINES}</td><td>{@link GL11C#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11C#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11C#GL_TRIANGLES TRIANGLES}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40#GL_PATCHES PATCHES}</td></tr></table>
      * @param indices the index values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawElements">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawElements">Reference Page</a>
      */
     public static void glDrawElements(@NativeType("GLenum") int mode, @NativeType("void const *") ByteBuffer indices) {
         GL11C.glDrawElements(mode, indices);
@@ -2180,7 +2131,7 @@ public class GL11 {
      * @param mode    the kind of primitives being constructed. One of:<br><table><tr><td>{@link GL11C#GL_POINTS POINTS}</td><td>{@link GL11C#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11C#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11C#GL_LINES LINES}</td><td>{@link GL11C#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11C#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11C#GL_TRIANGLES TRIANGLES}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40#GL_PATCHES PATCHES}</td></tr></table>
      * @param indices the index values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawElements">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawElements">Reference Page</a>
      */
     public static void glDrawElements(@NativeType("GLenum") int mode, @NativeType("void const *") ShortBuffer indices) {
         GL11C.glDrawElements(mode, indices);
@@ -2194,7 +2145,7 @@ public class GL11 {
      * @param mode    the kind of primitives being constructed. One of:<br><table><tr><td>{@link GL11C#GL_POINTS POINTS}</td><td>{@link GL11C#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11C#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11C#GL_LINES LINES}</td><td>{@link GL11C#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11C#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11C#GL_TRIANGLES TRIANGLES}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40#GL_PATCHES PATCHES}</td></tr></table>
      * @param indices the index values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDrawElements">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDrawElements">Reference Page</a>
      */
     public static void glDrawElements(@NativeType("GLenum") int mode, @NativeType("void const *") IntBuffer indices) {
         GL11C.glDrawElements(mode, indices);
@@ -2214,7 +2165,7 @@ public class GL11 {
      * @param type   the pixel data type. One of:<br><table><tr><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_SHORT SHORT}</td></tr><tr><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link #GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr><tr><td>{@link #GL_BITMAP BITMAP}</td></tr></table>
      * @param pixels the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer pixels) {
         nglDrawPixels(width, height, format, type, memAddress(pixels));
@@ -2229,7 +2180,7 @@ public class GL11 {
      * @param type   the pixel data type. One of:<br><table><tr><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_SHORT SHORT}</td></tr><tr><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link #GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr><tr><td>{@link #GL_BITMAP BITMAP}</td></tr></table>
      * @param pixels the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") long pixels) {
         nglDrawPixels(width, height, format, type, pixels);
@@ -2244,7 +2195,7 @@ public class GL11 {
      * @param type   the pixel data type. One of:<br><table><tr><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_SHORT SHORT}</td></tr><tr><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link #GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr><tr><td>{@link #GL_BITMAP BITMAP}</td></tr></table>
      * @param pixels the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ShortBuffer pixels) {
         nglDrawPixels(width, height, format, type, memAddress(pixels));
@@ -2259,7 +2210,7 @@ public class GL11 {
      * @param type   the pixel data type. One of:<br><table><tr><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_SHORT SHORT}</td></tr><tr><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link #GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr><tr><td>{@link #GL_BITMAP BITMAP}</td></tr></table>
      * @param pixels the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") IntBuffer pixels) {
         nglDrawPixels(width, height, format, type, memAddress(pixels));
@@ -2274,7 +2225,7 @@ public class GL11 {
      * @param type   the pixel data type. One of:<br><table><tr><td>{@link #GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link #GL_BYTE BYTE}</td><td>{@link #GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link #GL_SHORT SHORT}</td></tr><tr><td>{@link #GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link #GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link #GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr><tr><td>{@link #GL_BITMAP BITMAP}</td></tr></table>
      * @param pixels the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") FloatBuffer pixels) {
         nglDrawPixels(width, height, format, type, memAddress(pixels));
@@ -2293,7 +2244,7 @@ public class GL11 {
      *
      * @param flag the edge flag bit
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEdgeFlag">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEdgeFlag">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEdgeFlag(@NativeType("GLboolean") boolean flag);
 
@@ -2307,7 +2258,7 @@ public class GL11 {
      *
      * @param flag the edge flag buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEdgeFlagv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEdgeFlagv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEdgeFlagv(@NativeType("GLboolean const *") ByteBuffer flag) {
         if (CHECKS) {
@@ -2327,7 +2278,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the edge flag array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEdgeFlagPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEdgeFlagPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEdgeFlagPointer(@NativeType("GLsizei") int stride, @NativeType("GLboolean const *") ByteBuffer pointer) {
         nglEdgeFlagPointer(stride, memAddress(pointer));
@@ -2339,7 +2290,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the edge flag array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEdgeFlagPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEdgeFlagPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEdgeFlagPointer(@NativeType("GLsizei") int stride, @NativeType("GLboolean const *") long pointer) {
         nglEdgeFlagPointer(stride, pointer);
@@ -2354,7 +2305,7 @@ public class GL11 {
      *
      * @param cap the capability to enable. One of:<br><table><tr><td>{@link #GL_COLOR_ARRAY COLOR_ARRAY}</td><td>{@link #GL_EDGE_FLAG_ARRAY EDGE_FLAG_ARRAY}</td><td>{@link GL15#GL_FOG_COORD_ARRAY FOG_COORD_ARRAY}</td><td>{@link #GL_INDEX_ARRAY INDEX_ARRAY}</td></tr><tr><td>{@link #GL_NORMAL_ARRAY NORMAL_ARRAY}</td><td>{@link GL14#GL_SECONDARY_COLOR_ARRAY SECONDARY_COLOR_ARRAY}</td><td>{@link #GL_TEXTURE_COORD_ARRAY TEXTURE_COORD_ARRAY}</td><td>{@link #GL_VERTEX_ARRAY VERTEX_ARRAY}</td></tr><tr><td>{@link NVVertexBufferUnifiedMemory#GL_VERTEX_ATTRIB_ARRAY_UNIFIED_NV VERTEX_ATTRIB_ARRAY_UNIFIED_NV}</td><td>{@link NVVertexBufferUnifiedMemory#GL_ELEMENT_ARRAY_UNIFIED_NV ELEMENT_ARRAY_UNIFIED_NV}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEnableClientState">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEnableClientState">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEnableClientState(@NativeType("GLenum") int cap);
 
@@ -2363,7 +2314,7 @@ public class GL11 {
     /**
      * Ends the definition of vertex attributes of a sequence of primitives to be transferred to the GL.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEnd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEnd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEnd();
 
@@ -2374,7 +2325,7 @@ public class GL11 {
      *
      * @param u the domain coordinate u
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalCoord1f(@NativeType("GLfloat") float u);
 
@@ -2388,7 +2339,7 @@ public class GL11 {
      *
      * @param u the domain coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord1fv(@NativeType("GLfloat const *") FloatBuffer u) {
         if (CHECKS) {
@@ -2404,7 +2355,7 @@ public class GL11 {
      *
      * @param u the domain coordinate u
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalCoord1d(@NativeType("GLdouble") double u);
 
@@ -2418,7 +2369,7 @@ public class GL11 {
      *
      * @param u the domain coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord1dv(@NativeType("GLdouble const *") DoubleBuffer u) {
         if (CHECKS) {
@@ -2435,7 +2386,7 @@ public class GL11 {
      * @param u the domain coordinate u
      * @param v the domain coordinate v
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalCoord2f(@NativeType("GLfloat") float u, @NativeType("GLfloat") float v);
 
@@ -2449,7 +2400,7 @@ public class GL11 {
      *
      * @param u the domain coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord2fv(@NativeType("GLfloat const *") FloatBuffer u) {
         if (CHECKS) {
@@ -2466,7 +2417,7 @@ public class GL11 {
      * @param u the domain coordinate u
      * @param v the domain coordinate v
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalCoord2d(@NativeType("GLdouble") double u, @NativeType("GLdouble") double v);
 
@@ -2480,7 +2431,7 @@ public class GL11 {
      *
      * @param u the domain coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord2dv(@NativeType("GLdouble const *") DoubleBuffer u) {
         if (CHECKS) {
@@ -2498,7 +2449,7 @@ public class GL11 {
      * @param i1   the start index
      * @param i2   the end index
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalMesh1">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalMesh1">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalMesh1(@NativeType("GLenum") int mode, @NativeType("GLint") int i1, @NativeType("GLint") int i2);
 
@@ -2513,7 +2464,7 @@ public class GL11 {
      * @param j1   the v-dimension start index
      * @param j2   the v-dimension end index
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalMesh2">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalMesh2">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalMesh2(@NativeType("GLenum") int mode, @NativeType("GLint") int i1, @NativeType("GLint") int i2, @NativeType("GLint") int j1, @NativeType("GLint") int j2);
 
@@ -2524,7 +2475,7 @@ public class GL11 {
      *
      * @param i the grid index
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalPoint1">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalPoint1">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalPoint1(@NativeType("GLint") int i);
 
@@ -2536,7 +2487,7 @@ public class GL11 {
      * @param i the u-dimension grid index
      * @param j the v-dimension grid index
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalPoint2">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalPoint2">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEvalPoint2(@NativeType("GLint") int i, @NativeType("GLint") int j);
 
@@ -2555,7 +2506,7 @@ public class GL11 {
      * @param type   the type of information to feed back for each vertex. One of:<br><table><tr><td>{@link #GL_2D 2D}</td><td>{@link #GL_3D 3D}</td><td>{@link #GL_3D_COLOR 3D_COLOR}</td><td>{@link #GL_3D_COLOR_TEXTURE 3D_COLOR_TEXTURE}</td><td>{@link #GL_4D_COLOR_TEXTURE 4D_COLOR_TEXTURE}</td></tr></table>
      * @param buffer an array of floating-point values into which feedback information will be placed
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFeedbackBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFeedbackBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFeedbackBuffer(@NativeType("GLenum") int type, @NativeType("GLfloat *") FloatBuffer buffer) {
         nglFeedbackBuffer(buffer.remaining(), type, memAddress(buffer));
@@ -2567,7 +2518,7 @@ public class GL11 {
      * Forces all previously issued GL commands to complete. {@code Finish} does not return until all effects from such commands on GL client and server
      * state and the framebuffer are fully realized.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glFinish">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glFinish">Reference Page</a>
      */
     public static void glFinish() {
         GL11C.glFinish();
@@ -2578,7 +2529,7 @@ public class GL11 {
     /**
      * Causes all previously issued GL commands to complete in finite time (although such commands may still be executing when {@code Flush} returns).
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glFlush">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glFlush">Reference Page</a>
      */
     public static void glFlush() {
         GL11C.glFlush();
@@ -2592,7 +2543,7 @@ public class GL11 {
      * @param pname the fog parameter. One of:<br><table><tr><td>{@link #GL_FOG_MODE FOG_MODE}</td><td>{@link GL15#GL_FOG_COORD_SRC FOG_COORD_SRC}</td></tr></table>
      * @param param the fog parameter value. One of:<br><table><tr><td>{@link #GL_EXP EXP}</td><td>{@link #GL_EXP2 EXP2}</td><td>{@link #GL_LINEAR LINEAR}</td><td>{@link GL14#GL_FRAGMENT_DEPTH FRAGMENT_DEPTH}</td><td>{@link GL15#GL_FOG_COORD FOG_COORD}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFogi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFogi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glFogi(@NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -2607,7 +2558,7 @@ public class GL11 {
      * @param pname  the fog parameter. One of:<br><table><tr><td>{@link #GL_FOG_MODE FOG_MODE}</td><td>{@link GL15#GL_FOG_COORD_SRC FOG_COORD_SRC}</td></tr></table>
      * @param params the fog parameter buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFogiv(@NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -2624,7 +2575,7 @@ public class GL11 {
      * @param pname the fog parameter. One of:<br><table><tr><td>{@link #GL_FOG_DENSITY FOG_DENSITY}</td><td>{@link #GL_FOG_START FOG_START}</td><td>{@link #GL_FOG_END FOG_END}</td></tr></table>
      * @param param the fog parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFogf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFogf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glFogf(@NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -2639,7 +2590,7 @@ public class GL11 {
      * @param pname  the fog parameter. One of:<br><table><tr><td>{@link #GL_FOG_DENSITY FOG_DENSITY}</td><td>{@link #GL_FOG_START FOG_START}</td><td>{@link #GL_FOG_END FOG_END}</td></tr></table>
      * @param params the fog parameter buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFogfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -2657,7 +2608,7 @@ public class GL11 {
      *
      * @param dir the front face direction. One of:<br><table><tr><td>{@link GL11C#GL_CCW CCW}</td><td>{@link GL11C#GL_CW CW}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glFrontFace">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glFrontFace">Reference Page</a>
      */
     public static void glFrontFace(@NativeType("GLenum") int dir) {
         GL11C.glFrontFace(dir);
@@ -2673,7 +2624,7 @@ public class GL11 {
      *
      * @param s the number of display lists to create
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGenLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGenLists">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLuint")
     public static native int glGenLists(@NativeType("GLsizei") int s);
@@ -2695,7 +2646,7 @@ public class GL11 {
      *
      * @param textures a scalar or buffer in which to place the returned texture names
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenTextures">Reference Page</a>
      */
     public static void glGenTextures(@NativeType("GLuint *") IntBuffer textures) {
         GL11C.glGenTextures(textures);
@@ -2705,7 +2656,7 @@ public class GL11 {
      * Returns n previously unused texture names in textures. These names are marked as used, for the purposes of GenTextures only, but they acquire texture
      * state and a dimensionality only when they are first bound, just as if they were unused.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenTextures">Reference Page</a>
      */
     @NativeType("void")
     public static int glGenTextures() {
@@ -2734,7 +2685,7 @@ public class GL11 {
      *
      * @param textures contains {@code n} names of texture objects to be deleted
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteTextures">Reference Page</a>
      */
     public static void glDeleteTextures(@NativeType("GLuint const *") IntBuffer textures) {
         GL11C.glDeleteTextures(textures);
@@ -2749,7 +2700,7 @@ public class GL11 {
      * <p>Unused names in textures that have been marked as used for the purposes of {@link #glGenTextures GenTextures} are marked as unused again. Unused names in textures are
      * silently ignored, as is the name zero.</p>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteTextures">Reference Page</a>
      */
     public static void glDeleteTextures(@NativeType("GLuint const *") int texture) {
         GL11C.glDeleteTextures(texture);
@@ -2767,7 +2718,7 @@ public class GL11 {
      * @param plane    the clip plane
      * @param equation a buffer in which to place the returned values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetClipPlane(@NativeType("GLenum") int plane, @NativeType("GLdouble *") DoubleBuffer equation) {
         if (CHECKS) {
@@ -2793,7 +2744,7 @@ public class GL11 {
      * @param pname  the state variable
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetBooleanv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetBooleanv">Reference Page</a>
      */
     public static void glGetBooleanv(@NativeType("GLenum") int pname, @NativeType("GLboolean *") ByteBuffer params) {
         GL11C.glGetBooleanv(pname, params);
@@ -2808,7 +2759,7 @@ public class GL11 {
      *
      * @param pname the state variable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetBooleanv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetBooleanv">Reference Page</a>
      */
     @NativeType("void")
     public static boolean glGetBoolean(@NativeType("GLenum") int pname) {
@@ -2832,7 +2783,7 @@ public class GL11 {
      * @param pname  the state variable
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetFloatv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetFloatv">Reference Page</a>
      */
     public static void glGetFloatv(@NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer params) {
         GL11C.glGetFloatv(pname, params);
@@ -2847,7 +2798,7 @@ public class GL11 {
      *
      * @param pname the state variable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetFloatv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetFloatv">Reference Page</a>
      */
     @NativeType("void")
     public static float glGetFloat(@NativeType("GLenum") int pname) {
@@ -2871,7 +2822,7 @@ public class GL11 {
      * @param pname  the state variable
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetIntegerv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetIntegerv">Reference Page</a>
      */
     public static void glGetIntegerv(@NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
         GL11C.glGetIntegerv(pname, params);
@@ -2886,7 +2837,7 @@ public class GL11 {
      *
      * @param pname the state variable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetIntegerv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetIntegerv">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetInteger(@NativeType("GLenum") int pname) {
@@ -2910,7 +2861,7 @@ public class GL11 {
      * @param pname  the state variable
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetDoublev">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetDoublev">Reference Page</a>
      */
     public static void glGetDoublev(@NativeType("GLenum") int pname, @NativeType("GLdouble *") DoubleBuffer params) {
         GL11C.glGetDoublev(pname, params);
@@ -2925,7 +2876,7 @@ public class GL11 {
      *
      * @param pname the state variable
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetDoublev">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetDoublev">Reference Page</a>
      */
     @NativeType("void")
     public static double glGetDouble(@NativeType("GLenum") int pname) {
@@ -2942,7 +2893,7 @@ public class GL11 {
      * its code. If a call to {@code GetError} returns {@link GL11C#GL_NO_ERROR NO_ERROR}, then there has been no detectable error since the last call to {@code GetError} (or since
      * the GL was initialized).</p>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetError">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetError">Reference Page</a>
      */
     @NativeType("GLenum")
     public static int glGetError() {
@@ -2961,7 +2912,7 @@ public class GL11 {
      * @param pname the light parameter to query. One of:<br><table><tr><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_POSITION POSITION}</td><td>{@link #GL_CONSTANT_ATTENUATION CONSTANT_ATTENUATION}</td><td>{@link #GL_LINEAR_ATTENUATION LINEAR_ATTENUATION}</td></tr><tr><td>{@link #GL_QUADRATIC_ATTENUATION QUADRATIC_ATTENUATION}</td><td>{@link #GL_SPOT_DIRECTION SPOT_DIRECTION}</td><td>{@link #GL_SPOT_EXPONENT SPOT_EXPONENT}</td><td>{@link #GL_SPOT_CUTOFF SPOT_CUTOFF}</td></tr></table>
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetLightiv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer data) {
         if (CHECKS) {
@@ -2976,7 +2927,7 @@ public class GL11 {
      * @param light the light for which to return information. One of:<br><table><tr><td>{@link #GL_LIGHT0 LIGHT0}</td><td>GL_LIGHT[1-7]</td></tr></table>
      * @param pname the light parameter to query. One of:<br><table><tr><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_POSITION POSITION}</td><td>{@link #GL_CONSTANT_ATTENUATION CONSTANT_ATTENUATION}</td><td>{@link #GL_LINEAR_ATTENUATION LINEAR_ATTENUATION}</td></tr><tr><td>{@link #GL_QUADRATIC_ATTENUATION QUADRATIC_ATTENUATION}</td><td>{@link #GL_SPOT_DIRECTION SPOT_DIRECTION}</td><td>{@link #GL_SPOT_EXPONENT SPOT_EXPONENT}</td><td>{@link #GL_SPOT_CUTOFF SPOT_CUTOFF}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static int glGetLighti(@NativeType("GLenum") int light, @NativeType("GLenum") int pname) {
@@ -3002,7 +2953,7 @@ public class GL11 {
      * @param pname the light parameter to query
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetLightfv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3017,7 +2968,7 @@ public class GL11 {
      * @param light the light for which to return information
      * @param pname the light parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static float glGetLightf(@NativeType("GLenum") int light, @NativeType("GLenum") int pname) {
@@ -3043,7 +2994,7 @@ public class GL11 {
      * @param query  the information to query. One of:<br><table><tr><td>{@link #GL_ORDER ORDER}</td><td>{@link #GL_COEFF COEFF}</td><td>{@link #GL_DOMAIN DOMAIN}</td></tr></table>
      * @param data   a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapiv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLint *") IntBuffer data) {
         if (CHECKS) {
@@ -3058,7 +3009,7 @@ public class GL11 {
      * @param target the evaluator target. One of:<br><table><tr><td>{@link #GL_MAP1_VERTEX_3 MAP1_VERTEX_3}</td><td>{@link #GL_MAP1_VERTEX_4 MAP1_VERTEX_4}</td><td>{@link #GL_MAP1_COLOR_4 MAP1_COLOR_4}</td><td>{@link #GL_MAP1_NORMAL MAP1_NORMAL}</td><td>{@link #GL_MAP1_TEXTURE_COORD_1 MAP1_TEXTURE_COORD_1}</td></tr><tr><td>{@link #GL_MAP1_TEXTURE_COORD_2 MAP1_TEXTURE_COORD_2}</td><td>{@link #GL_MAP1_TEXTURE_COORD_3 MAP1_TEXTURE_COORD_3}</td><td>{@link #GL_MAP1_TEXTURE_COORD_4 MAP1_TEXTURE_COORD_4}</td><td>{@link #GL_MAP2_VERTEX_3 MAP2_VERTEX_3}</td><td>{@link #GL_MAP2_VERTEX_4 MAP2_VERTEX_4}</td></tr><tr><td>{@link #GL_MAP2_COLOR_4 MAP2_COLOR_4}</td><td>{@link #GL_MAP2_NORMAL MAP2_NORMAL}</td><td>{@link #GL_MAP2_TEXTURE_COORD_1 MAP2_TEXTURE_COORD_1}</td><td>{@link #GL_MAP2_TEXTURE_COORD_2 MAP2_TEXTURE_COORD_2}</td><td>{@link #GL_MAP2_TEXTURE_COORD_3 MAP2_TEXTURE_COORD_3}</td></tr><tr><td>{@link #GL_MAP2_TEXTURE_COORD_4 MAP2_TEXTURE_COORD_4}</td></tr></table>
      * @param query  the information to query. One of:<br><table><tr><td>{@link #GL_ORDER ORDER}</td><td>{@link #GL_COEFF COEFF}</td><td>{@link #GL_DOMAIN DOMAIN}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static int glGetMapi(@NativeType("GLenum") int target, @NativeType("GLenum") int query) {
@@ -3084,7 +3035,7 @@ public class GL11 {
      * @param query  the information to query
      * @param data   a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapfv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3099,7 +3050,7 @@ public class GL11 {
      * @param target the evaluator map
      * @param query  the information to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static float glGetMapf(@NativeType("GLenum") int target, @NativeType("GLenum") int query) {
@@ -3125,7 +3076,7 @@ public class GL11 {
      * @param query  the information to query
      * @param data   a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapdv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLdouble *") DoubleBuffer data) {
         if (CHECKS) {
@@ -3140,7 +3091,7 @@ public class GL11 {
      * @param target the evaluator map
      * @param query  the information to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static double glGetMapd(@NativeType("GLenum") int target, @NativeType("GLenum") int query) {
@@ -3166,7 +3117,7 @@ public class GL11 {
      * @param pname the information to query. One of:<br><table><tr><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_EMISSION EMISSION}</td><td>{@link #GL_SHININESS SHININESS}</td></tr></table>
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMaterialiv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer data) {
         if (CHECKS) {
@@ -3187,7 +3138,7 @@ public class GL11 {
      * @param pname the information to query
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMaterialfv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3207,7 +3158,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query. One of:<br><table><tr><td>{@link #GL_PIXEL_MAP_I_TO_I PIXEL_MAP_I_TO_I}</td><td>{@link #GL_PIXEL_MAP_S_TO_S PIXEL_MAP_S_TO_S}</td><td>{@link #GL_PIXEL_MAP_I_TO_R PIXEL_MAP_I_TO_R}</td><td>{@link #GL_PIXEL_MAP_I_TO_G PIXEL_MAP_I_TO_G}</td><td>{@link #GL_PIXEL_MAP_I_TO_B PIXEL_MAP_I_TO_B}</td></tr><tr><td>{@link #GL_PIXEL_MAP_I_TO_A PIXEL_MAP_I_TO_A}</td><td>{@link #GL_PIXEL_MAP_R_TO_R PIXEL_MAP_R_TO_R}</td><td>{@link #GL_PIXEL_MAP_G_TO_G PIXEL_MAP_G_TO_G}</td><td>{@link #GL_PIXEL_MAP_B_TO_B PIXEL_MAP_B_TO_B}</td><td>{@link #GL_PIXEL_MAP_A_TO_A PIXEL_MAP_A_TO_A}</td></tr></table>
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3222,7 +3173,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query. One of:<br><table><tr><td>{@link #GL_PIXEL_MAP_I_TO_I PIXEL_MAP_I_TO_I}</td><td>{@link #GL_PIXEL_MAP_S_TO_S PIXEL_MAP_S_TO_S}</td><td>{@link #GL_PIXEL_MAP_I_TO_R PIXEL_MAP_I_TO_R}</td><td>{@link #GL_PIXEL_MAP_I_TO_G PIXEL_MAP_I_TO_G}</td><td>{@link #GL_PIXEL_MAP_I_TO_B PIXEL_MAP_I_TO_B}</td></tr><tr><td>{@link #GL_PIXEL_MAP_I_TO_A PIXEL_MAP_I_TO_A}</td><td>{@link #GL_PIXEL_MAP_R_TO_R PIXEL_MAP_R_TO_R}</td><td>{@link #GL_PIXEL_MAP_G_TO_G PIXEL_MAP_G_TO_G}</td><td>{@link #GL_PIXEL_MAP_B_TO_B PIXEL_MAP_B_TO_B}</td><td>{@link #GL_PIXEL_MAP_A_TO_A PIXEL_MAP_A_TO_A}</td></tr></table>
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLfloat *") long data) {
         nglGetPixelMapfv(map, data);
@@ -3239,7 +3190,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLushort *") ShortBuffer data) {
         if (CHECKS) {
@@ -3254,7 +3205,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLushort *") long data) {
         nglGetPixelMapusv(map, data);
@@ -3271,7 +3222,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLuint *") IntBuffer data) {
         if (CHECKS) {
@@ -3286,7 +3237,7 @@ public class GL11 {
      * @param map  the pixel map parameter to query
      * @param data a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLuint *") long data) {
         nglGetPixelMapuiv(map, data);
@@ -3305,7 +3256,7 @@ public class GL11 {
      * @param pname  the pointer to return. One of:<br><table><tr><td>{@link GL43#GL_DEBUG_CALLBACK_FUNCTION DEBUG_CALLBACK_FUNCTION}</td><td>{@link GL43#GL_DEBUG_CALLBACK_USER_PARAM DEBUG_CALLBACK_USER_PARAM}</td></tr></table>
      * @param params a buffer in which to place the returned pointer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetPointerv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetPointerv">Reference Page</a>
      */
     public static void glGetPointerv(@NativeType("GLenum") int pname, @NativeType("void **") PointerBuffer params) {
         GL11C.glGetPointerv(pname, params);
@@ -3316,7 +3267,7 @@ public class GL11 {
      *
      * @param pname the pointer to return. One of:<br><table><tr><td>{@link GL43#GL_DEBUG_CALLBACK_FUNCTION DEBUG_CALLBACK_FUNCTION}</td><td>{@link GL43#GL_DEBUG_CALLBACK_USER_PARAM DEBUG_CALLBACK_USER_PARAM}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetPointerv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetPointerv">Reference Page</a>
      */
     @NativeType("void")
     public static long glGetPointer(@NativeType("GLenum") int pname) {
@@ -3333,7 +3284,7 @@ public class GL11 {
      *
      * @param pattern a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPolygonStipple(@NativeType("void *") ByteBuffer pattern) {
         if (CHECKS) {
@@ -3347,7 +3298,7 @@ public class GL11 {
      *
      * @param pattern a buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPolygonStipple(@NativeType("void *") long pattern) {
         nglGetPolygonStipple(pattern);
@@ -3365,7 +3316,7 @@ public class GL11 {
      *
      * @param name the property to query. One of:<br><table><tr><td>{@link GL11C#GL_RENDERER RENDERER}</td><td>{@link GL11C#GL_VENDOR VENDOR}</td><td>{@link GL11C#GL_EXTENSIONS EXTENSIONS}</td><td>{@link GL11C#GL_VERSION VERSION}</td><td>{@link GL20#GL_SHADING_LANGUAGE_VERSION SHADING_LANGUAGE_VERSION}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetString">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetString">Reference Page</a>
      */
     @Nullable
     @NativeType("GLubyte const *")
@@ -3385,7 +3336,7 @@ public class GL11 {
      * @param pname the parameter to query. One of:<br><table><tr><td>{@link GL20#GL_COORD_REPLACE COORD_REPLACE}</td><td>{@link #GL_TEXTURE_ENV_MODE TEXTURE_ENV_MODE}</td><td>{@link #GL_TEXTURE_ENV_COLOR TEXTURE_ENV_COLOR}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL13#GL_COMBINE_RGB COMBINE_RGB}</td><td>{@link GL13#GL_COMBINE_ALPHA COMBINE_ALPHA}</td></tr><tr><td>{@link GL15#GL_SRC0_RGB SRC0_RGB}</td><td>{@link GL15#GL_SRC1_RGB SRC1_RGB}</td><td>{@link GL15#GL_SRC2_RGB SRC2_RGB}</td><td>{@link GL15#GL_SRC0_ALPHA SRC0_ALPHA}</td><td>{@link GL15#GL_SRC1_ALPHA SRC1_ALPHA}</td><td>{@link GL15#GL_SRC2_ALPHA SRC2_ALPHA}</td></tr><tr><td>{@link GL13#GL_OPERAND0_RGB OPERAND0_RGB}</td><td>{@link GL13#GL_OPERAND1_RGB OPERAND1_RGB}</td><td>{@link GL13#GL_OPERAND2_RGB OPERAND2_RGB}</td><td>{@link GL13#GL_OPERAND0_ALPHA OPERAND0_ALPHA}</td><td>{@link GL13#GL_OPERAND1_ALPHA OPERAND1_ALPHA}</td><td>{@link GL13#GL_OPERAND2_ALPHA OPERAND2_ALPHA}</td></tr><tr><td>{@link GL13#GL_RGB_SCALE RGB_SCALE}</td><td>{@link #GL_ALPHA_SCALE ALPHA_SCALE}</td></tr></table>
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexEnviv(@NativeType("GLenum") int env, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer data) {
         if (CHECKS) {
@@ -3400,7 +3351,7 @@ public class GL11 {
      * @param env   the texture environment to query. One of:<br><table><tr><td>{@link GL20#GL_POINT_SPRITE POINT_SPRITE}</td><td>{@link #GL_TEXTURE_ENV TEXTURE_ENV}</td><td>{@link GL14#GL_TEXTURE_FILTER_CONTROL TEXTURE_FILTER_CONTROL}</td></tr></table>
      * @param pname the parameter to query. One of:<br><table><tr><td>{@link GL20#GL_COORD_REPLACE COORD_REPLACE}</td><td>{@link #GL_TEXTURE_ENV_MODE TEXTURE_ENV_MODE}</td><td>{@link #GL_TEXTURE_ENV_COLOR TEXTURE_ENV_COLOR}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL13#GL_COMBINE_RGB COMBINE_RGB}</td><td>{@link GL13#GL_COMBINE_ALPHA COMBINE_ALPHA}</td></tr><tr><td>{@link GL15#GL_SRC0_RGB SRC0_RGB}</td><td>{@link GL15#GL_SRC1_RGB SRC1_RGB}</td><td>{@link GL15#GL_SRC2_RGB SRC2_RGB}</td><td>{@link GL15#GL_SRC0_ALPHA SRC0_ALPHA}</td><td>{@link GL15#GL_SRC1_ALPHA SRC1_ALPHA}</td><td>{@link GL15#GL_SRC2_ALPHA SRC2_ALPHA}</td></tr><tr><td>{@link GL13#GL_OPERAND0_RGB OPERAND0_RGB}</td><td>{@link GL13#GL_OPERAND1_RGB OPERAND1_RGB}</td><td>{@link GL13#GL_OPERAND2_RGB OPERAND2_RGB}</td><td>{@link GL13#GL_OPERAND0_ALPHA OPERAND0_ALPHA}</td><td>{@link GL13#GL_OPERAND1_ALPHA OPERAND1_ALPHA}</td><td>{@link GL13#GL_OPERAND2_ALPHA OPERAND2_ALPHA}</td></tr><tr><td>{@link GL13#GL_RGB_SCALE RGB_SCALE}</td><td>{@link #GL_ALPHA_SCALE ALPHA_SCALE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static int glGetTexEnvi(@NativeType("GLenum") int env, @NativeType("GLenum") int pname) {
@@ -3426,7 +3377,7 @@ public class GL11 {
      * @param pname the parameter to query
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexEnvfv(@NativeType("GLenum") int env, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3441,7 +3392,7 @@ public class GL11 {
      * @param env   the texture environment to query
      * @param pname the parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static float glGetTexEnvf(@NativeType("GLenum") int env, @NativeType("GLenum") int pname) {
@@ -3467,7 +3418,7 @@ public class GL11 {
      * @param pname the parameter to query. One of:<br><table><tr><td>{@link #GL_EYE_PLANE EYE_PLANE}</td><td>{@link #GL_OBJECT_PLANE OBJECT_PLANE}</td><td>{@link #GL_TEXTURE_GEN_MODE TEXTURE_GEN_MODE}</td></tr></table>
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGeniv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer data) {
         if (CHECKS) {
@@ -3482,7 +3433,7 @@ public class GL11 {
      * @param coord the coord to query. One of:<br><table><tr><td>{@link #GL_S S}</td><td>{@link #GL_T T}</td><td>{@link #GL_R R}</td><td>{@link #GL_Q Q}</td></tr></table>
      * @param pname the parameter to query. One of:<br><table><tr><td>{@link #GL_EYE_PLANE EYE_PLANE}</td><td>{@link #GL_OBJECT_PLANE OBJECT_PLANE}</td><td>{@link #GL_TEXTURE_GEN_MODE TEXTURE_GEN_MODE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static int glGetTexGeni(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname) {
@@ -3508,7 +3459,7 @@ public class GL11 {
      * @param pname the parameter to query
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGenfv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer data) {
         if (CHECKS) {
@@ -3523,7 +3474,7 @@ public class GL11 {
      * @param coord the coord to query
      * @param pname the parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static float glGetTexGenf(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname) {
@@ -3549,7 +3500,7 @@ public class GL11 {
      * @param pname the parameter to query
      * @param data  a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGendv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLdouble *") DoubleBuffer data) {
         if (CHECKS) {
@@ -3564,7 +3515,7 @@ public class GL11 {
      * @param coord the coord to query
      * @param pname the parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("void")
     public static double glGetTexGend(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname) {
@@ -3594,7 +3545,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") ByteBuffer pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3609,7 +3560,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") long pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3624,7 +3575,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") ShortBuffer pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3639,7 +3590,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") IntBuffer pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3654,7 +3605,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") FloatBuffer pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3669,7 +3620,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels the buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") DoubleBuffer pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -3690,7 +3641,7 @@ public class GL11 {
      * @param pname  the parameter to query. One of:<br><table><tr><td>{@link GL11C#GL_TEXTURE_WIDTH TEXTURE_WIDTH}</td><td>{@link GL11C#GL_TEXTURE_HEIGHT TEXTURE_HEIGHT}</td><td>{@link GL12#GL_TEXTURE_DEPTH TEXTURE_DEPTH}</td><td>{@link GL32#GL_TEXTURE_SAMPLES TEXTURE_SAMPLES}</td></tr><tr><td>{@link GL32#GL_TEXTURE_FIXED_SAMPLE_LOCATIONS TEXTURE_FIXED_SAMPLE_LOCATIONS}</td><td>{@link GL11C#GL_TEXTURE_INTERNAL_FORMAT TEXTURE_INTERNAL_FORMAT}</td><td>{@link GL11C#GL_TEXTURE_RED_SIZE TEXTURE_RED_SIZE}</td><td>{@link GL11C#GL_TEXTURE_GREEN_SIZE TEXTURE_GREEN_SIZE}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_BLUE_SIZE TEXTURE_BLUE_SIZE}</td><td>{@link GL11C#GL_TEXTURE_ALPHA_SIZE TEXTURE_ALPHA_SIZE}</td><td>{@link GL14#GL_TEXTURE_DEPTH_SIZE TEXTURE_DEPTH_SIZE}</td><td>{@link GL30#GL_TEXTURE_STENCIL_SIZE TEXTURE_STENCIL_SIZE}</td></tr><tr><td>{@link GL30#GL_TEXTURE_SHARED_SIZE TEXTURE_SHARED_SIZE}</td><td>{@link GL30#GL_TEXTURE_ALPHA_TYPE TEXTURE_ALPHA_TYPE}</td><td>{@link GL30#GL_TEXTURE_DEPTH_TYPE TEXTURE_DEPTH_TYPE}</td><td>{@link GL13#GL_TEXTURE_COMPRESSED TEXTURE_COMPRESSED}</td></tr><tr><td>{@link GL13#GL_TEXTURE_COMPRESSED_IMAGE_SIZE TEXTURE_COMPRESSED_IMAGE_SIZE}</td><td>{@link GL31#GL_TEXTURE_BUFFER_DATA_STORE_BINDING TEXTURE_BUFFER_DATA_STORE_BINDING}</td><td>{@link GL43#GL_TEXTURE_BUFFER_OFFSET TEXTURE_BUFFER_OFFSET}</td><td>{@link GL43#GL_TEXTURE_BUFFER_SIZE TEXTURE_BUFFER_SIZE}</td></tr></table>
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     public static void glGetTexLevelParameteriv(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
         GL11C.glGetTexLevelParameteriv(target, level, pname, params);
@@ -3703,7 +3654,7 @@ public class GL11 {
      * @param level  the level-of-detail number
      * @param pname  the parameter to query. One of:<br><table><tr><td>{@link GL11C#GL_TEXTURE_WIDTH TEXTURE_WIDTH}</td><td>{@link GL11C#GL_TEXTURE_HEIGHT TEXTURE_HEIGHT}</td><td>{@link GL12#GL_TEXTURE_DEPTH TEXTURE_DEPTH}</td><td>{@link GL32#GL_TEXTURE_SAMPLES TEXTURE_SAMPLES}</td></tr><tr><td>{@link GL32#GL_TEXTURE_FIXED_SAMPLE_LOCATIONS TEXTURE_FIXED_SAMPLE_LOCATIONS}</td><td>{@link GL11C#GL_TEXTURE_INTERNAL_FORMAT TEXTURE_INTERNAL_FORMAT}</td><td>{@link GL11C#GL_TEXTURE_RED_SIZE TEXTURE_RED_SIZE}</td><td>{@link GL11C#GL_TEXTURE_GREEN_SIZE TEXTURE_GREEN_SIZE}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_BLUE_SIZE TEXTURE_BLUE_SIZE}</td><td>{@link GL11C#GL_TEXTURE_ALPHA_SIZE TEXTURE_ALPHA_SIZE}</td><td>{@link GL14#GL_TEXTURE_DEPTH_SIZE TEXTURE_DEPTH_SIZE}</td><td>{@link GL30#GL_TEXTURE_STENCIL_SIZE TEXTURE_STENCIL_SIZE}</td></tr><tr><td>{@link GL30#GL_TEXTURE_SHARED_SIZE TEXTURE_SHARED_SIZE}</td><td>{@link GL30#GL_TEXTURE_ALPHA_TYPE TEXTURE_ALPHA_TYPE}</td><td>{@link GL30#GL_TEXTURE_DEPTH_TYPE TEXTURE_DEPTH_TYPE}</td><td>{@link GL13#GL_TEXTURE_COMPRESSED TEXTURE_COMPRESSED}</td></tr><tr><td>{@link GL13#GL_TEXTURE_COMPRESSED_IMAGE_SIZE TEXTURE_COMPRESSED_IMAGE_SIZE}</td><td>{@link GL31#GL_TEXTURE_BUFFER_DATA_STORE_BINDING TEXTURE_BUFFER_DATA_STORE_BINDING}</td><td>{@link GL43#GL_TEXTURE_BUFFER_OFFSET TEXTURE_BUFFER_OFFSET}</td><td>{@link GL43#GL_TEXTURE_BUFFER_SIZE TEXTURE_BUFFER_SIZE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetTexLevelParameteri(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname) {
@@ -3725,7 +3676,7 @@ public class GL11 {
      * @param pname  the parameter to query
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     public static void glGetTexLevelParameterfv(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer params) {
         GL11C.glGetTexLevelParameterfv(target, level, pname, params);
@@ -3738,7 +3689,7 @@ public class GL11 {
      * @param level  the level-of-detail number
      * @param pname  the parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     @NativeType("void")
     public static float glGetTexLevelParameterf(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname) {
@@ -3759,7 +3710,7 @@ public class GL11 {
      * @param pname  the parameter to query. One of:<br><table><tr><td>{@link GL12#GL_TEXTURE_BASE_LEVEL TEXTURE_BASE_LEVEL}</td><td>{@link GL11C#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr><tr><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL11C#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td><td>{@link GL12#GL_TEXTURE_MAX_LEVEL TEXTURE_MAX_LEVEL}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_R TEXTURE_SWIZZLE_R}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_G TEXTURE_SWIZZLE_G}</td></tr><tr><td>{@link GL33#GL_TEXTURE_SWIZZLE_B TEXTURE_SWIZZLE_B}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_A TEXTURE_SWIZZLE_A}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_RGBA TEXTURE_SWIZZLE_RGBA}</td><td>{@link GL11C#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL14#GL_DEPTH_TEXTURE_MODE DEPTH_TEXTURE_MODE}</td><td>{@link GL14#GL_GENERATE_MIPMAP GENERATE_MIPMAP}</td></tr><tr><td>{@link GL42#GL_IMAGE_FORMAT_COMPATIBILITY_TYPE IMAGE_FORMAT_COMPATIBILITY_TYPE}</td><td>{@link GL42#GL_TEXTURE_IMMUTABLE_FORMAT TEXTURE_IMMUTABLE_FORMAT}</td><td>{@link GL43#GL_TEXTURE_IMMUTABLE_LEVELS TEXTURE_IMMUTABLE_LEVELS}</td><td>{@link GL43#GL_TEXTURE_VIEW_MIN_LEVEL TEXTURE_VIEW_MIN_LEVEL}</td></tr><tr><td>{@link GL43#GL_TEXTURE_VIEW_NUM_LEVELS TEXTURE_VIEW_NUM_LEVELS}</td><td>{@link GL43#GL_TEXTURE_VIEW_MIN_LAYER TEXTURE_VIEW_MIN_LAYER}</td><td>{@link GL43#GL_TEXTURE_VIEW_NUM_LAYERS TEXTURE_VIEW_NUM_LAYERS}</td></tr></table>
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     public static void glGetTexParameteriv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
         GL11C.glGetTexParameteriv(target, pname, params);
@@ -3771,7 +3722,7 @@ public class GL11 {
      * @param target the texture target. One of:<br><table><tr><td>{@link GL11C#GL_TEXTURE_1D TEXTURE_1D}</td><td>{@link GL11C#GL_TEXTURE_2D TEXTURE_2D}</td><td>{@link GL12#GL_TEXTURE_3D TEXTURE_3D}</td><td>{@link GL30#GL_TEXTURE_1D_ARRAY TEXTURE_1D_ARRAY}</td></tr><tr><td>{@link GL30#GL_TEXTURE_2D_ARRAY TEXTURE_2D_ARRAY}</td><td>{@link GL31#GL_TEXTURE_RECTANGLE TEXTURE_RECTANGLE}</td><td>{@link GL13#GL_TEXTURE_CUBE_MAP TEXTURE_CUBE_MAP}</td><td>{@link GL40#GL_TEXTURE_CUBE_MAP_ARRAY TEXTURE_CUBE_MAP_ARRAY}</td></tr><tr><td>{@link GL32#GL_TEXTURE_2D_MULTISAMPLE TEXTURE_2D_MULTISAMPLE}</td><td>{@link GL32#GL_TEXTURE_2D_MULTISAMPLE_ARRAY TEXTURE_2D_MULTISAMPLE_ARRAY}</td></tr></table>
      * @param pname  the parameter to query. One of:<br><table><tr><td>{@link GL12#GL_TEXTURE_BASE_LEVEL TEXTURE_BASE_LEVEL}</td><td>{@link GL11C#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr><tr><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL11C#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td><td>{@link GL12#GL_TEXTURE_MAX_LEVEL TEXTURE_MAX_LEVEL}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_R TEXTURE_SWIZZLE_R}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_G TEXTURE_SWIZZLE_G}</td></tr><tr><td>{@link GL33#GL_TEXTURE_SWIZZLE_B TEXTURE_SWIZZLE_B}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_A TEXTURE_SWIZZLE_A}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_RGBA TEXTURE_SWIZZLE_RGBA}</td><td>{@link GL11C#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL14#GL_DEPTH_TEXTURE_MODE DEPTH_TEXTURE_MODE}</td><td>{@link GL14#GL_GENERATE_MIPMAP GENERATE_MIPMAP}</td></tr><tr><td>{@link GL42#GL_IMAGE_FORMAT_COMPATIBILITY_TYPE IMAGE_FORMAT_COMPATIBILITY_TYPE}</td><td>{@link GL42#GL_TEXTURE_IMMUTABLE_FORMAT TEXTURE_IMMUTABLE_FORMAT}</td><td>{@link GL43#GL_TEXTURE_IMMUTABLE_LEVELS TEXTURE_IMMUTABLE_LEVELS}</td><td>{@link GL43#GL_TEXTURE_VIEW_MIN_LEVEL TEXTURE_VIEW_MIN_LEVEL}</td></tr><tr><td>{@link GL43#GL_TEXTURE_VIEW_NUM_LEVELS TEXTURE_VIEW_NUM_LEVELS}</td><td>{@link GL43#GL_TEXTURE_VIEW_MIN_LAYER TEXTURE_VIEW_MIN_LAYER}</td><td>{@link GL43#GL_TEXTURE_VIEW_NUM_LAYERS TEXTURE_VIEW_NUM_LAYERS}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetTexParameteri(@NativeType("GLenum") int target, @NativeType("GLenum") int pname) {
@@ -3792,7 +3743,7 @@ public class GL11 {
      * @param pname  the parameter to query
      * @param params a scalar or buffer in which to place the returned data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     public static void glGetTexParameterfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer params) {
         GL11C.glGetTexParameterfv(target, pname, params);
@@ -3804,7 +3755,7 @@ public class GL11 {
      * @param target the texture target
      * @param pname  the parameter to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     @NativeType("void")
     public static float glGetTexParameterf(@NativeType("GLenum") int target, @NativeType("GLenum") int pname) {
@@ -3820,7 +3771,7 @@ public class GL11 {
      * @param target the behavior to control. One of:<br><table><tr><td>{@link GL11C#GL_LINE_SMOOTH_HINT LINE_SMOOTH_HINT}</td><td>{@link GL11C#GL_POLYGON_SMOOTH_HINT POLYGON_SMOOTH_HINT}</td><td>{@link GL13#GL_TEXTURE_COMPRESSION_HINT TEXTURE_COMPRESSION_HINT}</td></tr><tr><td>{@link GL20#GL_FRAGMENT_SHADER_DERIVATIVE_HINT FRAGMENT_SHADER_DERIVATIVE_HINT}</td></tr></table>
      * @param hint   the behavior hint. One of:<br><table><tr><td>{@link GL11C#GL_FASTEST FASTEST}</td><td>{@link GL11C#GL_NICEST NICEST}</td><td>{@link GL11C#GL_DONT_CARE DONT_CARE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glHint">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glHint">Reference Page</a>
      */
     public static void glHint(@NativeType("GLenum") int target, @NativeType("GLenum") int hint) {
         GL11C.glHint(target, hint);
@@ -3833,7 +3784,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexi(@NativeType("GLint") int index);
 
@@ -3844,7 +3795,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexub">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexub">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexub(@NativeType("GLubyte") byte index);
 
@@ -3855,7 +3806,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexs">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexs">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexs(@NativeType("GLshort") short index);
 
@@ -3866,7 +3817,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexf(@NativeType("GLfloat") float index);
 
@@ -3877,7 +3828,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexd(@NativeType("GLdouble") double index);
 
@@ -3891,7 +3842,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexiv(@NativeType("GLint const *") IntBuffer index) {
         if (CHECKS) {
@@ -3910,7 +3861,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexubv(@NativeType("GLubyte const *") ByteBuffer index) {
         if (CHECKS) {
@@ -3929,7 +3880,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexsv(@NativeType("GLshort const *") ShortBuffer index) {
         if (CHECKS) {
@@ -3948,7 +3899,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexfv(@NativeType("GLfloat const *") FloatBuffer index) {
         if (CHECKS) {
@@ -3967,7 +3918,7 @@ public class GL11 {
      *
      * @param index the value to which the current color index should be set
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexdv(@NativeType("GLdouble const *") DoubleBuffer index) {
         if (CHECKS) {
@@ -3985,7 +3936,7 @@ public class GL11 {
      *
      * @param mask the color index mask value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexMask">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexMask">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glIndexMask(@NativeType("GLuint") int mask);
 
@@ -4005,7 +3956,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color index array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglIndexPointer(type, stride, memAddress(pointer));
@@ -4018,7 +3969,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color index array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglIndexPointer(type, stride, pointer);
@@ -4030,7 +3981,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color index array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexPointer(@NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglIndexPointer(GL11.GL_UNSIGNED_BYTE, stride, memAddress(pointer));
@@ -4042,7 +3993,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color index array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexPointer(@NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglIndexPointer(GL11.GL_SHORT, stride, memAddress(pointer));
@@ -4054,7 +4005,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the color index array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexPointer(@NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglIndexPointer(GL11.GL_INT, stride, memAddress(pointer));
@@ -4065,7 +4016,7 @@ public class GL11 {
     /**
      * Clears the selection name stack.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInitNames">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInitNames">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glInitNames();
 
@@ -4081,7 +4032,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglInterleavedArrays(format, stride, memAddress(pointer));
@@ -4094,7 +4045,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglInterleavedArrays(format, stride, pointer);
@@ -4107,7 +4058,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglInterleavedArrays(format, stride, memAddress(pointer));
@@ -4120,7 +4071,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglInterleavedArrays(format, stride, memAddress(pointer));
@@ -4133,7 +4084,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") FloatBuffer pointer) {
         nglInterleavedArrays(format, stride, memAddress(pointer));
@@ -4146,7 +4097,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") DoubleBuffer pointer) {
         nglInterleavedArrays(format, stride, memAddress(pointer));
@@ -4159,7 +4110,7 @@ public class GL11 {
      *
      * @param cap the enable state to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glIsEnabled">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glIsEnabled">Reference Page</a>
      */
     @NativeType("GLboolean")
     public static boolean glIsEnabled(@NativeType("GLenum") int cap) {
@@ -4173,7 +4124,7 @@ public class GL11 {
      *
      * @param list the list index to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIsList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIsList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLboolean")
     public static native boolean glIsList(@NativeType("GLuint") int list);
@@ -4185,7 +4136,7 @@ public class GL11 {
      *
      * @param texture the texture name to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glIsTexture">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glIsTexture">Reference Page</a>
      */
     @NativeType("GLboolean")
     public static boolean glIsTexture(@NativeType("GLuint") int texture) {
@@ -4200,7 +4151,7 @@ public class GL11 {
      * @param pname the lighting model parameter to set. One of:<br><table><tr><td>{@link #GL_LIGHT_MODEL_AMBIENT LIGHT_MODEL_AMBIENT}</td><td>{@link #GL_LIGHT_MODEL_LOCAL_VIEWER LIGHT_MODEL_LOCAL_VIEWER}</td><td>{@link #GL_LIGHT_MODEL_TWO_SIDE LIGHT_MODEL_TWO_SIDE}</td></tr><tr><td>{@link GL12#GL_LIGHT_MODEL_COLOR_CONTROL LIGHT_MODEL_COLOR_CONTROL}</td></tr></table>
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModeli">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModeli">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLightModeli(@NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -4212,7 +4163,7 @@ public class GL11 {
      * @param pname the lighting model parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModelf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModelf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLightModelf(@NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -4227,7 +4178,7 @@ public class GL11 {
      * @param pname  the lighting model parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightModeliv(@NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -4247,7 +4198,7 @@ public class GL11 {
      * @param pname  the lighting model parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightModelfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -4265,7 +4216,7 @@ public class GL11 {
      * @param pname the parameter to set. One of:<br><table><tr><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_POSITION POSITION}</td><td>{@link #GL_CONSTANT_ATTENUATION CONSTANT_ATTENUATION}</td><td>{@link #GL_LINEAR_ATTENUATION LINEAR_ATTENUATION}</td></tr><tr><td>{@link #GL_QUADRATIC_ATTENUATION QUADRATIC_ATTENUATION}</td><td>{@link #GL_SPOT_DIRECTION SPOT_DIRECTION}</td><td>{@link #GL_SPOT_EXPONENT SPOT_EXPONENT}</td><td>{@link #GL_SPOT_CUTOFF SPOT_CUTOFF}</td></tr></table>
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLighti">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLighti">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLighti(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -4278,7 +4229,7 @@ public class GL11 {
      * @param pname the parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLightf(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -4294,7 +4245,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightiv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -4315,7 +4266,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightfv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -4334,7 +4285,7 @@ public class GL11 {
      *                to the range [1, 256].
      * @param pattern an unsigned short integer whose 16 bits define the stipple pattern
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLineStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLineStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLineStipple(@NativeType("GLint") int factor, @NativeType("GLushort") short pattern);
 
@@ -4345,7 +4296,7 @@ public class GL11 {
      *
      * @param width the line width
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glLineWidth">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glLineWidth">Reference Page</a>
      */
     public static void glLineWidth(@NativeType("GLfloat") float width) {
         GL11C.glLineWidth(width);
@@ -4358,7 +4309,7 @@ public class GL11 {
      *
      * @param base the display list base offset
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glListBase">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glListBase">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glListBase(@NativeType("GLuint") int base);
 
@@ -4384,7 +4335,7 @@ public class GL11 {
      *
      * @param m the matrix data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLoadMatrixf(@NativeType("GLfloat const *") FloatBuffer m) {
         if (CHECKS) {
@@ -4403,7 +4354,7 @@ public class GL11 {
      *
      * @param m the matrix data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLoadMatrixd(@NativeType("GLdouble const *") DoubleBuffer m) {
         if (CHECKS) {
@@ -4426,7 +4377,7 @@ public class GL11 {
      * <tr><td>0</td><td>0</td><td>0</td><td>1</td></tr>
      * </table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadIdentity">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadIdentity">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLoadIdentity();
 
@@ -4437,7 +4388,7 @@ public class GL11 {
      *
      * @param name the name to load
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glLoadName(@NativeType("GLuint") int name);
 
@@ -4448,7 +4399,7 @@ public class GL11 {
      *
      * @param op the operation to set. One of:<br><table><tr><td>{@link GL11C#GL_CLEAR CLEAR}</td><td>{@link GL11C#GL_AND AND}</td><td>{@link GL11C#GL_AND_REVERSE AND_REVERSE}</td><td>{@link GL11C#GL_COPY COPY}</td><td>{@link GL11C#GL_AND_INVERTED AND_INVERTED}</td><td>{@link GL11C#GL_NOOP NOOP}</td><td>{@link GL11C#GL_XOR XOR}</td><td>{@link GL11C#GL_OR OR}</td><td>{@link GL11C#GL_NOR NOR}</td><td>{@link GL11C#GL_EQUIV EQUIV}</td><td>{@link GL11C#GL_INVERT INVERT}</td><td>{@link GL11C#GL_OR_REVERSE OR_REVERSE}</td><td>{@link GL11C#GL_COPY_INVERTED COPY_INVERTED}</td></tr><tr><td>{@link GL11C#GL_OR_INVERTED OR_INVERTED}</td><td>{@link GL11C#GL_NAND NAND}</td><td>{@link GL11C#GL_SET SET}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glLogicOp">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glLogicOp">Reference Page</a>
      */
     public static void glLogicOp(@NativeType("GLenum") int op) {
         GL11C.glLogicOp(op);
@@ -4470,7 +4421,7 @@ public class GL11 {
      * @param order  the polynomial order
      * @param points a set of {@code order} blocks of storage containing control points
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap1f(@NativeType("GLenum") int target, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2, @NativeType("GLint") int stride, @NativeType("GLint") int order, @NativeType("GLfloat const *") FloatBuffer points) {
         if (CHECKS) {
@@ -4494,7 +4445,7 @@ public class GL11 {
      * @param order  the polynomial order
      * @param points a set of {@code order} blocks of storage containing control points
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap1d(@NativeType("GLenum") int target, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2, @NativeType("GLint") int stride, @NativeType("GLint") int order, @NativeType("GLdouble const *") DoubleBuffer points) {
         if (CHECKS) {
@@ -4522,7 +4473,7 @@ public class GL11 {
      * @param vorder  the polynomial order in the v-dimension
      * @param points  a set of <code>uorder &times; vorder</code> blocks of storage containing control points
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap2f(@NativeType("GLenum") int target, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2, @NativeType("GLint") int ustride, @NativeType("GLint") int uorder, @NativeType("GLfloat") float v1, @NativeType("GLfloat") float v2, @NativeType("GLint") int vstride, @NativeType("GLint") int vorder, @NativeType("GLfloat const *") FloatBuffer points) {
         if (CHECKS) {
@@ -4550,7 +4501,7 @@ public class GL11 {
      * @param vorder  the polynomial order in the v-dimension
      * @param points  a set of <code>uorder &times; vorder</code> blocks of storage containing control points
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap2d(@NativeType("GLenum") int target, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2, @NativeType("GLint") int ustride, @NativeType("GLint") int uorder, @NativeType("GLdouble") double v1, @NativeType("GLdouble") double v2, @NativeType("GLint") int vstride, @NativeType("GLint") int vorder, @NativeType("GLdouble const *") DoubleBuffer points) {
         if (CHECKS) {
@@ -4568,7 +4519,7 @@ public class GL11 {
      * @param u1 the first interval endpoint
      * @param u2 the second interval endpoint
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMapGrid1f(@NativeType("GLint") int n, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2);
 
@@ -4581,7 +4532,7 @@ public class GL11 {
      * @param u1 the first interval endpoint
      * @param u2 the second interval endpoint
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMapGrid1d(@NativeType("GLint") int n, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2);
 
@@ -4597,7 +4548,7 @@ public class GL11 {
      * @param v1 the first v-dimension interval endpoint
      * @param v2 the second v-dimension interval endpoint
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMapGrid2f(@NativeType("GLint") int un, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2, @NativeType("GLint") int vn, @NativeType("GLfloat") float v1, @NativeType("GLfloat") float v2);
 
@@ -4613,7 +4564,7 @@ public class GL11 {
      * @param v1 the first v-dimension interval endpoint
      * @param v2 the second v-dimension interval endpoint
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMapGrid">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMapGrid2d(@NativeType("GLint") int un, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2, @NativeType("GLint") int vn, @NativeType("GLdouble") double v1, @NativeType("GLdouble") double v2);
 
@@ -4626,7 +4577,7 @@ public class GL11 {
      * @param pname the parameter to set. Must be:<br><table><tr><td>{@link #GL_SHININESS SHININESS}</td></tr></table>
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMateriali">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMateriali">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMateriali(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -4639,7 +4590,7 @@ public class GL11 {
      * @param pname the parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMaterialf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMaterialf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMaterialf(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -4655,7 +4606,7 @@ public class GL11 {
      * @param pname  the parameter to set. One of:<br><table><tr><td>{@link #GL_AMBIENT AMBIENT}</td><td>{@link #GL_DIFFUSE DIFFUSE}</td><td>{@link #GL_AMBIENT_AND_DIFFUSE AMBIENT_AND_DIFFUSE}</td><td>{@link #GL_SPECULAR SPECULAR}</td><td>{@link #GL_EMISSION EMISSION}</td></tr></table>
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMaterialiv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -4676,7 +4627,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMaterialfv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -4692,7 +4643,7 @@ public class GL11 {
      *
      * @param mode the matrix mode. One of:<br><table><tr><td>{@link #GL_MODELVIEW MODELVIEW}</td><td>{@link #GL_PROJECTION PROJECTION}</td><td>{@link #GL_TEXTURE TEXTURE}</td><td>{@link #GL_COLOR COLOR}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMatrixMode">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMatrixMode">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMatrixMode(@NativeType("GLenum") int mode);
 
@@ -4706,7 +4657,7 @@ public class GL11 {
      *
      * @param m the matrix data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultMatrixf(@NativeType("GLfloat const *") FloatBuffer m) {
         if (CHECKS) {
@@ -4725,7 +4676,7 @@ public class GL11 {
      *
      * @param m the matrix data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultMatrixd(@NativeType("GLdouble const *") DoubleBuffer m) {
         if (CHECKS) {
@@ -4758,7 +4709,7 @@ public class GL11 {
      * @param n the near frustum plane
      * @param f the far frustum plane
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFrustum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFrustum">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glFrustum(@NativeType("GLdouble") double l, @NativeType("GLdouble") double r, @NativeType("GLdouble") double b, @NativeType("GLdouble") double t, @NativeType("GLdouble") double n, @NativeType("GLdouble") double f);
 
@@ -4770,7 +4721,7 @@ public class GL11 {
      * @param n    a positive integer to which the display list that follows is assigned
      * @param mode a symbolic constant that controls the behavior of the GL during display list creation. One of:<br><table><tr><td>{@link #GL_COMPILE COMPILE}</td><td>{@link #GL_COMPILE_AND_EXECUTE COMPILE_AND_EXECUTE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNewList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNewList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNewList(@NativeType("GLuint") int n, @NativeType("GLenum") int mode);
 
@@ -4780,7 +4731,7 @@ public class GL11 {
      * Ends the definition of GL commands to be placed in a display list. It is only when {@code EndList} occurs that the specified display list is actually
      * associated with the index indicated with {@link #glNewList NewList}.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEndList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEndList">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glEndList();
 
@@ -4793,7 +4744,7 @@ public class GL11 {
      * @param ny the y coordinate of the current normal
      * @param nz the z coordinate of the current normal
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormal3f(@NativeType("GLfloat") float nx, @NativeType("GLfloat") float ny, @NativeType("GLfloat") float nz);
 
@@ -4806,7 +4757,7 @@ public class GL11 {
      * @param ny the y coordinate of the current normal
      * @param nz the z coordinate of the current normal
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormal3b(@NativeType("GLbyte") byte nx, @NativeType("GLbyte") byte ny, @NativeType("GLbyte") byte nz);
 
@@ -4819,7 +4770,7 @@ public class GL11 {
      * @param ny the y coordinate of the current normal
      * @param nz the z coordinate of the current normal
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormal3s(@NativeType("GLshort") short nx, @NativeType("GLshort") short ny, @NativeType("GLshort") short nz);
 
@@ -4832,7 +4783,7 @@ public class GL11 {
      * @param ny the y coordinate of the current normal
      * @param nz the z coordinate of the current normal
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormal3i(@NativeType("GLint") int nx, @NativeType("GLint") int ny, @NativeType("GLint") int nz);
 
@@ -4845,7 +4796,7 @@ public class GL11 {
      * @param ny the y coordinate of the current normal
      * @param nz the z coordinate of the current normal
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormal3d(@NativeType("GLdouble") double nx, @NativeType("GLdouble") double ny, @NativeType("GLdouble") double nz);
 
@@ -4859,7 +4810,7 @@ public class GL11 {
      *
      * @param v the normal buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -4878,7 +4829,7 @@ public class GL11 {
      *
      * @param v the normal buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3bv(@NativeType("GLbyte const *") ByteBuffer v) {
         if (CHECKS) {
@@ -4897,7 +4848,7 @@ public class GL11 {
      *
      * @param v the normal buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -4916,7 +4867,7 @@ public class GL11 {
      *
      * @param v the normal buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -4935,7 +4886,7 @@ public class GL11 {
      *
      * @param v the normal buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -4956,7 +4907,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the normal array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglNormalPointer(type, stride, memAddress(pointer));
@@ -4969,7 +4920,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the normal array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglNormalPointer(type, stride, pointer);
@@ -4982,7 +4933,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the normal array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglNormalPointer(type, stride, memAddress(pointer));
@@ -4995,7 +4946,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the normal array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglNormalPointer(type, stride, memAddress(pointer));
@@ -5008,7 +4959,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the normal array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormalPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalPointer(@NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") FloatBuffer pointer) {
         nglNormalPointer(type, stride, memAddress(pointer));
@@ -5038,7 +4989,7 @@ public class GL11 {
      * @param n the near frustum plane
      * @param f the far frustum plane
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glOrtho">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glOrtho">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glOrtho(@NativeType("GLdouble") double l, @NativeType("GLdouble") double r, @NativeType("GLdouble") double b, @NativeType("GLdouble") double t, @NativeType("GLdouble") double n, @NativeType("GLdouble") double f);
 
@@ -5051,7 +5002,7 @@ public class GL11 {
      *
      * @param token the marker value to insert
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPassThrough">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPassThrough">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPassThrough(@NativeType("GLfloat") float token);
 
@@ -5071,7 +5022,7 @@ public class GL11 {
      * @param size   the map size
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLsizei") int size, @NativeType("GLfloat const *") long values) {
         nglPixelMapfv(map, size, values);
@@ -5083,7 +5034,7 @@ public class GL11 {
      * @param map    the map to set. One of:<br><table><tr><td>{@link #GL_PIXEL_MAP_I_TO_I PIXEL_MAP_I_TO_I}</td><td>{@link #GL_PIXEL_MAP_S_TO_S PIXEL_MAP_S_TO_S}</td><td>{@link #GL_PIXEL_MAP_I_TO_R PIXEL_MAP_I_TO_R}</td><td>{@link #GL_PIXEL_MAP_I_TO_G PIXEL_MAP_I_TO_G}</td><td>{@link #GL_PIXEL_MAP_I_TO_B PIXEL_MAP_I_TO_B}</td></tr><tr><td>{@link #GL_PIXEL_MAP_I_TO_A PIXEL_MAP_I_TO_A}</td><td>{@link #GL_PIXEL_MAP_R_TO_R PIXEL_MAP_R_TO_R}</td><td>{@link #GL_PIXEL_MAP_G_TO_G PIXEL_MAP_G_TO_G}</td><td>{@link #GL_PIXEL_MAP_B_TO_B PIXEL_MAP_B_TO_B}</td><td>{@link #GL_PIXEL_MAP_A_TO_A PIXEL_MAP_A_TO_A}</td></tr></table>
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLfloat const *") FloatBuffer values) {
         nglPixelMapfv(map, values.remaining(), memAddress(values));
@@ -5105,7 +5056,7 @@ public class GL11 {
      * @param size   the map size
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLsizei") int size, @NativeType("GLushort const *") long values) {
         nglPixelMapusv(map, size, values);
@@ -5117,7 +5068,7 @@ public class GL11 {
      * @param map    the map to set
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLushort const *") ShortBuffer values) {
         nglPixelMapusv(map, values.remaining(), memAddress(values));
@@ -5139,7 +5090,7 @@ public class GL11 {
      * @param size   the map size
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLsizei") int size, @NativeType("GLuint const *") long values) {
         nglPixelMapuiv(map, size, values);
@@ -5151,7 +5102,7 @@ public class GL11 {
      * @param map    the map to set
      * @param values the map values
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLuint const *") IntBuffer values) {
         nglPixelMapuiv(map, values.remaining(), memAddress(values));
@@ -5165,7 +5116,7 @@ public class GL11 {
      * @param pname the pixel store parameter to set. One of:<br><table><tr><td>{@link GL11C#GL_UNPACK_SWAP_BYTES UNPACK_SWAP_BYTES}</td><td>{@link GL11C#GL_UNPACK_LSB_FIRST UNPACK_LSB_FIRST}</td><td>{@link GL11C#GL_UNPACK_ROW_LENGTH UNPACK_ROW_LENGTH}</td></tr><tr><td>{@link GL11C#GL_UNPACK_SKIP_ROWS UNPACK_SKIP_ROWS}</td><td>{@link GL11C#GL_UNPACK_SKIP_PIXELS UNPACK_SKIP_PIXELS}</td><td>{@link GL11C#GL_UNPACK_ALIGNMENT UNPACK_ALIGNMENT}</td></tr><tr><td>{@link GL12#GL_UNPACK_IMAGE_HEIGHT UNPACK_IMAGE_HEIGHT}</td><td>{@link GL12#GL_UNPACK_SKIP_IMAGES UNPACK_SKIP_IMAGES}</td><td>{@link GL42#GL_UNPACK_COMPRESSED_BLOCK_WIDTH UNPACK_COMPRESSED_BLOCK_WIDTH}</td></tr><tr><td>{@link GL42#GL_UNPACK_COMPRESSED_BLOCK_HEIGHT UNPACK_COMPRESSED_BLOCK_HEIGHT}</td><td>{@link GL42#GL_UNPACK_COMPRESSED_BLOCK_DEPTH UNPACK_COMPRESSED_BLOCK_DEPTH}</td><td>{@link GL42#GL_UNPACK_COMPRESSED_BLOCK_SIZE UNPACK_COMPRESSED_BLOCK_SIZE}</td></tr></table>
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPixelStorei">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPixelStorei">Reference Page</a>
      */
     public static void glPixelStorei(@NativeType("GLenum") int pname, @NativeType("GLint") int param) {
         GL11C.glPixelStorei(pname, param);
@@ -5179,7 +5130,7 @@ public class GL11 {
      * @param pname the pixel store parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPixelStoref">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPixelStoref">Reference Page</a>
      */
     public static void glPixelStoref(@NativeType("GLenum") int pname, @NativeType("GLfloat") float param) {
         GL11C.glPixelStoref(pname, param);
@@ -5193,7 +5144,7 @@ public class GL11 {
      * @param pname the pixel transfer parameter to set. One of:<br><table><tr><td>{@link #GL_MAP_COLOR MAP_COLOR}</td><td>{@link #GL_MAP_STENCIL MAP_STENCIL}</td><td>{@link #GL_INDEX_SHIFT INDEX_SHIFT}</td><td>{@link #GL_INDEX_OFFSET INDEX_OFFSET}</td></tr><tr><td>{@link #GL_RED_SCALE RED_SCALE}</td><td>{@link #GL_GREEN_SCALE GREEN_SCALE}</td><td>{@link #GL_BLUE_SCALE BLUE_SCALE}</td><td>{@link #GL_ALPHA_SCALE ALPHA_SCALE}</td></tr><tr><td>{@link #GL_DEPTH_SCALE DEPTH_SCALE}</td><td>{@link #GL_RED_BIAS RED_BIAS}</td><td>{@link #GL_GREEN_BIAS GREEN_BIAS}</td><td>{@link #GL_BLUE_BIAS BLUE_BIAS}</td></tr><tr><td>{@link #GL_ALPHA_BIAS ALPHA_BIAS}</td><td>{@link #GL_DEPTH_BIAS DEPTH_BIAS}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_RED_SCALE POST_CONVOLUTION_RED_SCALE}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_RED_BIAS POST_CONVOLUTION_RED_BIAS}</td></tr><tr><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_RED_SCALE POST_COLOR_MATRIX_RED_SCALE}</td><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_RED_BIAS POST_COLOR_MATRIX_RED_BIAS}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_GREEN_SCALE POST_CONVOLUTION_GREEN_SCALE}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_GREEN_BIAS POST_CONVOLUTION_GREEN_BIAS}</td></tr><tr><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_GREEN_SCALE POST_COLOR_MATRIX_GREEN_SCALE}</td><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_GREEN_BIAS POST_COLOR_MATRIX_GREEN_BIAS}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_BLUE_SCALE POST_CONVOLUTION_BLUE_SCALE}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_BLUE_BIAS POST_CONVOLUTION_BLUE_BIAS}</td></tr><tr><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_BLUE_SCALE POST_COLOR_MATRIX_BLUE_SCALE}</td><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_BLUE_BIAS POST_COLOR_MATRIX_BLUE_BIAS}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_ALPHA_SCALE POST_CONVOLUTION_ALPHA_SCALE}</td><td>{@link ARBImaging#GL_POST_CONVOLUTION_ALPHA_BIAS POST_CONVOLUTION_ALPHA_BIAS}</td></tr><tr><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_ALPHA_SCALE POST_COLOR_MATRIX_ALPHA_SCALE}</td><td>{@link ARBImaging#GL_POST_COLOR_MATRIX_ALPHA_BIAS POST_COLOR_MATRIX_ALPHA_BIAS}</td></tr></table>
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelTransferi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelTransferi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPixelTransferi(@NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -5205,7 +5156,7 @@ public class GL11 {
      * @param pname the pixel transfer parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelTransferf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelTransferf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPixelTransferf(@NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -5225,7 +5176,7 @@ public class GL11 {
      * @param xfactor the z<sub>x</sub> factor
      * @param yfactor the z<sub>y</sub> factor
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelZoom">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelZoom">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPixelZoom(@NativeType("GLfloat") float xfactor, @NativeType("GLfloat") float yfactor);
 
@@ -5236,7 +5187,7 @@ public class GL11 {
      *
      * @param size the request size of a point
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPointSize">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPointSize">Reference Page</a>
      */
     public static void glPointSize(@NativeType("GLfloat") float size) {
         GL11C.glPointSize(size);
@@ -5254,7 +5205,7 @@ public class GL11 {
      * @param face the face for which to set the rasterizing method. One of:<br><table><tr><td>{@link GL11C#GL_FRONT FRONT}</td><td>{@link GL11C#GL_BACK BACK}</td><td>{@link GL11C#GL_FRONT_AND_BACK FRONT_AND_BACK}</td></tr></table>
      * @param mode the rasterization mode. One of:<br><table><tr><td>{@link GL11C#GL_POINT POINT}</td><td>{@link GL11C#GL_LINE LINE}</td><td>{@link GL11C#GL_FILL FILL}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPolygonMode">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPolygonMode">Reference Page</a>
      */
     public static void glPolygonMode(@NativeType("GLenum") int face, @NativeType("GLenum") int mode) {
         GL11C.glPolygonMode(face, mode);
@@ -5272,7 +5223,7 @@ public class GL11 {
      * @param factor the maximum depth slope factor
      * @param units  the constant scale
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPolygonOffset">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPolygonOffset">Reference Page</a>
      */
     public static void glPolygonOffset(@NativeType("GLfloat") float factor, @NativeType("GLfloat") float units) {
         GL11C.glPolygonOffset(factor, units);
@@ -5295,7 +5246,7 @@ public class GL11 {
      *
      * @param pattern a pointer to memory into which a 32 &times; 32 pattern is packed
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPolygonStipple(@NativeType("GLubyte const *") ByteBuffer pattern) {
         if (CHECKS) {
@@ -5316,7 +5267,7 @@ public class GL11 {
      *
      * @param pattern a pointer to memory into which a 32 &times; 32 pattern is packed
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPolygonStipple">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPolygonStipple(@NativeType("GLubyte const *") long pattern) {
         nglPolygonStipple(pattern);
@@ -5336,7 +5287,7 @@ public class GL11 {
      *
      * @param mask the state variables to push. One or more of:<br><table><tr><td>{@link #GL_ACCUM_BUFFER_BIT ACCUM_BUFFER_BIT}</td><td>{@link #GL_COLOR_BUFFER_BIT COLOR_BUFFER_BIT}</td><td>{@link #GL_CURRENT_BIT CURRENT_BIT}</td><td>{@link #GL_DEPTH_BUFFER_BIT DEPTH_BUFFER_BIT}</td><td>{@link #GL_ENABLE_BIT ENABLE_BIT}</td><td>{@link #GL_EVAL_BIT EVAL_BIT}</td></tr><tr><td>{@link #GL_FOG_BIT FOG_BIT}</td><td>{@link #GL_HINT_BIT HINT_BIT}</td><td>{@link #GL_LIGHTING_BIT LIGHTING_BIT}</td><td>{@link #GL_LINE_BIT LINE_BIT}</td><td>{@link #GL_LIST_BIT LIST_BIT}</td><td>{@link GL13#GL_MULTISAMPLE_BIT MULTISAMPLE_BIT}</td></tr><tr><td>{@link #GL_PIXEL_MODE_BIT PIXEL_MODE_BIT}</td><td>{@link #GL_POINT_BIT POINT_BIT}</td><td>{@link #GL_POLYGON_BIT POLYGON_BIT}</td><td>{@link #GL_POLYGON_STIPPLE_BIT POLYGON_STIPPLE_BIT}</td><td>{@link #GL_SCISSOR_BIT SCISSOR_BIT}</td><td>{@link #GL_STENCIL_BUFFER_BIT STENCIL_BUFFER_BIT}</td></tr><tr><td>{@link #GL_TEXTURE_BIT TEXTURE_BIT}</td><td>{@link #GL_TRANSFORM_BIT TRANSFORM_BIT}</td><td>{@link #GL_VIEWPORT_BIT VIEWPORT_BIT}</td><td>{@link #GL_ALL_ATTRIB_BITS ALL_ATTRIB_BITS}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPushAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPushAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPushAttrib(@NativeType("GLbitfield") int mask);
 
@@ -5354,7 +5305,7 @@ public class GL11 {
      *
      * @param mask the state variables to push. One or more of:<br><table><tr><td>{@link #GL_CLIENT_VERTEX_ARRAY_BIT CLIENT_VERTEX_ARRAY_BIT}</td><td>{@link #GL_CLIENT_PIXEL_STORE_BIT CLIENT_PIXEL_STORE_BIT}</td><td>{@link #GL_CLIENT_ALL_ATTRIB_BITS CLIENT_ALL_ATTRIB_BITS}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPushClientAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPushClientAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPushClientAttrib(@NativeType("GLbitfield") int mask);
 
@@ -5363,7 +5314,7 @@ public class GL11 {
     /**
      * Resets the values of those state variables that were saved with the last {@link #glPushAttrib PushAttrib}. Those not saved remain unchanged.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPopAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPopAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPopAttrib();
 
@@ -5372,7 +5323,7 @@ public class GL11 {
     /**
      * Resets the values of those state variables that were saved with the last {@link #glPushClientAttrib PushClientAttrib}. Those not saved remain unchanged.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPopClientAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPopClientAttrib">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPopClientAttrib();
 
@@ -5381,7 +5332,7 @@ public class GL11 {
     /**
      * Pops the top entry off the current matrix stack, replacing the current matrix with the matrix that was the second entry in the stack.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPopMatrix">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPopMatrix">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPopMatrix();
 
@@ -5390,7 +5341,7 @@ public class GL11 {
     /**
      * Pops one name off the top of the selection name stack.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPopName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPopName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPopName();
 
@@ -5410,7 +5361,7 @@ public class GL11 {
      * @param textures   an array of texture object names
      * @param priorities an array of texture object priorities
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPrioritizeTextures">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPrioritizeTextures">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPrioritizeTextures(@NativeType("GLuint const *") IntBuffer textures, @NativeType("GLfloat const *") FloatBuffer priorities) {
         if (CHECKS) {
@@ -5424,7 +5375,7 @@ public class GL11 {
     /**
      * Pushes the current matrix stack down by one, duplicating the current matrix in both the top of the stack and the entry below it.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPushMatrix">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPushMatrix">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPushMatrix();
 
@@ -5435,7 +5386,7 @@ public class GL11 {
      *
      * @param name the name to push
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPushName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPushName">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glPushName(@NativeType("GLuint") int name);
 
@@ -5453,7 +5404,7 @@ public class GL11 {
      * @param x the {@code x} raster coordinate
      * @param y the {@code y} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos2i(@NativeType("GLint") int x, @NativeType("GLint") int y);
 
@@ -5465,7 +5416,7 @@ public class GL11 {
      * @param x the {@code x} raster coordinate
      * @param y the {@code y} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos2s(@NativeType("GLshort") short x, @NativeType("GLshort") short y);
 
@@ -5477,7 +5428,7 @@ public class GL11 {
      * @param x the {@code x} raster coordinate
      * @param y the {@code y} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos2f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y);
 
@@ -5489,7 +5440,7 @@ public class GL11 {
      * @param x the {@code x} raster coordinate
      * @param y the {@code y} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos2d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y);
 
@@ -5503,7 +5454,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -5522,7 +5473,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -5541,7 +5492,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -5560,7 +5511,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -5578,7 +5529,7 @@ public class GL11 {
      * @param y the {@code y} raster coordinate
      * @param z the {@code z} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos3i(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z);
 
@@ -5591,7 +5542,7 @@ public class GL11 {
      * @param y the {@code y} raster coordinate
      * @param z the {@code z} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos3s(@NativeType("GLshort") short x, @NativeType("GLshort") short y, @NativeType("GLshort") short z);
 
@@ -5604,7 +5555,7 @@ public class GL11 {
      * @param y the {@code y} raster coordinate
      * @param z the {@code z} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos3f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
 
@@ -5617,7 +5568,7 @@ public class GL11 {
      * @param y the {@code y} raster coordinate
      * @param z the {@code z} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos3d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
 
@@ -5631,7 +5582,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -5650,7 +5601,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -5669,7 +5620,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -5688,7 +5639,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -5707,7 +5658,7 @@ public class GL11 {
      * @param z the {@code z} raster coordinate
      * @param w the {@code w} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos4i(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z, @NativeType("GLint") int w);
 
@@ -5721,7 +5672,7 @@ public class GL11 {
      * @param z the {@code z} raster coordinate
      * @param w the {@code w} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos4s(@NativeType("GLshort") short x, @NativeType("GLshort") short y, @NativeType("GLshort") short z, @NativeType("GLshort") short w);
 
@@ -5735,7 +5686,7 @@ public class GL11 {
      * @param z the {@code z} raster coordinate
      * @param w the {@code w} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos4f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z, @NativeType("GLfloat") float w);
 
@@ -5749,7 +5700,7 @@ public class GL11 {
      * @param z the {@code z} raster coordinate
      * @param w the {@code w} raster coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRasterPos4d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w);
 
@@ -5763,7 +5714,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -5782,7 +5733,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -5801,7 +5752,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -5820,7 +5771,7 @@ public class GL11 {
      *
      * @param coords the raster position buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -5839,7 +5790,7 @@ public class GL11 {
      *
      * @param src the color buffer to read from. One of:<br><table><tr><td>{@link GL11C#GL_NONE NONE}</td><td>{@link GL11C#GL_FRONT_LEFT FRONT_LEFT}</td><td>{@link GL11C#GL_FRONT_RIGHT FRONT_RIGHT}</td><td>{@link GL11C#GL_BACK_LEFT BACK_LEFT}</td><td>{@link GL11C#GL_BACK_RIGHT BACK_RIGHT}</td><td>{@link GL11C#GL_FRONT FRONT}</td><td>{@link GL11C#GL_BACK BACK}</td><td>{@link GL11C#GL_LEFT LEFT}</td></tr><tr><td>{@link GL11C#GL_RIGHT RIGHT}</td><td>{@link GL11C#GL_FRONT_AND_BACK FRONT_AND_BACK}</td><td>{@link GL30#GL_COLOR_ATTACHMENT0 COLOR_ATTACHMENT0}</td><td>GL30.GL_COLOR_ATTACHMENT[1-15]</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadBuffer">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadBuffer">Reference Page</a>
      */
     public static void glReadBuffer(@NativeType("GLenum") int src) {
         GL11C.glReadBuffer(src);
@@ -5867,7 +5818,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels a buffer in which to place the returned pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") ByteBuffer pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -5888,7 +5839,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels a buffer in which to place the returned pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") long pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -5909,7 +5860,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels a buffer in which to place the returned pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") ShortBuffer pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -5930,7 +5881,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels a buffer in which to place the returned pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") IntBuffer pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -5951,7 +5902,7 @@ public class GL11 {
      * @param type   the pixel type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels a buffer in which to place the returned pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") FloatBuffer pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -5980,7 +5931,7 @@ public class GL11 {
      * @param x2 the x coordinate of the second corner vertex
      * @param y2 the y coordinate of the second corner vertex
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRecti">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRecti">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRecti(@NativeType("GLint") int x1, @NativeType("GLint") int y1, @NativeType("GLint") int x2, @NativeType("GLint") int y2);
 
@@ -5994,7 +5945,7 @@ public class GL11 {
      * @param x2 the x coordinate of the second corner vertex
      * @param y2 the y coordinate of the second corner vertex
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRects">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRects">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRects(@NativeType("GLshort") short x1, @NativeType("GLshort") short y1, @NativeType("GLshort") short x2, @NativeType("GLshort") short y2);
 
@@ -6008,7 +5959,7 @@ public class GL11 {
      * @param x2 the x coordinate of the second corner vertex
      * @param y2 the y coordinate of the second corner vertex
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRectf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRectf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRectf(@NativeType("GLfloat") float x1, @NativeType("GLfloat") float y1, @NativeType("GLfloat") float x2, @NativeType("GLfloat") float y2);
 
@@ -6022,7 +5973,7 @@ public class GL11 {
      * @param x2 the x coordinate of the second corner vertex
      * @param y2 the y coordinate of the second corner vertex
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRectd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRectd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRectd(@NativeType("GLdouble") double x1, @NativeType("GLdouble") double y1, @NativeType("GLdouble") double x2, @NativeType("GLdouble") double y2);
 
@@ -6037,7 +5988,7 @@ public class GL11 {
      * @param v1 the first vertex buffer
      * @param v2 the second vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectiv(@NativeType("GLint const *") IntBuffer v1, @NativeType("GLint const *") IntBuffer v2) {
         if (CHECKS) {
@@ -6058,7 +6009,7 @@ public class GL11 {
      * @param v1 the first vertex buffer
      * @param v2 the second vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectsv(@NativeType("GLshort const *") ShortBuffer v1, @NativeType("GLshort const *") ShortBuffer v2) {
         if (CHECKS) {
@@ -6079,7 +6030,7 @@ public class GL11 {
      * @param v1 the first vertex buffer
      * @param v2 the second vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectfv(@NativeType("GLfloat const *") FloatBuffer v1, @NativeType("GLfloat const *") FloatBuffer v2) {
         if (CHECKS) {
@@ -6100,7 +6051,7 @@ public class GL11 {
      * @param v1 the first vertex buffer
      * @param v2 the second vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectdv(@NativeType("GLdouble const *") DoubleBuffer v1, @NativeType("GLdouble const *") DoubleBuffer v2) {
         if (CHECKS) {
@@ -6117,7 +6068,7 @@ public class GL11 {
      *
      * @param mode the render mode. One of:<br><table><tr><td>{@link #GL_RENDER RENDER}</td><td>{@link #GL_SELECT SELECT}</td><td>{@link #GL_FEEDBACK FEEDBACK}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRenderMode">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRenderMode">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLint")
     public static native int glRenderMode(@NativeType("GLenum") int mode);
@@ -6153,7 +6104,7 @@ public class GL11 {
      * @param y     the y coordinate of the rotation vector
      * @param z     the z coordinate of the rotation vector
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRotatef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRotatef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRotatef(@NativeType("GLfloat") float angle, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
 
@@ -6167,7 +6118,7 @@ public class GL11 {
      * @param y     the y coordinate of the rotation vector
      * @param z     the z coordinate of the rotation vector
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRotated">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRotated">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glRotated(@NativeType("GLdouble") double angle, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
 
@@ -6189,7 +6140,7 @@ public class GL11 {
      * @param y the y-axis scaling factor
      * @param z the z-axis scaling factor
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glScalef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glScalef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glScalef(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
 
@@ -6202,7 +6153,7 @@ public class GL11 {
      * @param y the y-axis scaling factor
      * @param z the z-axis scaling factor
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glScaled">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glScaled">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glScaled(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
 
@@ -6219,7 +6170,7 @@ public class GL11 {
      * @param width  the scissor rectangle width
      * @param height the scissor rectangle height
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glScissor">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glScissor">Reference Page</a>
      */
     public static void glScissor(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
         GL11C.glScissor(x, y, width, height);
@@ -6239,7 +6190,7 @@ public class GL11 {
      *
      * @param buffer an array of unsigned integers to be potentially filled names
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glSelectBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glSelectBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glSelectBuffer(@NativeType("GLuint *") IntBuffer buffer) {
         nglSelectBuffer(buffer.remaining(), memAddress(buffer));
@@ -6256,7 +6207,7 @@ public class GL11 {
      *
      * @param mode the shade mode. One of:<br><table><tr><td>{@link #GL_SMOOTH SMOOTH}</td><td>{@link #GL_FLAT FLAT}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glShadeModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glShadeModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glShadeModel(@NativeType("GLenum") int mode);
 
@@ -6274,7 +6225,7 @@ public class GL11 {
      * @param ref  the reference value
      * @param mask the stencil comparison mask
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glStencilFunc">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glStencilFunc">Reference Page</a>
      */
     public static void glStencilFunc(@NativeType("GLenum") int func, @NativeType("GLint") int ref, @NativeType("GLuint") int mask) {
         GL11C.glStencilFunc(func, ref, mask);
@@ -6290,7 +6241,7 @@ public class GL11 {
      *
      * @param mask the stencil mask
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glStencilMask">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glStencilMask">Reference Page</a>
      */
     public static void glStencilMask(@NativeType("GLuint") int mask) {
         GL11C.glStencilMask(mask);
@@ -6313,7 +6264,7 @@ public class GL11 {
      * @param dpfail the action to take if the depth buffer test fails
      * @param dppass the action to take if the depth buffer test passes
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glStencilOp">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glStencilOp">Reference Page</a>
      */
     public static void glStencilOp(@NativeType("GLenum") int sfail, @NativeType("GLenum") int dpfail, @NativeType("GLenum") int dppass) {
         GL11C.glStencilOp(sfail, dpfail, dppass);
@@ -6326,7 +6277,7 @@ public class GL11 {
      *
      * @param s the s component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord1f(@NativeType("GLfloat") float s);
 
@@ -6337,7 +6288,7 @@ public class GL11 {
      *
      * @param s the s component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord1s(@NativeType("GLshort") short s);
 
@@ -6348,7 +6299,7 @@ public class GL11 {
      *
      * @param s the s component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord1i(@NativeType("GLint") int s);
 
@@ -6359,7 +6310,7 @@ public class GL11 {
      *
      * @param s the s component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord1d(@NativeType("GLdouble") double s);
 
@@ -6373,7 +6324,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -6392,7 +6343,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -6411,7 +6362,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -6430,7 +6381,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -6447,7 +6398,7 @@ public class GL11 {
      * @param s the s component of the current texture coordinates
      * @param t the t component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord2f(@NativeType("GLfloat") float s, @NativeType("GLfloat") float t);
 
@@ -6459,7 +6410,7 @@ public class GL11 {
      * @param s the s component of the current texture coordinates
      * @param t the t component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord2s(@NativeType("GLshort") short s, @NativeType("GLshort") short t);
 
@@ -6471,7 +6422,7 @@ public class GL11 {
      * @param s the s component of the current texture coordinates
      * @param t the t component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord2i(@NativeType("GLint") int s, @NativeType("GLint") int t);
 
@@ -6483,7 +6434,7 @@ public class GL11 {
      * @param s the s component of the current texture coordinates
      * @param t the t component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord2d(@NativeType("GLdouble") double s, @NativeType("GLdouble") double t);
 
@@ -6497,7 +6448,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -6516,7 +6467,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -6535,7 +6486,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -6554,7 +6505,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -6572,7 +6523,7 @@ public class GL11 {
      * @param t the t component of the current texture coordinates
      * @param r the r component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord3f(@NativeType("GLfloat") float s, @NativeType("GLfloat") float t, @NativeType("GLfloat") float r);
 
@@ -6585,7 +6536,7 @@ public class GL11 {
      * @param t the t component of the current texture coordinates
      * @param r the r component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord3s(@NativeType("GLshort") short s, @NativeType("GLshort") short t, @NativeType("GLshort") short r);
 
@@ -6598,7 +6549,7 @@ public class GL11 {
      * @param t the t component of the current texture coordinates
      * @param r the r component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord3i(@NativeType("GLint") int s, @NativeType("GLint") int t, @NativeType("GLint") int r);
 
@@ -6611,7 +6562,7 @@ public class GL11 {
      * @param t the t component of the current texture coordinates
      * @param r the r component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord3d(@NativeType("GLdouble") double s, @NativeType("GLdouble") double t, @NativeType("GLdouble") double r);
 
@@ -6625,7 +6576,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -6644,7 +6595,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -6663,7 +6614,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -6682,7 +6633,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -6701,7 +6652,7 @@ public class GL11 {
      * @param r the r component of the current texture coordinates
      * @param q the q component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord4f(@NativeType("GLfloat") float s, @NativeType("GLfloat") float t, @NativeType("GLfloat") float r, @NativeType("GLfloat") float q);
 
@@ -6715,7 +6666,7 @@ public class GL11 {
      * @param r the r component of the current texture coordinates
      * @param q the q component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord4s(@NativeType("GLshort") short s, @NativeType("GLshort") short t, @NativeType("GLshort") short r, @NativeType("GLshort") short q);
 
@@ -6729,7 +6680,7 @@ public class GL11 {
      * @param r the r component of the current texture coordinates
      * @param q the q component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord4i(@NativeType("GLint") int s, @NativeType("GLint") int t, @NativeType("GLint") int r, @NativeType("GLint") int q);
 
@@ -6743,7 +6694,7 @@ public class GL11 {
      * @param r the r component of the current texture coordinates
      * @param q the q component of the current texture coordinates
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoord4d(@NativeType("GLdouble") double s, @NativeType("GLdouble") double t, @NativeType("GLdouble") double r, @NativeType("GLdouble") double q);
 
@@ -6757,7 +6708,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4fv(@NativeType("GLfloat const *") FloatBuffer v) {
         if (CHECKS) {
@@ -6776,7 +6727,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4sv(@NativeType("GLshort const *") ShortBuffer v) {
         if (CHECKS) {
@@ -6795,7 +6746,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4iv(@NativeType("GLint const *") IntBuffer v) {
         if (CHECKS) {
@@ -6814,7 +6765,7 @@ public class GL11 {
      *
      * @param v the texture coordinate buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4dv(@NativeType("GLdouble const *") DoubleBuffer v) {
         if (CHECKS) {
@@ -6836,7 +6787,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the texture coordinate array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglTexCoordPointer(size, type, stride, memAddress(pointer));
@@ -6850,7 +6801,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the texture coordinate array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglTexCoordPointer(size, type, stride, pointer);
@@ -6864,7 +6815,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the texture coordinate array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglTexCoordPointer(size, type, stride, memAddress(pointer));
@@ -6878,7 +6829,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the texture coordinate array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglTexCoordPointer(size, type, stride, memAddress(pointer));
@@ -6892,7 +6843,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the texture coordinate array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoordPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") FloatBuffer pointer) {
         nglTexCoordPointer(size, type, stride, memAddress(pointer));
@@ -6908,7 +6859,7 @@ public class GL11 {
      * @param pname  the parameter to set. One of:<br><table><tr><td>{@link GL20#GL_COORD_REPLACE COORD_REPLACE}</td><td>{@link #GL_TEXTURE_ENV_MODE TEXTURE_ENV_MODE}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL13#GL_COMBINE_RGB COMBINE_RGB}</td><td>{@link GL13#GL_COMBINE_ALPHA COMBINE_ALPHA}</td><td>{@link GL15#GL_SRC0_RGB SRC0_RGB}</td></tr><tr><td>{@link GL15#GL_SRC1_RGB SRC1_RGB}</td><td>{@link GL15#GL_SRC2_RGB SRC2_RGB}</td><td>{@link GL15#GL_SRC0_ALPHA SRC0_ALPHA}</td><td>{@link GL15#GL_SRC1_ALPHA SRC1_ALPHA}</td><td>{@link GL15#GL_SRC2_ALPHA SRC2_ALPHA}</td><td>{@link GL13#GL_OPERAND0_RGB OPERAND0_RGB}</td></tr><tr><td>{@link GL13#GL_OPERAND1_RGB OPERAND1_RGB}</td><td>{@link GL13#GL_OPERAND2_RGB OPERAND2_RGB}</td><td>{@link GL13#GL_OPERAND0_ALPHA OPERAND0_ALPHA}</td><td>{@link GL13#GL_OPERAND1_ALPHA OPERAND1_ALPHA}</td><td>{@link GL13#GL_OPERAND2_ALPHA OPERAND2_ALPHA}</td><td>{@link GL13#GL_RGB_SCALE RGB_SCALE}</td></tr><tr><td>{@link #GL_ALPHA_SCALE ALPHA_SCALE}</td></tr></table>
      * @param param  the parameter value. Scalar value or one of:<br><table><tr><td>{@link #GL_REPLACE REPLACE}</td><td>{@link #GL_MODULATE MODULATE}</td><td>{@link #GL_DECAL DECAL}</td><td>{@link #GL_BLEND BLEND}</td><td>{@link #GL_ADD ADD}</td><td>{@link GL13#GL_COMBINE COMBINE}</td><td>{@link GL13#GL_ADD_SIGNED ADD_SIGNED}</td><td>{@link GL13#GL_INTERPOLATE INTERPOLATE}</td></tr><tr><td>{@link GL13#GL_SUBTRACT SUBTRACT}</td><td>{@link GL13#GL_DOT3_RGB DOT3_RGB}</td><td>{@link GL13#GL_DOT3_RGBA DOT3_RGBA}</td><td>{@link #GL_TEXTURE TEXTURE}</td><td>{@link GL13#GL_TEXTURE0 TEXTURE0}</td><td>GL13.GL_TEXTURE[1-31]</td><td>{@link GL13#GL_CONSTANT CONSTANT}</td><td>{@link GL13#GL_PRIMARY_COLOR PRIMARY_COLOR}</td></tr><tr><td>{@link GL13#GL_PREVIOUS PREVIOUS}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnvi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnvi">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexEnvi(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -6924,7 +6875,7 @@ public class GL11 {
      * @param pname  the parameter to set. Must be:<br><table><tr><td>{@link #GL_TEXTURE_ENV_COLOR TEXTURE_ENV_COLOR}</td></tr></table>
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexEnviv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -6942,7 +6893,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param param  the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnvf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnvf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexEnvf(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -6958,7 +6909,7 @@ public class GL11 {
      * @param pname  the parameter to set. Must be:<br><table><tr><td>{@link #GL_TEXTURE_ENV_COLOR TEXTURE_ENV_COLOR}</td></tr></table>
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexEnvfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -6984,7 +6935,7 @@ public class GL11 {
      * @param pname the parameter to set. Must be:<br><table><tr><td>{@link #GL_TEXTURE_GEN_MODE TEXTURE_GEN_MODE}</td></tr></table>
      * @param param the parameter value. One of:<br><table><tr><td>{@link #GL_OBJECT_LINEAR OBJECT_LINEAR}</td><td>{@link #GL_EYE_LINEAR EYE_LINEAR}</td><td>{@link #GL_SPHERE_MAP SPHERE_MAP}</td><td>{@link GL13#GL_REFLECTION_MAP REFLECTION_MAP}</td><td>{@link GL13#GL_NORMAL_MAP NORMAL_MAP}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGeni">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGeni">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexGeni(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLint") int param);
 
@@ -7000,7 +6951,7 @@ public class GL11 {
      * @param pname  the parameter to set. One of:<br><table><tr><td>{@link #GL_OBJECT_PLANE OBJECT_PLANE}</td><td>{@link #GL_EYE_PLANE EYE_PLANE}</td></tr></table>
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGeniv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         if (CHECKS) {
@@ -7018,7 +6969,7 @@ public class GL11 {
      * @param pname the parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGenf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGenf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexGenf(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
 
@@ -7034,7 +6985,7 @@ public class GL11 {
      * @param pname  the parameter to set. One of:<br><table><tr><td>{@link #GL_OBJECT_PLANE OBJECT_PLANE}</td><td>{@link #GL_EYE_PLANE EYE_PLANE}</td></tr></table>
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGenfv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         if (CHECKS) {
@@ -7052,7 +7003,7 @@ public class GL11 {
      * @param pname the parameter to set
      * @param param the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGend">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGend">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexGend(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLdouble") double param);
 
@@ -7068,7 +7019,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGendv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLdouble const *") DoubleBuffer params) {
         if (CHECKS) {
@@ -7096,7 +7047,7 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") ByteBuffer pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -7114,9 +7065,9 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
-    public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") long pixels) {
+    public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") long pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
     }
 
@@ -7132,7 +7083,7 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") ShortBuffer pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -7150,7 +7101,7 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") IntBuffer pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -7168,7 +7119,7 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") FloatBuffer pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -7186,7 +7137,7 @@ public class GL11 {
      * @param type           the texel data type
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") DoubleBuffer pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -7212,7 +7163,7 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") ByteBuffer pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -7231,9 +7182,9 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
-    public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") long pixels) {
+    public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") long pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
     }
 
@@ -7250,7 +7201,7 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") ShortBuffer pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -7269,7 +7220,7 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") IntBuffer pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -7288,7 +7239,7 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") FloatBuffer pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -7307,7 +7258,7 @@ public class GL11 {
      * @param type           the texel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels         the texel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") DoubleBuffer pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -7330,7 +7281,7 @@ public class GL11 {
      * @param width          the texture width
      * @param border         the texture border width
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glCopyTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glCopyTexImage1D">Reference Page</a>
      */
     public static void glCopyTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int internalFormat, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLint") int border) {
         GL11C.glCopyTexImage1D(target, level, internalFormat, x, y, width, border);
@@ -7364,7 +7315,7 @@ public class GL11 {
      * @param height         the texture height
      * @param border         the texture border width
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glCopyTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glCopyTexImage2D">Reference Page</a>
      */
     public static void glCopyTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int internalFormat, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border) {
         GL11C.glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
@@ -7384,7 +7335,7 @@ public class GL11 {
      * @param y       the lower framebuffer pixel coordinate
      * @param width   the texture subregion width
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glCopyTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glCopyTexSubImage1D">Reference Page</a>
      */
     public static void glCopyTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width) {
         GL11C.glCopyTexSubImage1D(target, level, xoffset, x, y, width);
@@ -7406,7 +7357,7 @@ public class GL11 {
      * @param width   the texture subregion width
      * @param height  the texture subregion height
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glCopyTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glCopyTexSubImage2D">Reference Page</a>
      */
     public static void glCopyTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
         GL11C.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
@@ -7421,7 +7372,7 @@ public class GL11 {
      * @param pname  the parameter to set. One of:<br><table><tr><td>{@link GL12#GL_TEXTURE_BASE_LEVEL TEXTURE_BASE_LEVEL}</td><td>{@link GL11C#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr><tr><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL11C#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td><td>{@link GL12#GL_TEXTURE_MAX_LEVEL TEXTURE_MAX_LEVEL}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_R TEXTURE_SWIZZLE_R}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_G TEXTURE_SWIZZLE_G}</td></tr><tr><td>{@link GL33#GL_TEXTURE_SWIZZLE_B TEXTURE_SWIZZLE_B}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_A TEXTURE_SWIZZLE_A}</td><td>{@link GL33#GL_TEXTURE_SWIZZLE_RGBA TEXTURE_SWIZZLE_RGBA}</td><td>{@link GL11C#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td></tr><tr><td>{@link GL11C#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL14#GL_DEPTH_TEXTURE_MODE DEPTH_TEXTURE_MODE}</td><td>{@link GL14#GL_GENERATE_MIPMAP GENERATE_MIPMAP}</td></tr></table>
      * @param param  the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameteri">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameteri">Reference Page</a>
      */
     public static void glTexParameteri(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint") int param) {
         GL11C.glTexParameteri(target, pname, param);
@@ -7441,7 +7392,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameter">Reference Page</a>
      */
     public static void glTexParameteriv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         GL11C.glTexParameteriv(target, pname, params);
@@ -7456,7 +7407,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param param  the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameterf">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameterf">Reference Page</a>
      */
     public static void glTexParameterf(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param) {
         GL11C.glTexParameterf(target, pname, param);
@@ -7476,7 +7427,7 @@ public class GL11 {
      * @param pname  the parameter to set
      * @param params the parameter value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameter">Reference Page</a>
      */
     public static void glTexParameterfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         GL11C.glTexParameterfv(target, pname, params);
@@ -7500,7 +7451,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7517,7 +7468,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") long pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7534,7 +7485,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ShortBuffer pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7551,7 +7502,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") IntBuffer pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7568,7 +7519,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") FloatBuffer pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7585,7 +7536,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") DoubleBuffer pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -7612,7 +7563,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7632,7 +7583,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") long pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7652,7 +7603,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") ShortBuffer pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7672,7 +7623,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") IntBuffer pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7692,7 +7643,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") FloatBuffer pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7712,7 +7663,7 @@ public class GL11 {
      * @param type    the pixel data type. One of:<br><table><tr><td>{@link GL11C#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11C#GL_BYTE BYTE}</td><td>{@link GL11C#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11C#GL_SHORT SHORT}</td></tr><tr><td>{@link GL11C#GL_UNSIGNED_INT UNSIGNED_INT}</td><td>{@link GL11C#GL_INT INT}</td><td>{@link GL30#GL_HALF_FLOAT HALF_FLOAT}</td><td>{@link GL11C#GL_FLOAT FLOAT}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_BYTE_3_3_2 UNSIGNED_BYTE_3_3_2}</td><td>{@link GL12#GL_UNSIGNED_BYTE_2_3_3_REV UNSIGNED_BYTE_2_3_3_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5 UNSIGNED_SHORT_5_6_5}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_6_5_REV UNSIGNED_SHORT_5_6_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4 UNSIGNED_SHORT_4_4_4_4}</td><td>{@link GL12#GL_UNSIGNED_SHORT_4_4_4_4_REV UNSIGNED_SHORT_4_4_4_4_REV}</td><td>{@link GL12#GL_UNSIGNED_SHORT_5_5_5_1 UNSIGNED_SHORT_5_5_5_1}</td><td>{@link GL12#GL_UNSIGNED_SHORT_1_5_5_5_REV UNSIGNED_SHORT_1_5_5_5_REV}</td></tr><tr><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8 UNSIGNED_INT_8_8_8_8}</td><td>{@link GL12#GL_UNSIGNED_INT_8_8_8_8_REV UNSIGNED_INT_8_8_8_8_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_10_10_10_2 UNSIGNED_INT_10_10_10_2}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr><tr><td>{@link GL30#GL_UNSIGNED_INT_24_8 UNSIGNED_INT_24_8}</td><td>{@link GL30#GL_UNSIGNED_INT_10F_11F_11F_REV UNSIGNED_INT_10F_11F_11F_REV}</td><td>{@link GL30#GL_UNSIGNED_INT_5_9_9_9_REV UNSIGNED_INT_5_9_9_9_REV}</td><td>{@link GL30#GL_FLOAT_32_UNSIGNED_INT_24_8_REV FLOAT_32_UNSIGNED_INT_24_8_REV}</td></tr></table>
      * @param pixels  the pixel data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") DoubleBuffer pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -7736,7 +7687,7 @@ public class GL11 {
      * @param y the y-axis translation
      * @param z the z-axis translation
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTranslatef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTranslatef">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTranslatef(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
 
@@ -7749,7 +7700,7 @@ public class GL11 {
      * @param y the y-axis translation
      * @param z the z-axis translation
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTranslated">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTranslated">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTranslated(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
 
@@ -7762,7 +7713,7 @@ public class GL11 {
      * @param x the vertex x coordinate
      * @param y the vertex y coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex2f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y);
 
@@ -7774,7 +7725,7 @@ public class GL11 {
      * @param x the vertex x coordinate
      * @param y the vertex y coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex2s(@NativeType("GLshort") short x, @NativeType("GLshort") short y);
 
@@ -7786,7 +7737,7 @@ public class GL11 {
      * @param x the vertex x coordinate
      * @param y the vertex y coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex2i(@NativeType("GLint") int x, @NativeType("GLint") int y);
 
@@ -7798,7 +7749,7 @@ public class GL11 {
      * @param x the vertex x coordinate
      * @param y the vertex y coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex2d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y);
 
@@ -7812,7 +7763,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -7831,7 +7782,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -7850,7 +7801,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -7869,7 +7820,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -7888,7 +7839,7 @@ public class GL11 {
      * @param y the vertex y coordinate
      * @param z the vertex z coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex3f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
 
@@ -7901,7 +7852,7 @@ public class GL11 {
      * @param y the vertex y coordinate
      * @param z the vertex z coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex3s(@NativeType("GLshort") short x, @NativeType("GLshort") short y, @NativeType("GLshort") short z);
 
@@ -7914,7 +7865,7 @@ public class GL11 {
      * @param y the vertex y coordinate
      * @param z the vertex z coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex3i(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z);
 
@@ -7927,7 +7878,7 @@ public class GL11 {
      * @param y the vertex y coordinate
      * @param z the vertex z coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex3d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
 
@@ -7941,7 +7892,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -7960,7 +7911,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -7979,7 +7930,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -7998,7 +7949,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -8017,7 +7968,7 @@ public class GL11 {
      * @param z the vertex z coordinate
      * @param w the vertex w coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex4f(@NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z, @NativeType("GLfloat") float w);
 
@@ -8031,7 +7982,7 @@ public class GL11 {
      * @param z the vertex z coordinate
      * @param w the vertex w coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex4s(@NativeType("GLshort") short x, @NativeType("GLshort") short y, @NativeType("GLshort") short z, @NativeType("GLshort") short w);
 
@@ -8045,7 +7996,7 @@ public class GL11 {
      * @param z the vertex z coordinate
      * @param w the vertex w coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex4i(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z, @NativeType("GLint") int w);
 
@@ -8059,7 +8010,7 @@ public class GL11 {
      * @param z the vertex z coordinate
      * @param w the vertex w coordinate
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertex4d(@NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w);
 
@@ -8073,7 +8024,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4fv(@NativeType("GLfloat const *") FloatBuffer coords) {
         if (CHECKS) {
@@ -8092,7 +8043,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4sv(@NativeType("GLshort const *") ShortBuffer coords) {
         if (CHECKS) {
@@ -8111,7 +8062,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4iv(@NativeType("GLint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -8130,7 +8081,7 @@ public class GL11 {
      *
      * @param coords the vertex buffer
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4dv(@NativeType("GLdouble const *") DoubleBuffer coords) {
         if (CHECKS) {
@@ -8152,7 +8103,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
         nglVertexPointer(size, type, stride, memAddress(pointer));
@@ -8166,7 +8117,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
         nglVertexPointer(size, type, stride, pointer);
@@ -8180,7 +8131,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ShortBuffer pointer) {
         nglVertexPointer(size, type, stride, memAddress(pointer));
@@ -8194,7 +8145,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") IntBuffer pointer) {
         nglVertexPointer(size, type, stride, memAddress(pointer));
@@ -8208,7 +8159,7 @@ public class GL11 {
      * @param stride  the vertex stride in bytes. If specified as zero, then array elements are stored sequentially
      * @param pointer the vertex array data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertexPointer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexPointer(@NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") FloatBuffer pointer) {
         nglVertexPointer(size, type, stride, memAddress(pointer));
@@ -8235,7 +8186,7 @@ public class GL11 {
      * @param w the viewport width
      * @param h the viewport height
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glViewport">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glViewport">Reference Page</a>
      */
     public static void glViewport(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int w, @NativeType("GLsizei") int h) {
         GL11C.glViewport(x, y, w, h);
@@ -8244,7 +8195,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glAreTexturesResident AreTexturesResident}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glAreTexturesResident">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     @NativeType("GLboolean")
     public static boolean glAreTexturesResident(@NativeType("GLuint const *") int[] textures, @NativeType("GLboolean *") ByteBuffer residences) {
@@ -8259,7 +8210,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glClipPlane ClipPlane}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glClipPlane(@NativeType("GLenum") int plane, @NativeType("GLdouble const *") double[] equation) {
         long __functionAddress = GL.getICD().glClipPlane;
@@ -8273,7 +8224,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3sv Color3sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glColor3sv;
@@ -8287,7 +8238,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3iv Color3iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glColor3iv;
@@ -8301,7 +8252,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3fv Color3fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glColor3fv;
@@ -8315,7 +8266,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3dv Color3dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glColor3dv;
@@ -8329,7 +8280,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3usv Color3usv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3usv(@NativeType("GLushort const *") short[] v) {
         long __functionAddress = GL.getICD().glColor3usv;
@@ -8343,7 +8294,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor3uiv Color3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor3uiv(@NativeType("GLuint const *") int[] v) {
         long __functionAddress = GL.getICD().glColor3uiv;
@@ -8357,7 +8308,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4sv Color4sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glColor4sv;
@@ -8371,7 +8322,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4iv Color4iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glColor4iv;
@@ -8385,7 +8336,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4fv Color4fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glColor4fv;
@@ -8399,7 +8350,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4dv Color4dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glColor4dv;
@@ -8413,7 +8364,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4usv Color4usv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4usv(@NativeType("GLushort const *") short[] v) {
         long __functionAddress = GL.getICD().glColor4usv;
@@ -8427,7 +8378,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glColor4uiv Color4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColor4uiv(@NativeType("GLuint const *") int[] v) {
         long __functionAddress = GL.getICD().glColor4uiv;
@@ -8441,7 +8392,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glDrawPixels DrawPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") short[] pixels) {
         long __functionAddress = GL.getICD().glDrawPixels;
@@ -8454,7 +8405,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glDrawPixels DrawPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") int[] pixels) {
         long __functionAddress = GL.getICD().glDrawPixels;
@@ -8467,7 +8418,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glDrawPixels DrawPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glDrawPixels">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glDrawPixels(@NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") float[] pixels) {
         long __functionAddress = GL.getICD().glDrawPixels;
@@ -8480,7 +8431,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glEvalCoord1fv EvalCoord1fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord1fv(@NativeType("GLfloat const *") float[] u) {
         long __functionAddress = GL.getICD().glEvalCoord1fv;
@@ -8494,7 +8445,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glEvalCoord1dv EvalCoord1dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord1dv(@NativeType("GLdouble const *") double[] u) {
         long __functionAddress = GL.getICD().glEvalCoord1dv;
@@ -8508,7 +8459,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glEvalCoord2fv EvalCoord2fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord2fv(@NativeType("GLfloat const *") float[] u) {
         long __functionAddress = GL.getICD().glEvalCoord2fv;
@@ -8522,7 +8473,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glEvalCoord2dv EvalCoord2dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glEvalCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glEvalCoord2dv(@NativeType("GLdouble const *") double[] u) {
         long __functionAddress = GL.getICD().glEvalCoord2dv;
@@ -8536,7 +8487,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glFeedbackBuffer FeedbackBuffer}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFeedbackBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFeedbackBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFeedbackBuffer(@NativeType("GLenum") int type, @NativeType("GLfloat *") float[] buffer) {
         long __functionAddress = GL.getICD().glFeedbackBuffer;
@@ -8549,7 +8500,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glFogiv Fogiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFogiv(@NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glFogiv;
@@ -8563,7 +8514,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glFogfv Fogfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glFog">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glFogfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glFogfv;
@@ -8577,7 +8528,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGenTextures GenTextures}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenTextures">Reference Page</a>
      */
     public static void glGenTextures(@NativeType("GLuint *") int[] textures) {
         GL11C.glGenTextures(textures);
@@ -8586,7 +8537,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glDeleteTextures DeleteTextures}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteTextures">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteTextures">Reference Page</a>
      */
     public static void glDeleteTextures(@NativeType("GLuint const *") int[] textures) {
         GL11C.glDeleteTextures(textures);
@@ -8595,7 +8546,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetClipPlane GetClipPlane}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetClipPlane">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetClipPlane(@NativeType("GLenum") int plane, @NativeType("GLdouble *") double[] equation) {
         long __functionAddress = GL.getICD().glGetClipPlane;
@@ -8609,7 +8560,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetFloatv GetFloatv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetFloatv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetFloatv">Reference Page</a>
      */
     public static void glGetFloatv(@NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] params) {
         GL11C.glGetFloatv(pname, params);
@@ -8618,7 +8569,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetIntegerv GetIntegerv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetIntegerv">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetIntegerv">Reference Page</a>
      */
     public static void glGetIntegerv(@NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         GL11C.glGetIntegerv(pname, params);
@@ -8627,7 +8578,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetDoublev GetDoublev}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetDoublev">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetDoublev">Reference Page</a>
      */
     public static void glGetDoublev(@NativeType("GLenum") int pname, @NativeType("GLdouble *") double[] params) {
         GL11C.glGetDoublev(pname, params);
@@ -8636,7 +8587,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetLightiv GetLightiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetLightiv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] data) {
         long __functionAddress = GL.getICD().glGetLightiv;
@@ -8650,7 +8601,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetLightfv GetLightfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetLightfv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetLightfv;
@@ -8664,7 +8615,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetMapiv GetMapiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapiv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLint *") int[] data) {
         long __functionAddress = GL.getICD().glGetMapiv;
@@ -8678,7 +8629,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetMapfv GetMapfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapfv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetMapfv;
@@ -8692,7 +8643,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetMapdv GetMapdv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMapdv(@NativeType("GLenum") int target, @NativeType("GLenum") int query, @NativeType("GLdouble *") double[] data) {
         long __functionAddress = GL.getICD().glGetMapdv;
@@ -8706,7 +8657,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetMaterialiv GetMaterialiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMaterialiv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] data) {
         long __functionAddress = GL.getICD().glGetMaterialiv;
@@ -8720,7 +8671,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetMaterialfv GetMaterialfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetMaterialfv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetMaterialfv;
@@ -8734,7 +8685,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetPixelMapfv GetPixelMapfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetPixelMapfv;
@@ -8748,7 +8699,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetPixelMapusv GetPixelMapusv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLushort *") short[] data) {
         long __functionAddress = GL.getICD().glGetPixelMapusv;
@@ -8762,7 +8713,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetPixelMapuiv GetPixelMapuiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLuint *") int[] data) {
         long __functionAddress = GL.getICD().glGetPixelMapuiv;
@@ -8776,7 +8727,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexEnviv GetTexEnviv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexEnviv(@NativeType("GLenum") int env, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] data) {
         long __functionAddress = GL.getICD().glGetTexEnviv;
@@ -8790,7 +8741,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexEnvfv GetTexEnvfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexEnvfv(@NativeType("GLenum") int env, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetTexEnvfv;
@@ -8804,7 +8755,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexGeniv GetTexGeniv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGeniv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] data) {
         long __functionAddress = GL.getICD().glGetTexGeniv;
@@ -8818,7 +8769,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexGenfv GetTexGenfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGenfv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] data) {
         long __functionAddress = GL.getICD().glGetTexGenfv;
@@ -8832,7 +8783,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexGendv GetTexGendv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glGetTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glGetTexGendv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLdouble *") double[] data) {
         long __functionAddress = GL.getICD().glGetTexGendv;
@@ -8846,7 +8797,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexImage GetTexImage}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") short[] pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -8855,7 +8806,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexImage GetTexImage}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") int[] pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -8864,7 +8815,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexImage GetTexImage}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") float[] pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -8873,7 +8824,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexImage GetTexImage}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexImage">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexImage">Reference Page</a>
      */
     public static void glGetTexImage(@NativeType("GLenum") int tex, @NativeType("GLint") int level, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") double[] pixels) {
         GL11C.glGetTexImage(tex, level, format, type, pixels);
@@ -8882,7 +8833,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexLevelParameteriv GetTexLevelParameteriv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     public static void glGetTexLevelParameteriv(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         GL11C.glGetTexLevelParameteriv(target, level, pname, params);
@@ -8891,7 +8842,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexLevelParameterfv GetTexLevelParameterfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexLevelParameter">Reference Page</a>
      */
     public static void glGetTexLevelParameterfv(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] params) {
         GL11C.glGetTexLevelParameterfv(target, level, pname, params);
@@ -8900,7 +8851,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexParameteriv GetTexParameteriv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     public static void glGetTexParameteriv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         GL11C.glGetTexParameteriv(target, pname, params);
@@ -8909,7 +8860,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glGetTexParameterfv GetTexParameterfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetTexParameter">Reference Page</a>
      */
     public static void glGetTexParameterfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] params) {
         GL11C.glGetTexParameterfv(target, pname, params);
@@ -8918,7 +8869,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glIndexiv Indexiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexiv(@NativeType("GLint const *") int[] index) {
         long __functionAddress = GL.getICD().glIndexiv;
@@ -8932,7 +8883,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glIndexsv Indexsv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexsv(@NativeType("GLshort const *") short[] index) {
         long __functionAddress = GL.getICD().glIndexsv;
@@ -8946,7 +8897,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glIndexfv Indexfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexfv(@NativeType("GLfloat const *") float[] index) {
         long __functionAddress = GL.getICD().glIndexfv;
@@ -8960,7 +8911,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glIndexdv Indexdv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glIndex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glIndexdv(@NativeType("GLdouble const *") double[] index) {
         long __functionAddress = GL.getICD().glIndexdv;
@@ -8974,7 +8925,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glInterleavedArrays InterleavedArrays}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") short[] pointer) {
         long __functionAddress = GL.getICD().glInterleavedArrays;
@@ -8987,7 +8938,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glInterleavedArrays InterleavedArrays}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") int[] pointer) {
         long __functionAddress = GL.getICD().glInterleavedArrays;
@@ -9000,7 +8951,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glInterleavedArrays InterleavedArrays}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") float[] pointer) {
         long __functionAddress = GL.getICD().glInterleavedArrays;
@@ -9013,7 +8964,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glInterleavedArrays InterleavedArrays}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glInterleavedArrays">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glInterleavedArrays(@NativeType("GLenum") int format, @NativeType("GLsizei") int stride, @NativeType("void const *") double[] pointer) {
         long __functionAddress = GL.getICD().glInterleavedArrays;
@@ -9026,7 +8977,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLightModeliv LightModeliv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightModeliv(@NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glLightModeliv;
@@ -9040,7 +8991,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLightModelfv LightModelfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLightModel">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightModelfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glLightModelfv;
@@ -9054,7 +9005,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLightiv Lightiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightiv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glLightiv;
@@ -9068,7 +9019,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLightfv Lightfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLight">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLightfv(@NativeType("GLenum") int light, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glLightfv;
@@ -9082,7 +9033,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLoadMatrixf LoadMatrixf}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLoadMatrixf(@NativeType("GLfloat const *") float[] m) {
         long __functionAddress = GL.getICD().glLoadMatrixf;
@@ -9096,7 +9047,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glLoadMatrixd LoadMatrixd}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glLoadMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glLoadMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glLoadMatrixd(@NativeType("GLdouble const *") double[] m) {
         long __functionAddress = GL.getICD().glLoadMatrixd;
@@ -9110,7 +9061,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMap1f Map1f}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap1f(@NativeType("GLenum") int target, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2, @NativeType("GLint") int stride, @NativeType("GLint") int order, @NativeType("GLfloat const *") float[] points) {
         long __functionAddress = GL.getICD().glMap1f;
@@ -9124,7 +9075,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMap1d Map1d}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap1d(@NativeType("GLenum") int target, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2, @NativeType("GLint") int stride, @NativeType("GLint") int order, @NativeType("GLdouble const *") double[] points) {
         long __functionAddress = GL.getICD().glMap1d;
@@ -9138,7 +9089,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMap2f Map2f}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap2f(@NativeType("GLenum") int target, @NativeType("GLfloat") float u1, @NativeType("GLfloat") float u2, @NativeType("GLint") int ustride, @NativeType("GLint") int uorder, @NativeType("GLfloat") float v1, @NativeType("GLfloat") float v2, @NativeType("GLint") int vstride, @NativeType("GLint") int vorder, @NativeType("GLfloat const *") float[] points) {
         long __functionAddress = GL.getICD().glMap2f;
@@ -9152,7 +9103,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMap2d Map2d}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMap2d(@NativeType("GLenum") int target, @NativeType("GLdouble") double u1, @NativeType("GLdouble") double u2, @NativeType("GLint") int ustride, @NativeType("GLint") int uorder, @NativeType("GLdouble") double v1, @NativeType("GLdouble") double v2, @NativeType("GLint") int vstride, @NativeType("GLint") int vorder, @NativeType("GLdouble const *") double[] points) {
         long __functionAddress = GL.getICD().glMap2d;
@@ -9166,7 +9117,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMaterialiv Materialiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMaterialiv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glMaterialiv;
@@ -9180,7 +9131,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMaterialfv Materialfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMaterial">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMaterialfv(@NativeType("GLenum") int face, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glMaterialfv;
@@ -9194,7 +9145,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMultMatrixf MultMatrixf}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultMatrixf">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultMatrixf(@NativeType("GLfloat const *") float[] m) {
         long __functionAddress = GL.getICD().glMultMatrixf;
@@ -9208,7 +9159,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glMultMatrixd MultMatrixd}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultMatrixd">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultMatrixd(@NativeType("GLdouble const *") double[] m) {
         long __functionAddress = GL.getICD().glMultMatrixd;
@@ -9222,7 +9173,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glNormal3fv Normal3fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glNormal3fv;
@@ -9236,7 +9187,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glNormal3sv Normal3sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glNormal3sv;
@@ -9250,7 +9201,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glNormal3iv Normal3iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glNormal3iv;
@@ -9264,7 +9215,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glNormal3dv Normal3dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormal3dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glNormal3dv;
@@ -9278,7 +9229,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glPixelMapfv PixelMapfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapfv(@NativeType("GLenum") int map, @NativeType("GLfloat const *") float[] values) {
         long __functionAddress = GL.getICD().glPixelMapfv;
@@ -9291,7 +9242,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glPixelMapusv PixelMapusv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapusv(@NativeType("GLenum") int map, @NativeType("GLushort const *") short[] values) {
         long __functionAddress = GL.getICD().glPixelMapusv;
@@ -9304,7 +9255,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glPixelMapuiv PixelMapuiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPixelMap">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPixelMapuiv(@NativeType("GLenum") int map, @NativeType("GLuint const *") int[] values) {
         long __functionAddress = GL.getICD().glPixelMapuiv;
@@ -9317,7 +9268,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glPrioritizeTextures PrioritizeTextures}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glPrioritizeTextures">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glPrioritizeTextures">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glPrioritizeTextures(@NativeType("GLuint const *") int[] textures, @NativeType("GLfloat const *") float[] priorities) {
         long __functionAddress = GL.getICD().glPrioritizeTextures;
@@ -9331,7 +9282,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos2iv RasterPos2iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glRasterPos2iv;
@@ -9345,7 +9296,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos2sv RasterPos2sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glRasterPos2sv;
@@ -9359,7 +9310,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos2fv RasterPos2fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glRasterPos2fv;
@@ -9373,7 +9324,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos2dv RasterPos2dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos2dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glRasterPos2dv;
@@ -9387,7 +9338,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos3iv RasterPos3iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glRasterPos3iv;
@@ -9401,7 +9352,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos3sv RasterPos3sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glRasterPos3sv;
@@ -9415,7 +9366,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos3fv RasterPos3fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glRasterPos3fv;
@@ -9429,7 +9380,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos3dv RasterPos3dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos3dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glRasterPos3dv;
@@ -9443,7 +9394,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos4iv RasterPos4iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glRasterPos4iv;
@@ -9457,7 +9408,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos4sv RasterPos4sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glRasterPos4sv;
@@ -9471,7 +9422,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos4fv RasterPos4fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glRasterPos4fv;
@@ -9485,7 +9436,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRasterPos4dv RasterPos4dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRasterPos">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRasterPos4dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glRasterPos4dv;
@@ -9499,7 +9450,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glReadPixels ReadPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") short[] pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -9508,7 +9459,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glReadPixels ReadPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") int[] pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -9517,7 +9468,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glReadPixels ReadPixels}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glReadPixels">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glReadPixels">Reference Page</a>
      */
     public static void glReadPixels(@NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void *") float[] pixels) {
         GL11C.glReadPixels(x, y, width, height, format, type, pixels);
@@ -9526,7 +9477,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRectiv Rectiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectiv(@NativeType("GLint const *") int[] v1, @NativeType("GLint const *") int[] v2) {
         long __functionAddress = GL.getICD().glRectiv;
@@ -9541,7 +9492,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRectsv Rectsv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectsv(@NativeType("GLshort const *") short[] v1, @NativeType("GLshort const *") short[] v2) {
         long __functionAddress = GL.getICD().glRectsv;
@@ -9556,7 +9507,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRectfv Rectfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectfv(@NativeType("GLfloat const *") float[] v1, @NativeType("GLfloat const *") float[] v2) {
         long __functionAddress = GL.getICD().glRectfv;
@@ -9571,7 +9522,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glRectdv Rectdv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glRect">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glRectdv(@NativeType("GLdouble const *") double[] v1, @NativeType("GLdouble const *") double[] v2) {
         long __functionAddress = GL.getICD().glRectdv;
@@ -9586,7 +9537,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glSelectBuffer SelectBuffer}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glSelectBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glSelectBuffer">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glSelectBuffer(@NativeType("GLuint *") int[] buffer) {
         long __functionAddress = GL.getICD().glSelectBuffer;
@@ -9599,7 +9550,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord1fv TexCoord1fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glTexCoord1fv;
@@ -9613,7 +9564,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord1sv TexCoord1sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glTexCoord1sv;
@@ -9627,7 +9578,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord1iv TexCoord1iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glTexCoord1iv;
@@ -9641,7 +9592,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord1dv TexCoord1dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord1dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glTexCoord1dv;
@@ -9655,7 +9606,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord2fv TexCoord2fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glTexCoord2fv;
@@ -9669,7 +9620,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord2sv TexCoord2sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glTexCoord2sv;
@@ -9683,7 +9634,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord2iv TexCoord2iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glTexCoord2iv;
@@ -9697,7 +9648,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord2dv TexCoord2dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord2dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glTexCoord2dv;
@@ -9711,7 +9662,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord3fv TexCoord3fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glTexCoord3fv;
@@ -9725,7 +9676,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord3sv TexCoord3sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glTexCoord3sv;
@@ -9739,7 +9690,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord3iv TexCoord3iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glTexCoord3iv;
@@ -9753,7 +9704,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord3dv TexCoord3dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord3dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glTexCoord3dv;
@@ -9767,7 +9718,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord4fv TexCoord4fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4fv(@NativeType("GLfloat const *") float[] v) {
         long __functionAddress = GL.getICD().glTexCoord4fv;
@@ -9781,7 +9732,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord4sv TexCoord4sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4sv(@NativeType("GLshort const *") short[] v) {
         long __functionAddress = GL.getICD().glTexCoord4sv;
@@ -9795,7 +9746,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord4iv TexCoord4iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4iv(@NativeType("GLint const *") int[] v) {
         long __functionAddress = GL.getICD().glTexCoord4iv;
@@ -9809,7 +9760,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexCoord4dv TexCoord4dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoord4dv(@NativeType("GLdouble const *") double[] v) {
         long __functionAddress = GL.getICD().glTexCoord4dv;
@@ -9823,7 +9774,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexEnviv TexEnviv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexEnviv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glTexEnviv;
@@ -9837,7 +9788,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexEnvfv TexEnvfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexEnv">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexEnvfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glTexEnvfv;
@@ -9851,7 +9802,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexGeniv TexGeniv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGeniv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         long __functionAddress = GL.getICD().glTexGeniv;
@@ -9865,7 +9816,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexGenfv TexGenfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGenfv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         long __functionAddress = GL.getICD().glTexGenfv;
@@ -9879,7 +9830,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexGendv TexGendv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexGen">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexGendv(@NativeType("GLenum") int coord, @NativeType("GLenum") int pname, @NativeType("GLdouble const *") double[] params) {
         long __functionAddress = GL.getICD().glTexGendv;
@@ -9893,7 +9844,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage1D TexImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") short[] pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -9902,7 +9853,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage1D TexImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") int[] pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -9911,7 +9862,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage1D TexImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") float[] pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -9920,7 +9871,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage1D TexImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage1D">Reference Page</a>
      */
     public static void glTexImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") double[] pixels) {
         GL11C.glTexImage1D(target, level, internalformat, width, border, format, type, pixels);
@@ -9929,7 +9880,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage2D TexImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") short[] pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -9938,7 +9889,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage2D TexImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") int[] pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -9947,7 +9898,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage2D TexImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") float[] pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -9956,7 +9907,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexImage2D TexImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexImage2D">Reference Page</a>
      */
     public static void glTexImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int internalformat, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLint") int border, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @Nullable @NativeType("void const *") double[] pixels) {
         GL11C.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -9965,7 +9916,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexParameteriv TexParameteriv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameter">Reference Page</a>
      */
     public static void glTexParameteriv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         GL11C.glTexParameteriv(target, pname, params);
@@ -9974,7 +9925,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexParameterfv TexParameterfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexParameter">Reference Page</a>
      */
     public static void glTexParameterfv(@NativeType("GLenum") int target, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         GL11C.glTexParameterfv(target, pname, params);
@@ -9983,7 +9934,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage1D TexSubImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") short[] pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -9992,7 +9943,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage1D TexSubImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") int[] pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -10001,7 +9952,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage1D TexSubImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") float[] pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -10010,7 +9961,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage1D TexSubImage1D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage1D">Reference Page</a>
      */
     public static void glTexSubImage1D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLsizei") int width, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") double[] pixels) {
         GL11C.glTexSubImage1D(target, level, xoffset, width, format, type, pixels);
@@ -10019,7 +9970,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage2D TexSubImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") short[] pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -10028,7 +9979,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage2D TexSubImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") int[] pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -10037,7 +9988,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage2D TexSubImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") float[] pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -10046,7 +9997,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glTexSubImage2D TexSubImage2D}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glTexSubImage2D">Reference Page</a>
      */
     public static void glTexSubImage2D(@NativeType("GLenum") int target, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLenum") int format, @NativeType("GLenum") int type, @NativeType("void const *") double[] pixels) {
         GL11C.glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -10055,7 +10006,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex2fv Vertex2fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glVertex2fv;
@@ -10069,7 +10020,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex2sv Vertex2sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glVertex2sv;
@@ -10083,7 +10034,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex2iv Vertex2iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glVertex2iv;
@@ -10097,7 +10048,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex2dv Vertex2dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex2dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glVertex2dv;
@@ -10111,7 +10062,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex3fv Vertex3fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glVertex3fv;
@@ -10125,7 +10076,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex3sv Vertex3sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glVertex3sv;
@@ -10139,7 +10090,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex3iv Vertex3iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glVertex3iv;
@@ -10153,7 +10104,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex3dv Vertex3dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex3dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glVertex3dv;
@@ -10167,7 +10118,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex4fv Vertex4fv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4fv(@NativeType("GLfloat const *") float[] coords) {
         long __functionAddress = GL.getICD().glVertex4fv;
@@ -10181,7 +10132,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex4sv Vertex4sv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4sv(@NativeType("GLshort const *") short[] coords) {
         long __functionAddress = GL.getICD().glVertex4sv;
@@ -10195,7 +10146,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex4iv Vertex4iv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4iv(@NativeType("GLint const *") int[] coords) {
         long __functionAddress = GL.getICD().glVertex4iv;
@@ -10209,7 +10160,7 @@ public class GL11 {
     /**
      * Array version of: {@link #glVertex4dv Vertex4dv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertex4dv(@NativeType("GLdouble const *") double[] coords) {
         long __functionAddress = GL.getICD().glVertex4dv;

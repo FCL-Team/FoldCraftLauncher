@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sync.txt">ARB_sync</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sync.txt">ARB_sync</a> extension.
  * 
  * <p>This extension introduces the concept of "sync objects". Sync objects are a synchronization primitive - a representation of events whose completion
  * status can be tested or waited upon. One specific type of sync object, the "fence sync object", is supported in this extension, and additional types can
@@ -31,6 +29,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL31 OpenGL 3.1}. Promoted to core in {@link GL32 OpenGL 3.2}.</p>
  */
 public class ARBSync {
+
+    static { GL.initialize(); }
 
     /** Accepted as the {@code pname} parameter of GetInteger64v. */
     public static final int GL_MAX_SERVER_WAIT_TIMEOUT = 0x9111;
@@ -66,16 +66,8 @@ public class ARBSync {
         GL_CONDITION_SATISFIED = 0x911C,
         GL_WAIT_FAILED         = 0x911D;
 
-    static { GL.initialize(); }
-
     protected ARBSync() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glFenceSync, caps.glIsSync, caps.glDeleteSync, caps.glClientWaitSync, caps.glWaitSync, caps.glGetInteger64v, caps.glGetSynciv
-        );
     }
 
     // --- [ glFenceSync ] ---

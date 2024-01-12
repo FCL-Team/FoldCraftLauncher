@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster_dilate.txt">NV_conservative_raster_dilate</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster_dilate.txt">NV_conservative_raster_dilate</a> extension.
  * 
  * <p>This extension extends the conservative rasterization funtionality provided by NV_conservative_raster. It provides a new control to generate an
  * "over-conservative" rasterization by dilating primitives prior to rasterization.</p>
@@ -23,22 +21,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVConservativeRasterDilate {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of ConservativeRasterParameterfNV, GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int
         GL_CONSERVATIVE_RASTER_DILATE_NV             = 0x9379,
         GL_CONSERVATIVE_RASTER_DILATE_RANGE_NV       = 0x937A,
         GL_CONSERVATIVE_RASTER_DILATE_GRANULARITY_NV = 0x937B;
 
-    static { GL.initialize(); }
-
     protected NVConservativeRasterDilate() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glConservativeRasterParameterfNV
-        );
     }
 
     // --- [ glConservativeRasterParameterfNV ] ---

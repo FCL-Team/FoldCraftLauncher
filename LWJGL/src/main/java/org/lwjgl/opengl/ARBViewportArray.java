@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_viewport_array.txt">ARB_viewport_array</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_viewport_array.txt">ARB_viewport_array</a> extension.
  * 
  * <p>OpenGL is modeled on a pipeline of operations. The final stage in this pipeline before rasterization is the viewport transformation. This stage
  * transforms vertices from view space into window coordinates and allows the application to specify a rectangular region of screen space into which OpenGL
@@ -31,6 +29,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBViewportArray {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, GetDoublev and GetInteger64v. */
     public static final int
         GL_MAX_VIEWPORTS                   = 0x825B,
@@ -42,17 +42,8 @@ public class ARBViewportArray {
     /** Returned in the {@code data} parameter from a Get query with a {@code pname} of LAYER_PROVOKING_VERTEX or VIEWPORT_INDEX_PROVOKING_VERTEX. */
     public static final int GL_UNDEFINED_VERTEX = 0x8260;
 
-    static { GL.initialize(); }
-
     protected ARBViewportArray() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glViewportArrayv, caps.glViewportIndexedf, caps.glViewportIndexedfv, caps.glScissorArrayv, caps.glScissorIndexed, caps.glScissorIndexedv, 
-            caps.glDepthRangeArrayv, caps.glDepthRangeIndexed, caps.glGetFloati_v, caps.glGetDoublei_v
-        );
     }
 
     // --- [ glViewportArrayv ] ---

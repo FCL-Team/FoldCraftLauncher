@@ -13,10 +13,8 @@ import org.lwjgl.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_separate_shader_objects.txt">ARB_separate_shader_objects</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_separate_shader_objects.txt">ARB_separate_shader_objects</a> extension.
  * 
  * <p>Conventional GLSL requires multiple shader stages (vertex, fragment, geometry, tessellation control, and tessellation evaluation) to be linked into a
  * single monolithic program object to specify a GLSL shader for each stage.</p>
@@ -65,6 +63,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBSeparateShaderObjects {
 
+    static { GL.initialize(); }
+
     /** Accepted by {@code stages} parameter to UseProgramStages. */
     public static final int
         GL_VERTEX_SHADER_BIT          = 0x1,
@@ -83,29 +83,8 @@ public class ARBSeparateShaderObjects {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int GL_PROGRAM_PIPELINE_BINDING = 0x825A;
 
-    static { GL.initialize(); }
-
     protected ARBSeparateShaderObjects() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glUseProgramStages, caps.glActiveShaderProgram, caps.glCreateShaderProgramv, caps.glBindProgramPipeline, caps.glDeleteProgramPipelines, 
-            caps.glGenProgramPipelines, caps.glIsProgramPipeline, caps.glProgramParameteri, caps.glGetProgramPipelineiv, caps.glProgramUniform1i, 
-            caps.glProgramUniform2i, caps.glProgramUniform3i, caps.glProgramUniform4i, caps.glProgramUniform1ui, caps.glProgramUniform2ui, 
-            caps.glProgramUniform3ui, caps.glProgramUniform4ui, caps.glProgramUniform1f, caps.glProgramUniform2f, caps.glProgramUniform3f, 
-            caps.glProgramUniform4f, caps.glProgramUniform1d, caps.glProgramUniform2d, caps.glProgramUniform3d, caps.glProgramUniform4d, 
-            caps.glProgramUniform1iv, caps.glProgramUniform2iv, caps.glProgramUniform3iv, caps.glProgramUniform4iv, caps.glProgramUniform1uiv, 
-            caps.glProgramUniform2uiv, caps.glProgramUniform3uiv, caps.glProgramUniform4uiv, caps.glProgramUniform1fv, caps.glProgramUniform2fv, 
-            caps.glProgramUniform3fv, caps.glProgramUniform4fv, caps.glProgramUniform1dv, caps.glProgramUniform2dv, caps.glProgramUniform3dv, 
-            caps.glProgramUniform4dv, caps.glProgramUniformMatrix2fv, caps.glProgramUniformMatrix3fv, caps.glProgramUniformMatrix4fv, 
-            caps.glProgramUniformMatrix2dv, caps.glProgramUniformMatrix3dv, caps.glProgramUniformMatrix4dv, caps.glProgramUniformMatrix2x3fv, 
-            caps.glProgramUniformMatrix3x2fv, caps.glProgramUniformMatrix2x4fv, caps.glProgramUniformMatrix4x2fv, caps.glProgramUniformMatrix3x4fv, 
-            caps.glProgramUniformMatrix4x3fv, caps.glProgramUniformMatrix2x3dv, caps.glProgramUniformMatrix3x2dv, caps.glProgramUniformMatrix2x4dv, 
-            caps.glProgramUniformMatrix4x2dv, caps.glProgramUniformMatrix3x4dv, caps.glProgramUniformMatrix4x3dv, caps.glValidateProgramPipeline, 
-            caps.glGetProgramPipelineInfoLog
-        );
     }
 
     // --- [ glUseProgramStages ] ---
@@ -178,7 +157,7 @@ public class ARBSeparateShaderObjects {
      * @param strings an array of pointers to source code strings from which to create the program object
      */
     @NativeType("GLuint")
-    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") PointerBuffer strings) {
+    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const * const *") PointerBuffer strings) {
         return GL41C.glCreateShaderProgramv(type, strings);
     }
 
@@ -216,7 +195,7 @@ public class ARBSeparateShaderObjects {
      * @param strings an array of pointers to source code strings from which to create the program object
      */
     @NativeType("GLuint")
-    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") CharSequence... strings) {
+    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const * const *") CharSequence... strings) {
         return GL41C.glCreateShaderProgramv(type, strings);
     }
 
@@ -253,7 +232,7 @@ public class ARBSeparateShaderObjects {
      * @param type the type of shader to create
      */
     @NativeType("GLuint")
-    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") CharSequence string) {
+    public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const * const *") CharSequence string) {
         return GL41C.glCreateShaderProgramv(type, string);
     }
 

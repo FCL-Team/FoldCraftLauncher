@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_buffer_object.txt">ARB_vertex_buffer_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_buffer_object.txt">ARB_vertex_buffer_object</a> extension.
  * 
  * <p>This extension defines an interface that allows various types of data (especially vertex array data) to be cached in high-performance graphics memory on
  * the server, thereby increasing the rate of data transfers.</p>
@@ -57,6 +57,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Promoted to core in {@link GL15 OpenGL 1.5}.</p>
  */
 public class ARBVertexBufferObject {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameters of BindBufferARB, BufferDataARB, BufferSubDataARB, MapBufferARB, UnmapBufferARB, GetBufferSubDataARB,
@@ -111,17 +113,8 @@ public class ARBVertexBufferObject {
     /** Accepted by the {@code pname} parameter of GetBufferPointervARB. */
     public static final int GL_BUFFER_MAP_POINTER_ARB = 0x88BD;
 
-    static { GL.initialize(); }
-
     protected ARBVertexBufferObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindBufferARB, caps.glDeleteBuffersARB, caps.glGenBuffersARB, caps.glIsBufferARB, caps.glBufferDataARB, caps.glBufferSubDataARB, 
-            caps.glGetBufferSubDataARB, caps.glMapBufferARB, caps.glUnmapBufferARB, caps.glGetBufferParameterivARB, caps.glGetBufferPointervARB
-        );
     }
 
     // --- [ glBindBufferARB ] ---

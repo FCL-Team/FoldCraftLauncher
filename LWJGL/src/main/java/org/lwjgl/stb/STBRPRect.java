@@ -18,31 +18,20 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * A packed rectangle.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code id} &ndash; reserved for your use</li>
- * <li>{@code w} &ndash; input width</li>
- * <li>{@code h} &ndash; input height</li>
- * <li>{@code x} &ndash; output x coordinate</li>
- * <li>{@code y} &ndash; output y coordinate</li>
- * <li>{@code was_packed} &ndash; non-zero if valid packing</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct stbrp_rect {
- *     int id;
- *     stbrp_coord w;
- *     stbrp_coord h;
- *     stbrp_coord x;
- *     stbrp_coord y;
- *     int was_packed;
+ *     int {@link #id};
+ *     stbrp_coord {@link #w};
+ *     stbrp_coord {@link #h};
+ *     stbrp_coord {@link #x};
+ *     stbrp_coord {@link #y};
+ *     int {@link #was_packed};
  * }</code></pre>
  */
 @NativeType("struct stbrp_rect")
-public class STBRPRect extends Struct implements NativeResource {
+public class STBRPRect extends Struct<STBRPRect> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -62,10 +51,10 @@ public class STBRPRect extends Struct implements NativeResource {
     static {
         Layout layout = __struct(
             __member(4),
-            __member(2),
-            __member(2),
-            __member(2),
-            __member(2),
+            __member(4),
+            __member(4),
+            __member(4),
+            __member(4),
             __member(4)
         );
 
@@ -78,6 +67,15 @@ public class STBRPRect extends Struct implements NativeResource {
         X = layout.offsetof(3);
         Y = layout.offsetof(4);
         WAS_PACKED = layout.offsetof(5);
+    }
+
+    protected STBRPRect(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected STBRPRect create(long address, @Nullable ByteBuffer container) {
+        return new STBRPRect(address, container);
     }
 
     /**
@@ -93,44 +91,44 @@ public class STBRPRect extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code id} field. */
+    /** reserved for your use */
     public int id() { return nid(address()); }
-    /** Returns the value of the {@code w} field. */
+    /** input width */
     @NativeType("stbrp_coord")
-    public short w() { return nw(address()); }
-    /** Returns the value of the {@code h} field. */
+    public int w() { return nw(address()); }
+    /** input height */
     @NativeType("stbrp_coord")
-    public short h() { return nh(address()); }
-    /** Returns the value of the {@code x} field. */
+    public int h() { return nh(address()); }
+    /** output x coordinate */
     @NativeType("stbrp_coord")
-    public short x() { return nx(address()); }
-    /** Returns the value of the {@code y} field. */
+    public int x() { return nx(address()); }
+    /** output y coordinate */
     @NativeType("stbrp_coord")
-    public short y() { return ny(address()); }
-    /** Returns the value of the {@code was_packed} field. */
+    public int y() { return ny(address()); }
+    /** non-zero if valid packing */
     @NativeType("int")
     public boolean was_packed() { return nwas_packed(address()) != 0; }
 
-    /** Sets the specified value to the {@code id} field. */
+    /** Sets the specified value to the {@link #id} field. */
     public STBRPRect id(int value) { nid(address(), value); return this; }
-    /** Sets the specified value to the {@code w} field. */
-    public STBRPRect w(@NativeType("stbrp_coord") short value) { nw(address(), value); return this; }
-    /** Sets the specified value to the {@code h} field. */
-    public STBRPRect h(@NativeType("stbrp_coord") short value) { nh(address(), value); return this; }
-    /** Sets the specified value to the {@code x} field. */
-    public STBRPRect x(@NativeType("stbrp_coord") short value) { nx(address(), value); return this; }
-    /** Sets the specified value to the {@code y} field. */
-    public STBRPRect y(@NativeType("stbrp_coord") short value) { ny(address(), value); return this; }
-    /** Sets the specified value to the {@code was_packed} field. */
+    /** Sets the specified value to the {@link #w} field. */
+    public STBRPRect w(@NativeType("stbrp_coord") int value) { nw(address(), value); return this; }
+    /** Sets the specified value to the {@link #h} field. */
+    public STBRPRect h(@NativeType("stbrp_coord") int value) { nh(address(), value); return this; }
+    /** Sets the specified value to the {@link #x} field. */
+    public STBRPRect x(@NativeType("stbrp_coord") int value) { nx(address(), value); return this; }
+    /** Sets the specified value to the {@link #y} field. */
+    public STBRPRect y(@NativeType("stbrp_coord") int value) { ny(address(), value); return this; }
+    /** Sets the specified value to the {@link #was_packed} field. */
     public STBRPRect was_packed(@NativeType("int") boolean value) { nwas_packed(address(), value ? 1 : 0); return this; }
 
     /** Initializes this struct with the specified values. */
     public STBRPRect set(
         int id,
-        short w,
-        short h,
-        short x,
-        short y,
+        int w,
+        int h,
+        int x,
+        int y,
         boolean was_packed
     ) {
         id(id);
@@ -159,29 +157,29 @@ public class STBRPRect extends Struct implements NativeResource {
 
     /** Returns a new {@code STBRPRect} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static STBRPRect malloc() {
-        return wrap(STBRPRect.class, nmemAllocChecked(SIZEOF));
+        return new STBRPRect(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code STBRPRect} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static STBRPRect calloc() {
-        return wrap(STBRPRect.class, nmemCallocChecked(1, SIZEOF));
+        return new STBRPRect(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code STBRPRect} instance allocated with {@link BufferUtils}. */
     public static STBRPRect create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(STBRPRect.class, memAddress(container), container);
+        return new STBRPRect(memAddress(container), container);
     }
 
     /** Returns a new {@code STBRPRect} instance for the specified memory address. */
     public static STBRPRect create(long address) {
-        return wrap(STBRPRect.class, address);
+        return new STBRPRect(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static STBRPRect createSafe(long address) {
-        return address == NULL ? null : wrap(STBRPRect.class, address);
+        return address == NULL ? null : new STBRPRect(address, null);
     }
 
     /**
@@ -190,7 +188,7 @@ public class STBRPRect extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -199,7 +197,7 @@ public class STBRPRect extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -209,7 +207,7 @@ public class STBRPRect extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -219,34 +217,41 @@ public class STBRPRect extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code STBRPRect} instance allocated on the thread-local {@link MemoryStack}. */
-    public static STBRPRect mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code STBRPRect} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static STBRPRect callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBRPRect mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBRPRect callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBRPRect mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBRPRect callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code STBRPRect} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static STBRPRect mallocStack(MemoryStack stack) {
-        return wrap(STBRPRect.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static STBRPRect malloc(MemoryStack stack) {
+        return new STBRPRect(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -254,46 +259,28 @@ public class STBRPRect extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static STBRPRect callocStack(MemoryStack stack) {
-        return wrap(STBRPRect.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static STBRPRect calloc(MemoryStack stack) {
+        return new STBRPRect(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -301,26 +288,26 @@ public class STBRPRect extends Struct implements NativeResource {
     /** Unsafe version of {@link #id}. */
     public static int nid(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.ID); }
     /** Unsafe version of {@link #w}. */
-    public static short nw(long struct) { return UNSAFE.getShort(null, struct + STBRPRect.W); }
+    public static int nw(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.W); }
     /** Unsafe version of {@link #h}. */
-    public static short nh(long struct) { return UNSAFE.getShort(null, struct + STBRPRect.H); }
+    public static int nh(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.H); }
     /** Unsafe version of {@link #x}. */
-    public static short nx(long struct) { return UNSAFE.getShort(null, struct + STBRPRect.X); }
+    public static int nx(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.X); }
     /** Unsafe version of {@link #y}. */
-    public static short ny(long struct) { return UNSAFE.getShort(null, struct + STBRPRect.Y); }
+    public static int ny(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.Y); }
     /** Unsafe version of {@link #was_packed}. */
     public static int nwas_packed(long struct) { return UNSAFE.getInt(null, struct + STBRPRect.WAS_PACKED); }
 
     /** Unsafe version of {@link #id(int) id}. */
     public static void nid(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.ID, value); }
-    /** Unsafe version of {@link #w(short) w}. */
-    public static void nw(long struct, short value) { UNSAFE.putShort(null, struct + STBRPRect.W, value); }
-    /** Unsafe version of {@link #h(short) h}. */
-    public static void nh(long struct, short value) { UNSAFE.putShort(null, struct + STBRPRect.H, value); }
-    /** Unsafe version of {@link #x(short) x}. */
-    public static void nx(long struct, short value) { UNSAFE.putShort(null, struct + STBRPRect.X, value); }
-    /** Unsafe version of {@link #y(short) y}. */
-    public static void ny(long struct, short value) { UNSAFE.putShort(null, struct + STBRPRect.Y, value); }
+    /** Unsafe version of {@link #w(int) w}. */
+    public static void nw(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.W, value); }
+    /** Unsafe version of {@link #h(int) h}. */
+    public static void nh(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.H, value); }
+    /** Unsafe version of {@link #x(int) x}. */
+    public static void nx(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.X, value); }
+    /** Unsafe version of {@link #y(int) y}. */
+    public static void ny(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.Y, value); }
     /** Unsafe version of {@link #was_packed(boolean) was_packed}. */
     public static void nwas_packed(long struct, int value) { UNSAFE.putInt(null, struct + STBRPRect.WAS_PACKED, value); }
 
@@ -334,9 +321,9 @@ public class STBRPRect extends Struct implements NativeResource {
         /**
          * Creates a new {@code STBRPRect.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link STBRPRect#SIZEOF}, and its mark will be undefined.
+         * by {@link STBRPRect#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -362,35 +349,35 @@ public class STBRPRect extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code id} field. */
+        /** @return the value of the {@link STBRPRect#id} field. */
         public int id() { return STBRPRect.nid(address()); }
-        /** Returns the value of the {@code w} field. */
+        /** @return the value of the {@link STBRPRect#w} field. */
         @NativeType("stbrp_coord")
-        public short w() { return STBRPRect.nw(address()); }
-        /** Returns the value of the {@code h} field. */
+        public int w() { return STBRPRect.nw(address()); }
+        /** @return the value of the {@link STBRPRect#h} field. */
         @NativeType("stbrp_coord")
-        public short h() { return STBRPRect.nh(address()); }
-        /** Returns the value of the {@code x} field. */
+        public int h() { return STBRPRect.nh(address()); }
+        /** @return the value of the {@link STBRPRect#x} field. */
         @NativeType("stbrp_coord")
-        public short x() { return STBRPRect.nx(address()); }
-        /** Returns the value of the {@code y} field. */
+        public int x() { return STBRPRect.nx(address()); }
+        /** @return the value of the {@link STBRPRect#y} field. */
         @NativeType("stbrp_coord")
-        public short y() { return STBRPRect.ny(address()); }
-        /** Returns the value of the {@code was_packed} field. */
+        public int y() { return STBRPRect.ny(address()); }
+        /** @return the value of the {@link STBRPRect#was_packed} field. */
         @NativeType("int")
         public boolean was_packed() { return STBRPRect.nwas_packed(address()) != 0; }
 
-        /** Sets the specified value to the {@code id} field. */
+        /** Sets the specified value to the {@link STBRPRect#id} field. */
         public Buffer id(int value) { STBRPRect.nid(address(), value); return this; }
-        /** Sets the specified value to the {@code w} field. */
-        public Buffer w(@NativeType("stbrp_coord") short value) { STBRPRect.nw(address(), value); return this; }
-        /** Sets the specified value to the {@code h} field. */
-        public Buffer h(@NativeType("stbrp_coord") short value) { STBRPRect.nh(address(), value); return this; }
-        /** Sets the specified value to the {@code x} field. */
-        public Buffer x(@NativeType("stbrp_coord") short value) { STBRPRect.nx(address(), value); return this; }
-        /** Sets the specified value to the {@code y} field. */
-        public Buffer y(@NativeType("stbrp_coord") short value) { STBRPRect.ny(address(), value); return this; }
-        /** Sets the specified value to the {@code was_packed} field. */
+        /** Sets the specified value to the {@link STBRPRect#w} field. */
+        public Buffer w(@NativeType("stbrp_coord") int value) { STBRPRect.nw(address(), value); return this; }
+        /** Sets the specified value to the {@link STBRPRect#h} field. */
+        public Buffer h(@NativeType("stbrp_coord") int value) { STBRPRect.nh(address(), value); return this; }
+        /** Sets the specified value to the {@link STBRPRect#x} field. */
+        public Buffer x(@NativeType("stbrp_coord") int value) { STBRPRect.nx(address(), value); return this; }
+        /** Sets the specified value to the {@link STBRPRect#y} field. */
+        public Buffer y(@NativeType("stbrp_coord") int value) { STBRPRect.ny(address(), value); return this; }
+        /** Sets the specified value to the {@link STBRPRect#was_packed} field. */
         public Buffer was_packed(@NativeType("int") boolean value) { STBRPRect.nwas_packed(address(), value ? 1 : 0); return this; }
 
     }

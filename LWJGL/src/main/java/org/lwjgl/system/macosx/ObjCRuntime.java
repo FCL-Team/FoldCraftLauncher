@@ -34,7 +34,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * long currentThread = invokePPP(NSThread, sel_getUid("currentThread"), objc_msgSend);</code></pre>
  * 
  * <p>The safe way to use objc_msgSend in C code is to cast it to an appropriate function pointer. This is exactly what the {@link JNI JNI}
- * class does. If a particular function signature is not available, {@link org.lwjgl.system.dyncall.DynCall DynCall} may be used to invoke it.</p>
+ * class does. If a particular function signature is not available, {@link org.lwjgl.system.libffi.LibFFI LibFFI} may be used to invoke it.</p>
  * 
  * <p>The functions not exposed are:</p>
  * 
@@ -46,59 +46,6 @@ import static org.lwjgl.system.MemoryUtil.*;
  * </ul>
  */
 public class ObjCRuntime {
-
-    /** Nil value. */
-    public static final long nil = 0x0L;
-
-    /** Boolean values. */
-    public static final byte
-        YES = 1,
-        NO  = 0;
-
-    /** Types. */
-    public static final char
-        _C_ID       = '@',
-        _C_CLASS    = '#',
-        _C_SEL      = ':',
-        _C_CHR      = 'c',
-        _C_UCHR     = 'C',
-        _C_SHT      = 's',
-        _C_USHT     = 'S',
-        _C_INT      = 'i',
-        _C_UINT     = 'I',
-        _C_LNG      = 'l',
-        _C_ULNG     = 'L',
-        _C_LNG_LNG  = 'q',
-        _C_ULNG_LNG = 'Q',
-        _C_FLT      = 'f',
-        _C_DBL      = 'd',
-        _C_BFLD     = 'b',
-        _C_BOOL     = 'B',
-        _C_VOID     = 'v',
-        _C_UNDEF    = '?',
-        _C_PTR      = '^',
-        _C_CHARPTR  = '*',
-        _C_ATOM     = '%',
-        _C_ARY_B    = '[',
-        _C_ARY_E    = ']',
-        _C_UNION_B  = '(',
-        _C_UNION_E  = ')',
-        _C_STRUCT_B = '{',
-        _C_STRUCT_E = '}',
-        _C_VECTOR   = '!',
-        _C_CONST    = 'r';
-
-    /** Policies related to associative references. */
-    public static final int
-        OBJC_ASSOCIATION_ASSIGN           = 0,
-        OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
-        OBJC_ASSOCIATION_COPY_NONATOMIC   = 3,
-        OBJC_ASSOCIATION_RETAIN           = 1401,
-        OBJC_ASSOCIATION_COPY             = 1403;
-
-    protected ObjCRuntime() {
-        throw new UnsupportedOperationException();
-    }
 
     private static final SharedLibrary OBJC = Library.loadNative(ObjCRuntime.class, "org.lwjgl", "objc");
 
@@ -214,6 +161,59 @@ public class ObjCRuntime {
     /** Returns the objc {@link SharedLibrary}. */
     public static SharedLibrary getLibrary() {
         return OBJC;
+    }
+
+    /** Nil value. */
+    public static final long nil = 0x0L;
+
+    /** Boolean values. */
+    public static final byte
+        YES = 1,
+        NO  = 0;
+
+    /** Types. */
+    public static final char
+        _C_ID       = '@',
+        _C_CLASS    = '#',
+        _C_SEL      = ':',
+        _C_CHR      = 'c',
+        _C_UCHR     = 'C',
+        _C_SHT      = 's',
+        _C_USHT     = 'S',
+        _C_INT      = 'i',
+        _C_UINT     = 'I',
+        _C_LNG      = 'l',
+        _C_ULNG     = 'L',
+        _C_LNG_LNG  = 'q',
+        _C_ULNG_LNG = 'Q',
+        _C_FLT      = 'f',
+        _C_DBL      = 'd',
+        _C_BFLD     = 'b',
+        _C_BOOL     = 'B',
+        _C_VOID     = 'v',
+        _C_UNDEF    = '?',
+        _C_PTR      = '^',
+        _C_CHARPTR  = '*',
+        _C_ATOM     = '%',
+        _C_ARY_B    = '[',
+        _C_ARY_E    = ']',
+        _C_UNION_B  = '(',
+        _C_UNION_E  = ')',
+        _C_STRUCT_B = '{',
+        _C_STRUCT_E = '}',
+        _C_VECTOR   = '!',
+        _C_CONST    = 'r';
+
+    /** Policies related to associative references. */
+    public static final int
+        OBJC_ASSOCIATION_ASSIGN           = 0,
+        OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1,
+        OBJC_ASSOCIATION_COPY_NONATOMIC   = 3,
+        OBJC_ASSOCIATION_RETAIN           = 1401,
+        OBJC_ASSOCIATION_COPY             = 1403;
+
+    protected ObjCRuntime() {
+        throw new UnsupportedOperationException();
     }
 
     // --- [ object_copy ] ---
@@ -1476,7 +1476,7 @@ public class ObjCRuntime {
         if (CHECKS) {
             check(cls);
         }
-        return invokePPPPZ(cls, name, size, alignment, types, __functionAddress);
+        return invokePPPUPZ(cls, name, size, alignment, types, __functionAddress);
     }
 
     /**
@@ -1559,7 +1559,7 @@ public class ObjCRuntime {
         long __functionAddress = Functions.class_addProperty;
         if (CHECKS) {
             check(cls);
-            ObjCPropertyAttribute.validate(attributes, attributeCount);
+            Struct.validate(attributes, attributeCount, ObjCPropertyAttribute.SIZEOF, ObjCPropertyAttribute::validate);
         }
         return invokePPPZ(cls, name, attributes, attributeCount, __functionAddress);
     }
@@ -1613,7 +1613,7 @@ public class ObjCRuntime {
         long __functionAddress = Functions.class_replaceProperty;
         if (CHECKS) {
             check(cls);
-            ObjCPropertyAttribute.validate(attributes, attributeCount);
+            Struct.validate(attributes, attributeCount, ObjCPropertyAttribute.SIZEOF, ObjCPropertyAttribute::validate);
         }
         invokePPPV(cls, name, attributes, attributeCount, __functionAddress);
     }
@@ -2023,8 +2023,13 @@ public class ObjCRuntime {
     @Nullable
     @NativeType("char *")
     public static String method_copyArgumentType(@NativeType("Method") long m, @NativeType("unsigned int") int index) {
-        long __result = nmethod_copyArgumentType(m, index);
-        return memUTF8Safe(__result);
+        long __result = NULL;
+        try {
+            __result = nmethod_copyArgumentType(m, index);
+            return memUTF8Safe(__result);
+        } finally {
+            if (__result != NULL) org.lwjgl.system.libc.LibCStdlib.nfree(__result);
+        }
     }
 
     // --- [ method_getReturnType ] ---
@@ -2344,8 +2349,13 @@ public class ObjCRuntime {
         if (CHECKS) {
             checkNT1(attributeName);
         }
-        long __result = nproperty_copyAttributeValue(property, memAddress(attributeName));
-        return memUTF8Safe(__result);
+        long __result = NULL;
+        try {
+            __result = nproperty_copyAttributeValue(property, memAddress(attributeName));
+            return memUTF8Safe(__result);
+        } finally {
+            if (__result != NULL) org.lwjgl.system.libc.LibCStdlib.nfree(__result);
+        }
     }
 
     /**
@@ -2361,12 +2371,14 @@ public class ObjCRuntime {
     @NativeType("char *")
     public static String property_copyAttributeValue(@NativeType("objc_property_t") long property, @NativeType("char const *") CharSequence attributeName) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
+        long __result = NULL;
         try {
             stack.nUTF8(attributeName, true);
             long attributeNameEncoded = stack.getPointerAddress();
-            long __result = nproperty_copyAttributeValue(property, attributeNameEncoded);
+            __result = nproperty_copyAttributeValue(property, attributeNameEncoded);
             return memUTF8Safe(__result);
         } finally {
+            if (__result != NULL) org.lwjgl.system.libc.LibCStdlib.nfree(__result);
             stack.setPointer(stackPointer);
         }
     }
@@ -2880,7 +2892,7 @@ public class ObjCRuntime {
         long __functionAddress = Functions.protocol_addProperty;
         if (CHECKS) {
             check(proto);
-            ObjCPropertyAttribute.validate(attributes, attributeCount);
+            Struct.validate(attributes, attributeCount, ObjCPropertyAttribute.SIZEOF, ObjCPropertyAttribute::validate);
         }
         invokePPPV(proto, name, attributes, attributeCount, isRequiredProperty, isInstanceProperty, __functionAddress);
     }

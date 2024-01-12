@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shading_rate_image.txt">NV_shading_rate_image</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shading_rate_image.txt">NV_shading_rate_image</a> extension.
  * 
  * <p>By default, OpenGL runs a fragment shader once for each pixel covered by a primitive being rasterized. When using multisampling, the outputs of that
  * fragment shader are broadcast to each covered sample of the fragment's pixel. When using multisampling, applications can also request that the fragment
@@ -33,7 +33,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>When this extension is advertised by an OpenGL implementation, the implementation must also support the GLSL extension
  * {@code "GL_NV_shading_rate_image"} (documented separately), which provides new built-in variables that allow fragment shaders to determine the
  * effective shading rate used for each fragment. Additionally, the GLSL extension also provides new layout qualifiers allowing the interlock
- * functionality provided by <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_shader_interlock.txt">ARB_fragment_shader_interlock</a> to guarantee mutual exclusion across an entire fragment when the shading rate specifies
+ * functionality provided by <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_shader_interlock.txt">ARB_fragment_shader_interlock</a> to guarantee mutual exclusion across an entire fragment when the shading rate specifies
  * multiple pixels per fragment shader invocation.</p>
  * 
  * <p>Note that this extension requires the use of a framebuffer object; the shading rate image and related state are ignored when rendering to the default
@@ -42,6 +42,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL45 OpenGL 4.5} and {@link NVFramebufferMixedSamples NV_framebuffer_mixed_samples}.</p>
  */
 public class NVShadingRateImage {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of {@link CGL#CGLEnable Enable}, {@link CGL#CGLDisable Disable}, and {@link CGL#CGLIsEnabled IsEnabled}, by the {@code target} parameter of {@link GL30C#glEnablei Enablei}, {@link GL30C#glDisablei Disablei},
@@ -83,17 +85,8 @@ public class NVShadingRateImage {
         GL_SHADING_RATE_SAMPLE_ORDER_PIXEL_MAJOR_NV  = 0x95AF,
         GL_SHADING_RATE_SAMPLE_ORDER_SAMPLE_MAJOR_NV = 0x95B0;
 
-    static { GL.initialize(); }
-
     protected NVShadingRateImage() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindShadingRateImageNV, caps.glShadingRateImagePaletteNV, caps.glGetShadingRateImagePaletteNV, caps.glShadingRateImageBarrierNV, 
-            caps.glShadingRateSampleOrderNV, caps.glShadingRateSampleOrderCustomNV, caps.glGetShadingRateSampleLocationivNV
-        );
     }
 
     // --- [ glBindShadingRateImageNV ] ---

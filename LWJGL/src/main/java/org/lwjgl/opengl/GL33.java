@@ -21,19 +21,21 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Extensions promoted to core in this release:</p>
  * 
  * <ul>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_bit_encoding.txt">ARB_shader_bit_encoding</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_blend_func_extended.txt">ARB_blend_func_extended</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_explicit_attrib_location.txt">ARB_explicit_attrib_location</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_occlusion_query2.txt">ARB_occlusion_query2</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sampler_objects.txt">ARB_sampler_objects</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_rgb10_a2ui.txt">ARB_texture_rgb10_a2ui</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_swizzle.txt">ARB_texture_swizzle</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_timer_query.txt">ARB_timer_query</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_instanced_arrays.txt">ARB_instanced_arrays</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_type_2_10_10_10_rev.txt">ARB_vertex_type_2_10_10_10_rev</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_bit_encoding.txt">ARB_shader_bit_encoding</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_blend_func_extended.txt">ARB_blend_func_extended</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_explicit_attrib_location.txt">ARB_explicit_attrib_location</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_occlusion_query2.txt">ARB_occlusion_query2</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sampler_objects.txt">ARB_sampler_objects</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_rgb10_a2ui.txt">ARB_texture_rgb10_a2ui</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_swizzle.txt">ARB_texture_swizzle</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_timer_query.txt">ARB_timer_query</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_instanced_arrays.txt">ARB_instanced_arrays</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_type_2_10_10_10_rev.txt">ARB_vertex_type_2_10_10_10_rev</a></li>
  * </ul>
  */
 public class GL33 extends GL32 {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code src} and {@code dst} parameters of BlendFunc and BlendFunci, and by the {@code srcRGB}, {@code dstRGB}, {@code srcAlpha} and
@@ -87,27 +89,8 @@ public class GL33 extends GL32 {
      */
     public static final int GL_INT_2_10_10_10_REV = 0x8D9F;
 
-    static { GL.initialize(); }
-
     protected GL33() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, boolean fc) {
-        return (fc || checkFunctions(
-            caps.glVertexP2ui, caps.glVertexP3ui, caps.glVertexP4ui, caps.glVertexP2uiv, caps.glVertexP3uiv, caps.glVertexP4uiv, caps.glTexCoordP1ui, 
-            caps.glTexCoordP2ui, caps.glTexCoordP3ui, caps.glTexCoordP4ui, caps.glTexCoordP1uiv, caps.glTexCoordP2uiv, caps.glTexCoordP3uiv, 
-            caps.glTexCoordP4uiv, caps.glMultiTexCoordP1ui, caps.glMultiTexCoordP2ui, caps.glMultiTexCoordP3ui, caps.glMultiTexCoordP4ui, 
-            caps.glMultiTexCoordP1uiv, caps.glMultiTexCoordP2uiv, caps.glMultiTexCoordP3uiv, caps.glMultiTexCoordP4uiv, caps.glNormalP3ui, caps.glNormalP3uiv, 
-            caps.glColorP3ui, caps.glColorP4ui, caps.glColorP3uiv, caps.glColorP4uiv, caps.glSecondaryColorP3ui, caps.glSecondaryColorP3uiv
-        )) && checkFunctions(
-            caps.glBindFragDataLocationIndexed, caps.glGetFragDataIndex, caps.glGenSamplers, caps.glDeleteSamplers, caps.glIsSampler, caps.glBindSampler, 
-            caps.glSamplerParameteri, caps.glSamplerParameterf, caps.glSamplerParameteriv, caps.glSamplerParameterfv, caps.glSamplerParameterIiv, 
-            caps.glSamplerParameterIuiv, caps.glGetSamplerParameteriv, caps.glGetSamplerParameterfv, caps.glGetSamplerParameterIiv, 
-            caps.glGetSamplerParameterIuiv, caps.glQueryCounter, caps.glGetQueryObjecti64v, caps.glGetQueryObjectui64v, caps.glVertexAttribDivisor, 
-            caps.glVertexAttribP1ui, caps.glVertexAttribP2ui, caps.glVertexAttribP3ui, caps.glVertexAttribP4ui, caps.glVertexAttribP1uiv, 
-            caps.glVertexAttribP2uiv, caps.glVertexAttribP3uiv, caps.glVertexAttribP4uiv
-        );
     }
 
     // --- [ glBindFragDataLocationIndexed ] ---
@@ -125,7 +108,7 @@ public class GL33 extends GL32 {
      * @param index       the index of the color input to bind the user-defined varying out variable to
      * @param name        the name of the user-defined varying out variable whose binding to modify
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glBindFragDataLocationIndexed">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glBindFragDataLocationIndexed">Reference Page</a>
      */
     public static void glBindFragDataLocationIndexed(@NativeType("GLuint") int program, @NativeType("GLuint") int colorNumber, @NativeType("GLuint") int index, @NativeType("GLchar const *") ByteBuffer name) {
         GL33C.glBindFragDataLocationIndexed(program, colorNumber, index, name);
@@ -139,7 +122,7 @@ public class GL33 extends GL32 {
      * @param index       the index of the color input to bind the user-defined varying out variable to
      * @param name        the name of the user-defined varying out variable whose binding to modify
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glBindFragDataLocationIndexed">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glBindFragDataLocationIndexed">Reference Page</a>
      */
     public static void glBindFragDataLocationIndexed(@NativeType("GLuint") int program, @NativeType("GLuint") int colorNumber, @NativeType("GLuint") int index, @NativeType("GLchar const *") CharSequence name) {
         GL33C.glBindFragDataLocationIndexed(program, colorNumber, index, name);
@@ -158,7 +141,7 @@ public class GL33 extends GL32 {
      * @param program the name of the program containing varying out variable whose binding to query
      * @param name    the name of the user-defined varying out variable whose index to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetFragDataIndex">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetFragDataIndex">Reference Page</a>
      */
     @NativeType("GLint")
     public static int glGetFragDataIndex(@NativeType("GLuint") int program, @NativeType("GLchar const *") ByteBuffer name) {
@@ -171,7 +154,7 @@ public class GL33 extends GL32 {
      * @param program the name of the program containing varying out variable whose binding to query
      * @param name    the name of the user-defined varying out variable whose index to query
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetFragDataIndex">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetFragDataIndex">Reference Page</a>
      */
     @NativeType("GLint")
     public static int glGetFragDataIndex(@NativeType("GLuint") int program, @NativeType("GLchar const *") CharSequence name) {
@@ -194,7 +177,7 @@ public class GL33 extends GL32 {
      *
      * @param samplers a buffer in which the generated sampler object names are stored
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenSamplers">Reference Page</a>
      */
     public static void glGenSamplers(@NativeType("GLuint *") IntBuffer samplers) {
         GL33C.glGenSamplers(samplers);
@@ -203,7 +186,7 @@ public class GL33 extends GL32 {
     /**
      * Generates sampler object names.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenSamplers">Reference Page</a>
      */
     @NativeType("void")
     public static int glGenSamplers() {
@@ -226,7 +209,7 @@ public class GL33 extends GL32 {
      *
      * @param samplers an array of sampler objects to be deleted
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") IntBuffer samplers) {
         GL33C.glDeleteSamplers(samplers);
@@ -235,7 +218,7 @@ public class GL33 extends GL32 {
     /**
      * Deletes named sampler objects.
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") int sampler) {
         GL33C.glDeleteSamplers(sampler);
@@ -248,7 +231,7 @@ public class GL33 extends GL32 {
      *
      * @param sampler a value that may be the name of a sampler object
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glIsSampler">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glIsSampler">Reference Page</a>
      */
     @NativeType("GLboolean")
     public static boolean glIsSampler(@NativeType("GLuint") int sampler) {
@@ -263,7 +246,7 @@ public class GL33 extends GL32 {
      * @param unit    the index of the texture unit to which the sampler is bound
      * @param sampler the name of a sampler
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glBindSampler">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glBindSampler">Reference Page</a>
      */
     public static void glBindSampler(@NativeType("GLuint") int unit, @NativeType("GLuint") int sampler) {
         GL33C.glBindSampler(unit, sampler);
@@ -278,7 +261,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a single-valued sampler parameter. One of:<br><table><tr><td>{@link GL11#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td><td>{@link GL11#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL11#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL11#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td></tr><tr><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr></table>
      * @param param   the value of {@code pname}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameteri">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameteri">Reference Page</a>
      */
     public static void glSamplerParameteri(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint") int param) {
         GL33C.glSamplerParameteri(sampler, pname, param);
@@ -293,7 +276,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a single-valued sampler parameter
      * @param param   the value of {@code pname}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameterf">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameterf">Reference Page</a>
      */
     public static void glSamplerParameterf(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param) {
         GL33C.glSamplerParameterf(sampler, pname, param);
@@ -313,7 +296,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter. One of:<br><table><tr><td>{@link GL11#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td><td>{@link GL11#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td><td>{@link GL11#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td></tr><tr><td>{@link GL11#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL11#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td></tr><tr><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr></table>
      * @param params  an array where the value or values of {@code pname} are stored
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         GL33C.glSamplerParameteriv(sampler, pname, params);
@@ -333,7 +316,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  an array where the value or values of {@code pname} are stored
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
         GL33C.glSamplerParameterfv(sampler, pname, params);
@@ -353,7 +336,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  an array where the value or values of {@code pname} are stored
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
         GL33C.glSamplerParameterIiv(sampler, pname, params);
@@ -373,7 +356,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  an array where the value or values of {@code pname} are stored
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint const *") IntBuffer params) {
         GL33C.glSamplerParameterIuiv(sampler, pname, params);
@@ -393,7 +376,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter. One of:<br><table><tr><td>{@link GL11#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td><td>{@link GL11#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL11#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL11#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td></tr><tr><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr><tr><td>,</td><td>{@link GL11#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td></tr></table>
      * @param params  the sampler parameters
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
         GL33C.glGetSamplerParameteriv(sampler, pname, params);
@@ -405,7 +388,7 @@ public class GL33 extends GL32 {
      * @param sampler the name of the sampler object from which to retrieve parameters
      * @param pname   the symbolic name of a sampler parameter. One of:<br><table><tr><td>{@link GL11#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td><td>{@link GL11#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL11#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL11#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td></tr><tr><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr><tr><td>,</td><td>{@link GL11#GL_TEXTURE_BORDER_COLOR TEXTURE_BORDER_COLOR}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetSamplerParameteri(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
@@ -426,7 +409,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  the sampler parameters
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer params) {
         GL33C.glGetSamplerParameterfv(sampler, pname, params);
@@ -438,7 +421,7 @@ public class GL33 extends GL32 {
      * @param sampler the name of the sampler object from which to retrieve parameters
      * @param pname   the symbolic name of a sampler parameter
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     @NativeType("void")
     public static float glGetSamplerParameterf(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
@@ -459,7 +442,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  the sampler parameters
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
         GL33C.glGetSamplerParameterIiv(sampler, pname, params);
@@ -471,7 +454,7 @@ public class GL33 extends GL32 {
      * @param sampler the name of the sampler object from which to retrieve parameters
      * @param pname   the symbolic name of a sampler parameter
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetSamplerParameterIi(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
@@ -492,7 +475,7 @@ public class GL33 extends GL32 {
      * @param pname   the symbolic name of a sampler parameter
      * @param params  the sampler parameters
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint *") IntBuffer params) {
         GL33C.glGetSamplerParameterIuiv(sampler, pname, params);
@@ -504,7 +487,7 @@ public class GL33 extends GL32 {
      * @param sampler the name of the sampler object from which to retrieve parameters
      * @param pname   the symbolic name of a sampler parameter
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     @NativeType("void")
     public static int glGetSamplerParameterIui(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
@@ -519,7 +502,7 @@ public class GL33 extends GL32 {
      * @param id     the name of a query object into which to record the GL time
      * @param target the counter to query. Must be:<br><table><tr><td>{@link GL33C#GL_TIMESTAMP TIMESTAMP}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glQueryCounter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glQueryCounter">Reference Page</a>
      */
     public static void glQueryCounter(@NativeType("GLuint") int id, @NativeType("GLenum") int target) {
         GL33C.glQueryCounter(id, target);
@@ -539,9 +522,22 @@ public class GL33 extends GL32 {
      * @param pname  the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link GL15#GL_QUERY_RESULT QUERY_RESULT}</td><td>{@link GL15#GL_QUERY_RESULT_AVAILABLE QUERY_RESULT_AVAILABLE}</td></tr></table>
      * @param params the requested data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") LongBuffer params) {
+        GL33C.glGetQueryObjecti64v(id, pname, params);
+    }
+
+    /**
+     * Returns the 64bit integer value of query object parameter.
+     *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link GL15#GL_QUERY_RESULT QUERY_RESULT}</td><td>{@link GL15#GL_QUERY_RESULT_AVAILABLE QUERY_RESULT_AVAILABLE}</td></tr></table>
+     * @param params the requested data
+     * 
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     */
+    public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") long params) {
         GL33C.glGetQueryObjecti64v(id, pname, params);
     }
 
@@ -551,7 +547,7 @@ public class GL33 extends GL32 {
      * @param id    the name of a query object
      * @param pname the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link GL15#GL_QUERY_RESULT QUERY_RESULT}</td><td>{@link GL15#GL_QUERY_RESULT_AVAILABLE QUERY_RESULT_AVAILABLE}</td></tr></table>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     @NativeType("void")
     public static long glGetQueryObjecti64(@NativeType("GLuint") int id, @NativeType("GLenum") int pname) {
@@ -572,9 +568,22 @@ public class GL33 extends GL32 {
      * @param pname  the symbolic name of a query object parameter
      * @param params the requested data
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") LongBuffer params) {
+        GL33C.glGetQueryObjectui64v(id, pname, params);
+    }
+
+    /**
+     * Unsigned version of {@link #glGetQueryObjecti64v GetQueryObjecti64v}.
+     *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter
+     * @param params the requested data
+     * 
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     */
+    public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") long params) {
         GL33C.glGetQueryObjectui64v(id, pname, params);
     }
 
@@ -584,7 +593,7 @@ public class GL33 extends GL32 {
      * @param id    the name of a query object
      * @param pname the symbolic name of a query object parameter
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     @NativeType("void")
     public static long glGetQueryObjectui64(@NativeType("GLuint") int id, @NativeType("GLenum") int pname) {
@@ -599,7 +608,7 @@ public class GL33 extends GL32 {
      * @param index   the index of the generic vertex attribute
      * @param divisor the number of instances that will pass between updates of the generic attribute at slot {@code index}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttribDivisor">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttribDivisor">Reference Page</a>
      */
     public static void glVertexAttribDivisor(@NativeType("GLuint") int index, @NativeType("GLuint") int divisor) {
         GL33C.glVertexAttribDivisor(index, divisor);
@@ -613,7 +622,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertexP2ui(@NativeType("GLenum") int type, @NativeType("GLuint") int value);
 
@@ -625,7 +634,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertexP3ui(@NativeType("GLenum") int type, @NativeType("GLuint") int value);
 
@@ -637,7 +646,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glVertexP4ui(@NativeType("GLenum") int type, @NativeType("GLuint") int value);
 
@@ -652,7 +661,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP2uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer value) {
         if (CHECKS) {
@@ -672,7 +681,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer value) {
         if (CHECKS) {
@@ -692,7 +701,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param value the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer value) {
         if (CHECKS) {
@@ -709,7 +718,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoordP1ui(@NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -721,7 +730,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoordP2ui(@NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -733,7 +742,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoordP3ui(@NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -745,7 +754,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glTexCoordP4ui(@NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -760,7 +769,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP1uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -780,7 +789,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP2uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -800,7 +809,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -820,7 +829,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -838,7 +847,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>type</td><td>of</td><td>packing</td><td>used</td><td>on</td><td>the</td><td>data</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMultiTexCoordP1ui(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -851,7 +860,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>type</td><td>of</td><td>packing</td><td>used</td><td>on</td><td>the</td><td>data</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMultiTexCoordP2ui(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -864,7 +873,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>type</td><td>of</td><td>packing</td><td>used</td><td>on</td><td>the</td><td>data</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMultiTexCoordP3ui(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -877,7 +886,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>type</td><td>of</td><td>packing</td><td>used</td><td>on</td><td>the</td><td>data</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glMultiTexCoordP4ui(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -893,7 +902,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP1uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -914,7 +923,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP2uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -935,7 +944,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP3uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -956,7 +965,7 @@ public class GL33 extends GL32 {
      * @param type    type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords  the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP4uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -973,7 +982,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glNormalP3ui(@NativeType("GLenum") int type, @NativeType("GLuint") int coords);
 
@@ -988,7 +997,7 @@ public class GL33 extends GL32 {
      * @param type   type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param coords the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer coords) {
         if (CHECKS) {
@@ -1005,7 +1014,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColorP3ui(@NativeType("GLenum") int type, @NativeType("GLuint") int color);
 
@@ -1017,7 +1026,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glColorP4ui(@NativeType("GLenum") int type, @NativeType("GLuint") int color);
 
@@ -1032,7 +1041,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer color) {
         if (CHECKS) {
@@ -1052,7 +1061,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer color) {
         if (CHECKS) {
@@ -1069,7 +1078,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static native void glSecondaryColorP3ui(@NativeType("GLenum") int type, @NativeType("GLuint") int color);
 
@@ -1084,7 +1093,7 @@ public class GL33 extends GL32 {
      * @param type  type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param color the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glSecondaryColorP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") IntBuffer color) {
         if (CHECKS) {
@@ -1103,7 +1112,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP1ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
         GL33C.glVertexAttribP1ui(index, type, normalized, value);
@@ -1119,7 +1128,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP2ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
         GL33C.glVertexAttribP2ui(index, type, normalized, value);
@@ -1135,7 +1144,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP3ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
         GL33C.glVertexAttribP3ui(index, type, normalized, value);
@@ -1151,7 +1160,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP4ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
         GL33C.glVertexAttribP4ui(index, type, normalized, value);
@@ -1172,7 +1181,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP1uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
         GL33C.glVertexAttribP1uiv(index, type, normalized, value);
@@ -1193,7 +1202,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP2uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
         GL33C.glVertexAttribP2uiv(index, type, normalized, value);
@@ -1214,7 +1223,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP3uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
         GL33C.glVertexAttribP3uiv(index, type, normalized, value);
@@ -1235,7 +1244,7 @@ public class GL33 extends GL32 {
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP4uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
         GL33C.glVertexAttribP4uiv(index, type, normalized, value);
@@ -1244,7 +1253,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGenSamplers GenSamplers}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGenSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGenSamplers">Reference Page</a>
      */
     public static void glGenSamplers(@NativeType("GLuint *") int[] samplers) {
         GL33C.glGenSamplers(samplers);
@@ -1253,7 +1262,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glDeleteSamplers DeleteSamplers}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glDeleteSamplers">Reference Page</a>
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") int[] samplers) {
         GL33C.glDeleteSamplers(samplers);
@@ -1262,7 +1271,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glSamplerParameteriv SamplerParameteriv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         GL33C.glSamplerParameteriv(sampler, pname, params);
@@ -1271,7 +1280,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glSamplerParameterfv SamplerParameterfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
         GL33C.glSamplerParameterfv(sampler, pname, params);
@@ -1280,7 +1289,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glSamplerParameterIiv SamplerParameterIiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
         GL33C.glSamplerParameterIiv(sampler, pname, params);
@@ -1289,7 +1298,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glSamplerParameterIuiv SamplerParameterIuiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSamplerParameter">Reference Page</a>
      */
     public static void glSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint const *") int[] params) {
         GL33C.glSamplerParameterIuiv(sampler, pname, params);
@@ -1298,7 +1307,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetSamplerParameteriv GetSamplerParameteriv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         GL33C.glGetSamplerParameteriv(sampler, pname, params);
@@ -1307,7 +1316,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetSamplerParameterfv GetSamplerParameterfv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] params) {
         GL33C.glGetSamplerParameterfv(sampler, pname, params);
@@ -1316,7 +1325,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetSamplerParameterIiv GetSamplerParameterIiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
         GL33C.glGetSamplerParameterIiv(sampler, pname, params);
@@ -1325,7 +1334,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetSamplerParameterIuiv GetSamplerParameterIuiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetSamplerParameter">Reference Page</a>
      */
     public static void glGetSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint *") int[] params) {
         GL33C.glGetSamplerParameterIuiv(sampler, pname, params);
@@ -1334,7 +1343,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetQueryObjecti64v GetQueryObjecti64v}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") long[] params) {
         GL33C.glGetQueryObjecti64v(id, pname, params);
@@ -1343,7 +1352,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glGetQueryObjectui64v GetQueryObjectui64v}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glGetQueryObject">Reference Page</a>
      */
     public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") long[] params) {
         GL33C.glGetQueryObjectui64v(id, pname, params);
@@ -1352,7 +1361,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexP2uiv VertexP2uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP2uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] value) {
         long __functionAddress = GL.getICD().glVertexP2uiv;
@@ -1366,7 +1375,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexP3uiv VertexP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] value) {
         long __functionAddress = GL.getICD().glVertexP3uiv;
@@ -1380,7 +1389,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexP4uiv VertexP4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glVertex">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glVertexP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] value) {
         long __functionAddress = GL.getICD().glVertexP4uiv;
@@ -1394,7 +1403,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glTexCoordP1uiv TexCoordP1uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP1uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glTexCoordP1uiv;
@@ -1408,7 +1417,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glTexCoordP2uiv TexCoordP2uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP2uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glTexCoordP2uiv;
@@ -1422,7 +1431,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glTexCoordP3uiv TexCoordP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glTexCoordP3uiv;
@@ -1436,7 +1445,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glTexCoordP4uiv TexCoordP4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glTexCoordP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glTexCoordP4uiv;
@@ -1450,7 +1459,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glMultiTexCoordP1uiv MultiTexCoordP1uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP1uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glMultiTexCoordP1uiv;
@@ -1464,7 +1473,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glMultiTexCoordP2uiv MultiTexCoordP2uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP2uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glMultiTexCoordP2uiv;
@@ -1478,7 +1487,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glMultiTexCoordP3uiv MultiTexCoordP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP3uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glMultiTexCoordP3uiv;
@@ -1492,7 +1501,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glMultiTexCoordP4uiv MultiTexCoordP4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glMultiTexCoord">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glMultiTexCoordP4uiv(@NativeType("GLenum") int texture, @NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glMultiTexCoordP4uiv;
@@ -1506,7 +1515,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glNormalP3uiv NormalP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glNormal">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glNormalP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] coords) {
         long __functionAddress = GL.getICD().glNormalP3uiv;
@@ -1520,7 +1529,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glColorP3uiv ColorP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] color) {
         long __functionAddress = GL.getICD().glColorP3uiv;
@@ -1534,7 +1543,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glColorP4uiv ColorP4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glColorP4uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] color) {
         long __functionAddress = GL.getICD().glColorP4uiv;
@@ -1548,7 +1557,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glSecondaryColorP3uiv SecondaryColorP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
+     * @see <a href="https://docs.gl/gl3/glSecondaryColor">Reference Page</a> - <em>This function is deprecated and unavailable in the Core profile</em>
      */
     public static void glSecondaryColorP3uiv(@NativeType("GLenum") int type, @NativeType("GLuint const *") int[] color) {
         long __functionAddress = GL.getICD().glSecondaryColorP3uiv;
@@ -1562,7 +1571,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexAttribP1uiv VertexAttribP1uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP1uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
         GL33C.glVertexAttribP1uiv(index, type, normalized, value);
@@ -1571,7 +1580,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexAttribP2uiv VertexAttribP2uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP2uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
         GL33C.glVertexAttribP2uiv(index, type, normalized, value);
@@ -1580,7 +1589,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexAttribP3uiv VertexAttribP3uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP3uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
         GL33C.glVertexAttribP3uiv(index, type, normalized, value);
@@ -1589,7 +1598,7 @@ public class GL33 extends GL32 {
     /**
      * Array version of: {@link #glVertexAttribP4uiv VertexAttribP4uiv}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glVertexAttrib">Reference Page</a>
      */
     public static void glVertexAttribP4uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
         GL33C.glVertexAttribP4uiv(index, type, normalized, value);

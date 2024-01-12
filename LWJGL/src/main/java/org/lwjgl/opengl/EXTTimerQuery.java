@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_timer_query.txt">EXT_timer_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_timer_query.txt">EXT_timer_query</a> extension.
  * 
  * <p>Applications can benefit from accurate timing information in a number of different ways. During application development, timing information can help
  * identify application or driver bottlenecks. At run time, applications can use timing information to dynamically adjust the amount of detail in a scene
@@ -33,19 +33,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTTimerQuery {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code target} parameter of BeginQuery, EndQuery, and GetQueryiv. */
     public static final int GL_TIME_ELAPSED_EXT = 0x88BF;
 
-    static { GL.initialize(); }
-
     protected EXTTimerQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetQueryObjecti64vEXT, caps.glGetQueryObjectui64vEXT
-        );
     }
 
     // --- [ glGetQueryObjecti64vEXT ] ---
@@ -57,6 +51,10 @@ public class EXTTimerQuery {
             check(params, 1);
         }
         nglGetQueryObjecti64vEXT(id, pname, memAddress(params));
+    }
+
+    public static void glGetQueryObjecti64vEXT(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") long params) {
+        nglGetQueryObjecti64vEXT(id, pname, params);
     }
 
     @NativeType("void")
@@ -80,6 +78,10 @@ public class EXTTimerQuery {
             check(params, 1);
         }
         nglGetQueryObjectui64vEXT(id, pname, memAddress(params));
+    }
+
+    public static void glGetQueryObjectui64vEXT(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") long params) {
+        nglGetQueryObjectui64vEXT(id, pname, params);
     }
 
     @NativeType("void")

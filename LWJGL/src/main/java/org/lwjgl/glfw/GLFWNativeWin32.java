@@ -17,10 +17,6 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Native bindings to the GLFW library's Win32 native access functions. */
 public class GLFWNativeWin32 {
 
-    protected GLFWNativeWin32() {
-        throw new UnsupportedOperationException();
-    }
-
     /** Contains the function pointers loaded from {@code GLFW.getLibrary()}. */
     public static final class Functions {
 
@@ -33,6 +29,10 @@ public class GLFWNativeWin32 {
             GetWin32Window    = apiGetFunctionAddress(GLFW.getLibrary(), "glfwGetWin32Window"),
             AttachWin32Window = apiGetFunctionAddress(GLFW.getLibrary(), "glfwAttachWin32Window");
 
+    }
+
+    protected GLFWNativeWin32() {
+        throw new UnsupportedOperationException();
     }
 
     // --- [ glfwGetWin32Adapter ] ---
@@ -53,7 +53,9 @@ public class GLFWNativeWin32 {
      *
      * @param monitor the GLFW monitor
      *
-     * @return the UTF-8 encoded adapter device name (for example `\\.\DISPLAY1`) of the specified monitor, or {@code NULL} if an error occurred
+     * @return the UTF-8 encoded adapter device name (for example `\\.\DISPLAY1`) of the specified monitor, or {@code NULL} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.1
      */
@@ -82,7 +84,9 @@ public class GLFWNativeWin32 {
      *
      * @param monitor the GLFW monitor
      *
-     * @return the UTF-8 encoded display device name (for example `\\.\DISPLAY1\Monitor0`) of the specified monitor, or {@code NULL} if an error occurred
+     * @return the UTF-8 encoded display device name (for example `\\.\DISPLAY1\Monitor0`) of the specified monitor, or {@code NULL} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.1
      */
@@ -98,11 +102,19 @@ public class GLFWNativeWin32 {
     /**
      * Returns the {@code HWND} of the specified window.
      * 
+     * <p>The {@code HDC} associated with the window can be queried with the
+     * <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdc">GetDC</a> function.
+     * <code>
+     * HDC dc = GetDC(glfwGetWin32Window(window));</code>
+     * This DC is private and does not need to be released.</p>
+     * 
      * <p>Note: This function may be called from any thread. Access is not synchronized.</p>
      *
      * @param window the GLFW window
      *
-     * @return the {@code HWND} of the specified window, or {@code NULL} if an error occurred
+     * @return the {@code HWND} of the specified window, or {@code NULL} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.0
      */

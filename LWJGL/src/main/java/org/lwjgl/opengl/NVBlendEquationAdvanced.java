@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_blend_equation_advanced.txt">NV_blend_equation_advanced</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_blend_equation_advanced.txt">NV_blend_equation_advanced</a> extension.
  * 
  * <p>This extension adds a number of "advanced" blending equations that can be used to perform new color blending operations, many of which are more complex
  * than the standard blend modes provided by unextended OpenGL.</p>
@@ -21,6 +19,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL20 OpenGL 2.0}.</p>
  */
 public class NVBlendEquationAdvanced {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of BlendParameteriNV, GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int
@@ -80,16 +80,8 @@ public class NVBlendEquationAdvanced {
         GL_GREEN_NV              = 0x1904,
         GL_BLUE_NV               = 0x1905;
 
-    static { GL.initialize(); }
-
     protected NVBlendEquationAdvanced() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBlendParameteriNV, caps.glBlendBarrierNV
-        );
     }
 
     // --- [ glBlendParameteriNV ] ---

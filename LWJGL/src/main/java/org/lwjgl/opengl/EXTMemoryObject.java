@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_memory_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_memory_object</a> extension.
  * 
  * <p>The Vulkan API introduces the concept of explicit memory objects and reusable synchronization objects. This extension brings those concepts to the
  * OpenGL API via two new object types:</p>
@@ -40,6 +40,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL42 OpenGL 4.2} or {@link ARBTextureStorage ARB_texture_storage}.</p>
  */
 public class EXTMemoryObject {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code pname} parameter of TexParameter{ifx}{v}, TexParameterI{i ui}v, TextureParameter{if}{v}, TextureParameterI{i ui}v,
@@ -77,21 +79,8 @@ public class EXTMemoryObject {
     /** Constant values. */
     public static final int GL_UUID_SIZE_EXT = 16;
 
-    static { GL.initialize(); }
-
     protected EXTMemoryObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glGetUnsignedBytevEXT, caps.glGetUnsignedBytei_vEXT, caps.glDeleteMemoryObjectsEXT, caps.glIsMemoryObjectEXT, caps.glCreateMemoryObjectsEXT, 
-            caps.glMemoryObjectParameterivEXT, caps.glGetMemoryObjectParameterivEXT, caps.glTexStorageMem2DEXT, caps.glTexStorageMem2DMultisampleEXT, 
-            caps.glTexStorageMem3DEXT, caps.glTexStorageMem3DMultisampleEXT, caps.glBufferStorageMemEXT, caps.hasDSA(ext) ? caps.glTextureStorageMem2DEXT : -1L, 
-            caps.hasDSA(ext) ? caps.glTextureStorageMem2DMultisampleEXT : -1L, caps.hasDSA(ext) ? caps.glTextureStorageMem3DEXT : -1L, 
-            caps.hasDSA(ext) ? caps.glTextureStorageMem3DMultisampleEXT : -1L, caps.hasDSA(ext) ? caps.glNamedBufferStorageMemEXT : -1L, 
-            caps.glTexStorageMem1DEXT, caps.hasDSA(ext) ? caps.glTextureStorageMem1DEXT : -1L
-        );
     }
 
     // --- [ glGetUnsignedBytevEXT ] ---

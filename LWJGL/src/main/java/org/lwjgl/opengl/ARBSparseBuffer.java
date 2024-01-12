@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_buffer.txt">ARB_sparse_buffer</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_buffer.txt">ARB_sparse_buffer</a> extension.
  * 
  * <p>This extension adds to GL a mechanism to decouple the virtual and physical storage requirements of textures and allows an application
  * to create partially populated textures that would over-subscribe available graphics memory if made fully resident. This extension provides like
@@ -20,22 +18,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBSparseBuffer {
 
+    static { GL.initialize(); }
+
     /** Accepted as part of the {@code flags} parameter to {@link GL44C#glBufferStorage BufferStorage}. */
     public static final int GL_SPARSE_STORAGE_BIT_ARB = 0x400;
 
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetFloatv, GetIntegerv, and GetInteger64v. */
     public static final int GL_SPARSE_BUFFER_PAGE_SIZE_ARB = 0x82F8;
 
-    static { GL.initialize(); }
-
     protected ARBSparseBuffer() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glBufferPageCommitmentARB
-        );
     }
 
     // --- [ glBufferPageCommitmentARB ] ---

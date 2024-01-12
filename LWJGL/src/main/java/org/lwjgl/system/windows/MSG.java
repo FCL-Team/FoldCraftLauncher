@@ -18,30 +18,19 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Contains message information from a thread's message queue.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code hwnd} &ndash; a handle to the window whose window procedure receives the message. This member is {@code NULL} when the message is a thread message.</li>
- * <li>{@code message} &ndash; the message identifier. Applications can only use the low word; the high word is reserved by the system.</li>
- * <li>{@code wParam} &ndash; additional information about the message. The exact meaning depends on the value of the message member.</li>
- * <li>{@code lParam} &ndash; additional information about the message. The exact meaning depends on the value of the message member.</li>
- * <li>{@code time} &ndash; the time at which the message was posted</li>
- * <li>{@code pt} &ndash; the cursor position, in screen coordinates, when the message was posted.</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct MSG {
- *     HWND hwnd;
- *     UINT message;
- *     WPARAM wParam;
- *     LPARAM lParam;
- *     DWORD time;
- *     {@link POINT POINT} pt;
+ *     HWND {@link #hwnd};
+ *     UINT {@link #message};
+ *     WPARAM {@link #wParam};
+ *     LPARAM {@link #lParam};
+ *     DWORD {@link #time};
+ *     {@link POINT POINT} {@link #pt};
  * }</code></pre>
  */
-public class MSG extends Struct implements NativeResource {
+public class MSG extends Struct<MSG> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -79,6 +68,15 @@ public class MSG extends Struct implements NativeResource {
         PT = layout.offsetof(5);
     }
 
+    protected MSG(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected MSG create(long address, @Nullable ByteBuffer container) {
+        return new MSG(address, container);
+    }
+
     /**
      * Creates a {@code MSG} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -92,37 +90,37 @@ public class MSG extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code hwnd} field. */
+    /** a handle to the window whose window procedure receives the message. This member is {@code NULL} when the message is a thread message. */
     @NativeType("HWND")
     public long hwnd() { return nhwnd(address()); }
-    /** Returns the value of the {@code message} field. */
+    /** the message identifier. Applications can only use the low word; the high word is reserved by the system. */
     @NativeType("UINT")
     public int message() { return nmessage(address()); }
-    /** Returns the value of the {@code wParam} field. */
+    /** additional information about the message. The exact meaning depends on the value of the message member. */
     @NativeType("WPARAM")
     public long wParam() { return nwParam(address()); }
-    /** Returns the value of the {@code lParam} field. */
+    /** additional information about the message. The exact meaning depends on the value of the message member. */
     @NativeType("LPARAM")
     public long lParam() { return nlParam(address()); }
-    /** Returns the value of the {@code time} field. */
+    /** the time at which the message was posted */
     @NativeType("DWORD")
     public int time() { return ntime(address()); }
-    /** Returns a {@link POINT} view of the {@code pt} field. */
+    /** the cursor position, in screen coordinates, when the message was posted. */
     public POINT pt() { return npt(address()); }
 
-    /** Sets the specified value to the {@code hwnd} field. */
+    /** Sets the specified value to the {@link #hwnd} field. */
     public MSG hwnd(@NativeType("HWND") long value) { nhwnd(address(), value); return this; }
-    /** Sets the specified value to the {@code message} field. */
+    /** Sets the specified value to the {@link #message} field. */
     public MSG message(@NativeType("UINT") int value) { nmessage(address(), value); return this; }
-    /** Sets the specified value to the {@code wParam} field. */
+    /** Sets the specified value to the {@link #wParam} field. */
     public MSG wParam(@NativeType("WPARAM") long value) { nwParam(address(), value); return this; }
-    /** Sets the specified value to the {@code lParam} field. */
+    /** Sets the specified value to the {@link #lParam} field. */
     public MSG lParam(@NativeType("LPARAM") long value) { nlParam(address(), value); return this; }
-    /** Sets the specified value to the {@code time} field. */
+    /** Sets the specified value to the {@link #time} field. */
     public MSG time(@NativeType("DWORD") int value) { ntime(address(), value); return this; }
-    /** Copies the specified {@link POINT} to the {@code pt} field. */
+    /** Copies the specified {@link POINT} to the {@link #pt} field. */
     public MSG pt(POINT value) { npt(address(), value); return this; }
-    /** Passes the {@code pt} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #pt} field to the specified {@link java.util.function.Consumer Consumer}. */
     public MSG pt(java.util.function.Consumer<POINT> consumer) { consumer.accept(pt()); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -160,29 +158,29 @@ public class MSG extends Struct implements NativeResource {
 
     /** Returns a new {@code MSG} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static MSG malloc() {
-        return wrap(MSG.class, nmemAllocChecked(SIZEOF));
+        return new MSG(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code MSG} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static MSG calloc() {
-        return wrap(MSG.class, nmemCallocChecked(1, SIZEOF));
+        return new MSG(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code MSG} instance allocated with {@link BufferUtils}. */
     public static MSG create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(MSG.class, memAddress(container), container);
+        return new MSG(memAddress(container), container);
     }
 
     /** Returns a new {@code MSG} instance for the specified memory address. */
     public static MSG create(long address) {
-        return wrap(MSG.class, address);
+        return new MSG(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static MSG createSafe(long address) {
-        return address == NULL ? null : wrap(MSG.class, address);
+        return address == NULL ? null : new MSG(address, null);
     }
 
     /**
@@ -191,7 +189,7 @@ public class MSG extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -200,7 +198,7 @@ public class MSG extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -210,7 +208,7 @@ public class MSG extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -220,34 +218,41 @@ public class MSG extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code MSG} instance allocated on the thread-local {@link MemoryStack}. */
-    public static MSG mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code MSG} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static MSG callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static MSG mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static MSG callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static MSG mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static MSG callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code MSG} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static MSG mallocStack(MemoryStack stack) {
-        return wrap(MSG.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static MSG malloc(MemoryStack stack) {
+        return new MSG(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -255,46 +260,28 @@ public class MSG extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static MSG callocStack(MemoryStack stack) {
-        return wrap(MSG.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static MSG calloc(MemoryStack stack) {
+        return new MSG(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -335,9 +322,9 @@ public class MSG extends Struct implements NativeResource {
         /**
          * Creates a new {@code MSG.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link MSG#SIZEOF}, and its mark will be undefined.
+         * by {@link MSG#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -363,37 +350,37 @@ public class MSG extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code hwnd} field. */
+        /** @return the value of the {@link MSG#hwnd} field. */
         @NativeType("HWND")
         public long hwnd() { return MSG.nhwnd(address()); }
-        /** Returns the value of the {@code message} field. */
+        /** @return the value of the {@link MSG#message} field. */
         @NativeType("UINT")
         public int message() { return MSG.nmessage(address()); }
-        /** Returns the value of the {@code wParam} field. */
+        /** @return the value of the {@link MSG#wParam} field. */
         @NativeType("WPARAM")
         public long wParam() { return MSG.nwParam(address()); }
-        /** Returns the value of the {@code lParam} field. */
+        /** @return the value of the {@link MSG#lParam} field. */
         @NativeType("LPARAM")
         public long lParam() { return MSG.nlParam(address()); }
-        /** Returns the value of the {@code time} field. */
+        /** @return the value of the {@link MSG#time} field. */
         @NativeType("DWORD")
         public int time() { return MSG.ntime(address()); }
-        /** Returns a {@link POINT} view of the {@code pt} field. */
+        /** @return a {@link POINT} view of the {@link MSG#pt} field. */
         public POINT pt() { return MSG.npt(address()); }
 
-        /** Sets the specified value to the {@code hwnd} field. */
+        /** Sets the specified value to the {@link MSG#hwnd} field. */
         public Buffer hwnd(@NativeType("HWND") long value) { MSG.nhwnd(address(), value); return this; }
-        /** Sets the specified value to the {@code message} field. */
+        /** Sets the specified value to the {@link MSG#message} field. */
         public Buffer message(@NativeType("UINT") int value) { MSG.nmessage(address(), value); return this; }
-        /** Sets the specified value to the {@code wParam} field. */
+        /** Sets the specified value to the {@link MSG#wParam} field. */
         public Buffer wParam(@NativeType("WPARAM") long value) { MSG.nwParam(address(), value); return this; }
-        /** Sets the specified value to the {@code lParam} field. */
+        /** Sets the specified value to the {@link MSG#lParam} field. */
         public Buffer lParam(@NativeType("LPARAM") long value) { MSG.nlParam(address(), value); return this; }
-        /** Sets the specified value to the {@code time} field. */
+        /** Sets the specified value to the {@link MSG#time} field. */
         public Buffer time(@NativeType("DWORD") int value) { MSG.ntime(address(), value); return this; }
-        /** Copies the specified {@link POINT} to the {@code pt} field. */
+        /** Copies the specified {@link POINT} to the {@link MSG#pt} field. */
         public Buffer pt(POINT value) { MSG.npt(address(), value); return this; }
-        /** Passes the {@code pt} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link MSG#pt} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer pt(java.util.function.Consumer<POINT> consumer) { consumer.accept(pt()); return this; }
 
     }

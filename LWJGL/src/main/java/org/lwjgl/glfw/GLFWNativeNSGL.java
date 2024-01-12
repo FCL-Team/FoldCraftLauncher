@@ -11,12 +11,14 @@ import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
 
+import javax.annotation.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.macosx.*;
+
+import static org.lwjgl.system.MemoryUtil.*;
+
 /** Native bindings to the GLFW library's NSGL native access functions. */
 public class GLFWNativeNSGL {
-
-    protected GLFWNativeNSGL() {
-        throw new UnsupportedOperationException();
-    }
 
     /** Contains the function pointers loaded from {@code GLFW.getLibrary()}. */
     public static final class Functions {
@@ -29,6 +31,10 @@ public class GLFWNativeNSGL {
 
     }
 
+    protected GLFWNativeNSGL() {
+        throw new UnsupportedOperationException();
+    }
+
     // --- [ glfwGetNSGLContext ] ---
 
     /**
@@ -38,7 +44,9 @@ public class GLFWNativeNSGL {
      *
      * @param window the GLFW window
      *
-     * @return The {@code NSOpenGLContext} of the specified window, or nil if an error occurred.
+     * @return the {@code NSOpenGLContext} of the specified window, or nil if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NO_WINDOW_CONTEXT NO_WINDOW_CONTEXT} and {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.0
      */

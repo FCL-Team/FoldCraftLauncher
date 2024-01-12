@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_matrix_palette.txt">ARB_matrix_palette</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_matrix_palette.txt">ARB_matrix_palette</a> extension.
  * 
  * <p>This extension extends the abilities of {@link ARBVertexBlend} to include a palette of modelview matrices. The n vertex units use a palette of m modelview
  * matrices. (Where n and m are constrained to implementation defined maxima.) Each vertex has a set of n indices into the palette, and a corresponding set
@@ -26,6 +26,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>A similar procedure is followed for normals. Normals, however, are transformed by the inverse transpose of the modelview matrix.</p>
  */
 public class ARBMatrixPalette {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code pname} parameters of GetFloatv, GetDoublev, and IsEnabled, by the {@code mode} parameter of MatrixMode, and by the {@code cap}
@@ -54,16 +56,8 @@ public class ARBMatrixPalette {
     /** Accepted by the {@code pname} parameter of GetPointerv. */
     public static final int GL_MATRIX_INDEX_ARRAY_POINTER_ARB = 0x8849;
 
-    static { GL.initialize(); }
-
     protected ARBMatrixPalette() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glCurrentPaletteMatrixARB, caps.glMatrixIndexuivARB, caps.glMatrixIndexubvARB, caps.glMatrixIndexusvARB, caps.glMatrixIndexPointerARB
-        );
     }
 
     // --- [ glCurrentPaletteMatrixARB ] ---

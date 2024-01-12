@@ -17,29 +17,20 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.MemoryStack.*;
 
 /**
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code serial} &ndash; # of last request processed by server</li>
- * <li>{@code send_event} &ndash; true if this came from an {@link X11#XSendEvent} request</li>
- * <li>{@code display} &ndash; {@code Display} the event was read from</li>
- * <li>{@code place} &ndash; one of:<br><table><tr><td>{@link X11#PlaceOnTop}</td><td>{@link X11#PlaceOnBottom}</td></tr></table></li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct XCirculateRequestEvent {
  *     int type;
- *     unsigned long serial;
- *     Bool send_event;
- *     Display * display;
+ *     unsigned long {@link #serial};
+ *     Bool {@link #send_event};
+ *     Display * {@link #display};
  *     Window parent;
  *     Window window;
- *     int place;
+ *     int {@link #place};
  * }</code></pre>
  */
-public class XCirculateRequestEvent extends Struct implements NativeResource {
+public class XCirculateRequestEvent extends Struct<XCirculateRequestEvent> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -80,6 +71,15 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
         PLACE = layout.offsetof(6);
     }
 
+    protected XCirculateRequestEvent(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected XCirculateRequestEvent create(long address, @Nullable ByteBuffer container) {
+        return new XCirculateRequestEvent(address, container);
+    }
+
     /**
      * Creates a {@code XCirculateRequestEvent} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -93,39 +93,39 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code type} field. */
+    /** @return the value of the {@code type} field. */
     public int type() { return ntype(address()); }
-    /** Returns the value of the {@code serial} field. */
+    /** # of last request processed by server */
     @NativeType("unsigned long")
     public long serial() { return nserial(address()); }
-    /** Returns the value of the {@code send_event} field. */
+    /** true if this came from an {@link X11#XSendEvent} request */
     @NativeType("Bool")
     public boolean send_event() { return nsend_event(address()) != 0; }
-    /** Returns the value of the {@code display} field. */
+    /** {@code Display} the event was read from */
     @NativeType("Display *")
     public long display() { return ndisplay(address()); }
-    /** Returns the value of the {@code parent} field. */
+    /** @return the value of the {@code parent} field. */
     @NativeType("Window")
     public long parent() { return nparent(address()); }
-    /** Returns the value of the {@code window} field. */
+    /** @return the value of the {@code window} field. */
     @NativeType("Window")
     public long window() { return nwindow(address()); }
-    /** Returns the value of the {@code place} field. */
+    /** one of:<br><table><tr><td>{@link X11#PlaceOnTop}</td><td>{@link X11#PlaceOnBottom}</td></tr></table> */
     public int place() { return nplace(address()); }
 
     /** Sets the specified value to the {@code type} field. */
     public XCirculateRequestEvent type(int value) { ntype(address(), value); return this; }
-    /** Sets the specified value to the {@code serial} field. */
+    /** Sets the specified value to the {@link #serial} field. */
     public XCirculateRequestEvent serial(@NativeType("unsigned long") long value) { nserial(address(), value); return this; }
-    /** Sets the specified value to the {@code send_event} field. */
+    /** Sets the specified value to the {@link #send_event} field. */
     public XCirculateRequestEvent send_event(@NativeType("Bool") boolean value) { nsend_event(address(), value ? 1 : 0); return this; }
-    /** Sets the specified value to the {@code display} field. */
+    /** Sets the specified value to the {@link #display} field. */
     public XCirculateRequestEvent display(@NativeType("Display *") long value) { ndisplay(address(), value); return this; }
     /** Sets the specified value to the {@code parent} field. */
     public XCirculateRequestEvent parent(@NativeType("Window") long value) { nparent(address(), value); return this; }
     /** Sets the specified value to the {@code window} field. */
     public XCirculateRequestEvent window(@NativeType("Window") long value) { nwindow(address(), value); return this; }
-    /** Sets the specified value to the {@code place} field. */
+    /** Sets the specified value to the {@link #place} field. */
     public XCirculateRequestEvent place(int value) { nplace(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -165,29 +165,29 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
 
     /** Returns a new {@code XCirculateRequestEvent} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static XCirculateRequestEvent malloc() {
-        return wrap(XCirculateRequestEvent.class, nmemAllocChecked(SIZEOF));
+        return new XCirculateRequestEvent(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code XCirculateRequestEvent} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static XCirculateRequestEvent calloc() {
-        return wrap(XCirculateRequestEvent.class, nmemCallocChecked(1, SIZEOF));
+        return new XCirculateRequestEvent(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code XCirculateRequestEvent} instance allocated with {@link BufferUtils}. */
     public static XCirculateRequestEvent create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(XCirculateRequestEvent.class, memAddress(container), container);
+        return new XCirculateRequestEvent(memAddress(container), container);
     }
 
     /** Returns a new {@code XCirculateRequestEvent} instance for the specified memory address. */
     public static XCirculateRequestEvent create(long address) {
-        return wrap(XCirculateRequestEvent.class, address);
+        return new XCirculateRequestEvent(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static XCirculateRequestEvent createSafe(long address) {
-        return address == NULL ? null : wrap(XCirculateRequestEvent.class, address);
+        return address == NULL ? null : new XCirculateRequestEvent(address, null);
     }
 
     /**
@@ -196,7 +196,7 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -205,7 +205,7 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -215,7 +215,7 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -225,34 +225,41 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code XCirculateRequestEvent} instance allocated on the thread-local {@link MemoryStack}. */
-    public static XCirculateRequestEvent mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code XCirculateRequestEvent} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static XCirculateRequestEvent callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XCirculateRequestEvent mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XCirculateRequestEvent callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XCirculateRequestEvent mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XCirculateRequestEvent callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code XCirculateRequestEvent} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static XCirculateRequestEvent mallocStack(MemoryStack stack) {
-        return wrap(XCirculateRequestEvent.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static XCirculateRequestEvent malloc(MemoryStack stack) {
+        return new XCirculateRequestEvent(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -260,46 +267,28 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static XCirculateRequestEvent callocStack(MemoryStack stack) {
-        return wrap(XCirculateRequestEvent.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static XCirculateRequestEvent calloc(MemoryStack stack) {
+        return new XCirculateRequestEvent(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -343,18 +332,6 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
         check(memGetAddress(struct + XCirculateRequestEvent.DISPLAY));
     }
 
-    /**
-     * Calls {@link #validate(long)} for each struct contained in the specified struct array.
-     *
-     * @param array the struct array to validate
-     * @param count the number of structs in {@code array}
-     */
-    public static void validate(long array, int count) {
-        for (int i = 0; i < count; i++) {
-            validate(array + Integer.toUnsignedLong(i) * SIZEOF);
-        }
-    }
-
     // -----------------------------------
 
     /** An array of {@link XCirculateRequestEvent} structs. */
@@ -365,9 +342,9 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
         /**
          * Creates a new {@code XCirculateRequestEvent.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link XCirculateRequestEvent#SIZEOF}, and its mark will be undefined.
+         * by {@link XCirculateRequestEvent#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -393,39 +370,39 @@ public class XCirculateRequestEvent extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code type} field. */
+        /** @return the value of the {@code type} field. */
         public int type() { return XCirculateRequestEvent.ntype(address()); }
-        /** Returns the value of the {@code serial} field. */
+        /** @return the value of the {@link XCirculateRequestEvent#serial} field. */
         @NativeType("unsigned long")
         public long serial() { return XCirculateRequestEvent.nserial(address()); }
-        /** Returns the value of the {@code send_event} field. */
+        /** @return the value of the {@link XCirculateRequestEvent#send_event} field. */
         @NativeType("Bool")
         public boolean send_event() { return XCirculateRequestEvent.nsend_event(address()) != 0; }
-        /** Returns the value of the {@code display} field. */
+        /** @return the value of the {@link XCirculateRequestEvent#display} field. */
         @NativeType("Display *")
         public long display() { return XCirculateRequestEvent.ndisplay(address()); }
-        /** Returns the value of the {@code parent} field. */
+        /** @return the value of the {@code parent} field. */
         @NativeType("Window")
         public long parent() { return XCirculateRequestEvent.nparent(address()); }
-        /** Returns the value of the {@code window} field. */
+        /** @return the value of the {@code window} field. */
         @NativeType("Window")
         public long window() { return XCirculateRequestEvent.nwindow(address()); }
-        /** Returns the value of the {@code place} field. */
+        /** @return the value of the {@link XCirculateRequestEvent#place} field. */
         public int place() { return XCirculateRequestEvent.nplace(address()); }
 
         /** Sets the specified value to the {@code type} field. */
         public Buffer type(int value) { XCirculateRequestEvent.ntype(address(), value); return this; }
-        /** Sets the specified value to the {@code serial} field. */
+        /** Sets the specified value to the {@link XCirculateRequestEvent#serial} field. */
         public Buffer serial(@NativeType("unsigned long") long value) { XCirculateRequestEvent.nserial(address(), value); return this; }
-        /** Sets the specified value to the {@code send_event} field. */
+        /** Sets the specified value to the {@link XCirculateRequestEvent#send_event} field. */
         public Buffer send_event(@NativeType("Bool") boolean value) { XCirculateRequestEvent.nsend_event(address(), value ? 1 : 0); return this; }
-        /** Sets the specified value to the {@code display} field. */
+        /** Sets the specified value to the {@link XCirculateRequestEvent#display} field. */
         public Buffer display(@NativeType("Display *") long value) { XCirculateRequestEvent.ndisplay(address(), value); return this; }
         /** Sets the specified value to the {@code parent} field. */
         public Buffer parent(@NativeType("Window") long value) { XCirculateRequestEvent.nparent(address(), value); return this; }
         /** Sets the specified value to the {@code window} field. */
         public Buffer window(@NativeType("Window") long value) { XCirculateRequestEvent.nwindow(address(), value); return this; }
-        /** Sets the specified value to the {@code place} field. */
+        /** Sets the specified value to the {@link XCirculateRequestEvent#place} field. */
         public Buffer place(int value) { XCirculateRequestEvent.nplace(address(), value); return this; }
 
     }

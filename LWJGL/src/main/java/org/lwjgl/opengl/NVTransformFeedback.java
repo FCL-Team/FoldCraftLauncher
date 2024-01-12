@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_transform_feedback.txt">NV_transform_feedback</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_transform_feedback.txt">NV_transform_feedback</a> extension.
  * 
  * <p>This extension provides a new mode to the GL, called transform feedback, which records vertex attributes of the primitives processed by the GL. The
  * selected attributes are written into buffer objects, and can be written with each attribute in a separate buffer object or with all attributes
@@ -40,6 +40,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL15 OpenGL 1.5}.</p>
  */
 public class NVTransformFeedback {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv,
@@ -103,18 +105,8 @@ public class NVTransformFeedback {
         GL_SECONDARY_COLOR_NV      = 0x852D,
         GL_LAYER_NV                = 0x8DAA;
 
-    static { GL.initialize(); }
-
     protected NVTransformFeedback() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBeginTransformFeedbackNV, caps.glEndTransformFeedbackNV, caps.glTransformFeedbackAttribsNV, caps.glBindBufferRangeNV, 
-            caps.glBindBufferOffsetNV, caps.glBindBufferBaseNV, caps.glTransformFeedbackVaryingsNV, caps.glActiveVaryingNV, caps.glGetVaryingLocationNV, 
-            caps.glGetActiveVaryingNV, caps.glGetTransformFeedbackVaryingNV, caps.glTransformFeedbackStreamAttribsNV
-        );
     }
 
     // --- [ glBeginTransformFeedbackNV ] ---

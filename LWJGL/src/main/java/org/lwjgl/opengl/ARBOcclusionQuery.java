@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_occlusion_query.txt">ARB_occlusion_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_occlusion_query.txt">ARB_occlusion_query</a> extension.
  * 
  * <p>This extension defines a mechanism whereby an application can query the number of pixels (or, more precisely, samples) drawn by a primitive or group of
  * primitives.</p>
@@ -24,7 +24,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * application will render the major occluders in the scene, then perform an occlusion query for the bounding box of each detail object in the scene. Only
  * if said bounding box is visible, i.e., if at least one sample is drawn, should the corresponding object be drawn.</p>
  * 
- * <p>The earlier <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/HP/HP_occlusion_test.txt">HP_occlusion_test</a> extension defined a similar mechanism, but it had two major shortcomings.</p>
+ * <p>The earlier <a href="https://www.khronos.org/registry/OpenGL/extensions/HP/HP_occlusion_test.txt">HP_occlusion_test</a> extension defined a similar mechanism, but it had two major shortcomings.</p>
  * 
  * <ul>
  * <li>It returned the result as a simple {@link GL11#GL_TRUE TRUE}/{@link GL11#GL_FALSE FALSE} result, when in fact it is often useful to know exactly how many samples were drawn.</li>
@@ -58,6 +58,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBOcclusionQuery {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code target} parameter of BeginQueryARB, EndQueryARB, and GetQueryivARB. */
     public static final int GL_SAMPLES_PASSED_ARB = 0x8914;
 
@@ -71,17 +73,8 @@ public class ARBOcclusionQuery {
         GL_QUERY_RESULT_ARB           = 0x8866,
         GL_QUERY_RESULT_AVAILABLE_ARB = 0x8867;
 
-    static { GL.initialize(); }
-
     protected ARBOcclusionQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGenQueriesARB, caps.glDeleteQueriesARB, caps.glIsQueryARB, caps.glBeginQueryARB, caps.glEndQueryARB, caps.glGetQueryivARB, 
-            caps.glGetQueryObjectivARB, caps.glGetQueryObjectuivARB
-        );
     }
 
     // --- [ glGenQueriesARB ] ---
@@ -232,6 +225,17 @@ public class ARBOcclusionQuery {
     /**
      * Returns the integer value of a query object parameter.
      *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link #GL_QUERY_RESULT_ARB QUERY_RESULT_ARB}</td><td>{@link #GL_QUERY_RESULT_AVAILABLE_ARB QUERY_RESULT_AVAILABLE_ARB}</td></tr></table>
+     * @param params the requested data
+     */
+    public static void glGetQueryObjectivARB(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint *") long params) {
+        nglGetQueryObjectivARB(id, pname, params);
+    }
+
+    /**
+     * Returns the integer value of a query object parameter.
+     *
      * @param id    the name of a query object
      * @param pname the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link #GL_QUERY_RESULT_ARB QUERY_RESULT_ARB}</td><td>{@link #GL_QUERY_RESULT_AVAILABLE_ARB QUERY_RESULT_AVAILABLE_ARB}</td></tr></table>
      */
@@ -264,6 +268,17 @@ public class ARBOcclusionQuery {
             check(params, 1);
         }
         nglGetQueryObjectuivARB(id, pname, memAddress(params));
+    }
+
+    /**
+     * Unsigned version of {@link #glGetQueryObjectivARB GetQueryObjectivARB}.
+     *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link #GL_QUERY_RESULT_ARB QUERY_RESULT_ARB}</td><td>{@link #GL_QUERY_RESULT_AVAILABLE_ARB QUERY_RESULT_AVAILABLE_ARB}</td></tr></table>
+     * @param params the requested data
+     */
+    public static void glGetQueryObjectuivARB(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint *") long params) {
+        nglGetQueryObjectuivARB(id, pname, params);
     }
 
     /**

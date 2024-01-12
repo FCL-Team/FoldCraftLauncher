@@ -18,7 +18,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to stb_truetype.h from the <a target="_blank" href="https://github.com/nothings/stb">stb library</a>.
+ * Native bindings to stb_truetype.h from the <a href="https://github.com/nothings/stb">stb library</a>.
  * 
  * <p>This library processes TrueType files:</p>
  * 
@@ -156,7 +156,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *    glBindTexture(GL_TEXTURE_2D, ftex);
  *    glBegin(GL_QUADS);
  *    while (*text) {
- *       if (*text &gt;= 32 &amp;&amp; *text &lt; 128) {
+ *       if (*text &ge; 32 &amp;&amp; *text &lt; 128) {
  *          stbtt_aligned_quad q;
  *          stbtt_GetBakedQuad(cdata, 512,512, *text-32, &amp;x,&amp;y,&amp;q,1);//1=opengl &amp; d3d10+,0=d3d9
  *          glTexCoord2f(q.s0,q.t1); glVertex2f(q.x0,q.y0);
@@ -256,6 +256,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class STBTruetype {
 
+    static { LibSTB.initialize(); }
+
     /** Vertex type. */
     public static final byte
         STBTT_vmove  = 1,
@@ -335,8 +337,6 @@ public class STBTruetype {
         STBTT_MAC_LANG_SWEDISH            = 5,
         STBTT_MAC_LANG_CHINESE_SIMPLIFIED = 33,
         STBTT_MAC_LANG_CHINESE_TRAD       = 19;
-
-    static { LibSTB.initialize(); }
 
     protected STBTruetype() {
         throw new UnsupportedOperationException();
@@ -558,7 +558,7 @@ public class STBTruetype {
     @NativeType("int")
     public static boolean stbtt_PackFontRanges(@NativeType("stbtt_pack_context *") STBTTPackContext spc, @NativeType("unsigned char const *") ByteBuffer fontdata, int font_index, @NativeType("stbtt_pack_range *") STBTTPackRange.Buffer ranges) {
         if (CHECKS) {
-            STBTTPackRange.validate(ranges.address(), ranges.remaining());
+            Struct.validate(ranges.address(), ranges.remaining(), STBTTPackRange.SIZEOF, STBTTPackRange::validate);
         }
         return nstbtt_PackFontRanges(spc.address(), memAddress(fontdata), font_index, ranges.address(), ranges.remaining()) != 0;
     }
@@ -575,7 +575,7 @@ public class STBTruetype {
      * default (no oversampling) is achieved by {@code h_oversample=1, v_oversample=1}. The total number of pixels required is
      * {@code h_oversample*v_oversample} larger than the default; for example, 2x2 oversampling requires 4x the storage of 1x1. For best results, render
      * oversampled textures with bilinear filtering. Look at the readme in
-     * <a target="_blank" href="https://github.com/nothings/stb/blob/master/tests/oversample/README.md">stb/tests/oversample</a> for information about oversampled fonts.</p>
+     * <a href="https://github.com/nothings/stb/blob/master/tests/oversample/README.md">stb/tests/oversample</a> for information about oversampled fonts.</p>
      * 
      * <p>To use with PackFontRangesGather etc., you must set it before calls to {@link #stbtt_PackFontRangesGatherRects PackFontRangesGatherRects}.</p>
      *
@@ -656,7 +656,7 @@ public class STBTruetype {
      */
     public static int stbtt_PackFontRangesGatherRects(@NativeType("stbtt_pack_context *") STBTTPackContext spc, @NativeType("stbtt_fontinfo *") STBTTFontinfo info, @NativeType("stbtt_pack_range *") STBTTPackRange.Buffer ranges, @NativeType("stbrp_rect *") STBRPRect.Buffer rects) {
         if (CHECKS) {
-            STBTTPackRange.validate(ranges.address(), ranges.remaining());
+            Struct.validate(ranges.address(), ranges.remaining(), STBTTPackRange.SIZEOF, STBTTPackRange::validate);
         }
         return nstbtt_PackFontRangesGatherRects(spc.address(), info.address(), ranges.address(), ranges.remaining(), rects.address());
     }
@@ -702,7 +702,7 @@ public class STBTruetype {
     @NativeType("int")
     public static boolean stbtt_PackFontRangesRenderIntoRects(@NativeType("stbtt_pack_context *") STBTTPackContext spc, @NativeType("stbtt_fontinfo *") STBTTFontinfo info, @NativeType("stbtt_pack_range *") STBTTPackRange.Buffer ranges, @NativeType("stbrp_rect *") STBRPRect.Buffer rects) {
         if (CHECKS) {
-            STBTTPackRange.validate(ranges.address(), ranges.remaining());
+            Struct.validate(ranges.address(), ranges.remaining(), STBTTPackRange.SIZEOF, STBTTPackRange::validate);
         }
         return nstbtt_PackFontRangesRenderIntoRects(spc.address(), info.address(), ranges.address(), ranges.remaining(), rects.address()) != 0;
     }
@@ -1037,6 +1037,29 @@ public class STBTruetype {
         return nstbtt_GetGlyphBox(info.address(), glyph_index, memAddressSafe(x0), memAddressSafe(y0), memAddressSafe(x1), memAddressSafe(y1)) != 0;
     }
 
+    // --- [ stbtt_GetKerningTableLength ] ---
+
+    public static native int nstbtt_GetKerningTableLength(long info);
+
+    public static int stbtt_GetKerningTableLength(@NativeType("stbtt_fontinfo const *") STBTTFontinfo info) {
+        return nstbtt_GetKerningTableLength(info.address());
+    }
+
+    // --- [ stbtt_GetKerningTable ] ---
+
+    /** Unsafe version of: {@link #stbtt_GetKerningTable GetKerningTable} */
+    public static native int nstbtt_GetKerningTable(long info, long table, int table_length);
+
+    /**
+     * Retrieves a complete list of all of the kerning pairs provided by the font.
+     * 
+     * <p>{@code stbtt_GetKerningTable} never writes more than {@code table_length} entries and returns how many entries it did write. The table will be sorted
+     * by {@code (a.glyph1 == b.glyph1)?(a.glyph2 < b.glyph2):(a.glyph1 < b.glyph1)}</p>
+     */
+    public static int stbtt_GetKerningTable(@NativeType("stbtt_fontinfo const *") STBTTFontinfo info, @NativeType("stbtt_kerningentry *") STBTTKerningentry.Buffer table) {
+        return nstbtt_GetKerningTable(info.address(), table.address(), table.remaining());
+    }
+
     // --- [ stbtt_IsGlyphEmpty ] ---
 
     /** Unsafe version of: {@link #stbtt_IsGlyphEmpty IsGlyphEmpty} */
@@ -1157,6 +1180,49 @@ public class STBTruetype {
             check(vertices, 1);
         }
         nstbtt_FreeShape(info.address(), vertices.address());
+    }
+
+    // --- [ stbtt_FindSVGDoc ] ---
+
+    public static native long nstbtt_FindSVGDoc(long info, int gl);
+
+    @NativeType("unsigned char *")
+    public static long stbtt_FindSVGDoc(@NativeType("stbtt_fontinfo const *") STBTTFontinfo info, int gl) {
+        return nstbtt_FindSVGDoc(info.address(), gl);
+    }
+
+    // --- [ stbtt_GetCodepointSVG ] ---
+
+    /** Unsafe version of: {@link #stbtt_GetCodepointSVG GetCodepointSVG} */
+    public static native int nstbtt_GetCodepointSVG(long info, int unicode_codepoint, long svg);
+
+    /**
+     * Fills {@code svg} with the character's SVG data.
+     *
+     * @return data size or 0 if SVG not found
+     */
+    public static int stbtt_GetCodepointSVG(@NativeType("stbtt_fontinfo const *") STBTTFontinfo info, int unicode_codepoint, @NativeType("char const **") PointerBuffer svg) {
+        if (CHECKS) {
+            check(svg, 1);
+        }
+        return nstbtt_GetCodepointSVG(info.address(), unicode_codepoint, memAddress(svg));
+    }
+
+    // --- [ stbtt_GetGlyphSVG ] ---
+
+    /** Unsafe version of: {@link #stbtt_GetGlyphSVG GetGlyphSVG} */
+    public static native int nstbtt_GetGlyphSVG(long info, int gl, long svg);
+
+    /**
+     * Fills {@code svg} with the character's SVG data.
+     *
+     * @return data size or 0 if SVG not found
+     */
+    public static int stbtt_GetGlyphSVG(@NativeType("stbtt_fontinfo const *") STBTTFontinfo info, int gl, @NativeType("char const **") PointerBuffer svg) {
+        if (CHECKS) {
+            check(svg, 1);
+        }
+        return nstbtt_GetGlyphSVG(info.address(), gl, memAddress(svg));
     }
 
     // --- [ stbtt_FreeBitmap ] ---
@@ -1813,8 +1879,8 @@ public class STBTruetype {
      * <p>See the truetype spec:</p>
      * 
      * <ul>
-     * <li><a target="_blank" href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html">TrueType Reference Manual - The 'name' table</a></li>
-     * <li><a target="_blank" href="http://www.microsoft.com/typography/otspec/name.htm">OpenType™ Specification - The Naming Table</a></li>
+     * <li><a href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6name.html">TrueType Reference Manual - The 'name' table</a></li>
+     * <li><a href="https://learn.microsoft.com/en-us/typography/opentype/spec/name">OpenType™ Specification - The Naming Table</a></li>
      * </ul>
      *
      * @param font       an {@link STBTTFontinfo} struct

@@ -4,14 +4,14 @@
  */
 package org.lwjgl.opengl;
 
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.*;
 import org.lwjgl.system.*;
-import org.lwjgl.system.macosx.*;
 import org.lwjgl.system.windows.*;
 
 import javax.annotation.*;
 import java.nio.*;
 import java.util.*;
+import java.util.function.*;
 
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL32C.*;
@@ -21,7 +21,6 @@ import static org.lwjgl.opengl.WGL.*;
 import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.JNI.callJPI;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.linux.X11.*;
@@ -77,7 +76,7 @@ public final class GL {
     private static GLXCapabilities capabilitiesGLX;
 
     static {
-        Library.loadSystem(System::load, System::loadLibrary, GL.class, "org.lwjgl.opengl", Platform.mapLibraryNameBundled("lwjgl"));
+        Library.loadSystem(System::load, System::loadLibrary, GL.class, "org.lwjgl.opengl", Platform.mapLibraryNameBundled("lwjgl_opengl"));
 
         MAX_VERSION = apiParseVersion(Configuration.OPENGL_MAXVERSION);
 
@@ -99,13 +98,10 @@ public final class GL {
         switch (Platform.get()) {
             case FCL:
             case LINUX:
-                GL = Library.loadNative(GL.class, "org.lwjgl.opengl", Configuration.OPENGL_LIBRARY_NAME, "libGL.so.1", "libGL.so");
+                GL = Library.loadNative(GL.class, "org.lwjgl.opengl", Configuration.OPENGL_LIBRARY_NAME, "libGLX.so.0", "libGL.so.1", "libGL.so");
                 break;
             case MACOSX:
-                String override = Configuration.OPENGL_LIBRARY_NAME.get();
-                GL = override != null
-                    ? Library.loadNative(GL.class, "org.lwjgl.opengl", override)
-                    : MacOSXLibrary.getWithIdentifier("com.apple.opengl");
+                GL = Library.loadNative(GL.class, "org.lwjgl.opengl", Configuration.OPENGL_LIBRARY_NAME, "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL");
                 break;
             case WINDOWS:
                 GL = Library.loadNative(GL.class, "org.lwjgl.opengl", Configuration.OPENGL_LIBRARY_NAME, "opengl32");
@@ -125,74 +121,48 @@ public final class GL {
         create(Library.loadNative(GL.class, "org.lwjgl.opengl", libName));
     }
 
-    private abstract static class SharedLibraryGL extends SharedLibrary.Delegate {
-
-        SharedLibraryGL(SharedLibrary library) {
-            super(library);
-        }
-        abstract long getExtensionAddress(long name);
-
-        @Override
-        public long getFunctionAddress(ByteBuffer functionName) {
-            long address = getExtensionAddress(memAddress(functionName));
-            if (address == NULL) {
-                address = library.getFunctionAddress(functionName);
-                if (address == NULL && DEBUG_FUNCTIONS) {
-                    apiLog("Failed to locate address for GL function " + memASCII(functionName));
-                }
-            }
-
-            return address;
-        }
-
-    }
-
     private static void create(SharedLibrary OPENGL) {
-        FunctionProvider functionProvider;
         try {
-            switch (Platform.get()) {
-                case WINDOWS:
-                    functionProvider = new SharedLibraryGL(OPENGL) {
-                        private final long wglGetProcAddress = library.getFunctionAddress("wglGetProcAddress");
+            create((FunctionProvider)new SharedLibrary.Delegate(OPENGL) {
+                private final long GetProcAddress;
 
-                        @Override
-                        long getExtensionAddress(long name) {
-                            return callPP(name, wglGetProcAddress);
-                        }
-                    };
-                    break;
-                case FCL:
-                case LINUX:
-                    functionProvider = new SharedLibraryGL(OPENGL) {
-                        private final long glXGetProcAddress;
+                {
+                    long GetProcAddress = NULL;
 
-                        {
-                            long GetProcAddress = library.getFunctionAddress("glXGetProcAddress");
+                    switch (Platform.get()) {
+                        case FCL:
+                        case LINUX:
+                            GetProcAddress = library.getFunctionAddress("glXGetProcAddress");
                             if (GetProcAddress == NULL) {
                                 GetProcAddress = library.getFunctionAddress("glXGetProcAddressARB");
                             }
+                            break;
+                        case WINDOWS:
+                            GetProcAddress = library.getFunctionAddress("wglGetProcAddress");
+                            break;
+                    }
+                    if (GetProcAddress == NULL) {
+                        GetProcAddress = library.getFunctionAddress("OSMesaGetProcAddress");
+                    }
 
-                            glXGetProcAddress = GetProcAddress;
-                        }
+                    this.GetProcAddress = GetProcAddress;
+                }
 
-                        @Override
-                        long getExtensionAddress(long name) {
-                            return glXGetProcAddress == NULL ? NULL : callPP(name, glXGetProcAddress);
+                @Override
+                public long getFunctionAddress(ByteBuffer functionName) {
+                    long address = GetProcAddress == NULL ? NULL : Platform.get() == Platform.WINDOWS
+                        ? nwglGetProcAddress(memAddress(functionName), GetProcAddress) // save LastError
+                        : callPP(memAddress(functionName), GetProcAddress);
+                    if (address == NULL) {
+                        address = library.getFunctionAddress(functionName);
+                        if (address == NULL && DEBUG_FUNCTIONS) {
+                            apiLogMissing("GL", functionName);
                         }
-                    };
-                    break;
-                case MACOSX:
-                    functionProvider = new SharedLibraryGL(OPENGL) {
-                        @Override
-                        long getExtensionAddress(long name) {
-                            return NULL;
-                        }
-                    };
-                    break;
-                default:
-                    throw new IllegalStateException();
-            }
-            create(functionProvider);
+                    }
+
+                    return address;
+                }
+            });
         } catch (RuntimeException e) {
             OPENGL.free();
             throw e;
@@ -210,7 +180,7 @@ public final class GL {
         }
 
         GL.functionProvider = functionProvider;
-        ThreadLocalUtil.setFunctionMissingAddresses(GLCapabilities.class, 3);
+        ThreadLocalUtil.setFunctionMissingAddresses(GLCapabilities.ADDRESS_BUFFER_SIZE);
     }
 
     /** Unloads the OpenGL native library. */
@@ -219,7 +189,7 @@ public final class GL {
             return;
         }
 
-        ThreadLocalUtil.setFunctionMissingAddresses(null, 3);
+        ThreadLocalUtil.setFunctionMissingAddresses(0);
 
         capabilitiesWGL = null;
         capabilitiesGLX = null;
@@ -244,7 +214,7 @@ public final class GL {
      */
     public static void setCapabilities(@Nullable GLCapabilities caps) {
         capabilitiesTLS.set(caps);
-        ThreadLocalUtil.setEnv(caps == null ? NULL : memAddress(caps.addresses), 3);
+        ThreadLocalUtil.setCapabilities(caps == null ? NULL : memAddress(caps.addresses));
         icd.set(caps);
     }
 
@@ -323,7 +293,23 @@ public final class GL {
      * @return the GLCapabilities instance
      */
     public static GLCapabilities createCapabilities() {
-        return createCapabilities(false);
+        return createCapabilities(null);
+    }
+
+    /**
+     * Creates a new {@link GLCapabilities} instance for the OpenGL context that is current in the current thread.
+     *
+     * <p>Depending on the current context, the instance returned may or may not contain the deprecated functionality removed since OpenGL version 3.1.</p>
+     *
+     * <p>This method calls {@link #setCapabilities(GLCapabilities)} with the new instance before returning.</p>
+     *
+     * @param bufferFactory a function that allocates a {@link PointerBuffer} given a size. The buffer must be filled with zeroes. If {@code null}, LWJGL will
+     *                      allocate a GC-managed buffer internally.
+     *
+     * @return the GLCapabilities instance
+     */
+    public static GLCapabilities createCapabilities(@Nullable IntFunction<PointerBuffer> bufferFactory) {
+        return createCapabilities(false, bufferFactory);
     }
 
     /**
@@ -338,144 +324,158 @@ public final class GL {
      *
      * @return the GLCapabilities instance
      */
-    @SuppressWarnings("AssignmentToMethodParameter")
     public static GLCapabilities createCapabilities(boolean forwardCompatible) {
+        return createCapabilities(forwardCompatible, null);
+    }
+
+    /**
+     * Creates a new {@link GLCapabilities} instance for the OpenGL context that is current in the current thread.
+     *
+     * <p>Depending on the current context, the instance returned may or may not contain the deprecated functionality removed since OpenGL version 3.1. The
+     * {@code forwardCompatible} flag will force LWJGL to not load the deprecated functions, even if the current context exposes them.</p>
+     *
+     * <p>This method calls {@link #setCapabilities(GLCapabilities)} with the new instance before returning.</p>
+     *
+     * @param forwardCompatible if true, LWJGL will create forward compatible capabilities
+     * @param bufferFactory     a function that allocates a {@link PointerBuffer} given a size. If {@code null}, LWJGL will allocate a GC-managed buffer
+     *                          internally.
+     *
+     * @return the GLCapabilities instance
+     */
+    @SuppressWarnings("AssignmentToMethodParameter")
+    public static GLCapabilities createCapabilities(boolean forwardCompatible, @Nullable IntFunction<PointerBuffer> bufferFactory) {
         FunctionProvider functionProvider = GL.functionProvider;
         if (functionProvider == null) {
             throw new IllegalStateException("OpenGL library has not been loaded.");
         }
 
-        GLCapabilities caps = null;
+        // We don't have a current ContextCapabilities when this method is called
+        // so we have to use the native bindings directly.
+        long GetError    = functionProvider.getFunctionAddress("glGetError");
+        long GetString   = functionProvider.getFunctionAddress("glGetString");
+        long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
 
-        try {
-            if (System.getProperty("org.lwjgl.opengl.libname", "").equals("libOSMesa_8.so")) {
-                long window = GLFW.glfwGetCurrentContext();
-                callJPI(GLFW.glfwGetOSMesaCurrentContext(), GLFW.glfwGetGraphicBuffersAddr(window), GL_UNSIGNED_BYTE, GLFW.glfwGetOSMesaWidth(), GLFW.glfwGetOSMesaHeight(), functionProvider.getFunctionAddress("OSMesaMakeCurrent"));
-            }
+        if (GetError == NULL || GetString == NULL || GetIntegerv == NULL) {
+            throw new IllegalStateException("Core OpenGL functions could not be found. Make sure that the OpenGL library has been loaded correctly.");
+        }
 
-            // We don't have a current ContextCapabilities when this method is called
-            // so we have to use the native bindings directly.
-            long GetError    = functionProvider.getFunctionAddress("glGetError");
-            long GetString   = functionProvider.getFunctionAddress("glGetString");
-            long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
+        int errorCode = callI(GetError);
+        if (errorCode != GL_NO_ERROR) {
+            apiLog(String.format("An OpenGL context was in an error state before the creation of its capabilities instance. Error: 0x%X", errorCode));
+        }
 
-            if (GetError == NULL || GetString == NULL || GetIntegerv == NULL) {
-                throw new IllegalStateException("Core OpenGL functions could not be found. Make sure that the OpenGL library has been loaded correctly.");
-            }
+        int majorVersion;
+        int minorVersion;
 
-            int errorCode = callI(GetError);
-            if (errorCode != GL_NO_ERROR) {
-                apiLog(String.format("An OpenGL context was in an error state before the creation of its capabilities instance. Error: 0x%X", errorCode));
-            }
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer version = stack.ints(0);
 
-            int majorVersion;
-            int minorVersion;
-
-            try (MemoryStack stack = stackPush()) {
-                IntBuffer version = stack.ints(0);
-
-                // Try the 3.0+ version query first
-                callPV(GL_MAJOR_VERSION, memAddress(version), GetIntegerv);
-                if (callI(GetError) == GL_NO_ERROR && 3 <= (majorVersion = version.get(0))) {
-                    // We're on an 3.0+ context.
-                    callPV(GL_MINOR_VERSION, memAddress(version), GetIntegerv);
-                    minorVersion = version.get(0);
-                } else {
-                    // Fallback to the string query.
-                    String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
-                    if (versionString == null || callI(GetError) != GL_NO_ERROR) {
-                        throw new IllegalStateException("There is no OpenGL context current in the current thread.");
-                    }
-
-                    APIVersion apiVersion = apiParseVersion(versionString);
-
-                    majorVersion = apiVersion.major;
-                    minorVersion = apiVersion.minor;
-                }
-            }
-
-            if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 1)) {
-                throw new IllegalStateException("OpenGL 1.1 is required.");
-            }
-
-            int[] GL_VERSIONS = {
-                5, // OpenGL 1.1 to 1.5
-                1, // OpenGL 2.0 to 2.1
-                3, // OpenGL 3.0 to 3.3
-                6, // OpenGL 4.0 to 4.6
-            };
-
-            Set<String> supportedExtensions = new HashSet<>(512);
-
-            int maxMajor = min(majorVersion, GL_VERSIONS.length);
-            if (MAX_VERSION != null) {
-                maxMajor = min(MAX_VERSION.major, maxMajor);
-            }
-            for (int M = 1; M <= maxMajor; M++) {
-                int maxMinor = GL_VERSIONS[M - 1];
-                if (M == majorVersion) {
-                    maxMinor = min(minorVersion, maxMinor);
-                }
-                if (MAX_VERSION != null && M == MAX_VERSION.major) {
-                    maxMinor = min(MAX_VERSION.minor, maxMinor);
-                }
-
-                for (int m = M == 1 ? 1 : 0; m <= maxMinor; m++) {
-                    supportedExtensions.add(String.format("OpenGL%d%d", M, m));
-                }
-            }
-
-            if (majorVersion < 3) {
-                // Parse EXTENSIONS string
-                String extensionsString = memASCIISafe(callP(GL_EXTENSIONS, GetString));
-                if (extensionsString != null) {
-                    StringTokenizer tokenizer = new StringTokenizer(extensionsString);
-                    while (tokenizer.hasMoreTokens()) {
-                        supportedExtensions.add(tokenizer.nextToken());
-                    }
-                }
+            // Try the 3.0+ version query first
+            callPV(GL_MAJOR_VERSION, memAddress(version), GetIntegerv);
+            if (callI(GetError) == GL_NO_ERROR && 3 <= (majorVersion = version.get(0))) {
+                // We're on an 3.0+ context.
+                callPV(GL_MINOR_VERSION, memAddress(version), GetIntegerv);
+                minorVersion = version.get(0);
             } else {
-                // Use indexed EXTENSIONS
-                try (MemoryStack stack = stackPush()) {
-                    IntBuffer pi = stack.ints(0);
+                // Fallback to the string query.
+                String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
+                if (versionString == null || callI(GetError) != GL_NO_ERROR) {
+                    throw new IllegalStateException("There is no OpenGL context current in the current thread.");
+                }
 
-                    callPV(GL_NUM_EXTENSIONS, memAddress(pi), GetIntegerv);
-                    int extensionCount = pi.get(0);
+                APIVersion apiVersion = apiParseVersion(versionString);
 
-                    long GetStringi = apiGetFunctionAddress(functionProvider, "glGetStringi");
-                    for (int i = 0; i < extensionCount; i++) {
-                        supportedExtensions.add(memASCII(callP(GL_EXTENSIONS, i, GetStringi)));
-                    }
+                majorVersion = apiVersion.major;
+                minorVersion = apiVersion.minor;
+            }
+        }
 
-                    // In real drivers, we may encounter the following weird scenarios:
-                    // - 3.1 context without GL_ARB_compatibility but with deprecated functionality exposed and working.
-                    // - Core or forward-compatible context with GL_ARB_compatibility exposed, but not working when used.
-                    // We ignore these and go by the spec.
+        if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 1)) {
+            throw new IllegalStateException("OpenGL 1.1 is required.");
+        }
 
-                    // Force forwardCompatible to true if the context is a forward-compatible context.
-                    callPV(GL_CONTEXT_FLAGS, memAddress(pi), GetIntegerv);
-                    if ((pi.get(0) & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT) != 0) {
-                        forwardCompatible = true;
-                    } else {
-                        // Force forwardCompatible to true if the context is a core profile context.
-                        if ((3 < majorVersion || 1 <= minorVersion)) { // OpenGL 3.1+
-                            if (3 < majorVersion || 2 <= minorVersion) { // OpenGL 3.2+
-                                callPV(GL_CONTEXT_PROFILE_MASK, memAddress(pi), GetIntegerv);
-                                if ((pi.get(0) & GL_CONTEXT_CORE_PROFILE_BIT) != 0) {
-                                    forwardCompatible = true;
-                                }
-                            } else {
-                                forwardCompatible = !supportedExtensions.contains("GL_ARB_compatibility");
+        int[] GL_VERSIONS = {
+            5, // OpenGL 1.1 to 1.5
+            1, // OpenGL 2.0 to 2.1
+            3, // OpenGL 3.0 to 3.3
+            6, // OpenGL 4.0 to 4.6
+        };
+
+        Set<String> supportedExtensions = new HashSet<>(512);
+
+        int maxMajor = min(majorVersion, GL_VERSIONS.length);
+        if (MAX_VERSION != null) {
+            maxMajor = min(MAX_VERSION.major, maxMajor);
+        }
+        for (int M = 1; M <= maxMajor; M++) {
+            int maxMinor = GL_VERSIONS[M - 1];
+            if (M == majorVersion) {
+                maxMinor = min(minorVersion, maxMinor);
+            }
+            if (MAX_VERSION != null && M == MAX_VERSION.major) {
+                maxMinor = min(MAX_VERSION.minor, maxMinor);
+            }
+
+            for (int m = M == 1 ? 1 : 0; m <= maxMinor; m++) {
+                supportedExtensions.add("OpenGL" + M + m);
+            }
+        }
+
+        if (majorVersion < 3) {
+            // Parse EXTENSIONS string
+            String extensionsString = memASCIISafe(callP(GL_EXTENSIONS, GetString));
+            if (extensionsString != null) {
+                StringTokenizer tokenizer = new StringTokenizer(extensionsString);
+                while (tokenizer.hasMoreTokens()) {
+                    supportedExtensions.add(tokenizer.nextToken());
+                }
+            }
+        } else {
+            // Use indexed EXTENSIONS
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer pi = stack.ints(0);
+
+                callPV(GL_NUM_EXTENSIONS, memAddress(pi), GetIntegerv);
+                int extensionCount = pi.get(0);
+
+                long GetStringi = apiGetFunctionAddress(functionProvider, "glGetStringi");
+                for (int i = 0; i < extensionCount; i++) {
+                    supportedExtensions.add(memASCII(callP(GL_EXTENSIONS, i, GetStringi)));
+                }
+
+                // In real drivers, we may encounter the following weird scenarios:
+                // - 3.1 context without GL_ARB_compatibility but with deprecated functionality exposed and working.
+                // - Core or forward-compatible context with GL_ARB_compatibility exposed, but not working when used.
+                // We ignore these and go by the spec.
+
+                // Force forwardCompatible to true if the context is a forward-compatible context.
+                callPV(GL_CONTEXT_FLAGS, memAddress(pi), GetIntegerv);
+                if ((pi.get(0) & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT) != 0) {
+                    forwardCompatible = true;
+                } else {
+                    // Force forwardCompatible to true if the context is a core profile context.
+                    if ((3 < majorVersion || 1 <= minorVersion)) { // OpenGL 3.1+
+                        if (3 < majorVersion || 2 <= minorVersion) { // OpenGL 3.2+
+                            callPV(GL_CONTEXT_PROFILE_MASK, memAddress(pi), GetIntegerv);
+                            if ((pi.get(0) & GL_CONTEXT_CORE_PROFILE_BIT) != 0) {
+                                forwardCompatible = true;
                             }
+                        } else {
+                            forwardCompatible = !supportedExtensions.contains("GL_ARB_compatibility");
                         }
                     }
                 }
             }
-
-            return caps = new GLCapabilities(functionProvider, supportedExtensions, forwardCompatible);
-        } finally {
-            setCapabilities(caps);
         }
+        apiFilterExtensions(supportedExtensions, Configuration.OPENGL_EXTENSION_FILTER);
+
+        GLCapabilities caps = new GLCapabilities(functionProvider, supportedExtensions, forwardCompatible, bufferFactory == null
+            ? BufferUtils::createPointerBuffer
+            : bufferFactory);
+
+        setCapabilities(caps);
+
+        return caps;
     }
 
     /** Creates a dummy context and retrieves the WGL capabilities. */
@@ -489,7 +489,7 @@ public final class GL {
         long  hwnd      = NULL;
         long  hglrc     = NULL;
         try (MemoryStack stack = stackPush()) {
-            WNDCLASSEX wc = WNDCLASSEX.callocStack(stack)
+            WNDCLASSEX wc = WNDCLASSEX.calloc(stack)
                 .cbSize(WNDCLASSEX.SIZEOF)
                 .style(CS_HREDRAW | CS_VREDRAW)
                 .hInstance(WindowsLibrary.HINSTANCE)
@@ -514,7 +514,7 @@ public final class GL {
 
             hdc = check(GetDC(hwnd));
 
-            PIXELFORMATDESCRIPTOR pfd = PIXELFORMATDESCRIPTOR.callocStack(stack)
+            PIXELFORMATDESCRIPTOR pfd = PIXELFORMATDESCRIPTOR.calloc(stack)
                 .nSize((short)PIXELFORMATDESCRIPTOR.SIZEOF)
                 .nVersion((short)1)
                 .dwFlags(PFD_SUPPORT_OPENGL); // we don't care about anything else
@@ -598,6 +598,8 @@ public final class GL {
             }
         }
 
+        apiFilterExtensions(supportedExtensions, Configuration.OPENGL_EXTENSION_FILTER);
+
         return new WGLCapabilities(functionProvider, supportedExtensions);
     }
 
@@ -626,14 +628,8 @@ public final class GL {
             throw new IllegalStateException("OpenGL library has not been loaded.");
         }
 
-        int majorVersion = 1;
-        int minorVersion = 4;
-
-		Set<String> supportedExtensions = new HashSet<>(32);
-		
-		int[][] GLX_VERSIONS = {
-			{1, 2, 3, 4}
-		};
+        int majorVersion;
+        int minorVersion;
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer piMajor = stack.ints(0);
@@ -649,17 +645,23 @@ public final class GL {
                 throw new IllegalStateException("Invalid GLX major version: " + majorVersion);
             }
         }
-		
-		for (int major = 1; major <= GLX_VERSIONS.length; major++) {
-			int[] minors = GLX_VERSIONS[major - 1];
-			for (int minor : minors) {
-				if (major < majorVersion || (major == majorVersion && minor <= minorVersion)) {
-					supportedExtensions.add("GLX" + major + minor);
-				}
-			}
-		}
 
-		if (1 <= minorVersion) {
+        Set<String> supportedExtensions = new HashSet<>(32);
+
+        int[][] GLX_VERSIONS = {
+            {1, 2, 3, 4}
+        };
+
+        for (int major = 1; major <= GLX_VERSIONS.length; major++) {
+            int[] minors = GLX_VERSIONS[major - 1];
+            for (int minor : minors) {
+                if (major < majorVersion || (major == majorVersion && minor <= minorVersion)) {
+                    supportedExtensions.add("GLX" + major + minor);
+                }
+            }
+        }
+
+        if (1 <= minorVersion) {
             String extensionsString;
 
             if (screen == -1) {
@@ -677,6 +679,8 @@ public final class GL {
                 }
             }
         }
+
+        apiFilterExtensions(supportedExtensions, Configuration.OPENGL_EXTENSION_FILTER);
 
         return new GLXCapabilities(functionProvider, supportedExtensions);
     }
@@ -703,6 +707,7 @@ public final class GL {
         @Nullable
         private static GLCapabilities tempCaps;
 
+        @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
         @Override
         public void set(@Nullable GLCapabilities caps) {
             if (tempCaps == null) {
@@ -720,13 +725,14 @@ public final class GL {
 
         private static final class WriteOnce {
             // This will be initialized the first time get() above is called
-            @Nullable
-            static final GLCapabilities caps = ICDStatic.tempCaps;
+            static final GLCapabilities caps;
 
             static {
-                if (caps == null) {
+                GLCapabilities tempCaps = ICDStatic.tempCaps;
+                if (tempCaps == null) {
                     throw new IllegalStateException("No GLCapabilities instance has been set");
                 }
+                caps = tempCaps;
             }
         }
 

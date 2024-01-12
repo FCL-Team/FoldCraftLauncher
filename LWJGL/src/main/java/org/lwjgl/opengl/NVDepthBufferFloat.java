@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_depth_buffer_float.txt">NV_depth_buffer_float</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_depth_buffer_float.txt">NV_depth_buffer_float</a> extension.
  * 
  * <p>This extension provides new texture internal formats whose depth components are stored as 32-bit floating-point values, rather than the normalized
  * unsigned integers used in existing depth formats. Floating-point depth textures support all the functionality supported for fixed-point depth textures,
@@ -29,6 +27,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVDepthBufferFloat {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code internalformat} parameter of TexImage1D, TexImage2D, TexImage3D, CopyTexImage1D, CopyTexImage2D, and RenderbufferStorageEXT, and
      * returned in the {@code data} parameter of GetTexLevelParameter and GetRenderbufferParameterivEXT.
@@ -46,16 +46,8 @@ public class NVDepthBufferFloat {
     /** Accepted by the {@code pname} parameters of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_DEPTH_BUFFER_FLOAT_MODE_NV = 0x8DAF;
 
-    static { GL.initialize(); }
-
     protected NVDepthBufferFloat() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDepthRangedNV, caps.glClearDepthdNV, caps.glDepthBoundsdNV
-        );
     }
 
     // --- [ glDepthRangedNV ] ---

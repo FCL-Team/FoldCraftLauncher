@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback3.txt">ARB_transform_feedback3</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback3.txt">ARB_transform_feedback3</a> extension.
  * 
  * <p>This extension further extends the transform feedback capabilities provided by the {@link EXTTransformFeedback EXT_transform_feedback}, {@link NVTransformFeedback NV_transform_feedback}, and
  * {@link NVTransformFeedback2 NV_transform_feedback2} extensions. Those extensions provided a new transform feedback mode, where selected vertex attributes can be recorded to
@@ -34,7 +32,7 @@ import static org.lwjgl.system.Checks.*;
  * </ul>
  * 
  * <p>Additionally, this extension adds new support for multiple separate vertex streams. New geometry shader functionality provided by the
- * {@link ARBGPUShader5 ARB_gpu_shader5} and <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program5.txt">NV_gpu_program5</a> extensions allows geometry shaders to direct each vertex arbitrarily at a specified
+ * {@link ARBGPUShader5 ARB_gpu_shader5} and <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program5.txt">NV_gpu_program5</a> extensions allows geometry shaders to direct each vertex arbitrarily at a specified
  * vertex stream. For example, a geometry program might write each "regular" vertex it emits to one vertex stream while writing some per-primitive data it
  * computes to a second vertex stream. This extension allows applications to choose a vertex stream for each buffer object it writes to, and allows the
  * vertices written to each vertex stream to be recorded in separate buffer objects. Only one stream may be selected for rasterization, and in the initial
@@ -47,21 +45,15 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBTransformFeedback3 {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetIntegerv, and GetFloatv. */
     public static final int
         GL_MAX_TRANSFORM_FEEDBACK_BUFFERS = 0x8E70,
         GL_MAX_VERTEX_STREAMS             = 0x8E71;
 
-    static { GL.initialize(); }
-
     protected ARBTransformFeedback3() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawTransformFeedbackStream, caps.glBeginQueryIndexed, caps.glEndQueryIndexed, caps.glGetQueryIndexediv
-        );
     }
 
     // --- [ glDrawTransformFeedbackStream ] ---

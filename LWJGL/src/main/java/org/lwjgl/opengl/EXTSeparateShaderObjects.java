@@ -14,7 +14,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_shader_objects.gl.txt">EXT_separate_shader_objects</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_shader_objects.gl.txt">EXT_separate_shader_objects</a> extension.
  * 
  * <p>rior to this extension, GLSL requires multiple shader domains (vertex, fragment, geometry) to be linked into a single monolithic program object to
  * specify a GLSL shader for each domain.</p>
@@ -52,19 +52,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTSeparateShaderObjects {
 
+    static { GL.initialize(); }
+
     /** Accepted by {@code type} parameter to GetIntegerv and GetFloatv. */
     public static final int GL_ACTIVE_PROGRAM_EXT = 0x8B8D;
 
-    static { GL.initialize(); }
-
     protected EXTSeparateShaderObjects() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glUseShaderProgramEXT, caps.glActiveProgramEXT, caps.glCreateShaderProgramEXT
-        );
     }
 
     // --- [ glUseShaderProgramEXT ] ---

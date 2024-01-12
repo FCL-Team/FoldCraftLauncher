@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_framebuffer_no_attachments.txt">ARB_framebuffer_no_attachments</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_framebuffer_no_attachments.txt">ARB_framebuffer_no_attachments</a> extension.
  * 
  * <p>Framebuffer objects as introduced by {@link ARBFramebufferObject ARB_framebuffer_object} and OpenGL 3.0 provide a generalized mechanism for rendering to off-screen surfaces.
  * Each framebuffer object may have depth, stencil and zero or more color attachments that can be written to by the GL. The size of the framebuffer (width,
@@ -45,6 +45,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBFramebufferNoAttachments {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code pname} parameter of FramebufferParameteri, GetFramebufferParameteriv, NamedFramebufferParameteriEXT, and
      * GetNamedFramebufferParameterivEXT.
@@ -63,18 +65,8 @@ public class ARBFramebufferNoAttachments {
         GL_MAX_FRAMEBUFFER_LAYERS  = 0x9317,
         GL_MAX_FRAMEBUFFER_SAMPLES = 0x9318;
 
-    static { GL.initialize(); }
-
     protected ARBFramebufferNoAttachments() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glFramebufferParameteri, caps.glGetFramebufferParameteriv, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glNamedFramebufferParameteriEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glGetNamedFramebufferParameterivEXT : -1L
-        );
     }
 
     // --- [ glFramebufferParameteri ] ---

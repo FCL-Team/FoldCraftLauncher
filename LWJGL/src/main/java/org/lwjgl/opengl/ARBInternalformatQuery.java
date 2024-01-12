@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_internalformat_query.txt">ARB_internalformat_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_internalformat_query.txt">ARB_internalformat_query</a> extension.
  * 
  * <p>OpenGL 4.1 has a number of queries to indicate the maximum number of samples available for different formats. These give a coarse-grained query
  * mechanism e.g. an implementation can expose different sample counts for integer and floating-point formats, but not for different floating-point
@@ -24,19 +22,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBInternalformatQuery {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetInternalformativ. */
     public static final int GL_NUM_SAMPLE_COUNTS = 0x9380;
 
-    static { GL.initialize(); }
-
     protected ARBInternalformatQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetInternalformativ
-        );
     }
 
     // --- [ glGetInternalformativ ] ---

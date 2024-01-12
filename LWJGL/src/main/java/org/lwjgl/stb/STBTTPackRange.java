@@ -19,33 +19,21 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * A range of packed character data, used by {@link STBTruetype#stbtt_PackFontRanges PackFontRanges}
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code font_size} &ndash; the font size</li>
- * <li>{@code first_unicode_codepoint_in_range} &ndash; if non-zero, then the chars are continuous, and this is the first codepoint</li>
- * <li>{@code array_of_unicode_codepoints} &ndash; if non-zero, then this is an array of unicode codepoints</li>
- * <li>{@code num_chars} &ndash; the number of codepoints in the range</li>
- * <li>{@code chardata_for_range} &ndash; output</li>
- * <li>{@code h_oversample} &ndash; used internally</li>
- * <li>{@code v_oversample} &ndash; used internally</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct stbtt_pack_range {
- *     float font_size;
- *     int first_unicode_codepoint_in_range;
- *     int * array_of_unicode_codepoints;
- *     int num_chars;
- *     {@link STBTTPackedchar stbtt_packedchar} * chardata_for_range;
- *     unsigned char h_oversample;
- *     unsigned char v_oversample;
+ *     float {@link #font_size};
+ *     int {@link #first_unicode_codepoint_in_range};
+ *     int * {@link #array_of_unicode_codepoints};
+ *     int {@link #num_chars};
+ *     {@link STBTTPackedchar stbtt_packedchar} * {@link #chardata_for_range};
+ *     unsigned char {@link #h_oversample};
+ *     unsigned char {@link #v_oversample};
  * }</code></pre>
  */
 @NativeType("struct stbtt_pack_range")
-public class STBTTPackRange extends Struct implements NativeResource {
+public class STBTTPackRange extends Struct<STBTTPackRange> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -86,6 +74,15 @@ public class STBTTPackRange extends Struct implements NativeResource {
         V_OVERSAMPLE = layout.offsetof(6);
     }
 
+    protected STBTTPackRange(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected STBTTPackRange create(long address, @Nullable ByteBuffer container) {
+        return new STBTTPackRange(address, container);
+    }
+
     /**
      * Creates a {@code STBTTPackRange} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -99,39 +96,39 @@ public class STBTTPackRange extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code font_size} field. */
+    /** the font size */
     public float font_size() { return nfont_size(address()); }
-    /** Returns the value of the {@code first_unicode_codepoint_in_range} field. */
+    /** if non-zero, then the chars are continuous, and this is the first codepoint */
     public int first_unicode_codepoint_in_range() { return nfirst_unicode_codepoint_in_range(address()); }
-    /** Returns a {@link IntBuffer} view of the data pointed to by the {@code array_of_unicode_codepoints} field. */
+    /** if non-zero, then this is an array of unicode codepoints */
     @Nullable
     @NativeType("int *")
     public IntBuffer array_of_unicode_codepoints() { return narray_of_unicode_codepoints(address()); }
-    /** Returns the value of the {@code num_chars} field. */
+    /** the number of codepoints in the range */
     public int num_chars() { return nnum_chars(address()); }
-    /** Returns a {@link STBTTPackedchar.Buffer} view of the struct array pointed to by the {@code chardata_for_range} field. */
+    /** output */
     @NativeType("stbtt_packedchar *")
     public STBTTPackedchar.Buffer chardata_for_range() { return nchardata_for_range(address()); }
-    /** Returns the value of the {@code h_oversample} field. */
+    /** used internally */
     @NativeType("unsigned char")
     public byte h_oversample() { return nh_oversample(address()); }
-    /** Returns the value of the {@code v_oversample} field. */
+    /** used internally */
     @NativeType("unsigned char")
     public byte v_oversample() { return nv_oversample(address()); }
 
-    /** Sets the specified value to the {@code font_size} field. */
+    /** Sets the specified value to the {@link #font_size} field. */
     public STBTTPackRange font_size(float value) { nfont_size(address(), value); return this; }
-    /** Sets the specified value to the {@code first_unicode_codepoint_in_range} field. */
+    /** Sets the specified value to the {@link #first_unicode_codepoint_in_range} field. */
     public STBTTPackRange first_unicode_codepoint_in_range(int value) { nfirst_unicode_codepoint_in_range(address(), value); return this; }
-    /** Sets the address of the specified {@link IntBuffer} to the {@code array_of_unicode_codepoints} field. */
+    /** Sets the address of the specified {@link IntBuffer} to the {@link #array_of_unicode_codepoints} field. */
     public STBTTPackRange array_of_unicode_codepoints(@Nullable @NativeType("int *") IntBuffer value) { narray_of_unicode_codepoints(address(), value); return this; }
-    /** Sets the specified value to the {@code num_chars} field. */
+    /** Sets the specified value to the {@link #num_chars} field. */
     public STBTTPackRange num_chars(int value) { nnum_chars(address(), value); return this; }
-    /** Sets the address of the specified {@link STBTTPackedchar.Buffer} to the {@code chardata_for_range} field. */
+    /** Sets the address of the specified {@link STBTTPackedchar.Buffer} to the {@link #chardata_for_range} field. */
     public STBTTPackRange chardata_for_range(@NativeType("stbtt_packedchar *") STBTTPackedchar.Buffer value) { nchardata_for_range(address(), value); return this; }
-    /** Sets the specified value to the {@code h_oversample} field. */
+    /** Sets the specified value to the {@link #h_oversample} field. */
     public STBTTPackRange h_oversample(@NativeType("unsigned char") byte value) { nh_oversample(address(), value); return this; }
-    /** Sets the specified value to the {@code v_oversample} field. */
+    /** Sets the specified value to the {@link #v_oversample} field. */
     public STBTTPackRange v_oversample(@NativeType("unsigned char") byte value) { nv_oversample(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -171,29 +168,29 @@ public class STBTTPackRange extends Struct implements NativeResource {
 
     /** Returns a new {@code STBTTPackRange} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static STBTTPackRange malloc() {
-        return wrap(STBTTPackRange.class, nmemAllocChecked(SIZEOF));
+        return new STBTTPackRange(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code STBTTPackRange} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static STBTTPackRange calloc() {
-        return wrap(STBTTPackRange.class, nmemCallocChecked(1, SIZEOF));
+        return new STBTTPackRange(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code STBTTPackRange} instance allocated with {@link BufferUtils}. */
     public static STBTTPackRange create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(STBTTPackRange.class, memAddress(container), container);
+        return new STBTTPackRange(memAddress(container), container);
     }
 
     /** Returns a new {@code STBTTPackRange} instance for the specified memory address. */
     public static STBTTPackRange create(long address) {
-        return wrap(STBTTPackRange.class, address);
+        return new STBTTPackRange(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static STBTTPackRange createSafe(long address) {
-        return address == NULL ? null : wrap(STBTTPackRange.class, address);
+        return address == NULL ? null : new STBTTPackRange(address, null);
     }
 
     /**
@@ -202,7 +199,7 @@ public class STBTTPackRange extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -211,7 +208,7 @@ public class STBTTPackRange extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -221,7 +218,7 @@ public class STBTTPackRange extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -231,34 +228,41 @@ public class STBTTPackRange extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code STBTTPackRange} instance allocated on the thread-local {@link MemoryStack}. */
-    public static STBTTPackRange mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code STBTTPackRange} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static STBTTPackRange callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackRange mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackRange callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackRange mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBTTPackRange callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code STBTTPackRange} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static STBTTPackRange mallocStack(MemoryStack stack) {
-        return wrap(STBTTPackRange.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static STBTTPackRange malloc(MemoryStack stack) {
+        return new STBTTPackRange(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -266,46 +270,28 @@ public class STBTTPackRange extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static STBTTPackRange callocStack(MemoryStack stack) {
-        return wrap(STBTTPackRange.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static STBTTPackRange calloc(MemoryStack stack) {
+        return new STBTTPackRange(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -349,18 +335,6 @@ public class STBTTPackRange extends Struct implements NativeResource {
         check(memGetAddress(struct + STBTTPackRange.CHARDATA_FOR_RANGE));
     }
 
-    /**
-     * Calls {@link #validate(long)} for each struct contained in the specified struct array.
-     *
-     * @param array the struct array to validate
-     * @param count the number of structs in {@code array}
-     */
-    public static void validate(long array, int count) {
-        for (int i = 0; i < count; i++) {
-            validate(array + Integer.toUnsignedLong(i) * SIZEOF);
-        }
-    }
-
     // -----------------------------------
 
     /** An array of {@link STBTTPackRange} structs. */
@@ -371,9 +345,9 @@ public class STBTTPackRange extends Struct implements NativeResource {
         /**
          * Creates a new {@code STBTTPackRange.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link STBTTPackRange#SIZEOF}, and its mark will be undefined.
+         * by {@link STBTTPackRange#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -399,39 +373,39 @@ public class STBTTPackRange extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code font_size} field. */
+        /** @return the value of the {@link STBTTPackRange#font_size} field. */
         public float font_size() { return STBTTPackRange.nfont_size(address()); }
-        /** Returns the value of the {@code first_unicode_codepoint_in_range} field. */
+        /** @return the value of the {@link STBTTPackRange#first_unicode_codepoint_in_range} field. */
         public int first_unicode_codepoint_in_range() { return STBTTPackRange.nfirst_unicode_codepoint_in_range(address()); }
-        /** Returns a {@link IntBuffer} view of the data pointed to by the {@code array_of_unicode_codepoints} field. */
+        /** @return a {@link IntBuffer} view of the data pointed to by the {@link STBTTPackRange#array_of_unicode_codepoints} field. */
         @Nullable
         @NativeType("int *")
         public IntBuffer array_of_unicode_codepoints() { return STBTTPackRange.narray_of_unicode_codepoints(address()); }
-        /** Returns the value of the {@code num_chars} field. */
+        /** @return the value of the {@link STBTTPackRange#num_chars} field. */
         public int num_chars() { return STBTTPackRange.nnum_chars(address()); }
-        /** Returns a {@link STBTTPackedchar.Buffer} view of the struct array pointed to by the {@code chardata_for_range} field. */
+        /** @return a {@link STBTTPackedchar.Buffer} view of the struct array pointed to by the {@link STBTTPackRange#chardata_for_range} field. */
         @NativeType("stbtt_packedchar *")
         public STBTTPackedchar.Buffer chardata_for_range() { return STBTTPackRange.nchardata_for_range(address()); }
-        /** Returns the value of the {@code h_oversample} field. */
+        /** @return the value of the {@link STBTTPackRange#h_oversample} field. */
         @NativeType("unsigned char")
         public byte h_oversample() { return STBTTPackRange.nh_oversample(address()); }
-        /** Returns the value of the {@code v_oversample} field. */
+        /** @return the value of the {@link STBTTPackRange#v_oversample} field. */
         @NativeType("unsigned char")
         public byte v_oversample() { return STBTTPackRange.nv_oversample(address()); }
 
-        /** Sets the specified value to the {@code font_size} field. */
+        /** Sets the specified value to the {@link STBTTPackRange#font_size} field. */
         public Buffer font_size(float value) { STBTTPackRange.nfont_size(address(), value); return this; }
-        /** Sets the specified value to the {@code first_unicode_codepoint_in_range} field. */
+        /** Sets the specified value to the {@link STBTTPackRange#first_unicode_codepoint_in_range} field. */
         public Buffer first_unicode_codepoint_in_range(int value) { STBTTPackRange.nfirst_unicode_codepoint_in_range(address(), value); return this; }
-        /** Sets the address of the specified {@link IntBuffer} to the {@code array_of_unicode_codepoints} field. */
+        /** Sets the address of the specified {@link IntBuffer} to the {@link STBTTPackRange#array_of_unicode_codepoints} field. */
         public Buffer array_of_unicode_codepoints(@Nullable @NativeType("int *") IntBuffer value) { STBTTPackRange.narray_of_unicode_codepoints(address(), value); return this; }
-        /** Sets the specified value to the {@code num_chars} field. */
+        /** Sets the specified value to the {@link STBTTPackRange#num_chars} field. */
         public Buffer num_chars(int value) { STBTTPackRange.nnum_chars(address(), value); return this; }
-        /** Sets the address of the specified {@link STBTTPackedchar.Buffer} to the {@code chardata_for_range} field. */
+        /** Sets the address of the specified {@link STBTTPackedchar.Buffer} to the {@link STBTTPackRange#chardata_for_range} field. */
         public Buffer chardata_for_range(@NativeType("stbtt_packedchar *") STBTTPackedchar.Buffer value) { STBTTPackRange.nchardata_for_range(address(), value); return this; }
-        /** Sets the specified value to the {@code h_oversample} field. */
+        /** Sets the specified value to the {@link STBTTPackRange#h_oversample} field. */
         public Buffer h_oversample(@NativeType("unsigned char") byte value) { STBTTPackRange.nh_oversample(address(), value); return this; }
-        /** Sets the specified value to the {@code v_oversample} field. */
+        /** Sets the specified value to the {@link STBTTPackRange#v_oversample} field. */
         public Buffer v_oversample(@NativeType("unsigned char") byte value) { STBTTPackRange.nv_oversample(address(), value); return this; }
 
     }

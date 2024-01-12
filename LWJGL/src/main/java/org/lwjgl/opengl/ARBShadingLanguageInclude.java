@@ -19,7 +19,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_include.txt">ARB_shading_language_include</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_include.txt">ARB_shading_language_include</a> extension.
  * 
  * <p>This extension introduces a {@code &#35;include} GLSL directive to allow reusing the same shader text in multiple shaders and defines the semantics and syntax of
  * the names allowed in {@code &#35;include} directives. It also defines API mechanisms to define the named string backing a {@code &#35;include}.</p>
@@ -74,6 +74,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBShadingLanguageInclude {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code type} parameter of NamedStringARB. */
     public static final int GL_SHADER_INCLUDE_ARB = 0x8DAE;
 
@@ -82,17 +84,8 @@ public class ARBShadingLanguageInclude {
         GL_NAMED_STRING_LENGTH_ARB = 0x8DE9,
         GL_NAMED_STRING_TYPE_ARB   = 0x8DEA;
 
-    static { GL.initialize(); }
-
     protected ARBShadingLanguageInclude() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glNamedStringARB, caps.glDeleteNamedStringARB, caps.glCompileShaderIncludeARB, caps.glIsNamedStringARB, caps.glGetNamedStringARB, 
-            caps.glGetNamedStringivARB
-        );
     }
 
     // --- [ glNamedStringARB ] ---

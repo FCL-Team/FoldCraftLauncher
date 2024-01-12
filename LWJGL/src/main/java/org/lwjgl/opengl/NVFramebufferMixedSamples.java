@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_mixed_samples.txt">NV_framebuffer_mixed_samples</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_mixed_samples.txt">NV_framebuffer_mixed_samples</a> extension.
  * 
  * <p>This extension allows multisample rendering with a raster and
  * depth/stencil sample count that is larger than the color sample count.
@@ -27,6 +27,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * color samples.</p>
  */
 public class NVFramebufferMixedSamples {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code cap} parameter of Enable, Disable, IsEnabled. */
     public static final int
@@ -48,16 +50,8 @@ public class NVFramebufferMixedSamples {
         GL_COVERAGE_MODULATION_NV                = 0x9332,
         GL_COVERAGE_MODULATION_TABLE_SIZE_NV     = 0x9333;
 
-    static { GL.initialize(); }
-
     protected NVFramebufferMixedSamples() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRasterSamplesEXT, caps.glCoverageModulationTableNV, caps.glGetCoverageModulationTableNV, caps.glCoverageModulationNV
-        );
     }
 
     // --- [ glRasterSamplesEXT ] ---

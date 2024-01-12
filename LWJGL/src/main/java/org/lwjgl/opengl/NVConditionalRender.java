@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conditional_render.txt">NV_conditional_render</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conditional_render.txt">NV_conditional_render</a> extension.
  * 
  * <p>This extension provides support for conditional rendering based on the results of an occlusion query. This mechanism allows an application to
  * potentially reduce the latency between the completion of an occlusion query and the rendering commands depending on its result. It additionally allows
@@ -29,6 +27,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVConditionalRender {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code mode} parameter of BeginConditionalRenderNV. */
     public static final int
         GL_QUERY_WAIT_NV              = 0x8E13,
@@ -36,16 +36,8 @@ public class NVConditionalRender {
         GL_QUERY_BY_REGION_WAIT_NV    = 0x8E15,
         GL_QUERY_BY_REGION_NO_WAIT_NV = 0x8E16;
 
-    static { GL.initialize(); }
-
     protected NVConditionalRender() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBeginConditionalRenderNV, caps.glEndConditionalRenderNV
-        );
     }
 
     // --- [ glBeginConditionalRenderNV ] ---

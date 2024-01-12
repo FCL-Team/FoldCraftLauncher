@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_attrib_64bit.txt">ARB_vertex_attrib_64bit</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_attrib_64bit.txt">ARB_vertex_attrib_64bit</a> extension.
  * 
  * <p>This extension provides OpenGL shading language support for vertex shader inputs with 64-bit floating-point components and OpenGL API support for
  * specifying the value of those inputs using vertex array or immediate mode entry points. This builds on the support for general-purpose support for
@@ -41,6 +39,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBVertexAttrib64Bit {
 
+    static { GL.initialize(); }
+
     /** Returned in the {@code type} parameter of GetActiveAttrib. */
     public static final int
         GL_DOUBLE_VEC2   = 0x8FFC,
@@ -56,18 +56,8 @@ public class ARBVertexAttrib64Bit {
         GL_DOUBLE_MAT4x2 = 0x8F4D,
         GL_DOUBLE_MAT4x3 = 0x8F4E;
 
-    static { GL.initialize(); }
-
     protected ARBVertexAttrib64Bit() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glVertexAttribL1d, caps.glVertexAttribL2d, caps.glVertexAttribL3d, caps.glVertexAttribL4d, caps.glVertexAttribL1dv, caps.glVertexAttribL2dv, 
-            caps.glVertexAttribL3dv, caps.glVertexAttribL4dv, caps.glVertexAttribLPointer, caps.glGetVertexAttribLdv, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribLOffsetEXT : -1L
-        );
     }
 
     // --- [ glVertexAttribL1d ] ---

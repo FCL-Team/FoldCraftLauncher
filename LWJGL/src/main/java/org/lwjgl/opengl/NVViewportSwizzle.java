@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_viewport_swizzle.txt">NV_viewport_swizzle</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_viewport_swizzle.txt">NV_viewport_swizzle</a> extension.
  * 
  * <p>This extension provides a new per-viewport swizzle that can modify the position of primitives sent to each viewport. New viewport swizzle state is
  * added for each viewport, and a new position vector is computed for each vertex by selecting from and optionally negating any of the four components of
@@ -22,6 +20,8 @@ import static org.lwjgl.system.Checks.*;
  * buffering is required, 1/W buffering should be used, as described in the single-pass cubemap rendering example in the "Issues" section below.</p>
  */
 public class NVViewportSwizzle {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code swizzlex}, {@code swizzley}, {@code swizzlez}, and {@code swizzlew} parameters of ViewportSwizzleNV. */
     public static final int
@@ -41,16 +41,8 @@ public class NVViewportSwizzle {
         GL_VIEWPORT_SWIZZLE_Z_NV = 0x935A,
         GL_VIEWPORT_SWIZZLE_W_NV = 0x935B;
 
-    static { GL.initialize(); }
-
     protected NVViewportSwizzle() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glViewportSwizzleNV
-        );
     }
 
     // --- [ glViewportSwizzleNV ] ---

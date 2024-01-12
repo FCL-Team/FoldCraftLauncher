@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_clip_control.txt">ARB_clip_control</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_clip_control.txt">ARB_clip_control</a> extension.
  * 
  * <p>This extension provides additional clip control modes to configure how clip space is mapped to window space.  This extension's goal is to 1) allow
  * OpenGL to effectively match Direct3D's coordinate system conventions, and 2) potentially improve the numerical precision of the Z coordinate mapping.</p>
@@ -18,6 +16,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL45 OpenGL 4.5}.</p>
  */
 public class ARBClipControl {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code origin} parameter of {@link #glClipControl ClipControl}. */
     public static final int
@@ -34,16 +34,8 @@ public class ARBClipControl {
         GL_CLIP_ORIGIN     = 0x935C,
         GL_CLIP_DEPTH_MODE = 0x935D;
 
-    static { GL.initialize(); }
-
     protected ARBClipControl() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glClipControl
-        );
     }
 
     // --- [ glClipControl ] ---

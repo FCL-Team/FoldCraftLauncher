@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness.txt">ARB_robustness</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness.txt">ARB_robustness</a> extension.
  * 
  * <p>Several recent trends in how OpenGL integrates into modern computer systems have created new requirements for robustness and security for OpenGL
  * rendering contexts.</p>
@@ -75,6 +75,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBRobustness {
 
+    static { GL.initialize(); }
+
     /** Returned by GetGraphicsResetStatusARB. */
     public static final int
         GL_GUILTY_CONTEXT_RESET_ARB   = 0x8253,
@@ -92,27 +94,8 @@ public class ARBRobustness {
     /** Returned by GetIntegerv when {@code pname} is CONTEXT_FLAGS. */
     public static final int GL_CONTEXT_FLAG_ROBUST_ACCESS_BIT_ARB = 0x4;
 
-    static { GL.initialize(); }
-
     protected ARBRobustness() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glGetGraphicsResetStatusARB, caps.glGetMapdv != NULL ? caps.glGetnMapdvARB : -1L, caps.glGetMapfv != NULL ? caps.glGetnMapfvARB : -1L, 
-            caps.glGetMapiv != NULL ? caps.glGetnMapivARB : -1L, caps.glGetPixelMapfv != NULL ? caps.glGetnPixelMapfvARB : -1L, 
-            caps.glGetPixelMapuiv != NULL ? caps.glGetnPixelMapuivARB : -1L, caps.glGetPixelMapusv != NULL ? caps.glGetnPixelMapusvARB : -1L, 
-            caps.glGetPolygonStipple != NULL ? caps.glGetnPolygonStippleARB : -1L, caps.glGetnTexImageARB, caps.glReadnPixelsARB, 
-            ext.contains("GL_ARB_imaging") && caps.glGetColorTable != NULL ? caps.glGetnColorTableARB : -1L, 
-            ext.contains("GL_ARB_imaging") && caps.glGetConvolutionFilter != NULL ? caps.glGetnConvolutionFilterARB : -1L, 
-            ext.contains("GL_ARB_imaging") && caps.glGetSeparableFilter != NULL ? caps.glGetnSeparableFilterARB : -1L, 
-            ext.contains("GL_ARB_imaging") && caps.glGetHistogram != NULL ? caps.glGetnHistogramARB : -1L, 
-            ext.contains("GL_ARB_imaging") && caps.glGetMinmax != NULL ? caps.glGetnMinmaxARB : -1L, 
-            ext.contains("OpenGL13") ? caps.glGetnCompressedTexImageARB : -1L, ext.contains("OpenGL20") ? caps.glGetnUniformfvARB : -1L, 
-            ext.contains("OpenGL20") ? caps.glGetnUniformivARB : -1L, ext.contains("OpenGL30") ? caps.glGetnUniformuivARB : -1L, 
-            ext.contains("OpenGL40") ? caps.glGetnUniformdvARB : -1L
-        );
     }
 
     // --- [ glGetGraphicsResetStatusARB ] ---

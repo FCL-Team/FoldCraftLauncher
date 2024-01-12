@@ -7,13 +7,11 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_equation_separate.txt">EXT_blend_equation_separate</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_equation_separate.txt">EXT_blend_equation_separate</a> extension.
  * 
  * <p>{@link EXTBlendFuncSeparate EXT_blend_func_separate} introduced separate RGB and alpha blend factors. {@link EXTBlendMinmax EXT_blend_minmax} introduced a distinct blend equation for
- * combining source and destination blend terms. ({@link EXTBlendSubtract EXT_blend_subtract} &amp; <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_logic_op.txt">EXT_blend_logic_op</a> added other blend equation
+ * combining source and destination blend terms. ({@link EXTBlendSubtract EXT_blend_subtract} &amp; <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_logic_op.txt">EXT_blend_logic_op</a> added other blend equation
  * modes.) OpenGL 1.4 integrated both functionalities into the core standard.</p>
  * 
  * <p>While there are separate blend functions for the RGB and alpha blend factors, OpenGL 1.4 provides a single blend equation that applies to both RGB and
@@ -25,21 +23,15 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTBlendEquationSeparate {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
         GL_BLEND_EQUATION_RGB_EXT   = 0x8009,
         GL_BLEND_EQUATION_ALPHA_EXT = 0x883D;
 
-    static { GL.initialize(); }
-
     protected EXTBlendEquationSeparate() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBlendEquationSeparateEXT
-        );
     }
 
     // --- [ glBlendEquationSeparateEXT ] ---

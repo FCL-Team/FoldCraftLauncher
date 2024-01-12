@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster.txt">NV_conservative_raster</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster.txt">NV_conservative_raster</a> extension.
  * 
  * <p>This extension adds a "conservative" rasterization mode where any pixel that is partially covered, even if no sample location is covered, is treated as
  * fully covered and a corresponding fragment will be shaded.</p>
@@ -24,6 +22,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVConservativeRaster {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code cap} parameter of Enable, Disable, IsEnabled. */
     public static final int GL_CONSERVATIVE_RASTERIZATION_NV = 0x9346;
 
@@ -33,16 +33,8 @@ public class NVConservativeRaster {
         GL_SUBPIXEL_PRECISION_BIAS_Y_BITS_NV   = 0x9348,
         GL_MAX_SUBPIXEL_PRECISION_BIAS_BITS_NV = 0x9349;
 
-    static { GL.initialize(); }
-
     protected NVConservativeRaster() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSubpixelPrecisionBiasNV
-        );
     }
 
     // --- [ glSubpixelPrecisionBiasNV ] ---

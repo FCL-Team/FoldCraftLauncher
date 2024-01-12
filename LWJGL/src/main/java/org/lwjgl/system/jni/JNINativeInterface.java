@@ -32,6 +32,8 @@ import java.lang.reflect.*;
  */
 public class JNINativeInterface {
 
+    static { Library.initialize(); }
+
     /** JNI versions. */
     public static final int
         JNI_VERSION_1_1 = 0x10001,
@@ -40,7 +42,10 @@ public class JNINativeInterface {
         JNI_VERSION_1_6 = 0x10006,
         JNI_VERSION_1_8 = 0x10008,
         JNI_VERSION_9   = 0x90000,
-        JNI_VERSION_10  = 0xA0000;
+        JNI_VERSION_10  = 0xA0000,
+        JNI_VERSION_19  = 0x130000,
+        JNI_VERSION_20  = 0x140000,
+        JNI_VERSION_21  = 0x150000;
 
     /**
      * {@code jobjectRefType}: Return values from {@link #GetObjectRefType}.
@@ -93,8 +98,6 @@ public class JNINativeInterface {
     public static final int
         JNI_COMMIT = 1,
         JNI_ABORT  = 2;
-
-    static { Library.initialize(); }
 
     protected JNINativeInterface() {
         throw new UnsupportedOperationException();
@@ -989,7 +992,7 @@ public class JNINativeInterface {
     @NativeType("jint")
     public static int RegisterNatives(@NativeType("jclass") Class<?> targetClass, @NativeType("JNINativeMethod const *") JNINativeMethod.Buffer methods) {
         if (CHECKS) {
-            JNINativeMethod.validate(methods.address(), methods.remaining());
+            Struct.validate(methods.address(), methods.remaining(), JNINativeMethod.SIZEOF, JNINativeMethod::validate);
         }
         return nRegisterNatives(targetClass, methods.address(), methods.remaining());
     }
@@ -1129,5 +1132,10 @@ public class JNINativeInterface {
      */
     @NativeType("jobjectRefType")
     public static native int GetObjectRefType(@NativeType("jobject") Object obj);
+
+    // --- [ noop ] ---
+
+    /** No-op JNI function for benchmarking. */
+    public static native void noop();
 
 }

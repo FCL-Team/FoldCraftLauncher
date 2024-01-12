@@ -18,32 +18,19 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Contains information about the placement of a window on the screen.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code length} &ndash; 
- * the length of the structure, in bytes. Before calling the {@link User32#GetWindowPlacement} or {@link User32#SetWindowPlacement} functions, set this member to
- * {@link #SIZEOF}.</li>
- * <li>{@code flags} &ndash; the flags that control the position of the minimized window and the method by which the window is restored. This member can be one or more of thefollowing values:<br>{@link User32#WPF_SETMINPOSITION} {@link User32#WPF_RESTORETOMAXIMIZED} {@link User32#WPF_ASYNCWINDOWPLACEMENT}</li>
- * <li>{@code showCmd} &ndash; the current show state of the window</li>
- * <li>{@code ptMinPosition} &ndash; the coordinates of the window's upper-left corner when the window is minimized</li>
- * <li>{@code ptMaxPosition} &ndash; the coordinates of the window's upper-left corner when the window is maximized</li>
- * <li>{@code rcNormalPosition} &ndash; the window's coordinates when the window is in the restored position</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct WINDOWPLACEMENT {
- *     UINT length;
- *     UINT flags;
- *     UINT showCmd;
- *     {@link POINT POINT} ptMinPosition;
- *     {@link POINT POINT} ptMaxPosition;
- *     {@link RECT RECT} rcNormalPosition;
+ *     UINT {@link #length};
+ *     UINT {@link #flags};
+ *     UINT {@link #showCmd};
+ *     {@link POINT POINT} {@link #ptMinPosition};
+ *     {@link POINT POINT} {@link #ptMaxPosition};
+ *     {@link RECT RECT} {@link #rcNormalPosition};
  * }</code></pre>
  */
-public class WINDOWPLACEMENT extends Struct implements NativeResource {
+public class WINDOWPLACEMENT extends Struct<WINDOWPLACEMENT> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -81,6 +68,15 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
         RCNORMALPOSITION = layout.offsetof(5);
     }
 
+    protected WINDOWPLACEMENT(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected WINDOWPLACEMENT create(long address, @Nullable ByteBuffer container) {
+        return new WINDOWPLACEMENT(address, container);
+    }
+
     /**
      * Creates a {@code WINDOWPLACEMENT} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -94,39 +90,42 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code length} field. */
+    /**
+     * the length of the structure, in bytes. Before calling the {@link User32#GetWindowPlacement} or {@link User32#SetWindowPlacement} functions, set this member to
+     * {@link #SIZEOF}.
+     */
     @NativeType("UINT")
     public int length() { return nlength(address()); }
-    /** Returns the value of the {@code flags} field. */
+    /** the flags that control the position of the minimized window and the method by which the window is restored. This member can be one or more of thefollowing values:<br>{@link User32#WPF_SETMINPOSITION} {@link User32#WPF_RESTORETOMAXIMIZED} {@link User32#WPF_ASYNCWINDOWPLACEMENT} */
     @NativeType("UINT")
     public int flags() { return nflags(address()); }
-    /** Returns the value of the {@code showCmd} field. */
+    /** the current show state of the window */
     @NativeType("UINT")
     public int showCmd() { return nshowCmd(address()); }
-    /** Returns a {@link POINT} view of the {@code ptMinPosition} field. */
+    /** the coordinates of the window's upper-left corner when the window is minimized */
     public POINT ptMinPosition() { return nptMinPosition(address()); }
-    /** Returns a {@link POINT} view of the {@code ptMaxPosition} field. */
+    /** the coordinates of the window's upper-left corner when the window is maximized */
     public POINT ptMaxPosition() { return nptMaxPosition(address()); }
-    /** Returns a {@link RECT} view of the {@code rcNormalPosition} field. */
+    /** the window's coordinates when the window is in the restored position */
     public RECT rcNormalPosition() { return nrcNormalPosition(address()); }
 
-    /** Sets the specified value to the {@code length} field. */
+    /** Sets the specified value to the {@link #length} field. */
     public WINDOWPLACEMENT length(@NativeType("UINT") int value) { nlength(address(), value); return this; }
-    /** Sets the specified value to the {@code flags} field. */
+    /** Sets the specified value to the {@link #flags} field. */
     public WINDOWPLACEMENT flags(@NativeType("UINT") int value) { nflags(address(), value); return this; }
-    /** Sets the specified value to the {@code showCmd} field. */
+    /** Sets the specified value to the {@link #showCmd} field. */
     public WINDOWPLACEMENT showCmd(@NativeType("UINT") int value) { nshowCmd(address(), value); return this; }
-    /** Copies the specified {@link POINT} to the {@code ptMinPosition} field. */
+    /** Copies the specified {@link POINT} to the {@link #ptMinPosition} field. */
     public WINDOWPLACEMENT ptMinPosition(POINT value) { nptMinPosition(address(), value); return this; }
-    /** Passes the {@code ptMinPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #ptMinPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
     public WINDOWPLACEMENT ptMinPosition(java.util.function.Consumer<POINT> consumer) { consumer.accept(ptMinPosition()); return this; }
-    /** Copies the specified {@link POINT} to the {@code ptMaxPosition} field. */
+    /** Copies the specified {@link POINT} to the {@link #ptMaxPosition} field. */
     public WINDOWPLACEMENT ptMaxPosition(POINT value) { nptMaxPosition(address(), value); return this; }
-    /** Passes the {@code ptMaxPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #ptMaxPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
     public WINDOWPLACEMENT ptMaxPosition(java.util.function.Consumer<POINT> consumer) { consumer.accept(ptMaxPosition()); return this; }
-    /** Copies the specified {@link RECT} to the {@code rcNormalPosition} field. */
+    /** Copies the specified {@link RECT} to the {@link #rcNormalPosition} field. */
     public WINDOWPLACEMENT rcNormalPosition(RECT value) { nrcNormalPosition(address(), value); return this; }
-    /** Passes the {@code rcNormalPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #rcNormalPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
     public WINDOWPLACEMENT rcNormalPosition(java.util.function.Consumer<RECT> consumer) { consumer.accept(rcNormalPosition()); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -164,29 +163,29 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
 
     /** Returns a new {@code WINDOWPLACEMENT} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static WINDOWPLACEMENT malloc() {
-        return wrap(WINDOWPLACEMENT.class, nmemAllocChecked(SIZEOF));
+        return new WINDOWPLACEMENT(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code WINDOWPLACEMENT} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static WINDOWPLACEMENT calloc() {
-        return wrap(WINDOWPLACEMENT.class, nmemCallocChecked(1, SIZEOF));
+        return new WINDOWPLACEMENT(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code WINDOWPLACEMENT} instance allocated with {@link BufferUtils}. */
     public static WINDOWPLACEMENT create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(WINDOWPLACEMENT.class, memAddress(container), container);
+        return new WINDOWPLACEMENT(memAddress(container), container);
     }
 
     /** Returns a new {@code WINDOWPLACEMENT} instance for the specified memory address. */
     public static WINDOWPLACEMENT create(long address) {
-        return wrap(WINDOWPLACEMENT.class, address);
+        return new WINDOWPLACEMENT(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static WINDOWPLACEMENT createSafe(long address) {
-        return address == NULL ? null : wrap(WINDOWPLACEMENT.class, address);
+        return address == NULL ? null : new WINDOWPLACEMENT(address, null);
     }
 
     /**
@@ -195,7 +194,7 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -204,7 +203,7 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -214,7 +213,7 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -224,34 +223,41 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code WINDOWPLACEMENT} instance allocated on the thread-local {@link MemoryStack}. */
-    public static WINDOWPLACEMENT mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code WINDOWPLACEMENT} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static WINDOWPLACEMENT callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static WINDOWPLACEMENT mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static WINDOWPLACEMENT callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static WINDOWPLACEMENT mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static WINDOWPLACEMENT callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code WINDOWPLACEMENT} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static WINDOWPLACEMENT mallocStack(MemoryStack stack) {
-        return wrap(WINDOWPLACEMENT.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static WINDOWPLACEMENT malloc(MemoryStack stack) {
+        return new WINDOWPLACEMENT(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -259,46 +265,28 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static WINDOWPLACEMENT callocStack(MemoryStack stack) {
-        return wrap(WINDOWPLACEMENT.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static WINDOWPLACEMENT calloc(MemoryStack stack) {
+        return new WINDOWPLACEMENT(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -339,9 +327,9 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
         /**
          * Creates a new {@code WINDOWPLACEMENT.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link WINDOWPLACEMENT#SIZEOF}, and its mark will be undefined.
+         * by {@link WINDOWPLACEMENT#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -367,39 +355,39 @@ public class WINDOWPLACEMENT extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code length} field. */
+        /** @return the value of the {@link WINDOWPLACEMENT#length} field. */
         @NativeType("UINT")
         public int length() { return WINDOWPLACEMENT.nlength(address()); }
-        /** Returns the value of the {@code flags} field. */
+        /** @return the value of the {@link WINDOWPLACEMENT#flags} field. */
         @NativeType("UINT")
         public int flags() { return WINDOWPLACEMENT.nflags(address()); }
-        /** Returns the value of the {@code showCmd} field. */
+        /** @return the value of the {@link WINDOWPLACEMENT#showCmd} field. */
         @NativeType("UINT")
         public int showCmd() { return WINDOWPLACEMENT.nshowCmd(address()); }
-        /** Returns a {@link POINT} view of the {@code ptMinPosition} field. */
+        /** @return a {@link POINT} view of the {@link WINDOWPLACEMENT#ptMinPosition} field. */
         public POINT ptMinPosition() { return WINDOWPLACEMENT.nptMinPosition(address()); }
-        /** Returns a {@link POINT} view of the {@code ptMaxPosition} field. */
+        /** @return a {@link POINT} view of the {@link WINDOWPLACEMENT#ptMaxPosition} field. */
         public POINT ptMaxPosition() { return WINDOWPLACEMENT.nptMaxPosition(address()); }
-        /** Returns a {@link RECT} view of the {@code rcNormalPosition} field. */
+        /** @return a {@link RECT} view of the {@link WINDOWPLACEMENT#rcNormalPosition} field. */
         public RECT rcNormalPosition() { return WINDOWPLACEMENT.nrcNormalPosition(address()); }
 
-        /** Sets the specified value to the {@code length} field. */
+        /** Sets the specified value to the {@link WINDOWPLACEMENT#length} field. */
         public Buffer length(@NativeType("UINT") int value) { WINDOWPLACEMENT.nlength(address(), value); return this; }
-        /** Sets the specified value to the {@code flags} field. */
+        /** Sets the specified value to the {@link WINDOWPLACEMENT#flags} field. */
         public Buffer flags(@NativeType("UINT") int value) { WINDOWPLACEMENT.nflags(address(), value); return this; }
-        /** Sets the specified value to the {@code showCmd} field. */
+        /** Sets the specified value to the {@link WINDOWPLACEMENT#showCmd} field. */
         public Buffer showCmd(@NativeType("UINT") int value) { WINDOWPLACEMENT.nshowCmd(address(), value); return this; }
-        /** Copies the specified {@link POINT} to the {@code ptMinPosition} field. */
+        /** Copies the specified {@link POINT} to the {@link WINDOWPLACEMENT#ptMinPosition} field. */
         public Buffer ptMinPosition(POINT value) { WINDOWPLACEMENT.nptMinPosition(address(), value); return this; }
-        /** Passes the {@code ptMinPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link WINDOWPLACEMENT#ptMinPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer ptMinPosition(java.util.function.Consumer<POINT> consumer) { consumer.accept(ptMinPosition()); return this; }
-        /** Copies the specified {@link POINT} to the {@code ptMaxPosition} field. */
+        /** Copies the specified {@link POINT} to the {@link WINDOWPLACEMENT#ptMaxPosition} field. */
         public Buffer ptMaxPosition(POINT value) { WINDOWPLACEMENT.nptMaxPosition(address(), value); return this; }
-        /** Passes the {@code ptMaxPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link WINDOWPLACEMENT#ptMaxPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer ptMaxPosition(java.util.function.Consumer<POINT> consumer) { consumer.accept(ptMaxPosition()); return this; }
-        /** Copies the specified {@link RECT} to the {@code rcNormalPosition} field. */
+        /** Copies the specified {@link RECT} to the {@link WINDOWPLACEMENT#rcNormalPosition} field. */
         public Buffer rcNormalPosition(RECT value) { WINDOWPLACEMENT.nrcNormalPosition(address(), value); return this; }
-        /** Passes the {@code rcNormalPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link WINDOWPLACEMENT#rcNormalPosition} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer rcNormalPosition(java.util.function.Consumer<RECT> consumer) { consumer.accept(rcNormalPosition()); return this; }
 
     }

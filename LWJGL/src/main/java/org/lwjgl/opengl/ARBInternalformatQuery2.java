@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_internalformat_query2.txt">ARB_internalformat_query2</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_internalformat_query2.txt">ARB_internalformat_query2</a> extension.
  * 
  * <p>This extension extends the {@link ARBInternalformatQuery#glGetInternalformativ GetInternalformativ} query that was added in the {@link ARBInternalformatQuery ARB_internalformat_query} extension to
  * provide applications with more granular per-format capability information.</p>
@@ -47,6 +45,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL20 OpenGL 2.0} and {@link ARBInternalformatQuery ARB_internalformat_query}. Promoted to core in {@link GL43 OpenGL 4.3}.</p>
  */
 public class ARBInternalformatQuery2 {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code target} parameter of GetInternalformativ and GetInternalformati64v. */
     public static final int
@@ -172,16 +172,8 @@ public class ARBInternalformatQuery2 {
         GL_VIEW_CLASS_BPTC_UNORM     = 0x82D2,
         GL_VIEW_CLASS_BPTC_FLOAT     = 0x82D3;
 
-    static { GL.initialize(); }
-
     protected ARBInternalformatQuery2() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetInternalformati64v
-        );
     }
 
     // --- [ glGetInternalformati64v ] ---

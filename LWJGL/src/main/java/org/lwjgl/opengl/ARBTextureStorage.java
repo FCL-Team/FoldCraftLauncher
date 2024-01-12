@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_storage.txt">ARB_texture_storage</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_storage.txt">ARB_texture_storage</a> extension.
  * 
  * <p>The texture image specification commands in OpenGL allow each level to be separately specified with different sizes, formats, types and so on, and only
  * imposes consistency checks at draw time. This adds overhead for implementations.</p>
@@ -29,21 +27,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBTextureStorage {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code value} parameter of GetTexParameter{if}v. */
     public static final int GL_TEXTURE_IMMUTABLE_FORMAT = 0x912F;
 
-    static { GL.initialize(); }
-
     protected ARBTextureStorage() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glTexStorage1D, caps.glTexStorage2D, caps.glTexStorage3D, ext.contains("GL_EXT_direct_state_access") ? caps.glTextureStorage1DEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glTextureStorage2DEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glTextureStorage3DEXT : -1L
-        );
     }
 
     // --- [ glTexStorage1D ] ---

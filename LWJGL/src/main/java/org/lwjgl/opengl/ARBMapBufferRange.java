@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_map_buffer_range.txt">ARB_map_buffer_range</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_map_buffer_range.txt">ARB_map_buffer_range</a> extension.
  * 
  * <p>ARB_map_buffer_range expands the buffer object API to allow greater performance when a client application only needs to write to a sub-range of a buffer
  * object. To that end, this extension introduces two new buffer object features: non-serialized buffer modification and explicit sub-range flushing for
@@ -33,6 +31,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBMapBufferRange {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code access} parameter of MapBufferRange. */
     public static final int
         GL_MAP_READ_BIT              = 0x1,
@@ -42,16 +42,8 @@ public class ARBMapBufferRange {
         GL_MAP_FLUSH_EXPLICIT_BIT    = 0x10,
         GL_MAP_UNSYNCHRONIZED_BIT    = 0x20;
 
-    static { GL.initialize(); }
-
     protected ARBMapBufferRange() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMapBufferRange, caps.glFlushMappedBufferRange
-        );
     }
 
     // --- [ glMapBufferRange ] ---

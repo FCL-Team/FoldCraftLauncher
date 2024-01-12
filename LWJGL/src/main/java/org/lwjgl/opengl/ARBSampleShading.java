@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sample_shading.txt">ARB_sample_shading</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sample_shading.txt">ARB_sample_shading</a> extension.
  * 
  * <p>In standard multisample rendering, an implementation is allowed to assign the same color and texture coordinate values to each sample, which then allows
  * the optimization where the shader is only evaluated once and then distributed to the samples that have been determined to be covered by the primitive
@@ -30,6 +28,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBSampleShading {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, and by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
      * GetDoublev.
@@ -39,16 +39,8 @@ public class ARBSampleShading {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetIntegerv, and GetFloatv. */
     public static final int GL_MIN_SAMPLE_SHADING_VALUE_ARB = 0x8C37;
 
-    static { GL.initialize(); }
-
     protected ARBSampleShading() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMinSampleShadingARB
-        );
     }
 
     // --- [ glMinSampleShadingARB ] ---

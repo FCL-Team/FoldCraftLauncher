@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_compute_shader.txt">ARB_compute_shader</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_compute_shader.txt">ARB_compute_shader</a> extension.
  * 
  * <p>Recent graphics hardware has become extremely powerful and a strong desire to harness this power for work (both graphics and non-graphics) that does not
  * fit the traditional graphics pipeline well has emerged. To address this, this extension adds a new single-stage program type known as a compute program.
@@ -35,6 +33,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL42 OpenGL 4.2}. Promoted to core in {@link GL43 OpenGL 4.3}.</p>
  */
 public class ARBComputeShader {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code type} parameter of CreateShader and returned in the {@code params} parameter by GetShaderiv. */
     public static final int GL_COMPUTE_SHADER = 0x91B9;
@@ -74,16 +74,8 @@ public class ARBComputeShader {
     /** Accepted by the {@code stages} parameter of UseProgramStages. */
     public static final int GL_COMPUTE_SHADER_BIT = 0x20;
 
-    static { GL.initialize(); }
-
     protected ARBComputeShader() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDispatchCompute, caps.glDispatchComputeIndirect
-        );
     }
 
     // --- [ glDispatchCompute ] ---

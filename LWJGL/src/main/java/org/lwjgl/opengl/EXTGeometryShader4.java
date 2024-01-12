@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader4.txt">EXT_geometry_shader4</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_geometry_shader4.txt">EXT_geometry_shader4</a> extension.
  * 
  * <p>EXT_geometry_shader4 defines a new shader type available to be run on the GPU, called a geometry shader. Geometry shaders are run after vertices are
  * transformed, but prior to color clamping, flat shading and clipping.</p>
@@ -30,6 +28,8 @@ import static org.lwjgl.system.Checks.*;
  * example, if a geometry shader expects points, an error will occur at Begin() time, if a primitive mode of TRIANGLES is specified.</p>
  */
 public class EXTGeometryShader4 {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code type} parameter of CreateShader and returned by the {@code params} parameter of GetShaderiv. */
     public static final int GL_GEOMETRY_SHADER_EXT = 0x8DD9;
@@ -73,16 +73,8 @@ public class EXTGeometryShader4 {
      */
     public static final int GL_PROGRAM_POINT_SIZE_EXT = 0x8642;
 
-    static { GL.initialize(); }
-
     protected EXTGeometryShader4() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glProgramParameteriEXT, caps.glFramebufferTextureEXT, caps.glFramebufferTextureLayerEXT, caps.glFramebufferTextureFaceEXT
-        );
     }
 
     // --- [ glProgramParameteriEXT ] ---

@@ -39,7 +39,7 @@ import static org.lwjgl.system.MemoryStack.*;
  *     Cursor cursor;
  * }</code></pre>
  */
-public class XSetWindowAttributes extends Struct implements NativeResource {
+public class XSetWindowAttributes extends Struct<XSetWindowAttributes> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -104,6 +104,15 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
         CURSOR = layout.offsetof(14);
     }
 
+    protected XSetWindowAttributes(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected XSetWindowAttributes create(long address, @Nullable ByteBuffer container) {
+        return new XSetWindowAttributes(address, container);
+    }
+
     /**
      * Creates a {@code XSetWindowAttributes} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -117,44 +126,44 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code background_pixmap} field. */
+    /** @return the value of the {@code background_pixmap} field. */
     @NativeType("Pixmap")
     public long background_pixmap() { return nbackground_pixmap(address()); }
-    /** Returns the value of the {@code background_pixel} field. */
+    /** @return the value of the {@code background_pixel} field. */
     @NativeType("unsigned long")
     public long background_pixel() { return nbackground_pixel(address()); }
-    /** Returns the value of the {@code border_pixmap} field. */
+    /** @return the value of the {@code border_pixmap} field. */
     @NativeType("Pixmap")
     public long border_pixmap() { return nborder_pixmap(address()); }
-    /** Returns the value of the {@code border_pixel} field. */
+    /** @return the value of the {@code border_pixel} field. */
     @NativeType("unsigned long")
     public long border_pixel() { return nborder_pixel(address()); }
-    /** Returns the value of the {@code bit_gravity} field. */
+    /** @return the value of the {@code bit_gravity} field. */
     public int bit_gravity() { return nbit_gravity(address()); }
-    /** Returns the value of the {@code win_gravity} field. */
+    /** @return the value of the {@code win_gravity} field. */
     public int win_gravity() { return nwin_gravity(address()); }
-    /** Returns the value of the {@code backing_store} field. */
+    /** @return the value of the {@code backing_store} field. */
     public int backing_store() { return nbacking_store(address()); }
-    /** Returns the value of the {@code backing_planes} field. */
+    /** @return the value of the {@code backing_planes} field. */
     @NativeType("unsigned long")
     public long backing_planes() { return nbacking_planes(address()); }
-    /** Returns the value of the {@code backing_pixel} field. */
+    /** @return the value of the {@code backing_pixel} field. */
     @NativeType("unsigned long")
     public long backing_pixel() { return nbacking_pixel(address()); }
-    /** Returns the value of the {@code save_under} field. */
+    /** @return the value of the {@code save_under} field. */
     @NativeType("Bool")
     public boolean save_under() { return nsave_under(address()) != 0; }
-    /** Returns the value of the {@code event_mask} field. */
+    /** @return the value of the {@code event_mask} field. */
     public long event_mask() { return nevent_mask(address()); }
-    /** Returns the value of the {@code do_not_propagate_mask} field. */
+    /** @return the value of the {@code do_not_propagate_mask} field. */
     public long do_not_propagate_mask() { return ndo_not_propagate_mask(address()); }
-    /** Returns the value of the {@code override_redirect} field. */
+    /** @return the value of the {@code override_redirect} field. */
     @NativeType("Bool")
     public boolean override_redirect() { return noverride_redirect(address()) != 0; }
-    /** Returns the value of the {@code colormap} field. */
+    /** @return the value of the {@code colormap} field. */
     @NativeType("Colormap")
     public long colormap() { return ncolormap(address()); }
-    /** Returns the value of the {@code cursor} field. */
+    /** @return the value of the {@code cursor} field. */
     @NativeType("Cursor")
     public long cursor() { return ncursor(address()); }
 
@@ -242,29 +251,29 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
 
     /** Returns a new {@code XSetWindowAttributes} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static XSetWindowAttributes malloc() {
-        return wrap(XSetWindowAttributes.class, nmemAllocChecked(SIZEOF));
+        return new XSetWindowAttributes(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code XSetWindowAttributes} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static XSetWindowAttributes calloc() {
-        return wrap(XSetWindowAttributes.class, nmemCallocChecked(1, SIZEOF));
+        return new XSetWindowAttributes(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code XSetWindowAttributes} instance allocated with {@link BufferUtils}. */
     public static XSetWindowAttributes create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(XSetWindowAttributes.class, memAddress(container), container);
+        return new XSetWindowAttributes(memAddress(container), container);
     }
 
     /** Returns a new {@code XSetWindowAttributes} instance for the specified memory address. */
     public static XSetWindowAttributes create(long address) {
-        return wrap(XSetWindowAttributes.class, address);
+        return new XSetWindowAttributes(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static XSetWindowAttributes createSafe(long address) {
-        return address == NULL ? null : wrap(XSetWindowAttributes.class, address);
+        return address == NULL ? null : new XSetWindowAttributes(address, null);
     }
 
     /**
@@ -273,7 +282,7 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -282,7 +291,7 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -292,7 +301,7 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -302,34 +311,41 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code XSetWindowAttributes} instance allocated on the thread-local {@link MemoryStack}. */
-    public static XSetWindowAttributes mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code XSetWindowAttributes} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static XSetWindowAttributes callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XSetWindowAttributes mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XSetWindowAttributes callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XSetWindowAttributes mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XSetWindowAttributes callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code XSetWindowAttributes} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static XSetWindowAttributes mallocStack(MemoryStack stack) {
-        return wrap(XSetWindowAttributes.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static XSetWindowAttributes malloc(MemoryStack stack) {
+        return new XSetWindowAttributes(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -337,46 +353,28 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static XSetWindowAttributes callocStack(MemoryStack stack) {
-        return wrap(XSetWindowAttributes.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static XSetWindowAttributes calloc(MemoryStack stack) {
+        return new XSetWindowAttributes(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -453,9 +451,9 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
         /**
          * Creates a new {@code XSetWindowAttributes.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link XSetWindowAttributes#SIZEOF}, and its mark will be undefined.
+         * by {@link XSetWindowAttributes#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -481,44 +479,44 @@ public class XSetWindowAttributes extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code background_pixmap} field. */
+        /** @return the value of the {@code background_pixmap} field. */
         @NativeType("Pixmap")
         public long background_pixmap() { return XSetWindowAttributes.nbackground_pixmap(address()); }
-        /** Returns the value of the {@code background_pixel} field. */
+        /** @return the value of the {@code background_pixel} field. */
         @NativeType("unsigned long")
         public long background_pixel() { return XSetWindowAttributes.nbackground_pixel(address()); }
-        /** Returns the value of the {@code border_pixmap} field. */
+        /** @return the value of the {@code border_pixmap} field. */
         @NativeType("Pixmap")
         public long border_pixmap() { return XSetWindowAttributes.nborder_pixmap(address()); }
-        /** Returns the value of the {@code border_pixel} field. */
+        /** @return the value of the {@code border_pixel} field. */
         @NativeType("unsigned long")
         public long border_pixel() { return XSetWindowAttributes.nborder_pixel(address()); }
-        /** Returns the value of the {@code bit_gravity} field. */
+        /** @return the value of the {@code bit_gravity} field. */
         public int bit_gravity() { return XSetWindowAttributes.nbit_gravity(address()); }
-        /** Returns the value of the {@code win_gravity} field. */
+        /** @return the value of the {@code win_gravity} field. */
         public int win_gravity() { return XSetWindowAttributes.nwin_gravity(address()); }
-        /** Returns the value of the {@code backing_store} field. */
+        /** @return the value of the {@code backing_store} field. */
         public int backing_store() { return XSetWindowAttributes.nbacking_store(address()); }
-        /** Returns the value of the {@code backing_planes} field. */
+        /** @return the value of the {@code backing_planes} field. */
         @NativeType("unsigned long")
         public long backing_planes() { return XSetWindowAttributes.nbacking_planes(address()); }
-        /** Returns the value of the {@code backing_pixel} field. */
+        /** @return the value of the {@code backing_pixel} field. */
         @NativeType("unsigned long")
         public long backing_pixel() { return XSetWindowAttributes.nbacking_pixel(address()); }
-        /** Returns the value of the {@code save_under} field. */
+        /** @return the value of the {@code save_under} field. */
         @NativeType("Bool")
         public boolean save_under() { return XSetWindowAttributes.nsave_under(address()) != 0; }
-        /** Returns the value of the {@code event_mask} field. */
+        /** @return the value of the {@code event_mask} field. */
         public long event_mask() { return XSetWindowAttributes.nevent_mask(address()); }
-        /** Returns the value of the {@code do_not_propagate_mask} field. */
+        /** @return the value of the {@code do_not_propagate_mask} field. */
         public long do_not_propagate_mask() { return XSetWindowAttributes.ndo_not_propagate_mask(address()); }
-        /** Returns the value of the {@code override_redirect} field. */
+        /** @return the value of the {@code override_redirect} field. */
         @NativeType("Bool")
         public boolean override_redirect() { return XSetWindowAttributes.noverride_redirect(address()) != 0; }
-        /** Returns the value of the {@code colormap} field. */
+        /** @return the value of the {@code colormap} field. */
         @NativeType("Colormap")
         public long colormap() { return XSetWindowAttributes.ncolormap(address()); }
-        /** Returns the value of the {@code cursor} field. */
+        /** @return the value of the {@code cursor} field. */
         @NativeType("Cursor")
         public long cursor() { return XSetWindowAttributes.ncursor(address()); }
 

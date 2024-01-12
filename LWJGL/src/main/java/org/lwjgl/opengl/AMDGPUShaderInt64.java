@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gpu_shader_int64.txt">AMD_gpu_shader_int64</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gpu_shader_int64.txt">AMD_gpu_shader_int64</a> extension.
  * 
  * <p>This extension was developed based on the NV_gpu_shader5 extension to allow implementations supporting 64-bit integers to expose the feature without
  * the additional requirements that are present in NV_gpu_shader5.</p>
@@ -34,6 +32,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL40 OpenGL 4.0} and GLSL 4.00.</p>
  */
 public class AMDGPUShaderInt64 {
+
+    static { GL.initialize(); }
 
     /** Returned by the {@code type} parameter of GetActiveAttrib, GetActiveUniform, and GetTransformFeedbackVarying. */
     public static final int
@@ -66,34 +66,8 @@ public class AMDGPUShaderInt64 {
         GL_FLOAT16_VEC3_NV        = 0x8FFA,
         GL_FLOAT16_VEC4_NV        = 0x8FFB;
 
-    static { GL.initialize(); }
-
     protected AMDGPUShaderInt64() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glUniform1i64NV, caps.glUniform2i64NV, caps.glUniform3i64NV, caps.glUniform4i64NV, caps.glUniform1i64vNV, caps.glUniform2i64vNV, 
-            caps.glUniform3i64vNV, caps.glUniform4i64vNV, caps.glUniform1ui64NV, caps.glUniform2ui64NV, caps.glUniform3ui64NV, caps.glUniform4ui64NV, 
-            caps.glUniform1ui64vNV, caps.glUniform2ui64vNV, caps.glUniform3ui64vNV, caps.glUniform4ui64vNV, caps.glGetUniformi64vNV, caps.glGetUniformui64vNV, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform1i64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform2i64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform3i64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform4i64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform1i64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform2i64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform3i64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform4i64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform1ui64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform2ui64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform3ui64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform4ui64NV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform1ui64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform2ui64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform3ui64vNV : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glProgramUniform4ui64vNV : -1L
-        );
     }
 
     // --- [ glUniform1i64NV ] ---

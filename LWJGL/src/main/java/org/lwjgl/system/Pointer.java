@@ -117,41 +117,6 @@ public interface Pointer {
             return String.format("%s pointer [0x%X]", getClass().getSimpleName(), address);
         }
 
-        @SuppressWarnings("unchecked")
-        protected static <T extends CustomBuffer<?>> T wrap(Class<? extends T> clazz, long address, int capacity) {
-            T buffer;
-            try {
-                buffer = (T)UNSAFE.allocateInstance(clazz);
-            } catch (InstantiationException e) {
-                throw new UnsupportedOperationException(e);
-            }
-
-            UNSAFE.putLong(buffer, ADDRESS, address);
-            UNSAFE.putInt(buffer, BUFFER_MARK, -1);
-            UNSAFE.putInt(buffer, BUFFER_LIMIT, capacity);
-            UNSAFE.putInt(buffer, BUFFER_CAPACITY, capacity);
-
-            return buffer;
-        }
-
-        @SuppressWarnings("unchecked")
-        protected static <T extends CustomBuffer<?>> T wrap(Class<? extends T> clazz, long address, int capacity, ByteBuffer container) {
-            T buffer;
-            try {
-                buffer = (T)UNSAFE.allocateInstance(clazz);
-            } catch (InstantiationException e) {
-                throw new UnsupportedOperationException(e);
-            }
-
-            UNSAFE.putLong(buffer, ADDRESS, address);
-            UNSAFE.putInt(buffer, BUFFER_MARK, -1);
-            UNSAFE.putInt(buffer, BUFFER_LIMIT, capacity);
-            UNSAFE.putInt(buffer, BUFFER_CAPACITY, capacity);
-            UNSAFE.putObject(buffer, BUFFER_CONTAINER, container);
-
-            return buffer;
-        }
-
     }
 
 }

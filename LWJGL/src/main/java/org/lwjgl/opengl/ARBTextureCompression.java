@@ -13,7 +13,7 @@ import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_compression.txt">ARB_texture_compression</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_compression.txt">ARB_texture_compression</a> extension.
  * 
  * <p>Compressing texture images can reduce texture memory utilization and improve performance when rendering textured primitives. This extension allows
  * OpenGL applications to use compressed texture images by providing:</p>
@@ -39,6 +39,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBTextureCompression {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code internalformat} parameter of TexImage1D, TexImage2D, TexImage3D, CopyTexImage1D, and CopyTexImage2D. */
     public static final int
         GL_COMPRESSED_ALPHA_ARB           = 0x84E9,
@@ -61,17 +63,8 @@ public class ARBTextureCompression {
         GL_NUM_COMPRESSED_TEXTURE_FORMATS_ARB = 0x86A2,
         GL_COMPRESSED_TEXTURE_FORMATS_ARB     = 0x86A3;
 
-    static { GL.initialize(); }
-
     protected ARBTextureCompression() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glCompressedTexImage3DARB, caps.glCompressedTexImage2DARB, caps.glCompressedTexImage1DARB, caps.glCompressedTexSubImage3DARB, 
-            caps.glCompressedTexSubImage2DARB, caps.glCompressedTexSubImage1DARB, caps.glGetCompressedTexImageARB
-        );
     }
 
     // --- [ glCompressedTexImage3DARB ] ---

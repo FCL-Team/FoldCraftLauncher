@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_object.txt">ARB_texture_buffer_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_object.txt">ARB_texture_buffer_object</a> extension.
  * 
  * <p>This extension provides a new texture type, called a buffer texture. Buffer textures are one-dimensional arrays of texels whose storage comes from an
  * attached buffer object. When a buffer object is bound to a buffer texture, a format is specified, and the data in the buffer object is treated as an
@@ -30,9 +28,11 @@ import static org.lwjgl.system.Checks.*;
  * object is attached to a buffer texture, a size is not specified; rather, the number of texels in the texture is taken by dividing the size of the buffer
  * object by the size of each texel.</p>
  * 
- * <p>Requires {@link GL20 OpenGL 2.0} and <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program4.txt">NV_gpu_program4</a> or {@link EXTGPUShader4 EXT_gpu_shader4}. Promoted to core in {@link GL31 OpenGL 3.1}.</p>
+ * <p>Requires {@link GL20 OpenGL 2.0} and <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program4.txt">NV_gpu_program4</a> or {@link EXTGPUShader4 EXT_gpu_shader4}. Promoted to core in {@link GL31 OpenGL 3.1}.</p>
  */
 public class ARBTextureBufferObject {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameter of BindBuffer, BufferData, BufferSubData, MapBuffer, MapBufferRangeARB, BindTexture, UnmapBuffer,
@@ -48,16 +48,8 @@ public class ARBTextureBufferObject {
         GL_TEXTURE_BUFFER_DATA_STORE_BINDING_ARB = 0x8C2D,
         GL_TEXTURE_BUFFER_FORMAT_ARB             = 0x8C2E;
 
-    static { GL.initialize(); }
-
     protected ARBTextureBufferObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glTexBufferARB
-        );
     }
 
     // --- [ glTexBufferARB ] ---

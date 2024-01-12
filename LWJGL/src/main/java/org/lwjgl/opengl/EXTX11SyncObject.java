@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_x11_sync_object.txt">EXT_x11_sync_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_x11_sync_object.txt">EXT_x11_sync_object</a> extension.
  * 
  * <p>Synchronization objects added the ability to better coordinate operations between multiple GL command streams. However, it is desirable to have the
  * same level of coordination between GL command streams and external rendering APIs. This extension introduces two new concepts to build upon the
@@ -31,19 +29,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTX11SyncObject {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code external_sync_type} parameter of ImportSyncEXT. */
     public static final int GL_SYNC_X11_FENCE_EXT = 0x90E1;
 
-    static { GL.initialize(); }
-
     protected EXTX11SyncObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glImportSyncEXT
-        );
     }
 
     // --- [ glImportSyncEXT ] ---

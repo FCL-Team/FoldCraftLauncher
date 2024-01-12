@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_func_separate.txt">EXT_blend_func_separate</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_blend_func_separate.txt">EXT_blend_func_separate</a> extension.
  * 
  * <p>Blending capability is extended by defining a function that allows independent setting of the RGB and alpha blend factors for blend operations that
  * require source and destination blend factors. It is not always desired that the blending used for RGB is also applied to alpha.</p>
@@ -19,6 +17,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTBlendFuncSeparate {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
         GL_BLEND_DST_RGB_EXT   = 0x80C8,
@@ -26,16 +26,8 @@ public class EXTBlendFuncSeparate {
         GL_BLEND_DST_ALPHA_EXT = 0x80CA,
         GL_BLEND_SRC_ALPHA_EXT = 0x80CB;
 
-    static { GL.initialize(); }
-
     protected EXTBlendFuncSeparate() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBlendFuncSeparateEXT
-        );
     }
 
     // --- [ glBlendFuncSeparateEXT ] ---
