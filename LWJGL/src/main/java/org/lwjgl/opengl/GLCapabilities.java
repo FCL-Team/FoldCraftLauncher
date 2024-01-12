@@ -7690,9 +7690,6 @@ public final class GLCapabilities {
     }
 
     private static boolean check_GL30(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL30")) {
-            return false;
-        }
 
         return (checkFunctions(provider, caps, new int[] {
             551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 
@@ -7713,13 +7710,10 @@ public final class GLCapabilities {
             "glGetTexParameterIuiv", "glColorMaski", "glGetBooleani_v", "glGetIntegeri_v", "glEnablei", "glDisablei", "glIsEnabledi", "glBindBufferRange", 
             "glBindBufferBase", "glBeginTransformFeedback", "glEndTransformFeedback", "glTransformFeedbackVaryings", "glGetTransformFeedbackVarying", 
             "glBindVertexArray", "glDeleteVertexArrays", "glGenVertexArrays", "glIsVertexArray"
-        )) || reportMissing("GL", "OpenGL30");
+        )) && ext.contains("OpenGL30") || reportMissing("GL", "OpenGL30");
     }
 
     private static boolean check_GL31(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL31")) {
-            return false;
-        }
 
         return (checkFunctions(provider, caps, new int[] {
             635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646
@@ -7727,13 +7721,10 @@ public final class GLCapabilities {
             "glDrawArraysInstanced", "glDrawElementsInstanced", "glCopyBufferSubData", "glPrimitiveRestartIndex", "glTexBuffer", "glGetUniformIndices", 
             "glGetActiveUniformsiv", "glGetActiveUniformName", "glGetUniformBlockIndex", "glGetActiveUniformBlockiv", "glGetActiveUniformBlockName", 
             "glUniformBlockBinding"
-        )) || reportMissing("GL", "OpenGL31");
+        )) && ext.contains("OpenGL31") || reportMissing("GL", "OpenGL31");
     }
 
     private static boolean check_GL32(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL32")) {
-            return false;
-        }
 
         return (checkFunctions(provider, caps, new int[] {
             647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665
@@ -7742,13 +7733,10 @@ public final class GLCapabilities {
             "glMultiDrawElementsBaseVertex", "glProvokingVertex", "glTexImage2DMultisample", "glTexImage3DMultisample", "glGetMultisamplefv", "glSampleMaski", 
             "glFramebufferTexture", "glFenceSync", "glIsSync", "glDeleteSync", "glClientWaitSync", "glWaitSync", "glGetInteger64v", "glGetInteger64i_v", 
             "glGetSynciv"
-        )) || reportMissing("GL", "OpenGL32");
+        )) && ext.contains("OpenGL32") || reportMissing("GL", "OpenGL32");
     }
 
     private static boolean check_GL33(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
-        if (!ext.contains("OpenGL33")) {
-            return false;
-        }
 
         return ((fc || checkFunctions(provider, caps, new int[] {
             686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 
@@ -7767,7 +7755,7 @@ public final class GLCapabilities {
             "glGetSamplerParameterfv", "glGetSamplerParameterIiv", "glGetSamplerParameterIuiv", "glQueryCounter", "glGetQueryObjecti64v", 
             "glGetQueryObjectui64v", "glVertexAttribDivisor", "glVertexAttribP1ui", "glVertexAttribP2ui", "glVertexAttribP3ui", "glVertexAttribP4ui", 
             "glVertexAttribP1uiv", "glVertexAttribP2uiv", "glVertexAttribP3uiv", "glVertexAttribP4uiv"
-        )) || reportMissing("GL", "OpenGL33");
+        )) && ext.contains("OpenGL33") || reportMissing("GL", "OpenGL33");
     }
 
     private static boolean check_GL40(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
