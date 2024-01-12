@@ -23,11 +23,11 @@
 <h1 align="center">Features</h1>
 
 - [x] Run Minecraft on all versions
-- [x] Run Forge, LiteLoader, OptiFine, Fabric, Quilt and others
+- [x] Run Forge, NeoForge, LiteLoader, OptiFine, Fabric, Quilt and others
 - [x] Java 8 and Java 17
 - [x] Mouse Virtual
 - [x] Download Mods, ModPacks, ResourcePacks and Worlds
-- [x] Using Shaders (with VirGL)
+- [x] Using Shaders (with VirGL/Zink)
 - [x] Create custom controllers
 - [x] Customizable launcher themes and colors
 - [x] And much more!
