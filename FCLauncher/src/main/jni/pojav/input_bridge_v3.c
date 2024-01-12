@@ -511,11 +511,11 @@ JNIEXPORT void JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeSetWindowAttrib(
         return;
     }
 
-    (*pojav_environ->runtimeJNIEnvPtr_JRE)->CallStaticVoidMethod(
-        pojav_environ->runtimeJNIEnvPtr_JRE,
-        pojav_environ->vmGlfwClass, pojav_environ->method_glftSetWindowAttrib,
-        (jlong) pojav_environ->showingWindow, attrib, value
-    );
+//    (*pojav_environ->runtimeJNIEnvPtr_JRE)->CallStaticVoidMethod(
+//        pojav_environ->runtimeJNIEnvPtr_JRE,
+//        pojav_environ->vmGlfwClass, pojav_environ->method_glftSetWindowAttrib,
+//        (jlong) pojav_environ->showingWindow, attrib, value
+//    );
 }
 const static JNINativeMethod critical_fcns[] = {
         {"nativeSetUseInputStackQueue", "(Z)V", critical_set_stackqueue},

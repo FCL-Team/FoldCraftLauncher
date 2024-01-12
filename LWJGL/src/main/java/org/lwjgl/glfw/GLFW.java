@@ -1087,7 +1087,7 @@ public class GLFW
             internalChangeMonitorSize(w, h);
             glfwSetWindowSize(window, mGLFWWindowWidth, mGLFWWindowHeight);
         }catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

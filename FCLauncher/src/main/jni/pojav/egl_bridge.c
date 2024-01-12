@@ -316,7 +316,7 @@ EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
         ptr = br_init_context((basic_render_window_t *) contextSrc);
     }
     //to prevent internalWindowSizeChanged cause too much error
-    pojav_environ->showingWindow = (long) ptr;
+//    pojav_environ->showingWindow = (long) ptr;
     return ptr;
 }
 
