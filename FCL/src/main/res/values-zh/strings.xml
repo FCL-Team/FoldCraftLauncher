@@ -406,6 +406,7 @@
     <string name="install_success">安装成功</string>
 
     <string name="jar_execute">执行 Jar 文件</string>
+    <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
@@ -870,6 +871,4 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
-
-    <string name="dialog_custom_args">使用自定义参数执行</string>
 </resources>

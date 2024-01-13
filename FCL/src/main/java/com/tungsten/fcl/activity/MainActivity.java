@@ -180,13 +180,12 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 editText.setLines(1);
                 editText.setMaxLines(1);
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.dialog_custom_args)
+                        .setTitle(R.string.jar_execute_custom_args)
                         .setView(editText)
-                        .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive, (dialog1, which) -> {
-                            JarExecutorHelper.exec(MainActivity.this, null, 8, editText.getText().toString());
-                        })
+                        .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive, (dialog1, which) -> JarExecutorHelper.exec(MainActivity.this, null, 8, editText.getText().toString()))
                         .setNegativeButton(com.tungsten.fcllibrary.R.string.dialog_negative, null)
                         .create();
+                ThemeEngine.getInstance().applyFullscreen(dialog.getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
                 dialog.show();
                 return true;
             });

@@ -45,7 +45,7 @@ public class JarExecutorLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
 
         if (args != null) {
-            for (String s : Arrays.asList(args.split(" "))) {
+            for (String s : args.split(" ")) {
                 res.add(s);
             }
         } else {
