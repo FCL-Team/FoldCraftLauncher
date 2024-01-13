@@ -50,6 +50,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class DefaultLauncher extends Launcher {
 
@@ -148,6 +149,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
         res.addDefault("-Duser.language=", System.getProperty("user.language"));
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
+        res.addDefault("-Djna.boot.library.path=", context.getApplicationInfo().nativeLibraryDir);
+        res.addDefault("-Dorg.lwjgl.vulkan.libname=","libvulkan.so");
 
         if (getInjectorArg() != null && options.isBeGesture()) {
             res.addDefault("-Dfcl.injector=", getInjectorArg());
@@ -178,8 +181,14 @@ public class DefaultLauncher extends Launcher {
         configuration.put("${assets_root}", gameAssets.toAbsolutePath().toString());
 
         configuration.put("${natives_directory}", "${natives_directory}");
-
-        res.addAll(Arguments.parseArguments(version.getArguments().map(Arguments::getJvm).orElseGet(this::getDefaultJVMArguments), configuration));
+        List<String> jvmArgs = Arguments.parseArguments(version.getArguments().map(Arguments::getJvm).orElseGet(this::getDefaultJVMArguments), configuration);
+        res.addAll(jvmArgs.stream().filter(arg -> {
+            if (arg.contains("-Djna.tmpdir=") || arg.contains("-Dorg.lwjgl.system.SharedLibraryExtractPath=")) {
+                return false;
+            } else {
+                return true;
+            }
+        }).collect(Collectors.toList()));
         Arguments argumentsFromAuthInfo = authInfo.getLaunchArguments(options);
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getJvm() != null && !argumentsFromAuthInfo.getJvm().isEmpty())
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getJvm(), configuration));
