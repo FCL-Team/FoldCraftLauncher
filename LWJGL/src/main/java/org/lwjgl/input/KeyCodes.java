@@ -155,8 +155,9 @@ public class KeyCodes {
 //		public static final int KEY_POWER           = 0xDE;
 //		public static final int KEY_SLEEP           = 0xDF;
 
-		default: 	System.out.println("UNKNOWN GLFW KEY CODE: " + glfwKeyCode);
-					return Keyboard.KEY_NONE;
+		default:
+//			System.out.println("UNKNOWN GLFW KEY CODE: " + glfwKeyCode);
+			return Keyboard.KEY_NONE;
 		}
 	}
 	
