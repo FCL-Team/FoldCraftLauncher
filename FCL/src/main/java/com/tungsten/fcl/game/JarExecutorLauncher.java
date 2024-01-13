@@ -14,6 +14,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ public class JarExecutorLauncher extends Launcher {
         this.javaVersion = javaVersion;
     }
 
-    private CommandBuilder generateCommandLine() {
+    private CommandBuilder generateCommandLine(String args) {
         CommandBuilder res = new CommandBuilder();
 
         getCacioJavaArgs(res, javaVersion == 8);
@@ -43,9 +44,14 @@ public class JarExecutorLauncher extends Launcher {
         res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
 
-        res.add("-jar");
-        res.add(destJarPath);
-
+        if (args != null) {
+            for (String s : Arrays.asList(args.split(" "))) {
+                res.add(s);
+            }
+        } else {
+            res.add("-jar");
+            res.add(destJarPath);
+        }
         return res;
     }
 
@@ -96,10 +102,11 @@ public class JarExecutorLauncher extends Launcher {
 
     @Override
     public FCLBridge launch() throws IOException, InterruptedException {
-        if (destJarPath == null)
-            throw new RuntimeException("ExecutorLauncher not initialized!");
+        return null;
+    }
 
-        final CommandBuilder command = generateCommandLine();
+    public FCLBridge launch(String args) throws IOException, InterruptedException {
+        final CommandBuilder command = generateCommandLine(args);
 
         List<String> rawCommandLine = command.asList();
 

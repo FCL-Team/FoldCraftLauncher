@@ -870,4 +870,6 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
+
+    <string name="dialog_custom_args">使用自定义参数执行</string>
 </resources>
