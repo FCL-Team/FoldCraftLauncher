@@ -11,10 +11,8 @@ import org.lwjgl.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_elements_base_vertex.txt">ARB_draw_elements_base_vertex</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_draw_elements_base_vertex.txt">ARB_draw_elements_base_vertex</a> extension.
  * 
  * <p>This extension provides a method to specify a "base vertex offset" value which is effectively added to every vertex index that is transferred through
  * {@link GL11C#glDrawElements DrawElements}.</p>
@@ -73,12 +71,6 @@ public class ARBDrawElementsBaseVertex {
 
     protected ARBDrawElementsBaseVertex() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawElementsBaseVertex, caps.glDrawRangeElementsBaseVertex, caps.glDrawElementsInstancedBaseVertex, caps.glMultiDrawElementsBaseVertex
-        );
     }
 
     // --- [ glDrawElementsBaseVertex ] ---
@@ -328,12 +320,12 @@ public class ARBDrawElementsBaseVertex {
      * @param indices    a pointer to the location where the indices are stored
      * @param basevertex a pointer to the location where the base vertices are stored
      */
-    public static void glMultiDrawElementsBaseVertex(@NativeType("GLenum") int mode, @NativeType("GLsizei const *") IntBuffer count, @NativeType("GLenum") int type, @NativeType("void const **") PointerBuffer indices, @NativeType("GLint *") IntBuffer basevertex) {
+    public static void glMultiDrawElementsBaseVertex(@NativeType("GLenum") int mode, @NativeType("GLsizei const *") IntBuffer count, @NativeType("GLenum") int type, @NativeType("void const * const *") PointerBuffer indices, @NativeType("GLint *") IntBuffer basevertex) {
         GL32C.glMultiDrawElementsBaseVertex(mode, count, type, indices, basevertex);
     }
 
     /** Array version of: {@link #glMultiDrawElementsBaseVertex MultiDrawElementsBaseVertex} */
-    public static void glMultiDrawElementsBaseVertex(@NativeType("GLenum") int mode, @NativeType("GLsizei const *") int[] count, @NativeType("GLenum") int type, @NativeType("void const **") PointerBuffer indices, @NativeType("GLint *") int[] basevertex) {
+    public static void glMultiDrawElementsBaseVertex(@NativeType("GLenum") int mode, @NativeType("GLsizei const *") int[] count, @NativeType("GLenum") int type, @NativeType("void const * const *") PointerBuffer indices, @NativeType("GLint *") int[] basevertex) {
         GL32C.glMultiDrawElementsBaseVertex(mode, count, type, indices, basevertex);
     }
 

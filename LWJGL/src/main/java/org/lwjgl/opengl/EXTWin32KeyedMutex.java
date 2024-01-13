@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_win32_keyed_mutex.txt">EXT_win32_keyed_mutex</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_win32_keyed_mutex.txt">EXT_win32_keyed_mutex</a> extension.
  * 
  * <p>Direct3D image objects may have a built-in synchronization primitive associated with them that can be used to synchronize access to their contents
  * across process and API boundaries. This extension provides access to that synchronization primitive via two new commands that operate on GL memory
@@ -24,12 +22,6 @@ public class EXTWin32KeyedMutex {
 
     protected EXTWin32KeyedMutex() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glAcquireKeyedMutexWin32EXT, caps.glReleaseKeyedMutexWin32EXT
-        );
     }
 
     // --- [ glAcquireKeyedMutexWin32EXT ] ---

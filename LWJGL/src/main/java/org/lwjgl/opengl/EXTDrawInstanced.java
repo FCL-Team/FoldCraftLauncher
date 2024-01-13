@@ -9,11 +9,10 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_draw_instanced.txt">EXT_draw_instanced</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_draw_instanced.txt">EXT_draw_instanced</a> extension.
  * 
  * <p>This extension provides the means to render multiple instances of an object with a single draw call, and an "instance ID" variable which can be used by
  * the vertex program to compute per-instance values, typically an object's transform.</p>
@@ -26,12 +25,6 @@ public class EXTDrawInstanced {
 
     protected EXTDrawInstanced() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDrawArraysInstancedEXT, caps.glDrawElementsInstancedEXT
-        );
     }
 
     // --- [ glDrawArraysInstancedEXT ] ---

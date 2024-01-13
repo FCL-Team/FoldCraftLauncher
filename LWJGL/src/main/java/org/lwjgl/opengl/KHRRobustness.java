@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_robustness.txt">KHR_robustness</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_robustness.txt">KHR_robustness</a> extension.
  * 
  * <p>Several recent trends in how OpenGL ES integrates into modern computer systems have created new requirements for robustness and security for GL
  * rendering contexts.</p>
@@ -50,6 +48,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class KHRRobustness {
 
+    static { GL.initialize(); }
+
     /** Returned by {@link #glGetGraphicsResetStatus GetGraphicsResetStatus}. */
     public static final int
         GL_NO_ERROR               = 0x0,
@@ -70,16 +70,8 @@ public class KHRRobustness {
     /** Returned by {@link GL11C#glGetError GetError}. */
     public static final int GL_CONTEXT_LOST = 0x507;
 
-    static { GL.initialize(); }
-
     protected KHRRobustness() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetGraphicsResetStatus, caps.glReadnPixels, caps.glGetnUniformfv, caps.glGetnUniformiv, caps.glGetnUniformuiv
-        );
     }
 
     // --- [ glGetGraphicsResetStatus ] ---

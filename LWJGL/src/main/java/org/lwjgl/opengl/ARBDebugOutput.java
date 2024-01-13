@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_debug_output.txt">ARB_debug_output</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_debug_output.txt">ARB_debug_output</a> extension.
  * 
  * <p>This extension allows the GL to notify applications when various events occur that may be useful during application development and debugging.</p>
  * 
@@ -60,6 +60,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * provided by debug contexts through other extensions.</p>
  */
 public class ARBDebugOutput {
+
+    static { GL.initialize(); }
 
     /**
      * Tokens accepted by the {@code target} parameters of Enable, Disable, and IsEnabled.
@@ -137,16 +139,8 @@ public class ARBDebugOutput {
         GL_DEBUG_SEVERITY_MEDIUM_ARB = 0x9147,
         GL_DEBUG_SEVERITY_LOW_ARB    = 0x9148;
 
-    static { GL.initialize(); }
-
     protected ARBDebugOutput() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDebugMessageControlARB, caps.glDebugMessageInsertARB, caps.glDebugMessageCallbackARB, caps.glGetDebugMessageLogARB
-        );
     }
 
     // --- [ glDebugMessageControlARB ] ---

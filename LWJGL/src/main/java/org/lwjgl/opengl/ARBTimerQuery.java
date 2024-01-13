@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_timer_query.txt">ARB_timer_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_timer_query.txt">ARB_timer_query</a> extension.
  * 
  * <p>Applications can benefit from accurate timing information in a number of different ways. During application development, timing information can help
  * identify application or driver bottlenecks. At run time, applications can use timing information to dynamically adjust the amount of detail in a scene
@@ -30,6 +28,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBTimerQuery {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code target} parameter of BeginQuery, EndQuery, and GetQueryiv. */
     public static final int GL_TIME_ELAPSED = 0x88BF;
 
@@ -39,16 +39,8 @@ public class ARBTimerQuery {
      */
     public static final int GL_TIMESTAMP = 0x8E28;
 
-    static { GL.initialize(); }
-
     protected ARBTimerQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glQueryCounter, caps.glGetQueryObjecti64v, caps.glGetQueryObjectui64v
-        );
     }
 
     // --- [ glQueryCounter ] ---
@@ -84,6 +76,17 @@ public class ARBTimerQuery {
     /**
      * Returns the 64bit integer value of query object parameter.
      *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link GL15#GL_QUERY_RESULT QUERY_RESULT}</td><td>{@link GL15#GL_QUERY_RESULT_AVAILABLE QUERY_RESULT_AVAILABLE}</td></tr></table>
+     * @param params the requested data
+     */
+    public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") long params) {
+        GL33C.glGetQueryObjecti64v(id, pname, params);
+    }
+
+    /**
+     * Returns the 64bit integer value of query object parameter.
+     *
      * @param id    the name of a query object
      * @param pname the symbolic name of a query object parameter. One of:<br><table><tr><td>{@link GL15#GL_QUERY_RESULT QUERY_RESULT}</td><td>{@link GL15#GL_QUERY_RESULT_AVAILABLE QUERY_RESULT_AVAILABLE}</td></tr></table>
      */
@@ -107,6 +110,17 @@ public class ARBTimerQuery {
      * @param params the requested data
      */
     public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") LongBuffer params) {
+        GL33C.glGetQueryObjectui64v(id, pname, params);
+    }
+
+    /**
+     * Unsigned version of {@link #glGetQueryObjecti64v GetQueryObjecti64v}.
+     *
+     * @param id     the name of a query object
+     * @param pname  the symbolic name of a query object parameter
+     * @param params the requested data
+     */
+    public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") long params) {
         GL33C.glGetQueryObjectui64v(id, pname, params);
     }
 

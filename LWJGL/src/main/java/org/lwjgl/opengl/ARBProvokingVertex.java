@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_provoking_vertex.txt">ARB_provoking_vertex</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_provoking_vertex.txt">ARB_provoking_vertex</a> extension.
  * 
  * <p>This extension provides an alternative provoking vertex convention for rendering lines, triangles, and (optionally depending on the implementation)
  * quads.</p>
@@ -32,6 +30,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBProvokingVertex {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code mode} parameter of ProvokingVertex. */
     public static final int
         GL_FIRST_VERTEX_CONVENTION = 0x8E4D,
@@ -42,16 +42,8 @@ public class ARBProvokingVertex {
         GL_PROVOKING_VERTEX                         = 0x8E4F,
         GL_QUADS_FOLLOW_PROVOKING_VERTEX_CONVENTION = 0x8E4C;
 
-    static { GL.initialize(); }
-
     protected ARBProvokingVertex() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glProvokingVertex
-        );
     }
 
     // --- [ glProvokingVertex ] ---

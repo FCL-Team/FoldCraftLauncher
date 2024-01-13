@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_gpu_multicast2.txt">NVX_gpu_multicast2</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_gpu_multicast2.txt">NVX_gpu_multicast2</a> extension.
  * 
  * <p>This extension provides additional mechanisms that influence multicast rendering which is simultaneous rendering to multiple GPUs.</p>
  * 
@@ -26,13 +26,6 @@ public class NVXGpuMulticast2 {
 
     protected NVXGpuMulticast2() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glAsyncCopyImageSubDataNVX, caps.glAsyncCopyBufferSubDataNVX, caps.glUploadGpuMaskNVX, caps.glMulticastViewportArrayvNVX, 
-            caps.glMulticastScissorArrayvNVX, caps.glMulticastViewportPositionWScaleNVX
-        );
     }
 
     // --- [ glAsyncCopyImageSubDataNVX ] ---

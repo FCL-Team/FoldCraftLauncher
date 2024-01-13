@@ -7,8 +7,6 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
  * Virtual Reality (VR) applications often involve a post-processing step to apply a "barrel" distortion to the rendered image to correct the "pincushion"
  * distortion introduced by the optics in a VR device. The barrel distorted image has lower resolution along the edges compared to the center. Since the
@@ -31,6 +29,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVClipSpaceWScaling {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code cap} parameter of Enable, Disable, IsEnabled. */
     public static final int GL_VIEWPORT_POSITION_W_SCALE_NV = 0x937C;
 
@@ -39,16 +39,8 @@ public class NVClipSpaceWScaling {
         GL_VIEWPORT_POSITION_W_SCALE_X_COEFF = 0x937D,
         GL_VIEWPORT_POSITION_W_SCALE_Y_COEFF = 0x937E;
 
-    static { GL.initialize(); }
-
     protected NVClipSpaceWScaling() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glViewportPositionWScaleNV
-        );
     }
 
     // --- [ glViewportPositionWScaleNV ] ---

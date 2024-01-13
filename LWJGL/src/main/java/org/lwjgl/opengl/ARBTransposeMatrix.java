@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transpose_matrix.txt">ARB_transpose_matrix</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transpose_matrix.txt">ARB_transpose_matrix</a> extension.
  * 
  * <p>New functions and tokens are added allowing application matrices stored in row major order rather than column major order to be transferred to the
  * OpenGL implementation. This allows an application to use standard C-language 2-dimensional arrays ({@code m[row][col]}) and have the array indices match the
@@ -28,6 +28,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBTransposeMatrix {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
         GL_TRANSPOSE_MODELVIEW_MATRIX_ARB  = 0x84E3,
@@ -35,16 +37,8 @@ public class ARBTransposeMatrix {
         GL_TRANSPOSE_TEXTURE_MATRIX_ARB    = 0x84E5,
         GL_TRANSPOSE_COLOR_MATRIX_ARB      = 0x84E6;
 
-    static { GL.initialize(); }
-
     protected ARBTransposeMatrix() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glLoadTransposeMatrixfARB, caps.glLoadTransposeMatrixdARB, caps.glMultTransposeMatrixfARB, caps.glMultTransposeMatrixdARB
-        );
     }
 
     // --- [ glLoadTransposeMatrixfARB ] ---

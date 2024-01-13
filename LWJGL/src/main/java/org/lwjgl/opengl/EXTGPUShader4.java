@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_gpu_shader4.txt">EXT_gpu_shader4</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_gpu_shader4.txt">EXT_gpu_shader4</a> extension.
  * 
  * <p>This extension provides a set of new features to the OpenGL Shading Language and related APIs to support capabilities of new hardware. In particular,
  * this extension provides the following functionality:</p>
@@ -69,6 +69,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTGPUShader4 {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameters of GetVertexAttribdv, GetVertexAttribfv, GetVertexAttribiv, GetVertexAttribIuivEXT and GetVertexAttribIivEXT. */
     public static final int GL_VERTEX_ATTRIB_ARRAY_INTEGER_EXT = 0x88FD;
 
@@ -105,22 +107,8 @@ public class EXTGPUShader4 {
         GL_MIN_PROGRAM_TEXEL_OFFSET_EXT = 0x8904,
         GL_MAX_PROGRAM_TEXEL_OFFSET_EXT = 0x8905;
 
-    static { GL.initialize(); }
-
     protected EXTGPUShader4() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glVertexAttribI1iEXT, caps.glVertexAttribI2iEXT, caps.glVertexAttribI3iEXT, caps.glVertexAttribI4iEXT, caps.glVertexAttribI1uiEXT, 
-            caps.glVertexAttribI2uiEXT, caps.glVertexAttribI3uiEXT, caps.glVertexAttribI4uiEXT, caps.glVertexAttribI1ivEXT, caps.glVertexAttribI2ivEXT, 
-            caps.glVertexAttribI3ivEXT, caps.glVertexAttribI4ivEXT, caps.glVertexAttribI1uivEXT, caps.glVertexAttribI2uivEXT, caps.glVertexAttribI3uivEXT, 
-            caps.glVertexAttribI4uivEXT, caps.glVertexAttribI4bvEXT, caps.glVertexAttribI4svEXT, caps.glVertexAttribI4ubvEXT, caps.glVertexAttribI4usvEXT, 
-            caps.glVertexAttribIPointerEXT, caps.glGetVertexAttribIivEXT, caps.glGetVertexAttribIuivEXT, caps.glGetUniformuivEXT, 
-            caps.glBindFragDataLocationEXT, caps.glGetFragDataLocationEXT, caps.glUniform1uiEXT, caps.glUniform2uiEXT, caps.glUniform3uiEXT, 
-            caps.glUniform4uiEXT, caps.glUniform1uivEXT, caps.glUniform2uivEXT, caps.glUniform3uivEXT, caps.glUniform4uivEXT
-        );
     }
 
     // --- [ glVertexAttribI1iEXT ] ---

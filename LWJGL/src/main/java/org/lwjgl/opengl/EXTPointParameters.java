@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_point_parameters.txt">EXT_point_parameters</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_point_parameters.txt">EXT_point_parameters</a> extension.
  * 
  * <p>This extension supports additional geometric characteristics of points. It can be used to render particles or tiny light sources, commonly referred as
  * "Light points".</p>
@@ -43,7 +43,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * Here we simplify the raster brightness to be a function of the rasterized point area and point transparency.</p>
  * 
  * <pre><code>
- *             brightness(Pe)      brightness(Pe) &gt;= Threshold_Area
+ *             brightness(Pe)      brightness(Pe) &ge; Threshold_Area
  * area(Pe) =
  *             Threshold_Area      Otherwise
  * 
@@ -59,6 +59,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTPointParameters {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of glPointParameterfvEXT, and the {@code pname} of glGet. */
     public static final int
         GL_POINT_SIZE_MIN_EXT            = 0x8126,
@@ -66,16 +68,8 @@ public class EXTPointParameters {
         GL_POINT_FADE_THRESHOLD_SIZE_EXT = 0x8128,
         GL_DISTANCE_ATTENUATION_EXT      = 0x8129;
 
-    static { GL.initialize(); }
-
     protected EXTPointParameters() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPointParameterfEXT, caps.glPointParameterfvEXT
-        );
     }
 
     // --- [ glPointParameterfEXT ] ---

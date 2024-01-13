@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_copy_buffer.txt">ARB_copy_buffer</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_copy_buffer.txt">ARB_copy_buffer</a> extension.
  * 
  * <p>This extension provides a mechanism to do an accelerated copy from one buffer object to another. This may be useful to load buffer objects in a "loading
  * thread" while minimizing cost and synchronization effort in the "rendering thread."</p>
@@ -18,6 +16,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL31 OpenGL 3.1}.</p>
  */
 public class ARBCopyBuffer {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the target parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv, MapBufferRange,
@@ -27,16 +27,8 @@ public class ARBCopyBuffer {
         GL_COPY_READ_BUFFER  = 0x8F36,
         GL_COPY_WRITE_BUFFER = 0x8F37;
 
-    static { GL.initialize(); }
-
     protected ARBCopyBuffer() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glCopyBufferSubData
-        );
     }
 
     // --- [ glCopyBufferSubData ] ---

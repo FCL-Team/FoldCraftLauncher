@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_color_buffer_float.txt">ARB_color_buffer_float</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_color_buffer_float.txt">ARB_color_buffer_float</a> extension.
  * 
  * <p>The standard OpenGL pipeline is based on a fixed-point pipeline. While color components are nominally floating-point values in the pipeline, components
  * are frequently clamped to the range [0,1] to accomodate the fixed-point color buffer representation and allow for fixed-point computational hardware.</p>
@@ -33,6 +31,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBColorBufferFloat {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameters of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_RGBA_FLOAT_MODE_ARB = 0x8820;
 
@@ -45,16 +45,8 @@ public class ARBColorBufferFloat {
     /** Accepted by the {@code clamp} parameter of ClampColorARB. */
     public static final int GL_FIXED_ONLY_ARB = 0x891D;
 
-    static { GL.initialize(); }
-
     protected ARBColorBufferFloat() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glClampColorARB
-        );
     }
 
     // --- [ glClampColorARB ] ---

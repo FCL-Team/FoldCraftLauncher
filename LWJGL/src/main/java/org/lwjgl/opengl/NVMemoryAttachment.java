@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_memory_attachment.txt">NV_memory_attachment</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_memory_attachment.txt">NV_memory_attachment</a> extension.
  * 
  * <p>This extension extends the memory objects introduced with {@link EXTMemoryObject EXT_memory_object} to allow existing textures and buffers to be migrated to an
  * imported memory allocation. The primary use-case of this extension is plug-in development where resource management (creation, deletion, sizing etc.)
@@ -23,6 +23,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link EXTMemoryObject EXT_memory_object} and {@link ARBTextureStorage ARB_texture_storage} or a version of OpenGL that incorporates it.</p>
  */
 public class NVMemoryAttachment {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code pname} parameter of TexParameter{ifx}{v}, TexParameterI{i ui}v, TextureParameter{if}{v}, TextureParameterI{i ui}v,
@@ -53,17 +55,8 @@ public class NVMemoryAttachment {
         GL_MAX_DETACHED_TEXTURES_NV = 0x95AC,
         GL_MAX_DETACHED_BUFFERS_NV  = 0x95AD;
 
-    static { GL.initialize(); }
-
     protected NVMemoryAttachment() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glGetMemoryObjectDetachedResourcesuivNV, caps.glResetMemoryObjectParameterNV, caps.glTexAttachMemoryNV, caps.glBufferAttachMemoryNV, 
-            caps.hasDSA(ext) ? caps.glTextureAttachMemoryNV : -1L, caps.hasDSA(ext) ? caps.glNamedBufferAttachMemoryNV : -1L
-        );
     }
 
     // --- [ glGetMemoryObjectDetachedResourcesuivNV ] ---

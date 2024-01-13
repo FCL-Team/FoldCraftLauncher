@@ -7,8 +7,6 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
  * When {@link NVConservativeRaster#GL_CONSERVATIVE_RASTERIZATION_NV CONSERVATIVE_RASTERIZATION_NV} is enabled, the fragments generated for a primitive are conservative with respect to the primitive after snapping
  * to sub-pixel grid. This extension provides a new mode of rasterization for triangles where the fragments generated are conservative with respect to the
@@ -26,6 +24,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVConservativeRasterPreSnapTriangles {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of ConservativeRasterParameteriNV. */
     public static final int GL_CONSERVATIVE_RASTER_MODE_NV = 0x954D;
 
@@ -34,16 +34,8 @@ public class NVConservativeRasterPreSnapTriangles {
         GL_CONSERVATIVE_RASTER_MODE_POST_SNAP_NV          = 0x954E,
         GL_CONSERVATIVE_RASTER_MODE_PRE_SNAP_TRIANGLES_NV = 0x954F;
 
-    static { GL.initialize(); }
-
     protected NVConservativeRasterPreSnapTriangles() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glConservativeRasterParameteriNV
-        );
     }
 
     // --- [ glConservativeRasterParameteriNV ] ---

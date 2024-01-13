@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_depth_bounds_test.txt">EXT_depth_bounds_test</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_depth_bounds_test.txt">EXT_depth_bounds_test</a> extension.
  * 
  * <p>This extension adds a new per-fragment test that is, logically, after the scissor test and before the alpha test. The depth bounds test compares the
  * depth value stored at the location given by the incoming fragment's (xw,yw) coordinates to a user-defined minimum and maximum depth value. If the stored
@@ -37,6 +35,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTDepthBoundsTest {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, and by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
      * GetDoublev.
@@ -46,16 +46,8 @@ public class EXTDepthBoundsTest {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_DEPTH_BOUNDS_EXT = 0x8891;
 
-    static { GL.initialize(); }
-
     protected EXTDepthBoundsTest() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDepthBoundsEXT
-        );
     }
 
     // --- [ glDepthBoundsEXT ] ---

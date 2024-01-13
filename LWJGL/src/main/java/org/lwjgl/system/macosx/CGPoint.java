@@ -18,22 +18,15 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * A structure that contains a point in a two-dimensional coordinate system.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code x} &ndash; the x-coordinate of the point</li>
- * <li>{@code y} &ndash; the y-coordinate of the point</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct CGPoint {
- *     CGFloat x;
- *     CGFloat y;
+ *     CGFloat {@link #x};
+ *     CGFloat {@link #y};
  * }</code></pre>
  */
-public class CGPoint extends Struct implements NativeResource {
+public class CGPoint extends Struct<CGPoint> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -59,6 +52,15 @@ public class CGPoint extends Struct implements NativeResource {
         Y = layout.offsetof(1);
     }
 
+    protected CGPoint(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected CGPoint create(long address, @Nullable ByteBuffer container) {
+        return new CGPoint(address, container);
+    }
+
     /**
      * Creates a {@code CGPoint} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -72,16 +74,16 @@ public class CGPoint extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code x} field. */
+    /** the x-coordinate of the point */
     @NativeType("CGFloat")
     public double x() { return nx(address()); }
-    /** Returns the value of the {@code y} field. */
+    /** the y-coordinate of the point */
     @NativeType("CGFloat")
     public double y() { return ny(address()); }
 
-    /** Sets the specified value to the {@code x} field. */
+    /** Sets the specified value to the {@link #x} field. */
     public CGPoint x(@NativeType("CGFloat") double value) { nx(address(), value); return this; }
-    /** Sets the specified value to the {@code y} field. */
+    /** Sets the specified value to the {@link #y} field. */
     public CGPoint y(@NativeType("CGFloat") double value) { ny(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -111,29 +113,29 @@ public class CGPoint extends Struct implements NativeResource {
 
     /** Returns a new {@code CGPoint} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static CGPoint malloc() {
-        return wrap(CGPoint.class, nmemAllocChecked(SIZEOF));
+        return new CGPoint(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code CGPoint} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static CGPoint calloc() {
-        return wrap(CGPoint.class, nmemCallocChecked(1, SIZEOF));
+        return new CGPoint(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code CGPoint} instance allocated with {@link BufferUtils}. */
     public static CGPoint create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(CGPoint.class, memAddress(container), container);
+        return new CGPoint(memAddress(container), container);
     }
 
     /** Returns a new {@code CGPoint} instance for the specified memory address. */
     public static CGPoint create(long address) {
-        return wrap(CGPoint.class, address);
+        return new CGPoint(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static CGPoint createSafe(long address) {
-        return address == NULL ? null : wrap(CGPoint.class, address);
+        return address == NULL ? null : new CGPoint(address, null);
     }
 
     /**
@@ -142,7 +144,7 @@ public class CGPoint extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -151,7 +153,7 @@ public class CGPoint extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -161,7 +163,7 @@ public class CGPoint extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -171,34 +173,41 @@ public class CGPoint extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code CGPoint} instance allocated on the thread-local {@link MemoryStack}. */
-    public static CGPoint mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code CGPoint} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static CGPoint callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static CGPoint mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static CGPoint callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static CGPoint mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static CGPoint callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code CGPoint} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static CGPoint mallocStack(MemoryStack stack) {
-        return wrap(CGPoint.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static CGPoint malloc(MemoryStack stack) {
+        return new CGPoint(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -206,46 +215,28 @@ public class CGPoint extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static CGPoint callocStack(MemoryStack stack) {
-        return wrap(CGPoint.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static CGPoint calloc(MemoryStack stack) {
+        return new CGPoint(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -270,9 +261,9 @@ public class CGPoint extends Struct implements NativeResource {
         /**
          * Creates a new {@code CGPoint.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link CGPoint#SIZEOF}, and its mark will be undefined.
+         * by {@link CGPoint#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -298,16 +289,16 @@ public class CGPoint extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code x} field. */
+        /** @return the value of the {@link CGPoint#x} field. */
         @NativeType("CGFloat")
         public double x() { return CGPoint.nx(address()); }
-        /** Returns the value of the {@code y} field. */
+        /** @return the value of the {@link CGPoint#y} field. */
         @NativeType("CGFloat")
         public double y() { return CGPoint.ny(address()); }
 
-        /** Sets the specified value to the {@code x} field. */
+        /** Sets the specified value to the {@link CGPoint#x} field. */
         public Buffer x(@NativeType("CGFloat") double value) { CGPoint.nx(address(), value); return this; }
-        /** Sets the specified value to the {@code y} field. */
+        /** Sets the specified value to the {@link CGPoint#y} field. */
         public Buffer y(@NativeType("CGFloat") double value) { CGPoint.ny(address(), value); return this; }
 
     }

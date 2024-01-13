@@ -7,12 +7,13 @@ package org.lwjgl.system;
 import org.lwjgl.*;
 import org.lwjgl.system.MemoryManage.*;
 import org.lwjgl.system.MemoryUtil.MemoryAllocationReport.*;
-import org.lwjgl.system.jni.*;
 
 import javax.annotation.*;
+import java.lang.reflect.*;
 import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.function.*;
 
 import static java.lang.Character.*;
 import static java.lang.Math.*;
@@ -41,7 +42,9 @@ import static org.lwjgl.system.libc.LibCString.*;
  * <li>ASCII - Not the original 7bit ASCII, but any character set with a single byte encoding (ISO 8859-1, Windows-1252, etc.)</li>
  * </ul>
  *
- * <p>Methods in bindings that accept/return {@code CharSequence}/{@code String} also support {@code ByteBuffer}, so custom codecs can be used if necessary.</p>
+ * <p>The codec implementations do no codepoint validation, for improved performance. Therefore, if malformed input or unmappable characters are expected, the
+ * JDK {@link CharsetEncoder}/{@link CharsetDecoder} classes should be used instead. Methods in bindings that accept/return {@code CharSequence}/{@code String}
+ * also support {@code ByteBuffer}, so custom codecs can be used if necessary.</p>
  *
  * @see Configuration#MEMORY_ALLOCATOR
  * @see Configuration#DEBUG_MEMORY_ALLOCATOR
@@ -96,7 +99,6 @@ public final class MemoryUtil {
     static {
         Library.initialize();
 
-        //ACCESSOR = MemoryAccess.getInstance();
         ByteBuffer bb = ByteBuffer.allocateDirect(0).order(NATIVE_ORDER);
 
         BUFFER_BYTE = bb.getClass();
@@ -117,18 +119,13 @@ public final class MemoryUtil {
 
             ADDRESS = getAddressOffset();
 
-            int oopSize = UNSAFE.arrayIndexScale(Object[].class);
-
-            long offset = (max(max(max(MARK, POSITION), LIMIT), CAPACITY) + 4 + (oopSize - 1)) & ~Integer.toUnsignedLong(oopSize - 1);
-            long a      = memAddress(bb);
-
-            PARENT_BYTE = getParentOffset(offset, oopSize, bb, bb.duplicate().order(bb.order()));
-            PARENT_SHORT = getParentOffset(offset, oopSize, memShortBuffer(a, 0), bb.asShortBuffer());
-            PARENT_CHAR = getParentOffset(offset, oopSize, memCharBuffer(a, 0), bb.asCharBuffer());
-            PARENT_INT = getParentOffset(offset, oopSize, memIntBuffer(a, 0), bb.asIntBuffer());
-            PARENT_LONG = getParentOffset(offset, oopSize, memLongBuffer(a, 0), bb.asLongBuffer());
-            PARENT_FLOAT = getParentOffset(offset, oopSize, memFloatBuffer(a, 0), bb.asFloatBuffer());
-            PARENT_DOUBLE = getParentOffset(offset, oopSize, memDoubleBuffer(a, 0), bb.asDoubleBuffer());
+            PARENT_BYTE = getFieldOffsetObject(bb.duplicate().order(bb.order()), bb);
+            PARENT_SHORT = getFieldOffsetObject(bb.asShortBuffer(), bb);
+            PARENT_CHAR = getFieldOffsetObject(bb.asCharBuffer(), bb);
+            PARENT_INT = getFieldOffsetObject(bb.asIntBuffer(), bb);
+            PARENT_LONG = getFieldOffsetObject(bb.asLongBuffer(), bb);
+            PARENT_FLOAT = getFieldOffsetObject(bb.asFloatBuffer(), bb);
+            PARENT_DOUBLE = getFieldOffsetObject(bb.asDoubleBuffer(), bb);
         } catch (Throwable t) {
             throw new UnsupportedOperationException(t);
         }
@@ -146,12 +143,17 @@ public final class MemoryUtil {
         static final MemoryAllocator ALLOCATOR;
 
         static {
+            boolean debug = Configuration.DEBUG_MEMORY_ALLOCATOR.get(false);
+
             ALLOCATOR_IMPL = MemoryManage.getInstance();
-            ALLOCATOR = Configuration.DEBUG_MEMORY_ALLOCATOR.get(false)
+            ALLOCATOR = debug
                 ? new DebugAllocator(ALLOCATOR_IMPL)
                 : ALLOCATOR_IMPL;
 
             apiLog("MemoryUtil allocator: " + ALLOCATOR.getClass().getSimpleName());
+            if (debug && !Configuration.DEBUG_MEMORY_ALLOCATOR_FAST.get(false)) {
+                apiLogMore("Reminder: enable Configuration.DEBUG_MEMORY_ALLOCATOR_FAST for low overhead allocation tracking.");
+            }
         }
     }
 
@@ -310,7 +312,7 @@ public final class MemoryUtil {
      * @param size the number of C long values to allocate.
      */
     public static CLongBuffer memAllocCLong(int size) {
-        return Default.wrap(CLongBuffer.class, nmemAllocChecked(getAllocationSize(size, CLONG_SHIFT)), size);
+        return CLongBuffer.create(nmemAllocChecked(getAllocationSize(size, CLONG_SHIFT)), size);
     }
 
     /**
@@ -328,7 +330,7 @@ public final class MemoryUtil {
      * @param size the number of pointer values to allocate.
      */
     public static PointerBuffer memAllocPointer(int size) {
-        return Default.wrap(PointerBuffer.class, nmemAllocChecked(getAllocationSize(size, POINTER_SHIFT)), size);
+        return PointerBuffer.create(nmemAllocChecked(getAllocationSize(size, POINTER_SHIFT)), size);
     }
 
     /** Unsafe version of {@link #memFree}. */
@@ -353,7 +355,15 @@ public final class MemoryUtil {
     }
 
     /** {@code CustomBuffer} version of {@link #memFree}. */
-    public static void memFree(@Nullable CustomBuffer ptr) {
+    public static void memFree(@Nullable CustomBuffer<?> ptr) {
+        if (ptr != null) {
+            nmemFree(ptr.address);
+        }
+    }
+
+    // from LWJGL 3.2.2
+    /** {@code PointerBuffer} version of {@link #memFree}. */
+    public static void memFree(@Nullable PointerBuffer ptr) {
         if (ptr != null) {
             nmemFree(ptr.address);
         }
@@ -458,7 +468,7 @@ public final class MemoryUtil {
      * @param num the number of C long values to allocate.
      */
     public static CLongBuffer memCallocCLong(int num) {
-        return Default.wrap(CLongBuffer.class, nmemCallocChecked(num, CLONG_SIZE), num);
+        return CLongBuffer.create(nmemCallocChecked(num, CLONG_SIZE), num);
     }
 
     /**
@@ -476,7 +486,7 @@ public final class MemoryUtil {
      * @param num the number of pointer values to allocate.
      */
     public static PointerBuffer memCallocPointer(int num) {
-        return Default.wrap(PointerBuffer.class, nmemCallocChecked(num, POINTER_SIZE), num);
+        return PointerBuffer.create(nmemCallocChecked(num, POINTER_SIZE), num);
     }
 
     // --- [ memRealloc] ---
@@ -870,7 +880,7 @@ public final class MemoryUtil {
         return wrap(BUFFER_BYTE, address, capacity).order(NATIVE_ORDER);
     }
 
-    /** Like {@link #memByteBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
+    /** Like {@link #memByteBuffer(long, int) memByteBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
     @Nullable
     public static ByteBuffer memByteBufferSafe(long address, int capacity) {
         return address == NULL ? null : wrap(BUFFER_BYTE, address, capacity).order(NATIVE_ORDER);
@@ -995,6 +1005,19 @@ public final class MemoryUtil {
     }
 
     /**
+     * Creates a {@link ByteBuffer} instance as a view of the specified {@link Struct}.
+     *
+     * <p>The returned {@code ByteBuffer} instance will be set to the native {@link ByteOrder}.</p>
+     *
+     * @param value the struct value
+     *
+     * @return the {@code ByteBuffer} view
+     */
+    public static <T extends Struct<T>> ByteBuffer memByteBuffer(T value) {
+        return wrap(BUFFER_BYTE, value.address, value.sizeof()).order(NATIVE_ORDER);
+    }
+
+    /**
      * Creates a new direct ShortBuffer that starts at the specified memory address and has the specified capacity.
      *
      * <p>The {@code address} specified must be aligned to 2 bytes. If not, use {@code memByteBuffer(address, capacity * 2).asShortBuffer()}.</p>
@@ -1100,13 +1123,13 @@ public final class MemoryUtil {
         if (CHECKS) {
             check(address);
         }
-        return Default.wrap(CLongBuffer.class, address, capacity);
+        return CLongBuffer.create(address, capacity);
     }
 
     /** Like {@link #memCLongBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
     @Nullable
     public static CLongBuffer memCLongBufferSafe(long address, int capacity) {
-        return address == NULL ? null : Default.wrap(CLongBuffer.class, address, capacity);
+        return address == NULL ? null : CLongBuffer.create(address, capacity);
     }
 
     /**
@@ -1170,13 +1193,13 @@ public final class MemoryUtil {
         if (CHECKS) {
             check(address);
         }
-        return Default.wrap(PointerBuffer.class, address, capacity);
+        return PointerBuffer.create(address, capacity);
     }
 
     /** Like {@link #memPointerBuffer}, but returns {@code null} if {@code address} is {@link #NULL}. */
     @Nullable
     public static PointerBuffer memPointerBufferSafe(long address, int capacity) {
-        return address == NULL ? null : Default.wrap(PointerBuffer.class, address, capacity);
+        return address == NULL ? null : PointerBuffer.create(address, capacity);
     }
 
     // --- [ Buffer duplication ] ---
@@ -1624,7 +1647,7 @@ public final class MemoryUtil {
      * @param value the value to set (memSet will convert it to unsigned byte)
      * @param <T>   the struct type
      */
-    public static <T extends Struct> void memSet(T ptr, int value) { memSet(ptr.address, value, ptr.sizeof()); }
+    public static <T extends Struct<T>> void memSet(T ptr, int value) { memSet(ptr.address, value, ptr.sizeof()); }
 
     // --- [ memcpy ] ---
 
@@ -1740,7 +1763,7 @@ public final class MemoryUtil {
      * @param dst the destination struct
      * @param <T> the struct type
      */
-    public static <T extends Struct> void memCopy(T src, T dst) {
+    public static <T extends Struct<T>> void memCopy(T src, T dst) {
         MultiReleaseMemCopy.copy(src.address, dst.address, src.sizeof());
     }
 
@@ -1750,22 +1773,8 @@ public final class MemoryUtil {
         -------------------------------------
         ------------------------------------- */
 
-    private interface NativeShift {
-        long left(long value, int bytes);
-        long right(long value, int bytes);
-    }
-
-    private static final NativeShift SHIFT = NATIVE_ORDER == ByteOrder.BIG_ENDIAN ?
-        new NativeShift() {
-            @Override public long left(long value, int bytes) { return value << (bytes << 3); }
-            @Override public long right(long value, int bytes) { return value >>> (bytes << 3); }
-        } :
-        new NativeShift() {
-            @Override public long left(long value, int bytes) { return value >>> (bytes << 3); }
-            @Override public long right(long value, int bytes) { return value << (bytes << 3); }
-        };
-
-    private static final long FILL_PATTERN = Long.divideUnsigned(-1L, 255L);
+    private static final int  FILL_PATTERN_32 = Integer.divideUnsigned(-1, 255);
+    private static final long FILL_PATTERN_64 = Long.divideUnsigned(-1L, 255L);
 
     /**
      * Sets all bytes in a specified block of memory to a fixed value (usually zero).
@@ -1785,49 +1794,64 @@ public final class MemoryUtil {
         - The native memset becomes fastest at bigger sizes, when the JNI overhead becomes negligible.
          */
 
-        //UNSAFE.setMemory(dst, bytes, (byte)(value & 0xFF));
-        if (256L <= bytes) {
-            nmemset(ptr, value, bytes);
-            return;
-        }
-
-        long fill = (value & 0xFF) * FILL_PATTERN;
-
-        int i = 0,
-            length = (int)bytes & 0xFF;
-
-        if (length != 0) {
-            int misalignment = (int)ptr & 7;
-            if (misalignment != 0) {
-                long aligned = ptr - misalignment;
-                UNSAFE.putLong(null, aligned, merge(
-                    UNSAFE.getLong(null, aligned),
-                    fill,
-                    SHIFT.right(SHIFT.left(-1L, max(0, 8 - length)), misalignment) // 0x0000FFFFFFFF0000
-                ));
-                i += 8 - misalignment;
+        //UNSAFE.setMemory(ptr, bytes, (byte)(value & 0xFF));
+        if (bytes < 256L) {
+            int p = (int)ptr;
+            if (BITS64) {
+                if ((p & 7) == 0) {
+                    memSet64(ptr, value, (int)bytes & 0xFF);
+                    return;
+                }
+            } else {
+                if ((p & 3) == 0) {
+                    memSet32(p, value, (int)bytes & 0xFF);
+                    return;
+                }
             }
         }
+        nmemset(ptr, value, bytes);
+    }
+    private static void memSet64(long ptr, int value, int bytes) {
+        int aligned = bytes & ~7;
 
-        // Aligned longs for performance
-        for (; i <= length - 8; i += 8) {
-            UNSAFE.putLong(null, ptr + i, fill);
+        // Aligned body
+        long valuel = (value & 0xFF) * FILL_PATTERN_64;
+        for (int i = 0; i < aligned; i += 8) {
+            UNSAFE.putLong(null, ptr + i, valuel);
         }
 
-        int tail = length - i;
-        if (0 < tail) {
-            // Aligned tail
-            UNSAFE.putLong(null, ptr + i, merge(
-                fill,
-                UNSAFE.getLong(null, ptr + i),
-                SHIFT.right(-1L, tail) // 0x00000000FFFFFFFF
-            ));
+        // Unaligned tail
+        byte valueb = (byte)(value & 0xFF);
+        for (int i = aligned; i < bytes; i++) {
+            UNSAFE.putByte(null, ptr + i, valueb);
+        }
+    }
+    private static void memSet32(int ptr, int value, int bytes) {
+        int aligned = bytes & ~3;
+
+        // Aligned body
+        int vi = (value & 0xFF) * FILL_PATTERN_32;
+        for (int i = 0; i < aligned; i += 4) {
+            UNSAFE.putInt(null, (ptr + i) & 0xFFFF_FFFFL, vi);
+        }
+
+        // Unaligned tail
+        byte vb = (byte)(value & 0xFF);
+        for (int i = aligned; i < bytes; i++) {
+            UNSAFE.putByte(null, (ptr + i) & 0xFFFF_FFFFL, vb);
         }
     }
 
-    // Bit from a where mask bit is 0, bit from b where mask bit is 1.
-    static long merge(long a, long b, long mask) {
-        return a ^ ((a ^ b) & mask);
+    // from LWJGL 3.1.2
+    /**
+     * Sets all bytes in a specified block of memory to a copy of another block.
+     *
+     * @param src   the source memory address
+     * @param dst   the destination memory address
+     * @param bytes the number of bytes to copy
+     */
+    public static void memCopy(long src, long dst, int bytes) {
+        memCopy(src, dst, (long)bytes);
     }
 
     /**
@@ -1845,21 +1869,30 @@ public final class MemoryUtil {
         MultiReleaseMemCopy.copy(src, dst, bytes);
     }
 
-    static void memCopyAligned(long src, long dst, int bytes) {
-        int i = 0;
+    static void memCopyAligned64(long src, long dst, int bytes) {
+        int aligned = bytes & ~7;
 
-        // Aligned longs for performance
-        for (; i <= bytes - 8; i += 8) {
+        // Aligned body
+        for (int i = 0; i < aligned; i += 8) {
             UNSAFE.putLong(null, dst + i, UNSAFE.getLong(null, src + i));
         }
 
-        // Aligned tail
-        if (i < bytes) {
-            UNSAFE.putLong(null, dst + i, merge(
-                UNSAFE.getLong(null, src + i),
-                UNSAFE.getLong(null, dst + i),
-                SHIFT.right(-1L, bytes - i)
-            ));
+        // Unaligned tail
+        for (int i = aligned; i < bytes; i++) {
+            UNSAFE.putByte(null, dst + i, UNSAFE.getByte(null, src + i));
+        }
+    }
+    static void memCopyAligned32(int src, int dst, int bytes) {
+        int aligned = bytes & ~3;
+
+        // Aligned body
+        for (int i = 0; i < aligned; i += 4) {
+            UNSAFE.putInt(null, (dst + i) & 0xFFFF_FFFFL, UNSAFE.getInt(null, (src + i) & 0xFFFF_FFFFL));
+        }
+
+        // Unaligned tail
+        for (int i = aligned; i < bytes; i++) {
+            UNSAFE.putByte(null, (dst + i) & 0xFFFF_FFFFL, UNSAFE.getByte(null, (src + i) & 0xFFFF_FFFFL));
         }
     }
 
@@ -1920,23 +1953,27 @@ public final class MemoryUtil {
      */
     public static native <T> T memGlobalRefToObject(long globalRef);
 
-    /** Deprecated, use {@link JNINativeInterface#NewGlobalRef} instead. */
-    @Deprecated public static long memNewGlobalRef(Object obj) { return NewGlobalRef(obj); }
-
-    /** Deprecated, use {@link JNINativeInterface#DeleteGlobalRef} instead. */
-    @Deprecated public static void memDeleteGlobalRef(long globalRef) { DeleteGlobalRef(globalRef); }
-
-    /** Deprecated, use {@link JNINativeInterface#NewWeakGlobalRef} instead. */
-    @Deprecated public static long memNewWeakGlobalRef(Object obj) { return NewWeakGlobalRef(obj); }
-
-    /** Deprecated, use {@link JNINativeInterface#DeleteWeakGlobalRef} instead. */
-    @Deprecated public static void memDeleteWeakGlobalRef(long globalRef) { DeleteWeakGlobalRef(globalRef);}
-
     /*  -------------------------------------
         -------------------------------------
                   TEXT ENCODING API
         -------------------------------------
         ------------------------------------- */
+
+    private static int write8(long target, int offset, int value) {
+        UNSAFE.putByte(null, target + Integer.toUnsignedLong(offset), (byte)value);
+        return offset + 1;
+    }
+    private static int write8Safe(long target, int offset, int maxLength, int value) {
+        if (offset == maxLength) {
+            throw new BufferOverflowException();
+        }
+        UNSAFE.putByte(null, target + Integer.toUnsignedLong(offset), (byte)value);
+        return offset + 1;
+    }
+    private static int write16(long target, int offset, char value) {
+        UNSAFE.putShort(null, target + Integer.toUnsignedLong(offset), (short)value);
+        return offset + 2;
+    }
 
     /**
      * Returns a ByteBuffer containing the specified text ASCII encoded and null-terminated.
@@ -1944,6 +1981,8 @@ public final class MemoryUtil {
      * @param text the text to encode
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memASCII(CharSequence text) {
         return memASCII(text, true);
@@ -1956,17 +1995,22 @@ public final class MemoryUtil {
     }
 
     /**
-     * Returns a ByteBuffer containing the specified text ASCII encoded and optionally null-terminated.
+     * Returns a {@link ByteBuffer} containing the specified text ASCII encoded and optionally null-terminated.
      *
      * @param text           the text to encode
      * @param nullTerminated if true, the text will be terminated with a '\0'.
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memASCII(CharSequence text, boolean nullTerminated) {
         int  length = memLengthASCII(text, nullTerminated);
         long target = nmemAlloc(length);
-        encodeASCII(text, nullTerminated, target);
+        if (CHECKS && target == NULL) {
+            throw new OutOfMemoryError();
+        }
+        encodeASCIIUnsafe(text, nullTerminated, target);
         return wrap(BUFFER_BYTE, target, length).order(NATIVE_ORDER);
     }
 
@@ -1978,42 +2022,55 @@ public final class MemoryUtil {
 
     /**
      * Encodes and optionally null-terminates the specified text using ASCII encoding. The encoded text is stored in the specified {@link ByteBuffer}, at the
-     * current buffer position. The current buffer position is not modified by this operation. The {@code target} buffer is assumed to have enough remaining
-     * space to store the encoded text.
+     * current buffer position. The current buffer position is not modified by this operation.
      *
      * @param text           the text to encode
-     * @param nullTerminated if true, the text will be terminated with a '\0'.
+     * @param nullTerminated if true, the text will be terminated with a '\0'
+     * @param target         the buffer where the encoded text should be stored
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.remaining()} bytes are required to encode the text.
      */
     public static int memASCII(CharSequence text, boolean nullTerminated, ByteBuffer target) {
-        return encodeASCII(text, nullTerminated, memAddress(target));
+        if (target.remaining() < memLengthASCII(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        long address = memAddress(target);
+        return encodeASCIIUnsafe(text, nullTerminated, address);
     }
 
     /**
      * Encodes and optionally null-terminates the specified text using ASCII encoding. The encoded text is stored in the specified {@link ByteBuffer} at the
-     * specified {@code position} offset. The current buffer position is not modified by this operation. The {@code target} buffer is assumed to have enough
-     * remaining space to store the encoded text.
+     * specified {@code position} offset. The current buffer position is not modified by this operation.
      *
      * @param text           the text to encode
      * @param nullTerminated if true, the text will be terminated with a '\0'.
      * @param offset         the buffer position to which the string will be encoded
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.capacity() - offset} bytes are required to encode the text.
      */
     public static int memASCII(CharSequence text, boolean nullTerminated, ByteBuffer target, int offset) {
-        return encodeASCII(text, nullTerminated, memAddress(target, offset));
+        if (target.capacity() - offset < memLengthASCII(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        return encodeASCIIUnsafe(text, nullTerminated, memAddress(target, offset));
     }
 
-    static int encodeASCII(CharSequence text, boolean nullTerminated, long target) {
-        int len = text.length();
-        for (int p = 0; p < len; p++) {
-            UNSAFE.putByte(target + p, (byte)text.charAt(p));
+    static int encodeASCIIUnsafe(CharSequence text, boolean nullTerminated, long target) {
+        int i = 0, len = text.length();
+
+        while (i < len) {
+            i = write8(target, i, text.charAt(i));
         }
+
         if (nullTerminated) {
-            UNSAFE.putByte(target + len++, (byte)0);
+            i = write8(target, i, 0);
         }
-        return len;
+
+        return i;
     }
 
     /**
@@ -2023,9 +2080,15 @@ public final class MemoryUtil {
      * @param nullTerminated if true, add the number of bytes required for null-termination
      *
      * @return the number of bytes
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static int memLengthASCII(CharSequence value, boolean nullTerminated) {
-        return value.length() + (nullTerminated ? 1 : 0);
+        int len = value.length() + (nullTerminated ? 1 : 0);
+        if (len < 0) {
+            throw new BufferOverflowException();
+        }
+        return len;
     }
 
     /**
@@ -2034,12 +2097,14 @@ public final class MemoryUtil {
      * @param text the text to encode
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memUTF8(CharSequence text) {
         return memUTF8(text, true);
     }
 
-    /** Like {@link #memUTF8(CharSequence) memASCII}, but returns {@code null} if {@code text} is {@code null}. */
+    /** Like {@link #memUTF8(CharSequence) memUTF8}, but returns {@code null} if {@code text} is {@code null}. */
     @Nullable
     public static ByteBuffer memUTF8Safe(@Nullable CharSequence text) {
         return text == null ? null : memUTF8(text, true);
@@ -2052,15 +2117,20 @@ public final class MemoryUtil {
      * @param nullTerminated if true, the text will be terminated with a '\0'.
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memUTF8(CharSequence text, boolean nullTerminated) {
         int  length = memLengthUTF8(text, nullTerminated);
         long target = nmemAlloc(length);
-        encodeUTF8(text, nullTerminated, target);
+        if (CHECKS && target == NULL) {
+            throw new OutOfMemoryError();
+        }
+        encodeUTF8Unsafe(text, nullTerminated, target);
         return wrap(BUFFER_BYTE, target, length).order(NATIVE_ORDER);
     }
 
-    /** Like {@link #memUTF8(CharSequence, boolean) memASCII}, but returns {@code null} if {@code text} is {@code null}. */
+    /** Like {@link #memUTF8(CharSequence, boolean) memUTF8}, but returns {@code null} if {@code text} is {@code null}. */
     @Nullable
     public static ByteBuffer memUTF8Safe(@Nullable CharSequence text, boolean nullTerminated) {
         return text == null ? null : memUTF8(text, nullTerminated);
@@ -2068,23 +2138,26 @@ public final class MemoryUtil {
 
     /**
      * Encodes and optionally null-terminates the specified text using UTF-8 encoding. The encoded text is stored in the specified {@link ByteBuffer}, at the
-     * current buffer position. The current buffer position is not modified by this operation. The {@code target} buffer is assumed to have enough remaining
-     * space to store the encoded text. The specified text is assumed to be a valid UTF-16 string.
+     * current buffer position. The current buffer position is not modified by this operation.
      *
      * @param text           the text to encode
      * @param nullTerminated if true, the text will be terminated with a '\0'.
      * @param target         the buffer in which to store the encoded text
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.remaining} bytes are required to encode the text.
      */
     public static int memUTF8(CharSequence text, boolean nullTerminated, ByteBuffer target) {
-        return encodeUTF8(text, nullTerminated, memAddress(target));
+        if (target.remaining() < memLengthASCII(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        return encodeUTF8Safe(text, nullTerminated, memAddress(target), target.remaining());
     }
 
     /**
      * Encodes and optionally null-terminates the specified text using UTF-8 encoding. The encoded text is stored in the specified {@link ByteBuffer}, at the
-     * specified {@code position} offset. The current buffer position is not modified by this operation. The {@code target} buffer is assumed to have enough
-     * remaining space to store the encoded text. The specified text is assumed to be a valid UTF-16 string.
+     * specified {@code position} offset. The current buffer position is not modified by this operation.
      *
      * @param text           the text to encode
      * @param nullTerminated if true, the text will be terminated with a '\0'.
@@ -2092,48 +2165,88 @@ public final class MemoryUtil {
      * @param offset         the buffer position to which the string will be encoded
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.capacity() - offset} bytes are required to encode the text.
      */
     public static int memUTF8(CharSequence text, boolean nullTerminated, ByteBuffer target, int offset) {
-        return encodeUTF8(text, nullTerminated, memAddress(target, offset));
+        if (target.capacity() - offset < memLengthASCII(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        return encodeUTF8Safe(text, nullTerminated, memAddress(target, offset), target.capacity() - offset);
     }
 
-    static int encodeUTF8(CharSequence text, boolean nullTerminated, long target) {
-        int i = 0, len = text.length(), p = 0;
+    static int encodeUTF8Unsafe(CharSequence text, boolean nullTerminated, long target) {
+        int p = 0, i = 0, len = text.length();
 
-        char c;
-
-        // ASCII fast path
-        while (i < len && (c = text.charAt(i)) < 0x80) {
-            UNSAFE.putByte(target + p++, (byte)c);
-            i++;
-        }
-
-        // Slow path
         while (i < len) {
-            c = text.charAt(i++);
+            char c = text.charAt(i++);
             if (c < 0x80) {
-                UNSAFE.putByte(target + p++, (byte)c);
+                p = write8(target, p, c);
             } else {
                 int cp = c;
                 if (c < 0x800) {
-                    UNSAFE.putByte(target + p++, (byte)(0xC0 | cp >> 6));
+                    p = write8(target, p, 0xC0 | cp >> 6);
                 } else {
                     if (!isHighSurrogate(c)) {
-                        UNSAFE.putByte(target + p++, (byte)(0xE0 | cp >> 12));
+                        p = write8(target, p, 0xE0 | cp >> 12);
                     } else {
                         cp = toCodePoint(c, text.charAt(i++));
 
-                        UNSAFE.putByte(target + p++, (byte)(0xF0 | cp >> 18));
-                        UNSAFE.putByte(target + p++, (byte)(0x80 | cp >> 12 & 0x3F));
+                        p = write8(target, p, 0xF0 | cp >> 18);
+                        p = write8(target, p, 0x80 | cp >> 12 & 0x3F);
                     }
-                    UNSAFE.putByte(target + p++, (byte)(0x80 | cp >> 6 & 0x3F));
+                    p = write8(target, p, 0x80 | cp >> 6 & 0x3F);
                 }
-                UNSAFE.putByte(target + p++, (byte)(0x80 | cp & 0x3F));
+                p = write8(target, p, 0x80 | cp & 0x3F);
             }
         }
 
         if (nullTerminated) {
-            UNSAFE.putByte(target + p++, (byte)0); // TODO: did we have a bug here?
+            p = write8(target, p, 0);
+        }
+
+        return p;
+    }
+
+    static int encodeUTF8Safe(CharSequence text, boolean nullTerminated, long target, int maxLength) {
+        int p = 0, i = 0, length = text.length();
+
+        // ASCII fast path
+        while (i < length) {
+            char c = text.charAt(i);
+            if (0x80 <= c) {
+                break;
+            }
+            p = write8(target, p, c); // have already checked that text.length() <= maxLength
+            i++;
+        }
+
+        // Slow path
+        while (i < length) {
+            char c = text.charAt(i++);
+            if (c < 0x80) {
+                p = write8Safe(target, p, maxLength, c);
+            } else {
+                int cp = c;
+                if (c < 0x800) {
+                    p = write8Safe(target, p, maxLength, 0xC0 | cp >> 6);
+                } else {
+                    if (!isHighSurrogate(c)) {
+                        p = write8Safe(target, p, maxLength, 0xE0 | cp >> 12);
+                    } else {
+                        cp = toCodePoint(c, text.charAt(i++));
+
+                        p = write8Safe(target, p, maxLength, 0xF0 | cp >> 18);
+                        p = write8Safe(target, p, maxLength, 0x80 | cp >> 12 & 0x3F);
+                    }
+                    p = write8Safe(target, p, maxLength, 0x80 | cp >> 6 & 0x3F);
+                }
+                p = write8Safe(target, p, maxLength, 0x80 | cp & 0x3F);
+            }
+        }
+
+        if (nullTerminated) {
+            p = write8Safe(target, p, maxLength, 0);
         }
 
         return p;
@@ -2146,48 +2259,39 @@ public final class MemoryUtil {
      * @param nullTerminated if true, add the number of bytes required for null-termination
      *
      * @return the number of bytes
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static int memLengthUTF8(CharSequence value, boolean nullTerminated) {
-        int i, len = value.length(), bytes = len; // start with 1:1
+        int len   = value.length();
+        int bytes = len + (nullTerminated ? 1 : 0); // start with 1:1
 
-        // ASCII fast path
-        for (i = 0; i < len; i++) {
-            if (0x80 <= value.charAt(i)) {
-                break;
-            }
-        }
-
-        // 1 or 2 bytes fast path
-        for (; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             char c = value.charAt(i);
 
-            // fallback to slow path
-            if (0x800 <= c) {
-                bytes += encodeUTF8LengthSlow(value, i, len);
-                break;
-            }
-
-            // c <= 127: 0
-            // c >= 128: 1
-            bytes += (0x7F - c) >>> 31;
-        }
-
-        return bytes + (nullTerminated ? 1 : 0);
-    }
-
-    private static int encodeUTF8LengthSlow(CharSequence value, int offset, int len) {
-        int bytes = 0;
-
-        for (int i = offset; i < len; i++) {
-            char c = value.charAt(i);
-            if (c < 0x800) {
-                bytes += (0x7F - c) >>> 31;
-            } else if (c < MIN_SURROGATE || MAX_SURROGATE < c) {
-                bytes += 2;
+            if (c < 0x80) {
+                // 1 input char -> 1 output byte
             } else {
-                bytes += 2; // the byte count already includes 2 bytes for the surrogate pair, add 2 more
-                i++;
+                if (c < 0x800) {
+                    // c <= 127: 0 (1 input char -> 1 output byte)
+                    // c >= 128: 1 (1 input char -> 2 output bytes)
+                    bytes += (0x7F - c) >>> 31;
+                } else {
+                    // non-high-surrogate: 1 input char  -> 3 output bytes
+                    //     surrogate-pair: 2 input chars -> 4 output bytes
+                    bytes += 2;
+                    if (isHighSurrogate(c)) {
+                        i++;
+                    }
+                }
+                if (bytes < 0) {
+                    throw new BufferOverflowException();
+                }
             }
+        }
+
+        if (bytes < 0) {
+            throw new BufferOverflowException();
         }
 
         return bytes;
@@ -2199,12 +2303,14 @@ public final class MemoryUtil {
      * @param text the text to encode
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memUTF16(CharSequence text) {
         return memUTF16(text, true);
     }
 
-    /** Like {@link #memUTF16(CharSequence) memASCII}, but returns {@code null} if {@code text} is {@code null}. */
+    /** Like {@link #memUTF16(CharSequence) memUTF16}, but returns {@code null} if {@code text} is {@code null}. */
     @Nullable
     public static ByteBuffer memUTF16Safe(@Nullable CharSequence text) {
         return text == null ? null : memUTF16(text, true);
@@ -2217,15 +2323,20 @@ public final class MemoryUtil {
      * @param nullTerminated if true, the text will be terminated with a '\0'.
      *
      * @return the encoded text. The returned buffer must be deallocated manually with {@link #memFree}.
+     *
+     * @throws BufferOverflowException if more than {@link Integer#MAX_VALUE} bytes are required to encode the text.
      */
     public static ByteBuffer memUTF16(CharSequence text, boolean nullTerminated) {
         int  length = memLengthUTF16(text, nullTerminated);
         long target = nmemAlloc(length);
-        encodeUTF16(text, nullTerminated, target);
+        if (CHECKS && target == NULL) {
+            throw new OutOfMemoryError();
+        }
+        encodeUTF16Unsafe(text, nullTerminated, target);
         return wrap(BUFFER_BYTE, target, length).order(NATIVE_ORDER);
     }
 
-    /** Like {@link #memUTF16(CharSequence, boolean) memASCII}, but returns {@code null} if {@code text} is {@code null}. */
+    /** Like {@link #memUTF16(CharSequence, boolean) memUTF16}, but returns {@code null} if {@code text} is {@code null}. */
     @Nullable
     public static ByteBuffer memUTF16Safe(@Nullable CharSequence text, boolean nullTerminated) {
         return text == null ? null : memUTF16(text, nullTerminated);
@@ -2241,9 +2352,15 @@ public final class MemoryUtil {
      * @param target         the buffer in which to store the encoded text
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.remaining()} bytes are required to encode the text.
      */
     public static int memUTF16(CharSequence text, boolean nullTerminated, ByteBuffer target) {
-        return encodeUTF16(text, nullTerminated, memAddress(target));
+        if (target.remaining() < memLengthUTF16(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        long address = memAddress(target);
+        return encodeUTF16Unsafe(text, nullTerminated, address);
     }
 
     /**
@@ -2257,20 +2374,29 @@ public final class MemoryUtil {
      * @param offset         the buffer position to which the string will be encoded
      *
      * @return the number of bytes of the encoded string
+     *
+     * @throws BufferOverflowException if more than {@code target.capacity() - offset} bytes are required to encode the text.
      */
     public static int memUTF16(CharSequence text, boolean nullTerminated, ByteBuffer target, int offset) {
-        return encodeUTF16(text, nullTerminated, memAddress(target, offset));
+        if (target.capacity() - offset < memLengthUTF16(text, nullTerminated)) {
+            throw new BufferOverflowException();
+        }
+        long address = memAddress(target, offset);
+        return encodeUTF16Unsafe(text, nullTerminated, address);
     }
 
-    static int encodeUTF16(CharSequence text, boolean nullTerminated, long target) {
-        int len = text.length();
-        for (int i = 0; i < len; i++) {
-            UNSAFE.putShort(target + Integer.toUnsignedLong(i) * 2, (short)text.charAt(i));
+    static int encodeUTF16Unsafe(CharSequence text, boolean nullTerminated, long target) {
+        int p = 0, i = 0, len = text.length();
+
+        while (i < len) {
+            p = write16(target, p, text.charAt(i++));
         }
+
         if (nullTerminated) {
-            UNSAFE.putShort(target + Integer.toUnsignedLong(len++) * 2, (short)0);
+            p = write16(target, p, '\0');
         }
-        return 2 * len;
+
+        return p;
     }
 
     /**
@@ -2282,7 +2408,11 @@ public final class MemoryUtil {
      * @return the number of bytes
      */
     public static int memLengthUTF16(CharSequence value, boolean nullTerminated) {
-        return (value.length() + (nullTerminated ? 1 : 0)) << 1;
+        int len = value.length() + (nullTerminated ? 1 : 0);
+        if (len < 0 || 0x3FFFFFFF < len) {
+            throw new BufferOverflowException();
+        }
+        return len << 1;
     }
 
     /*  -------------------------------------
@@ -2315,11 +2445,10 @@ public final class MemoryUtil {
             }
 
             // Aligned longs for performance
-            while (i <= maxLength - 8) {
+            for (; i <= maxLength - 8; i += 8) {
                 if (mathHasZeroByte(UNSAFE.getLong(null, address + i))) {
                     break;
                 }
-                i += 8;
             }
         }
 
@@ -2348,11 +2477,10 @@ public final class MemoryUtil {
             }
 
             // Aligned ints for performance
-            while (i <= maxLength - 4) {
+            for (; i <= maxLength - 4; i += 4) {
                 if (mathHasZeroByte(UNSAFE.getInt(null, address + i))) {
                     break;
                 }
-                i += 4;
             }
         }
 
@@ -2386,7 +2514,7 @@ public final class MemoryUtil {
         }
         return BITS64
             ? strlen64NT2(address, maxLength)
-            : strlen32NT2(address, maxLength);
+            : strlen32NT2((int)address, maxLength);
     }
 
     private static int strlen64NT2(long address, int maxLength) {
@@ -2404,11 +2532,10 @@ public final class MemoryUtil {
             }
 
             // Aligned longs for performance
-            while (i <= maxLength - 8) {
+            for (; i <= maxLength - 8; i += 8) {
                 if (mathHasZeroShort(UNSAFE.getLong(null, address + i))) {
                     break;
                 }
-                i += 8;
             }
         }
 
@@ -2830,7 +2957,7 @@ public final class MemoryUtil {
     // -------------------------------------------------
 
     private static sun.misc.Unsafe getUnsafeInstance() {
-        java.lang.reflect.Field[] fields = sun.misc.Unsafe.class.getDeclaredFields();
+        Field[] fields = sun.misc.Unsafe.class.getDeclaredFields();
 
         /*
         Different runtimes use different names for the Unsafe singleton,
@@ -2840,13 +2967,13 @@ public final class MemoryUtil {
         PERC : m_unsafe_instance
         Android: THE_ONE
         */
-        for (java.lang.reflect.Field field : fields) {
+        for (Field field : fields) {
             if (!field.getType().equals(sun.misc.Unsafe.class)) {
                 continue;
             }
 
             int modifiers = field.getModifiers();
-            if (!(java.lang.reflect.Modifier.isStatic(modifiers) && java.lang.reflect.Modifier.isFinal(modifiers))) {
+            if (!(Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers))) {
                 continue;
             }
 
@@ -2861,78 +2988,65 @@ public final class MemoryUtil {
         throw new UnsupportedOperationException("LWJGL requires sun.misc.Unsafe to be available.");
     }
 
-    private static long getAddressOffset() {
-        long MAGIC_ADDRESS = 0xDEADBEEF8BADF00DL;
-        if (BITS32) {
-            MAGIC_ADDRESS &= 0xFFFFFFFFL;
+    private static long getFieldOffset(Class<?> containerType, Class<?> fieldType, LongPredicate predicate) {
+        Class<?> c = containerType;
+        while (c != Object.class) {
+            Field[] fields = c.getDeclaredFields();
+            for (Field field : fields) {
+                if (!field.getType().isAssignableFrom(fieldType) || Modifier.isStatic(field.getModifiers()) || field.isSynthetic()) {
+                    continue;
+                }
+
+                long offset = UNSAFE.objectFieldOffset(field);
+                if (predicate.test(offset)) {
+                    return offset;
+                }
+            }
+            c = c.getSuperclass();
         }
+        throw new UnsupportedOperationException("Failed to find field offset in class.");
+    }
+
+    private static long getFieldOffsetInt(Object container, int value) {
+        return getFieldOffset(container.getClass(), int.class, offset -> UNSAFE.getInt(container, offset) == value);
+    }
+
+    private static long getFieldOffsetObject(Object container, Object value) {
+        return getFieldOffset(container.getClass(), value.getClass(), offset -> UNSAFE.getObject(container, offset) == value);
+    }
+
+    private static long getAddressOffset() {
+        long MAGIC_ADDRESS = 0xDEADBEEF8BADF00DL & (BITS32 ? 0xFFFF_FFFFL : 0xFFFF_FFFF_FFFF_FFFFL);
 
         ByteBuffer bb = Objects.requireNonNull(NewDirectByteBuffer(MAGIC_ADDRESS, 0));
 
-        long offset = 8L; // 8 byte aligned, cannot be at 0
-        while (true) {
-            if (UNSAFE.getLong(bb, offset) == MAGIC_ADDRESS) {
-                return offset;
-            }
-            offset += 8L;
-        }
+        return getFieldOffset(bb.getClass(), long.class, offset -> UNSAFE.getLong(bb, offset) == MAGIC_ADDRESS);
     }
 
     private static final int MAGIC_CAPACITY = 0x0D15EA5E;
     private static final int MAGIC_POSITION = 0x00FACADE;
 
-    private static long getIntFieldOffset(ByteBuffer bb, int magicValue) {
-        long offset = 4L; // 4 byte aligned, cannot be at 0
-        while (true) {
-            if (UNSAFE.getInt(bb, offset) == magicValue) {
-                return offset;
-            }
-            offset += 4L;
-        }
-    }
-
     private static long getMarkOffset() {
         ByteBuffer bb = Objects.requireNonNull(NewDirectByteBuffer(1L, 0));
-        return getIntFieldOffset(bb, -1);
+        return getFieldOffsetInt(bb, -1);
     }
 
     private static long getPositionOffset() {
         ByteBuffer bb = Objects.requireNonNull(NewDirectByteBuffer(-1L, MAGIC_CAPACITY));
         bb.position(MAGIC_POSITION);
-        return getIntFieldOffset(bb, MAGIC_POSITION);
+        return getFieldOffsetInt(bb, MAGIC_POSITION);
     }
 
     private static long getLimitOffset() {
         ByteBuffer bb = Objects.requireNonNull(NewDirectByteBuffer(-1L, MAGIC_CAPACITY));
         bb.limit(MAGIC_POSITION);
-        return getIntFieldOffset(bb, MAGIC_POSITION);
+        return getFieldOffsetInt(bb, MAGIC_POSITION);
     }
 
     private static long getCapacityOffset() {
         ByteBuffer bb = Objects.requireNonNull(NewDirectByteBuffer(-1L, MAGIC_CAPACITY));
         bb.limit(0);
-        return getIntFieldOffset(bb, MAGIC_CAPACITY);
-    }
-
-    private static <T extends Buffer> long getParentOffset(long offset, int oopSize, T buffer, T bufferWithAttachment) {
-        switch (oopSize) {
-            case Integer.BYTES: // 32-bit or 64-bit with compressed oops
-                while (true) {
-                    if (UNSAFE.getInt(buffer, offset) != UNSAFE.getInt(bufferWithAttachment, offset)) {
-                        return offset;
-                    }
-                    offset += oopSize;
-                }
-            case Long.BYTES: // 64-bit with uncompressed oops
-                while (true) {
-                    if (UNSAFE.getLong(buffer, offset) != UNSAFE.getLong(bufferWithAttachment, offset)) {
-                        return offset;
-                    }
-                    offset += oopSize;
-                }
-            default:
-                throw new IllegalStateException();
-        }
+        return getFieldOffsetInt(bb, MAGIC_CAPACITY);
     }
 
     @SuppressWarnings("unchecked")

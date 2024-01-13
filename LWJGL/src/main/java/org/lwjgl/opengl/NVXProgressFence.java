@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_progress_fence.txt">NVX_progress_fence</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_progress_fence.txt">NVX_progress_fence</a> extension.
  * 
  * <p>This extension uses the concept of GL semaphores as defined in {@link EXTSemaphore EXT_semaphore} to better coordinate operations between multiple GPU command
  * streams. A semaphore type called "progress fence" is derived from the GL semaphore. The progress fence semaphore is created by
@@ -35,12 +35,6 @@ public class NVXProgressFence {
 
     protected NVXProgressFence() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glCreateProgressFenceNVX, caps.glSignalSemaphoreui64NVX, caps.glWaitSemaphoreui64NVX, caps.glClientWaitSemaphoreui64NVX
-        );
     }
 
     // --- [ glCreateProgressFenceNVX ] ---

@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_blend_equation_advanced.txt">KHR_blend_equation_advanced</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_blend_equation_advanced.txt">KHR_blend_equation_advanced</a> extension.
  * 
  * <p>This extension adds a number of "advanced" blending equations that can be used to perform new color blending operations, many of which are more complex
  * than the standard blend modes provided by unextended OpenGL. This extension provides two different extension string entries:</p>
@@ -52,6 +50,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class KHRBlendEquationAdvanced {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code mode} parameter of BlendEquation and BlendEquationi. */
     public static final int
         GL_MULTIPLY_KHR       = 0x9294,
@@ -70,16 +70,8 @@ public class KHRBlendEquationAdvanced {
         GL_HSL_COLOR_KHR      = 0x92AF,
         GL_HSL_LUMINOSITY_KHR = 0x92B0;
 
-    static { GL.initialize(); }
-
     protected KHRBlendEquationAdvanced() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBlendBarrierKHR
-        );
     }
 
     // --- [ glBlendBarrierKHR ] ---

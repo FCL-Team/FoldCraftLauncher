@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_framebuffer_object.txt">EXT_framebuffer_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_framebuffer_object.txt">EXT_framebuffer_object</a> extension.
  * 
  * <p>This extension defines a simple interface for drawing to rendering destinations other than the buffers provided to the GL by the window-system.</p>
  * 
@@ -59,6 +59,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Promoted to core in {@link GL30 OpenGL 3.0}.</p>
  */
 public class EXTFramebufferObject {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameter of BindFramebufferEXT, CheckFramebufferStatusEXT, FramebufferTexture{1D|2D|3D}EXT, FramebufferRenderbufferEXT,
@@ -141,19 +143,8 @@ public class EXTFramebufferObject {
     /** Returned by GetError(). */
     public static final int GL_INVALID_FRAMEBUFFER_OPERATION_EXT = 0x506;
 
-    static { GL.initialize(); }
-
     protected EXTFramebufferObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glIsRenderbufferEXT, caps.glBindRenderbufferEXT, caps.glDeleteRenderbuffersEXT, caps.glGenRenderbuffersEXT, caps.glRenderbufferStorageEXT, 
-            caps.glGetRenderbufferParameterivEXT, caps.glIsFramebufferEXT, caps.glBindFramebufferEXT, caps.glDeleteFramebuffersEXT, caps.glGenFramebuffersEXT, 
-            caps.glCheckFramebufferStatusEXT, caps.glFramebufferTexture1DEXT, caps.glFramebufferTexture2DEXT, caps.glFramebufferTexture3DEXT, 
-            caps.glFramebufferRenderbufferEXT, caps.glGetFramebufferAttachmentParameterivEXT, caps.glGenerateMipmapEXT
-        );
     }
 
     // --- [ glIsRenderbufferEXT ] ---

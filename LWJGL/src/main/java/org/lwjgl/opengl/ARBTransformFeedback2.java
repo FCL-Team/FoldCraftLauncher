@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback2.txt">ARB_transform_feedback2</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback2.txt">ARB_transform_feedback2</a> extension.
  * 
  * <p>The {@link EXTTransformFeedback EXT_transform_feedback} extension allows applications to capture primitives to one or more buffer objects when transformed by the GL. This
  * extension provides a few additional capabilities to these extensions, making transform feedback mode more useful.</p>
@@ -33,6 +31,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBTransformFeedback2 {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code target} parameter of BindTransformFeedback. */
     public static final int GL_TRANSFORM_FEEDBACK = 0x8E22;
 
@@ -42,17 +42,8 @@ public class ARBTransformFeedback2 {
         GL_TRANSFORM_FEEDBACK_BUFFER_ACTIVE = 0x8E24,
         GL_TRANSFORM_FEEDBACK_BINDING       = 0x8E25;
 
-    static { GL.initialize(); }
-
     protected ARBTransformFeedback2() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindTransformFeedback, caps.glDeleteTransformFeedbacks, caps.glGenTransformFeedbacks, caps.glIsTransformFeedback, 
-            caps.glPauseTransformFeedback, caps.glResumeTransformFeedback, caps.glDrawTransformFeedback
-        );
     }
 
     // --- [ glBindTransformFeedback ] ---

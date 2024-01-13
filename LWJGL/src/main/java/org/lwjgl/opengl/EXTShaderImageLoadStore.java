@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_image_load_store.txt">EXT_shader_image_load_store</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_image_load_store.txt">EXT_shader_image_load_store</a> extension.
  * 
  * <p>This extension provides GLSL built-in functions allowing shaders to load from, store to, and perform atomic read-modify-write operations to a single
  * level of a texture object from any shader stage. These built-in functions are named imageLoad(), imageStore(), and imageAtomic*(), respectively, and
@@ -39,6 +37,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL30 OpenGL 3.0}.</p>
  */
 public class EXTShaderImageLoadStore {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
@@ -107,16 +107,8 @@ public class EXTShaderImageLoadStore {
         GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_EXT       = 0x906B,
         GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY_EXT = 0x906C;
 
-    static { GL.initialize(); }
-
     protected EXTShaderImageLoadStore() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindImageTextureEXT, caps.glMemoryBarrierEXT
-        );
     }
 
     // --- [ glBindImageTextureEXT ] ---

@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_polygon_offset_clamp.txt">EXT_polygon_offset_clamp</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_polygon_offset_clamp.txt">EXT_polygon_offset_clamp</a> extension.
  * 
  * <p>This extension adds a new parameter to the polygon offset function that clamps the calculated offset to a minimum or maximum value. The clamping
  * functionality is useful when polygons are nearly parallel to the view direction because their high slopes can result in arbitrarily large polygon
@@ -21,19 +19,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTPolygonOffsetClamp {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameters of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int GL_POLYGON_OFFSET_CLAMP_EXT = 0x8E1B;
 
-    static { GL.initialize(); }
-
     protected EXTPolygonOffsetClamp() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPolygonOffsetClampEXT
-        );
     }
 
     // --- [ glPolygonOffsetClampEXT ] ---

@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_vertex_attrib_integer_64bit.txt">NV_vertex_attrib_integer_64bit</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_vertex_attrib_integer_64bit.txt">NV_vertex_attrib_integer_64bit</a> extension.
  * 
  * <p>This extension provides support for specifying vertex attributes with 64-bit integer components, analagous to the 64-bit floating point support added
  * in EXT_vertex_attrib_64bit.</p>
@@ -27,25 +27,15 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVVertexAttribInteger64bit {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code type} parameter of VertexAttribLPointerEXT, VertexArrayVertexAttribLOffsetEXT, and VertexAttribLFormatNV. */
     public static final int
         GL_INT64_NV          = 0x140E,
         GL_UNSIGNED_INT64_NV = 0x140F;
 
-    static { GL.initialize(); }
-
     protected NVVertexAttribInteger64bit() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glVertexAttribL1i64NV, caps.glVertexAttribL2i64NV, caps.glVertexAttribL3i64NV, caps.glVertexAttribL4i64NV, caps.glVertexAttribL1i64vNV, 
-            caps.glVertexAttribL2i64vNV, caps.glVertexAttribL3i64vNV, caps.glVertexAttribL4i64vNV, caps.glVertexAttribL1ui64NV, caps.glVertexAttribL2ui64NV, 
-            caps.glVertexAttribL3ui64NV, caps.glVertexAttribL4ui64NV, caps.glVertexAttribL1ui64vNV, caps.glVertexAttribL2ui64vNV, caps.glVertexAttribL3ui64vNV, 
-            caps.glVertexAttribL4ui64vNV, caps.glGetVertexAttribLi64vNV, caps.glGetVertexAttribLui64vNV, 
-            ext.contains("GL_NV_vertex_buffer_unified_memory") ? caps.glVertexAttribLFormatNV : -1L
-        );
     }
 
     // --- [ glVertexAttribL1i64NV ] ---

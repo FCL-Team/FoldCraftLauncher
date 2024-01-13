@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_attrib_64bit.txt">EXT_vertex_attrib_64bit</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_attrib_64bit.txt">EXT_vertex_attrib_64bit</a> extension.
  * 
  * <p>This extension provides OpenGL shading language support for vertex shader inputs with 64-bit floating-point components and OpenGL API support for
  * specifying the value of those inputs using vertex array or immediate mode entry points. This builds on the support for general-purpose support for
@@ -43,6 +43,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class EXTVertexAttrib64bit {
 
+    static { GL.initialize(); }
+
     /** Returned in the {@code type} parameter of GetActiveAttrib. */
     public static final int
         GL_DOUBLE_VEC2_EXT   = 0x8FFC,
@@ -58,18 +60,8 @@ public class EXTVertexAttrib64bit {
         GL_DOUBLE_MAT4x2_EXT = 0x8F4D,
         GL_DOUBLE_MAT4x3_EXT = 0x8F4E;
 
-    static { GL.initialize(); }
-
     protected EXTVertexAttrib64bit() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glVertexAttribL1dEXT, caps.glVertexAttribL2dEXT, caps.glVertexAttribL3dEXT, caps.glVertexAttribL4dEXT, caps.glVertexAttribL1dvEXT, 
-            caps.glVertexAttribL2dvEXT, caps.glVertexAttribL3dvEXT, caps.glVertexAttribL4dvEXT, caps.glVertexAttribLPointerEXT, caps.glGetVertexAttribLdvEXT, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribLOffsetEXT : -1L
-        );
     }
 
     // --- [ glVertexAttribL1dEXT ] ---

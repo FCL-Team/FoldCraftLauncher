@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_stencil_clear_tag.txt">EXT_stencil_clear_tag</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_stencil_clear_tag.txt">EXT_stencil_clear_tag</a> extension.
  * 
  * <p>Stencil-only framebuffer clears are increasingly common as 3D applications are now using rendering algorithms such as stenciled shadow volume rendering
  * for multiple light sources in a single frame, recent "soft" stenciled shadow volume techniques, and stencil-based constructive solid geometry
@@ -47,21 +45,15 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTStencilClearTag {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
         GL_STENCIL_TAG_BITS_EXT        = 0x88F2,
         GL_STENCIL_CLEAR_TAG_VALUE_EXT = 0x88F3;
 
-    static { GL.initialize(); }
-
     protected EXTStencilClearTag() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glStencilClearTagEXT
-        );
     }
 
     // --- [ glStencilClearTagEXT ] ---

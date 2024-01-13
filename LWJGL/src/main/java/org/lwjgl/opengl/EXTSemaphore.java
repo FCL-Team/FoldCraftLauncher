@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_semaphore</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_semaphore</a> extension.
  * 
  * <p>The Vulkan API introduces the concept of explicit memory objects and reusable synchronization objects. This extension brings those concepts to the
  * OpenGL API via two new object types:</p>
@@ -38,6 +38,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * commands that manipulate semaphores also allow external usage information to be imported and exported.</p>
  */
 public class EXTSemaphore {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetFloatv, GetIntegerv, GetInteger64v, {@link #glGetUnsignedBytevEXT GetUnsignedBytevEXT}, and the
@@ -63,17 +65,8 @@ public class EXTSemaphore {
         GL_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_EXT = 0x9530,
         GL_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_EXT = 0x9531;
 
-    static { GL.initialize(); }
-
     protected EXTSemaphore() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetUnsignedBytevEXT, caps.glGetUnsignedBytei_vEXT, caps.glGenSemaphoresEXT, caps.glDeleteSemaphoresEXT, caps.glIsSemaphoreEXT, 
-            caps.glSemaphoreParameterui64vEXT, caps.glGetSemaphoreParameterui64vEXT, caps.glWaitSemaphoreEXT, caps.glSignalSemaphoreEXT
-        );
     }
 
     // --- [ glGetUnsignedBytevEXT ] ---

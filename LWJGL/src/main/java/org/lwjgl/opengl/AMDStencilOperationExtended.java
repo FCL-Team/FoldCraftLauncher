@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_stencil_operation_extended.txt">AMD_stencil_operation_extended</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_stencil_operation_extended.txt">AMD_stencil_operation_extended</a> extension.
  * 
  * <p>Stencil buffers are special buffers that allow tests to be made against an incoming value and action taken based on that value. The stencil buffer is
  * updated during rasterization, and the operation used to update the stencil buffer is chosen based on whether the fragment passes the stencil test, and
@@ -23,6 +21,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class AMDStencilOperationExtended {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code sfail}, {@code dpfail} and {@code dppass} parameters of StencilOp and StencilOpSeparate. */
     public static final int
         GL_SET_AMD           = 0x874A,
@@ -33,16 +33,8 @@ public class AMDStencilOperationExtended {
         GL_STENCIL_OP_VALUE_AMD      = 0x874C,
         GL_STENCIL_BACK_OP_VALUE_AMD = 0x874D;
 
-    static { GL.initialize(); }
-
     protected AMDStencilOperationExtended() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glStencilOpValueAMD
-        );
     }
 
     // --- [ glStencilOpValueAMD ] ---

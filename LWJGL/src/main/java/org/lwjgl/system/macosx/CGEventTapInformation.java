@@ -18,37 +18,23 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * The structure used to report information about event taps.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code tapPoint} &ndash; HID, session, annotated session</li>
- * <li>{@code options} &ndash; listener, filter</li>
- * <li>{@code eventsOfInterest} &ndash; mask of events being tapped</li>
- * <li>{@code tappingProcess} &ndash; process that is tapping events</li>
- * <li>{@code processBeingTapped} &ndash; zero if not a per-process tap</li>
- * <li>{@code enabled} &ndash; true if tap is enabled</li>
- * <li>{@code minUsecLatency} &ndash; minimum latency in microseconds</li>
- * <li>{@code avgUsecLatency} &ndash; average latency in microseconds</li>
- * <li>{@code maxUsecLatency} &ndash; maximum latency in microseconds</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct CGEventTapInformation {
  *     uint32_t eventTapID;
- *     CGEventTapLocation tapPoint;
- *     CGEventTapOptions options;
- *     CGEventMask eventsOfInterest;
- *     pid_t tappingProcess;
- *     pid_t processBeingTapped;
- *     bool enabled;
- *     float minUsecLatency;
- *     float avgUsecLatency;
- *     float maxUsecLatency;
+ *     CGEventTapLocation {@link #tapPoint};
+ *     CGEventTapOptions {@link #options};
+ *     CGEventMask {@link #eventsOfInterest};
+ *     pid_t {@link #tappingProcess};
+ *     pid_t {@link #processBeingTapped};
+ *     bool {@link #enabled};
+ *     float {@link #minUsecLatency};
+ *     float {@link #avgUsecLatency};
+ *     float {@link #maxUsecLatency};
  * }</code></pre>
  */
-public class CGEventTapInformation extends Struct implements NativeResource {
+public class CGEventTapInformation extends Struct<CGEventTapInformation> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -98,6 +84,15 @@ public class CGEventTapInformation extends Struct implements NativeResource {
         MAXUSECLATENCY = layout.offsetof(9);
     }
 
+    protected CGEventTapInformation(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected CGEventTapInformation create(long address, @Nullable ByteBuffer container) {
+        return new CGEventTapInformation(address, container);
+    }
+
     /**
      * Creates a {@code CGEventTapInformation} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -111,61 +106,61 @@ public class CGEventTapInformation extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code eventTapID} field. */
+    /** @return the value of the {@code eventTapID} field. */
     @NativeType("uint32_t")
     public int eventTapID() { return neventTapID(address()); }
-    /** Returns the value of the {@code tapPoint} field. */
+    /** HID, session, annotated session */
     @NativeType("CGEventTapLocation")
     public int tapPoint() { return ntapPoint(address()); }
-    /** Returns the value of the {@code options} field. */
+    /** listener, filter */
     @NativeType("CGEventTapOptions")
     public int options() { return noptions(address()); }
-    /** Returns the value of the {@code eventsOfInterest} field. */
+    /** mask of events being tapped */
     @NativeType("CGEventMask")
     public long eventsOfInterest() { return neventsOfInterest(address()); }
-    /** Returns the value of the {@code tappingProcess} field. */
+    /** process that is tapping events */
     @NativeType("pid_t")
     public long tappingProcess() { return ntappingProcess(address()); }
-    /** Returns the value of the {@code processBeingTapped} field. */
+    /** zero if not a per-process tap */
     @NativeType("pid_t")
     public long processBeingTapped() { return nprocessBeingTapped(address()); }
-    /** Returns the value of the {@code enabled} field. */
+    /** true if tap is enabled */
     @NativeType("bool")
     public boolean enabled() { return nenabled(address()); }
-    /** Returns the value of the {@code minUsecLatency} field. */
+    /** minimum latency in microseconds */
     public float minUsecLatency() { return nminUsecLatency(address()); }
-    /** Returns the value of the {@code avgUsecLatency} field. */
+    /** average latency in microseconds */
     public float avgUsecLatency() { return navgUsecLatency(address()); }
-    /** Returns the value of the {@code maxUsecLatency} field. */
+    /** maximum latency in microseconds */
     public float maxUsecLatency() { return nmaxUsecLatency(address()); }
 
     // -----------------------------------
 
     /** Returns a new {@code CGEventTapInformation} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static CGEventTapInformation malloc() {
-        return wrap(CGEventTapInformation.class, nmemAllocChecked(SIZEOF));
+        return new CGEventTapInformation(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code CGEventTapInformation} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static CGEventTapInformation calloc() {
-        return wrap(CGEventTapInformation.class, nmemCallocChecked(1, SIZEOF));
+        return new CGEventTapInformation(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code CGEventTapInformation} instance allocated with {@link BufferUtils}. */
     public static CGEventTapInformation create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(CGEventTapInformation.class, memAddress(container), container);
+        return new CGEventTapInformation(memAddress(container), container);
     }
 
     /** Returns a new {@code CGEventTapInformation} instance for the specified memory address. */
     public static CGEventTapInformation create(long address) {
-        return wrap(CGEventTapInformation.class, address);
+        return new CGEventTapInformation(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static CGEventTapInformation createSafe(long address) {
-        return address == NULL ? null : wrap(CGEventTapInformation.class, address);
+        return address == NULL ? null : new CGEventTapInformation(address, null);
     }
 
     /**
@@ -174,7 +169,7 @@ public class CGEventTapInformation extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -183,7 +178,7 @@ public class CGEventTapInformation extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -193,7 +188,7 @@ public class CGEventTapInformation extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -203,34 +198,41 @@ public class CGEventTapInformation extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code CGEventTapInformation} instance allocated on the thread-local {@link MemoryStack}. */
-    public static CGEventTapInformation mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code CGEventTapInformation} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static CGEventTapInformation callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static CGEventTapInformation mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static CGEventTapInformation callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static CGEventTapInformation mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static CGEventTapInformation callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code CGEventTapInformation} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static CGEventTapInformation mallocStack(MemoryStack stack) {
-        return wrap(CGEventTapInformation.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static CGEventTapInformation malloc(MemoryStack stack) {
+        return new CGEventTapInformation(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -238,46 +240,28 @@ public class CGEventTapInformation extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static CGEventTapInformation callocStack(MemoryStack stack) {
-        return wrap(CGEventTapInformation.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static CGEventTapInformation calloc(MemoryStack stack) {
+        return new CGEventTapInformation(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -313,9 +297,9 @@ public class CGEventTapInformation extends Struct implements NativeResource {
         /**
          * Creates a new {@code CGEventTapInformation.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link CGEventTapInformation#SIZEOF}, and its mark will be undefined.
+         * by {@link CGEventTapInformation#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -341,32 +325,32 @@ public class CGEventTapInformation extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code eventTapID} field. */
+        /** @return the value of the {@code eventTapID} field. */
         @NativeType("uint32_t")
         public int eventTapID() { return CGEventTapInformation.neventTapID(address()); }
-        /** Returns the value of the {@code tapPoint} field. */
+        /** @return the value of the {@link CGEventTapInformation#tapPoint} field. */
         @NativeType("CGEventTapLocation")
         public int tapPoint() { return CGEventTapInformation.ntapPoint(address()); }
-        /** Returns the value of the {@code options} field. */
+        /** @return the value of the {@link CGEventTapInformation#options} field. */
         @NativeType("CGEventTapOptions")
         public int options() { return CGEventTapInformation.noptions(address()); }
-        /** Returns the value of the {@code eventsOfInterest} field. */
+        /** @return the value of the {@link CGEventTapInformation#eventsOfInterest} field. */
         @NativeType("CGEventMask")
         public long eventsOfInterest() { return CGEventTapInformation.neventsOfInterest(address()); }
-        /** Returns the value of the {@code tappingProcess} field. */
+        /** @return the value of the {@link CGEventTapInformation#tappingProcess} field. */
         @NativeType("pid_t")
         public long tappingProcess() { return CGEventTapInformation.ntappingProcess(address()); }
-        /** Returns the value of the {@code processBeingTapped} field. */
+        /** @return the value of the {@link CGEventTapInformation#processBeingTapped} field. */
         @NativeType("pid_t")
         public long processBeingTapped() { return CGEventTapInformation.nprocessBeingTapped(address()); }
-        /** Returns the value of the {@code enabled} field. */
+        /** @return the value of the {@link CGEventTapInformation#enabled} field. */
         @NativeType("bool")
         public boolean enabled() { return CGEventTapInformation.nenabled(address()); }
-        /** Returns the value of the {@code minUsecLatency} field. */
+        /** @return the value of the {@link CGEventTapInformation#minUsecLatency} field. */
         public float minUsecLatency() { return CGEventTapInformation.nminUsecLatency(address()); }
-        /** Returns the value of the {@code avgUsecLatency} field. */
+        /** @return the value of the {@link CGEventTapInformation#avgUsecLatency} field. */
         public float avgUsecLatency() { return CGEventTapInformation.navgUsecLatency(address()); }
-        /** Returns the value of the {@code maxUsecLatency} field. */
+        /** @return the value of the {@link CGEventTapInformation#maxUsecLatency} field. */
         public float maxUsecLatency() { return CGEventTapInformation.nmaxUsecLatency(address()); }
 
     }

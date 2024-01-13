@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_transform_feedback.txt">EXT_transform_feedback</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_transform_feedback.txt">EXT_transform_feedback</a> extension.
  * 
  * <p>This extension provides a new mode to the GL, called transform feedback, which records selected vertex attributes for each primitive processed by the
  * GL. The selected attributes are written into buffer objects, and can be written with each attribute in a separate buffer object or with all attributes
@@ -31,7 +31,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>The vertex data recorded in transform feedback mode is stored into buffer objects as an array of vertex attributes. The regular representation and the
  * use of buffer objects allows the recorded data to be processed directly by the GL without requiring CPU intervention to copy data. In particular,
  * transform feedback data can be used for vertex arrays (via vertex buffer objects), as the source for pixel data (via pixel buffer objects), as shader
- * constant data (via the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_parameter_buffer_object.txt">NV_parameter_buffer_object</a> or {@link EXTBindableUniform EXT_bindable_uniform} extensions), or via any other extension that
+ * constant data (via the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_parameter_buffer_object.txt">NV_parameter_buffer_object</a> or {@link EXTBindableUniform EXT_bindable_uniform} extensions), or via any other extension that
  * makes use of buffer objects.</p>
  * 
  * <p>This extension introduces new query object support to allow transform feedback mode to operate asynchronously. Query objects allow applications to
@@ -42,6 +42,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL20 OpenGL 2.0} or {@link ARBShaderObjects ARB_shader_objects}. Promoted to core in {@link GL30 OpenGL 3.0}.</p>
  */
 public class EXTTransformFeedback {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv,
@@ -88,17 +90,8 @@ public class EXTTransformFeedback {
         GL_TRANSFORM_FEEDBACK_BUFFER_MODE_EXT        = 0x8C7F,
         GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH_EXT = 0x8C76;
 
-    static { GL.initialize(); }
-
     protected EXTTransformFeedback() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindBufferRangeEXT, caps.glBindBufferOffsetEXT, caps.glBindBufferBaseEXT, caps.glBeginTransformFeedbackEXT, caps.glEndTransformFeedbackEXT, 
-            caps.glTransformFeedbackVaryingsEXT, caps.glGetTransformFeedbackVaryingEXT, caps.glGetIntegerIndexedvEXT, caps.glGetBooleanIndexedvEXT
-        );
     }
 
     // --- [ glBindBufferRangeEXT ] ---
@@ -132,9 +125,9 @@ public class EXTTransformFeedback {
     public static void glTransformFeedbackVaryingsEXT(@NativeType("GLuint") int program, @NativeType("GLchar const * const *") CharSequence[] varyings, @NativeType("GLenum") int bufferMode) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            long varyingsAddress = org.lwjgl.system.APIUtil.apiArray(stack, MemoryUtil::memASCII, varyings);
+            long varyingsAddress = APIUtil.apiArray(stack, MemoryUtil::memASCII, varyings);
             nglTransformFeedbackVaryingsEXT(program, varyings.length, varyingsAddress, bufferMode);
-            org.lwjgl.system.APIUtil.apiArrayFree(varyingsAddress, varyings.length);
+            APIUtil.apiArrayFree(varyingsAddress, varyings.length);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -143,9 +136,9 @@ public class EXTTransformFeedback {
     public static void glTransformFeedbackVaryingsEXT(@NativeType("GLuint") int program, @NativeType("GLchar const * const *") CharSequence varying, @NativeType("GLenum") int bufferMode) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            long varyingsAddress = org.lwjgl.system.APIUtil.apiArray(stack, MemoryUtil::memASCII, varying);
+            long varyingsAddress = APIUtil.apiArray(stack, MemoryUtil::memASCII, varying);
             nglTransformFeedbackVaryingsEXT(program, 1, varyingsAddress, bufferMode);
-            org.lwjgl.system.APIUtil.apiArrayFree(varyingsAddress, 1);
+            APIUtil.apiArrayFree(varyingsAddress, 1);
         } finally {
             stack.setPointer(stackPointer);
         }

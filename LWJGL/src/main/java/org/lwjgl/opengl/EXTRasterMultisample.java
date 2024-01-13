@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_raster_multisample.txt">EXT_raster_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_raster_multisample.txt">EXT_raster_multisample</a> extension.
  * 
  * <p>This extension allows rendering to a non-multisample color buffer while rasterizing with more than one sample. The result of rasterization (coverage)
  * is available in the {@code gl_SampleMaskIn[]} fragment shader input, multisample rasterization is enabled for all primitives, and several per- fragment
@@ -25,6 +23,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTRasterMultisample {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code cap} parameter of Enable, Disable, IsEnabled. */
     public static final int GL_RASTER_MULTISAMPLE_EXT = 0x9327;
 
@@ -36,16 +36,8 @@ public class EXTRasterMultisample {
         GL_MULTISAMPLE_RASTERIZATION_ALLOWED_EXT = 0x932B,
         GL_EFFECTIVE_RASTER_SAMPLES_EXT          = 0x932C;
 
-    static { GL.initialize(); }
-
     protected EXTRasterMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRasterSamplesEXT
-        );
     }
 
     // --- [ glRasterSamplesEXT ] ---

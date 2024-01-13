@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_point_sprite.txt">NV_point_sprite</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_point_sprite.txt">NV_point_sprite</a> extension.
  * 
  * <p>Applications such as particle systems usually must use OpenGL quads rather than points to render their geometry, since they would like to use a
  * custom-drawn texture for each particle, rather than the traditional OpenGL round antialiased points, and each fragment in a point has the same texture
@@ -32,6 +32,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link EXTPointParameters EXT_point_parameters}.</p>
  */
 public class NVPointSprite {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
@@ -51,16 +53,8 @@ public class NVPointSprite {
      */
     public static final int GL_POINT_SPRITE_R_MODE_NV = 0x8863;
 
-    static { GL.initialize(); }
-
     protected NVPointSprite() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPointParameteriNV, caps.glPointParameterivNV
-        );
     }
 
     // --- [ glPointParameteriNV ] ---

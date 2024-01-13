@@ -10,6 +10,7 @@
 #define ButtonPress           4
 #define ButtonRelease         5
 #define MotionNotify          6
+#define KeyChar               7
 #define ConfigureNotify       22
 #define FCLMessage            37
 

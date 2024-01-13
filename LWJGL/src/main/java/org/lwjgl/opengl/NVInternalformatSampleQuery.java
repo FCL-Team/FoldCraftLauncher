@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_internalformat_sample_query.txt">NV_internalformat_sample_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_internalformat_sample_query.txt">NV_internalformat_sample_query</a> extension.
  * 
  * <p>Some OpenGL implementations support modes of multisampling which have
  * properties which are non-obvious to applications and/or which may not be
@@ -43,6 +43,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVInternalformatSampleQuery {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetInternalformatSampleivNV */
     public static final int
         GL_MULTISAMPLES_NV        = 0x9371,
@@ -50,16 +52,8 @@ public class NVInternalformatSampleQuery {
         GL_SUPERSAMPLE_SCALE_Y_NV = 0x9373,
         GL_CONFORMANT_NV          = 0x9374;
 
-    static { GL.initialize(); }
-
     protected NVInternalformatSampleQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetInternalformatSampleivNV
-        );
     }
 
     // --- [ glGetInternalformatSampleivNV ] ---

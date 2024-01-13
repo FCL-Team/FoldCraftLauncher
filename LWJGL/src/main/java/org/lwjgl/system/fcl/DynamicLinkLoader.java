@@ -18,6 +18,8 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Native bindings to &lt;dlfcn.h&gt;. */
 public class DynamicLinkLoader {
 
+    static { Library.initialize(); }
+
     /** The {@code mode} argument to {@link #dlopen} contains one of the following. */
     public static final int
         RTLD_LAZY         = 0x1,
@@ -40,8 +42,6 @@ public class DynamicLinkLoader {
 
     /** Do not delete object when closed. */
     public static final int RTLD_NODELETE = 0x1000;
-
-    static { Library.initialize(); }
 
     protected DynamicLinkLoader() {
         throw new UnsupportedOperationException();
@@ -78,7 +78,7 @@ public class DynamicLinkLoader {
     public static long dlopen(@Nullable @NativeType("char const *") CharSequence filename, int mode) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            stack.nASCIISafe(filename, true);
+            stack.nUTF8Safe(filename, true);
             long filenameEncoded = filename == null ? NULL : stack.getPointerAddress();
             return ndlopen(filenameEncoded, mode);
         } finally {
@@ -99,7 +99,7 @@ public class DynamicLinkLoader {
     @NativeType("char *")
     public static String dlerror() {
         long __result = ndlerror();
-        return memASCIISafe(__result);
+        return memUTF8Safe(__result);
     }
 
     // --- [ dlsym ] ---

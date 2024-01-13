@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_multicast.txt">NV_gpu_multicast</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_multicast.txt">NV_gpu_multicast</a> extension.
  * 
  * <p>This extension enables novel multi-GPU rendering techniques by providing application control over a group of linked GPUs with identical hardware
  * configuration.</p>
@@ -45,6 +45,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVGPUMulticast {
 
+    static { GL.initialize(); }
+
     /** Accepted in the {@code flags} parameter of BufferStorage and NamedBufferStorageEXT. */
     public static final int GL_PER_GPU_STORAGE_BIT_NV = 0x800;
 
@@ -63,19 +65,8 @@ public class NVGPUMulticast {
     /** Accepted by the {@code pname} parameter of GetMultisamplefv. */
     public static final int GL_MULTICAST_PROGRAMMABLE_SAMPLE_LOCATION_NV = 0x9549;
 
-    static { GL.initialize(); }
-
     protected NVGPUMulticast() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRenderGpuMaskNV, caps.glMulticastBufferSubDataNV, caps.glMulticastCopyBufferSubDataNV, caps.glMulticastCopyImageSubDataNV, 
-            caps.glMulticastBlitFramebufferNV, caps.glMulticastFramebufferSampleLocationsfvNV, caps.glMulticastBarrierNV, caps.glMulticastWaitSyncNV, 
-            caps.glMulticastGetQueryObjectivNV, caps.glMulticastGetQueryObjectuivNV, caps.glMulticastGetQueryObjecti64vNV, 
-            caps.glMulticastGetQueryObjectui64vNV
-        );
     }
 
     // --- [ glRenderGpuMaskNV ] ---

@@ -5,6 +5,8 @@
  */
 package org.lwjgl.system.libc;
 
+import javax.annotation.*;
+
 import java.nio.*;
 
 import org.lwjgl.system.*;
@@ -334,6 +336,31 @@ public class LibCString {
             check(dest, src.remaining());
         }
         return nmemmove(memAddress(dest), memAddress(src), Integer.toUnsignedLong(src.remaining()) << 3);
+    }
+
+    // --- [ strlen ] ---
+
+    public static native long nstrlen(long str);
+
+    @NativeType("size_t")
+    public static long strlen(@NativeType("char const *") ByteBuffer str) {
+        if (CHECKS) {
+            checkNT1(str);
+        }
+        return nstrlen(memAddress(str));
+    }
+
+    // --- [ strerror ] ---
+
+    /** Unsafe version of: {@link #strerror} */
+    public static native long nstrerror(int errnum);
+
+    /** Returns string describing error number. */
+    @Nullable
+    @NativeType("char *")
+    public static String strerror(int errnum) {
+        long __result = nstrerror(errnum);
+        return memASCIISafe(__result);
     }
 
     /** Array version of: {@link #nmemset} */

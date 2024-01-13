@@ -22,7 +22,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * <h3>Type</h3>
  * 
  * <pre><code>
- * void (*) (
+ * void (*{@link #invoke}) (
  *     int error,
  *     char *description
  * )</code></pre>
@@ -57,7 +57,7 @@ public abstract class GLFWErrorCallback extends Callback implements GLFWErrorCal
     }
 
     protected GLFWErrorCallback() {
-        super(SIGNATURE);
+        super(CIF);
     }
 
     GLFWErrorCallback(long functionPointer) {
@@ -65,7 +65,7 @@ public abstract class GLFWErrorCallback extends Callback implements GLFWErrorCal
     }
 
     /**
-     * Converts the specified {@link GLFWErrorCallback} argument to a String.
+     * Converts the specified {@code GLFWErrorCallback} argument to a String.
      *
      * <p>This method may only be used inside a GLFWErrorCallback invocation.</p>
      *
@@ -78,7 +78,7 @@ public abstract class GLFWErrorCallback extends Callback implements GLFWErrorCal
     }
 
     /**
-     * Returns a {@link GLFWErrorCallback} instance that prints the error to the {@link APIUtil#DEBUG_STREAM}.
+     * Returns a {@code GLFWErrorCallback} instance that prints the error to the {@link APIUtil#DEBUG_STREAM}.
      *
      * @return the GLFWerrorCallback
      */
@@ -87,7 +87,7 @@ public abstract class GLFWErrorCallback extends Callback implements GLFWErrorCal
     }
 
     /**
-     * Returns a {@link GLFWErrorCallback} instance that prints the error in the specified {@link PrintStream}.
+     * Returns a {@code GLFWErrorCallback} instance that prints the error in the specified {@link PrintStream}.
      *
      * @param stream the PrintStream to use
      *
@@ -101,20 +101,30 @@ public abstract class GLFWErrorCallback extends Callback implements GLFWErrorCal
             public void invoke(int error, long description) {
                 String msg = getDescription(description);
 
-                stream.printf("[LWJGL] %s error\n", ERROR_CODES.get(error));
-                stream.println("\tDescription : " + msg);
-                stream.println("\tStacktrace  :");
+                StringBuilder sb = new StringBuilder(512);
+                sb
+                    .append("[LWJGL] ")
+                    .append(ERROR_CODES.get(error))
+                    .append(" error\n")
+                    .append("\tDescription : ")
+                    .append(msg)
+                    .append("\n")
+                    .append("\tStacktrace  :\n");
+
                 StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-                for ( int i = 4; i < stack.length; i++ ) {
-                    stream.print("\t\t");
-                    stream.println(stack[i].toString());
+                for (int i = 4; i < stack.length; i++) {
+                    sb.append("\t\t");
+                    sb.append(stack[i]);
+                    sb.append("\n");
                 }
+
+                stream.print(sb);
             }
         };
     }
 
     /**
-     * Returns a {@link GLFWErrorCallback} instance that throws an {@link IllegalStateException} when an error occurs.
+     * Returns a {@code GLFWErrorCallback} instance that throws an {@link IllegalStateException} when an error occurs.
      *
      * @return the GLFWerrorCallback
      */

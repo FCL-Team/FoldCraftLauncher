@@ -24,6 +24,7 @@ _GLFWlibrary _glfw = { GLFW_FALSE };
 //
 static _GLFWerror _glfwMainThreadError;
 static GLFWerrorfun _glfwErrorCallback;
+static GLFWallocator _glfwInitAllocator;
 static _GLFWinitconfig _glfwInitHints =
 {
     GLFW_TRUE,      // hat buttons
@@ -254,6 +255,19 @@ GLFWAPI void glfwInitHint(int hint, int value)
                     "Invalid init hint 0x%08X", hint);
 }
 
+GLFWAPI void glfwInitAllocator(const GLFWallocator* allocator)
+{
+    if (allocator)
+    {
+        if (allocator->allocate && allocator->reallocate && allocator->deallocate)
+            _glfwInitAllocator = *allocator;
+        else
+            _glfwInputError(GLFW_INVALID_VALUE, "Missing function in allocator");
+    }
+    else
+        memset(&_glfwInitAllocator, 0, sizeof(GLFWallocator));
+}
+
 GLFWAPI void glfwGetVersion(int* major, int* minor, int* rev)
 {
     if (major != NULL)
@@ -262,11 +276,6 @@ GLFWAPI void glfwGetVersion(int* major, int* minor, int* rev)
         *minor = GLFW_VERSION_MINOR;
     if (rev != NULL)
         *rev = GLFW_VERSION_REVISION;
-}
-
-GLFWAPI const char* glfwGetVersionString(void)
-{
-    return _glfwPlatformGetVersionString();
 }
 
 GLFWAPI int glfwGetError(const char** description)
@@ -298,4 +307,3 @@ GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun cbfun)
     _GLFW_SWAP_POINTERS(_glfwErrorCallback, cbfun);
     return cbfun;
 }
-

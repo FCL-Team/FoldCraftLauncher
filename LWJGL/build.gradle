@@ -15,7 +15,7 @@ jar {
     doLast {
         archiveFileName = 'lwjgl.jar'
         manifest {
-            attributes 'Manifest-Version': '3.2.3'
+            attributes 'Manifest-Version': '3.3.3'
         }
         destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl"))
         File versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl/version")

@@ -14,10 +14,6 @@ import static org.lwjgl.system.JNI.*;
 /** Native bindings to the GLFW library's Cocoa native access functions. */
 public class GLFWNativeCocoa {
 
-    protected GLFWNativeCocoa() {
-        throw new UnsupportedOperationException();
-    }
-
     /** Contains the function pointers loaded from {@code GLFW.getLibrary()}. */
     public static final class Functions {
 
@@ -30,6 +26,10 @@ public class GLFWNativeCocoa {
 
     }
 
+    protected GLFWNativeCocoa() {
+        throw new UnsupportedOperationException();
+    }
+
     // --- [ glfwGetCocoaMonitor ] ---
 
     /**
@@ -39,7 +39,9 @@ public class GLFWNativeCocoa {
      *
      * @param monitor the GLFW monitor
      *
-     * @return The {@code CGDirectDisplayID} of the specified monitor, or {@code kCGNullDirectDisplay} if an error occurred.
+     * @return the {@code CGDirectDisplayID} of the specified monitor, or {@code kCGNullDirectDisplay} if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.1
      */
@@ -61,7 +63,9 @@ public class GLFWNativeCocoa {
      *
      * @param window the GLFW window
      *
-     * @return The {@code NSWindow} of the specified window, or nil if an error occurred.
+     * @return the {@code NSWindow} of the specified window, or nil if an error occurred.
+     *         
+     *         <p>Possible errors include {@link GLFW#GLFW_NOT_INITIALIZED NOT_INITIALIZED}.</p>
      *
      * @since version 3.0
      */

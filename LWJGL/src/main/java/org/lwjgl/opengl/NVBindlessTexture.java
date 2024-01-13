@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_bindless_texture.txt">NV_bindless_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_bindless_texture.txt">NV_bindless_texture</a> extension.
  * 
  * <p>This extension allows OpenGL applications to access texture objects in
  * shaders without first binding each texture to one of a limited number of
@@ -67,15 +67,6 @@ public class NVBindlessTexture {
 
     protected NVBindlessTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetTextureHandleNV, caps.glGetTextureSamplerHandleNV, caps.glMakeTextureHandleResidentNV, caps.glMakeTextureHandleNonResidentNV, 
-            caps.glGetImageHandleNV, caps.glMakeImageHandleResidentNV, caps.glMakeImageHandleNonResidentNV, caps.glUniformHandleui64NV, 
-            caps.glUniformHandleui64vNV, caps.glProgramUniformHandleui64NV, caps.glProgramUniformHandleui64vNV, caps.glIsTextureHandleResidentNV, 
-            caps.glIsImageHandleResidentNV
-        );
     }
 
     // --- [ glGetTextureHandleNV ] ---

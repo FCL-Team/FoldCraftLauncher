@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_array_object.txt">ARB_vertex_array_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_array_object.txt">ARB_vertex_array_object</a> extension.
  * 
  * <p>This extension introduces named vertex array objects which encapsulate vertex array state on the client side. These objects allow applications to
  * rapidly switch between large sets of array state. In addition, layered libraries can return to the default array state by simply creating and binding a
@@ -25,19 +23,13 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBVertexArrayObject {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_VERTEX_ARRAY_BINDING = 0x85B5;
 
-    static { GL.initialize(); }
-
     protected ARBVertexArrayObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBindVertexArray, caps.glDeleteVertexArrays, caps.glGenVertexArrays, caps.glIsVertexArray
-        );
     }
 
     // --- [ glBindVertexArray ] ---

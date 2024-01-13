@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_sparse_texture.txt">AMD_sparse_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_sparse_texture.txt">AMD_sparse_texture</a> extension.
  * 
  * <p>Recent advances in application complexity and a desire for higher resolutions have pushed texture sizes up considerably. Often, the amount of physical
  * memory available to a graphics processor is a limiting factor in the performance of texture-heavy applications. Once the available physical memory is
@@ -25,6 +23,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL20 OpenGL 2.0} or {@link ARBFragmentShader ARB_fragment_shader}.</p>
  */
 public class AMDSparseTexture {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code flags} parameter to TexStorageSparseAMD and TextureStorageSparseAMD. */
     public static final int GL_TEXTURE_STORAGE_SPARSE_BIT_AMD = 0x1;
@@ -47,16 +47,8 @@ public class AMDSparseTexture {
     /** Accepted by the {@code pname} parameter of TexParameter{if}{v} and GetTexParameter{if}v. */
     public static final int GL_MIN_LOD_WARNING_AMD = 0x919C;
 
-    static { GL.initialize(); }
-
     protected AMDSparseTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glTexStorageSparseAMD, caps.glTextureStorageSparseAMD
-        );
     }
 
     // --- [ glTexStorageSparseAMD ] ---

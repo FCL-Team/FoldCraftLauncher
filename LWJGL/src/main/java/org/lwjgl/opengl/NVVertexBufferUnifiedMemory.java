@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_vertex_buffer_unified_memory.txt">NV_vertex_buffer_unified_memory</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_vertex_buffer_unified_memory.txt">NV_vertex_buffer_unified_memory</a> extension.
  * 
  * <p>This extension provides a mechanism to specify vertex attrib and element array locations using GPU addresses.</p>
  * 
@@ -24,6 +24,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * vertex attrib state that alleviates the overhead of object binds and driver memory management.</p>
  */
 public class NVVertexBufferUnifiedMemory {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code cap} parameter of DisableClientState, EnableClientState, IsEnabled. */
     public static final int
@@ -62,18 +64,8 @@ public class NVVertexBufferUnifiedMemory {
         GL_FOG_COORD_ARRAY_LENGTH_NV       = 0x8F32,
         GL_ELEMENT_ARRAY_LENGTH_NV         = 0x8F33;
 
-    static { GL.initialize(); }
-
     protected NVVertexBufferUnifiedMemory() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBufferAddressRangeNV, caps.glVertexFormatNV, caps.glNormalFormatNV, caps.glColorFormatNV, caps.glIndexFormatNV, caps.glTexCoordFormatNV, 
-            caps.glEdgeFlagFormatNV, caps.glSecondaryColorFormatNV, caps.glFogCoordFormatNV, caps.glVertexAttribFormatNV, caps.glVertexAttribIFormatNV, 
-            caps.glGetIntegerui64i_vNV
-        );
     }
 
     // --- [ glBufferAddressRangeNV ] ---

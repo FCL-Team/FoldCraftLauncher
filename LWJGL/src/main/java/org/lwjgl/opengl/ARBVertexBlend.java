@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_blend.txt">ARB_vertex_blend</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_blend.txt">ARB_vertex_blend</a> extension.
  * 
  * <p>This extension provides the ability to replace the single modelview transformation with a set of n vertex units. (Where n is constrained to an
  * implementation defined maximum.) Each unit has its own modelview transform matrix. For each unit, there is a current weight associated with the vertex.
@@ -23,6 +23,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * transformed by the inverse transpose of the modelview matrices.</p>
  */
 public class ARBVertexBlend {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code value} parameters of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
@@ -90,17 +92,8 @@ public class ARBVertexBlend {
      */
     public static final int GL_WEIGHT_ARRAY_ARB = 0x86AD;
 
-    static { GL.initialize(); }
-
     protected ARBVertexBlend() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glWeightfvARB, caps.glWeightbvARB, caps.glWeightubvARB, caps.glWeightsvARB, caps.glWeightusvARB, caps.glWeightivARB, caps.glWeightuivARB, 
-            caps.glWeightdvARB, caps.glWeightPointerARB, caps.glVertexBlendARB
-        );
     }
 
     // --- [ glWeightfvARB ] ---

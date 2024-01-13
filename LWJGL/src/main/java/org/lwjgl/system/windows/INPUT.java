@@ -18,32 +18,19 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Used by {@link User32#SendInput} to store information for synthesizing input events such as keystrokes, mouse movement, and mouse clicks.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code type} &ndash; the type of the input event. One of:<br><table><tr><td>{@link User32#INPUT_MOUSE}</td><td>{@link User32#INPUT_KEYBOARD}</td><td>{@link User32#INPUT_HARDWARE}</td></tr></table></li>
- * <li>{@code DUMMYUNIONNAME}
- * 
- * <ul>
- * <li>{@code DUMMYUNIONNAME.mi} &ndash; the information about a simulated mouse event</li>
- * <li>{@code DUMMYUNIONNAME.ki} &ndash; the information about a simulated keyboard event</li>
- * <li>{@code DUMMYUNIONNAME.hi} &ndash; the information about a simulated hardware event</li>
- * </ul></li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct INPUT {
- *     DWORD type;
+ *     DWORD {@link #type};
  *     union {
- *         {@link MOUSEINPUT MOUSEINPUT} mi;
- *         {@link KEYBDINPUT KEYBDINPUT} ki;
- *         {@link HARDWAREINPUT HARDWAREINPUT} hi;
+ *         {@link MOUSEINPUT MOUSEINPUT} {@link #DUMMYUNIONNAME_mi mi};
+ *         {@link KEYBDINPUT KEYBDINPUT} {@link #DUMMYUNIONNAME_ki ki};
+ *         {@link HARDWAREINPUT HARDWAREINPUT} {@link #DUMMYUNIONNAME_hi hi};
  *     } DUMMYUNIONNAME;
  * }</code></pre>
  */
-public class INPUT extends Struct implements NativeResource {
+public class INPUT extends Struct<INPUT> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -79,6 +66,15 @@ public class INPUT extends Struct implements NativeResource {
             DUMMYUNIONNAME_HI = layout.offsetof(4);
     }
 
+    protected INPUT(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected INPUT create(long address, @Nullable ByteBuffer container) {
+        return new INPUT(address, container);
+    }
+
     /**
      * Creates a {@code INPUT} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -92,29 +88,29 @@ public class INPUT extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code type} field. */
+    /** the type of the input event. One of:<br><table><tr><td>{@link User32#INPUT_MOUSE}</td><td>{@link User32#INPUT_KEYBOARD}</td><td>{@link User32#INPUT_HARDWARE}</td></tr></table> */
     @NativeType("DWORD")
     public int type() { return ntype(address()); }
-    /** Returns a {@link MOUSEINPUT} view of the {@code DUMMYUNIONNAME.mi} field. */
+    /** the information about a simulated mouse event */
     public MOUSEINPUT DUMMYUNIONNAME_mi() { return nDUMMYUNIONNAME_mi(address()); }
-    /** Returns a {@link KEYBDINPUT} view of the {@code DUMMYUNIONNAME.ki} field. */
+    /** the information about a simulated keyboard event */
     public KEYBDINPUT DUMMYUNIONNAME_ki() { return nDUMMYUNIONNAME_ki(address()); }
-    /** Returns a {@link HARDWAREINPUT} view of the {@code DUMMYUNIONNAME.hi} field. */
+    /** the information about a simulated hardware event */
     public HARDWAREINPUT DUMMYUNIONNAME_hi() { return nDUMMYUNIONNAME_hi(address()); }
 
-    /** Sets the specified value to the {@code type} field. */
+    /** Sets the specified value to the {@link #type} field. */
     public INPUT type(@NativeType("DWORD") int value) { ntype(address(), value); return this; }
-    /** Copies the specified {@link MOUSEINPUT} to the {@code DUMMYUNIONNAME.mi} field. */
+    /** Copies the specified {@link MOUSEINPUT} to the {@link #DUMMYUNIONNAME_mi} field. */
     public INPUT DUMMYUNIONNAME_mi(MOUSEINPUT value) { nDUMMYUNIONNAME_mi(address(), value); return this; }
-    /** Passes the {@code DUMMYUNIONNAME.mi} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #DUMMYUNIONNAME_mi} field to the specified {@link java.util.function.Consumer Consumer}. */
     public INPUT DUMMYUNIONNAME_mi(java.util.function.Consumer<MOUSEINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_mi()); return this; }
-    /** Copies the specified {@link KEYBDINPUT} to the {@code DUMMYUNIONNAME.ki} field. */
+    /** Copies the specified {@link KEYBDINPUT} to the {@link #DUMMYUNIONNAME_ki} field. */
     public INPUT DUMMYUNIONNAME_ki(KEYBDINPUT value) { nDUMMYUNIONNAME_ki(address(), value); return this; }
-    /** Passes the {@code DUMMYUNIONNAME.ki} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #DUMMYUNIONNAME_ki} field to the specified {@link java.util.function.Consumer Consumer}. */
     public INPUT DUMMYUNIONNAME_ki(java.util.function.Consumer<KEYBDINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_ki()); return this; }
-    /** Copies the specified {@link HARDWAREINPUT} to the {@code DUMMYUNIONNAME.hi} field. */
+    /** Copies the specified {@link HARDWAREINPUT} to the {@link #DUMMYUNIONNAME_hi} field. */
     public INPUT DUMMYUNIONNAME_hi(HARDWAREINPUT value) { nDUMMYUNIONNAME_hi(address(), value); return this; }
-    /** Passes the {@code DUMMYUNIONNAME.hi} field to the specified {@link java.util.function.Consumer Consumer}. */
+    /** Passes the {@link #DUMMYUNIONNAME_hi} field to the specified {@link java.util.function.Consumer Consumer}. */
     public INPUT DUMMYUNIONNAME_hi(java.util.function.Consumer<HARDWAREINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_hi()); return this; }
 
     /**
@@ -133,29 +129,29 @@ public class INPUT extends Struct implements NativeResource {
 
     /** Returns a new {@code INPUT} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static INPUT malloc() {
-        return wrap(INPUT.class, nmemAllocChecked(SIZEOF));
+        return new INPUT(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code INPUT} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static INPUT calloc() {
-        return wrap(INPUT.class, nmemCallocChecked(1, SIZEOF));
+        return new INPUT(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code INPUT} instance allocated with {@link BufferUtils}. */
     public static INPUT create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(INPUT.class, memAddress(container), container);
+        return new INPUT(memAddress(container), container);
     }
 
     /** Returns a new {@code INPUT} instance for the specified memory address. */
     public static INPUT create(long address) {
-        return wrap(INPUT.class, address);
+        return new INPUT(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static INPUT createSafe(long address) {
-        return address == NULL ? null : wrap(INPUT.class, address);
+        return address == NULL ? null : new INPUT(address, null);
     }
 
     /**
@@ -164,7 +160,7 @@ public class INPUT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -173,7 +169,7 @@ public class INPUT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -183,7 +179,7 @@ public class INPUT extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -193,34 +189,41 @@ public class INPUT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code INPUT} instance allocated on the thread-local {@link MemoryStack}. */
-    public static INPUT mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code INPUT} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static INPUT callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static INPUT mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static INPUT callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static INPUT mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static INPUT callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code INPUT} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static INPUT mallocStack(MemoryStack stack) {
-        return wrap(INPUT.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static INPUT malloc(MemoryStack stack) {
+        return new INPUT(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -228,46 +231,28 @@ public class INPUT extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static INPUT callocStack(MemoryStack stack) {
-        return wrap(INPUT.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static INPUT calloc(MemoryStack stack) {
+        return new INPUT(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -300,9 +285,9 @@ public class INPUT extends Struct implements NativeResource {
         /**
          * Creates a new {@code INPUT.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link INPUT#SIZEOF}, and its mark will be undefined.
+         * by {@link INPUT#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -328,29 +313,29 @@ public class INPUT extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code type} field. */
+        /** @return the value of the {@link INPUT#type} field. */
         @NativeType("DWORD")
         public int type() { return INPUT.ntype(address()); }
-        /** Returns a {@link MOUSEINPUT} view of the {@code DUMMYUNIONNAME.mi} field. */
+        /** @return a {@link MOUSEINPUT} view of the {@link INPUT#DUMMYUNIONNAME_mi} field. */
         public MOUSEINPUT DUMMYUNIONNAME_mi() { return INPUT.nDUMMYUNIONNAME_mi(address()); }
-        /** Returns a {@link KEYBDINPUT} view of the {@code DUMMYUNIONNAME.ki} field. */
+        /** @return a {@link KEYBDINPUT} view of the {@link INPUT#DUMMYUNIONNAME_ki} field. */
         public KEYBDINPUT DUMMYUNIONNAME_ki() { return INPUT.nDUMMYUNIONNAME_ki(address()); }
-        /** Returns a {@link HARDWAREINPUT} view of the {@code DUMMYUNIONNAME.hi} field. */
+        /** @return a {@link HARDWAREINPUT} view of the {@link INPUT#DUMMYUNIONNAME_hi} field. */
         public HARDWAREINPUT DUMMYUNIONNAME_hi() { return INPUT.nDUMMYUNIONNAME_hi(address()); }
 
-        /** Sets the specified value to the {@code type} field. */
+        /** Sets the specified value to the {@link INPUT#type} field. */
         public Buffer type(@NativeType("DWORD") int value) { INPUT.ntype(address(), value); return this; }
-        /** Copies the specified {@link MOUSEINPUT} to the {@code DUMMYUNIONNAME.mi} field. */
+        /** Copies the specified {@link MOUSEINPUT} to the {@link INPUT#DUMMYUNIONNAME_mi} field. */
         public Buffer DUMMYUNIONNAME_mi(MOUSEINPUT value) { INPUT.nDUMMYUNIONNAME_mi(address(), value); return this; }
-        /** Passes the {@code DUMMYUNIONNAME.mi} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link INPUT#DUMMYUNIONNAME_mi} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer DUMMYUNIONNAME_mi(java.util.function.Consumer<MOUSEINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_mi()); return this; }
-        /** Copies the specified {@link KEYBDINPUT} to the {@code DUMMYUNIONNAME.ki} field. */
+        /** Copies the specified {@link KEYBDINPUT} to the {@link INPUT#DUMMYUNIONNAME_ki} field. */
         public Buffer DUMMYUNIONNAME_ki(KEYBDINPUT value) { INPUT.nDUMMYUNIONNAME_ki(address(), value); return this; }
-        /** Passes the {@code DUMMYUNIONNAME.ki} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link INPUT#DUMMYUNIONNAME_ki} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer DUMMYUNIONNAME_ki(java.util.function.Consumer<KEYBDINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_ki()); return this; }
-        /** Copies the specified {@link HARDWAREINPUT} to the {@code DUMMYUNIONNAME.hi} field. */
+        /** Copies the specified {@link HARDWAREINPUT} to the {@link INPUT#DUMMYUNIONNAME_hi} field. */
         public Buffer DUMMYUNIONNAME_hi(HARDWAREINPUT value) { INPUT.nDUMMYUNIONNAME_hi(address(), value); return this; }
-        /** Passes the {@code DUMMYUNIONNAME.hi} field to the specified {@link java.util.function.Consumer Consumer}. */
+        /** Passes the {@link INPUT#DUMMYUNIONNAME_hi} field to the specified {@link java.util.function.Consumer Consumer}. */
         public Buffer DUMMYUNIONNAME_hi(java.util.function.Consumer<HARDWAREINPUT> consumer) { consumer.accept(DUMMYUNIONNAME_hi()); return this; }
 
     }

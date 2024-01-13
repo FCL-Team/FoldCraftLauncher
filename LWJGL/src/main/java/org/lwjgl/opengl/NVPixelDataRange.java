@@ -9,11 +9,10 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_pixel_data_range.txt">NV_pixel_data_range</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_pixel_data_range.txt">NV_pixel_data_range</a> extension.
  * 
  * <p>The vertex array range extension is intended to improve the efficiency of OpenGL vertex arrays. OpenGL vertex arrays' coherency model and ability to
  * access memory from arbitrary locations in memory prevented implementations from using DMA (Direct Memory Access) operations.</p>
@@ -49,6 +48,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class NVPixelDataRange {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code target} parameter of PixelDataRangeNV and FlushPixelDataRangeNV, and by the {@code cap} parameter of EnableClientState,
      * DisableClientState, and IsEnabled.
@@ -67,16 +68,8 @@ public class NVPixelDataRange {
         GL_WRITE_PIXEL_DATA_RANGE_POINTER_NV = 0x887C,
         GL_READ_PIXEL_DATA_RANGE_POINTER_NV  = 0x887D;
 
-    static { GL.initialize(); }
-
     protected NVPixelDataRange() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPixelDataRangeNV, caps.glFlushPixelDataRangeNV
-        );
     }
 
     // --- [ glPixelDataRangeNV ] ---

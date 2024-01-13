@@ -21,28 +21,16 @@ import static org.lwjgl.system.MemoryStack.*;
  * provides security settings for objects created by various functions, such as {@code CreateFile}, {@code CreatePipe}, {@code CreateProcess},
  * {@code RegCreateKeyEx}, or {@code RegSaveKeyEx}.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code nLength} &ndash; the size, in bytes, of this structure. Set this value to {@link #SIZEOF}.</li>
- * <li>{@code lpSecurityDescriptor} &ndash; 
- * a pointer to a {@code SECURITY_DESCRIPTOR} structure that controls access to the object. If the value of this member is {@code NULL}, the object is assigned
- * the default security descriptor associated with the access token of the calling process. This is not the same as granting access to everyone by
- * assigning a {@code NULL} discretionary access control list (DACL). By default, the default DACL in the access token of a process allows access only to the
- * user represented by the access token.</li>
- * <li>{@code bInheritHandle} &ndash; specifies whether the returned handle is inherited when a new process is created. If this member is {@code TRUE}, the new process inherits the handle.</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct SECURITY_ATTRIBUTES {
- *     DWORD nLength;
- *     LPVOID lpSecurityDescriptor;
- *     BOOL bInheritHandle;
+ *     DWORD {@link #nLength};
+ *     LPVOID {@link #lpSecurityDescriptor};
+ *     BOOL {@link #bInheritHandle};
  * }</code></pre>
  */
-public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
+public class SECURITY_ATTRIBUTES extends Struct<SECURITY_ATTRIBUTES> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -71,6 +59,15 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
         BINHERITHANDLE = layout.offsetof(2);
     }
 
+    protected SECURITY_ATTRIBUTES(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected SECURITY_ATTRIBUTES create(long address, @Nullable ByteBuffer container) {
+        return new SECURITY_ATTRIBUTES(address, container);
+    }
+
     /**
      * Creates a {@code SECURITY_ATTRIBUTES} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -84,21 +81,26 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code nLength} field. */
+    /** the size, in bytes, of this structure. Set this value to {@link #SIZEOF}. */
     @NativeType("DWORD")
     public int nLength() { return nnLength(address()); }
-    /** Returns the value of the {@code lpSecurityDescriptor} field. */
+    /**
+     * a pointer to a {@code SECURITY_DESCRIPTOR} structure that controls access to the object. If the value of this member is {@code NULL}, the object is assigned
+     * the default security descriptor associated with the access token of the calling process. This is not the same as granting access to everyone by
+     * assigning a {@code NULL} discretionary access control list (DACL). By default, the default DACL in the access token of a process allows access only to the
+     * user represented by the access token.
+     */
     @NativeType("LPVOID")
     public long lpSecurityDescriptor() { return nlpSecurityDescriptor(address()); }
-    /** Returns the value of the {@code bInheritHandle} field. */
+    /** specifies whether the returned handle is inherited when a new process is created. If this member is {@code TRUE}, the new process inherits the handle. */
     @NativeType("BOOL")
     public boolean bInheritHandle() { return nbInheritHandle(address()) != 0; }
 
-    /** Sets the specified value to the {@code nLength} field. */
+    /** Sets the specified value to the {@link #nLength} field. */
     public SECURITY_ATTRIBUTES nLength(@NativeType("DWORD") int value) { nnLength(address(), value); return this; }
-    /** Sets the specified value to the {@code lpSecurityDescriptor} field. */
+    /** Sets the specified value to the {@link #lpSecurityDescriptor} field. */
     public SECURITY_ATTRIBUTES lpSecurityDescriptor(@NativeType("LPVOID") long value) { nlpSecurityDescriptor(address(), value); return this; }
-    /** Sets the specified value to the {@code bInheritHandle} field. */
+    /** Sets the specified value to the {@link #bInheritHandle} field. */
     public SECURITY_ATTRIBUTES bInheritHandle(@NativeType("BOOL") boolean value) { nbInheritHandle(address(), value ? 1 : 0); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -130,29 +132,29 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
 
     /** Returns a new {@code SECURITY_ATTRIBUTES} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static SECURITY_ATTRIBUTES malloc() {
-        return wrap(SECURITY_ATTRIBUTES.class, nmemAllocChecked(SIZEOF));
+        return new SECURITY_ATTRIBUTES(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code SECURITY_ATTRIBUTES} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static SECURITY_ATTRIBUTES calloc() {
-        return wrap(SECURITY_ATTRIBUTES.class, nmemCallocChecked(1, SIZEOF));
+        return new SECURITY_ATTRIBUTES(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code SECURITY_ATTRIBUTES} instance allocated with {@link BufferUtils}. */
     public static SECURITY_ATTRIBUTES create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(SECURITY_ATTRIBUTES.class, memAddress(container), container);
+        return new SECURITY_ATTRIBUTES(memAddress(container), container);
     }
 
     /** Returns a new {@code SECURITY_ATTRIBUTES} instance for the specified memory address. */
     public static SECURITY_ATTRIBUTES create(long address) {
-        return wrap(SECURITY_ATTRIBUTES.class, address);
+        return new SECURITY_ATTRIBUTES(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static SECURITY_ATTRIBUTES createSafe(long address) {
-        return address == NULL ? null : wrap(SECURITY_ATTRIBUTES.class, address);
+        return address == NULL ? null : new SECURITY_ATTRIBUTES(address, null);
     }
 
     /**
@@ -161,7 +163,7 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -170,7 +172,7 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -180,7 +182,7 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -190,34 +192,41 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code SECURITY_ATTRIBUTES} instance allocated on the thread-local {@link MemoryStack}. */
-    public static SECURITY_ATTRIBUTES mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code SECURITY_ATTRIBUTES} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static SECURITY_ATTRIBUTES callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static SECURITY_ATTRIBUTES mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static SECURITY_ATTRIBUTES callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static SECURITY_ATTRIBUTES mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static SECURITY_ATTRIBUTES callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code SECURITY_ATTRIBUTES} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static SECURITY_ATTRIBUTES mallocStack(MemoryStack stack) {
-        return wrap(SECURITY_ATTRIBUTES.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static SECURITY_ATTRIBUTES malloc(MemoryStack stack) {
+        return new SECURITY_ATTRIBUTES(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -225,46 +234,28 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static SECURITY_ATTRIBUTES callocStack(MemoryStack stack) {
-        return wrap(SECURITY_ATTRIBUTES.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static SECURITY_ATTRIBUTES calloc(MemoryStack stack) {
+        return new SECURITY_ATTRIBUTES(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -292,18 +283,6 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
         check(memGetAddress(struct + SECURITY_ATTRIBUTES.LPSECURITYDESCRIPTOR));
     }
 
-    /**
-     * Calls {@link #validate(long)} for each struct contained in the specified struct array.
-     *
-     * @param array the struct array to validate
-     * @param count the number of structs in {@code array}
-     */
-    public static void validate(long array, int count) {
-        for (int i = 0; i < count; i++) {
-            validate(array + Integer.toUnsignedLong(i) * SIZEOF);
-        }
-    }
-
     // -----------------------------------
 
     /** An array of {@link SECURITY_ATTRIBUTES} structs. */
@@ -314,9 +293,9 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
         /**
          * Creates a new {@code SECURITY_ATTRIBUTES.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link SECURITY_ATTRIBUTES#SIZEOF}, and its mark will be undefined.
+         * by {@link SECURITY_ATTRIBUTES#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -342,21 +321,21 @@ public class SECURITY_ATTRIBUTES extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code nLength} field. */
+        /** @return the value of the {@link SECURITY_ATTRIBUTES#nLength} field. */
         @NativeType("DWORD")
         public int nLength() { return SECURITY_ATTRIBUTES.nnLength(address()); }
-        /** Returns the value of the {@code lpSecurityDescriptor} field. */
+        /** @return the value of the {@link SECURITY_ATTRIBUTES#lpSecurityDescriptor} field. */
         @NativeType("LPVOID")
         public long lpSecurityDescriptor() { return SECURITY_ATTRIBUTES.nlpSecurityDescriptor(address()); }
-        /** Returns the value of the {@code bInheritHandle} field. */
+        /** @return the value of the {@link SECURITY_ATTRIBUTES#bInheritHandle} field. */
         @NativeType("BOOL")
         public boolean bInheritHandle() { return SECURITY_ATTRIBUTES.nbInheritHandle(address()) != 0; }
 
-        /** Sets the specified value to the {@code nLength} field. */
+        /** Sets the specified value to the {@link SECURITY_ATTRIBUTES#nLength} field. */
         public Buffer nLength(@NativeType("DWORD") int value) { SECURITY_ATTRIBUTES.nnLength(address(), value); return this; }
-        /** Sets the specified value to the {@code lpSecurityDescriptor} field. */
+        /** Sets the specified value to the {@link SECURITY_ATTRIBUTES#lpSecurityDescriptor} field. */
         public Buffer lpSecurityDescriptor(@NativeType("LPVOID") long value) { SECURITY_ATTRIBUTES.nlpSecurityDescriptor(address(), value); return this; }
-        /** Sets the specified value to the {@code bInheritHandle} field. */
+        /** Sets the specified value to the {@link SECURITY_ATTRIBUTES#bInheritHandle} field. */
         public Buffer bInheritHandle(@NativeType("BOOL") boolean value) { SECURITY_ATTRIBUTES.nbInheritHandle(address(), value ? 1 : 0); return this; }
 
     }

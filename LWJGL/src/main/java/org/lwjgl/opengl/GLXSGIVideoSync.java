@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/SGI/GLX_SGI_video_sync.txt">GLX_SGI_video_sync</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/SGI/GLX_SGI_video_sync.txt">GLX_SGI_video_sync</a> extension.
  * 
  * <p>This extension provides a means for synchronization with the video frame rate of a monitor.</p>
  */
@@ -22,12 +22,6 @@ public class GLXSGIVideoSync {
 
     protected GLXSGIVideoSync() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLXCapabilities caps) {
-        return checkFunctions(
-            caps.glXGetVideoSyncSGI, caps.glXWaitVideoSyncSGI
-        );
     }
 
     // --- [ glXGetVideoSyncSGI ] ---

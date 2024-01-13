@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_parallel_shader_compile.txt">ARB_parallel_shader_compile</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_parallel_shader_compile.txt">ARB_parallel_shader_compile</a> extension.
  * 
  * <p>Compiling GLSL into implementation-specific code can be a time consuming process, so a GL implementation may wish to perform the compilation in a
  * separate CPU thread. This extension provides a mechanism for the application to provide a hint to limit the number of threads it wants to be used to
@@ -20,22 +18,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBParallelShaderCompile {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int GL_MAX_SHADER_COMPILER_THREADS_ARB = 0x91B0;
 
     /** Accepted as part of the {@code pname} parameter to GetShaderiv() and accepted as part of the {@code pname} parameter to GetProgramiv(). */
     public static final int GL_COMPLETION_STATUS_ARB = 0x91B1;
 
-    static { GL.initialize(); }
-
     protected ARBParallelShaderCompile() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMaxShaderCompilerThreadsARB
-        );
     }
 
     // --- [ glMaxShaderCompilerThreadsARB ] ---

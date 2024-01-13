@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_storage_buffer_object.txt">ARB_shader_storage_buffer_object</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_storage_buffer_object.txt">ARB_shader_storage_buffer_object</a> extension.
  * 
  * <p>This extension provides the ability for OpenGL shaders to perform random access reads, writes, and atomic memory operations on variables stored in a
  * buffer object. Application shader code can declare sets of variables (referred to as "buffer variables") arranged into interface blocks in a manner
@@ -34,6 +32,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL40 OpenGL 4.0} and {@link GL43 OpenGL 4.3} or {@link ARBProgramInterfaceQuery ARB_program_interface_query}. Promoted to core in {@link GL43 OpenGL 4.3}.</p>
  */
 public class ARBShaderStorageBufferObject {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, and GetBufferPointerv. */
     public static final int GL_SHADER_STORAGE_BUFFER = 0x90D2;
@@ -68,16 +68,8 @@ public class ARBShaderStorageBufferObject {
     /** Also, add a new alias for the existing token MAX_COMBINED_IMAGE_UNITS_AND_FRAGMENT_OUTPUTS. */
     public static final int GL_MAX_COMBINED_SHADER_OUTPUT_RESOURCES = 0x8F39;
 
-    static { GL.initialize(); }
-
     protected ARBShaderStorageBufferObject() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glShaderStorageBlockBinding
-        );
     }
 
     // --- [ glShaderStorageBlockBinding ] ---

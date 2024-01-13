@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sample_locations.txt">ARB_sample_locations</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sample_locations.txt">ARB_sample_locations</a> extension.
  * 
  * <p>This extension allows an application to modify the locations of samples within a pixel used in multisample rasterization. Additionally, it allows
  * applications to specify different sample locations for each pixel in a group of adjacent pixels, which may increase antialiasing quality (particularly
@@ -36,6 +36,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBSampleLocations {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int
         GL_SAMPLE_LOCATION_SUBPIXEL_BITS_ARB           = 0x933D,
@@ -51,16 +53,8 @@ public class ARBSampleLocations {
         GL_FRAMEBUFFER_PROGRAMMABLE_SAMPLE_LOCATIONS_ARB = 0x9342,
         GL_FRAMEBUFFER_SAMPLE_LOCATION_PIXEL_GRID_ARB    = 0x9343;
 
-    static { GL.initialize(); }
-
     protected ARBSampleLocations() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glFramebufferSampleLocationsfvARB, caps.glNamedFramebufferSampleLocationsfvARB, caps.glEvaluateDepthValuesARB
-        );
     }
 
     // --- [ glFramebufferSampleLocationsfvARB ] ---

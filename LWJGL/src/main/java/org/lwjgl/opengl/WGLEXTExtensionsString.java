@@ -13,17 +13,11 @@ import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-/** Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/WGL_EXT_extensions_string.txt">WGL_EXT_extensions_string</a> extension. */
+/** Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/WGL_EXT_extensions_string.txt">WGL_EXT_extensions_string</a> extension. */
 public class WGLEXTExtensionsString {
 
     protected WGLEXTExtensionsString() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(WGLCapabilities caps) {
-        return checkFunctions(
-            caps.wglGetExtensionsStringEXT
-        );
     }
 
     // --- [ wglGetExtensionsStringEXT ] ---

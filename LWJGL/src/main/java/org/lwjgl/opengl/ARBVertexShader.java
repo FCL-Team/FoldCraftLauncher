@@ -19,7 +19,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_shader.txt">ARB_vertex_shader</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_shader.txt">ARB_vertex_shader</a> extension.
  * 
  * <p>This extension adds programmable vertex level processing to OpenGL. The application can write vertex shaders in a high level language as defined in the
  * OpenGL Shading Language specification. A vertex shader replaces the transformation, texture coordinate generation and lighting parts of OpenGL, and it
@@ -30,6 +30,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Promoted to core in {@link GL20 OpenGL 2.0}.</p>
  */
 public class ARBVertexShader {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code shaderType} argument of CreateShaderObjectARB and returned by the {@code params} parameter of GetObjectParameter{if}vARB. */
     public static final int GL_VERTEX_SHADER_ARB = 0x8B31;
@@ -78,25 +80,8 @@ public class ARBVertexShader {
         GL_FLOAT_MAT3_ARB = 0x8B5B,
         GL_FLOAT_MAT4_ARB = 0x8B5C;
 
-    static { GL.initialize(); }
-
     protected ARBVertexShader() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glVertexAttrib1fARB, caps.glVertexAttrib1sARB, caps.glVertexAttrib1dARB, caps.glVertexAttrib2fARB, caps.glVertexAttrib2sARB, 
-            caps.glVertexAttrib2dARB, caps.glVertexAttrib3fARB, caps.glVertexAttrib3sARB, caps.glVertexAttrib3dARB, caps.glVertexAttrib4fARB, 
-            caps.glVertexAttrib4sARB, caps.glVertexAttrib4dARB, caps.glVertexAttrib4NubARB, caps.glVertexAttrib1fvARB, caps.glVertexAttrib1svARB, 
-            caps.glVertexAttrib1dvARB, caps.glVertexAttrib2fvARB, caps.glVertexAttrib2svARB, caps.glVertexAttrib2dvARB, caps.glVertexAttrib3fvARB, 
-            caps.glVertexAttrib3svARB, caps.glVertexAttrib3dvARB, caps.glVertexAttrib4fvARB, caps.glVertexAttrib4svARB, caps.glVertexAttrib4dvARB, 
-            caps.glVertexAttrib4ivARB, caps.glVertexAttrib4bvARB, caps.glVertexAttrib4ubvARB, caps.glVertexAttrib4usvARB, caps.glVertexAttrib4uivARB, 
-            caps.glVertexAttrib4NbvARB, caps.glVertexAttrib4NsvARB, caps.glVertexAttrib4NivARB, caps.glVertexAttrib4NubvARB, caps.glVertexAttrib4NusvARB, 
-            caps.glVertexAttrib4NuivARB, caps.glVertexAttribPointerARB, caps.glEnableVertexAttribArrayARB, caps.glDisableVertexAttribArrayARB, 
-            caps.glBindAttribLocationARB, caps.glGetActiveAttribARB, caps.glGetAttribLocationARB, caps.glGetVertexAttribivARB, caps.glGetVertexAttribfvARB, 
-            caps.glGetVertexAttribdvARB, caps.glGetVertexAttribPointervARB
-        );
     }
 
     // --- [ glVertexAttrib1fARB ] ---

@@ -19,14 +19,6 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Image IO callbacks, used by {@link STBImage#stbi_load_from_callbacks load_from_callbacks}.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code read} &ndash; fill {@code data} with {@code size} bytes. Return number of bytes actually read.</li>
- * <li>{@code skip} &ndash; skip the next {@code n} bytes, or {@code unget} the last -n bytes if negative</li>
- * <li>{@code eof} &ndash; returns nonzero if we are at end of file/data</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
@@ -37,7 +29,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * }</code></pre>
  */
 @NativeType("struct stbi_io_callbacks")
-public class STBIIOCallbacks extends Struct implements NativeResource {
+public class STBIIOCallbacks extends Struct<STBIIOCallbacks> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -66,6 +58,15 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
         EOF = layout.offsetof(2);
     }
 
+    protected STBIIOCallbacks(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected STBIIOCallbacks create(long address, @Nullable ByteBuffer container) {
+        return new STBIIOCallbacks(address, container);
+    }
+
     /**
      * Creates a {@code STBIIOCallbacks} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -79,21 +80,21 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code read} field. */
+    /** fill {@code data} with {@code size} bytes. Return number of bytes actually read. */
     @NativeType("int (*) (void *, char *, int)")
     public STBIReadCallback read() { return nread(address()); }
-    /** Returns the value of the {@code skip} field. */
+    /** skip the next {@code n} bytes, or {@code unget} the last -n bytes if negative */
     @NativeType("void (*) (void *, int)")
     public STBISkipCallback skip() { return nskip(address()); }
-    /** Returns the value of the {@code eof} field. */
+    /** returns nonzero if we are at end of file/data */
     @NativeType("int (*) (void *)")
     public STBIEOFCallback eof() { return neof(address()); }
 
-    /** Sets the specified value to the {@code read} field. */
+    /** Sets the specified value to the {@link #read} field. */
     public STBIIOCallbacks read(@NativeType("int (*) (void *, char *, int)") STBIReadCallbackI value) { nread(address(), value); return this; }
-    /** Sets the specified value to the {@code skip} field. */
+    /** Sets the specified value to the {@link #skip} field. */
     public STBIIOCallbacks skip(@NativeType("void (*) (void *, int)") STBISkipCallbackI value) { nskip(address(), value); return this; }
-    /** Sets the specified value to the {@code eof} field. */
+    /** Sets the specified value to the {@link #eof} field. */
     public STBIIOCallbacks eof(@NativeType("int (*) (void *)") STBIEOFCallbackI value) { neof(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -125,29 +126,29 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
 
     /** Returns a new {@code STBIIOCallbacks} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static STBIIOCallbacks malloc() {
-        return wrap(STBIIOCallbacks.class, nmemAllocChecked(SIZEOF));
+        return new STBIIOCallbacks(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code STBIIOCallbacks} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static STBIIOCallbacks calloc() {
-        return wrap(STBIIOCallbacks.class, nmemCallocChecked(1, SIZEOF));
+        return new STBIIOCallbacks(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code STBIIOCallbacks} instance allocated with {@link BufferUtils}. */
     public static STBIIOCallbacks create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(STBIIOCallbacks.class, memAddress(container), container);
+        return new STBIIOCallbacks(memAddress(container), container);
     }
 
     /** Returns a new {@code STBIIOCallbacks} instance for the specified memory address. */
     public static STBIIOCallbacks create(long address) {
-        return wrap(STBIIOCallbacks.class, address);
+        return new STBIIOCallbacks(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static STBIIOCallbacks createSafe(long address) {
-        return address == NULL ? null : wrap(STBIIOCallbacks.class, address);
+        return address == NULL ? null : new STBIIOCallbacks(address, null);
     }
 
     /**
@@ -156,7 +157,7 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -165,7 +166,7 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -175,7 +176,7 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -185,34 +186,41 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code STBIIOCallbacks} instance allocated on the thread-local {@link MemoryStack}. */
-    public static STBIIOCallbacks mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code STBIIOCallbacks} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static STBIIOCallbacks callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBIIOCallbacks mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBIIOCallbacks callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static STBIIOCallbacks mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static STBIIOCallbacks callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code STBIIOCallbacks} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static STBIIOCallbacks mallocStack(MemoryStack stack) {
-        return wrap(STBIIOCallbacks.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static STBIIOCallbacks malloc(MemoryStack stack) {
+        return new STBIIOCallbacks(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -220,46 +228,28 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static STBIIOCallbacks callocStack(MemoryStack stack) {
-        return wrap(STBIIOCallbacks.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static STBIIOCallbacks calloc(MemoryStack stack) {
+        return new STBIIOCallbacks(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -289,18 +279,6 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
         check(memGetAddress(struct + STBIIOCallbacks.EOF));
     }
 
-    /**
-     * Calls {@link #validate(long)} for each struct contained in the specified struct array.
-     *
-     * @param array the struct array to validate
-     * @param count the number of structs in {@code array}
-     */
-    public static void validate(long array, int count) {
-        for (int i = 0; i < count; i++) {
-            validate(array + Integer.toUnsignedLong(i) * SIZEOF);
-        }
-    }
-
     // -----------------------------------
 
     /** An array of {@link STBIIOCallbacks} structs. */
@@ -311,9 +289,9 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
         /**
          * Creates a new {@code STBIIOCallbacks.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link STBIIOCallbacks#SIZEOF}, and its mark will be undefined.
+         * by {@link STBIIOCallbacks#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -339,21 +317,21 @@ public class STBIIOCallbacks extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code read} field. */
+        /** @return the value of the {@link STBIIOCallbacks#read} field. */
         @NativeType("int (*) (void *, char *, int)")
         public STBIReadCallback read() { return STBIIOCallbacks.nread(address()); }
-        /** Returns the value of the {@code skip} field. */
+        /** @return the value of the {@link STBIIOCallbacks#skip} field. */
         @NativeType("void (*) (void *, int)")
         public STBISkipCallback skip() { return STBIIOCallbacks.nskip(address()); }
-        /** Returns the value of the {@code eof} field. */
+        /** @return the value of the {@link STBIIOCallbacks#eof} field. */
         @NativeType("int (*) (void *)")
         public STBIEOFCallback eof() { return STBIIOCallbacks.neof(address()); }
 
-        /** Sets the specified value to the {@code read} field. */
+        /** Sets the specified value to the {@link STBIIOCallbacks#read} field. */
         public Buffer read(@NativeType("int (*) (void *, char *, int)") STBIReadCallbackI value) { STBIIOCallbacks.nread(address(), value); return this; }
-        /** Sets the specified value to the {@code skip} field. */
+        /** Sets the specified value to the {@link STBIIOCallbacks#skip} field. */
         public Buffer skip(@NativeType("void (*) (void *, int)") STBISkipCallbackI value) { STBIIOCallbacks.nskip(address(), value); return this; }
-        /** Sets the specified value to the {@code eof} field. */
+        /** Sets the specified value to the {@link STBIIOCallbacks#eof} field. */
         public Buffer eof(@NativeType("int (*) (void *)") STBIEOFCallbackI value) { STBIIOCallbacks.neof(address(), value); return this; }
 
     }

@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_primitive_restart.txt">NV_primitive_restart</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_primitive_restart.txt">NV_primitive_restart</a> extension.
  * 
  * <p>This extension allows applications to easily and inexpensively restart a primitive in its middle. A "primitive restart" is simply the same as an End
  * command, followed by another Begin command with the same mode as the original. The typical expected use of this feature is to draw a mesh with many
@@ -28,6 +26,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVPrimitiveRestart {
 
+    static { GL.initialize(); }
+
     /**
      * Accepted by the {@code array} parameter of EnableClientState and DisableClientState, by the {@code cap} parameter of IsEnabled, and by the {@code pname}
      * parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev.
@@ -37,16 +37,8 @@ public class NVPrimitiveRestart {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_PRIMITIVE_RESTART_INDEX_NV = 0x8559;
 
-    static { GL.initialize(); }
-
     protected NVPrimitiveRestart() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPrimitiveRestartNV, caps.glPrimitiveRestartIndexNV
-        );
     }
 
     // --- [ glPrimitiveRestartNV ] ---

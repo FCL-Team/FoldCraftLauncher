@@ -10,7 +10,7 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.Checks.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_buffer.txt">EXT_external_buffer</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_buffer.txt">EXT_external_buffer</a> extension.
  * 
  * <p>Extension EXT_buffer_storage introduced immutable storage buffers to OpenGL ES. This extension allows the data store for an immutable buffer to be
  * sourced from an external {@code EGLClientBuffer}, allowing sharing of EGL client buffers across APIs, across processes, and across different processing
@@ -42,12 +42,6 @@ public class EXTExternalBuffer {
 
     protected EXTExternalBuffer() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glBufferStorageExternalEXT, caps.hasDSA(ext) ? caps.glNamedBufferStorageExternalEXT : -1L
-        );
     }
 
     // --- [ glBufferStorageExternalEXT ] ---

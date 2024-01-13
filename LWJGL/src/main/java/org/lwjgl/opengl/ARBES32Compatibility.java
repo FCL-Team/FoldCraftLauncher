@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_ES3_2_compatibility.txt">ARB_ES3_2_compatibility</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_ES3_2_compatibility.txt">ARB_ES3_2_compatibility</a> extension.
  * 
  * <p>This extension adds support for features of OpenGL ES 3.2 that are missing from OpenGL 4.5. Enabling these features will ease the process of porting
  * applications from OpenGL ES 3.2 to OpenGL.</p>
@@ -30,22 +28,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBES32Compatibility {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetFloatv, GetIntegerv, and GetInteger64v. */
     public static final int
         GL_PRIMITIVE_BOUNDING_BOX_ARB             = 0x92BE,
         GL_MULTISAMPLE_LINE_WIDTH_RANGE_ARB       = 0x9381,
         GL_MULTISAMPLE_LINE_WIDTH_GRANULARITY_ARB = 0x9382;
 
-    static { GL.initialize(); }
-
     protected ARBES32Compatibility() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPrimitiveBoundingBoxARB
-        );
     }
 
     // --- [ glPrimitiveBoundingBoxARB ] ---

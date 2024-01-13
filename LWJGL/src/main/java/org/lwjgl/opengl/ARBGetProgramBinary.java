@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_get_program_binary.txt">ARB_get_program_binary</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_get_program_binary.txt">ARB_get_program_binary</a> extension.
  * 
  * <p>This extension introduces new commands to retrieve and set the binary representation of a program object. {@link #glGetProgramBinary GetProgramBinary} allows an application to
  * cache compiled and linked programs to avoid compiling and linking when used again. This may even allow the GL itself to act as an offline compiler. The
@@ -32,6 +30,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBGetProgramBinary {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of ProgramParameteri and GetProgramiv. */
     public static final int GL_PROGRAM_BINARY_RETRIEVABLE_HINT = 0x8257;
 
@@ -43,16 +43,8 @@ public class ARBGetProgramBinary {
         GL_NUM_PROGRAM_BINARY_FORMATS = 0x87FE,
         GL_PROGRAM_BINARY_FORMATS     = 0x87FF;
 
-    static { GL.initialize(); }
-
     protected ARBGetProgramBinary() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetProgramBinary, caps.glProgramBinary, caps.glProgramParameteri
-        );
     }
 
     // --- [ glGetProgramBinary ] ---

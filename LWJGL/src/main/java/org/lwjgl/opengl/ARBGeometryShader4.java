@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_geometry_shader4.txt">ARB_geometry_shader4</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_geometry_shader4.txt">ARB_geometry_shader4</a> extension.
  * 
  * <p>ARB_geometry_shader4 defines a new shader type available to be run on the GPU, called a geometry shader. Geometry shaders are run after vertices are
  * transformed, but prior to color clamping, flat shading and clipping.</p>
@@ -32,6 +30,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL32 OpenGL 3.2}.</p>
  */
 public class ARBGeometryShader4 {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code type} parameter of CreateShader and returned by the {@code params} parameter of GetShaderiv. */
     public static final int GL_GEOMETRY_SHADER_ARB = 0x8DD9;
@@ -74,16 +74,8 @@ public class ARBGeometryShader4 {
      */
     public static final int GL_PROGRAM_POINT_SIZE_ARB = 0x8642;
 
-    static { GL.initialize(); }
-
     protected ARBGeometryShader4() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glProgramParameteriARB, caps.glFramebufferTextureARB, caps.glFramebufferTextureLayerARB, caps.glFramebufferTextureFaceARB
-        );
     }
 
     // --- [ glProgramParameteriARB ] ---

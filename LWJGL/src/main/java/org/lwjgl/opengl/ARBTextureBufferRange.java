@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_range.txt">ARB_texture_buffer_range</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_range.txt">ARB_texture_buffer_range</a> extension.
  * 
  * <p>{@link ARBTextureBufferObject ARB_texture_buffer_object} (which was promoted to core in OpenGL 3.1) introduced the ability to attach the data store of a buffer object to a buffer
  * texture and access it from shaders. The extension only allows the entire store of the buffer object to the texture. This extension expands on this and
@@ -21,6 +19,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBTextureBufferRange {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetTexLevelParameter. */
     public static final int
         GL_TEXTURE_BUFFER_OFFSET = 0x919D,
@@ -29,16 +29,8 @@ public class ARBTextureBufferRange {
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT = 0x919F;
 
-    static { GL.initialize(); }
-
     protected ARBTextureBufferRange() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glTexBufferRange, ext.contains("GL_EXT_direct_state_access") ? caps.glTextureBufferRangeEXT : -1L
-        );
     }
 
     // --- [ glTexBufferRange ] ---

@@ -16,31 +16,20 @@ import static org.lwjgl.system.MemoryUtil.*;
 /**
  * Describes a single video mode.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code width} &ndash; the width, in screen coordinates, of the video mode</li>
- * <li>{@code height} &ndash; the height, in screen coordinates, of the video mode</li>
- * <li>{@code redBits} &ndash; the bit depth of the red channel of the video mode</li>
- * <li>{@code greenBits} &ndash; the bit depth of the green channel of the video mode</li>
- * <li>{@code blueBits} &ndash; the bit depth of the blue channel of the video mode</li>
- * <li>{@code refreshRate} &ndash; the refresh rate, in Hz, of the video mode</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct GLFWvidmode {
- *     int width;
- *     int height;
- *     int redBits;
- *     int greenBits;
- *     int blueBits;
- *     int refreshRate;
+ *     int {@link #width};
+ *     int {@link #height};
+ *     int {@link #redBits};
+ *     int {@link #greenBits};
+ *     int {@link #blueBits};
+ *     int {@link #refreshRate};
  * }</code></pre>
  */
 @NativeType("struct GLFWvidmode")
-public class GLFWVidMode extends Struct {
+public class GLFWVidMode extends Struct<GLFWVidMode> {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -78,6 +67,15 @@ public class GLFWVidMode extends Struct {
         REFRESHRATE = layout.offsetof(5);
     }
 
+    protected GLFWVidMode(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected GLFWVidMode create(long address, @Nullable ByteBuffer container) {
+        return new GLFWVidMode(address, container);
+    }
+
     /**
      * Creates a {@code GLFWVidMode} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -91,30 +89,30 @@ public class GLFWVidMode extends Struct {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code width} field. */
+    /** the width, in screen coordinates, of the video mode */
     public int width() { return nwidth(address()); }
-    /** Returns the value of the {@code height} field. */
+    /** the height, in screen coordinates, of the video mode */
     public int height() { return nheight(address()); }
-    /** Returns the value of the {@code redBits} field. */
+    /** the bit depth of the red channel of the video mode */
     public int redBits() { return nredBits(address()); }
-    /** Returns the value of the {@code greenBits} field. */
+    /** the bit depth of the green channel of the video mode */
     public int greenBits() { return ngreenBits(address()); }
-    /** Returns the value of the {@code blueBits} field. */
+    /** the bit depth of the blue channel of the video mode */
     public int blueBits() { return nblueBits(address()); }
-    /** Returns the value of the {@code refreshRate} field. */
+    /** the refresh rate, in Hz, of the video mode */
     public int refreshRate() { return nrefreshRate(address()); }
 
     // -----------------------------------
 
     /** Returns a new {@code GLFWVidMode} instance for the specified memory address. */
     public static GLFWVidMode create(long address) {
-        return wrap(GLFWVidMode.class, address);
+        return new GLFWVidMode(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static GLFWVidMode createSafe(long address) {
-        return address == NULL ? null : wrap(GLFWVidMode.class, address);
+        return address == NULL ? null : new GLFWVidMode(address, null);
     }
 
     /**
@@ -124,13 +122,13 @@ public class GLFWVidMode extends Struct {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
@@ -158,9 +156,9 @@ public class GLFWVidMode extends Struct {
         /**
          * Creates a new {@code GLFWVidMode.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link GLFWVidMode#SIZEOF}, and its mark will be undefined.
+         * by {@link GLFWVidMode#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -186,17 +184,17 @@ public class GLFWVidMode extends Struct {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code width} field. */
+        /** @return the value of the {@link GLFWVidMode#width} field. */
         public int width() { return GLFWVidMode.nwidth(address()); }
-        /** Returns the value of the {@code height} field. */
+        /** @return the value of the {@link GLFWVidMode#height} field. */
         public int height() { return GLFWVidMode.nheight(address()); }
-        /** Returns the value of the {@code redBits} field. */
+        /** @return the value of the {@link GLFWVidMode#redBits} field. */
         public int redBits() { return GLFWVidMode.nredBits(address()); }
-        /** Returns the value of the {@code greenBits} field. */
+        /** @return the value of the {@link GLFWVidMode#greenBits} field. */
         public int greenBits() { return GLFWVidMode.ngreenBits(address()); }
-        /** Returns the value of the {@code blueBits} field. */
+        /** @return the value of the {@link GLFWVidMode#blueBits} field. */
         public int blueBits() { return GLFWVidMode.nblueBits(address()); }
-        /** Returns the value of the {@code refreshRate} field. */
+        /** @return the value of the {@link GLFWVidMode#refreshRate} field. */
         public int refreshRate() { return GLFWVidMode.nrefreshRate(address()); }
 
     }

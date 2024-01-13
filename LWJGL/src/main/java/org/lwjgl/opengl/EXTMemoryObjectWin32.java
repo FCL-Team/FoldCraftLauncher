@@ -10,12 +10,14 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.Checks.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects_win32.txt">EXT_memory_object_win32</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects_win32.txt">EXT_memory_object_win32</a> extension.
  * 
- * <p>Building upon the OpenGL memory object and semaphore framework defined in <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_external_objects</a>, this extension enables an
+ * <p>Building upon the OpenGL memory object and semaphore framework defined in <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects.txt">EXT_external_objects</a>, this extension enables an
  * OpenGL application to import a memory object or semaphore from a Win32 NT handle or a KMT share handle.</p>
  */
 public class EXTMemoryObjectWin32 {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code handleType} parameter of {@link #glImportMemoryWin32HandleEXT ImportMemoryWin32HandleEXT}, {@link #glImportMemoryWin32NameEXT ImportMemoryWin32NameEXT}, {@link EXTSemaphoreWin32#glImportSemaphoreWin32HandleEXT ImportSemaphoreWin32HandleEXT}, and
@@ -46,16 +48,8 @@ public class EXTMemoryObjectWin32 {
     /** Accepted by the {@code handleType} parameter of {@link #glImportMemoryWin32HandleEXT ImportMemoryWin32HandleEXT}. */
     public static final int GL_HANDLE_TYPE_D3D11_IMAGE_KMT_EXT = 0x958C;
 
-    static { GL.initialize(); }
-
     protected EXTMemoryObjectWin32() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glImportMemoryWin32HandleEXT, caps.glImportMemoryWin32NameEXT
-        );
     }
 
     // --- [ glImportMemoryWin32HandleEXT ] ---

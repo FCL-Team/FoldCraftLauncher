@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_framebuffer_multisample_advanced.txt">AMD_framebuffer_multisample_advanced</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_framebuffer_multisample_advanced.txt">AMD_framebuffer_multisample_advanced</a> extension.
  * 
  * <p>This extension extends {@link ARBFramebufferObject ARB_framebuffer_object} by allowing compromises between image quality and memory footprint of multisample antialiasing.</p>
  * 
@@ -28,6 +26,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class AMDFramebufferMultisampleAdvanced {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of {@link GL30C#glGetRenderbufferParameteriv GetRenderbufferParameteriv}. */
     public static final int GL_RENDERBUFFER_STORAGE_SAMPLES_AMD = 0x91B2;
 
@@ -39,16 +39,8 @@ public class AMDFramebufferMultisampleAdvanced {
         GL_NUM_SUPPORTED_MULTISAMPLE_MODES_AMD       = 0x91B6,
         GL_SUPPORTED_MULTISAMPLE_MODES_AMD           = 0x91B7;
 
-    static { GL.initialize(); }
-
     protected AMDFramebufferMultisampleAdvanced() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRenderbufferStorageMultisampleAdvancedAMD, caps.glNamedRenderbufferStorageMultisampleAdvancedAMD
-        );
     }
 
     // --- [ glRenderbufferStorageMultisampleAdvancedAMD ] ---

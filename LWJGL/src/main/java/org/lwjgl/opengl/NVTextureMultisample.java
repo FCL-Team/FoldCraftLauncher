@@ -7,34 +7,25 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_multisample.txt">NV_texture_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_multisample.txt">NV_texture_multisample</a> extension.
  * 
- * <p>This specification extends <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program4.txt">NV_gpu_program4</a> to support per-sample fetching from multisample textures described in
+ * <p>This specification extends <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program4.txt">NV_gpu_program4</a> to support per-sample fetching from multisample textures described in
  * {@link ARBTextureMultisample ARB_texture_multisample}.</p>
  * 
  * <p>Requires {@link GL20 OpenGL 2.0}, {@link ARBTextureMultisample ARB_texture_multisample}.</p>
  */
 public class NVTextureMultisample {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetTexLevelParameter. */
     public static final int
         GL_TEXTURE_COVERAGE_SAMPLES_NV = 0x9045,
         GL_TEXTURE_COLOR_SAMPLES_NV    = 0x9046;
 
-    static { GL.initialize(); }
-
     protected NVTextureMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glTexImage2DMultisampleCoverageNV, caps.glTexImage3DMultisampleCoverageNV, caps.glTextureImage2DMultisampleNV, 
-            caps.glTextureImage3DMultisampleNV, caps.glTextureImage2DMultisampleCoverageNV, caps.glTextureImage3DMultisampleCoverageNV
-        );
     }
 
     // --- [ glTexImage2DMultisampleCoverageNV ] ---

@@ -12,7 +12,6 @@ import java.nio.*;
 import org.lwjgl.*;
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.MemoryStack.*;
 
@@ -57,10 +56,10 @@ import static org.lwjgl.system.MemoryStack.*;
  *     {@link XKeymapEvent XKeymapEvent} xkeymap;
  *     {@link XGenericEvent XGenericEvent} xgeneric;
  *     {@link XGenericEventCookie XGenericEventCookie} xcookie;
- *     long pad[24];
+ *     long[24];
  * }</code></pre>
  */
-public class XEvent extends Struct implements NativeResource {
+public class XEvent extends Struct<XEvent> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -103,8 +102,7 @@ public class XEvent extends Struct implements NativeResource {
         XERROR,
         XKEYMAP,
         XGENERIC,
-        XCOOKIE,
-        PAD;
+        XCOOKIE;
 
     static {
         Layout layout = __union(
@@ -142,7 +140,7 @@ public class XEvent extends Struct implements NativeResource {
             __member(XKeymapEvent.SIZEOF, XKeymapEvent.ALIGNOF),
             __member(XGenericEvent.SIZEOF, XGenericEvent.ALIGNOF),
             __member(XGenericEventCookie.SIZEOF, XGenericEventCookie.ALIGNOF),
-            __array(CLONG_SIZE, 24)
+            __padding(24, CLONG_SIZE, true)
         );
 
         SIZEOF = layout.getSize();
@@ -182,7 +180,15 @@ public class XEvent extends Struct implements NativeResource {
         XKEYMAP = layout.offsetof(31);
         XGENERIC = layout.offsetof(32);
         XCOOKIE = layout.offsetof(33);
-        PAD = layout.offsetof(34);
+    }
+
+    protected XEvent(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected XEvent create(long address, @Nullable ByteBuffer container) {
+        return new XEvent(address, container);
     }
 
     /**
@@ -198,102 +204,102 @@ public class XEvent extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code type} field. */
+    /** @return the value of the {@code type} field. */
     public int type() { return ntype(address()); }
-    /** Returns a {@link XAnyEvent} view of the {@code xany} field. */
+    /** @return a {@link XAnyEvent} view of the {@code xany} field. */
     public XAnyEvent xany() { return nxany(address()); }
-    /** Returns a {@link XKeyEvent} view of the {@code xkey} field. */
+    /** @return a {@link XKeyEvent} view of the {@code xkey} field. */
     public XKeyEvent xkey() { return nxkey(address()); }
-    /** Returns a {@link XButtonEvent} view of the {@code xbutton} field. */
+    /** @return a {@link XButtonEvent} view of the {@code xbutton} field. */
     public XButtonEvent xbutton() { return nxbutton(address()); }
-    /** Returns a {@link XMotionEvent} view of the {@code xmotion} field. */
+    /** @return a {@link XMotionEvent} view of the {@code xmotion} field. */
     public XMotionEvent xmotion() { return nxmotion(address()); }
-    /** Returns a {@link XCrossingEvent} view of the {@code xcrossing} field. */
+    /** @return a {@link XCrossingEvent} view of the {@code xcrossing} field. */
     public XCrossingEvent xcrossing() { return nxcrossing(address()); }
-    /** Returns a {@link XFocusChangeEvent} view of the {@code xfocus} field. */
+    /** @return a {@link XFocusChangeEvent} view of the {@code xfocus} field. */
     public XFocusChangeEvent xfocus() { return nxfocus(address()); }
-    /** Returns a {@link XExposeEvent} view of the {@code xexpose} field. */
+    /** @return a {@link XExposeEvent} view of the {@code xexpose} field. */
     public XExposeEvent xexpose() { return nxexpose(address()); }
-    /** Returns a {@link XGraphicsExposeEvent} view of the {@code xgraphicsexpose} field. */
+    /** @return a {@link XGraphicsExposeEvent} view of the {@code xgraphicsexpose} field. */
     public XGraphicsExposeEvent xgraphicsexpose() { return nxgraphicsexpose(address()); }
-    /** Returns a {@link XNoExposeEvent} view of the {@code xnoexpose} field. */
+    /** @return a {@link XNoExposeEvent} view of the {@code xnoexpose} field. */
     public XNoExposeEvent xnoexpose() { return nxnoexpose(address()); }
-    /** Returns a {@link XVisibilityEvent} view of the {@code xvisibility} field. */
+    /** @return a {@link XVisibilityEvent} view of the {@code xvisibility} field. */
     public XVisibilityEvent xvisibility() { return nxvisibility(address()); }
-    /** Returns a {@link XCreateWindowEvent} view of the {@code xcreatewindow} field. */
+    /** @return a {@link XCreateWindowEvent} view of the {@code xcreatewindow} field. */
     public XCreateWindowEvent xcreatewindow() { return nxcreatewindow(address()); }
-    /** Returns a {@link XDestroyWindowEvent} view of the {@code xdestroywindow} field. */
+    /** @return a {@link XDestroyWindowEvent} view of the {@code xdestroywindow} field. */
     public XDestroyWindowEvent xdestroywindow() { return nxdestroywindow(address()); }
-    /** Returns a {@link XUnmapEvent} view of the {@code xunmap} field. */
+    /** @return a {@link XUnmapEvent} view of the {@code xunmap} field. */
     public XUnmapEvent xunmap() { return nxunmap(address()); }
-    /** Returns a {@link XMapEvent} view of the {@code xmap} field. */
+    /** @return a {@link XMapEvent} view of the {@code xmap} field. */
     public XMapEvent xmap() { return nxmap(address()); }
-    /** Returns a {@link XMapRequestEvent} view of the {@code xmaprequest} field. */
+    /** @return a {@link XMapRequestEvent} view of the {@code xmaprequest} field. */
     public XMapRequestEvent xmaprequest() { return nxmaprequest(address()); }
-    /** Returns a {@link XReparentEvent} view of the {@code xreparent} field. */
+    /** @return a {@link XReparentEvent} view of the {@code xreparent} field. */
     public XReparentEvent xreparent() { return nxreparent(address()); }
-    /** Returns a {@link XConfigureEvent} view of the {@code xconfigure} field. */
+    /** @return a {@link XConfigureEvent} view of the {@code xconfigure} field. */
     public XConfigureEvent xconfigure() { return nxconfigure(address()); }
-    /** Returns a {@link XGravityEvent} view of the {@code xgravity} field. */
+    /** @return a {@link XGravityEvent} view of the {@code xgravity} field. */
     public XGravityEvent xgravity() { return nxgravity(address()); }
-    /** Returns a {@link XResizeRequestEvent} view of the {@code xresizerequest} field. */
+    /** @return a {@link XResizeRequestEvent} view of the {@code xresizerequest} field. */
     public XResizeRequestEvent xresizerequest() { return nxresizerequest(address()); }
-    /** Returns a {@link XConfigureRequestEvent} view of the {@code xconfigurerequest} field. */
+    /** @return a {@link XConfigureRequestEvent} view of the {@code xconfigurerequest} field. */
     public XConfigureRequestEvent xconfigurerequest() { return nxconfigurerequest(address()); }
-    /** Returns a {@link XCirculateEvent} view of the {@code xcirculate} field. */
+    /** @return a {@link XCirculateEvent} view of the {@code xcirculate} field. */
     public XCirculateEvent xcirculate() { return nxcirculate(address()); }
-    /** Returns a {@link XCirculateRequestEvent} view of the {@code xcirculaterequest} field. */
+    /** @return a {@link XCirculateRequestEvent} view of the {@code xcirculaterequest} field. */
     public XCirculateRequestEvent xcirculaterequest() { return nxcirculaterequest(address()); }
-    /** Returns a {@link XPropertyEvent} view of the {@code xproperty} field. */
+    /** @return a {@link XPropertyEvent} view of the {@code xproperty} field. */
     public XPropertyEvent xproperty() { return nxproperty(address()); }
-    /** Returns a {@link XSelectionClearEvent} view of the {@code xselectionclear} field. */
+    /** @return a {@link XSelectionClearEvent} view of the {@code xselectionclear} field. */
     public XSelectionClearEvent xselectionclear() { return nxselectionclear(address()); }
-    /** Returns a {@link XSelectionRequestEvent} view of the {@code xselectionrequest} field. */
+    /** @return a {@link XSelectionRequestEvent} view of the {@code xselectionrequest} field. */
     public XSelectionRequestEvent xselectionrequest() { return nxselectionrequest(address()); }
-    /** Returns a {@link XSelectionEvent} view of the {@code xselection} field. */
+    /** @return a {@link XSelectionEvent} view of the {@code xselection} field. */
     public XSelectionEvent xselection() { return nxselection(address()); }
-    /** Returns a {@link XColormapEvent} view of the {@code xcolormap} field. */
+    /** @return a {@link XColormapEvent} view of the {@code xcolormap} field. */
     public XColormapEvent xcolormap() { return nxcolormap(address()); }
-    /** Returns a {@link XClientMessageEvent} view of the {@code xclient} field. */
+    /** @return a {@link XClientMessageEvent} view of the {@code xclient} field. */
     public XClientMessageEvent xclient() { return nxclient(address()); }
-    /** Returns a {@link XMappingEvent} view of the {@code xmapping} field. */
+    /** @return a {@link XMappingEvent} view of the {@code xmapping} field. */
     public XMappingEvent xmapping() { return nxmapping(address()); }
-    /** Returns a {@link XErrorEvent} view of the {@code xerror} field. */
+    /** @return a {@link XErrorEvent} view of the {@code xerror} field. */
     public XErrorEvent xerror() { return nxerror(address()); }
-    /** Returns a {@link XKeymapEvent} view of the {@code xkeymap} field. */
+    /** @return a {@link XKeymapEvent} view of the {@code xkeymap} field. */
     public XKeymapEvent xkeymap() { return nxkeymap(address()); }
-    /** Returns a {@link XGenericEvent} view of the {@code xgeneric} field. */
+    /** @return a {@link XGenericEvent} view of the {@code xgeneric} field. */
     public XGenericEvent xgeneric() { return nxgeneric(address()); }
-    /** Returns a {@link XGenericEventCookie} view of the {@code xcookie} field. */
+    /** @return a {@link XGenericEventCookie} view of the {@code xcookie} field. */
     public XGenericEventCookie xcookie() { return nxcookie(address()); }
 
     // -----------------------------------
 
     /** Returns a new {@code XEvent} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static XEvent malloc() {
-        return wrap(XEvent.class, nmemAllocChecked(SIZEOF));
+        return new XEvent(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code XEvent} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static XEvent calloc() {
-        return wrap(XEvent.class, nmemCallocChecked(1, SIZEOF));
+        return new XEvent(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code XEvent} instance allocated with {@link BufferUtils}. */
     public static XEvent create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(XEvent.class, memAddress(container), container);
+        return new XEvent(memAddress(container), container);
     }
 
     /** Returns a new {@code XEvent} instance for the specified memory address. */
     public static XEvent create(long address) {
-        return wrap(XEvent.class, address);
+        return new XEvent(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static XEvent createSafe(long address) {
-        return address == NULL ? null : wrap(XEvent.class, address);
+        return address == NULL ? null : new XEvent(address, null);
     }
 
     /**
@@ -302,7 +308,7 @@ public class XEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -311,7 +317,7 @@ public class XEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -321,7 +327,7 @@ public class XEvent extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -331,34 +337,41 @@ public class XEvent extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code XEvent} instance allocated on the thread-local {@link MemoryStack}. */
-    public static XEvent mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code XEvent} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static XEvent callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XEvent mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XEvent callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static XEvent mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static XEvent callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code XEvent} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static XEvent mallocStack(MemoryStack stack) {
-        return wrap(XEvent.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static XEvent malloc(MemoryStack stack) {
+        return new XEvent(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -366,46 +379,28 @@ public class XEvent extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static XEvent callocStack(MemoryStack stack) {
-        return wrap(XEvent.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static XEvent calloc(MemoryStack stack) {
+        return new XEvent(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -478,10 +473,6 @@ public class XEvent extends Struct implements NativeResource {
     public static XGenericEvent nxgeneric(long struct) { return XGenericEvent.create(struct + XEvent.XGENERIC); }
     /** Unsafe version of {@link #xcookie}. */
     public static XGenericEventCookie nxcookie(long struct) { return XGenericEventCookie.create(struct + XEvent.XCOOKIE); }
-    public static CLongBuffer npad(long struct) { return memCLongBuffer(struct + XEvent.PAD, 24); }
-    public static long npad(long struct, int index) {
-        return memGetCLong(struct + XEvent.PAD + check(index, 24) * CLONG_SIZE);
-    }
 
     // -----------------------------------
 
@@ -493,9 +484,9 @@ public class XEvent extends Struct implements NativeResource {
         /**
          * Creates a new {@code XEvent.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link XEvent#SIZEOF}, and its mark will be undefined.
+         * by {@link XEvent#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -521,73 +512,73 @@ public class XEvent extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code type} field. */
+        /** @return the value of the {@code type} field. */
         public int type() { return XEvent.ntype(address()); }
-        /** Returns a {@link XAnyEvent} view of the {@code xany} field. */
+        /** @return a {@link XAnyEvent} view of the {@code xany} field. */
         public XAnyEvent xany() { return XEvent.nxany(address()); }
-        /** Returns a {@link XKeyEvent} view of the {@code xkey} field. */
+        /** @return a {@link XKeyEvent} view of the {@code xkey} field. */
         public XKeyEvent xkey() { return XEvent.nxkey(address()); }
-        /** Returns a {@link XButtonEvent} view of the {@code xbutton} field. */
+        /** @return a {@link XButtonEvent} view of the {@code xbutton} field. */
         public XButtonEvent xbutton() { return XEvent.nxbutton(address()); }
-        /** Returns a {@link XMotionEvent} view of the {@code xmotion} field. */
+        /** @return a {@link XMotionEvent} view of the {@code xmotion} field. */
         public XMotionEvent xmotion() { return XEvent.nxmotion(address()); }
-        /** Returns a {@link XCrossingEvent} view of the {@code xcrossing} field. */
+        /** @return a {@link XCrossingEvent} view of the {@code xcrossing} field. */
         public XCrossingEvent xcrossing() { return XEvent.nxcrossing(address()); }
-        /** Returns a {@link XFocusChangeEvent} view of the {@code xfocus} field. */
+        /** @return a {@link XFocusChangeEvent} view of the {@code xfocus} field. */
         public XFocusChangeEvent xfocus() { return XEvent.nxfocus(address()); }
-        /** Returns a {@link XExposeEvent} view of the {@code xexpose} field. */
+        /** @return a {@link XExposeEvent} view of the {@code xexpose} field. */
         public XExposeEvent xexpose() { return XEvent.nxexpose(address()); }
-        /** Returns a {@link XGraphicsExposeEvent} view of the {@code xgraphicsexpose} field. */
+        /** @return a {@link XGraphicsExposeEvent} view of the {@code xgraphicsexpose} field. */
         public XGraphicsExposeEvent xgraphicsexpose() { return XEvent.nxgraphicsexpose(address()); }
-        /** Returns a {@link XNoExposeEvent} view of the {@code xnoexpose} field. */
+        /** @return a {@link XNoExposeEvent} view of the {@code xnoexpose} field. */
         public XNoExposeEvent xnoexpose() { return XEvent.nxnoexpose(address()); }
-        /** Returns a {@link XVisibilityEvent} view of the {@code xvisibility} field. */
+        /** @return a {@link XVisibilityEvent} view of the {@code xvisibility} field. */
         public XVisibilityEvent xvisibility() { return XEvent.nxvisibility(address()); }
-        /** Returns a {@link XCreateWindowEvent} view of the {@code xcreatewindow} field. */
+        /** @return a {@link XCreateWindowEvent} view of the {@code xcreatewindow} field. */
         public XCreateWindowEvent xcreatewindow() { return XEvent.nxcreatewindow(address()); }
-        /** Returns a {@link XDestroyWindowEvent} view of the {@code xdestroywindow} field. */
+        /** @return a {@link XDestroyWindowEvent} view of the {@code xdestroywindow} field. */
         public XDestroyWindowEvent xdestroywindow() { return XEvent.nxdestroywindow(address()); }
-        /** Returns a {@link XUnmapEvent} view of the {@code xunmap} field. */
+        /** @return a {@link XUnmapEvent} view of the {@code xunmap} field. */
         public XUnmapEvent xunmap() { return XEvent.nxunmap(address()); }
-        /** Returns a {@link XMapEvent} view of the {@code xmap} field. */
+        /** @return a {@link XMapEvent} view of the {@code xmap} field. */
         public XMapEvent xmap() { return XEvent.nxmap(address()); }
-        /** Returns a {@link XMapRequestEvent} view of the {@code xmaprequest} field. */
+        /** @return a {@link XMapRequestEvent} view of the {@code xmaprequest} field. */
         public XMapRequestEvent xmaprequest() { return XEvent.nxmaprequest(address()); }
-        /** Returns a {@link XReparentEvent} view of the {@code xreparent} field. */
+        /** @return a {@link XReparentEvent} view of the {@code xreparent} field. */
         public XReparentEvent xreparent() { return XEvent.nxreparent(address()); }
-        /** Returns a {@link XConfigureEvent} view of the {@code xconfigure} field. */
+        /** @return a {@link XConfigureEvent} view of the {@code xconfigure} field. */
         public XConfigureEvent xconfigure() { return XEvent.nxconfigure(address()); }
-        /** Returns a {@link XGravityEvent} view of the {@code xgravity} field. */
+        /** @return a {@link XGravityEvent} view of the {@code xgravity} field. */
         public XGravityEvent xgravity() { return XEvent.nxgravity(address()); }
-        /** Returns a {@link XResizeRequestEvent} view of the {@code xresizerequest} field. */
+        /** @return a {@link XResizeRequestEvent} view of the {@code xresizerequest} field. */
         public XResizeRequestEvent xresizerequest() { return XEvent.nxresizerequest(address()); }
-        /** Returns a {@link XConfigureRequestEvent} view of the {@code xconfigurerequest} field. */
+        /** @return a {@link XConfigureRequestEvent} view of the {@code xconfigurerequest} field. */
         public XConfigureRequestEvent xconfigurerequest() { return XEvent.nxconfigurerequest(address()); }
-        /** Returns a {@link XCirculateEvent} view of the {@code xcirculate} field. */
+        /** @return a {@link XCirculateEvent} view of the {@code xcirculate} field. */
         public XCirculateEvent xcirculate() { return XEvent.nxcirculate(address()); }
-        /** Returns a {@link XCirculateRequestEvent} view of the {@code xcirculaterequest} field. */
+        /** @return a {@link XCirculateRequestEvent} view of the {@code xcirculaterequest} field. */
         public XCirculateRequestEvent xcirculaterequest() { return XEvent.nxcirculaterequest(address()); }
-        /** Returns a {@link XPropertyEvent} view of the {@code xproperty} field. */
+        /** @return a {@link XPropertyEvent} view of the {@code xproperty} field. */
         public XPropertyEvent xproperty() { return XEvent.nxproperty(address()); }
-        /** Returns a {@link XSelectionClearEvent} view of the {@code xselectionclear} field. */
+        /** @return a {@link XSelectionClearEvent} view of the {@code xselectionclear} field. */
         public XSelectionClearEvent xselectionclear() { return XEvent.nxselectionclear(address()); }
-        /** Returns a {@link XSelectionRequestEvent} view of the {@code xselectionrequest} field. */
+        /** @return a {@link XSelectionRequestEvent} view of the {@code xselectionrequest} field. */
         public XSelectionRequestEvent xselectionrequest() { return XEvent.nxselectionrequest(address()); }
-        /** Returns a {@link XSelectionEvent} view of the {@code xselection} field. */
+        /** @return a {@link XSelectionEvent} view of the {@code xselection} field. */
         public XSelectionEvent xselection() { return XEvent.nxselection(address()); }
-        /** Returns a {@link XColormapEvent} view of the {@code xcolormap} field. */
+        /** @return a {@link XColormapEvent} view of the {@code xcolormap} field. */
         public XColormapEvent xcolormap() { return XEvent.nxcolormap(address()); }
-        /** Returns a {@link XClientMessageEvent} view of the {@code xclient} field. */
+        /** @return a {@link XClientMessageEvent} view of the {@code xclient} field. */
         public XClientMessageEvent xclient() { return XEvent.nxclient(address()); }
-        /** Returns a {@link XMappingEvent} view of the {@code xmapping} field. */
+        /** @return a {@link XMappingEvent} view of the {@code xmapping} field. */
         public XMappingEvent xmapping() { return XEvent.nxmapping(address()); }
-        /** Returns a {@link XErrorEvent} view of the {@code xerror} field. */
+        /** @return a {@link XErrorEvent} view of the {@code xerror} field. */
         public XErrorEvent xerror() { return XEvent.nxerror(address()); }
-        /** Returns a {@link XKeymapEvent} view of the {@code xkeymap} field. */
+        /** @return a {@link XKeymapEvent} view of the {@code xkeymap} field. */
         public XKeymapEvent xkeymap() { return XEvent.nxkeymap(address()); }
-        /** Returns a {@link XGenericEvent} view of the {@code xgeneric} field. */
+        /** @return a {@link XGenericEvent} view of the {@code xgeneric} field. */
         public XGenericEvent xgeneric() { return XEvent.nxgeneric(address()); }
-        /** Returns a {@link XGenericEventCookie} view of the {@code xcookie} field. */
+        /** @return a {@link XGenericEventCookie} view of the {@code xcookie} field. */
         public XGenericEventCookie xcookie() { return XEvent.nxcookie(address()); }
 
     }

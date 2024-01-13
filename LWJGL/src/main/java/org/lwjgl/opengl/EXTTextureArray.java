@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_array.txt">EXT_texture_array</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_array.txt">EXT_texture_array</a> extension.
  * 
  * <p>This extension introduces the notion of one- and two-dimensional array textures. An array texture is a collection of one- and two-dimensional images of
  * identical size and format, arranged in layers. A one-dimensional array texture is specified using TexImage2D; a two-dimensional array texture is
@@ -33,6 +31,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL30 OpenGL 3.0}.</p>
  */
 public class EXTTextureArray {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code target} parameter of TexParameteri, TexParameteriv, TexParameterf, TexParameterfv, GenerateMipmapEXT, and BindTexture. */
     public static final int
@@ -77,16 +77,8 @@ public class EXTTextureArray {
         GL_SAMPLER_1D_ARRAY_SHADOW_EXT = 0x8DC3,
         GL_SAMPLER_2D_ARRAY_SHADOW_EXT = 0x8DC4;
 
-    static { GL.initialize(); }
-
     protected EXTTextureArray() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glFramebufferTextureLayerEXT
-        );
     }
 
     // --- [ glFramebufferTextureLayerEXT ] ---

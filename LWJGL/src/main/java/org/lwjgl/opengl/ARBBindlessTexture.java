@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_bindless_texture.txt">ARB_bindless_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_bindless_texture.txt">ARB_bindless_texture</a> extension.
  * 
  * <p>This extension allows OpenGL applications to access texture objects in shaders without first binding each texture to one of a limited number of texture
  * image units. Using this extension, an application can query a 64-bit unsigned integer texture handle for each texture that it wants to access and then
@@ -45,22 +45,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBBindlessTexture {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code type} parameter of VertexAttribLPointer. */
     public static final int GL_UNSIGNED_INT64_ARB = 0x140F;
 
-    static { GL.initialize(); }
-
     protected ARBBindlessTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetTextureHandleARB, caps.glGetTextureSamplerHandleARB, caps.glMakeTextureHandleResidentARB, caps.glMakeTextureHandleNonResidentARB, 
-            caps.glGetImageHandleARB, caps.glMakeImageHandleResidentARB, caps.glMakeImageHandleNonResidentARB, caps.glUniformHandleui64ARB, 
-            caps.glUniformHandleui64vARB, caps.glProgramUniformHandleui64ARB, caps.glProgramUniformHandleui64vARB, caps.glIsTextureHandleResidentARB, 
-            caps.glIsImageHandleResidentARB, caps.glVertexAttribL1ui64ARB, caps.glVertexAttribL1ui64vARB, caps.glGetVertexAttribLui64vARB
-        );
     }
 
     // --- [ glGetTextureHandleARB ] ---

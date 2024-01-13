@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_attrib_binding.txt">ARB_vertex_attrib_binding</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_attrib_binding.txt">ARB_vertex_attrib_binding</a> extension.
  * 
  * <p>OpenGL currently supports (at least) 16 vertex attributes and 16 vertex buffer bindings, with a fixed mapping between vertex attributes and vertex
  * buffer bindings. This extension allows the application to change the mapping between attributes and bindings, which can make it more efficient to update
@@ -43,6 +41,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class ARBVertexAttribBinding {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetVertexAttrib*v. */
     public static final int
         GL_VERTEX_ATTRIB_BINDING         = 0x82D4,
@@ -60,22 +60,8 @@ public class ARBVertexAttribBinding {
         GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET = 0x82D9,
         GL_MAX_VERTEX_ATTRIB_BINDINGS        = 0x82DA;
 
-    static { GL.initialize(); }
-
     protected ARBVertexAttribBinding() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glBindVertexBuffer, caps.glVertexAttribFormat, caps.glVertexAttribIFormat, caps.glVertexAttribLFormat, caps.glVertexAttribBinding, 
-            caps.glVertexBindingDivisor, ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayBindVertexBufferEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribFormatEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribIFormatEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribLFormatEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexAttribBindingEXT : -1L, 
-            ext.contains("GL_EXT_direct_state_access") ? caps.glVertexArrayVertexBindingDivisorEXT : -1L
-        );
     }
 
     // --- [ glBindVertexBuffer ] ---

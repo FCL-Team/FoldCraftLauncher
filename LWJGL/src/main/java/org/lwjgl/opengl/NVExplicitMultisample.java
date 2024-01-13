@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_explicit_multisample.txt">NV_explicit_multisample</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_explicit_multisample.txt">NV_explicit_multisample</a> extension.
  * 
  * <p>In traditional multisample specs, the API only allows access to the samples indirectly through methods such as coverage values and downsampled
  * readbacks. NV_explicit_multisample adds a set of new capabilities to allow more precise control over the use of multisamples. Specifically, it adds:</p>
@@ -30,6 +30,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL20 OpenGL 2.0} and {@link ARBMultisample ARB_multisample}.</p>
  */
 public class NVExplicitMultisample {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter of GetMultisamplefvNV. */
     public static final int GL_SAMPLE_POSITION_NV = 0x8E50;
@@ -58,16 +60,8 @@ public class NVExplicitMultisample {
         GL_INT_SAMPLER_RENDERBUFFER_NV          = 0x8E57,
         GL_UNSIGNED_INT_SAMPLER_RENDERBUFFER_NV = 0x8E58;
 
-    static { GL.initialize(); }
-
     protected NVExplicitMultisample() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetMultisamplefvNV, caps.glSampleMaskIndexedNV, caps.glTexRenderbufferNV
-        );
     }
 
     // --- [ glGetMultisamplefvNV ] ---

@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview.txt">OVR_multiview</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview.txt">OVR_multiview</a> extension.
  * 
  * <p>The method of stereo rendering supported in OpenGL is currently achieved by rendering to the two eye buffers sequentially. This typically incurs double
  * the application and driver overhead, despite the fact that the command streams and render states are almost identical.</p>
@@ -33,6 +31,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class OVRMultiview {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of {@link GL30C#glGetFramebufferAttachmentParameteriv GetFramebufferAttachmentParameteriv}. */
     public static final int
         GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_NUM_VIEWS_OVR       = 0x9630,
@@ -44,16 +44,8 @@ public class OVRMultiview {
     /** Returned by {@link GL30C#glCheckFramebufferStatus CheckFramebufferStatus}. */
     public static final int GL_FRAMEBUFFER_INCOMPLETE_VIEW_TARGETS_OVR = 0x9633;
 
-    static { GL.initialize(); }
-
     protected OVRMultiview() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glFramebufferTextureMultiviewOVR, caps.hasDSA(ext) ? caps.glNamedFramebufferTextureMultiviewOVR : -1L
-        );
     }
 
     // --- [ glFramebufferTextureMultiviewOVR ] ---

@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_sample_positions.txt">AMD_sample_positions</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_sample_positions.txt">AMD_sample_positions</a> extension.
  * 
  * <p>This extension provides a mechanism to explicitly set sample positions for a FBO with multi-sampled attachments. The FBO will use identical sample
  * locations for all pixels in each attachment. This forces TEXTURE_FIXED_SAMPLE_LOCATIONS to TRUE if a multi-sampled texture is specified using
@@ -25,19 +25,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class AMDSamplePositions {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetFloatv. */
     public static final int GL_SUBSAMPLE_DISTANCE_AMD = 0x883F;
 
-    static { GL.initialize(); }
-
     protected AMDSamplePositions() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSetMultisamplefvAMD
-        );
     }
 
     // --- [ glSetMultisamplefvAMD ] ---

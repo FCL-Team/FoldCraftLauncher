@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_occlusion_query_event.txt">AMD_occlusion_query_event</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_occlusion_query_event.txt">AMD_occlusion_query_event</a> extension.
  * 
  * <p>This extension introduces the concept of occlusion query events and changes the concept of an occlusion query from counting passed fragments to counting
  * fragments that generate any of a user-selectable set of events. Provided events include passing the depth test, and passing or failing the stencil test.
@@ -19,6 +17,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Requires {@link GL15 OpenGL 1.5}.</p>
  */
 public class AMDOcclusionQueryEvent {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code pname} argument to {@link #glQueryObjectParameteruiAMD QueryObjectParameteruiAMD}, {@link GL15C#glGetQueryObjectiv GetQueryObjectiv}, {@link GL15C#glGetQueryObjectuiv GetQueryObjectuiv},
@@ -34,16 +34,8 @@ public class AMDOcclusionQueryEvent {
         GL_QUERY_DEPTH_BOUNDS_FAIL_EVENT_BIT_AMD = 0x8,
         GL_QUERY_ALL_EVENT_BITS_AMD              = 0xFFFFFFFF;
 
-    static { GL.initialize(); }
-
     protected AMDOcclusionQueryEvent() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glQueryObjectParameteruiAMD
-        );
     }
 
     // --- [ glQueryObjectParameteruiAMD ] ---

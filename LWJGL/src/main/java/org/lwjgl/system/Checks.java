@@ -9,6 +9,7 @@ import org.lwjgl.*;
 import javax.annotation.*;
 import java.nio.*;
 
+import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.CheckIntrinsics.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -49,7 +50,7 @@ public final class Checks {
     /**
      * Debug functions flag.
      *
-     * <p>When enabled, capabilities classes will print an error message when they fail to retrieve a function pointer.</p>
+     * <p>When enabled, a warning message will be output to the debug stream when LWJGL fails to retrieve a function pointer.</p>
      *
      * <p>Can be enabled by setting {@link Configuration#DEBUG_FUNCTIONS} to true.</p>
      */
@@ -86,6 +87,93 @@ public final class Checks {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks if all functions are available in the function provider.
+     *
+     * @param provider  the function address provider
+     * @param caps      the function address buffer
+     * @param indices   the function indices
+     * @param functions the function names
+     *
+     * @return true if all functions are available, false otherwise
+     */
+    public static boolean checkFunctions(FunctionProvider provider, PointerBuffer caps, int[] indices, String... functions) {
+        boolean available = true;
+        for (int i = 0; i < indices.length; i++) {
+            int index = indices[i];
+            if (index < 0 || caps.get(index) != NULL) {
+                continue;
+            }
+            long address = provider.getFunctionAddress(functions[i]);
+            if (address == NULL) {
+                available = false;
+                continue;
+            }
+            caps.put(index, address);
+        }
+        return available;
+    }
+
+    /**
+     * Checks if all functions are available in the function provider.
+     *
+     * @param provider  the function address provider
+     * @param handle    the handle to a platform/device/context
+     * @param caps      the function address buffer
+     * @param indices   the function indices
+     * @param functions the function names
+     *
+     * @return true if all functions are available, false otherwise
+     */
+    public static boolean checkFunctions(FunctionProviderLocal provider, long handle, PointerBuffer caps, int[] indices, String... functions) {
+        boolean available = true;
+        for (int i = 0; i < indices.length; i++) {
+            int index = indices[i];
+            if (index < 0 || caps.get(index) != NULL) {
+                continue;
+            }
+            long address = provider.getFunctionAddress(handle, functions[i]);
+            if (address != NULL) {
+                caps.put(index, address);
+                continue;
+            }
+            available = false;
+        }
+        return available;
+    }
+
+    /**
+     * Checks if all functions are available in the function provider.
+     *
+     * @param provider  the function address provider
+     * @param caps      the function address buffer
+     * @param indices   the function indices
+     * @param functions the function names
+     *
+     * @return true if all functions are available, false otherwise
+     */
+    public static boolean checkFunctions(FunctionProvider provider, long[] caps, int[] indices, String... functions) {
+        boolean available = true;
+        for (int i = 0; i < indices.length; i++) {
+            int index = indices[i];
+            if (index < 0 || caps[index] != NULL) {
+                continue;
+            }
+            long address = provider.getFunctionAddress(functions[i]);
+            if (address == NULL) {
+                available = false;
+                continue;
+            }
+            caps[index] = address;
+        }
+        return available;
+    }
+
+    public static boolean reportMissing(String api, String extension) {
+        apiLog("[" + api + "] " + extension + " was reported as available but an entry point is missing.");
+        return false;
     }
 
     /**

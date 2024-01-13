@@ -19,29 +19,20 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Describes the gamma ramp for a monitor.
  * 
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code red} &ndash; an array of values describing the response of the red channel</li>
- * <li>{@code green} &ndash; an array of values describing the response of the green channel</li>
- * <li>{@code blue} &ndash; an array of values describing the response of the blue channel</li>
- * <li>{@code size} &ndash; the number of elements in each array</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct GLFWgammaramp {
- *     unsigned short * red;
- *     unsigned short * green;
- *     unsigned short * blue;
- *     unsigned int size;
+ *     unsigned short * {@link #red};
+ *     unsigned short * {@link #green};
+ *     unsigned short * {@link #blue};
+ *     unsigned int {@link #size};
  * }</code></pre>
  *
  * @since version 3.0
  */
 @NativeType("struct GLFWgammaramp")
-public class GLFWGammaRamp extends Struct implements NativeResource {
+public class GLFWGammaRamp extends Struct<GLFWGammaRamp> implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -73,6 +64,15 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
         SIZE = layout.offsetof(3);
     }
 
+    protected GLFWGammaRamp(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected GLFWGammaRamp create(long address, @Nullable ByteBuffer container) {
+        return new GLFWGammaRamp(address, container);
+    }
+
     /**
      * Creates a {@code GLFWGammaRamp} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -86,26 +86,26 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code red} field. */
+    /** an array of values describing the response of the red channel */
     @NativeType("unsigned short *")
     public ShortBuffer red() { return nred(address()); }
-    /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code green} field. */
+    /** an array of values describing the response of the green channel */
     @NativeType("unsigned short *")
     public ShortBuffer green() { return ngreen(address()); }
-    /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code blue} field. */
+    /** an array of values describing the response of the blue channel */
     @NativeType("unsigned short *")
     public ShortBuffer blue() { return nblue(address()); }
-    /** Returns the value of the {@code size} field. */
+    /** the number of elements in each array */
     @NativeType("unsigned int")
     public int size() { return nsize(address()); }
 
-    /** Sets the address of the specified {@link ShortBuffer} to the {@code red} field. */
+    /** Sets the address of the specified {@link ShortBuffer} to the {@link #red} field. */
     public GLFWGammaRamp red(@NativeType("unsigned short *") ShortBuffer value) { nred(address(), value); return this; }
-    /** Sets the address of the specified {@link ShortBuffer} to the {@code green} field. */
+    /** Sets the address of the specified {@link ShortBuffer} to the {@link #green} field. */
     public GLFWGammaRamp green(@NativeType("unsigned short *") ShortBuffer value) { ngreen(address(), value); return this; }
-    /** Sets the address of the specified {@link ShortBuffer} to the {@code blue} field. */
+    /** Sets the address of the specified {@link ShortBuffer} to the {@link #blue} field. */
     public GLFWGammaRamp blue(@NativeType("unsigned short *") ShortBuffer value) { nblue(address(), value); return this; }
-    /** Sets the specified value to the {@code size} field. */
+    /** Sets the specified value to the {@link #size} field. */
     public GLFWGammaRamp size(@NativeType("unsigned int") int value) { nsize(address(), value); return this; }
 
     /** Initializes this struct with the specified values. */
@@ -139,29 +139,29 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
 
     /** Returns a new {@code GLFWGammaRamp} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static GLFWGammaRamp malloc() {
-        return wrap(GLFWGammaRamp.class, nmemAllocChecked(SIZEOF));
+        return new GLFWGammaRamp(nmemAllocChecked(SIZEOF), null);
     }
 
     /** Returns a new {@code GLFWGammaRamp} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static GLFWGammaRamp calloc() {
-        return wrap(GLFWGammaRamp.class, nmemCallocChecked(1, SIZEOF));
+        return new GLFWGammaRamp(nmemCallocChecked(1, SIZEOF), null);
     }
 
     /** Returns a new {@code GLFWGammaRamp} instance allocated with {@link BufferUtils}. */
     public static GLFWGammaRamp create() {
         ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
-        return wrap(GLFWGammaRamp.class, memAddress(container), container);
+        return new GLFWGammaRamp(memAddress(container), container);
     }
 
     /** Returns a new {@code GLFWGammaRamp} instance for the specified memory address. */
     public static GLFWGammaRamp create(long address) {
-        return wrap(GLFWGammaRamp.class, address);
+        return new GLFWGammaRamp(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static GLFWGammaRamp createSafe(long address) {
-        return address == NULL ? null : wrap(GLFWGammaRamp.class, address);
+        return address == NULL ? null : new GLFWGammaRamp(address, null);
     }
 
     /**
@@ -170,7 +170,7 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer malloc(int capacity) {
-        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
+        return new Buffer(nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -179,7 +179,7 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer calloc(int capacity) {
-        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
+        return new Buffer(nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -189,7 +189,7 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
      */
     public static Buffer create(int capacity) {
         ByteBuffer container = __create(capacity, SIZEOF);
-        return wrap(Buffer.class, memAddress(container), capacity, container);
+        return new Buffer(memAddress(container), container, -1, 0, capacity, capacity);
     }
 
     /**
@@ -199,34 +199,41 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
 
-    /** Returns a new {@code GLFWGammaRamp} instance allocated on the thread-local {@link MemoryStack}. */
-    public static GLFWGammaRamp mallocStack() {
-        return mallocStack(stackGet());
-    }
-
-    /** Returns a new {@code GLFWGammaRamp} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero. */
-    public static GLFWGammaRamp callocStack() {
-        return callocStack(stackGet());
-    }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static GLFWGammaRamp mallocStack() { return malloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static GLFWGammaRamp callocStack() { return calloc(stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(MemoryStack)} instead. */
+    @Deprecated public static GLFWGammaRamp mallocStack(MemoryStack stack) { return malloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(MemoryStack)} instead. */
+    @Deprecated public static GLFWGammaRamp callocStack(MemoryStack stack) { return calloc(stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity) { return malloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity) { return calloc(capacity, stackGet()); }
+    /** Deprecated for removal in 3.4.0. Use {@link #malloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer mallocStack(int capacity, MemoryStack stack) { return malloc(capacity, stack); }
+    /** Deprecated for removal in 3.4.0. Use {@link #calloc(int, MemoryStack)} instead. */
+    @Deprecated public static Buffer callocStack(int capacity, MemoryStack stack) { return calloc(capacity, stack); }
 
     /**
      * Returns a new {@code GLFWGammaRamp} instance allocated on the specified {@link MemoryStack}.
      *
      * @param stack the stack from which to allocate
      */
-    public static GLFWGammaRamp mallocStack(MemoryStack stack) {
-        return wrap(GLFWGammaRamp.class, stack.nmalloc(ALIGNOF, SIZEOF));
+    public static GLFWGammaRamp malloc(MemoryStack stack) {
+        return new GLFWGammaRamp(stack.nmalloc(ALIGNOF, SIZEOF), null);
     }
 
     /**
@@ -234,46 +241,28 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
      *
      * @param stack the stack from which to allocate
      */
-    public static GLFWGammaRamp callocStack(MemoryStack stack) {
-        return wrap(GLFWGammaRamp.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack}.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer mallocStack(int capacity) {
-        return mallocStack(capacity, stackGet());
-    }
-
-    /**
-     * Returns a new {@link Buffer} instance allocated on the thread-local {@link MemoryStack} and initializes all its bits to zero.
-     *
-     * @param capacity the buffer capacity
-     */
-    public static Buffer callocStack(int capacity) {
-        return callocStack(capacity, stackGet());
+    public static GLFWGammaRamp calloc(MemoryStack stack) {
+        return new GLFWGammaRamp(stack.ncalloc(ALIGNOF, 1, SIZEOF), null);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack}.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer mallocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+    public static Buffer malloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
      * Returns a new {@link Buffer} instance allocated on the specified {@link MemoryStack} and initializes all its bits to zero.
      *
-     * @param stack the stack from which to allocate
+     * @param stack    the stack from which to allocate
      * @param capacity the buffer capacity
      */
-    public static Buffer callocStack(int capacity, MemoryStack stack) {
-        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+    public static Buffer calloc(int capacity, MemoryStack stack) {
+        return new Buffer(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
@@ -307,18 +296,6 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
         check(memGetAddress(struct + GLFWGammaRamp.BLUE));
     }
 
-    /**
-     * Calls {@link #validate(long)} for each struct contained in the specified struct array.
-     *
-     * @param array the struct array to validate
-     * @param count the number of structs in {@code array}
-     */
-    public static void validate(long array, int count) {
-        for (int i = 0; i < count; i++) {
-            validate(array + Integer.toUnsignedLong(i) * SIZEOF);
-        }
-    }
-
     // -----------------------------------
 
     /** An array of {@link GLFWGammaRamp} structs. */
@@ -329,9 +306,9 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
         /**
          * Creates a new {@code GLFWGammaRamp.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link GLFWGammaRamp#SIZEOF}, and its mark will be undefined.
+         * by {@link GLFWGammaRamp#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -357,26 +334,26 @@ public class GLFWGammaRamp extends Struct implements NativeResource {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code red} field. */
+        /** @return a {@link ShortBuffer} view of the data pointed to by the {@link GLFWGammaRamp#red} field. */
         @NativeType("unsigned short *")
         public ShortBuffer red() { return GLFWGammaRamp.nred(address()); }
-        /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code green} field. */
+        /** @return a {@link ShortBuffer} view of the data pointed to by the {@link GLFWGammaRamp#green} field. */
         @NativeType("unsigned short *")
         public ShortBuffer green() { return GLFWGammaRamp.ngreen(address()); }
-        /** Returns a {@link ShortBuffer} view of the data pointed to by the {@code blue} field. */
+        /** @return a {@link ShortBuffer} view of the data pointed to by the {@link GLFWGammaRamp#blue} field. */
         @NativeType("unsigned short *")
         public ShortBuffer blue() { return GLFWGammaRamp.nblue(address()); }
-        /** Returns the value of the {@code size} field. */
+        /** @return the value of the {@link GLFWGammaRamp#size} field. */
         @NativeType("unsigned int")
         public int size() { return GLFWGammaRamp.nsize(address()); }
 
-        /** Sets the address of the specified {@link ShortBuffer} to the {@code red} field. */
+        /** Sets the address of the specified {@link ShortBuffer} to the {@link GLFWGammaRamp#red} field. */
         public Buffer red(@NativeType("unsigned short *") ShortBuffer value) { GLFWGammaRamp.nred(address(), value); return this; }
-        /** Sets the address of the specified {@link ShortBuffer} to the {@code green} field. */
+        /** Sets the address of the specified {@link ShortBuffer} to the {@link GLFWGammaRamp#green} field. */
         public Buffer green(@NativeType("unsigned short *") ShortBuffer value) { GLFWGammaRamp.ngreen(address(), value); return this; }
-        /** Sets the address of the specified {@link ShortBuffer} to the {@code blue} field. */
+        /** Sets the address of the specified {@link ShortBuffer} to the {@link GLFWGammaRamp#blue} field. */
         public Buffer blue(@NativeType("unsigned short *") ShortBuffer value) { GLFWGammaRamp.nblue(address(), value); return this; }
-        /** Sets the specified value to the {@code size} field. */
+        /** Sets the specified value to the {@link GLFWGammaRamp#size} field. */
         public Buffer size(@NativeType("unsigned int") int value) { GLFWGammaRamp.nsize(address(), value); return this; }
 
     }

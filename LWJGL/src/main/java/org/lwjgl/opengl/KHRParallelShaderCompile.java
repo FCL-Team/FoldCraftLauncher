@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_parallel_shader_compile.txt">KHR_parallel_shader_compile</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_parallel_shader_compile.txt">KHR_parallel_shader_compile</a> extension.
  * 
  * <p>Compiling GLSL into implementation-specific code can be a time consuming process, so a GL implementation may wish to perform the compilation in a
  * separate CPU thread. This extension provides a mechanism for the application to provide a hint to limit the number of threads it wants to be used to
@@ -18,22 +16,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class KHRParallelShaderCompile {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int GL_MAX_SHADER_COMPILER_THREADS_KHR = 0x91B0;
 
     /** Accepted as part of the {@code pname} parameter to {@link GL20C#glGetShaderiv GetShaderiv} and accepted as part of the {@code pname} parameter to {@link GL20C#glGetProgramiv GetProgramiv}. */
     public static final int GL_COMPLETION_STATUS_KHR = 0x91B1;
 
-    static { GL.initialize(); }
-
     protected KHRParallelShaderCompile() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMaxShaderCompilerThreadsKHR
-        );
     }
 
     // --- [ glMaxShaderCompilerThreadsKHR ] ---

@@ -17,12 +17,12 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_program.txt">ARB_vertex_program</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_program.txt">ARB_vertex_program</a> extension.
  * 
  * <p>Unextended OpenGL mandates a certain set of configurable per-vertex computations defining vertex transformation, texture coordinate generation and
  * transformation, and lighting. Several extensions have added further per-vertex computations to OpenGL. For example, extensions have defined new texture
- * coordinate generation modes ({@link ARBTextureCubeMap ARB_texture_cube_map}, {@link NVTexgenReflection NV_texgen_reflection}, <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texgen_emboss.txt">NV_texgen_emboss</a>), new vertex
- * transformation modes ({@link ARBVertexBlend ARB_vertex_blend}, <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_weighting.txt">EXT_vertex_weighting</a>), new lighting modes (OpenGL 1.2's separate specular and
+ * coordinate generation modes ({@link ARBTextureCubeMap ARB_texture_cube_map}, {@link NVTexgenReflection NV_texgen_reflection}, <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texgen_emboss.txt">NV_texgen_emboss</a>), new vertex
+ * transformation modes ({@link ARBVertexBlend ARB_vertex_blend}, <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_weighting.txt">EXT_vertex_weighting</a>), new lighting modes (OpenGL 1.2's separate specular and
  * rescale normal functionality), several modes for fog distance generation ({@link NVFogDistance NV_fog_distance}), and eye-distance point size attenuation
  * ({@link ARBPointParameters ARB_point_parameters}).</p>
  * 
@@ -49,6 +49,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * programming model.</p>
  */
 public class ARBVertexProgram {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of Disable, Enable, and IsEnabled, by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
@@ -161,29 +163,8 @@ public class ARBVertexProgram {
         GL_MATRIX30_ARB = 0x88DE,
         GL_MATRIX31_ARB = 0x88DF;
 
-    static { GL.initialize(); }
-
     protected ARBVertexProgram() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glVertexAttrib1sARB, caps.glVertexAttrib1fARB, caps.glVertexAttrib1dARB, caps.glVertexAttrib2sARB, caps.glVertexAttrib2fARB, 
-            caps.glVertexAttrib2dARB, caps.glVertexAttrib3sARB, caps.glVertexAttrib3fARB, caps.glVertexAttrib3dARB, caps.glVertexAttrib4sARB, 
-            caps.glVertexAttrib4fARB, caps.glVertexAttrib4dARB, caps.glVertexAttrib4NubARB, caps.glVertexAttrib1svARB, caps.glVertexAttrib1fvARB, 
-            caps.glVertexAttrib1dvARB, caps.glVertexAttrib2svARB, caps.glVertexAttrib2fvARB, caps.glVertexAttrib2dvARB, caps.glVertexAttrib3svARB, 
-            caps.glVertexAttrib3fvARB, caps.glVertexAttrib3dvARB, caps.glVertexAttrib4fvARB, caps.glVertexAttrib4bvARB, caps.glVertexAttrib4svARB, 
-            caps.glVertexAttrib4ivARB, caps.glVertexAttrib4ubvARB, caps.glVertexAttrib4usvARB, caps.glVertexAttrib4uivARB, caps.glVertexAttrib4dvARB, 
-            caps.glVertexAttrib4NbvARB, caps.glVertexAttrib4NsvARB, caps.glVertexAttrib4NivARB, caps.glVertexAttrib4NubvARB, caps.glVertexAttrib4NusvARB, 
-            caps.glVertexAttrib4NuivARB, caps.glVertexAttribPointerARB, caps.glEnableVertexAttribArrayARB, caps.glDisableVertexAttribArrayARB, 
-            caps.glProgramStringARB, caps.glBindProgramARB, caps.glDeleteProgramsARB, caps.glGenProgramsARB, caps.glProgramEnvParameter4dARB, 
-            caps.glProgramEnvParameter4dvARB, caps.glProgramEnvParameter4fARB, caps.glProgramEnvParameter4fvARB, caps.glProgramLocalParameter4dARB, 
-            caps.glProgramLocalParameter4dvARB, caps.glProgramLocalParameter4fARB, caps.glProgramLocalParameter4fvARB, caps.glGetProgramEnvParameterfvARB, 
-            caps.glGetProgramEnvParameterdvARB, caps.glGetProgramLocalParameterfvARB, caps.glGetProgramLocalParameterdvARB, caps.glGetProgramivARB, 
-            caps.glGetProgramStringARB, caps.glGetVertexAttribfvARB, caps.glGetVertexAttribdvARB, caps.glGetVertexAttribivARB, 
-            caps.glGetVertexAttribPointervARB, caps.glIsProgramARB
-        );
     }
 
     // --- [ glVertexAttrib1sARB ] ---

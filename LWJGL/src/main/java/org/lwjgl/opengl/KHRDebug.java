@@ -11,10 +11,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_debug.txt">KHR_debug</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_debug.txt">KHR_debug</a> extension.
  * 
  * <p>This extension allows the GL to notify applications when various events occur that may be useful during application development, debugging and
  * profiling.</p>
@@ -83,6 +81,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL43 OpenGL 4.3}.</p>
  */
 public class KHRDebug {
+
+    static { GL.initialize(); }
 
     /** Tokens accepted by the {@code target} parameters of Enable, Disable, and IsEnabled. */
     public static final int
@@ -157,17 +157,8 @@ public class KHRDebug {
         GL_SAMPLER          = 0x82E6,
         GL_DISPLAY_LIST     = 0x82E7;
 
-    static { GL.initialize(); }
-
     protected KHRDebug() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glDebugMessageControl, caps.glDebugMessageInsert, caps.glDebugMessageCallback, caps.glGetDebugMessageLog, caps.glPushDebugGroup, 
-            caps.glPopDebugGroup, caps.glObjectLabel, caps.glGetObjectLabel, caps.glObjectPtrLabel, caps.glGetObjectPtrLabel
-        );
     }
 
     // --- [ glDebugMessageControl ] ---

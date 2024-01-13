@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_get_texture_sub_image.txt">ARB_get_texture_sub_image</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_get_texture_sub_image.txt">ARB_get_texture_sub_image</a> extension.
  * 
  * <p>This extension adds a new function to get sub-regions of texture images.</p>
  * 
@@ -24,12 +22,6 @@ public class ARBGetTextureSubImage {
 
     protected ARBGetTextureSubImage() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glGetTextureSubImage, caps.glGetCompressedTextureSubImage
-        );
     }
 
     // --- [ glGetTextureSubImage ] ---

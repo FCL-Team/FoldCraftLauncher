@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture.txt">ARB_sparse_texture</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture.txt">ARB_sparse_texture</a> extension.
  * 
  * <p>Recent advances in application complexity and a desire for higher resolutions have pushed texture sizes up considerably. Often, the amount of physical
  * memory available to a graphics processor is a limiting factor in the performance of texture-heavy applications. Once the available physical memory is
@@ -23,6 +21,8 @@ import static org.lwjgl.system.Checks.*;
  * paging, on-demand and delayed loading of texture assets and application controlled level of detail.</p>
  */
 public class ARBSparseTexture {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code pname} parameter to TexParameter{i f}{v}, TexParameterI{u}v, GetTexParameter{if}v and GetTexParameterIi{u}v. */
     public static final int
@@ -46,16 +46,8 @@ public class ARBSparseTexture {
         GL_MAX_SPARSE_ARRAY_TEXTURE_LAYERS_ARB        = 0x919A,
         GL_SPARSE_TEXTURE_FULL_ARRAY_CUBE_MIPMAPS_ARB = 0x91A9;
 
-    static { GL.initialize(); }
-
     protected ARBSparseTexture() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps, java.util.Set<String> ext) {
-        return checkFunctions(
-            caps.glTexPageCommitmentARB, ext.contains("GL_EXT_direct_state_access") ? caps.glTexturePageCommitmentEXT : -1L
-        );
     }
 
     // --- [ glTexPageCommitmentARB ] ---

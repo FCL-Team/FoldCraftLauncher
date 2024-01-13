@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_multisample_coverage.txt">NV_framebuffer_multisample_coverage</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_framebuffer_multisample_coverage.txt">NV_framebuffer_multisample_coverage</a> extension.
  * 
  * <p>This extension extends the EXT_framebuffer_multisample specification by providing a new function, RenderBufferStorageMultisampleCoverageNV, that
  * distinguishes between color samples and coverage samples.</p>
@@ -27,6 +25,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVFramebufferMultisampleCoverage {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetRenderbufferParameterivEXT. */
     public static final int
         GL_RENDERBUFFER_COVERAGE_SAMPLES_NV = 0x8CAB,
@@ -37,16 +37,8 @@ public class NVFramebufferMultisampleCoverage {
         GL_MAX_MULTISAMPLE_COVERAGE_MODES_NV = 0x8E11,
         GL_MULTISAMPLE_COVERAGE_MODES_NV     = 0x8E12;
 
-    static { GL.initialize(); }
-
     protected NVFramebufferMultisampleCoverage() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glRenderbufferStorageMultisampleCoverageNV
-        );
     }
 
     // --- [ glRenderbufferStorageMultisampleCoverageNV ] ---

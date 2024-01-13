@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_coverage_to_color.txt">NV_fragment_coverage_to_color</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_coverage_to_color.txt">NV_fragment_coverage_to_color</a> extension.
  * 
  * <p>This extension allows the fragment coverage value, represented as an
  * integer bitfield, to be substituted for a color output being written to a
@@ -23,22 +21,16 @@ import static org.lwjgl.system.Checks.*;
  */
 public class NVFragmentCoverageToColor {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code cap} parameter of Enable, Disable, IsEnabled. */
     public static final int GL_FRAGMENT_COVERAGE_TO_COLOR_NV = 0x92DD;
 
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetDoublev, GetIntegerv, and GetFloatv. */
     public static final int GL_FRAGMENT_COVERAGE_COLOR_NV = 0x92DE;
 
-    static { GL.initialize(); }
-
     protected NVFragmentCoverageToColor() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glFragmentCoverageColorNV
-        );
     }
 
     // --- [ glFragmentCoverageColorNV ] ---

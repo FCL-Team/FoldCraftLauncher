@@ -13,7 +13,7 @@ import static org.lwjgl.system.APIUtil.*;
 /** The platforms supported by LWJGL. */
 public enum Platform {
 
-    FCL("FCL", "fcl") {
+    LINUX("Linux", "linux") {
         private final Pattern SO = Pattern.compile("(?:^|/)lib\\w+[.]so(?:[.]\\d+)*$");
 
         @Override
@@ -25,7 +25,7 @@ public enum Platform {
             return System.mapLibraryName(name);
         }
     },
-    LINUX("Linux", "linux") {
+    FCL("FCL", "fcl") {
         private final Pattern SO = Pattern.compile("(?:^|/)lib\\w+[.]so(?:[.]\\d+)*$");
 
         @Override

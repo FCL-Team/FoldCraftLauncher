@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_compiled_vertex_array.txt">EXT_compiled_vertex_array</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_compiled_vertex_array.txt">EXT_compiled_vertex_array</a> extension.
  * 
  * <p>This extension defines an interface which allows static vertex array data to be cached or pre-compiled for more efficient rendering. This is useful for
  * implementations which can cache the transformed results of array data for reuse by several DrawArrays, ArrayElement, or DrawElements commands. It is
@@ -23,21 +21,15 @@ import static org.lwjgl.system.Checks.*;
  */
 public class EXTCompiledVertexArray {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and GetDoublev. */
     public static final int
         GL_ARRAY_ELEMENT_LOCK_FIRST_EXT = 0x81A8,
         GL_ARRAY_ELEMENT_LOCK_COUNT_EXT = 0x81A9;
 
-    static { GL.initialize(); }
-
     protected EXTCompiledVertexArray() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glLockArraysEXT, caps.glUnlockArraysEXT
-        );
     }
 
     // --- [ glLockArraysEXT ] ---

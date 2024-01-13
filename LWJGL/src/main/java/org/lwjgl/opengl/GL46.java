@@ -5,11 +5,11 @@
  */
 package org.lwjgl.opengl;
 
+import javax.annotation.*;
+
 import java.nio.*;
 
 import org.lwjgl.system.*;
-
-import static org.lwjgl.system.Checks.*;
 
 /**
  * The OpenGL functionality up to version 4.6. Includes the deprecated symbols of the Compatibility Profile.
@@ -19,20 +19,22 @@ import static org.lwjgl.system.Checks.*;
  * <p>Extensions promoted to core in this release:</p>
  * 
  * <ul>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_indirect_parameters.txt">ARB_indirect_parameters</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_pipeline_statistics_query.txt">ARB_pipeline_statistics_query</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_polygon_offset_clamp.txt">ARB_polygon_offset_clamp</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_no_error.txt">KHR_no_error</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counter_ops.txt">ARB_shader_atomic_counter_ops</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_draw_parameters.txt">ARB_shader_draw_parameters</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_group_vote.txt">ARB_shader_group_vote</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gl_spirv.txt">ARB_gl_spirv</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_spirv_extensions.txt">ARB_spirv_extensions</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_filter_anisotropic.txt">ARB_texture_filter_anisotropic</a></li>
- * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback_overflow_query.txt">ARB_transform_feedback_overflow_query</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_indirect_parameters.txt">ARB_indirect_parameters</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_pipeline_statistics_query.txt">ARB_pipeline_statistics_query</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_polygon_offset_clamp.txt">ARB_polygon_offset_clamp</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_no_error.txt">KHR_no_error</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counter_ops.txt">ARB_shader_atomic_counter_ops</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_draw_parameters.txt">ARB_shader_draw_parameters</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_group_vote.txt">ARB_shader_group_vote</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_gl_spirv.txt">ARB_gl_spirv</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_spirv_extensions.txt">ARB_spirv_extensions</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_filter_anisotropic.txt">ARB_texture_filter_anisotropic</a></li>
+ * <li><a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback_overflow_query.txt">ARB_transform_feedback_overflow_query</a></li>
  * </ul>
  */
 public class GL46 extends GL45 {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv,
@@ -91,16 +93,8 @@ public class GL46 extends GL45 {
         GL_TRANSFORM_FEEDBACK_OVERFLOW        = 0x82EC,
         GL_TRANSFORM_FEEDBACK_STREAM_OVERFLOW = 0x82ED;
 
-    static { GL.initialize(); }
-
     protected GL46() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glMultiDrawArraysIndirectCount, caps.glMultiDrawElementsIndirectCount, caps.glPolygonOffsetClamp, caps.glSpecializeShader
-        );
     }
 
     // --- [ glMultiDrawArraysIndirectCount ] ---
@@ -123,7 +117,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawArraysIndirectCount(@NativeType("GLenum") int mode, @NativeType("void const *") ByteBuffer indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
@@ -142,7 +136,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawArraysIndirectCount(@NativeType("GLenum") int mode, @NativeType("void const *") long indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
@@ -161,7 +155,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawArraysIndirectCount(@NativeType("GLenum") int mode, @NativeType("void const *") IntBuffer indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
@@ -188,7 +182,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawElementsIndirectCount(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
@@ -208,7 +202,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawElementsIndirectCount(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") long indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
@@ -228,7 +222,7 @@ public class GL46 extends GL45 {
      * @param maxdrawcount the maximum number of draws
      * @param stride       the distance in basic machine units between elements of the draw parameter array
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawElementsIndirectCount(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") IntBuffer indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
@@ -251,7 +245,7 @@ public class GL46 extends GL45 {
      * @param units  scales an implementation-dependent constant that relates to the usable resolution of the depth buffer
      * @param clamp  the minimum or maximum polygon offset value
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glPolygonOffsetClamp">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glPolygonOffsetClamp">Reference Page</a>
      */
     public static void glPolygonOffsetClamp(@NativeType("GLfloat") float factor, @NativeType("GLfloat") float units, @NativeType("GLfloat") float clamp) {
         GL46C.glPolygonOffsetClamp(factor, units, clamp);
@@ -298,9 +292,9 @@ public class GL46 extends GL45 {
      *                       <p>Although this array is of unsigned integer, each entry is bitcast to the appropriate type for the module, and therefore, floating-point constants
      *                       may be set by including their IEEE-754 bit representation in the {@code pConstantValue} array.</p>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSpecializeShader">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSpecializeShader">Reference Page</a>
      */
-    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") ByteBuffer pEntryPoint, @NativeType("GLuint const *") IntBuffer pConstantIndex, @NativeType("GLuint const *") IntBuffer pConstantValue) {
+    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") ByteBuffer pEntryPoint, @Nullable @NativeType("GLuint const *") IntBuffer pConstantIndex, @Nullable @NativeType("GLuint const *") IntBuffer pConstantValue) {
         GL46C.glSpecializeShader(shader, pEntryPoint, pConstantIndex, pConstantValue);
     }
 
@@ -334,16 +328,16 @@ public class GL46 extends GL45 {
      *                       <p>Although this array is of unsigned integer, each entry is bitcast to the appropriate type for the module, and therefore, floating-point constants
      *                       may be set by including their IEEE-754 bit representation in the {@code pConstantValue} array.</p>
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSpecializeShader">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSpecializeShader">Reference Page</a>
      */
-    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") CharSequence pEntryPoint, @NativeType("GLuint const *") IntBuffer pConstantIndex, @NativeType("GLuint const *") IntBuffer pConstantValue) {
+    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") CharSequence pEntryPoint, @Nullable @NativeType("GLuint const *") IntBuffer pConstantIndex, @Nullable @NativeType("GLuint const *") IntBuffer pConstantValue) {
         GL46C.glSpecializeShader(shader, pEntryPoint, pConstantIndex, pConstantValue);
     }
 
     /**
      * Array version of: {@link #glMultiDrawArraysIndirectCount MultiDrawArraysIndirectCount}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawArraysIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawArraysIndirectCount(@NativeType("GLenum") int mode, @NativeType("void const *") int[] indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawArraysIndirectCount(mode, indirect, drawcount, maxdrawcount, stride);
@@ -352,7 +346,7 @@ public class GL46 extends GL45 {
     /**
      * Array version of: {@link #glMultiDrawElementsIndirectCount MultiDrawElementsIndirectCount}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glMultiDrawElementsIndirectCount">Reference Page</a>
      */
     public static void glMultiDrawElementsIndirectCount(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") int[] indirect, @NativeType("GLintptr") long drawcount, @NativeType("GLsizei") int maxdrawcount, @NativeType("GLsizei") int stride) {
         GL46C.glMultiDrawElementsIndirectCount(mode, type, indirect, drawcount, maxdrawcount, stride);
@@ -361,18 +355,18 @@ public class GL46 extends GL45 {
     /**
      * Array version of: {@link #glSpecializeShader SpecializeShader}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSpecializeShader">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSpecializeShader">Reference Page</a>
      */
-    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") ByteBuffer pEntryPoint, @NativeType("GLuint const *") int[] pConstantIndex, @NativeType("GLuint const *") int[] pConstantValue) {
+    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") ByteBuffer pEntryPoint, @Nullable @NativeType("GLuint const *") int[] pConstantIndex, @Nullable @NativeType("GLuint const *") int[] pConstantValue) {
         GL46C.glSpecializeShader(shader, pEntryPoint, pConstantIndex, pConstantValue);
     }
 
     /**
      * Array version of: {@link #glSpecializeShader SpecializeShader}
      * 
-     * @see <a target="_blank" href="http://docs.gl/gl4/glSpecializeShader">Reference Page</a>
+     * @see <a href="https://docs.gl/gl4/glSpecializeShader">Reference Page</a>
      */
-    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") CharSequence pEntryPoint, @NativeType("GLuint const *") int[] pConstantIndex, @NativeType("GLuint const *") int[] pConstantValue) {
+    public static void glSpecializeShader(@NativeType("GLuint") int shader, @NativeType("GLchar const *") CharSequence pEntryPoint, @Nullable @NativeType("GLuint const *") int[] pConstantIndex, @Nullable @NativeType("GLuint const *") int[] pConstantValue) {
         GL46C.glSpecializeShader(shader, pEntryPoint, pConstantIndex, pConstantValue);
     }
 

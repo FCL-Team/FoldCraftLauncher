@@ -14,24 +14,16 @@ import org.lwjgl.system.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * <h3>Member documentation</h3>
- * 
- * <ul>
- * <li>{@code time} &ndash; the time, in milliseconds</li>
- * <li>{@code x} &ndash; the x coordinate of the pointer relative to the origin of the specified window</li>
- * <li>{@code y} &ndash; the y coordinate of the pointer relative to the origin of the specified window</li>
- * </ul>
- * 
  * <h3>Layout</h3>
  * 
  * <pre><code>
  * struct XTimeCoord {
- *     Time time;
- *     short x;
- *     short y;
+ *     Time {@link #time};
+ *     short {@link #x};
+ *     short {@link #y};
  * }</code></pre>
  */
-public class XTimeCoord extends Struct {
+public class XTimeCoord extends Struct<XTimeCoord> {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
@@ -60,6 +52,15 @@ public class XTimeCoord extends Struct {
         Y = layout.offsetof(2);
     }
 
+    protected XTimeCoord(long address, @Nullable ByteBuffer container) {
+        super(address, container);
+    }
+
+    @Override
+    protected XTimeCoord create(long address, @Nullable ByteBuffer container) {
+        return new XTimeCoord(address, container);
+    }
+
     /**
      * Creates a {@code XTimeCoord} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -73,25 +74,25 @@ public class XTimeCoord extends Struct {
     @Override
     public int sizeof() { return SIZEOF; }
 
-    /** Returns the value of the {@code time} field. */
+    /** the time, in milliseconds */
     @NativeType("Time")
     public long time() { return ntime(address()); }
-    /** Returns the value of the {@code x} field. */
+    /** the x coordinate of the pointer relative to the origin of the specified window */
     public short x() { return nx(address()); }
-    /** Returns the value of the {@code y} field. */
+    /** the y coordinate of the pointer relative to the origin of the specified window */
     public short y() { return ny(address()); }
 
     // -----------------------------------
 
     /** Returns a new {@code XTimeCoord} instance for the specified memory address. */
     public static XTimeCoord create(long address) {
-        return wrap(XTimeCoord.class, address);
+        return new XTimeCoord(address, null);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static XTimeCoord createSafe(long address) {
-        return address == NULL ? null : wrap(XTimeCoord.class, address);
+        return address == NULL ? null : new XTimeCoord(address, null);
     }
 
     /**
@@ -101,13 +102,13 @@ public class XTimeCoord extends Struct {
      * @param capacity the buffer capacity
      */
     public static Buffer create(long address, int capacity) {
-        return wrap(Buffer.class, address, capacity);
+        return new Buffer(address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : wrap(Buffer.class, address, capacity);
+        return address == NULL ? null : new Buffer(address, capacity);
     }
 
     // -----------------------------------
@@ -129,9 +130,9 @@ public class XTimeCoord extends Struct {
         /**
          * Creates a new {@code XTimeCoord.Buffer} instance backed by the specified container.
          *
-         * Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
+         * <p>Changes to the container's content will be visible to the struct buffer instance and vice versa. The two buffers' position, limit, and mark values
          * will be independent. The new buffer's position will be zero, its capacity and its limit will be the number of bytes remaining in this buffer divided
-         * by {@link XTimeCoord#SIZEOF}, and its mark will be undefined.
+         * by {@link XTimeCoord#SIZEOF}, and its mark will be undefined.</p>
          *
          * <p>The created buffer instance holds a strong reference to the container object.</p>
          */
@@ -157,12 +158,12 @@ public class XTimeCoord extends Struct {
             return ELEMENT_FACTORY;
         }
 
-        /** Returns the value of the {@code time} field. */
+        /** @return the value of the {@link XTimeCoord#time} field. */
         @NativeType("Time")
         public long time() { return XTimeCoord.ntime(address()); }
-        /** Returns the value of the {@code x} field. */
+        /** @return the value of the {@link XTimeCoord#x} field. */
         public short x() { return XTimeCoord.nx(address()); }
-        /** Returns the value of the {@code y} field. */
+        /** @return the value of the {@link XTimeCoord#y} field. */
         public short y() { return XTimeCoord.ny(address()); }
 
     }

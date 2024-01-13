@@ -7,10 +7,8 @@ package org.lwjgl.opengl;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_tessellator.txt">AMD_vertex_shader_tessellator</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_tessellator.txt">AMD_vertex_shader_tessellator</a> extension.
  * 
  * <p>The vertex shader tessellator gives new flexibility to the shader author to shade at a tessellated vertex, rather than just at a provided vertex.</p>
  * 
@@ -68,6 +66,8 @@ import static org.lwjgl.system.Checks.*;
  */
 public class AMDVertexShaderTessellator {
 
+    static { GL.initialize(); }
+
     /** Returned by the {@code type} parameter of GetActiveUniform. */
     public static final int
         GL_SAMPLER_BUFFER_AMD              = 0x9001,
@@ -85,16 +85,8 @@ public class AMDVertexShaderTessellator {
     /** Accepted by GetFloatv. */
     public static final int GL_TESSELLATION_FACTOR_AMD = 0x9005;
 
-    static { GL.initialize(); }
-
     protected AMDVertexShaderTessellator() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glTessellationFactorAMD, caps.glTessellationModeAMD
-        );
     }
 
     // --- [ glTessellationFactorAMD ] ---

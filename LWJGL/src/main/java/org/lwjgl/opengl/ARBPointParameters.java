@@ -14,7 +14,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_point_parameters.txt">ARB_point_parameters</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_point_parameters.txt">ARB_point_parameters</a> extension.
  * 
  * <p>This extension supports additional geometric characteristics of points. It can be used to render particles or tiny light sources, commonly referred to
  * as "Light points".</p>
@@ -34,6 +34,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class ARBPointParameters {
 
+    static { GL.initialize(); }
+
     /** Accepted by the {@code pname} parameter of PointParameterfvARB, and the {@code pname} of Get. */
     public static final int
         GL_POINT_SIZE_MIN_ARB             = 0x8126,
@@ -41,16 +43,8 @@ public class ARBPointParameters {
         GL_POINT_FADE_THRESHOLD_SIZE_ARB  = 0x8128,
         GL_POINT_DISTANCE_ATTENUATION_ARB = 0x8129;
 
-    static { GL.initialize(); }
-
     protected ARBPointParameters() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glPointParameterfARB, caps.glPointParameterfvARB
-        );
     }
 
     // --- [ glPointParameterfARB ] ---

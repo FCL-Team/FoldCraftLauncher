@@ -14,12 +14,14 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_secondary_color.txt">EXT_secondary_color</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_secondary_color.txt">EXT_secondary_color</a> extension.
  * 
  * <p>This extension allows specifying the RGB components of the secondary color used in the Color Sum stage, instead of using the default (0,0,0,0) color.
  * It applies only in RGBA mode and when LIGHTING is disabled.</p>
  */
 public class EXTSecondaryColor {
+
+    static { GL.initialize(); }
 
     /**
      * Accepted by the {@code cap} parameter of Enable, Disable, and IsEnabled, and by the {@code pname} parameter of GetBooleanv, GetIntegerv, GetFloatv, and
@@ -40,19 +42,8 @@ public class EXTSecondaryColor {
     /** Accepted by the {@code array} parameter of EnableClientState and DisableClientState. */
     public static final int GL_SECONDARY_COLOR_ARRAY_EXT = 0x845E;
 
-    static { GL.initialize(); }
-
     protected EXTSecondaryColor() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glSecondaryColor3bEXT, caps.glSecondaryColor3sEXT, caps.glSecondaryColor3iEXT, caps.glSecondaryColor3fEXT, caps.glSecondaryColor3dEXT, 
-            caps.glSecondaryColor3ubEXT, caps.glSecondaryColor3usEXT, caps.glSecondaryColor3uiEXT, caps.glSecondaryColor3bvEXT, caps.glSecondaryColor3svEXT, 
-            caps.glSecondaryColor3ivEXT, caps.glSecondaryColor3fvEXT, caps.glSecondaryColor3dvEXT, caps.glSecondaryColor3ubvEXT, caps.glSecondaryColor3usvEXT, 
-            caps.glSecondaryColor3uivEXT, caps.glSecondaryColorPointerEXT
-        );
     }
 
     // --- [ glSecondaryColor3bEXT ] ---

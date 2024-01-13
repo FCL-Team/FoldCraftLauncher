@@ -57,14 +57,6 @@ public class ALC10 {
         throw new UnsupportedOperationException();
     }
 
-	static boolean isAvailable(ALCCapabilities caps) {
-		return checkFunctions(
-            caps.alcOpenDevice, caps.alcCloseDevice, caps.alcCreateContext, caps.alcMakeContextCurrent, caps.alcProcessContext, caps.alcSuspendContext, 
-            caps.alcDestroyContext, caps.alcGetCurrentContext, caps.alcGetContextsDevice, caps.alcIsExtensionPresent, caps.alcGetProcAddress, 
-            caps.alcGetEnumValue, caps.alcGetError, caps.alcGetString, caps.alcGetIntegerv
-        );
-	}
-
     static ALCcontext alcContext;
 
     public static ALCcontext alcCreateContext(ALCdevice device, java.nio.IntBuffer attrList) {
@@ -80,6 +72,10 @@ public class ALC10 {
     public static void alcGetInteger(ALCdevice device, int pname, java.nio.IntBuffer integerdata) {
         int res = alcGetInteger(device.device, pname);
         integerdata.put(0, res);
+    }
+
+    public static String alcGetString(ALCdevice device, int pname) {
+        return alcGetString(device.device, pname);
     }
 
     // --- [ alcOpenDevice ] ---
@@ -456,13 +452,6 @@ public class ALC10 {
     @NativeType("ALCchar const *")
     public static String alcGetString(@NativeType("ALCdevice *") long deviceHandle, @NativeType("ALCenum") int token) {
         long __result = nalcGetString(deviceHandle, token);
-        return memUTF8Safe(__result);
-    }
-
-    @Nullable
-    @NativeType("ALCchar const *")
-    public static String alcGetString(@NativeType("ALCdevice *") ALCdevice device, @NativeType("ALCenum") int token) {
-        long __result = nalcGetString(device == null ? MemoryUtil.NULL : device.device, token);
         return memUTF8Safe(__result);
     }
 

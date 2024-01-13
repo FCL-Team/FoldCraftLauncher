@@ -15,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_performance_query.txt">INTEL_performance_query</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_performance_query.txt">INTEL_performance_query</a> extension.
  * 
  * <p>The purpose of this extension is to expose Intel proprietary hardware performance counters to the OpenGL applications. Performance counters may count:</p>
  * 
@@ -44,6 +44,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>Requires {@link GL30 OpenGL 3.0}.</p>
  */
 public class INTELPerformanceQuery {
+
+    static { GL.initialize(); }
 
     /** Returned by the capsMask parameter of GetPerfQueryInfoINTEL. */
     public static final int
@@ -82,18 +84,8 @@ public class INTELPerformanceQuery {
     /** Accepted by the {@code pname} parameter of GetBooleanv. */
     public static final int GL_PERFQUERY_GPA_EXTENDED_COUNTERS_INTEL = 0x9500;
 
-    static { GL.initialize(); }
-
     protected INTELPerformanceQuery() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glBeginPerfQueryINTEL, caps.glCreatePerfQueryINTEL, caps.glDeletePerfQueryINTEL, caps.glEndPerfQueryINTEL, caps.glGetFirstPerfQueryIdINTEL, 
-            caps.glGetNextPerfQueryIdINTEL, caps.glGetPerfCounterInfoINTEL, caps.glGetPerfQueryDataINTEL, caps.glGetPerfQueryIdByNameINTEL, 
-            caps.glGetPerfQueryInfoINTEL
-        );
     }
 
     // --- [ glBeginPerfQueryINTEL ] ---

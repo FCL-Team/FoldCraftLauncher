@@ -9,10 +9,8 @@ import java.nio.*;
 
 import org.lwjgl.system.*;
 
-import static org.lwjgl.system.Checks.*;
-
 /**
- * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_ES2_compatibility.txt">ARB_ES2_compatibility</a> extension.
+ * Native bindings to the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_ES2_compatibility.txt">ARB_ES2_compatibility</a> extension.
  * 
  * <p>This extension adds support for features of OpenGL ES 2.0 that are missing from OpenGL 3.x. Enabling these features will ease the process of porting
  * applications from OpenGL ES 2.0 to OpenGL.</p>
@@ -20,6 +18,8 @@ import static org.lwjgl.system.Checks.*;
  * <p>Promoted to core in {@link GL41 OpenGL 4.1}.</p>
  */
 public class ARBES2Compatibility {
+
+    static { GL.initialize(); }
 
     /** Accepted by the {@code value} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int
@@ -47,16 +47,8 @@ public class ARBES2Compatibility {
     /** Accepted by the {@code format} parameter of most commands taking sized internal formats. */
     public static final int GL_RGB565 = 0x8D62;
 
-    static { GL.initialize(); }
-
     protected ARBES2Compatibility() {
         throw new UnsupportedOperationException();
-    }
-
-    static boolean isAvailable(GLCapabilities caps) {
-        return checkFunctions(
-            caps.glReleaseShaderCompiler, caps.glShaderBinary, caps.glGetShaderPrecisionFormat, caps.glDepthRangef, caps.glClearDepthf
-        );
     }
 
     // --- [ glReleaseShaderCompiler ] ---
