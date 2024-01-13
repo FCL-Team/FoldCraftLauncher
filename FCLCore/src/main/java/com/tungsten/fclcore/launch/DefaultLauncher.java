@@ -104,19 +104,19 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dminecraft.client.jar=", repository.getVersionJar(version).toString());
 
         // Using G1GC with its settings by default
-        if (options.getJava().getVersion() >= 8
-                && res.noneMatch(arg -> "-XX:-UseG1GC".equals(arg) || (arg.startsWith("-XX:+Use") && arg.endsWith("GC")))) {
-            res.addUnstableDefault("UnlockExperimentalVMOptions", true);
-            res.addUnstableDefault("UseG1GC", true);
-            res.addUnstableDefault("G1NewSizePercent", "20");
-            res.addUnstableDefault("G1ReservePercent", "20");
-            res.addUnstableDefault("MaxGCPauseMillis", "50");
-            res.addUnstableDefault("G1HeapRegionSize", "32m");
-        }
-
-        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
-        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
-        res.addUnstableDefault("DontCompileHugeMethods", false);
+//        if (options.getJava().getVersion() >= 8
+//                && res.noneMatch(arg -> "-XX:-UseG1GC".equals(arg) || (arg.startsWith("-XX:+Use") && arg.endsWith("GC")))) {
+//            res.addUnstableDefault("UnlockExperimentalVMOptions", true);
+//            res.addUnstableDefault("UseG1GC", true);
+//            res.addUnstableDefault("G1NewSizePercent", "20");
+//            res.addUnstableDefault("G1ReservePercent", "20");
+//            res.addUnstableDefault("MaxGCPauseMillis", "50");
+//            res.addUnstableDefault("G1HeapRegionSize", "32m");
+//        }
+//
+//        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
+//        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
+//        res.addUnstableDefault("DontCompileHugeMethods", false);
 
         // As 32-bit JVM allocate 320KB for stack by default rather than 64-bit version allocating 1MB,
         // causing Minecraft 1.13 crashed accounting for java.lang.StackOverflowError.
