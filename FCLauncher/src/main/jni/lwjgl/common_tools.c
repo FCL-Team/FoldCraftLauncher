@@ -6,6 +6,7 @@
     __pragma(warning(disable : 4710))
 #endif
 #include "common_tools.h"
+#include "fcl_hook.h"
 #include <stdlib.h>
 #include <errno.h>
 
@@ -199,6 +200,10 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     UNUSED_PARAM(reserved)
 
     jvm = vm;
+
+    JNIEnv *env = NULL;
+    (*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_4);
+    hookExec(env);
 
     tlsInit();
     return JNI_VERSION_1_6;
