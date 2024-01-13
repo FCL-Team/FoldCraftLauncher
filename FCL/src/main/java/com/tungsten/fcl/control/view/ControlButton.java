@@ -398,8 +398,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
     }
 
     private void cancelAllEvent() {
-        handleUpAfterPressEvent();
-        handleUpAfterLongPressEvent();
+//        handleUpAfterPressEvent();
+//        handleUpAfterLongPressEvent();
         cancelTickEvent(getData().getEvent().getPressEvent());
         cancelTickEvent(getData().getEvent().getLongPressEvent());
         cancelTickEvent(getData().getEvent().getClickEvent());
