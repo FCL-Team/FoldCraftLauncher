@@ -139,10 +139,15 @@ LOCAL_SRC_FILES         := lwjgl/fcl_hook.c \
                            lwjgl/org_lwjgl_system_MemoryAccessJNI.c \
                            lwjgl/org_lwjgl_system_MemoryUtil.c \
                            lwjgl/org_lwjgl_system_SharedLibraryUtil.c \
-                           lwjgl/org_lwjgl_system_ThreadLocalUtil.c \
-                           lwjgl/org_lwjgl_util_tinyfd_TinyFileDialogs.c \
-                           lwjgl/tinyfiledialogs.c
+                           lwjgl/org_lwjgl_system_ThreadLocalUtil.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/lwjgl/libffi/$(TARGET_ARCH_ABI)
+LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DLWJGL_FCL -Wunused-value
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE            := lwjgl_tinyfd
+LOCAL_SRC_FILES         := lwjgl/tinyfd/org_lwjgl_util_tinyfd_TinyFileDialogs.c \
+                           lwjgl/tinyfd/tinyfiledialogs.c
 LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DLWJGL_FCL -Wunused-value
 include $(BUILD_SHARED_LIBRARY)
 

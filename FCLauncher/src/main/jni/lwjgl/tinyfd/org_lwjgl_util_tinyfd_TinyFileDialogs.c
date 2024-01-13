@@ -3,7 +3,7 @@
  * License terms: https://www.lwjgl.org/license
  * MACHINE GENERATED FILE, DO NOT EDIT
  */
-#include "common_tools.h"
+#include "lwjgl/common_tools.h"
 #include "tinyfiledialogs.h"
 #ifndef LWJGL_WINDOWS
     static int tinyfd_winUtf8;
