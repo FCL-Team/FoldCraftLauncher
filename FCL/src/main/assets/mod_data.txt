@@ -1,10 +1,3 @@
-#
-# Fold Craft Launcher
-# Copyright (C) 2022  Tungsten and contributors
-#
-# mcmod.cn
-# Copyright (C) 2022. All Rights Reserved.
-#
 industrial-craft;2;515771;IC2,ic2;工业时代2;Industrial Craft 2;IC2
 ;3;71843;RedPowerCore,RedPowerBase;红石力量2;RedPower2;RP2
 BuildCraft;4;884720;BuildCraft|Core,buildcraftlib,buildcraftcore,buildcraftbuilders,buildcrafttransport,buildcraftsilicon,buildcraftfactory,buildcraftrobotics,buildcraftenergy,BuildMod,kamenridercraft4th,BuildCraft|Energy,BuildCraft|Transport,BuildCraft|Factory,BuildCraft|Silicon,BuildCraft|Builders,BuildCraft|Robotics;建筑;BuildCraft;BC

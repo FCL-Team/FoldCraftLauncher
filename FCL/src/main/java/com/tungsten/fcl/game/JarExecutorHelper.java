@@ -51,10 +51,14 @@ public class JarExecutorHelper {
     private static void launchJarExecutor(Context context, File file) {
         int version = getJavaVersion(file);
         int javaVersion = getNearestJavaVersion(version);
+        exec(context, file, javaVersion, null);
+    }
+
+    public static void exec(Context context, File file, int javaVersion, String args) {
         JarExecutorLauncher launcher = new JarExecutorLauncher(context);
-        launcher.setInfo(file.getAbsolutePath(), javaVersion);
+        launcher.setInfo(file == null ? null : file.getAbsolutePath(), javaVersion);
         try {
-            FCLBridge fclBridge = launcher.launch();
+            FCLBridge fclBridge = launcher.launch(args);
             Intent intent = new Intent(context, JVMActivity.class);
             fclBridge.setScaleFactor(1f);
             fclBridge.setController(null);

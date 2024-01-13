@@ -130,7 +130,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FCLTextView scaleFactorText = findViewById(R.id.scale_factor_text);
 
         scaleFactorSeekbar.addProgressListener();
-        scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> scaleFactorSeekbar.getProgress() + " %", scaleFactorSeekbar.percentProgressProperty()));
+        scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> (int) (lastVersionSetting.getScaleFactor() * 100) + " %", scaleFactorSeekbar.percentProgressProperty()));
 
         // add spinner data
         ArrayList<Integer> javaVersionDataList = new ArrayList<>();
