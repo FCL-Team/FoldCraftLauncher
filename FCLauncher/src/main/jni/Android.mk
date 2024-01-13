@@ -52,6 +52,7 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/fcl_window.c \
                            glfw/egl_context.c \
                            glfw/osmesa_context.c \
+                           glfw/platform.c \
                            glfw/posix_thread.c \
                            glfw/posix_time.c \
                            glfw/driver_helper.c \

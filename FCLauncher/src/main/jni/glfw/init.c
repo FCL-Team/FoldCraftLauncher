@@ -278,11 +278,6 @@ GLFWAPI void glfwGetVersion(int* major, int* minor, int* rev)
         *rev = GLFW_VERSION_REVISION;
 }
 
-GLFWAPI const char* glfwGetVersionString(void)
-{
-    return _glfwPlatformGetVersionString();
-}
-
 GLFWAPI int glfwGetError(const char** description)
 {
     _GLFWerror* error;
@@ -311,14 +306,4 @@ GLFWAPI GLFWerrorfun glfwSetErrorCallback(GLFWerrorfun cbfun)
 {
     _GLFW_SWAP_POINTERS(_glfwErrorCallback, cbfun);
     return cbfun;
-}
-
-GLFWAPI int glfwGetPlatform(void)
-{
-    return 0;
-}
-
-GLFWAPI int glfwPlatformSupported(int platformID)
-{
-    return GLFW_TRUE;
 }
