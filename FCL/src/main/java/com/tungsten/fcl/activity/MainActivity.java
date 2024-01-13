@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -175,16 +177,22 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             version.setOnClickListener(this);
             executeJar.setOnClickListener(this);
             executeJar.setOnLongClickListener(V -> {
+                int padding = ConvertUtils.dip2px(MainActivity.this, 15);
                 FCLEditText editText = new FCLEditText(MainActivity.this);
+                RelativeLayout layout = new RelativeLayout(MainActivity.this);
                 editText.setHint("-jar xxx");
                 editText.setLines(1);
                 editText.setMaxLines(1);
+                layout.setPadding(padding, padding, padding, padding);
+                layout.addView(editText);
                 AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle(R.string.jar_execute_custom_args)
-                        .setView(editText)
+                        .setView(layout)
                         .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive, (dialog1, which) -> JarExecutorHelper.exec(MainActivity.this, null, 8, editText.getText().toString()))
                         .setNegativeButton(com.tungsten.fcllibrary.R.string.dialog_negative, null)
                         .create();
+                layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                editText.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 ThemeEngine.getInstance().applyFullscreen(dialog.getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
                 dialog.show();
                 return true;
