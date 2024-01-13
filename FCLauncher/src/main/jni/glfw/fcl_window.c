@@ -258,6 +258,18 @@ static void processEvent(FCLEvent *event)
             return;
         }
 
+        case KeyChar:
+        {
+            const int keychar = event->keychar;
+            const int mods = translateState(event->state);
+            const int plain = !(mods & (GLFW_MOD_CONTROL | GLFW_MOD_ALT));
+
+            if (keychar) {
+                _glfwInputChar(window, keychar, mods, plain);
+            }
+            return;
+        }
+
         case ConfigureNotify:
         {
             const int width = event->width;

@@ -143,6 +143,9 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(J
     event->type = type;
     event->state = 0;
     switch (type) {
+        case KeyChar:
+            event->keychar = p2;
+            break;
         case MotionNotify:
             event->x = p1;
             event->y = p2;

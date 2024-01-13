@@ -92,8 +92,7 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
 
     public void sendChar(char keyChar) {
         if (menu.getBridge() != null) {
-            menu.getBridge().pushEventKey(FCLKeycodes.KEY_RESERVED, keyChar, true);
-            menu.getBridge().pushEventKey(FCLKeycodes.KEY_RESERVED, keyChar, false);
+            menu.getBridge().pushEventChar(keyChar);
         }
     }
 
