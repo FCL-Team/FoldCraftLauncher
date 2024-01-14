@@ -90,7 +90,7 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
 
-        renderer = new SkinRenderer();
+        renderer = new SkinRenderer(getContext());
         skinCanvas = findViewById(R.id.skin_view);
         skinCanvas.setRenderer(renderer, 5f);
 
