@@ -38,7 +38,7 @@ public class MainUI extends FCLCommonUI {
         super.onCreate();
 
         skinContainer = findViewById(R.id.skin_container);
-        renderer = new SkinRenderer();
+        renderer = new SkinRenderer(getContext());
         ViewGroup.LayoutParams layoutParamsSkin = skinContainer.getLayoutParams();
         layoutParamsSkin.width = (int) (((View) skinContainer.getParent().getParent()).getMeasuredWidth() * 0.5f);
         layoutParamsSkin.height = (int) Math.min(((View) skinContainer.getParent().getParent()).getMeasuredWidth() * 0.5f, ((View) skinContainer.getParent().getParent()).getMeasuredHeight());

@@ -1,11 +1,13 @@
 package com.tungsten.fcllibrary.skin;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -23,6 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class SkinRenderer implements GLSurfaceView.Renderer {
 
+    private final Context context;
     private final SkinModel skinModel;
     private boolean updateBitmapSkin;
     private boolean slim;
@@ -31,7 +34,8 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
     private int[] modelTextureData;
     private ObjectProperty<Bitmap[]> textureProperty;
 
-    public SkinRenderer() {
+    public SkinRenderer(Context context) {
+        this.context = context;
         this.skinModel = new SkinModel();
         this.skinModel.setRunning(true);
         this.updateBitmapSkin = false;
@@ -99,7 +103,8 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
                 this.cape = cape;
                 this.updateBitmapSkin = true;
             } catch (InvalidSkinException e) {
-                throw new RuntimeException(e.getCause());
+                e.printStackTrace();
+                Toast.makeText(context, "Skin Renderer: " + e, Toast.LENGTH_SHORT).show();
             }
         });
     }
