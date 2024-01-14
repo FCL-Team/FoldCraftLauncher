@@ -7,6 +7,15 @@ android {
     namespace 'com.tungsten.fcl'
     compileSdk 34
 
+    signingConfigs {
+        autoBuild {
+            storeFile file("../key-store.jks")
+            storePassword System.getenv("FCL_KEYSTORE_PASSWORD")
+            keyAlias "FCL-Key"
+            keyPassword System.getenv("FCL_KEYSTORE_PASSWORD")
+        }
+    }
+
     defaultConfig {
         applicationId "com.tungsten.fcl"
         minSdk 26
@@ -21,6 +30,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        autobuild {
+            initWith debug
+            signingConfig signingConfigs.autoBuild
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
@@ -74,7 +87,7 @@ tasks.register('updateMap') {
     }
 }
 
-task uploadMap(dependsOn:'updateMap') {
+task uploadMap(dependsOn: 'updateMap') {
     doLast {
         ssh.run {
             session(remotes.debugServer) {

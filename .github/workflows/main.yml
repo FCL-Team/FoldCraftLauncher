@@ -11,6 +11,8 @@ on:
 
 jobs:
   build:
+    env:
+      FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -25,11 +27,11 @@ jobs:
     - name: Build debug .apk
       run: |
         chmod +x gradlew
-        ./gradlew assembledebug
+        ./gradlew assembleautobuild
         
     - name : upload apk
       uses: actions/upload-artifact@v3
       with:
         name: app-release
-        path: FCL/build/outputs/apk/debug/*
+        path: FCL/build/outputs/apk/autobuild/*
       #  retention-days: 1
