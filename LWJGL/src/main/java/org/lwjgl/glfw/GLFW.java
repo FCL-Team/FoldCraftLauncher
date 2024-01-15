@@ -3955,13 +3955,7 @@ public class GLFW {
      *
      * @since version 3.1
      */
-    public static void glfwDestroyCursor(@NativeType("GLFWcursor *") long cursor) {
-        long __functionAddress = Functions.DestroyCursor;
-        if (CHECKS) {
-            check(cursor);
-        }
-        invokePV(cursor, __functionAddress);
-    }
+    public static void glfwDestroyCursor(@NativeType("GLFWcursor *") long cursor) {}
 
     // --- [ glfwSetCursor ] ---
 
@@ -3978,13 +3972,7 @@ public class GLFW {
      *
      * @since version 3.1
      */
-    public static void glfwSetCursor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWcursor *") long cursor) {
-        long __functionAddress = Functions.SetCursor;
-        if (CHECKS) {
-            check(window);
-        }
-        invokePPV(window, cursor, __functionAddress);
-    }
+    public static void glfwSetCursor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWcursor *") long cursor) {}
 
     // --- [ glfwSetKeyCallback ] ---
 

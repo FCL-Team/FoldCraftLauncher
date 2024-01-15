@@ -465,53 +465,9 @@ GLFWAPI GLFWcursor* glfwCreateStandardCursor(int shape)
     return (GLFWcursor*) cursor;
 }
 
-GLFWAPI void glfwDestroyCursor(GLFWcursor* handle)
-{
-    _GLFWcursor* cursor = (_GLFWcursor*) handle;
+GLFWAPI void glfwDestroyCursor(GLFWcursor *handle) {}
 
-    _GLFW_REQUIRE_INIT();
-
-    if (cursor == NULL)
-        return;
-
-    // Make sure the cursor is not being used by any window
-    {
-        _GLFWwindow* window;
-
-        for (window = _glfw.windowListHead;  window;  window = window->next)
-        {
-            if (window->cursor == cursor)
-                glfwSetCursor((GLFWwindow*) window, NULL);
-        }
-    }
-
-    _glfwPlatformDestroyCursor(cursor);
-
-    // Unlink cursor from global linked list
-    {
-        _GLFWcursor** prev = &_glfw.cursorListHead;
-
-        while (*prev != cursor)
-            prev = &((*prev)->next);
-
-        *prev = cursor->next;
-    }
-
-    free(cursor);
-}
-
-GLFWAPI void glfwSetCursor(GLFWwindow* windowHandle, GLFWcursor* cursorHandle)
-{
-    _GLFWwindow* window = (_GLFWwindow*) windowHandle;
-    _GLFWcursor* cursor = (_GLFWcursor*) cursorHandle;
-    assert(window != NULL);
-
-    _GLFW_REQUIRE_INIT();
-
-    window->cursor = cursor;
-
-    _glfwPlatformSetCursor(window, cursor);
-}
+GLFWAPI void glfwSetCursor(GLFWwindow* windowHandle, GLFWcursor* cursorHandle){}
 
 GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* handle, GLFWkeyfun cbfun)
 {
