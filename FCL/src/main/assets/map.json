@@ -5,6 +5,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -13,6 +14,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -21,6 +23,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -29,6 +32,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -37,6 +41,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -45,6 +50,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:x:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -53,6 +59,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:y:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -61,6 +68,7 @@
       "argument": {
         "vanilla": "2:net.minecraft.client.Minecraft:x:y:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -69,6 +77,7 @@
       "argument": {
         "vanilla": "2:atn:w:s:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -77,6 +86,7 @@
       "argument": {
         "vanilla": "2:ats:w:t:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -85,6 +95,7 @@
       "argument": {
         "vanilla": "2:atv:w:t:a",
         "forge": "2:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -93,6 +104,7 @@
       "argument": {
         "vanilla": "3:azd:A:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -101,6 +113,7 @@
       "argument": {
         "vanilla": "3:bao:B:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -109,6 +122,7 @@
       "argument": {
         "vanilla": "3:bsu:z:s:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -117,6 +131,7 @@
       "argument": {
         "vanilla": "3:ave:A:s:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -125,6 +140,7 @@
       "argument": {
         "vanilla": "3:bcf:z:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -133,6 +149,7 @@
       "argument": {
         "vanilla": "3:bcd:z:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -141,6 +158,7 @@
       "argument": {
         "vanilla": "3:bcx:z:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -149,6 +167,7 @@
       "argument": {
         "vanilla": "3:bes:z:t:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -157,6 +176,7 @@
       "argument": {
         "vanilla": "3:bib:z:s:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -165,6 +185,7 @@
       "argument": {
         "vanilla": "3:cft:s:s:a",
         "forge": "3:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:field_72313_a",
+        "neoforge": null,
         "fabric": null
       }
     },
@@ -173,6 +194,7 @@
       "argument": {
         "vanilla": "4:cyc:u:u:c",
         "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -181,6 +203,7 @@
       "argument": {
         "vanilla": "4:dbn:x:u:c",
         "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -189,6 +212,7 @@
       "argument": {
         "vanilla": "4:djz:C:v:c",
         "forge": "4:net.minecraft.client.Minecraft:func_71410_x:field_71476_x:func_216346_c",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -197,6 +221,7 @@
       "argument": {
         "vanilla": "4:dvp:C:v:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -205,6 +230,7 @@
       "argument": {
         "vanilla": "4:dyr:D:v:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -213,6 +239,7 @@
       "argument": {
         "vanilla": "4:eev:G:v:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -221,6 +248,7 @@
       "argument": {
         "vanilla": "4:ejf:N:w:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -229,6 +257,7 @@
       "argument": {
         "vanilla": "4:emh:N:w:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": null,
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -237,6 +266,7 @@
       "argument": {
         "vanilla": "4:enn:N:w:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": "4:net.minecraft.client.Minecraft:getInstance:hitResult:getType",
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -245,6 +275,7 @@
       "argument": {
         "vanilla": "4:eqv:O:v:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": "4:net.minecraft.client.Minecraft:getInstance:hitResult:getType",
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     },
@@ -253,6 +284,7 @@
       "argument": {
         "vanilla": "4:evi:O:v:c",
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "neoforge": "4:net.minecraft.client.Minecraft:getInstance:hitResult:getType",
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
     }

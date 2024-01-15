@@ -38,11 +38,13 @@ public class InjectorMap {
     public static class Argument {
         private final String vanilla;
         private final String forge;
+        private final String neoforge;
         private final String fabric;
 
-        public Argument(String vanilla, String forge, String fabric) {
+        public Argument(String vanilla, String forge, String neoforge, String fabric) {
             this.vanilla = vanilla;
             this.forge = forge;
+            this.neoforge = neoforge;
             this.fabric = fabric;
         }
 
@@ -54,13 +56,19 @@ public class InjectorMap {
             return forge;
         }
 
+        public String getNeoforge() {
+            return neoforge;
+        }
+
         public String getFabric() {
             return fabric;
         }
 
         public String getArgument(Version version) {
-            if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.BOOTSTRAP_LAUNCHER) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+            if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE))
                 return getForge();
+            else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+                return getNeoforge();
             else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FABRIC) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.QUILT))
                 return getFabric();
             else
