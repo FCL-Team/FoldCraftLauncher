@@ -239,6 +239,22 @@
         "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
         "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
       }
+    },
+    {
+      "id": "8",
+      "argument": {
+        "vanilla": "4:eqv:O:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
+    },
+    {
+      "id": "12",
+      "argument": {
+        "vanilla": "4:evi:O:v:c",
+        "forge": "4:net.minecraft.client.Minecraft:m_91087_:f_91077_:m_6662_",
+        "fabric": "4:net.minecraft.class_310:method_1551:field_1765:method_17783"
+      }
     }
   ]
 }

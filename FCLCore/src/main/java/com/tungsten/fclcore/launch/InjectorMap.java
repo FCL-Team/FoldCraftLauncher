@@ -59,7 +59,7 @@ public class InjectorMap {
         }
 
         public String getArgument(Version version) {
-            if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.BOOTSTRAP_LAUNCHER))
+            if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.BOOTSTRAP_LAUNCHER) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
                 return getForge();
             else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FABRIC) || LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.QUILT))
                 return getFabric();
