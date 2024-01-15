@@ -467,7 +467,7 @@ GLFWAPI GLFWcursor* glfwCreateStandardCursor(int shape)
 
 GLFWAPI void glfwDestroyCursor(GLFWcursor *handle) {}
 
-GLFWAPI void glfwSetCursor(GLFWwindow* windowHandle, GLFWcursor* cursorHandle){}
+GLFWAPI void glfwSetCursor(GLFWwindow* windowHandle, GLFWcursor* cursorHandle) {}
 
 GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* handle, GLFWkeyfun cbfun)
 {
