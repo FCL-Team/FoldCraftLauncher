@@ -62,7 +62,6 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadExceptio
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloader;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.authlibinjector.BoundAuthlibInjectorAccountFactory;
-import com.tungsten.fclcore.auth.authlibinjector.SimpleAuthlibInjectorArtifactProvider;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftService;
@@ -375,24 +374,19 @@ public final class Accounts {
     // ==== authlib-injector ====
     private static AuthlibInjectorArtifactProvider createAuthlibInjectorArtifactProvider() {
         String authlibinjectorLocation = FCLPath.AUTHLIB_INJECTOR_PATH;
-        if (!new File(authlibinjectorLocation).exists()) {
-            return new AuthlibInjectorDownloader(
-                    new File(authlibinjectorLocation).toPath(),
-                    DownloadProviders::getDownloadProvider) {
-                @Override
-                public Optional<AuthlibInjectorArtifactInfo> getArtifactInfoImmediately() {
-                    Optional<AuthlibInjectorArtifactInfo> local = super.getArtifactInfoImmediately();
-                    if (local.isPresent()) {
-                        return local;
-                    }
-                    // search authlib-injector.jar in current directory, it's used as a fallback
-                    return parseArtifact(Paths.get("authlib-injector.jar"));
+        return new AuthlibInjectorDownloader(
+                new File(authlibinjectorLocation).toPath(),
+                DownloadProviders::getDownloadProvider) {
+            @Override
+            public Optional<AuthlibInjectorArtifactInfo> getArtifactInfoImmediately() {
+                Optional<AuthlibInjectorArtifactInfo> local = super.getArtifactInfoImmediately();
+                if (local.isPresent()) {
+                    return local;
                 }
-            };
-        } else {
-            LOG.info("Using specified authlib-injector: " + authlibinjectorLocation);
-            return new SimpleAuthlibInjectorArtifactProvider(Paths.get(authlibinjectorLocation));
-        }
+                // search authlib-injector.jar in current directory, it's used as a fallback
+                return parseArtifact(Paths.get("authlib-injector.jar"));
+            }
+        };
     }
 
     private static AuthlibInjectorServer getOrCreateAuthlibInjectorServer(String url) {
