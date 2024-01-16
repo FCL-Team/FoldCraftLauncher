@@ -158,7 +158,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
 
             command.addAll(args);
 
-            runJVMProcess(processor, command, true);
+            runJVMProcess(processor, command, 8);
 
             for (Map.Entry<String, String> entry : outputs.entrySet()) {
                 Path artifact = Paths.get(entry.getKey());
@@ -178,7 +178,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
         }
     }
 
-    private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, boolean first) throws Exception {
+    private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
         LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
         int exitCode;
         boolean listen = true;
@@ -196,15 +196,17 @@ public class NeoForgeOldInstallTask extends Task<Version> {
         Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command.toArray(new String[0]));
-        bundle.putBoolean("first", first);
+        bundle.putInt("java", java);
         service.putExtras(bundle);
         FCLPath.CONTEXT.startService(service);
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());
         if (exitCode != 0) {
-            if (first) {
-                runJVMProcess(processor, command, false);
+            if (java == 8) {
+                runJVMProcess(processor, command, 17);
+            } else if (java == 17) {
+                runJVMProcess(processor, command, 21);
             } else {
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
             }

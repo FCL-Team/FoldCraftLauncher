@@ -136,8 +136,8 @@ public class DefaultLauncher extends Launcher {
 
         // FCL specific args
         JavaVersion javaVersion = options.getJava().getId() == 0 ? JavaVersion.getSuitableJavaVersion(version) : options.getJava();
-        if (javaVersion.getVersion() == JavaVersion.JAVA_VERSION_17) {
-            res.addDefault("-Dext.net.resolvPath=", FCLPath.JAVA_17_PATH + "/resolv.conf");
+        if (javaVersion.getVersion() == JavaVersion.JAVA_VERSION_17 || javaVersion.getVersion() == JavaVersion.JAVA_VERSION_21) {
+            res.addDefault("-Dext.net.resolvPath=", javaVersion.getJavaPath(version) + "/resolv.conf");
         }
 
         res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
@@ -408,7 +408,7 @@ public class DefaultLauncher extends Launcher {
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,
-                options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
+                options.getJava().getJavaPath(version),
                 repository.getRunDirectory(version.getId()).getAbsolutePath(),
                 renderer,
                 finalArgs

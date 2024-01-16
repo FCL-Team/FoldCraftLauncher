@@ -35,8 +35,8 @@ public class ProcessService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         String[] command = intent.getExtras().getStringArray("command");
-        boolean first = intent.getExtras().getBoolean("first");
-        String jre = first ? "jre8" : "jre17";
+        int java = intent.getExtras().getInt("java");
+        String jre = "jre" + java;
         FCLConfig config = new FCLConfig(
                 getApplicationContext(),
                 Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/log",

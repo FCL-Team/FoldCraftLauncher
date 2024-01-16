@@ -78,7 +78,8 @@ public class JarExecutorHelper {
             return 8;
         int diffFactorFirst = Math.abs(8 - majorVersion);
         int diffFactorSecond = Math.abs(17 - majorVersion);
-        return diffFactorFirst < diffFactorSecond ? 8 : 17;
+        int diffFactorThird = Math.abs(21 - majorVersion);
+        return diffFactorFirst < diffFactorSecond ? 8 : diffFactorSecond < diffFactorThird ? 17 : 21;
     }
 
     private static int getJavaVersion(File file) {
