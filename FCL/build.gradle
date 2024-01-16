@@ -106,12 +106,6 @@ android {
     }
 }
 
-tasks.whenTaskAdded { Task task ->
-    if (task.name.contentEquals("assembleRelease")) {
-        task.dependsOn(uploadMap)
-    }
-}
-
 tasks.register('updateMap') {
     doLast {
         def list = []

@@ -1,0 +1,42 @@
+name: Release new version
+
+on:
+  push:
+    tags:
+      - '*'
+    branches-ignore:
+      - ''
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        arch: [ "all", "arm", "arm64", "x86", "x64" ]
+      fail-fast: false
+    env:
+      FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
+    name: Build for ${{matrix.arch}}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Build release ${{matrix.arch}} .apk
+        run: |
+          chmod +x gradlew
+          ./gradlew assemblerelease -Darch=${{matrix.arch}}
+
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.TOKEN }}"
+          prerelease: false
+          files: |
+            FCL/build/outputs/apk/release/*.apk
