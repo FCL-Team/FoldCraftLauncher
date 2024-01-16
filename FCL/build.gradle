@@ -8,11 +8,17 @@ android {
     compileSdk 34
 
     signingConfigs {
-        autoBuild {
+        FCLKey {
+            def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
+            if (pwd == null) {
+                Properties prop = new Properties()
+                prop.load(new FileInputStream("${rootDir}/local.properties"))
+                pwd = prop.get("pwd")
+            }
             storeFile file("../key-store.jks")
-            storePassword System.getenv("FCL_KEYSTORE_PASSWORD")
+            storePassword pwd
             keyAlias "FCL-Key"
-            keyPassword System.getenv("FCL_KEYSTORE_PASSWORD")
+            keyPassword pwd
         }
     }
 
@@ -30,10 +36,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.FCLKey
         }
         autobuild {
             initWith debug
-            signingConfig signingConfigs.autoBuild
+            signingConfig signingConfigs.FCLKey
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
@@ -41,7 +48,28 @@ android {
     }
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach { output ->
-            outputFileName = "FCL-${variant.buildType.name}-${defaultConfig.versionName}.apk"
+            def abi = output.getFilter(ABI)
+            if (abi == null) {
+                abi = "all"
+            }
+            variant.mergeAssetsProvider.get().doLast {
+                def arch = System.getProperty("arch", "all")
+                def assetsDir = mergeAssetsProvider.get().outputDir.get()
+                def java = ['jre8', 'jre17']
+                println(arch)
+                java.forEach { String str ->
+                    def runtimeDir = new File([assetsDir, "app_runtime/java/" + str].join(File.separator))
+                    println(runtimeDir)
+                    def files = fileTree(dir: runtimeDir, include: ['*.tar.xz'])
+                    files.forEach { File file ->
+                        if (arch != 'all' && !file.getName().contains(arch)) {
+                            print("delete:${file} :")
+                            println(delete(file))
+                        }
+                    }
+                }
+            }
+            outputFileName = "FCL-${variant.buildType.name}-${defaultConfig.versionName}-${abi}.apk"
         }
     }
     compileOptions {
@@ -51,6 +79,29 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
+        }
+    }
+    splits {
+        def arch = System.getProperty("arch", "all")
+        if (arch != 'all') {
+            abi {
+                enable true
+                reset()
+                switch (arch) {
+                    case 'arm':
+                        include 'armeabi-v7a'
+                        break
+                    case 'arm64':
+                        include 'arm64-v8a'
+                        break
+                    case 'x86':
+                        include 'x86'
+                        break
+                    case 'x64':
+                        include 'x86_64'
+                        break
+                }
+            }
         }
     }
 }
@@ -130,7 +181,7 @@ remotes {
             user = prop.getProperty("sftp.username")
             password = prop.getProperty("sftp.password")
         }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
 
     }
 }

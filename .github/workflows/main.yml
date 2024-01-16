@@ -11,27 +11,32 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        arch: [ "all", "arm", "arm64", "x86", "x64" ]
+      fail-fast: false
     env:
       FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
+    name: Build for ${{matrix.arch}}
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-    - name: set up JDK 17
-      uses: actions/setup-java@v1
-      with:
-        java-version: 17
+      - name: set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
 
-    - name: Build debug .apk
-      run: |
-        chmod +x gradlew
-        ./gradlew assembleautobuild
-        
-    - name : upload apk
-      uses: actions/upload-artifact@v3
-      with:
-        name: app-release
-        path: FCL/build/outputs/apk/autobuild/*
-      #  retention-days: 1
+      - name: Build debug ${{matrix.arch}} .apk
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleautobuild -Darch=${{matrix.arch}}
+
+      - name: upload apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-debug-${{matrix.arch}}
+          path: FCL/build/outputs/apk/autobuild/*
+        #  retention-days: 1
