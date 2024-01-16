@@ -38,10 +38,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.FCLKey
         }
-        autobuild {
-            initWith debug
-            signingConfig signingConfigs.FCLKey
-        }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
         }

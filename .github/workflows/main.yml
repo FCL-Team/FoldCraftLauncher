@@ -5,6 +5,8 @@ on:
     branches-ignore:
       - ''
   push:
+    tags:
+      - 'v*'
     branches-ignore:
       - ''
   workflow_dispatch:
@@ -29,14 +31,23 @@ jobs:
         with:
           java-version: 17
 
-      - name: Build debug ${{matrix.arch}} .apk
+      - name: Build ${{matrix.arch}} .apk
         run: |
           chmod +x gradlew
-          ./gradlew assembleautobuild -Darch=${{matrix.arch}}
+          ./gradlew assemblerelease -Darch=${{matrix.arch}}
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          token: "${{ secrets.TOKEN }}"
+          files: |
+            FCL/build/outputs/apk/release/*.apk
 
       - name: upload apk
+        if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v3
         with:
-          name: app-debug-${{matrix.arch}}
-          path: FCL/build/outputs/apk/autobuild/*
+          name: app-${{matrix.arch}}
+          path: FCL/build/outputs/apk/release/*
         #  retention-days: 1
