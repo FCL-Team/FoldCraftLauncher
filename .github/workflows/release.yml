@@ -3,7 +3,7 @@ name: Release new version
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
     branches-ignore:
       - ''
   workflow_dispatch:
