@@ -31,6 +31,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @SuppressLint("CustomSplashScreen")
@@ -113,7 +114,11 @@ public class SplashActivity extends FCLActivity {
 
     private void transFile() {
         try {
-            FileUtils.copyDirectory(Paths.get(FCLPath.FILES_DIR + "/control"), Paths.get(FCLPath.CONTROLLER_DIR));
+            Path controlDir = Paths.get(FCLPath.FILES_DIR + "/control");
+            if (controlDir.toFile().exists()) {
+                FileUtils.copyDirectory(controlDir, Paths.get(FCLPath.CONTROLLER_DIR));
+                FileUtils.deleteDirectory(controlDir.toFile());
+            }
         } catch (IOException ignore) {
         }
     }
