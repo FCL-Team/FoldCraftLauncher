@@ -26,6 +26,7 @@ public class ViewManager {
     public void setup() {
         // Initialize menu view
         MenuView menuView = new MenuView(gameMenu.getActivity());
+        menuView.setElevation(114.0f);
         menuView.setup(gameMenu);
         gameMenu.getBaseLayout().addView(menuView);
         menuView.initPosition();
