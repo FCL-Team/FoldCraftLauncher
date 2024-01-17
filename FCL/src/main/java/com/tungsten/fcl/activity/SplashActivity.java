@@ -23,12 +23,15 @@ import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.ResultListener;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends FCLActivity {
@@ -87,6 +90,7 @@ public class SplashActivity extends FCLActivity {
 
     private void init() {
         FCLPath.loadPaths(this);
+        transFile();
         Logging.start(new File(FCLPath.FILES_DIR, "logs").toPath());
         initFragments();
         start();
@@ -104,6 +108,13 @@ public class SplashActivity extends FCLActivity {
         }
         else {
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.frag_start_anim, R.anim.frag_stop_anim).replace(R.id.fragment, runtimeFragment).commit();
+        }
+    }
+
+    private void transFile() {
+        try {
+            FileUtils.copyDirectory(Paths.get(FCLPath.FILES_DIR + "/control"), Paths.get(FCLPath.CONTROLLER_DIR));
+        } catch (IOException ignore) {
         }
     }
 
