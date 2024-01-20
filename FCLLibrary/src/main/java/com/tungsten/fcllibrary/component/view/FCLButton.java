@@ -76,6 +76,7 @@ public class FCLButton extends AppCompatButton {
         setMinHeight(0);
         setMinimumWidth(0);
         setMinimumHeight(0);
+        setStateListAnimator(null);
         if (autoPadding) {
             setPadding(
                     ConvertUtils.dip2px(getContext(), shape == GradientDrawable.RECTANGLE ? 16f : 10f),
@@ -91,7 +92,7 @@ public class FCLButton extends AppCompatButton {
         drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawableNormal.setColor(Color.TRANSPARENT);
         drawablePress.setShape(shape);
-        drawablePress.setCornerRadius(ConvertUtils.dip2px(getContext(), 5));
+        drawablePress.setCornerRadius(ConvertUtils.dip2px(getContext(), 8));
         drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
     }
