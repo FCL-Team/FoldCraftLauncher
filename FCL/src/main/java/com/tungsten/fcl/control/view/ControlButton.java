@@ -100,7 +100,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
         super(context);
         this.menu = gameMenu;
 
-        //去除阴影
         setStateListAnimator(null);
 
         boundaryPath = new Path();
