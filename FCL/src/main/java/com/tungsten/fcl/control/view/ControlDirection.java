@@ -111,6 +111,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         this.displayMode = displayMode;
         setClickable(true);
 
+        for (AppCompatButton b : buttons) {
+            b.setStateListAnimator(null);
+        }
+
         boundaryPath = new Path();
         boundaryPaint = new Paint();
         boundaryPaint.setAntiAlias(true);
