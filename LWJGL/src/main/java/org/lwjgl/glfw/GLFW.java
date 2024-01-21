@@ -1140,10 +1140,7 @@ public class GLFW {
      *
      * @since version 3.3
      */
-    public static void glfwInitHint(int hint, int value) {
-        long __functionAddress = Functions.InitHint;
-        invokeV(hint, value, __functionAddress);
-    }
+    public static void glfwInitHint(int hint, int value) {}
 
     // --- [ glfwInitAllocator ] ---
 
