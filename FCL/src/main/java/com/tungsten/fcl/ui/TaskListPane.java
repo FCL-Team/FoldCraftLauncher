@@ -20,6 +20,7 @@ import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameInstallTask;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderInstallTask;
 import com.tungsten.fclcore.download.neoforge.NeoForgeInstallTask;
+import com.tungsten.fclcore.download.neoforge.NeoForgeOldInstallTask;
 import com.tungsten.fclcore.download.optifine.OptiFineInstallTask;
 import com.tungsten.fclcore.mod.MinecraftInstanceTask;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
@@ -115,7 +116,7 @@ public final class TaskListPane extends FCLAdapter {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_game")));
                 } else if (task instanceof ForgeNewInstallTask || task instanceof ForgeOldInstallTask) {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_forge")));
-                } else if (task instanceof NeoForgeInstallTask) {
+                } else if (task instanceof NeoForgeInstallTask || task instanceof NeoForgeOldInstallTask) {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_neoforge")));
                 } else if (task instanceof LiteLoaderInstallTask) {
                     task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_liteloader")));
