@@ -79,20 +79,17 @@ public final class VersionSetting implements Cloneable {
 
     // java
 
-    private final ObjectProperty<Integer> javaProperty = new SimpleObjectProperty<>(this, "java", 0);
+    private final StringProperty javaProperty = new SimpleStringProperty(this, "java", JavaVersion.JAVA_AUTO.getVersionName());
 
-    public ObjectProperty<Integer> javaProperty() {
+    public StringProperty javaProperty() {
         return javaProperty;
     }
 
-    /**
-     * Java version or "Custom" if user customizes java directory, "Default" if the jvm that this app relies on.
-     */
-    public int getJava() {
+    public String getJava() {
         return javaProperty.get();
     }
 
-    public void setJava(int java) {
+    public void setJava(String java) {
         javaProperty.set(java);
     }
 
@@ -331,14 +328,18 @@ public final class VersionSetting implements Cloneable {
 
     public Task<JavaVersion> getJavaVersion(Version version) {
         return Task.runAsync(Schedulers.androidUIThread(), () -> {
-            if (getJava() != 0 && getJava() != 1 && getJava() != 2) {
-                setJava(0);
+            if (!getJava().equals(JavaVersion.JAVA_AUTO.getVersionName()) &&
+                    !getJava().equals(JavaVersion.JAVA_8.getVersionName()) &&
+                    !getJava().equals(JavaVersion.JAVA_11.getVersionName()) &&
+                    !getJava().equals(JavaVersion.JAVA_17.getVersionName()) &&
+                    !getJava().equals(JavaVersion.JAVA_21.getVersionName())) {
+                setJava(JavaVersion.JAVA_AUTO.getVersionName());
             }
         }).thenSupplyAsync(() -> {
-            if (getJava() == 0) {
+            if (getJava().equals(JavaVersion.JAVA_AUTO.getVersionName())) {
                 return JavaVersion.getSuitableJavaVersion(version);
             } else {
-                return JavaVersion.getJavaFromId(getJava());
+                return JavaVersion.getJavaFromVersionName(getJava());
             }
         });
     }
@@ -440,7 +441,7 @@ public final class VersionSetting implements Cloneable {
             vs.setAutoMemory(Optional.ofNullable(obj.get("autoMemory")).map(JsonElement::getAsBoolean).orElse(true));
             vs.setPermSize(Optional.ofNullable(obj.get("permSize")).map(JsonElement::getAsString).orElse(""));
             vs.setServerIp(Optional.ofNullable(obj.get("serverIp")).map(JsonElement::getAsString).orElse(""));
-            vs.setJava(Optional.ofNullable(obj.get("java")).map(JsonElement::getAsInt).orElse(0));
+            vs.setJava(Optional.ofNullable(obj.get("java")).map(JsonElement::getAsString).orElse(JavaVersion.JAVA_AUTO.getVersionName()));
             vs.setScaleFactor(Optional.ofNullable(obj.get("scaleFactor")).map(JsonElement::getAsDouble).orElse(1d));
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));

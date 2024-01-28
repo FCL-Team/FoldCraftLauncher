@@ -249,6 +249,8 @@ public final class OptiFineInstallTask extends Task<Version> {
             if (java == 8) {
                 runJVMProcess(command, 17);
             } else if (java == 17) {
+                runJVMProcess(command, 11);
+            } else if (java == 11) {
                 runJVMProcess(command, 21);
             } else {
                 throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));

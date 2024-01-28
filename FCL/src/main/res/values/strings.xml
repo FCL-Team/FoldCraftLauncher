@@ -12,6 +12,7 @@
     <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
     <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
     <string name="splash_runtime_java8" translatable="false">JRE 8</string>
+    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_java21" translatable="false">JRE 21</string>
     <string name="splash_runtime_install">Install / Update</string>
@@ -438,7 +439,7 @@
     <string name="jar_executor_crash_reason">Jar Executor crash reason analyse is not supported now.</string>
 
     <string name="launch">Launch</string>
-    <string name="launch_error_java">Wrong Java Version</string>
+    <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
     <string name="launch_failed">Unable to launch</string>

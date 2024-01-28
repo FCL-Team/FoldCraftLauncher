@@ -78,7 +78,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch noGameCheckSwitch;
     private FCLSwitch noJVMCheckSwitch;
 
-    private FCLSpinner<Integer> javaSpinner;
+    private FCLSpinner<String> javaSpinner;
     private FCLSpinner<FCLConfig.Renderer> rendererSpinner;
 
     private FCLImageButton editIconButton;
@@ -133,11 +133,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> (int) (lastVersionSetting.getScaleFactor() * 100) + " %", scaleFactorSeekbar.percentProgressProperty()));
 
         // add spinner data
-        ArrayList<Integer> javaVersionDataList = new ArrayList<>();
-        javaVersionDataList.add(JavaVersion.JAVA_AUTO.getId());
-        javaVersionDataList.add(JavaVersion.JAVA_8.getId());
-        javaVersionDataList.add(JavaVersion.JAVA_17.getId());
-        javaVersionDataList.add(JavaVersion.JAVA_21.getId());
+        ArrayList<String> javaVersionDataList = new ArrayList<>();
+        javaVersionDataList.add(JavaVersion.JAVA_AUTO.getVersionName());
+        javaVersionDataList.add(JavaVersion.JAVA_8.getVersionName());
+        javaVersionDataList.add(JavaVersion.JAVA_11.getVersionName());
+        javaVersionDataList.add(JavaVersion.JAVA_17.getVersionName());
+        javaVersionDataList.add(JavaVersion.JAVA_21.getVersionName());
         javaSpinner.setDataList(javaVersionDataList);
 
         ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
@@ -152,6 +153,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         ArrayList<String> javaVersionList = new ArrayList<>();
         javaVersionList.add(getContext().getString(R.string.settings_game_java_version_auto));
         javaVersionList.add("JRE 8");
+        javaVersionList.add("JRE 11");
         javaVersionList.add("JRE 17");
         javaVersionList.add("JRE 21");
         ArrayAdapter<String> javaAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, javaVersionList);

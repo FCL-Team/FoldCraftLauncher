@@ -32,6 +32,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     boolean cacio = false;
     boolean cacio17 = false;
     boolean java8 = false;
+    boolean java11 = false;
     boolean java17 = false;
     boolean java21 = false;
 
@@ -39,6 +40,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     private FCLProgressBar cacioProgress;
     private FCLProgressBar cacio17Progress;
     private FCLProgressBar java8Progress;
+    private FCLProgressBar java11Progress;
     private FCLProgressBar java17Progress;
     private FCLProgressBar java21Progress;
 
@@ -46,6 +48,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     private FCLImageView cacioState;
     private FCLImageView cacio17State;
     private FCLImageView java8State;
+    private FCLImageView java11State;
     private FCLImageView java17State;
     private FCLImageView java21State;
 
@@ -60,6 +63,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         cacioProgress = findViewById(view, R.id.cacio_progress);
         cacio17Progress = findViewById(view, R.id.cacio17_progress);
         java8Progress = findViewById(view, R.id.java8_progress);
+        java11Progress = findViewById(view, R.id.java11_progress);
         java17Progress = findViewById(view, R.id.java17_progress);
         java21Progress = findViewById(view, R.id.java21_progress);
 
@@ -67,6 +71,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         cacioState = findViewById(view, R.id.cacio_state);
         cacio17State = findViewById(view, R.id.cacio17_state);
         java8State = findViewById(view, R.id.java8_state);
+        java11State = findViewById(view, R.id.java11_state);
         java17State = findViewById(view, R.id.java17_state);
         java21State = findViewById(view, R.id.java21_state);
 
@@ -88,6 +93,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             cacio = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_8_DIR, "/assets/app_runtime/caciocavallo");
             cacio17 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_17_DIR, "/assets/app_runtime/caciocavallo17");
             java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
+            java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
             java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
         } catch (IOException e) {
@@ -107,13 +113,14 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             cacioState.setBackgroundDrawable(cacio ? stateDone : stateUpdate);
             cacio17State.setBackgroundDrawable(cacio17 ? stateDone : stateUpdate);
             java8State.setBackgroundDrawable(java8 ? stateDone : stateUpdate);
+            java11State.setBackgroundDrawable(java11 ? stateDone : stateUpdate);
             java17State.setBackgroundDrawable(java17 ? stateDone : stateUpdate);
             java21State.setBackgroundDrawable(java21 ? stateDone : stateUpdate);
         }
     }
 
     private boolean isLatest() {
-        return lwjgl && cacio && cacio17 && java8 && java17 && java21;
+        return lwjgl && cacio && cacio17 && java8 && java11 && java17 && java21;
     }
 
     private void check() {
@@ -205,6 +212,31 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     getActivity().runOnUiThread(() -> {
                         java8State.setVisibility(View.VISIBLE);
                         java8Progress.setVisibility(View.GONE);
+                        refreshDrawables();
+                        check();
+                    });
+                }
+            }).start();
+        }
+        if (!java11) {
+            java11State.setVisibility(View.GONE);
+            java11Progress.setVisibility(View.VISIBLE);
+            new Thread(() -> {
+                try {
+                    RuntimeUtils.installJava(getContext(), FCLPath.JAVA_11_PATH, "app_runtime/java/jre11");
+                    if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
+                        FileUtils.writeText(new File(FCLPath.JAVA_11_PATH + "/resolv.conf"), "nameserver 1.1.1.1\n" + "nameserver 1.0.0.1");
+                    } else {
+                        FileUtils.writeText(new File(FCLPath.JAVA_11_PATH + "/resolv.conf"), "nameserver 8.8.8.8\n" + "nameserver 8.8.4.4");
+                    }
+                    java11 = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        java11State.setVisibility(View.VISIBLE);
+                        java11Progress.setVisibility(View.GONE);
                         refreshDrawables();
                         check();
                     });

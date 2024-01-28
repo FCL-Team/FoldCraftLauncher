@@ -205,6 +205,8 @@ public class ForgeNewInstallTask extends Task<Version> {
             if (java == 8) {
                 runJVMProcess(processor, command, 17);
             } else if (java == 17) {
+                runJVMProcess(processor, command, 11);
+            } else if (java == 11) {
                 runJVMProcess(processor, command, 21);
             } else {
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
