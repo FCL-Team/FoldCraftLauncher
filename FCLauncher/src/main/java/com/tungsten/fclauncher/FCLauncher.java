@@ -175,7 +175,7 @@ public class FCLauncher {
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
         String jreLibDir = config.getJavaPath() + getJreLibDir(config.getJavaPath());
-        String jliLibDir = jreLibDir + "/jli";
+        String jliLibDir = new File(jreLibDir + "/jli/libjli.so").exists() ? jreLibDir + "/jli" : jreLibDir;
         String jvmLibDir = jreLibDir + getJvmLibDir(config.getJavaPath());
         // dlopen jre
         bridge.dlopen(jliLibDir + "/libjli.so");
