@@ -13,6 +13,7 @@
     <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
     <string name="splash_runtime_java8" translatable="false">JRE 8</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
+    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
     <string name="splash_runtime_install">Install / Update</string>
 
     <string name="account">Account</string>

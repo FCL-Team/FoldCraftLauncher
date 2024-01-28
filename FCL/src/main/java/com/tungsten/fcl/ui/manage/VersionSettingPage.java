@@ -137,6 +137,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaVersionDataList.add(JavaVersion.JAVA_AUTO.getId());
         javaVersionDataList.add(JavaVersion.JAVA_8.getId());
         javaVersionDataList.add(JavaVersion.JAVA_17.getId());
+        javaVersionDataList.add(JavaVersion.JAVA_21.getId());
         javaSpinner.setDataList(javaVersionDataList);
 
         ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
@@ -152,6 +153,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaVersionList.add(getContext().getString(R.string.settings_game_java_version_auto));
         javaVersionList.add("JRE 8");
         javaVersionList.add("JRE 17");
+        javaVersionList.add("JRE 21");
         ArrayAdapter<String> javaAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, javaVersionList);
         javaAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         javaSpinner.setAdapter(javaAdapter);

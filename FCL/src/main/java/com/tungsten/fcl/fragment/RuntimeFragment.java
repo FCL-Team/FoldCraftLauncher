@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +17,7 @@ import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
+import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -33,18 +33,21 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     boolean cacio17 = false;
     boolean java8 = false;
     boolean java17 = false;
+    boolean java21 = false;
 
-    private ProgressBar lwjglProgress;
-    private ProgressBar cacioProgress;
-    private ProgressBar cacio17Progress;
-    private ProgressBar java8Progress;
-    private ProgressBar java17Progress;
+    private FCLProgressBar lwjglProgress;
+    private FCLProgressBar cacioProgress;
+    private FCLProgressBar cacio17Progress;
+    private FCLProgressBar java8Progress;
+    private FCLProgressBar java17Progress;
+    private FCLProgressBar java21Progress;
 
     private FCLImageView lwjglState;
     private FCLImageView cacioState;
     private FCLImageView cacio17State;
     private FCLImageView java8State;
     private FCLImageView java17State;
+    private FCLImageView java21State;
 
     private FCLButton install;
 
@@ -58,12 +61,14 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         cacio17Progress = findViewById(view, R.id.cacio17_progress);
         java8Progress = findViewById(view, R.id.java8_progress);
         java17Progress = findViewById(view, R.id.java17_progress);
+        java21Progress = findViewById(view, R.id.java21_progress);
 
         lwjglState = findViewById(view, R.id.lwjgl_state);
         cacioState = findViewById(view, R.id.cacio_state);
         cacio17State = findViewById(view, R.id.cacio17_state);
         java8State = findViewById(view, R.id.java8_state);
         java17State = findViewById(view, R.id.java17_state);
+        java21State = findViewById(view, R.id.java21_state);
 
         initState();
 
@@ -80,26 +85,11 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     private void initState() {
         try {
             lwjgl = RuntimeUtils.isLatest(FCLPath.LWJGL_DIR, "/assets/app_runtime/lwjgl");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             cacio = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_8_DIR, "/assets/app_runtime/caciocavallo");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             cacio17 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_17_DIR, "/assets/app_runtime/caciocavallo17");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
+            java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,11 +108,12 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             cacio17State.setBackgroundDrawable(cacio17 ? stateDone : stateUpdate);
             java8State.setBackgroundDrawable(java8 ? stateDone : stateUpdate);
             java17State.setBackgroundDrawable(java17 ? stateDone : stateUpdate);
+            java21State.setBackgroundDrawable(java21 ? stateDone : stateUpdate);
         }
     }
 
     private boolean isLatest() {
-        return lwjgl && cacio && cacio17 && java8 && java17;
+        return lwjgl && cacio && cacio17 && java8 && java17 && java21;
     }
 
     private void check() {
@@ -239,6 +230,31 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     getActivity().runOnUiThread(() -> {
                         java17State.setVisibility(View.VISIBLE);
                         java17Progress.setVisibility(View.GONE);
+                        refreshDrawables();
+                        check();
+                    });
+                }
+            }).start();
+        }
+        if (!java21) {
+            java21State.setVisibility(View.GONE);
+            java21Progress.setVisibility(View.VISIBLE);
+            new Thread(() -> {
+                try {
+                    RuntimeUtils.installJava(getContext(), FCLPath.JAVA_21_PATH, "app_runtime/java/jre21");
+                    if (!LocaleUtils.getSystemLocale().getDisplayName().equals(Locale.CHINA.getDisplayName())) {
+                        FileUtils.writeText(new File(FCLPath.JAVA_21_PATH + "/resolv.conf"), "nameserver 1.1.1.1\n" + "nameserver 1.0.0.1");
+                    } else {
+                        FileUtils.writeText(new File(FCLPath.JAVA_21_PATH + "/resolv.conf"), "nameserver 8.8.8.8\n" + "nameserver 8.8.4.4");
+                    }
+                    java21 = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        java21State.setVisibility(View.VISIBLE);
+                        java21Progress.setVisibility(View.GONE);
                         refreshDrawables();
                         check();
                     });
