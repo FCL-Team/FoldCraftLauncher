@@ -135,9 +135,9 @@ public class DefaultLauncher extends Launcher {
         // res.addDefault("-Dorg.lwjgl.util.DebugFunctions=", "true");
 
         // FCL specific args
-        JavaVersion javaVersion = options.getJava().getId() == 0 ? JavaVersion.getSuitableJavaVersion(version) : options.getJava();
-        if (javaVersion.getVersion() == JavaVersion.JAVA_VERSION_17) {
-            res.addDefault("-Dext.net.resolvPath=", FCLPath.JAVA_17_PATH + "/resolv.conf");
+        JavaVersion javaVersion = options.getJava().isAuto() ? JavaVersion.getSuitableJavaVersion(version) : options.getJava();
+        if (javaVersion.getVersion() == JavaVersion.JAVA_VERSION_11 || javaVersion.getVersion() == JavaVersion.JAVA_VERSION_17 || javaVersion.getVersion() == JavaVersion.JAVA_VERSION_21) {
+            res.addDefault("-Dext.net.resolvPath=", javaVersion.getJavaPath(version) + "/resolv.conf");
         }
 
         res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
@@ -221,12 +221,13 @@ public class DefaultLauncher extends Launcher {
 
     public static void getCacioJavaArgs(CommandBuilder res, Version version, LaunchOptions options) {
         JavaVersion javaVersion;
-        if (options.getJava().getId() == 0) {
+        if (options.getJava().isAuto()) {
             javaVersion = JavaVersion.getSuitableJavaVersion(version);
         } else {
             javaVersion = options.getJava();
         }
         boolean isJava8 = javaVersion.getVersion() == JavaVersion.JAVA_VERSION_8;
+        boolean isJava11 = javaVersion.getVersion() == JavaVersion.JAVA_VERSION_11;
 
         res.addDefault("-Djava.awt.headless=", "false");
         res.addDefault("-Dcacio.managed.screensize=", options.getWidth() + "x" + options.getHeight());
@@ -236,7 +237,7 @@ public class DefaultLauncher extends Launcher {
         if (isJava8) {
             res.addDefault("-Dawt.toolkit=", "net.java.openjdk.cacio.ctc.CTCToolkit");
             res.addDefault("-Djava.awt.graphicsenv=", "net.java.openjdk.cacio.ctc.CTCGraphicsEnvironment");
-        } else {
+        } else if (!isJava11) {
             res.addDefault("-Dawt.toolkit=", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit");
             res.addDefault("-Djava.awt.graphicsenv=", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment");
             res.addDefault("-Djava.system.class.loader=", "com.github.caciocavallosilano.cacio.ctc.CTCPreloadClassLoader");
@@ -408,7 +409,7 @@ public class DefaultLauncher extends Launcher {
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,
-                options.getJava().getVersion() == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
+                options.getJava().getJavaPath(version),
                 repository.getRunDirectory(version.getId()).getAbsolutePath(),
                 renderer,
                 finalArgs

@@ -35,7 +35,7 @@ public class JarExecutorLauncher extends Launcher {
     private CommandBuilder generateCommandLine(String args) {
         CommandBuilder res = new CommandBuilder();
 
-        getCacioJavaArgs(res, javaVersion == 8);
+        getCacioJavaArgs(res, javaVersion == 8, javaVersion == 11);
 
         res.addDefault("-Xms", MemoryUtils.findBestRAMAllocation(context) + "m");
         res.addDefault("-Xmx", MemoryUtils.findBestRAMAllocation(context) + "m");
@@ -55,7 +55,7 @@ public class JarExecutorLauncher extends Launcher {
         return res;
     }
 
-    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8) {
+    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8, boolean isJava11) {
         res.addDefault("-Djava.awt.headless=", "false");
         res.addDefault("-Dcacio.managed.screensize=", FCLBridge.DEFAULT_WIDTH + "x" + FCLBridge.DEFAULT_HEIGHT);
         res.addDefault("-Dcacio.font.fontmanager=", "sun.awt.X11FontManager");
@@ -64,7 +64,7 @@ public class JarExecutorLauncher extends Launcher {
         if (isJava8) {
             res.addDefault("-Dawt.toolkit=", "net.java.openjdk.cacio.ctc.CTCToolkit");
             res.addDefault("-Djava.awt.graphicsenv=", "net.java.openjdk.cacio.ctc.CTCGraphicsEnvironment");
-        } else {
+        } else if (!isJava11) {
             res.addDefault("-Dawt.toolkit=", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit");
             res.addDefault("-Djava.awt.graphicsenv=", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment");
             res.addDefault("-Djava.system.class.loader=", "com.github.caciocavallosilano.cacio.ctc.CTCPreloadClassLoader");
@@ -119,7 +119,7 @@ public class JarExecutorLauncher extends Launcher {
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,
-                javaVersion == 8 ? FCLPath.JAVA_8_PATH : FCLPath.JAVA_17_PATH,
+                javaVersion == 8 ? FCLPath.JAVA_8_PATH : javaVersion == 11 ? FCLPath.JAVA_11_PATH : javaVersion == 17 ? FCLPath.JAVA_17_PATH : FCLPath.JAVA_21_PATH,
                 Profiles.getSelectedProfile().getGameDir().getAbsolutePath(),
                 FCLConfig.Renderer.RENDERER_GL4ES,
                 finalArgs
