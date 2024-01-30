@@ -50,23 +50,8 @@ public class ShellActivity extends FCLActivity {
                 if (cmd.endsWith("\n")) {
                     logWindow.appendLog("->" + cmd);
                     editText.setText("");
-                    String javaDir = FCLPath.RUNTIME_DIR + "/java";
                     if (cmd.contains("clear")) {
                         logWindow.cleanLog();
-                        return;
-                    } else if (cmd.contains("java21")) {
-                        shellUtil.append("cd " + javaDir);
-                        if (!new File(javaDir, "jre21").exists() && !new File(javaDir, "jre17_").exists()) {
-                            shellUtil.append("cp " + new File(new File(FCLPath.SHARED_COMMON_DIR).getParentFile(), "jre21.zip").getAbsolutePath() + " ./");
-                            shellUtil.append("unzip jre21.zip");
-                        }
-                        shellUtil.append("mv jre17 jre17_");
-                        shellUtil.append("mv jre21 jre17");
-                        return;
-                    } else if (cmd.contains("java17")) {
-                        shellUtil.append("cd " + javaDir);
-                        shellUtil.append("mv jre17 jre21");
-                        shellUtil.append("mv jre17_ jre17");
                         return;
                     }
                     shellUtil.append(cmd);
