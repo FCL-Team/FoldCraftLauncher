@@ -30,6 +30,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
     boolean lwjgl = false;
     boolean cacio = false;
+    boolean cacio11 = false;
     boolean cacio17 = false;
     boolean java8 = false;
     boolean java11 = false;
@@ -38,6 +39,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
     private FCLProgressBar lwjglProgress;
     private FCLProgressBar cacioProgress;
+    private FCLProgressBar cacio11Progress;
     private FCLProgressBar cacio17Progress;
     private FCLProgressBar java8Progress;
     private FCLProgressBar java11Progress;
@@ -46,6 +48,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
     private FCLImageView lwjglState;
     private FCLImageView cacioState;
+    private FCLImageView cacio11State;
     private FCLImageView cacio17State;
     private FCLImageView java8State;
     private FCLImageView java11State;
@@ -61,6 +64,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
         lwjglProgress = findViewById(view, R.id.lwjgl_progress);
         cacioProgress = findViewById(view, R.id.cacio_progress);
+        cacio11Progress = findViewById(view, R.id.cacio11_progress);
         cacio17Progress = findViewById(view, R.id.cacio17_progress);
         java8Progress = findViewById(view, R.id.java8_progress);
         java11Progress = findViewById(view, R.id.java11_progress);
@@ -69,6 +73,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
         lwjglState = findViewById(view, R.id.lwjgl_state);
         cacioState = findViewById(view, R.id.cacio_state);
+        cacio11State = findViewById(view, R.id.cacio11_state);
         cacio17State = findViewById(view, R.id.cacio17_state);
         java8State = findViewById(view, R.id.java8_state);
         java11State = findViewById(view, R.id.java11_state);
@@ -91,6 +96,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         try {
             lwjgl = RuntimeUtils.isLatest(FCLPath.LWJGL_DIR, "/assets/app_runtime/lwjgl");
             cacio = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_8_DIR, "/assets/app_runtime/caciocavallo");
+            cacio11 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_11_DIR, "/assets/app_runtime/caciocavallo11");
             cacio17 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_17_DIR, "/assets/app_runtime/caciocavallo17");
             java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
             java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
@@ -111,6 +117,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
             lwjglState.setBackgroundDrawable(lwjgl ? stateDone : stateUpdate);
             cacioState.setBackgroundDrawable(cacio ? stateDone : stateUpdate);
+            cacio11State.setBackgroundDrawable(cacio11 ? stateDone : stateUpdate);
             cacio17State.setBackgroundDrawable(cacio17 ? stateDone : stateUpdate);
             java8State.setBackgroundDrawable(java8 ? stateDone : stateUpdate);
             java11State.setBackgroundDrawable(java11 ? stateDone : stateUpdate);
@@ -120,7 +127,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     }
 
     private boolean isLatest() {
-        return lwjgl && cacio && cacio17 && java8 && java11 && java17 && java21;
+        return lwjgl && cacio && cacio11 && cacio17 && java8 && java11 && java17 && java21;
     }
 
     private void check() {
@@ -172,6 +179,26 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     getActivity().runOnUiThread(() -> {
                         cacioState.setVisibility(View.VISIBLE);
                         cacioProgress.setVisibility(View.GONE);
+                        refreshDrawables();
+                        check();
+                    });
+                }
+            }).start();
+        }
+        if (!cacio11) {
+            cacio11State.setVisibility(View.GONE);
+            cacio11Progress.setVisibility(View.VISIBLE);
+            new Thread(() -> {
+                try {
+                    RuntimeUtils.install(getContext(), FCLPath.CACIOCAVALLO_11_DIR, "app_runtime/caciocavallo11");
+                    cacio11 = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        cacio11State.setVisibility(View.VISIBLE);
+                        cacio11Progress.setVisibility(View.GONE);
                         refreshDrawables();
                         check();
                     });
