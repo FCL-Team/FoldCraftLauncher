@@ -28,6 +28,8 @@ public class SelectKeycodeDialog extends FCLDialog implements View.OnClickListen
 
     private FCLLinearLayout container;
 
+    private GameMenu gameMenu;
+
     public SimpleIntegerProperty selectionProperty() {
         return selectionProperty;
     }
@@ -54,6 +56,11 @@ public class SelectKeycodeDialog extends FCLDialog implements View.OnClickListen
         positive = findViewById(R.id.positive);
         assert positive != null;
         positive.setOnClickListener(this);
+    }
+
+    public SelectKeycodeDialog(@NonNull Context context, ObservableList<Integer> list, boolean singleSelection, boolean mouse, GameMenu gameMenu) {
+        this(context,list,singleSelection,mouse);
+        this.gameMenu = gameMenu;
     }
 
     private void checkSelection(ViewGroup container) {
@@ -109,6 +116,12 @@ public class SelectKeycodeDialog extends FCLDialog implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v == positive) {
+            if (gameMenu != null) {
+                list.forEach(key -> {
+                    gameMenu.getInput().sendKeyEvent(key, true);
+                    gameMenu.getInput().sendKeyEvent(key, false);
+                });
+            }
             dismiss();
         }
     }

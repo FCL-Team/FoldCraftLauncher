@@ -511,6 +511,8 @@
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
     <string name="menu_settings_quick_input_button">Manage</string>
+    <string name="menu_settings_send_key">Send Key</string>
+    <string name="menu_settings_send_key_button">Send</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>

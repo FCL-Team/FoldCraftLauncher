@@ -124,6 +124,34 @@
 
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="@string/menu_settings_send_key"
+                    android:textSize="12sp"
+                    app:auto_text_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/open_send_key"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/menu_settings_send_key_button"
+                    android:textSize="12sp" />
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 app:auto_text_tint="true"
                 android:singleLine="true"

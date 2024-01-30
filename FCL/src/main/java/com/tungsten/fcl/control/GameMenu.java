@@ -45,6 +45,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -92,7 +93,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLImageView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
-    
+
     private FCLButton manageViewGroups;
     private FCLButton addButton;
     private FCLButton addDirection;
@@ -101,6 +102,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
+    private FCLButton sendKeycode;
     private FCLButton forceExit;
 
     public FCLActivity getActivity() {
@@ -171,17 +173,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     public TouchCharInput getTouchCharInput() {
         return touchCharInput;
     }
-    
+
     private final BooleanProperty editModeProperty = new SimpleBooleanProperty(this, "editMode", false);
-    
+
     public BooleanProperty editModeProperty() {
         return editModeProperty;
     }
-    
+
     public void setEditMode(boolean editMode) {
         editModeProperty.set(editMode);
     }
-    
+
     public boolean isEditMode() {
         return editModeProperty.get();
     }
@@ -253,18 +255,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
-        
+
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
         FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
 
         FCLLinearLayout editLayout = findViewById(R.id.edit_layout);
-        
+
         manageViewGroups = findViewById(R.id.manage_view_groups);
         addButton = findViewById(R.id.add_button);
         addDirection = findViewById(R.id.add_direction);
         manageButtonStyle = findViewById(R.id.manage_button_style);
         manageDirectionStyle = findViewById(R.id.manage_direction_style);
-        
+
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
@@ -284,7 +286,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         });
 
         editLayout.visibilityProperty().bind(editModeProperty);
-        
+
         manageViewGroups.setOnClickListener(this);
         addButton.setOnClickListener(this);
         addDirection.setOnClickListener(this);
@@ -321,6 +323,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
+        sendKeycode = findViewById(R.id.open_send_key);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -373,6 +376,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
+        sendKeycode.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -417,7 +421,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 Logging.LOG.log(Level.SEVERE, "Failed to save menu setting", e);
             }
         });
-        
+
         editModeProperty.set(isSimulated());
         controllerProperty.set(Controllers.findControllerByName(activity.getIntent().getExtras().getString("controller")));
 
@@ -618,12 +622,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
             dialog.show();
         }
-        
+
         if (v == openMultiplayerMenu) {
 
         }
         if (v == manageQuickInput) {
             openQuickInput();
+        }
+        if (v == sendKeycode) {
+            ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
+            SelectKeycodeDialog dialog = new SelectKeycodeDialog(getActivity(), list, false, true, this);
+            dialog.show();
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
