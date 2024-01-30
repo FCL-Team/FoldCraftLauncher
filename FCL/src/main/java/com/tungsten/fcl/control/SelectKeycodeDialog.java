@@ -59,7 +59,7 @@ public class SelectKeycodeDialog extends FCLDialog implements View.OnClickListen
     }
 
     public SelectKeycodeDialog(@NonNull Context context, ObservableList<Integer> list, boolean singleSelection, boolean mouse, GameMenu gameMenu) {
-        this(context,list,singleSelection,mouse);
+        this(context, list, singleSelection, mouse);
         this.gameMenu = gameMenu;
     }
 
