@@ -18,7 +18,7 @@ public class ControllerActivity extends FCLActivity {
         super.onCreate(savedInstanceState);
 
         FCLImageView contentView = new FCLImageView(this);
-        contentView.setScaleType(ImageView.ScaleType.FIT_XY);
+        contentView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         contentView.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
         setContentView(contentView);
 
