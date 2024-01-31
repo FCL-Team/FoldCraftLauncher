@@ -29,8 +29,9 @@ public class FCLPath {
     public static String BACKGROUND_DIR;
     public static String CONTROLLER_DIR;
 
+    public static String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SweetRiceMC";
     public static String PRIVATE_COMMON_DIR;
-    public static String SHARED_COMMON_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SweetRiceMC/.minecraft";
+    public static String SHARED_COMMON_DIR;
 
     public static String AUTHLIB_INJECTOR_PATH;
     public static String MULTIPLAYER_FIX_PATH;
@@ -42,7 +43,7 @@ public class FCLPath {
 
         NATIVE_LIB_DIR = context.getApplicationInfo().nativeLibraryDir;
 
-        LOG_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/log";
+        LOG_DIR = STORAGE_DIR + "/log";
         CACHE_DIR = context.getCacheDir() + "/fclauncher";
 
         RUNTIME_DIR = context.getDir("runtime", 0).getAbsolutePath();
@@ -58,9 +59,10 @@ public class FCLPath {
         FILES_DIR = context.getFilesDir().getAbsolutePath();
         PLUGIN_DIR = FILES_DIR + "/plugins";
         BACKGROUND_DIR = FILES_DIR + "/background";
-        CONTROLLER_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/control";
+        CONTROLLER_DIR = STORAGE_DIR + "/control";
 
         PRIVATE_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
+        SHARED_COMMON_DIR = STORAGE_DIR + "/.minecraft";
 
         AUTHLIB_INJECTOR_PATH = PLUGIN_DIR + "/authlib-injector.jar";
         MULTIPLAYER_FIX_PATH = PLUGIN_DIR + "/MultiplayerFix.jar";
