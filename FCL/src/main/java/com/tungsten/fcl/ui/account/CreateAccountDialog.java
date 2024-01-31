@@ -64,7 +64,9 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
     private static CreateAccountDialog instance;
 
-    private static final Pattern USERNAME_CHECKER_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
+    // 英文数字下划线(默认): "^[A-Za-z0-9_]+$"
+    // 中文英文数字下划线: "^[A-Za-z0-9_\\u4e00-\\u9fa5]+$"
+    private static final Pattern USERNAME_CHECKER_PATTERN = Pattern.compile("^[A-Za-z0-9_\\u4e00-\\u9fa5]+$");
 
     private FCLTextView title;
     private FCLTabLayout tabLayout;

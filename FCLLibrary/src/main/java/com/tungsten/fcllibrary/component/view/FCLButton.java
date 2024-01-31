@@ -135,12 +135,12 @@ public class FCLButton extends AppCompatButton {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 isDown = true;
                 setBackgroundDrawable(drawablePress);
-                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                setTextColor(Color.GRAY);
             }
             if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                 isDown = false;
                 setBackgroundDrawable(drawableNormal);
-                setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                setTextColor(Color.WHITE);
             }
         }
         return super.onTouchEvent(event);
@@ -158,7 +158,7 @@ public class FCLButton extends AppCompatButton {
                 ThemeEngine.getInstance().getTheme().getColor()
         };
         setBackgroundTintList(new ColorStateList(state, color));
-        setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+        setTextColor(Color.WHITE);
     }
 
     public boolean isRipple() {

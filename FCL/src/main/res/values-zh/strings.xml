@@ -40,9 +40,10 @@
     <string name="account_create_server_not_select">没有认证服务器</string>
     <string name="account_login">登录</string>
     <string name="account_methods_offline">离线账户</string>
-    <string name="account_methods_offline_name_invalid">通常情况下，用户名只能包含英文字符，数字和下划线，且长度不得超过 16 个字符。\n一些有效的名称：Tungsten，Tungsten_123；\n一些无效的名称：Exam ple，Exam-a_%%%，Tungsten_hello_world_hello_world。\n如果你有相关模组或插件可以解除此限制，你可以忽略此警告。</string>
+    <string name="account_methods_offline_tips">如果你没有国际版正版 Minecraft 账户，请使用离线账户。</string>
+    <string name="account_methods_offline_name_invalid">通常情况下，用户名只能包含中文字符、英文字符，数字和下划线，且长度不得超过 16 个字符。\n一些有效的名称：猫猫uwu，LittleCatX；\n一些无效的名称：Exam ple，Exam-a_%%%，猫——哦。\n如果你有相关模组或插件可以解除此限制，你可以忽略此警告。</string>
     <string name="account_methods_yggdrasil">Mojang 账户</string>
-    <string name="account_methods_authlib_injector">外置账户</string>
+    <string name="account_methods_authlib_injector">外置登录</string>
     <string name="account_methods_microsoft">微软账户</string>
     <string name="account_failed">账户刷新失败</string>
     <string name="account_failed_no_character">该账户中无角色。</string>

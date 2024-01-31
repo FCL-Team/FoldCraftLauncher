@@ -21,6 +21,10 @@
 文件: `FCLLibrary/src/main/res/values/strings.xml`  
 位置: `file_browser_provider`
 
+(默认 FCL 客户端公共目录)  
+文件: `FCLauncher/src/main/java/com/tungsten/fclauncher/utils/FCLPath.java`  
+位置: `STORAGE_DIR`
+
 ## 应用版本号
 
 (实际版本号)  
@@ -54,11 +58,6 @@
 路径: `FCL/src/main/assets/app_runtime/java/`  
 不需要哪个就删哪个，只留自己客户端需要的那个即可
 
-## 默认 FCL 客户端公共目录
-
-文件: `FCLauncher/src/main/java/com/tungsten/fclauncher/utils/FCLPath.java`  
-位置: `SHARED_COMMON_DIR`
-
 ## 背景图
 
 文件: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
@@ -76,7 +75,22 @@
 在该文件中还可以给主页面加任意组件，如果需要加点击事件  
 文件: `FCL/src/main/java/com/tungsten/fcl/ui/main/MainUI.java`
 
+## 创建账户页面
+
+(离线登录，离线账户用户名的规则)  
+文件: `FCL/src/main/java/com/tungsten/fcl/ui/account/CreateAccountDialog.java`  
+位置: `USERNAME_CHECKER_PATTERN`
+
+默认的规则是，允许中文、英文、数字、下划线
+
+(如果玩家输入的用户名规则，将会显示的警告内容)
+文件: `FCL/src/main/res/values-zh/strings.xml`
+位置: `account_methods_offline_name_invalid`
+
+(离线登录，离线账户用户名上面的红字提示)
+
+
 ## 游戏界面右下角小字
 
 文件: `FCL/src/main/res/layout/view_game_menu.xml`
-位置: 接近结尾部分
+位置: 开头往下翻一点
