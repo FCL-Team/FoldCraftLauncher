@@ -62,10 +62,9 @@ public final class ALC {
     public static void create() {
         String libName;
         switch (Platform.get()) {
-            case FCL:
+            case LINUX:
                 create("libopenal.so");
                 return;
-            case LINUX:
             case MACOSX:
                 libName = "openal";
                 break;

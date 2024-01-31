@@ -283,7 +283,7 @@ public class GLFWVulkan {
         if (CHECKS) {
             check(surface, 1);
         }
-        if (Platform.get() == Platform.FCL) {
+        if (Platform.get() == Platform.LINUX) {
             VkAndroidSurfaceCreateInfoKHR pCreateInfo = VkAndroidSurfaceCreateInfoKHR
                     .calloc()
                     .sType(VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR)
