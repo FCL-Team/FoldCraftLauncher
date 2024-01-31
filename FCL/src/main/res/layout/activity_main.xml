@@ -260,9 +260,9 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
-            android:textSize="16sp"
+            android:paddingTop="20dp"
+            android:paddingBottom="30dp"
+            android:textSize="20sp"
             android:text="@string/launch"
             app:ripple="true"/>
 
