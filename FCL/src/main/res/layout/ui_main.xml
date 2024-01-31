@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/skin_container"
         android:layout_width="0dp"
         android:layout_height="300dp"

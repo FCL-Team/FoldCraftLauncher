@@ -63,9 +63,18 @@
 
 文件: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
 
-## 加载页面背景图
+## 游戏启动加载页面背景图
 
 文件: `FCLLibrary/src/main/res/drawable/background_loading_` + (`dark.jpg`|`light.jpg`)
+
+## 主页面皮肤
+
+文件: `FCL/src/main/res/layout/ui_main.xml`
+
+删掉 `android:visibility="gone"` 即可在主页面显示 FCL 的皮肤展示
+
+在该文件中还可以给主页面加任意组件，如果需要加点击事件  
+文件: `FCL/src/main/java/com/tungsten/fcl/ui/main/MainUI.java`
 
 ## 游戏界面右下角小字
 
