@@ -46,7 +46,8 @@ public class FCLButton extends AppCompatButton {
             if (!ripple) {
                 if (isDown) {
                     setBackgroundDrawable(drawablePress);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                    //setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                    setTextColor(Color.GRAY);
                 }
                 else {
                     setBackgroundDrawable(drawableNormal);
