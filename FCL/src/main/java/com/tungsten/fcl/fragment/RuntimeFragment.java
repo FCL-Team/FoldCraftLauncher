@@ -1,6 +1,7 @@
 package com.tungsten.fcl.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,10 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -161,12 +164,12 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
                 }
 
-                if (!RuntimeUtils.isAssetsFileExists("/assets/.minecraft/version")) {
+                if (!RuntimeUtils.isAssetsFileExists("/assets/minecraft/version")) {
                     clientSplit.setVisibility(View.GONE);
                     clientCompat.setVisibility(View.GONE);
                     client = true;
                 } else {
-                    client = RuntimeUtils.isLatest(FCLPath.SHARED_COMMON_DIR, "/assets/.minecraft");
+                    client = RuntimeUtils.isLatest(FCLPath.SHARED_COMMON_DIR, "/assets/minecraft");
                 }
             }
         } catch (IOException e) {
@@ -393,7 +396,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             clientProgress.setVisibility(View.VISIBLE);
             new Thread(() -> {
                 try {
-                    RuntimeUtils.install(getContext(), FCLPath.SHARED_COMMON_DIR, ".minecraft");
+                    RuntimeUtils.install(getContext(), FCLPath.SHARED_COMMON_DIR, "minecraft");
                     client = true;
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -368,7 +368,7 @@
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/splash_runtime_java21"
+                        android:text="@string/splash_runtime_client"
                         android:layout_gravity="center"/>
 
                 <View

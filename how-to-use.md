@@ -96,7 +96,7 @@
 
 ## 客户端自动解压释放
 
-路径: `FCL/src/main/assets/.minecraft`
+路径: `FCL/src/main/assets/minecraft`
 
 将客户端的 `.minecraft` 文件夹复制至此，注意不要删除 `version` 文件，每次更新客户端都应该将 `version` 文件的数字加一，这样下次玩家更新客户端apk后就会提示更新客户端文件了。
 
