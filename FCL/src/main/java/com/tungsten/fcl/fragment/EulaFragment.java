@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -23,10 +25,10 @@ import java.io.IOException;
 
 public class EulaFragment extends FCLFragment implements View.OnClickListener {
 
-    public static final String EULA_URL = "https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/eula.txt?inline=false";
-
+    // def: https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/eula.txt?inline=false
+    public static final String EULA_URL = "https://docs.pds.ink/rules";
     private FCLProgressBar progressBar;
-    private FCLTextView eula;
+    private WebView eula;
 
     private FCLButton next;
 
@@ -49,26 +51,18 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
     }
 
     private void loadEula() {
-        new Thread(() -> {
-            String str;
-            try {
-                str = NetworkUtils.doGet(NetworkUtils.toURL(EULA_URL));
-                load = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                str = getString(R.string.splash_eula_error);
-            }
-            final String s = str;
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if (load) {
-                        next.setEnabled(true);
-                    }
+        eula.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (url.equals(EULA_URL)) {
+                    load = true;
+                    next.setEnabled(true);
                     progressBar.setVisibility(View.GONE);
-                    eula.setText(s);
-                });
+                }
             }
-        }).start();
+        });
+        eula.loadUrl(EULA_URL);
     }
 
     @Override

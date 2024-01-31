@@ -11,6 +11,8 @@
 
 ## 与 FCL 原版共存
 
+现在已经是共存的了，避免与本仓库主的服务器客户端冲突，建议修改
+
 (应用包名)  
 文件: `FCL/build.gradle`  
 位置: `applicationId`
@@ -31,8 +33,13 @@
 
 ## 应用图标
 
-文件: `FCL/src/main/res/mipmap-anydpi-v26/ic_launcher` + (`.png`|`_foreground.png`|`_round.png`)  
+文件: `FCL/src/main/res/drawable/ic_launcher` + (`.png`|`_round.png`)  
 文件: `FCL/src/main/res/drawable/img_app.png`
+
+## 首次启动的 EULA 页面
+
+文件: `FCL/src/main/java/com/tungsten/fcl/fragment/EulaFragment.java`  
+位置: `EULA_URL`
 
 ## 默认主题颜色
 

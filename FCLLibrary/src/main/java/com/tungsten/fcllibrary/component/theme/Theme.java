@@ -51,6 +51,8 @@ public class Theme {
         this.autoTint.set(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
         this.backgroundLt.set(backgroundLt);
         this.backgroundDk.set(backgroundDk);
+        this.backgroundLoadingLt.set(backgroundLoadingLt);
+        this.backgroundLoadingDk.set(backgroundLoadingDk);
     }
 
     public int getColor() {
