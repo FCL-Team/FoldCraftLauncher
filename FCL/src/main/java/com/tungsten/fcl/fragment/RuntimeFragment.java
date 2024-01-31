@@ -195,7 +195,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     }
 
     private boolean isLatest() {
-        return lwjgl && cacio && cacio11 && cacio17 && java8 && java11 && java17 && java21;
+        return lwjgl && cacio && cacio11 && cacio17 && java8 && java11 && java17 && java21 && client;
     }
 
     private void check() {
