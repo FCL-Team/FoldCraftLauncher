@@ -27,12 +27,14 @@ import com.tungsten.fcl.setting.ConfigHolder;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.offline.Skin;
@@ -321,6 +323,11 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             refreshMenuView(null);
             titleView.setTextWithAnim(getString(R.string.account));
             uiManager.switchUI(uiManager.getAccountUI());
+            Account account = Accounts.getSelectedAccount();
+            if (account == null) {
+                CreateAccountDialog dialog = new CreateAccountDialog(this, (AccountFactory<?>) null);
+                dialog.show();
+            }
         }
         if (view == version && uiManager.getCurrentUI() != uiManager.getVersionUI()) {
             refreshMenuView(null);
