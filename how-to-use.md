@@ -54,6 +54,11 @@
 路径: `FCL/src/main/assets/app_runtime/java/`  
 不需要哪个就删哪个，只留自己客户端需要的那个即可
 
+## 默认 FCL 客户端公共目录
+
+文件: `FCLauncher/src/main/java/com/tungsten/fclauncher/utils/FCLPath.java`  
+位置: `SHARED_COMMON_DIR`
+
 ## 背景图
 
 文件: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
