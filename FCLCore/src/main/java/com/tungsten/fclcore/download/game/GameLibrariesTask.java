@@ -23,8 +23,10 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.update.ResourcePackUpdater;
 import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
@@ -114,6 +116,15 @@ public final class GameLibrariesTask extends Task<Void> {
                 dependencyManager.getCacheRepository().tryCacheLibrary(library, file.toPath());
             }
         });
+        if (ResourcePackUpdater.enable) {
+            File runDir = dependencyManager.getGameRepository().getRunDirectory(version.getId());
+            Pair<Boolean, Runnable> check = ResourcePackUpdater.check(runDir);
+            if (check.getKey()) {
+                dependencies.add(new ResourcePackUpdater(ResourcePackUpdater.downloadLinks(),
+                        new File(runDir, "/resourcepacks/服务器材质包.zip"),
+                        check.getValue()));
+            }
+        }
     }
 
 }
