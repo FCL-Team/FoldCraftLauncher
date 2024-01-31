@@ -9,10 +9,15 @@
 文件: `FCL/src/main/res/values/strings.xml`  
 位置: `app_name`
 
-## 应用包名
+## 与 FCL 原版共存
 
+(应用包名)  
 文件: `FCL/build.gradle`  
 位置: `applicationId`
+
+(文件提供器)  
+文件: `FCLLibrary/src/main/res/values/strings.xml`  
+位置: `file_browser_provider`
 
 ## 应用版本号
 
