@@ -19,6 +19,7 @@ import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
+import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,18 +33,21 @@ public class VersionList {
     private final ListView listView;
     private final FCLButton refreshButton;
     private final FCLProgressBar progressBar;
+    private final FCLTextView dirPath;
 
-    public VersionList(Context context, ListView listView, FCLButton refreshButton, FCLProgressBar progressBar) {
+    public VersionList(Context context, ListView listView, FCLButton refreshButton, FCLProgressBar progressBar, FCLTextView dirPath) {
         this.context = context;
         this.listView = listView;
         this.refreshButton = refreshButton;
         this.progressBar = progressBar;
+        this.dirPath = dirPath;
 
         Profiles.registerVersionsListener(this::loadVersions);
     }
 
     private void loadVersions(Profile profile) {
         Schedulers.androidUIThread().execute(() -> {
+            dirPath.setText(profile.getGameDir().getAbsolutePath());
             refreshButton.setEnabled(false);
             listView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);

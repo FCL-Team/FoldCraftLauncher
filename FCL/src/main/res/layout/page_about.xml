@@ -55,6 +55,7 @@
                 android:background="@drawable/bg_container_white_clickable"
                 android:orientation="horizontal"
                 android:id="@+id/launcher"
+                android:layout_marginTop="10dp"
                 app:auto_linear_background_tint="true">
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -211,6 +212,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:padding="10dp"
                 android:text="@string/about_desc"
                 android:background="@drawable/bg_container_white"
