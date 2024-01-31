@@ -100,7 +100,8 @@ public class ThemeEngine {
         }
     }
 
-    public void applyAndSave(Context context, int color) {
+    public void applyAndSave(Context context, Integer color) {
+        if (color == null) color = context.getColor(R.color.default_theme_color);
         applyColor(color);
         Theme.saveTheme(context, theme);
     }

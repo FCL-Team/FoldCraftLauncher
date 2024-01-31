@@ -43,8 +43,11 @@
 
 ## 默认主题颜色
 
+文件: `FCLLibrary/src/main/res/values/colors.xml`  
+位置: `default_theme_color`
+
 文件: `FCL/src/main/res/values/colors.xml`  
-位置: `default_theme_color` 和 `ui_bg_color`
+位置: `ui_bg_color`
 
 ## 删除多余的 Java
 

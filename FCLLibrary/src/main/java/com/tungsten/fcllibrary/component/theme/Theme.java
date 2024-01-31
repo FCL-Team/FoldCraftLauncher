@@ -138,7 +138,7 @@ public class Theme {
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
-        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
+        int color = sharedPreferences.getInt("theme_color", context.getColor(R.color.default_theme_color));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
         Bitmap lt = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
         BitmapDrawable backgroundLt = new BitmapDrawable(lt);

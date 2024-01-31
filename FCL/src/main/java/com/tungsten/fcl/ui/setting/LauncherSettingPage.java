@@ -251,7 +251,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             dialog.show();
         }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
+            ThemeEngine.getInstance().applyAndSave(getContext(), null);
         }
     }
 

@@ -40,7 +40,7 @@ public class FCLButton extends AppCompatButton {
         protected void invalidated() {
             get();
             drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
-            drawableNormal.setColor(Color.TRANSPARENT);
+            drawableNormal.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
             drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             if (!ripple) {
@@ -50,7 +50,7 @@ public class FCLButton extends AppCompatButton {
                 }
                 else {
                     setBackgroundDrawable(drawableNormal);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                    setTextColor(Color.WHITE);
                 }
             } else {
                 setRipple();
