@@ -125,7 +125,7 @@ LOCAL_SRC_FILES         := lwjgl/fcl_hook.c \
                            lwjgl/org_lwjgl_system_dyncall_DynCall.c \
                            lwjgl/org_lwjgl_system_dyncall_DynCallback.c \
                            lwjgl/org_lwjgl_system_dyncall_DynLoad.c \
-                           lwjgl/org_lwjgl_system_fcl_DynamicLinkLoader.c \
+                           lwjgl/org_lwjgl_system_linux_DynamicLinkLoader.c \
                            lwjgl/org_lwjgl_system_JNI.c \
                            lwjgl/org_lwjgl_system_jni_JNINativeInterface.c \
                            lwjgl/org_lwjgl_system_libc_LibCErrno.c \

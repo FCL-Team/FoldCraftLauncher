@@ -126,7 +126,7 @@ public final class APIUtil {
             case WINDOWS:
                 return new WindowsLibrary(name);
             case LINUX:
-                return new FCLLibrary(name);
+                return new LinuxLibrary(name);
             case MACOSX:
                 return MacOSXLibrary.create(name);
             default:
