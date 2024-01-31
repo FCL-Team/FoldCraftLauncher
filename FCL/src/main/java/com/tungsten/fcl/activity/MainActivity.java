@@ -82,7 +82,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     public FCLMenuView controller;
     public FCLMenuView multiplayer;
     public FCLMenuView setting;
-    public FCLMenuView back;
 
     private LinearLayoutCompat account;
     private FCLImageView avatar;
@@ -213,14 +212,12 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 controller = findViewById(R.id.controller);
                 multiplayer = findViewById(R.id.multiplayer);
                 setting = findViewById(R.id.setting);
-                back = findViewById(R.id.back);
                 home.setOnSelectListener(this);
                 manage.setOnSelectListener(this);
                 download.setOnSelectListener(this);
                 controller.setOnSelectListener(this);
                 multiplayer.setOnSelectListener(this);
                 setting.setOnSelectListener(this);
-                back.setOnClickListener(this);
                 home.setSelected(true);
 
                 setupAccountDisplay();
@@ -329,11 +326,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             refreshMenuView(null);
             titleView.setTextWithAnim(getString(R.string.version));
             uiManager.switchUI(uiManager.getVersionUI());
-        }
-        if (view == back) {
-            if (uiManager != null) {
-                uiManager.onBackPressed();
-            }
         }
         if (view == executeJar) {
             JarExecutorHelper.start(this, this);
