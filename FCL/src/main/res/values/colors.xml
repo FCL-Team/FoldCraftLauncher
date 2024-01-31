@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="default_theme_color">#7797CF</color>
+    <color name="default_theme_color">#B3801A</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="ui_bg_color">#4DBCBCBC</color>

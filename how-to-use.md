@@ -26,7 +26,8 @@
 
 ## 应用图标
 
-文件: `FCL/src/main/res/mipmap-anydpi-v26/ic_launcher` + (`.png`|`_foreground.png`|`_round.png`)
+文件: `FCL/src/main/res/mipmap-anydpi-v26/ic_launcher` + (`.png`|`_foreground.png`|`_round.png`)  
+文件: `FCL/src/main/res/drawable/img_app.png`
 
 ## 默认主题颜色
 
@@ -37,3 +38,11 @@
 
 路径: `FCL/src/main/assets/app_runtime/java`  
 不需要哪个就删哪个，只留自己客户端需要的那个即可
+
+## 背景图
+
+路径: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
+
+## 加载页面背景图
+
+路径: `FCLLibrary/src/main/res/drawable/background_loading_` + (`dark.jpg`|`light.jpg`)

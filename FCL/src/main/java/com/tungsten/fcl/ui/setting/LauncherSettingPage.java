@@ -63,11 +63,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton clearCache;
     private FCLButton exportLog;
     private FCLButton theme;
-    private FCLButton ltBackground;
-    private FCLButton dkBackground;
     private FCLButton resetTheme;
-    private FCLButton resetLtBackground;
-    private FCLButton resetDkBackground;
     private FCLSwitch ignoreNotch;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
@@ -88,11 +84,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
         theme = findViewById(R.id.theme);
-        ltBackground = findViewById(R.id.background_lt);
-        dkBackground = findViewById(R.id.background_dk);
         resetTheme = findViewById(R.id.reset_theme);
-        resetLtBackground = findViewById(R.id.reset_background_lt);
-        resetDkBackground = findViewById(R.id.reset_background_dk);
         ignoreNotch = findViewById(R.id.ignore_notch);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
@@ -105,11 +97,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache.setOnClickListener(this);
         exportLog.setOnClickListener(this);
         theme.setOnClickListener(this);
-        ltBackground.setOnClickListener(this);
-        dkBackground.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
-        resetLtBackground.setOnClickListener(this);
-        resetDkBackground.setOnClickListener(this);
 
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add(getContext().getString(R.string.settings_launcher_language_system));
@@ -262,52 +250,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
-        if (v == ltBackground) {
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-            ArrayList<String> suffix = new ArrayList<>();
-            suffix.add(".png");
-            builder.setSuffix(suffix);
-            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    String path = FileBrowser.getSelectedFiles(data).get(0);
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, path, null);
-                }
-            }));
-        }
-        if (v == dkBackground) {
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-            ArrayList<String> suffix = new ArrayList<>();
-            suffix.add(".png");
-            builder.setSuffix(suffix);
-            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    String path = FileBrowser.getSelectedFiles(data).get(0);
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, null, path);
-                }
-            }));
-        }
         if (v == resetTheme) {
             ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
-        }
-        if (v == resetLtBackground) {
-            new Thread(() -> {
-                if (!new File(FCLPath.LT_BACKGROUND_PATH).delete() && new File(FCLPath.LT_BACKGROUND_PATH).exists())
-                    Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
-
-                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, null, null));
-            }).start();
-        }
-        if (v == resetDkBackground) {
-            new Thread(() -> {
-                if (!new File(FCLPath.DK_BACKGROUND_PATH).delete() && new File(FCLPath.DK_BACKGROUND_PATH).exists())
-                    Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
-
-                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, null, null));
-            }).start();
         }
     }
 

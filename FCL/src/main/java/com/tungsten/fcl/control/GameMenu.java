@@ -89,7 +89,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private GameItemBar gameItemBar;
     private LogWindow logWindow;
     private TouchCharInput touchCharInput;
-    private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
@@ -430,12 +429,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gameItemBar = findViewById(R.id.game_item_bar);
         logWindow = findViewById(R.id.log_window);
         touchCharInput = findViewById(R.id.input_scanner);
-        launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
-            baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
-            launchProgress.setVisibility(View.VISIBLE);
+            baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackgroundLoading(activity));
             touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
@@ -511,7 +508,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onGraphicOutput() {
         baseLayout.setBackground(null);
-        baseLayout.removeView(launchProgress);
     }
 
     @Override

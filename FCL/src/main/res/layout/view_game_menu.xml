@@ -29,13 +29,6 @@
             android:id="@+id/cursor"
             android:src="@drawable/img_cursor"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            android:id="@+id/launch_progress"/>
-
         <com.tungsten.fcl.control.keyboard.TouchCharInput
             android:layout_width="1px"
             android:layout_height="1px"

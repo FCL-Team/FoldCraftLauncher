@@ -32,8 +32,10 @@ public class Theme {
     private final BooleanProperty fullscreen = new SimpleBooleanProperty();
     private final ObjectProperty<BitmapDrawable> backgroundLt = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundDk = new SimpleObjectProperty<>();
+    private final ObjectProperty<BitmapDrawable> backgroundLoadingLt = new SimpleObjectProperty<>();
+    private final ObjectProperty<BitmapDrawable> backgroundLoadingDk = new SimpleObjectProperty<>();
 
-    public Theme(int color, boolean fullscreen, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
+    public Theme(int color, boolean fullscreen, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk, BitmapDrawable backgroundLoadingLt, BitmapDrawable backgroundLoadingDk) {
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
         ltHsv[1] -= (1 - ltHsv[1]) * 0.3f;
@@ -103,17 +105,13 @@ public class Theme {
         return fullscreen;
     }
 
-    public ObjectProperty<BitmapDrawable> ltBackgroundProperty() {
-        return backgroundLt;
-    }
-
-    public ObjectProperty<BitmapDrawable> dkBackgroundProperty() {
-        return backgroundDk;
-    }
-
     public BitmapDrawable getBackground(Context context) {
         boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         return isNightMode ? backgroundDk.get() : backgroundLt.get();
+    }
+    public BitmapDrawable getBackgroundLoading(Context context) {
+        boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return isNightMode ? backgroundLoadingDk.get() : backgroundLoadingLt.get();
     }
 
     public void setColor(int color) {
@@ -148,11 +146,15 @@ public class Theme {
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
-        Bitmap lt = !new File(context.getFilesDir().getAbsolutePath() + "/background/lt.png").exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(context.getFilesDir().getAbsolutePath() + "/background/lt.png");
+        Bitmap lt = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
         BitmapDrawable backgroundLt = new BitmapDrawable(lt);
-        Bitmap dk = !new File(context.getFilesDir().getAbsolutePath() + "/background/dk.png").exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(context.getFilesDir().getAbsolutePath() + "/background/dk.png");
+        Bitmap dk = ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark);
         BitmapDrawable backgroundDk = new BitmapDrawable(dk);
-        return new Theme(color, fullscreen, backgroundLt, backgroundDk);
+        Bitmap ltl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_light);
+        BitmapDrawable backgroundLoadingLt = new BitmapDrawable(ltl);
+        Bitmap dkl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_dark);
+        BitmapDrawable backgroundLoadingDk = new BitmapDrawable(dkl);
+        return new Theme(color, fullscreen, backgroundLt, backgroundDk, backgroundLoadingLt, backgroundLoadingDk);
     }
 
     public static void saveTheme(Context context, Theme theme) {
