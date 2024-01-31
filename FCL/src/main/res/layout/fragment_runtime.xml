@@ -182,11 +182,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:id="@+id/java8_split"
                 android:background="@android:color/darker_gray"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/java8_compat"
                 android:padding="10dp"
                 android:orientation="horizontal">
 
@@ -223,11 +225,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:id="@+id/java11_split"
                 android:background="@android:color/darker_gray"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/java11_compat"
                 android:padding="10dp"
                 android:orientation="horizontal">
 
@@ -264,11 +268,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:id="@+id/java17_split"
                 android:background="@android:color/darker_gray"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/java17_compat"
                 android:padding="10dp"
                 android:orientation="horizontal">
 
@@ -305,11 +311,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:id="@+id/java21_split"
                 android:background="@android:color/darker_gray"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/java21_compat"
                 android:padding="10dp"
                 android:orientation="horizontal">
 

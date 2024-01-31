@@ -24,6 +24,15 @@ import java.util.logging.Level;
 
 public class RuntimeUtils {
 
+    public static boolean isAssetsFolderExists(Context context, String srcDir) {
+        try {
+            String[] list = context.getAssets().list(srcDir);
+            return list != null && list.length > 0;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public static boolean isLatest(String targetDir, String srcDir) throws IOException {
         File targetFile = new File(targetDir + "/version");
         long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));

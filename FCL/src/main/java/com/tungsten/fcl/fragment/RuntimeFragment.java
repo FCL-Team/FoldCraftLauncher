@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.appcompat.widget.LinearLayoutCompat;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
 import com.tungsten.fcl.util.RuntimeUtils;
@@ -57,6 +58,15 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
     private FCLButton install;
 
+    View java8Split;
+    LinearLayoutCompat java8Compat;
+    View java11Split;
+    LinearLayoutCompat java11Compat;
+    View java17Split;
+    LinearLayoutCompat java17Compat;
+    View java21Split;
+    LinearLayoutCompat java21Compat;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,6 +90,15 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         java17State = findViewById(view, R.id.java17_state);
         java21State = findViewById(view, R.id.java21_state);
 
+        java8Split = findViewById(view, R.id.java8_split);
+        java8Compat = findViewById(view, R.id.java8_compat);
+        java11Split = findViewById(view, R.id.java11_split);
+        java11Compat = findViewById(view, R.id.java11_compat);
+        java17Split = findViewById(view, R.id.java17_split);
+        java17Compat = findViewById(view, R.id.java17_compat);
+        java21Split = findViewById(view, R.id.java21_split);
+        java21Compat = findViewById(view, R.id.java21_compat);
+
         initState();
 
         refreshDrawables();
@@ -98,10 +117,41 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             cacio = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_8_DIR, "/assets/app_runtime/caciocavallo");
             cacio11 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_11_DIR, "/assets/app_runtime/caciocavallo11");
             cacio17 = RuntimeUtils.isLatest(FCLPath.CACIOCAVALLO_17_DIR, "/assets/app_runtime/caciocavallo17");
-            java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
-            java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
-            java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
-            java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
+
+            // hide check compat if jre not exists
+            if (getContext() != null) {
+                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre8")){
+                    java8Split.setVisibility(View.GONE);
+                    java8Compat.setVisibility(View.GONE);
+                    java8 = true;
+                } else {
+                    java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
+                }
+
+                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre11")){
+                    java11Split.setVisibility(View.GONE);
+                    java11Compat.setVisibility(View.GONE);
+                    java11 = true;
+                } else {
+                    java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
+                }
+
+                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre17")){
+                    java17Split.setVisibility(View.GONE);
+                    java17Compat.setVisibility(View.GONE);
+                    java17 = true;
+                } else {
+                    java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
+                }
+
+                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre21")){
+                    java21Split.setVisibility(View.GONE);
+                    java21Compat.setVisibility(View.GONE);
+                    java21 = true;
+                } else {
+                    java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

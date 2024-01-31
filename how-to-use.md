@@ -32,3 +32,8 @@
 
 文件: `FCL/src/main/res/values/colors.xml`  
 位置: `default_theme_color` 和 `ui_bg_color`
+
+## 删除多余的 Java
+
+路径: `FCL/src/main/assets/app_runtime/java`  
+不需要哪个就删哪个，只留自己客户端需要的那个即可
