@@ -435,7 +435,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
-            background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackgroundLoading(this));
+            background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackgroundLoading(getActivity()));
             touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
