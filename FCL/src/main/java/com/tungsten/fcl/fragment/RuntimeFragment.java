@@ -120,7 +120,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
             // hide check compat if jre not exists
             if (getContext() != null) {
-                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre8")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre8/version")){
                     java8Split.setVisibility(View.GONE);
                     java8Compat.setVisibility(View.GONE);
                     java8 = true;
@@ -128,7 +128,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
                 }
 
-                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre11")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre11/version")){
                     java11Split.setVisibility(View.GONE);
                     java11Compat.setVisibility(View.GONE);
                     java11 = true;
@@ -136,7 +136,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
                 }
 
-                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre17")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre17/version")){
                     java17Split.setVisibility(View.GONE);
                     java17Compat.setVisibility(View.GONE);
                     java17 = true;
@@ -144,7 +144,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
                 }
 
-                if (!RuntimeUtils.isAssetsFolderExists(getContext(), "/assets/app_runtime/java/jre21")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre21/version")){
                     java21Split.setVisibility(View.GONE);
                     java21Compat.setVisibility(View.GONE);
                     java21 = true;

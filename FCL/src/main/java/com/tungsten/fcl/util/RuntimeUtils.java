@@ -24,11 +24,10 @@ import java.util.logging.Level;
 
 public class RuntimeUtils {
 
-    public static boolean isAssetsFolderExists(Context context, String srcDir) {
+    public static boolean isAssetsFileExists(String srcPath) {
         try {
-            String[] list = context.getAssets().list(srcDir);
-            return list != null && list.length > 0;
-        } catch (IOException e) {
+            return RuntimeUtils.class.getResourceAsStream(srcPath) != null;
+        } catch (Throwable e) {
             return false;
         }
     }
