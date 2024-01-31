@@ -37,6 +37,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     boolean java11 = false;
     boolean java17 = false;
     boolean java21 = false;
+    boolean client = false;
 
     private FCLProgressBar lwjglProgress;
     private FCLProgressBar cacioProgress;
@@ -46,6 +47,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     private FCLProgressBar java11Progress;
     private FCLProgressBar java17Progress;
     private FCLProgressBar java21Progress;
+    private FCLProgressBar clientProgress;
 
     private FCLImageView lwjglState;
     private FCLImageView cacioState;
@@ -55,6 +57,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     private FCLImageView java11State;
     private FCLImageView java17State;
     private FCLImageView java21State;
+    private FCLImageView clientState;
 
     private FCLButton install;
 
@@ -66,6 +69,8 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
     LinearLayoutCompat java17Compat;
     View java21Split;
     LinearLayoutCompat java21Compat;
+    View clientSplit;
+    LinearLayoutCompat clientCompat;
 
     @Nullable
     @Override
@@ -80,6 +85,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         java11Progress = findViewById(view, R.id.java11_progress);
         java17Progress = findViewById(view, R.id.java17_progress);
         java21Progress = findViewById(view, R.id.java21_progress);
+        clientProgress = findViewById(view, R.id.client_progress);
 
         lwjglState = findViewById(view, R.id.lwjgl_state);
         cacioState = findViewById(view, R.id.cacio_state);
@@ -89,6 +95,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         java11State = findViewById(view, R.id.java11_state);
         java17State = findViewById(view, R.id.java17_state);
         java21State = findViewById(view, R.id.java21_state);
+        clientState = findViewById(view, R.id.client_state);
 
         java8Split = findViewById(view, R.id.java8_split);
         java8Compat = findViewById(view, R.id.java8_compat);
@@ -98,6 +105,8 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
         java17Compat = findViewById(view, R.id.java17_compat);
         java21Split = findViewById(view, R.id.java21_split);
         java21Compat = findViewById(view, R.id.java21_compat);
+        clientSplit = findViewById(view, R.id.client_split);
+        clientCompat = findViewById(view, R.id.client_compat);
 
         initState();
 
@@ -120,7 +129,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
 
             // hide check compat if jre not exists
             if (getContext() != null) {
-                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre8/version")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre8/version")) {
                     java8Split.setVisibility(View.GONE);
                     java8Compat.setVisibility(View.GONE);
                     java8 = true;
@@ -128,7 +137,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8");
                 }
 
-                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre11/version")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre11/version")) {
                     java11Split.setVisibility(View.GONE);
                     java11Compat.setVisibility(View.GONE);
                     java11 = true;
@@ -136,7 +145,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java11 = RuntimeUtils.isLatest(FCLPath.JAVA_11_PATH, "/assets/app_runtime/java/jre11");
                 }
 
-                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre17/version")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre17/version")) {
                     java17Split.setVisibility(View.GONE);
                     java17Compat.setVisibility(View.GONE);
                     java17 = true;
@@ -144,12 +153,20 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17");
                 }
 
-                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre21/version")){
+                if (!RuntimeUtils.isAssetsFileExists("/assets/app_runtime/java/jre21/version")) {
                     java21Split.setVisibility(View.GONE);
                     java21Compat.setVisibility(View.GONE);
                     java21 = true;
                 } else {
                     java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21");
+                }
+
+                if (!RuntimeUtils.isAssetsFileExists("/assets/.minecraft/version")) {
+                    clientSplit.setVisibility(View.GONE);
+                    clientCompat.setVisibility(View.GONE);
+                    client = true;
+                } else {
+                    client = RuntimeUtils.isLatest(FCLPath.SHARED_COMMON_DIR, "/assets/.minecraft");
                 }
             }
         } catch (IOException e) {
@@ -173,6 +190,7 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
             java11State.setBackgroundDrawable(java11 ? stateDone : stateUpdate);
             java17State.setBackgroundDrawable(java17 ? stateDone : stateUpdate);
             java21State.setBackgroundDrawable(java21 ? stateDone : stateUpdate);
+            clientState.setBackgroundDrawable(client ? stateDone : stateUpdate);
         }
     }
 
@@ -364,6 +382,26 @@ public class RuntimeFragment extends FCLFragment implements View.OnClickListener
                     getActivity().runOnUiThread(() -> {
                         java21State.setVisibility(View.VISIBLE);
                         java21Progress.setVisibility(View.GONE);
+                        refreshDrawables();
+                        check();
+                    });
+                }
+            }).start();
+        }
+        if (!client) {
+            clientState.setVisibility(View.GONE);
+            clientProgress.setVisibility(View.VISIBLE);
+            new Thread(() -> {
+                try {
+                    RuntimeUtils.install(getContext(), FCLPath.SHARED_COMMON_DIR, ".minecraft");
+                    client = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        clientState.setVisibility(View.VISIBLE);
+                        clientProgress.setVisibility(View.GONE);
                         refreshDrawables();
                         check();
                     });

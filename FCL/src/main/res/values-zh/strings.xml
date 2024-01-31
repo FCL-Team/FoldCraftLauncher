@@ -6,6 +6,7 @@
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
     <string name="splash_eula_next">同意并继续</string>
     <string name="splash_runtime_title">安装或更新运行环境</string>
+    <string name="splash_runtime_client">服务器客户端</string>
     <string name="splash_runtime_install">安装 / 更新</string>
 
     <string name="account">账户管理</string>

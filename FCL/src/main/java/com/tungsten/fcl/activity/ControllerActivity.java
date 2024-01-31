@@ -19,7 +19,7 @@ public class ControllerActivity extends FCLActivity {
 
         FCLImageView contentView = new FCLImageView(this);
         contentView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        contentView.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
+        contentView.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackgroundLoading(this));
         setContentView(contentView);
 
         GameMenu menu = new GameMenu();

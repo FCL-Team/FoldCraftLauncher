@@ -413,7 +413,7 @@
                 "bindViewGroup": []
               },
               "clickEvent": {
-                "autoKeep": true,
+                "autoKeep": false,
                 "autoClick": false,
                 "openMenu": false,
                 "switchTouchMode": false,
