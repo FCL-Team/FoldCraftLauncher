@@ -41,13 +41,18 @@
 
 ## 删除多余的 Java
 
-路径: `FCL/src/main/assets/app_runtime/java`  
+路径: `FCL/src/main/assets/app_runtime/java/`  
 不需要哪个就删哪个，只留自己客户端需要的那个即可
 
 ## 背景图
 
-路径: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
+文件: `FCLLibrary/src/main/res/drawable/background_` + (`dark.jpg`|`light.jpg`)
 
 ## 加载页面背景图
 
-路径: `FCLLibrary/src/main/res/drawable/background_loading_` + (`dark.jpg`|`light.jpg`)
+文件: `FCLLibrary/src/main/res/drawable/background_loading_` + (`dark.jpg`|`light.jpg`)
+
+## 游戏界面右下角小字
+
+文件: `FCL/src/main/res/layout/view_game_menu.xml`
+位置: 接近结尾部分

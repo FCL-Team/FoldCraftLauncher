@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 
+import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -37,7 +38,7 @@ import java.nio.file.Paths;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends FCLActivity {
 
-    public ConstraintLayout background;
+    public ImageView background;
 
     private EulaFragment eulaFragment;
     private RuntimeFragment runtimeFragment;
@@ -48,7 +49,7 @@ public class SplashActivity extends FCLActivity {
         setContentView(R.layout.activity_splash);
 
         background = findViewById(R.id.background);
-        background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+        background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
 
         checkPermission();
     }

@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -68,7 +69,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
     private static MainActivity instance;
 
-    public ConstraintLayout background;
+    public ImageView background;
     public FCLDynamicIsland titleView;
 
     private UIManager uiManager;
@@ -111,7 +112,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         instance = this;
 
         background = findViewById(R.id.background);
-        background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+        background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
 
         titleView = findViewById(R.id.title);
 

@@ -3,6 +3,7 @@ package com.tungsten.fcl.activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.control.GameMenu;
@@ -17,7 +18,8 @@ public class ControllerActivity extends FCLActivity {
         super.onCreate(savedInstanceState);
 
         FCLImageView contentView = new FCLImageView(this);
-        contentView.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+        contentView.setScaleType(ImageView.ScaleType.FIT_XY);
+        contentView.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
         setContentView(contentView);
 
         GameMenu menu = new GameMenu();

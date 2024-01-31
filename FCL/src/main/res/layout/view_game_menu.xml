@@ -4,6 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/background_light"/>
+
     <RelativeLayout
         android:id="@+id/base_layout"
         android:layout_width="match_parent"
@@ -77,5 +84,33 @@
             android:layout_height="match_parent"/>
 
     </RelativeLayout>
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textColor="#FFFFFF"
+                android:text="Powered by PojavLauncher, FCL"
+                android:textSize="10sp"/>
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:textColor="#FFFFFF"
+                android:text="SweetRice 服务器客户端"
+                android:textSize="13sp"/>
+
+    </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

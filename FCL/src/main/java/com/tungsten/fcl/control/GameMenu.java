@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -84,6 +85,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private int pointerY;
 
     private View layout;
+    private ImageView background;
     private RelativeLayout baseLayout;
     private TouchPad touchPad;
     private GameItemBar gameItemBar;
@@ -424,6 +426,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         editModeProperty.set(isSimulated());
         controllerProperty.set(Controllers.findControllerByName(activity.getIntent().getExtras().getString("controller")));
 
+        background = findViewById(R.id.background);
         baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);
         gameItemBar = findViewById(R.id.game_item_bar);
@@ -432,7 +435,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
-            baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackgroundLoading(activity));
+            background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackgroundLoading(this));
             touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
@@ -507,7 +510,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onGraphicOutput() {
-        baseLayout.setBackground(null);
+        background.setVisibility(View.GONE);
     }
 
     @Override

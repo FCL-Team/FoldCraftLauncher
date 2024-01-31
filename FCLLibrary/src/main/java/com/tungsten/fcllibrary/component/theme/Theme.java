@@ -133,14 +133,6 @@ public class Theme {
         this.fullscreen.set(fullscreen);
     }
 
-    public void setBackgroundLt(BitmapDrawable backgroundLt) {
-        this.backgroundLt.set(backgroundLt);
-    }
-
-    public void setBackgroundDk(BitmapDrawable backgroundDk) {
-        this.backgroundDk.set(backgroundDk);
-    }
-
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);

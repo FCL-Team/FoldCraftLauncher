@@ -4,8 +4,14 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/background"
     tools:context=".activity.SplashActivity">
+
+    <ImageView
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/background_light"/>
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
