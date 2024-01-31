@@ -4,6 +4,7 @@
  */
 package org.lwjgl.system.linux;
 
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.*;
 
 import javax.annotation.*;
@@ -27,7 +28,7 @@ public class LinuxLibrary extends SharedLibrary.Default {
     private static long loadLibrary(String name) {
         long handle;
         try (MemoryStack stack = stackPush()) {
-            handle = dlopen(stack.UTF8(name), RTLD_LAZY | RTLD_LOCAL);
+            handle = dlopen(stack.UTF8(name), RTLD_LAZY | (PointerBuffer.is64Bit() ? RTLD_GLOBAL : 2));
         }
         if (handle == NULL) {
             throw new UnsatisfiedLinkError("Failed to dynamically load library: " + name + "(error = " + dlerror() + ")");
