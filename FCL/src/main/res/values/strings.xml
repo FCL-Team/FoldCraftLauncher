@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name" translatable="false">SweetRiceMC 甜米</string>
     <string name="app_version" translatable="false">1.1.3</string>
 
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>

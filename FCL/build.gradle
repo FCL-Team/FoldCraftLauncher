@@ -23,7 +23,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.tungsten.fcl"
+        applicationId "com.tungsten.fcl.sweetrice"
         minSdk 26
         targetSdk 34
         versionCode 15
