@@ -190,7 +190,7 @@ public class OfflineAccount extends Account {
 
     @Override
     public AuthInfo playOffline() throws AuthenticationException {
-        return logIn();
+        return new AuthInfo(username, uuid, UUIDTypeAdapter.fromUUID(UUID.randomUUID()), AuthInfo.USER_TYPE_MSA, "{}");
     }
 
     @Override
