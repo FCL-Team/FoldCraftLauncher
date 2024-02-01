@@ -100,6 +100,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         super(context);
         this.menu = gameMenu;
 
+        setStateListAnimator(null);
+
         boundaryPath = new Path();
         boundaryPaint = new Paint();
         boundaryPaint.setAntiAlias(true);

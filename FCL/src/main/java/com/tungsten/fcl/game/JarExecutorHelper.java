@@ -13,6 +13,7 @@ import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
@@ -74,11 +75,13 @@ public class JarExecutorHelper {
     }
 
     private static int getNearestJavaVersion(int majorVersion) {
-        if (majorVersion == -1)
-            return 8;
-        int diffFactorFirst = Math.abs(8 - majorVersion);
-        int diffFactorSecond = Math.abs(17 - majorVersion);
-        return diffFactorFirst < diffFactorSecond ? 8 : 17;
+        if (majorVersion >= JavaVersion.JAVA_VERSION_17)
+            return JavaVersion.JAVA_VERSION_21;
+        if (majorVersion >= JavaVersion.JAVA_VERSION_11)
+            return JavaVersion.JAVA_VERSION_17;
+        if (majorVersion >= JavaVersion.JAVA_VERSION_8)
+            return JavaVersion.JAVA_VERSION_11;
+        return JavaVersion.JAVA_VERSION_8;
     }
 
     private static int getJavaVersion(File file) {

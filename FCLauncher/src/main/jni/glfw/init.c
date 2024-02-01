@@ -238,21 +238,6 @@ GLFWAPI void glfwTerminate(void)
 
 GLFWAPI void glfwInitHint(int hint, int value)
 {
-    switch (hint)
-    {
-        case GLFW_JOYSTICK_HAT_BUTTONS:
-            _glfwInitHints.hatButtons = value;
-            return;
-        case GLFW_COCOA_CHDIR_RESOURCES:
-            _glfwInitHints.ns.chdir = value;
-            return;
-        case GLFW_COCOA_MENUBAR:
-            _glfwInitHints.ns.menubar = value;
-            return;
-    }
-
-    _glfwInputError(GLFW_INVALID_ENUM,
-                    "Invalid init hint 0x%08X", hint);
 }
 
 GLFWAPI void glfwInitAllocator(const GLFWallocator* allocator)

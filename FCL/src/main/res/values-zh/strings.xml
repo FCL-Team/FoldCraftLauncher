@@ -411,7 +411,7 @@
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
     <string name="launch">启动游戏</string>
-    <string name="launch_error_java">错误的 Java 版本</string>
+    <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
     <string name="launch_failed">无法启动</string>

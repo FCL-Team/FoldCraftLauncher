@@ -16,7 +16,9 @@ public class FCLPath {
 
     public static String RUNTIME_DIR;
     public static String JAVA_8_PATH;
+    public static String JAVA_11_PATH;
     public static String JAVA_17_PATH;
+    public static String JAVA_21_PATH;
     public static String LWJGL_DIR;
     public static String CACIOCAVALLO_8_DIR;
     public static String CACIOCAVALLO_17_DIR;
@@ -44,7 +46,9 @@ public class FCLPath {
 
         RUNTIME_DIR = context.getDir("runtime", 0).getAbsolutePath();
         JAVA_8_PATH = RUNTIME_DIR + "/java/jre8";
+        JAVA_11_PATH = RUNTIME_DIR + "/java/jre11";
         JAVA_17_PATH = RUNTIME_DIR + "/java/jre17";
+        JAVA_21_PATH = RUNTIME_DIR + "/java/jre21";
         LWJGL_DIR = RUNTIME_DIR + "/lwjgl";
         CACIOCAVALLO_8_DIR = RUNTIME_DIR + "/caciocavallo";
         CACIOCAVALLO_17_DIR = RUNTIME_DIR + "/caciocavallo17";
@@ -65,7 +69,9 @@ public class FCLPath {
         init(CACHE_DIR);
         init(RUNTIME_DIR);
         init(JAVA_8_PATH);
+        init(JAVA_11_PATH);
         init(JAVA_17_PATH);
+        init(JAVA_21_PATH);
         init(LWJGL_DIR);
         init(CACIOCAVALLO_8_DIR);
         init(CACIOCAVALLO_17_DIR);

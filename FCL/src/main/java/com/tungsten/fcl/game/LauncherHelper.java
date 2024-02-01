@@ -277,7 +277,7 @@ public final class LauncherHelper {
                 .thenComposeAsync(Schedulers.androidUIThread(), javaVersions -> {
             JavaVersion javaVersion = (JavaVersion) javaVersions.get(0);
             JavaVersion suggestedJavaVersion = (JavaVersion) javaVersions.get(1);
-            if (setting.getJava() == 0 || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
+            if (setting.getJava().equals(JavaVersion.JAVA_AUTO.getVersionName()) || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
                 return Task.completed(suggestedJavaVersion);
             }
 
@@ -287,10 +287,10 @@ public final class LauncherHelper {
             builder.setCancelable(false);
             builder.setMessage(context.getString(R.string.launch_error_java));
             builder.setPositiveButton(context.getString(R.string.launch_error_java_auto), () -> {
-                setting.setJava(0);
+                setting.setJava(JavaVersion.JAVA_AUTO.getVersionName());
                 future.complete(suggestedJavaVersion);
             });
-            builder.setPositiveButton(context.getString(R.string.launch_error_java_continue), continueAction::run);
+            builder.setNegativeButton(context.getString(R.string.launch_error_java_continue), continueAction::run);
             builder.create().show();
             return Task.fromCompletableFuture(future);
         }).withStage("launch.state.java");

@@ -160,7 +160,7 @@ public final class OptiFineInstallTask extends Task<Version> {
                         dest.toString(),
                         gameRepository.getLibraryFile(version, optiFineLibrary).toString()
                 };
-                runJVMProcess(command, true);
+                runJVMProcess(command, 8);
             } else {
                 FileUtils.copyFile(dest, gameRepository.getLibraryFile(version, optiFineLibrary).toPath());
             }
@@ -222,7 +222,7 @@ public final class OptiFineInstallTask extends Task<Version> {
         dependencies.add(dependencyManager.checkLibraryCompletionAsync(getResult(), true));
     }
 
-    private void runJVMProcess(String[] command, boolean first) throws Exception {
+    private void runJVMProcess(String[] command, int java) throws Exception {
         int exitCode;
         boolean listen = true;
         while (listen) {
@@ -239,15 +239,19 @@ public final class OptiFineInstallTask extends Task<Version> {
         Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command);
-        bundle.putBoolean("first", first);
+        bundle.putInt("java", java);
         service.putExtras(bundle);
         FCLPath.CONTEXT.startService(service);
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());
         if (exitCode != 0) {
-            if (first) {
-                runJVMProcess(command, false);
+            if (java == 8) {
+                runJVMProcess(command, 17);
+            } else if (java == 17) {
+                runJVMProcess(command, 11);
+            } else if (java == 11) {
+                runJVMProcess(command, 21);
             } else {
                 throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
             }
