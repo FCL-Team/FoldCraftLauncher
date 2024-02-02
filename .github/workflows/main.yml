@@ -43,7 +43,7 @@ jobs:
           ./gradlew assembleDebug -Darch=${{matrix.arch}}
 
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && github.repository_owner == 'FCL-Team' && github.ref_name == 'main'
         uses: softprops/action-gh-release@v1
         with:
           token: "${{ secrets.TOKEN }}"
@@ -51,7 +51,7 @@ jobs:
             FCL/build/outputs/apk/release/*.apk
 
       - name: Upload Release apk
-        if: startsWith(github.ref, 'refs/heads/')
+        if: startsWith(github.ref, 'refs/heads/') && github.repository_owner == 'FCL-Team' && github.ref_name == 'main'
         uses: actions/upload-artifact@v3
         with:
           name: app-${{matrix.arch}}
