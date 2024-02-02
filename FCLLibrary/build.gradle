@@ -18,6 +18,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue 'string', 'file_browser_provider', 'com.tungsten.fcl.provider'
         }
         autobuild {
             initWith debug
@@ -26,6 +27,7 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue 'string', 'file_browser_provider', 'com.tungsten.fcl.provider.debug'
         }
     }
     compileOptions {
