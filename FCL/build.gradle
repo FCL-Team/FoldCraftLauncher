@@ -20,6 +20,12 @@ android {
             keyAlias "FCL-Key"
             keyPassword pwd
         }
+        customDebug {
+            storeFile file("../debug.jks")
+            storePassword "FCL-Team"
+            keyAlias "FCL-Key"
+            keyPassword "FCL-Team"
+        }
     }
 
     defaultConfig {
@@ -40,6 +46,21 @@ android {
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.customDebug
+            resValue 'string', 'application_package', 'com.tungsten.fcl.debug'
+            resValue 'string', 'storageProviderAuthorities', 'com.tungsten.fcl.scoped.gamefolder.debug'
+            resValue 'string', 'shareProviderAuthority', 'com.tungsten.fcl.scoped.controlfolder.debug'
+        }
+        proguard {
+            initWith debug
+            minifyEnabled true
+            shrinkResources true
         }
     }
     applicationVariants.configureEach { variant ->
