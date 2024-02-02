@@ -43,7 +43,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.FCLKey
-            resValue 'string', 'file_browser_provider', 'com.tungsten.fcl'
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
@@ -54,7 +53,6 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.customDebug
-            resValue 'string', 'file_browser_provider', 'com.tungsten.fcl.debug'
         }
         proguard {
             initWith debug
