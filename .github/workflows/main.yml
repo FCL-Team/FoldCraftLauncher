@@ -42,24 +42,16 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug -Darch=${{matrix.arch}}
 
-      - name: Upload Release
-        if: startsWith(github.ref, 'refs/tags/') && github.repository_owner == 'FCL-Team' && github.ref_name == 'main'
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           token: "${{ secrets.TOKEN }}"
           files: |
             FCL/build/outputs/apk/release/*.apk
 
-      - name: Upload Debug
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          token: "${{ secrets.TOKEN }}"
-          files: |
-            FCL/build/outputs/apk/debug/*.apk
-
       - name: Upload Release apk
-        if: startsWith(github.ref, 'refs/heads/') && github.repository_owner == 'FCL-Team' && github.ref_name == 'main'
+        if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v3
         with:
           name: app-${{matrix.arch}}
