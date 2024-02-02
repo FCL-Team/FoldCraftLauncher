@@ -62,6 +62,6 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v3
         with:
-          name: app-${{matrix.arch}}
+          name: app-${{matrix.arch}}-debug
           path: FCL/build/outputs/apk/debug/*
         #  retention-days: 1
