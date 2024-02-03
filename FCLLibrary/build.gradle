@@ -19,8 +19,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        autobuild {
+        fordebug {
             initWith debug
+            resValue 'string', 'file_browser_provider', 'com.tungsten.fcl.debug.provider'
         }
     }
     compileOptions {

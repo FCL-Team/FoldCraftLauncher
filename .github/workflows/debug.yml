@@ -1,4 +1,4 @@
-name: Android CI
+name: Build debug
 
 on:
   pull_request:
@@ -13,13 +13,11 @@ on:
 
 jobs:
   build:
-    if: github.repository_owner == 'FCL-Team'
+    if: github.repository_owner != 'FCL-Team'
     strategy:
       matrix:
         arch: [ "all", "arm", "arm64", "x86", "x64" ]
       fail-fast: false
-    env:
-      FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
     name: Build for ${{matrix.arch}}
     runs-on: ubuntu-20.04
     steps:
@@ -35,20 +33,12 @@ jobs:
       - name: Build ${{matrix.arch}} .apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblerelease -Darch=${{matrix.arch}}
+          ./gradlew assemblefordebug -Darch=${{matrix.arch}}
 
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          token: "${{ secrets.TOKEN }}"
-          files: |
-            FCL/build/outputs/apk/release/*.apk
-
-      - name: upload apk
+      - name: Upload debug apk
         if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v3
         with:
-          name: app-${{matrix.arch}}
-          path: FCL/build/outputs/apk/release/*
+          name: app-debug-${{matrix.arch}}
+          path: FCL/build/outputs/apk/fordebug/*
         #  retention-days: 1

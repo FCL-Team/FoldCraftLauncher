@@ -11,14 +11,22 @@ android {
         FCLKey {
             def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
             if (pwd == null) {
-                Properties prop = new Properties()
-                prop.load(new FileInputStream("${rootDir}/local.properties"))
-                pwd = prop.get("pwd")
+                if (new File("${rootDir}/local.properties").exists()) {
+                    Properties prop = new Properties()
+                    prop.load(new FileInputStream("${rootDir}/local.properties"))
+                    pwd = prop.get("pwd")
+                }
             }
             storeFile file("../key-store.jks")
             storePassword pwd
             keyAlias "FCL-Key"
             keyPassword pwd
+        }
+        FCLDebugKey {
+            storeFile file("../debug-key.jks")
+            storePassword "FCL-Debug"
+            keyAlias "FCL-Debug"
+            keyPassword "FCL-Debug"
         }
     }
 
@@ -37,6 +45,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.FCLKey
+        }
+        fordebug {
+            applicationIdSuffix ".debug"
+            initWith debug
+            signingConfig signingConfigs.FCLDebugKey
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
