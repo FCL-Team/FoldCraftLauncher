@@ -47,8 +47,8 @@ android {
             signingConfig signingConfigs.FCLKey
         }
         fordebug {
-            applicationIdSuffix ".debug"
             initWith debug
+            applicationIdSuffix ".debug"
             signingConfig signingConfigs.FCLDebugKey
         }
         configureEach {
