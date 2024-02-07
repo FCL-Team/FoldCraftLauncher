@@ -19,7 +19,7 @@ package com.tungsten.fcl.util;
 
 import java.io.InputStream;
 
-public class ResourceNotFoundError extends Error {
+public final class ResourceNotFoundError extends Error {
     public ResourceNotFoundError(String message) {
         super(message);
     }

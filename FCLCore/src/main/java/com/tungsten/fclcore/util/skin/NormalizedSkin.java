@@ -23,7 +23,7 @@ import android.graphics.Bitmap;
  * Describes a Minecraft 1.8+ skin (64x64).
  * Old format skins are converted to the new format.
  */
-public class NormalizedSkin {
+public final class NormalizedSkin {
 
     private static void copyImage(Bitmap src, Bitmap dst, int sx, int sy, int dx, int dy, int w, int h, boolean flipHorizontal) {
         for (int y = 0; y < h; y++) {

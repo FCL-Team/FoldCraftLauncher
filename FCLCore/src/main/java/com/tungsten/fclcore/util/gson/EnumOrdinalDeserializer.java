@@ -27,9 +27,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EnumOrdinalDeserializer<T extends Enum<T>> implements JsonDeserializer<T> {
+public final class EnumOrdinalDeserializer<T extends Enum<T>> implements JsonDeserializer<T> {
 
-    private Map<String, T> mapping = new HashMap<>();
+    private final Map<String, T> mapping = new HashMap<>();
 
     public EnumOrdinalDeserializer(Class<T> enumClass) {
         for (T constant : enumClass.getEnumConstants()) {

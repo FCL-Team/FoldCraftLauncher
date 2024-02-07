@@ -17,10 +17,25 @@
  */
 package com.tungsten.fclcore.util;
 
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
+
 import java.util.Objects;
 
-public final class Holder<T> {
+public final class Holder<T> implements InvalidationListener {
     public T value;
+
+    public Holder() {
+    }
+
+    public Holder(T value) {
+        this.value = value;
+    }
+
+    @Override
+    public void invalidated(Observable observable) {
+        // no-op
+    }
 
     @Override
     public int hashCode() {
