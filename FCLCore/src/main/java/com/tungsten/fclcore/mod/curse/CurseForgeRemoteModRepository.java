@@ -21,6 +21,8 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.R;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
@@ -42,12 +44,12 @@ import java.util.stream.Stream;
 public final class CurseForgeRemoteModRepository implements RemoteModRepository {
 
     private static final String PREFIX = "https://api.curseforge.com";
-    private static final String apiKey = "$2a$10$qqJ3zZFG5CDsVHk8eV5ft.2ywg2edBtHwS3gzFnw7CDe3X2cKpWZG";
+    private static final String apiKey = FCLPath.CONTEXT.getString(R.string.curse_api_key);
 
     private static final int WORD_PERFECT_MATCH_WEIGHT = 50;
 
     public static boolean isAvailable() {
-        return true;
+        return !apiKey.equals("null");
     }
 
     private final Type type;

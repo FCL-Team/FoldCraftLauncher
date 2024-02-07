@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_version">auto_change_by_gradle</string>
+
+    <string name="curse_api_key">null</string>
 </resources>

@@ -7,16 +7,19 @@ android {
     namespace 'com.tungsten.fcl'
     compileSdk 34
 
+    def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
+    def curseApiKey = System.getenv("CURSE_API_KEY")
+    if (pwd == null || curseApiKey == null) {
+        if (new File("${rootDir}/local.properties").exists()) {
+            Properties prop = new Properties()
+            prop.load(new FileInputStream("${rootDir}/local.properties"))
+            pwd = prop.get("pwd")
+            curseApiKey = prop.get("curse.api.key")
+        }
+    }
+
     signingConfigs {
         FCLKey {
-            def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
-            if (pwd == null) {
-                if (new File("${rootDir}/local.properties").exists()) {
-                    Properties prop = new Properties()
-                    prop.load(new FileInputStream("${rootDir}/local.properties"))
-                    pwd = prop.get("pwd")
-                }
-            }
             storeFile file("../key-store.jks")
             storePassword pwd
             keyAlias "FCL-Key"
@@ -53,6 +56,7 @@ android {
         }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
+            resValue "string", "curse_api_key", curseApiKey
         }
     }
     applicationVariants.configureEach { variant ->
