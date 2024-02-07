@@ -4,6 +4,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION.SDK_INT;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -25,7 +26,9 @@ import com.tungsten.fcl.activity.WebActivity;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
+import java.util.Objects;
 
+@SuppressLint("DiscouragedApi")
 public class AndroidUtils {
 
     public static void openLink(Context context, String link) {
@@ -61,7 +64,7 @@ public class AndroidUtils {
 
     public static String getLocalizedText(Context context, String key) {
         int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
-        if (resId != 0 && context.getString(resId) != null) {
+        if (resId != 0) {
             return context.getString(resId);
         } else {
             return key;
@@ -70,7 +73,7 @@ public class AndroidUtils {
 
     public static boolean hasStringId(Context context, String key) {
         int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
-        return resId != 0 && context.getString(resId) != null;
+        return resId != 0;
     }
 
 
@@ -94,9 +97,9 @@ public class AndroidUtils {
             try {
                 Rect notchRect;
                 if (SDK_INT >= Build.VERSION_CODES.S) {
-                    notchRect = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                    notchRect = Objects.requireNonNull(wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout()).getBoundingRects().get(0);
                 } else {
-                    notchRect = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout().getBoundingRects().get(0);
+                    notchRect = Objects.requireNonNull(context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout()).getBoundingRects().get(0);
                 }
                 return point.x - Math.min(notchRect.width(), notchRect.height());
             } catch (Exception e) {
