@@ -24,7 +24,7 @@
 
 - [x] Run Minecraft on all versions
 - [x] Run Forge, NeoForge, LiteLoader, OptiFine, Fabric, Quilt and others
-- [x] Java 8 and Java 17
+- [x] Java 8, Java 11, Java 17 and Java 21
 - [x] Mouse Virtual
 - [x] Download Mods, ModPacks, ResourcePacks and Worlds
 - [x] Using Shaders (with VirGL/Zink)
