@@ -27,6 +27,7 @@ import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.Validation;
 import com.tungsten.fclcore.util.io.HttpRequest;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +59,15 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
     }
 
     @Override
+    public Optional<NeoForgeRemoteVersion> getVersion(String gameVersion, String remoteVersion) {
+        if (gameVersion.equals("1.20.1")) {
+            remoteVersion = NeoForgeRemoteVersion.fixInvalidVersion(remoteVersion);
+            remoteVersion = VersionNumber.compare(remoteVersion, "47.1.85") >= 0 ? "1.20.1-" + remoteVersion : remoteVersion;
+        }
+        return super.getVersion(gameVersion, remoteVersion);
+    }
+
+    @Override
     public CompletableFuture<?> refreshAsync(String gameVersion) {
         return CompletableFuture.completedFuture((Void) null)
                 .thenApplyAsync(wrap(unused -> HttpRequest.GET(apiRoot + "/neoforge/list/" + gameVersion).<List<NeoForgeVersion>>getJson(new TypeToken<List<NeoForgeVersion>>() {
@@ -86,12 +96,6 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
                 });
     }
 
-    @Override
-    public Optional<NeoForgeRemoteVersion> getVersion(String gameVersion, String remoteVersion) {
-        remoteVersion = StringUtils.substringAfter(remoteVersion, "-", remoteVersion);
-        return super.getVersion(gameVersion, remoteVersion);
-    }
-
     private static final class NeoForgeVersion implements Validation {
         private final String rawVersion;
 
@@ -104,18 +108,6 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
             this.rawVersion = rawVersion;
             this.version = version;
             this.mcVersion = mcVersion;
-        }
-
-        public String getRawVersion() {
-            return this.rawVersion;
-        }
-
-        public String getVersion() {
-            return this.version;
-        }
-
-        public String getMcVersion() {
-            return this.mcVersion;
         }
 
         @Override

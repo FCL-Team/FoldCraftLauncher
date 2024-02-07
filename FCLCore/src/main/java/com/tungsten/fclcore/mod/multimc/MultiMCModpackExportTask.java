@@ -20,6 +20,7 @@ package com.tungsten.fclcore.mod.multimc;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOADER;
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.NEO_FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT;
 
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -80,9 +81,8 @@ public class MultiMCModpackExportTask extends Task<Void> {
             components.add(new MultiMCManifest.MultiMCManifestComponent(true, false, "net.minecraft", gameVersion));
             analyzer.getVersion(FORGE).ifPresent(forgeVersion ->
                     components.add(new MultiMCManifest.MultiMCManifestComponent(false, false, "net.minecraftforge", forgeVersion)));
-            // MultiMC hasn't supported NeoForge yet.
-            //  analyzer.getVersion(NEO_FORGE).ifPresent(neoForgeVersion ->
-            //          components.add(new MultiMCManifest.MultiMCManifestComponent(false, false, "net.neoforged", neoForgeVersion)));
+            analyzer.getVersion(NEO_FORGE).ifPresent(neoForgeVersion ->
+                    components.add(new MultiMCManifest.MultiMCManifestComponent(false, false, "net.neoforged", neoForgeVersion)));
             analyzer.getVersion(LITELOADER).ifPresent(liteLoaderVersion ->
                     components.add(new MultiMCManifest.MultiMCManifestComponent(false, false, "com.mumfrey.liteloader", liteLoaderVersion)));
             analyzer.getVersion(FABRIC).ifPresent(fabricVersion ->
