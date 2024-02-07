@@ -1,8 +1,8 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.StringUtils.parseColorEscapes;
+import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 
@@ -20,8 +20,7 @@ import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 
 public class WorldListItem {
     private final Context context;
@@ -32,8 +31,6 @@ public class WorldListItem {
     private final World world;
 
     public WorldListItem(Context context, Activity activity, FCLUILayout parent, World world) {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(context.getString(R.string.world_time));
-
         this.context = context;
 
         this.activity = activity;
@@ -44,7 +41,7 @@ public class WorldListItem {
 
         title.set(parseColorEscapes(world.getWorldName()));
 
-        subtitle.set(AndroidUtils.getLocalizedText(context, "world_description", world.getFileName(), SIMPLE_DATE_FORMAT.format(new Date(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion()));
+        subtitle.set(AndroidUtils.getLocalizedText(context, "world_description", world.getFileName(), formatDateTime(context, Instant.ofEpochMilli(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion()));
     }
 
     public StringProperty titleProperty() {

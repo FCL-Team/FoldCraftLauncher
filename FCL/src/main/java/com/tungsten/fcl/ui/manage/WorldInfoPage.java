@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
+import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -42,10 +43,9 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -106,7 +106,6 @@ public class WorldInfoPage extends FCLTempPage {
         xpLevel = findViewById(R.id.xp_level);
     }
 
-    @SuppressLint("SimpleDateFormat")
     @Override
     public void onStart() {
         super.onStart();
@@ -117,7 +116,7 @@ public class WorldInfoPage extends FCLTempPage {
         if (seedTag instanceof LongTag) {
             seed.setText(seedTag.getValue().toString());
         }
-        lastPlayed.setText(new SimpleDateFormat(getContext().getString(R.string.world_time)).format(new Date(world.getLastPlayed())));
+        lastPlayed.setText(formatDateTime(getContext(), Instant.ofEpochMilli(world.getLastPlayed())));
         Tag timeTag = dataTag.get("Time");
         if (timeTag instanceof LongTag) {
             long days = ((LongTag) timeTag).getValue() / 24000;
