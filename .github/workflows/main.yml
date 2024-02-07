@@ -6,7 +6,7 @@ on:
       - ''
   push:
     tags:
-      - 'v*'
+      - '*'
     branches-ignore:
       - ''
   workflow_dispatch:
