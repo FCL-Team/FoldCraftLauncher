@@ -36,6 +36,7 @@ import com.tungsten.fclcore.util.Pair;
 public final class NetworkUtils {
     public static final String PARAMETER_SEPARATOR = "&";
     public static final String NAME_VALUE_SEPARATOR = "=";
+    private static final int TIME_OUT = 8000;
 
     private NetworkUtils() {
     }
@@ -101,8 +102,8 @@ public final class NetworkUtils {
             connection.setRequestProperty("User-Agent", "FCL/" + FCLPath.CONTEXT.getString(R.string.app_version));
         }
         connection.setUseCaches(false);
-        connection.setConnectTimeout(5000);
-        connection.setReadTimeout(5000);
+        connection.setConnectTimeout(TIME_OUT);
+        connection.setReadTimeout(TIME_OUT);
         connection.setRequestProperty("Accept-Language", Locale.getDefault().toString());
         return connection;
     }
@@ -157,8 +158,8 @@ public final class NetworkUtils {
         while (true) {
 
             conn.setUseCaches(false);
-            conn.setConnectTimeout(8000);
-            conn.setReadTimeout(8000);
+            conn.setConnectTimeout(TIME_OUT);
+            conn.setReadTimeout(TIME_OUT);
             conn.setInstanceFollowRedirects(false);
             Map<String, List<String>> properties = conn.getRequestProperties();
             String method = conn.getRequestMethod();
