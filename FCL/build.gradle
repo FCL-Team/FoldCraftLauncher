@@ -9,12 +9,14 @@ android {
 
     def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
     def curseApiKey = System.getenv("CURSE_API_KEY")
-    if (pwd == null || curseApiKey == null) {
+    def oauthApiKey = System.getenv("OAUTH_API_KEY")
+    if (pwd == null || curseApiKey == null || oauthApiKey == null) {
         if (new File("${rootDir}/local.properties").exists()) {
             Properties prop = new Properties()
             prop.load(new FileInputStream("${rootDir}/local.properties"))
             pwd = prop.get("pwd")
             curseApiKey = prop.get("curse.api.key")
+            oauthApiKey = prop.get("oauth.api.key")
         }
     }
 
@@ -57,6 +59,7 @@ android {
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
             resValue "string", "curse_api_key", curseApiKey
+            resValue "string", "oauth_api_key", oauthApiKey
         }
     }
     applicationVariants.configureEach { variant ->

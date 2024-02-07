@@ -159,7 +159,7 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
 
         @Override
         public String getClientId() {
-            return "d903cc0e-c3b4-4a3c-b347-06c2e6269be0";
+            return FCLPath.CONTEXT.getString(R.string.oauth_api_key);
         }
 
         @Override
