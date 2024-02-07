@@ -625,7 +625,7 @@
               "fillColorPressed": -3355444
             },
             "baseInfo": {
-              "visibilityType": "IN_GAME",
+              "visibilityType": "ALWAYS",
               "xPosition": 100,
               "yPosition": 0,
               "sizeType": "PERCENTAGE",
