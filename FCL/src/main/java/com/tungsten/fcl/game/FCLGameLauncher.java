@@ -31,6 +31,7 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.launch.DefaultLauncher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.BufferedReader;
@@ -38,7 +39,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -88,11 +88,20 @@ public final class FCLGameLauncher extends DefaultLauncher {
 
     private void modifyOptions(File optionsFile, boolean overwrite) {
         StringBuilder str = new StringBuilder();
+        String lang;
+        VersionNumber gameVersion = VersionNumber.asVersion(repository.getGameVersion(version).orElse("0.0"));
+        if (gameVersion.compareTo("1.1") < 0) {
+            lang = null;
+        } else if (gameVersion.compareTo("1.11") < 0) {
+            lang = "zh_CN";
+        } else {
+            lang = "zh_cn";
+        }
         try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite) {
-                    str.append("lang:zh_CN\n");
+                if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite && lang != null) {
+                    str.append("lang:").append(lang).append("\n");
                 } else if (line.contains("forceUnicodeFont:")) {
                     str.append("forceUnicodeFont:false\n");
                 } else {
