@@ -92,7 +92,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         if (remoteVersion instanceof LiteLoaderRemoteVersion)
             return getContext().getDrawable(R.drawable.img_chicken);
         else if (remoteVersion instanceof OptiFineRemoteVersion)
-            return getContext().getDrawable(R.drawable.img_command);
+            return getContext().getDrawable(R.drawable.img_optifine);
         else if (remoteVersion instanceof ForgeRemoteVersion)
             return getContext().getDrawable(R.drawable.img_forge);
         else if (remoteVersion instanceof NeoForgeRemoteVersion)

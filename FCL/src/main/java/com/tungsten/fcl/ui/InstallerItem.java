@@ -86,7 +86,7 @@ public class InstallerItem {
             case LITELOADER:
                 return context.getDrawable(R.drawable.img_chicken);
             case OPTIFINE:
-                return context.getDrawable(R.drawable.img_command);
+                return context.getDrawable(R.drawable.img_optifine);
             case FABRIC:
             case FABRIC_API:
                 return context.getDrawable(R.drawable.img_fabric);
