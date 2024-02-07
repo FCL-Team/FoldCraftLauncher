@@ -29,7 +29,6 @@ import com.tungsten.fclcore.util.io.IOUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -37,6 +36,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -70,7 +70,7 @@ public class CacheRepository {
             }
 
             if (Files.isRegularFile(indexFile)) {
-                ETagIndex raw = JsonUtils.GSON.fromJson(FileUtils.readText(indexFile.toFile()), ETagIndex.class);
+                ETagIndex raw = JsonUtils.GSON.fromJson(FileUtils.readText(indexFile), ETagIndex.class);
                 if (raw == null)
                     index = new HashMap<>();
                 else
@@ -124,12 +124,12 @@ public class CacheRepository {
     public void tryCacheFile(Path path, String algorithm, String hash) throws IOException {
         Path cache = getFile(algorithm, hash);
         if (Files.isRegularFile(cache)) return;
-        FileUtils.copyFile(path.toFile(), cache.toFile());
+        FileUtils.copyFile(path, cache);
     }
 
     public Path cacheFile(Path path, String algorithm, String hash) throws IOException {
         Path cache = getFile(algorithm, hash);
-        FileUtils.copyFile(path.toFile(), cache.toFile());
+        FileUtils.copyFile(path, cache);
         return cache;
     }
 
@@ -223,7 +223,7 @@ public class CacheRepository {
         cacheData(() -> {
             String hash = DigestUtils.digestToString(SHA1, bytes);
             Path cached = getFile(SHA1, hash);
-            FileUtils.writeBytes(cached.toFile(), bytes);
+            FileUtils.writeBytes(cached, bytes);
             return new CacheResult(hash, cached);
         }, conn);
     }
@@ -288,7 +288,7 @@ public class CacheRepository {
     }
 
     public void saveETagIndex() throws IOException {
-        try (RandomAccessFile file = new RandomAccessFile(indexFile.toFile(), "rw"); FileChannel channel = file.getChannel()) {
+        try (FileChannel channel = FileChannel.open(indexFile, StandardOpenOption.READ, StandardOpenOption.WRITE)) {
             FileLock lock = channel.lock();
             try {
                 ETagIndex indexOnDisk = JsonUtils.fromMaybeMalformedJson(new String(IOUtils.readFullyWithoutClosing(Channels.newInputStream(channel)), UTF_8), ETagIndex.class);
@@ -372,7 +372,7 @@ public class CacheRepository {
     /**
      * Universal cache
      */
-    public static class Storage {
+    public static final class Storage {
         private final String name;
         private Map<String, Object> storage;
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -410,7 +410,7 @@ public class CacheRepository {
             try {
                 indexFile = cacheDirectory.resolve(name + ".json");
                 if (Files.isRegularFile(indexFile)) {
-                    joinEntries(JsonUtils.fromNonNullJson(FileUtils.readText(indexFile.toFile()), new TypeToken<Map<String, Object>>() {
+                    joinEntries(JsonUtils.fromNonNullJson(FileUtils.readText(indexFile), new TypeToken<Map<String, Object>>() {
                     }.getType()));
                 }
             } catch (IOException | JsonParseException e) {
@@ -421,7 +421,7 @@ public class CacheRepository {
         }
 
         public void saveToFile() {
-            try (RandomAccessFile file = new RandomAccessFile(indexFile.toFile(), "rw"); FileChannel channel = file.getChannel()) {
+            try (FileChannel channel = FileChannel.open(indexFile, StandardOpenOption.READ, StandardOpenOption.WRITE)) {
                 FileLock lock = channel.lock();
                 try {
                     Map<String, Object> indexOnDisk = JsonUtils.fromMaybeMalformedJson(new String(IOUtils.readFullyWithoutClosing(Channels.newInputStream(channel)), UTF_8), new TypeToken<Map<String, Object>>() {
