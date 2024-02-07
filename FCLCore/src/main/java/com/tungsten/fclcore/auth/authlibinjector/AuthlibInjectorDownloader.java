@@ -93,7 +93,7 @@ public class AuthlibInjectorDownloader implements AuthlibInjectorArtifactProvide
         }
 
         try {
-            new FileDownloadTask(new URL(downloadProvider.get().injectURL(latest.downloadUrl)), artifactLocation.toFile(),
+            new FileDownloadTask(downloadProvider.get().injectURLWithCandidates(latest.downloadUrl), artifactLocation.toFile(),
                     Optional.ofNullable(latest.checksums.get("sha256"))
                             .map(checksum -> new FileDownloadTask.IntegrityCheck("SHA-256", checksum))
                             .orElse(null))
