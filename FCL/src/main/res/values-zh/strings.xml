@@ -82,6 +82,9 @@
     <string name="action_retry">重试</string>
     <string name="action_skip">跳过</string>
 
+    <string name="announcement">公告：%s</string>
+    <string name="announcement_significant">此公告为重要公告，隐藏前请确认你已阅读此公告，是否继续隐藏？</string>
+
     <string name="archive_author">作者</string>
     <string name="archive_date">发布时间</string>
     <string name="archive_game_version">游戏版本</string>
@@ -97,6 +100,7 @@
     <string name="button_copy">复制</string>
     <string name="button_download">下载</string>
     <string name="button_export">导出</string>
+    <string name="button_hide">不再显示</string>
     <string name="button_install">安装</string>
     <string name="button_mouse_left">鼠标左键</string>
     <string name="button_mouse_right">鼠标右键</string>

@@ -97,6 +97,9 @@
     <string name="action_retry">Retry</string>
     <string name="action_skip">Skip</string>
 
+    <string name="announcement">Announcement: %s</string>
+    <string name="announcement_significant">This announcement is an important announcement. Please confirm that you have read this announcement before hiding it. Do you want to continue hiding it?</string>
+
     <string name="archive_author">Author(s)</string>
     <string name="archive_date">Publish Date</string>
     <string name="archive_game_version">Game Version</string>
@@ -112,6 +115,7 @@
     <string name="button_copy">Copy</string>
     <string name="button_download">Download</string>
     <string name="button_export">Export</string>
+    <string name="button_hide">Hide</string>
     <string name="button_install">Install</string>
     <string name="button_mouse_left">Mouse Left</string>
     <string name="button_mouse_right">Mouse Right</string>
