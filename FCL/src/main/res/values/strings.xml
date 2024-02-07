@@ -700,10 +700,10 @@
     <string name="search_hint_chinese">Search queries support both Chinese and English</string>
     <string name="search_hint_english">Only English is supported</string>
     <string name="search_sort">Sort By</string>
-    <string name="search_first_page">The first page</string>
+    <string name="search_first_page">First</string>
     <string name="search_previous_page" translatable="false">◀</string>
     <string name="search_next_page" translatable="false">▶</string>
-    <string name="search_last_page">The last page</string>
+    <string name="search_last_page">Last</string>
     <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
