@@ -9,6 +9,7 @@
 #include <internal.h>
 #include <android/native_window.h>
 #include <android/log.h>
+#include <jni.h>
 
 int (*vtest_main) (int argc, char** argv);
 void (*vtest_swap_buffers) (void);
@@ -468,3 +469,8 @@ GLFWAPI OSMesaContext glfwGetOSMesaContext(GLFWwindow* handle)
     return window->context.osmesa.handle;
 }
 
+JNIEXPORT jlong JNICALL
+Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(JNIEnv *env, jclass thiz) {
+    if (getenv("VULKAN_PTR") == NULL) load_vulkan();
+    return strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
+}
