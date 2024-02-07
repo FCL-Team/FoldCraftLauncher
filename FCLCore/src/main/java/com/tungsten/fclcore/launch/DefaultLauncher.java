@@ -206,7 +206,7 @@ public class DefaultLauncher extends Launcher {
 
         if (StringUtils.isNotBlank(options.getServerIp())) {
             String[] args = options.getServerIp().split(":");
-            if (VersionNumber.VERSION_COMPARATOR.compare(repository.getGameVersion(version).orElse("0.0"), "1.20") < 0) {
+            if (VersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "1.20") < 0) {
                 res.add("--server");
                 res.add(args[0]);
                 res.add("--port");
@@ -345,7 +345,7 @@ public class DefaultLauncher extends Launcher {
     }
 
     private boolean isUsingLog4j() {
-        return VersionNumber.VERSION_COMPARATOR.compare(repository.getGameVersion(version).orElse("1.7"), "1.7") >= 0;
+        return VersionNumber.compare(repository.getGameVersion(version).orElse("1.7"), "1.7") >= 0;
     }
 
     public File getLog4jConfigurationFile() {
@@ -355,7 +355,7 @@ public class DefaultLauncher extends Launcher {
     public void extractLog4jConfigurationFile() throws IOException {
         File targetFile = getLog4jConfigurationFile();
         InputStream source;
-        if (VersionNumber.VERSION_COMPARATOR.compare(repository.getGameVersion(version).orElse("0.0"), "1.12") < 0) {
+        if (VersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "1.12") < 0) {
             source = DefaultLauncher.class.getResourceAsStream("/assets/game/log4j2-1.7.xml");
         } else {
             source = DefaultLauncher.class.getResourceAsStream("/assets/game/log4j2-1.12.xml");

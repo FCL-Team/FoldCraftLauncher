@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -126,7 +127,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
     private void loadGameVersions() {
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), versions.keys().stream()
-                .sorted(VersionNumber.VERSION_COMPARATOR.reversed())
+                .sorted(Collections.reverseOrder(VersionNumber::compare))
                 .collect(Collectors.toList()), v -> {
             RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
             DownloadPageManager.getInstance().showTempPage(page);
