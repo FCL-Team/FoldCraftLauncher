@@ -28,6 +28,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -103,7 +104,7 @@ public class InstallerItem {
         return skin.getView();
     }
 
-    public static class InstallerItemGroup {
+    public final static class InstallerItemGroup {
         private final Context context;
 
         public final InstallerItem fabric;
@@ -115,7 +116,9 @@ public class InstallerItem {
         public final InstallerItem quilt;
         public final InstallerItem quiltApi;
 
-        public InstallerItemGroup(Context context) {
+        private final InstallerItem[] libraries;
+
+        public InstallerItemGroup(Context context, String gameVersion) {
             this.context = context;
 
             fabric = new InstallerItem(context, FABRIC);
@@ -188,10 +191,18 @@ public class InstallerItem {
                 if (quilt.libraryVersion.get() == null) return QUILT.getPatchId();
                 else return null;
             }, quilt.libraryVersion));
+
+            if (gameVersion == null) {
+                this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi};
+            } else if (VersionNumber.compare(gameVersion, "1.13") < 0) {
+                this.libraries = new InstallerItem[]{forge, liteLoader, optiFine};
+            } else {
+                this.libraries = new InstallerItem[]{forge, neoForge, optiFine, fabric, fabricApi, quilt, quiltApi};
+            }
         }
 
         public InstallerItem[] getLibraries() {
-            return new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi};
+            return libraries;
         }
 
         public View getView() {
