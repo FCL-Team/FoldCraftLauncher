@@ -128,7 +128,7 @@ tasks.register('updateMap') {
                     def date = new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
                     it = it.replaceAll(': ".+', ": \"${date}\",")
                 } else if (it.contains("url")) {
-                    it = it.replaceAll('download/.+"', "download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}.apk\"")
+                    it = it.replaceAll('download/.+"', "download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}-all.apk\"")
                 }
                 list.add(it + "\n")
             }
