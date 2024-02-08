@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 16,
-    "versionName": "1.1.4",
-    "date": "2024.02.07",
+    "versionCode": 1141,
+    "versionName": "1.1.4.1",
+    "date": "2024.02.08",
     "description": [
       {
         "lang": "en",
-        "text": "JRE 11 support.\nJRE 21 support.\nFix some bugs, see github for details."
+        "text": "JRE 11 support.\nJRE 21 support.\nFix CurseForge download.\nFix some bugs, see github for details."
       },
       {
         "lang": "zh_CN",
-        "text": "支持 JRE 11。\n支持 JRE 21。\n修复一些错误，详情见 Github，若无法下载或下载速度过慢，请使用网盘下载。"
+        "text": "支持 JRE 11。\n支持 JRE 21。\n修复 CurseForge 下载。\n修复一些错误，详情见 Github，若无法下载或下载速度过慢，请使用网盘下载。"
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.4/FCL-release-1.1.4-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.4.1/FCL-release-1.1.4.1-all.apk"
   }
 ]
