@@ -34,6 +34,7 @@ import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
+import com.tungsten.fcllibrary.component.theme.Theme;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -69,6 +70,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLSwitch ignoreNotch;
+    private FCLSeekBar animationSpeed;
+    private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
     private FCLSpinner<String> downloadType;
@@ -94,6 +97,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         ignoreNotch = findViewById(R.id.ignore_notch);
+        animationSpeed = findViewById(R.id.animation_speed);
+        animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
         downloadType = findViewById(R.id.source);
@@ -123,6 +128,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         ignoreNotch.setOnCheckedChangeListener(this);
+
+        animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
+        animationSpeed.addProgressListener();
+        animationSpeed.progressProperty().bindBidirectional(ThemeEngine.getInstance().getTheme().animationSpeedProperty());
+        animationSpeedText.stringProperty().bind(Bindings.createStringBinding(() -> animationSpeed.getProgress() * 100 + " MS", animationSpeed.progressProperty()));
+        ThemeEngine.getInstance().getTheme().animationSpeedProperty().addListener(observable -> Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme()));
 
         autoSource.setChecked(config().autoChooseDownloadTypeProperty().get());
         autoSource.addCheckedChangeListener();
