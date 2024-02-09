@@ -10,6 +10,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
+import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public class VersionListPage extends FCLCommonPage implements View.OnClickListener {
@@ -19,6 +20,7 @@ public class VersionListPage extends FCLCommonPage implements View.OnClickListen
     private ListView profileListView;
 
     private VersionList versionList;
+    private FCLTextView dirPath;
 
     public VersionListPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
@@ -30,6 +32,7 @@ public class VersionListPage extends FCLCommonPage implements View.OnClickListen
         refresh = findViewById(R.id.refresh);
         newProfile = findViewById(R.id.new_profile);
         profileListView = findViewById(R.id.profile_list);
+        dirPath = findViewById(R.id.dir_path);
         FCLProgressBar progressBar = findViewById(R.id.progress);
         ListView versionListView = findViewById(R.id.version_list);
 
@@ -37,7 +40,7 @@ public class VersionListPage extends FCLCommonPage implements View.OnClickListen
         newProfile.setOnClickListener(this);
 
         refreshProfile();
-        versionList = new VersionList(getContext(), versionListView, refresh, progressBar);
+        versionList = new VersionList(getContext(), versionListView, refresh, progressBar, dirPath);
     }
 
     @Override

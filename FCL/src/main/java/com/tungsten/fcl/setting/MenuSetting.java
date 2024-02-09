@@ -41,7 +41,7 @@ public class MenuSetting {
         this.lockMenuViewProperty.set(lockMenuView);
     }
 
-    private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.5d);
+    private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.65d);
 
     public DoubleProperty menuPositionXProperty() {
         return menuPositionXProperty;
@@ -55,7 +55,7 @@ public class MenuSetting {
         this.menuPositionXProperty.set(menuPositionX);
     }
 
-    private final DoubleProperty menuPositionYProperty = new SimpleDoubleProperty(this, "menuPositionY", 0.5d);
+    private final DoubleProperty menuPositionYProperty = new SimpleDoubleProperty(this, "menuPositionY", 0.0d);
 
     public DoubleProperty menuPositionYProperty() {
         return menuPositionYProperty;

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ui_bg_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
@@ -15,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
+        <WebView
             android:id="@+id/eula"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
