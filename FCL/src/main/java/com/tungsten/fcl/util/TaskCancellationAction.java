@@ -21,7 +21,7 @@ import com.tungsten.fcl.ui.TaskDialog;
 
 import java.util.function.Consumer;
 
-public class TaskCancellationAction {
+public final class TaskCancellationAction {
     public static TaskCancellationAction NORMAL = new TaskCancellationAction(() -> {
     });
 

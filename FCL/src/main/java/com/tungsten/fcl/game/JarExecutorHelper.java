@@ -75,11 +75,11 @@ public class JarExecutorHelper {
     }
 
     private static int getNearestJavaVersion(int majorVersion) {
-        if (majorVersion >= JavaVersion.JAVA_VERSION_17)
+        if (majorVersion > JavaVersion.JAVA_VERSION_17)
             return JavaVersion.JAVA_VERSION_21;
-        if (majorVersion >= JavaVersion.JAVA_VERSION_11)
+        if (majorVersion > JavaVersion.JAVA_VERSION_11)
             return JavaVersion.JAVA_VERSION_17;
-        if (majorVersion >= JavaVersion.JAVA_VERSION_8)
+        if (majorVersion > JavaVersion.JAVA_VERSION_8)
             return JavaVersion.JAVA_VERSION_11;
         return JavaVersion.JAVA_VERSION_8;
     }

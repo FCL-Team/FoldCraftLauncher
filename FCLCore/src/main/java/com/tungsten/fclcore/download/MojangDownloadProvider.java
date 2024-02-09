@@ -22,7 +22,7 @@ import com.tungsten.fclcore.download.fabric.FabricVersionList;
 import com.tungsten.fclcore.download.forge.ForgeBMCLVersionList;
 import com.tungsten.fclcore.download.game.GameVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderVersionList;
-import com.tungsten.fclcore.download.neoforge.NeoForgeBMCLVersionList;
+import com.tungsten.fclcore.download.neoforge.NeoForgeOfficialVersionList;
 import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
@@ -35,7 +35,7 @@ public class MojangDownloadProvider implements DownloadProvider {
     private final FabricVersionList fabric;
     private final FabricAPIVersionList fabricApi;
     private final ForgeBMCLVersionList forge;
-    private final NeoForgeBMCLVersionList neoforge;
+    private final NeoForgeOfficialVersionList neoforge;
     private final LiteLoaderVersionList liteLoader;
     private final OptiFineBMCLVersionList optifine;
     private final QuiltVersionList quilt;
@@ -48,7 +48,7 @@ public class MojangDownloadProvider implements DownloadProvider {
         this.fabric = new FabricVersionList(this);
         this.fabricApi = new FabricAPIVersionList(this);
         this.forge = new ForgeBMCLVersionList(apiRoot);
-        this.neoforge = new NeoForgeBMCLVersionList(apiRoot);
+        this.neoforge = new NeoForgeOfficialVersionList(this);
         this.liteLoader = new LiteLoaderVersionList(this);
         this.optifine = new OptiFineBMCLVersionList(apiRoot);
         this.quilt = new QuiltVersionList(this);

@@ -17,7 +17,7 @@
  */
 package com.tungsten.fclcore.util;
 
-public class ToStringBuilder {
+public final class ToStringBuilder {
 
     private final StringBuilder stringBuilder;
     private boolean first = true;

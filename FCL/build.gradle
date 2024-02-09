@@ -7,18 +7,35 @@ android {
     namespace 'com.tungsten.fcl'
     compileSdk 34
 
+    def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
+    def curseApiKey = System.getenv("CURSE_API_KEY")
+    def oauthApiKey = System.getenv("OAUTH_API_KEY")
+    if (pwd == null || curseApiKey == null || oauthApiKey == null) {
+        if (new File("${rootDir}/local.properties").exists()) {
+            Properties prop = new Properties()
+            prop.load(new FileInputStream("${rootDir}/local.properties"))
+            pwd = prop.get("pwd")
+            curseApiKey = prop.get("curse.api.key")
+            oauthApiKey = prop.get("oauth.api.key")
+        }
+    }
+    if (curseApiKey == null || oauthApiKey == null) {
+        curseApiKey = "null"
+        oauthApiKey = "null"
+    }
+
     signingConfigs {
         FCLKey {
-            def pwd = System.getenv("FCL_KEYSTORE_PASSWORD")
-            if (pwd == null) {
-                Properties prop = new Properties()
-                prop.load(new FileInputStream("${rootDir}/local.properties"))
-                pwd = prop.get("pwd")
-            }
             storeFile file("../key-store.jks")
             storePassword pwd
             keyAlias "FCL-Key"
             keyPassword pwd
+        }
+        FCLDebugKey {
+            storeFile file("../debug-key.jks")
+            storePassword "FCL-Debug"
+            keyAlias "FCL-Debug"
+            keyPassword "FCL-Debug"
         }
     }
 
@@ -26,8 +43,8 @@ android {
         applicationId "com.tungsten.fcl.sweetrice"
         minSdk 26
         targetSdk 34
-        versionCode 15
-        versionName "1.1.3"
+        versionCode 1141
+        versionName "1.1.4.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,8 +55,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.FCLKey
         }
+        fordebug {
+            initWith debug
+            applicationIdSuffix ".debug"
+            signingConfig signingConfigs.FCLDebugKey
+        }
         configureEach {
             resValue "string", "app_version", "${defaultConfig.versionName}"
+            resValue "string", "curse_api_key", curseApiKey
+            resValue "string", "oauth_api_key", oauthApiKey
         }
     }
     applicationVariants.configureEach { variant ->
@@ -115,7 +139,7 @@ tasks.register('updateMap') {
                     def date = new Date().format("yyyy.MM.dd", TimeZone.getTimeZone("UTC"))
                     it = it.replaceAll(': ".+', ": \"${date}\",")
                 } else if (it.contains("url")) {
-                    it = it.replaceAll('download/.+"', "download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}.apk\"")
+                    it = it.replaceAll('download/.+"', "download/${android.defaultConfig.versionName}/FCL-release-${android.defaultConfig.versionName}-all.apk\"")
                 }
                 list.add(it + "\n")
             }
@@ -145,7 +169,7 @@ dependencies {
     implementation project(path: ':FCLLibrary')
     implementation project(path: ':FCLauncher')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
-    implementation 'org.apache.commons:commons-compress:1.23.0'
+    implementation 'org.apache.commons:commons-compress:1.25.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.steveice10:opennbt:1.5'
     implementation 'com.google.code.gson:gson:2.10.1'

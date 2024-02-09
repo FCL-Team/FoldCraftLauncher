@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">SweetRiceMC 甜米</string>
-    <string name="app_version" translatable="false">1.1.3</string>
+    <string name="app_version" translatable="false">1.1.4.1</string>
+
+    <string name="oauth_api_key" translatable="false">null</string>
 
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
 
@@ -101,6 +103,9 @@
     <string name="action_retry">Retry</string>
     <string name="action_skip">Skip</string>
 
+    <string name="announcement">Announcement: %s</string>
+    <string name="announcement_significant">This announcement is an important announcement. Please confirm that you have read this announcement before hiding it. Do you want to continue hiding it?</string>
+
     <string name="archive_author">Author(s)</string>
     <string name="archive_date">Publish Date</string>
     <string name="archive_game_version">Game Version</string>
@@ -116,6 +121,7 @@
     <string name="button_copy">Copy</string>
     <string name="button_download">Download</string>
     <string name="button_export">Export</string>
+    <string name="button_hide">Hide</string>
     <string name="button_install">Install</string>
     <string name="button_mouse_left">Mouse Left</string>
     <string name="button_mouse_right">Mouse Right</string>
@@ -362,7 +368,7 @@
     <string name="game_crash_reason_optifine_is_not_compatible_with_forge">The current game crashes because OptiFine is incompatible with the current version of Forge.</string>
     <string name="game_crash_reason_mod_files_are_decompressed">The current game cannot continue to run because the Mod file has been decompressed.\nPlease put the entire Mod file directly into the Mod folder!\nIf unzipping will cause errors in the game, please delete the unzipped Mod in the Mod folder, and then start the game.</string>
     <string name="game_crash_reason_cannot_find_launch_target_fmlclient">The current game cannot be found because Forge is not installed completely.\nYou can try to uninstall Forge and reinstall it.</string>
-    <string name="game_crash_reason_shaders_mod">The current game cannot continue to run because both Optifine and Shaders Mod are installed.\nBecause Optifine has integrated Shaders Mod\'s functions, just remove Shaders Mod.</string>
+    <string name="game_crash_reason_shaders_mod">The current game cannot continue to run because both OptiFine and Shaders Mod are installed.\nBecause OptiFine has integrated Shaders Mod\'s functions, just remove Shaders Mod.</string>
     <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">The current game cannot continue to run because you have installed too many Mods, which exceeds the ID limit of the game.\nPlease try installing JEID, or delete some large Mods.</string>
     <string name="game_crash_reason_night_config_fixes">The current game cannot continue to run due to some problems with Night Config.\nYou can try to install the Night Config Fixes mod, which may help you this problem.\nFor more information, visit the mod\'s Github repository.</string>
     <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">The current game may not continue to run because of OptiFine.\nThis problem only occurs in a specific version of OptiFine. You can try changing the version of OptiFine.</string>
@@ -370,7 +376,7 @@
     <string name="game_crash_reason_loading_crashed_forge">The game crashed due to mod %1$s (%2$s).\n\nYou can try deleting or updating it.</string>
     <string name="game_crash_reason_loading_crashed_fabric">The game crashed due to mod %1$s.\n\nYou can try deleting or updating it.</string>
     <string name="game_crash_reason_forge_repeat_installation">The current game cannot continue to run due to a duplicate installation of Forge. This is a known issue.\nIt is recommended to upload the log feedback to Github so that we can find more clues and fix this question.\nCurrently you can uninstall Forge and reinstall it.</string>
-    <string name="game_crash_reason_optifine_repeat_installation">The current game cannot continue to run due to repeated installation of Optifine. \nPlease delete Optifine under the Mod folder or uninstall Optifine that is automatically installed.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">The current game cannot continue to run due to repeated installation of OptiFine. \nPlease delete OptiFine under the Mod folder or uninstall OptiFine that is automatically installed.</string>
     <string name="game_crash_reason_memory_exceeded">The game crashed due to too much memory allocated.</string>
     <string name="game_crash_reason_mod">The game crashed due to mod %1$s.\n\nYou may update or delete the mod and then try again.</string>
     <string name="game_crash_reason_mod_resolution">The game crashed due to mod resolution failure.\n\nFabric provided the following details:\n%1$s</string>
@@ -704,10 +710,10 @@
     <string name="search_hint_chinese">Search queries support both Chinese and English</string>
     <string name="search_hint_english">Only English is supported</string>
     <string name="search_sort">Sort By</string>
-    <string name="search_first_page">The first page</string>
+    <string name="search_first_page">First</string>
     <string name="search_previous_page" translatable="false">◀</string>
     <string name="search_next_page" translatable="false">▶</string>
-    <string name="search_last_page">The last page</string>
+    <string name="search_last_page">Last</string>
     <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>

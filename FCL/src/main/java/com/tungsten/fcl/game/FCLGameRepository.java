@@ -278,7 +278,7 @@ public class FCLGameRepository extends DefaultGameRepository {
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.LITELOADER))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_chicken);
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.OPTIFINE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_command);
+            return FCLPath.CONTEXT.getDrawable(R.drawable.img_optifine);
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FABRIC))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_fabric);
         else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.QUILT))

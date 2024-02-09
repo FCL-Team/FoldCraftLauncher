@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.os.Handler;
 import android.view.View;
 
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLDynamicIsland;
 
 public class DynamicIslandAnim {
@@ -62,14 +63,17 @@ public class DynamicIslandAnim {
         if (hideAnimator != null && hideAnimator.isRunning()) {
             hideAnimator.cancel();
         }
-        expandScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", scale / 2f, 0.95f).setDuration(300);
-        shrinkScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, scale / 2f).setDuration(300);
-        expandScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.5f, 0.95f).setDuration(300);
-        shrinkScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.5f).setDuration(300);
-        expandAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, 1f).setDuration(200);
-        shrinkAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.95f).setDuration(200);
-        expandAdjustAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 1f).setDuration(200);
-        shrinkAdjustAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.95f).setDuration(200);
+        int animationSpeed = ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 100;
+        int animationSpeedPri = (animationSpeed * 3) / 10;
+        int animationSpeedSec = animationSpeed / 5;
+        expandScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", scale / 2f, 0.95f).setDuration(animationSpeedPri);
+        shrinkScaleAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, scale / 2f).setDuration(animationSpeedPri);
+        expandScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.5f, 0.95f).setDuration(animationSpeedPri);
+        shrinkScaleAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 0.5f).setDuration(animationSpeedPri);
+        expandAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 0.95f, 1f).setDuration(animationSpeedSec);
+        shrinkAdjustAnimatorX = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.95f).setDuration(animationSpeedSec);
+        expandAdjustAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 0.95f, 1f).setDuration(animationSpeedSec);
+        shrinkAdjustAnimatorY = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.95f).setDuration(animationSpeedSec);
         hideAnimator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f).setDuration(2000);
     }
 

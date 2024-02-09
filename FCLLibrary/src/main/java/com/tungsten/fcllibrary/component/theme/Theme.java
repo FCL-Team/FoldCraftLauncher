@@ -30,12 +30,14 @@ public class Theme {
     private final IntegerProperty dkColor = new SimpleIntegerProperty();
     private final IntegerProperty autoTint = new SimpleIntegerProperty();
     private final BooleanProperty fullscreen = new SimpleBooleanProperty();
+    private final IntegerProperty animationSpeed = new SimpleIntegerProperty();
     private final ObjectProperty<BitmapDrawable> backgroundLt = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundDk = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundLoadingLt = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundLoadingDk = new SimpleObjectProperty<>();
 
-    public Theme(int color, boolean fullscreen, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk, BitmapDrawable backgroundLoadingLt, BitmapDrawable backgroundLoadingDk) {
+
+    public Theme(int color, boolean fullscreen, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk, BitmapDrawable backgroundLoadingLt, BitmapDrawable backgroundLoadingDk) {
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
         ltHsv[1] -= (1 - ltHsv[1]) * 0.3f;
@@ -48,6 +50,7 @@ public class Theme {
         this.ltColor.set(Color.HSVToColor(ltHsv));
         this.dkColor.set(Color.HSVToColor(dkHsv));
         this.fullscreen.set(fullscreen);
+        this.animationSpeed.set(animationSpeed);
         this.autoTint.set(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
         this.backgroundLt.set(backgroundLt);
         this.backgroundDk.set(backgroundDk);
@@ -79,6 +82,10 @@ public class Theme {
         return fullscreen.get();
     }
 
+    public int getAnimationSpeed() {
+        return animationSpeed.get();
+    }
+
     public BitmapDrawable getBackgroundLt() {
         return backgroundLt.get();
     }
@@ -105,6 +112,18 @@ public class Theme {
 
     public BooleanProperty fullscreenProperty() {
         return fullscreen;
+    }
+
+    public IntegerProperty animationSpeedProperty() {
+        return animationSpeed;
+    }
+
+    public ObjectProperty<BitmapDrawable> ltBackgroundProperty() {
+        return backgroundLt;
+    }
+
+    public ObjectProperty<BitmapDrawable> dkBackgroundProperty() {
+        return backgroundDk;
     }
 
     public BitmapDrawable getBackground(Context context) {
@@ -135,20 +154,37 @@ public class Theme {
         this.fullscreen.set(fullscreen);
     }
 
+    public void setAnimationSpeed(int animationSpeed) {
+        this.animationSpeed.set(animationSpeed);
+    }
+
+    public void setBackgroundLt(BitmapDrawable backgroundLt) {
+        this.backgroundLt.set(backgroundLt);
+    }
+
+    public void setBackgroundDk(BitmapDrawable backgroundDk) {
+        this.backgroundDk.set(backgroundDk);
+    }
+
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         int color = sharedPreferences.getInt("theme_color", context.getColor(R.color.default_theme_color));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
+
+        int animationSpeed = sharedPreferences.getInt("animation_speed", 8);
+  
         Bitmap lt = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
         BitmapDrawable backgroundLt = new BitmapDrawable(lt);
         Bitmap dk = ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark);
         BitmapDrawable backgroundDk = new BitmapDrawable(dk);
+
         Bitmap ltl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_light);
         BitmapDrawable backgroundLoadingLt = new BitmapDrawable(ltl);
         Bitmap dkl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_dark);
         BitmapDrawable backgroundLoadingDk = new BitmapDrawable(dkl);
-        return new Theme(color, fullscreen, backgroundLt, backgroundDk, backgroundLoadingLt, backgroundLoadingDk);
+        return new Theme(color, fullscreen, animationSpeed, backgroundLt, backgroundDk, backgroundLoadingLt, backgroundLoadingDk);
+
     }
 
     public static void saveTheme(Context context, Theme theme) {
@@ -158,6 +194,7 @@ public class Theme {
         editor = sharedPreferences.edit();
         editor.putInt("theme_color", theme.getColor());
         editor.putBoolean("fullscreen", theme.isFullscreen());
+        editor.putInt("animation_speed", theme.getAnimationSpeed());
         editor.apply();
     }
 }
