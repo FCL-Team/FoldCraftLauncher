@@ -173,6 +173,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         this.menu = null;
         this.displayMode = true;
         setClickable(true);
+        setElevation(112.0f);
 
         boundaryPath = new Path();
         boundaryPaint = new Paint();

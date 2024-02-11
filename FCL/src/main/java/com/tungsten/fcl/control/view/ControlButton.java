@@ -99,6 +99,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
     public ControlButton(@NonNull Context context, GameMenu gameMenu, ViewListener listener) {
         super(context);
         this.menu = gameMenu;
+        setElevation(113.0f);
 
         setStateListAnimator(null);
 
