@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1141,
-    "versionName": "1.1.4.1",
-    "date": "2024.02.08",
+    "versionCode": 1142,
+    "versionName": "1.1.4.2",
+    "date": "2024.02.11",
     "description": [
       {
         "lang": "en",
@@ -15,6 +15,6 @@
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.4.1/FCL-release-1.1.4.1-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.4.2/FCL-release-1.1.4.2-all.apk"
   }
 ]
