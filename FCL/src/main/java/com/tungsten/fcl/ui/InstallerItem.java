@@ -164,9 +164,9 @@ public class InstallerItem {
 
             mutualIncompatible(forge, fabric, quilt, neoForge);
             addIncompatibles(optiFine, fabric, quilt, neoForge);
-            addIncompatibles(fabricApi, forge, quilt, quiltApi, neoForge, liteLoader, optiFine);
-            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine);
             addIncompatibles(liteLoader, fabric, quilt, neoForge);
+            addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine);
+            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine);
 
             InvalidationListener listener = o -> {
                 for (Map.Entry<InstallerItem, Set<InstallerItem>> entry : incompatibleMap.entrySet()) {
