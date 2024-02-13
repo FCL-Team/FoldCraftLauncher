@@ -86,6 +86,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private ScrollView searchLayout;
 
     private FCLEditText nameEditText;
+    private FCLTextView sourceText;
     private FCLSpinner<String> sourceSpinner;
     private FCLSpinner<String> gameVersionSpinner;
     private FCLSpinner<CategoryIndented> categorySpinner;
@@ -207,6 +208,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         search.setOnClickListener(this);
 
         nameEditText = findViewById(R.id.name);
+        sourceText = findViewById(R.id.download_source_text);
         sourceSpinner = findViewById(R.id.download_source);
         gameVersionSpinner = findViewById(R.id.game_version);
         categorySpinner = findViewById(R.id.category);
@@ -229,6 +231,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
         nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
 
+        sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         if (downloadSources.getSize() > 1) {
             sourceSpinner.setDataList(new ArrayList<>(downloadSources));
