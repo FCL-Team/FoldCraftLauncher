@@ -58,7 +58,7 @@ jobs:
 
 #only for fork
   DebugBuild:
-    if: github.repository_owner != 'FCL-Team'
+    if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
     name: Build Debug
     runs-on: ubuntu-20.04
     steps:
