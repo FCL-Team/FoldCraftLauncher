@@ -13,7 +13,7 @@ on:
 
 jobs:
   FCLTeamBuild:
-    if: github.repository_owner == 'FCL-Team'
+    if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
         arch: [ "all", "arm", "arm64", "x86", "x64" ]
