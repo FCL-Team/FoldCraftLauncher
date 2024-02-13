@@ -482,11 +482,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private boolean keycodeOutputting = false;
 
     private void handleKeyEvent(ButtonEventData.Event event, boolean press) {
-        if (!press && !keycodeOutputting) {
+        if (!press && !keycodeOutputting)
             return;
-        }
+        keycodeOutputting = press;
         for (int keycode : event.outputKeycodesList()) {
-            keycodeOutputting = press;
             menu.getInput().sendKeyEvent(keycode, press);
         }
     }
