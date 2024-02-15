@@ -125,17 +125,17 @@ public class FCLBridge implements Serializable {
         this.callback = callback;
         this.surface = surface;
         setFCLBridge(this);
-        receiveLog("invoke redirectStdio");
+        receiveLog("invoke redirectStdio" + "\n");
         int errorCode = redirectStdio(getLogPath());
         if (errorCode != 0) {
-            receiveLog("Can't exec redirectStdio! Error code: " + errorCode);
+            receiveLog("Can't exec redirectStdio! Error code: " + errorCode + "\n");
         }
-        receiveLog("invoke setLogPipeReady");
+        receiveLog("invoke setLogPipeReady" + "\n");
         // set graphic output and event pipe
         if (surface != null) {
             handleWindow();
         }
-        receiveLog("invoke setEventPipe");
+        receiveLog("invoke setEventPipe" + "\n");
         setEventPipe();
 
         // start
@@ -171,7 +171,7 @@ public class FCLBridge implements Serializable {
     // FCLBridge callbacks
     public void onExit(int code) {
         if (callback != null) {
-            callback.onLog("OpenJDK exited with code : " + code);
+            callback.onLog("OpenJDK exited with code : " + code + "\n");
             callback.onExit(code);
         }
     }
@@ -295,10 +295,10 @@ public class FCLBridge implements Serializable {
 
     private void handleWindow() {
         if (gameDir != null) {
-            receiveLog("invoke setFCLNativeWindow");
+            receiveLog("invoke setFCLNativeWindow" + "\n");
             setFCLNativeWindow(surface);
         } else {
-            receiveLog("start Android AWT Renderer thread");
+            receiveLog("start Android AWT Renderer thread" + "\n");
             Thread canvasThread = new Thread(() -> {
                 Canvas canvas;
                 Bitmap rgbArrayBitmap = Bitmap.createBitmap(DEFAULT_WIDTH, DEFAULT_HEIGHT, Bitmap.Config.ARGB_8888);
@@ -317,7 +317,7 @@ public class FCLBridge implements Serializable {
                         surface.unlockCanvasAndPost(canvas);
                     }
                 } catch (Throwable throwable) {
-                    handler.post(() -> receiveLog(throwable.toString()));
+                    handler.post(() -> receiveLog(throwable + "\n"));
                 }
                 rgbArrayBitmap.recycle();
                 surface.release();

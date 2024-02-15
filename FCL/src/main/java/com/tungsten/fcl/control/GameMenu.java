@@ -542,10 +542,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
             try {
                 if (firstLog) {
-                    FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");
+                    FileUtils.writeText(new File(fclBridge.getLogPath()), log);
                     firstLog = false;
                 } else {
-                    FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log + "\n");
+                    FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log);
                 }
             } catch (IOException e) {
                 Logging.LOG.log(Level.WARNING, "Can't log game log to target file", e.getMessage());
