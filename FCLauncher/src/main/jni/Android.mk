@@ -93,38 +93,17 @@ LOCAL_SRC_FILES         := awt/awt_bridge.c
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE            := dyncall
-LOCAL_SRC_FILES         := lwjgl/dyncall/$(TARGET_ARCH_ABI)/libdyncall_s.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE            := dyncallback
-LOCAL_SRC_FILES         := lwjgl/dyncall/$(TARGET_ARCH_ABI)/libdyncallback_s.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE            := dynload
-LOCAL_SRC_FILES         := lwjgl/dyncall/$(TARGET_ARCH_ABI)/libdynload_s.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE            := libffi
 LOCAL_SRC_FILES         := lwjgl/libffi/$(TARGET_ARCH_ABI)/libffi.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE            := lwjgl
-LOCAL_STATIC_LIBRARIES  := dyncall \
-						   dyncallback \
-						   dynload \
-						   libffi
+LOCAL_STATIC_LIBRARIES  := libffi
 LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := lwjgl/fcl_hook.c \
 						   lwjgl/common_tools.c \
                            lwjgl/org_lwjgl_system_Callback.c \
-                           lwjgl/org_lwjgl_system_dyncall_DynCall.c \
-                           lwjgl/org_lwjgl_system_dyncall_DynCallback.c \
-                           lwjgl/org_lwjgl_system_dyncall_DynLoad.c \
                            lwjgl/org_lwjgl_system_linux_DynamicLinkLoader.c \
                            lwjgl/org_lwjgl_system_JNI.c \
                            lwjgl/org_lwjgl_system_jni_JNINativeInterface.c \
