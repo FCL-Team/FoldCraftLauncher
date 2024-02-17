@@ -65,7 +65,7 @@ public class ModVersionAdapter extends FCLAdapter {
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(version));
         viewHolder.name.setText(version.getName());
         viewHolder.tag.setText(getTag(getContext(), version));
-        viewHolder.date.setText(FORMATTER.format(version.getDatePublished().toInstant()));
+        viewHolder.date.setText(FORMATTER.format(version.getDatePublished()));
         return view;
     }
 
