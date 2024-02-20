@@ -59,7 +59,7 @@ public class ButtonStyles {
 
     public static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
         styles.addAll(getStylesFromDisk());
         checkStyles();

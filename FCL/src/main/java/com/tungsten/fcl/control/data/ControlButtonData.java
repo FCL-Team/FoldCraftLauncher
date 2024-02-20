@@ -195,10 +195,15 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             data.setText(Optional.ofNullable(obj.get("text")).map(JsonElement::getAsString).orElse(""));
-            if (obj.get("style").toString().contains("{")) {
+            if (obj.get("style").toString().contains("\"name\"")) {
                 data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlButtonStyle.DEFAULT_BUTTON_STYLE).getAsJsonObject()), new TypeToken<ControlButtonStyle>() {}.getType()));
+                ButtonStyles.init();
+                boolean add = true;
+                for (ControlButtonStyle buttonStyle : ButtonStyles.getStyles())
+                    if (buttonStyle.getName().equals(data.getStyle().getName())) add = false;
+                if (add) ButtonStyles.addStyle(data.getStyle());
             } else {
-                data.setStyle(Optional.ofNullable(ButtonStyles.findStyleByName(obj.get("style").getAsString())).orElse(ControlButtonStyle.DEFAULT_BUTTON_STYLE));
+                data.setStyle(ButtonStyles.findStyleByName(obj.get("style").getAsString()));
             }
             data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new BaseInfoData()).getAsJsonObject()), new TypeToken<BaseInfoData>(){}.getType()));
             data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonEventData()).getAsJsonObject()), new TypeToken<ButtonEventData>(){}.getType()));
