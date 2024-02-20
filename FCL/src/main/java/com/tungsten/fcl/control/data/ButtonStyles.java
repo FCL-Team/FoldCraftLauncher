@@ -61,7 +61,7 @@ public class ButtonStyles {
         if (initialized)
             return;
 
-        styles.addAll(getStylesFromDisk());
+        getStylesFromDisk().forEach(ButtonStyles::addStyle);
         checkStyles();
 
         initialized = true;
@@ -98,7 +98,10 @@ public class ButtonStyles {
 
     public static void addStyle(ControlButtonStyle style) {
         if (!initialized) return;
-        styles.add(style);
+        boolean add = true;
+        for (ControlButtonStyle buttonStyle : getStyles())
+            if (buttonStyle.getName().equals(style.getName())) add = false;
+        if (add) styles.add(style);
     }
 
     public static void removeStyles(ControlButtonStyle style) {

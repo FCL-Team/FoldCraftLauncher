@@ -59,9 +59,9 @@ public class DirectionStyles {
 
     public static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
-        styles.addAll(getStylesFromDisk());
+        getStylesFromDisk().forEach(DirectionStyles::addStyle);
         checkStyles();
 
         initialized = true;
@@ -98,7 +98,10 @@ public class DirectionStyles {
 
     public static void addStyle(ControlDirectionStyle style) {
         if (!initialized) return;
-        styles.add(style);
+        boolean add = true;
+        for (ControlDirectionStyle directionStyle : getStyles())
+            if (directionStyle.getName().equals(style.getName())) add = false;
+        if (add) styles.add(style);
     }
 
     public static void removeStyles(ControlDirectionStyle style) {

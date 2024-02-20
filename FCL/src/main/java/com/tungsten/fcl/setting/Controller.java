@@ -17,7 +17,11 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.control.data.ButtonStyles;
+import com.tungsten.fcl.control.data.ControlButtonStyle;
+import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -268,6 +272,8 @@ public class Controller implements Cloneable, Observable {
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
+            jsonObject.add("buttonStyles", gson.toJsonTree(new ArrayList<>(ButtonStyles.getStyles()), new TypeToken<ArrayList<ControlButtonStyle>>(){}.getType()).getAsJsonArray());
+            jsonObject.add("directionStyles", gson.toJsonTree(new ArrayList<>(DirectionStyles.getStyles()), new TypeToken<ArrayList<ControlDirectionStyle>>(){}.getType()).getAsJsonArray());
             jsonObject.add("viewGroups", gson.toJsonTree(new ArrayList<>(src.viewGroups()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()).getAsJsonArray());
 
             return jsonObject;

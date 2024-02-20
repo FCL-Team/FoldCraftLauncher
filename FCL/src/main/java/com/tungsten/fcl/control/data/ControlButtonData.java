@@ -198,10 +198,7 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
             if (obj.get("style").toString().contains("\"name\"")) {
                 data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlButtonStyle.DEFAULT_BUTTON_STYLE).getAsJsonObject()), new TypeToken<ControlButtonStyle>() {}.getType()));
                 ButtonStyles.init();
-                boolean add = true;
-                for (ControlButtonStyle buttonStyle : ButtonStyles.getStyles())
-                    if (buttonStyle.getName().equals(data.getStyle().getName())) add = false;
-                if (add) ButtonStyles.addStyle(data.getStyle());
+                ButtonStyles.addStyle(data.getStyle());
             } else {
                 data.setStyle(ButtonStyles.findStyleByName(obj.get("style").getAsString()));
             }
