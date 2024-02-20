@@ -28,6 +28,8 @@ public class ButtonStyles {
     private static final ReadOnlyListWrapper<ControlButtonStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
 
     public static void checkStyles() {
+        if (!initialized)
+            return;
         if (styles.isEmpty()) {
             styles.add(ControlButtonStyle.DEFAULT_BUTTON_STYLE);
             saveStyles();
@@ -53,6 +55,7 @@ public class ButtonStyles {
     }
 
     static {
+        init();
         styles.addListener(onInvalidating(ButtonStyles::updateStylesStorages));
         styles.addListener(onInvalidating(ButtonStyles::checkStyles));
     }

@@ -28,6 +28,8 @@ public class DirectionStyles {
     private static final ReadOnlyListWrapper<ControlDirectionStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
 
     public static void checkStyles() {
+        if (!initialized)
+            return;
         if (styles.isEmpty()) {
             styles.add(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE);
             saveStyles();
@@ -53,6 +55,7 @@ public class DirectionStyles {
     }
 
     static {
+        init();
         styles.addListener(onInvalidating(DirectionStyles::updateStylesStorages));
         styles.addListener(onInvalidating(DirectionStyles::checkStyles));
     }
