@@ -38,7 +38,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     private FCLLinearLayout pressedStyleLayout;
 
     private ControlButtonStyle style;
-    private boolean isEdit = false;
+    private boolean isEdit;
 
     public interface Callback {
         void onStyleAdd(ControlButtonStyle style);
