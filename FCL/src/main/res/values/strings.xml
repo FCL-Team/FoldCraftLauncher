@@ -166,7 +166,7 @@
     <string name="curse_category_4478">Quests</string>
     <string name="curse_category_4484">Multiplayer</string>
     <string name="curse_category_4476">Exploration</string>
-    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_4736">Skyblock</string>
     <string name="curse_category_4475">Adventure and RPG</string>
     <string name="curse_category_4487">FTB</string>
     <string name="curse_category_4480">Map Based</string>
@@ -180,6 +180,11 @@
     <string name="curse_category_5232">Galacticraft</string>
     <string name="curse_category_5129">Vanilla+</string>
     <string name="curse_category_5189">Utility &#38; QOL</string>
+    <string name="curse_category_6814">Performance</string>
+    <string name="curse_category_6954">Integrated Dynamics</string>
+    <string name="curse_category_6484">Create</string>
+    <string name="curse_category_6821">Bug Fixes</string>
+    <string name="curse_category_6145">Skyblock</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">Utility &#38; QoL</string>
     <string name="curse_category_5192">FancyMenu</string>
