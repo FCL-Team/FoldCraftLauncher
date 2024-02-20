@@ -483,6 +483,7 @@
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
     <string name="menu_control_style_add">Add Style</string>
+    <string name="menu_control_style_edit">Edit Style</string>
     <string name="menu_control_view_group_add">Add View Group</string>
     <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
     <string name="menu_control_view_group_name">Name</string>
