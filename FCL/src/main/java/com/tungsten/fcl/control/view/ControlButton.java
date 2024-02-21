@@ -458,7 +458,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     xDist = left - buttonLeft;
                     selfX = left - xDist;
                 }
-                if (Math.abs(left - buttonRight) < xDist) {
+                if (left - buttonRight >= 0 && left - buttonRight < xDist) {
                     xPref = true;
                     prefX = buttonRight;
                     xDist = left - buttonRight - dist;
@@ -470,7 +470,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     xDist = right - buttonRight;
                     selfX = right - xDist;
                 }
-                if (Math.abs(right - buttonLeft) < xDist) {
+                if (buttonLeft - right >= 0 && buttonLeft - right < xDist) {
                     xPref = true;
                     prefX = buttonLeft;
                     xDist = right - buttonLeft + dist;
@@ -482,7 +482,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     yDist = up - buttonUp;
                     selfY = up - yDist;
                 }
-                if (Math.abs(up - buttonDown) < yDist) {
+                if (up - buttonDown >= 0 && up - buttonDown < yDist) {
                     yPref = true;
                     prefY = buttonDown;
                     yDist = up - buttonDown - dist;
@@ -494,7 +494,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     yDist = down - buttonDown;
                     selfY = down - yDist;
                 }
-                if (Math.abs(down - buttonUp) < yDist) {
+                if (buttonUp - down >= 0 && buttonUp - down < yDist) {
                     yPref = true;
                     prefY = buttonUp;
                     yDist = down - buttonUp + dist;
