@@ -14,6 +14,7 @@ import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -461,6 +462,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(deleteRunnable);
                     }
+                    autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
@@ -595,6 +597,75 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             return true;
         }
         return true;
+    }
+
+    private void autoFitPosition() {
+        ViewGroup viewGroup = (ViewGroup) getParent();
+
+        final int autoFitDist = ConvertUtils.dip2px(getContext(), 5);
+
+        boolean xPref = false;
+        boolean yPref = false;
+        int xDist = autoFitDist;
+        int yDist = autoFitDist;
+
+        int left = (int) getX();
+        int right = (int) (getX() + getWidth());
+        int up = (int) getY();
+        int down = (int) (getY() + getHeight());
+
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
+                View button = viewGroup.getChildAt(i);
+                if (button == this) {
+                    continue;
+                }
+                int buttonLeft = (int) button.getX();
+                int buttonRight = (int) (button.getX() + button.getWidth());
+                int buttonUp = (int) button.getY();
+                int buttonDown = (int) (button.getY() + button.getHeight());
+
+                if (Math.abs(left - buttonLeft) < xDist) {
+                    xPref = true;
+                    xDist = left - buttonLeft;
+                }
+                if (Math.abs(left - buttonRight) < xDist) {
+                    xPref = true;
+                    xDist = left - buttonRight;
+                }
+                if (Math.abs(right - buttonRight) < xDist) {
+                    xPref = true;
+                    xDist = right - buttonRight;
+                }
+                if (Math.abs(right - buttonLeft) < xDist) {
+                    xPref = true;
+                    xDist = right - buttonLeft;
+                }
+                if (Math.abs(up - buttonUp) < yDist) {
+                    yPref = true;
+                    yDist = up - buttonUp;
+                }
+                if (Math.abs(up - buttonDown) < yDist) {
+                    yPref = true;
+                    yDist = up - buttonDown;
+                }
+                if (Math.abs(down - buttonDown) < yDist) {
+                    yPref = true;
+                    yDist = down - buttonDown;
+                }
+                if (Math.abs(down - buttonUp) < yDist) {
+                    yPref = true;
+                    yDist = down - buttonUp;
+                }
+            }
+        }
+
+        if (xPref) {
+            setX(left - xDist);
+        }
+        if (yPref) {
+            setY(up - yDist);
+        }
     }
 
     private void handleButtonEvent(int x, int y) {

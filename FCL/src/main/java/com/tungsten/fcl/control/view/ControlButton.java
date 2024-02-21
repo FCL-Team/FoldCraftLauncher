@@ -12,6 +12,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -403,64 +404,70 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private void autoFitPosition() {
         ViewGroup viewGroup = (ViewGroup) getParent();
+
+        final int autoFitDist = ConvertUtils.dip2px(getContext(), 5);
+
+        boolean xPref = false;
+        boolean yPref = false;
+        int xDist = autoFitDist;
+        int yDist = autoFitDist;
+
+        int left = (int) getX();
+        int right = (int) (getX() + getWidth());
+        int up = (int) getY();
+        int down = (int) (getY() + getHeight());
+
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            if (viewGroup.getChildAt(i) instanceof ControlButton) {
-                ControlButton button = (ControlButton) viewGroup.getChildAt(i);
+            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
+                View button = viewGroup.getChildAt(i);
                 if (button == this) {
                     continue;
                 }
-                int left = (int) (getX() + getWidth() / 2);
-                int up = (int) (getY() + getHeight() / 2);
-                int buttonLeft = (int) (button.getX() + button.getWidth() / 2);
-                int buttonUp = (int) (button.getY() + button.getHeight() / 2);
+                int buttonLeft = (int) button.getX();
+                int buttonRight = (int) (button.getX() + button.getWidth());
+                int buttonUp = (int) button.getY();
+                int buttonDown = (int) (button.getY() + button.getHeight());
 
-                double dist = Math.hypot(left - buttonLeft, up - buttonUp);
-                int minDist = getWidth() / 2 + button.getWidth() / 2;
-                int maxDist = getWidth() / 2 + button.getWidth() / 2 + ConvertUtils.dip2px(getContext(), 8);
-                if (dist < maxDist && dist > minDist) {
-                    minDist += ConvertUtils.dip2px(getContext(), 2);
-                    double degrees = Math.toDegrees(Math.atan2(up - buttonUp, left - buttonLeft));
-                    float x = getX();
-                    float y = getY();
-                    degrees = (degrees + 360) % 360;
-                    // 0: 22.5 - 67.5
-                    // 1: 67.5 - 112.5
-                    // 2: 112.5 - 157.5
-                    // 3: 157.5 - 202.5
-                    // 4: 202.5 - 247.5
-                    // 5: 247.5 - 292.5
-                    // 6: 292.5 - 337.5
-                    // 7: 337.5 - 360 / 0
-                    switch ((int) (degrees / 45)) {
-                        case 0:
-                            x = button.getX() + minDist;
-                            y = button.getY();
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            x = button.getX();
-                            y = button.getY() + minDist;
-                            break;
-                        case 3:
-                            break;
-                        case 4:
-                            x = button.getX() - minDist;
-                            y = button.getY();
-                            break;
-                        case 5:
-                            break;
-                        case 6:
-                            x = button.getX();
-                            y = button.getY() - minDist;
-                            break;
-                        case 7:
-                            break;
-                    }
-                    setX(x);
-                    setY(y);
+                if (Math.abs(left - buttonLeft) < xDist) {
+                    xPref = true;
+                    xDist = left - buttonLeft;
+                }
+                if (Math.abs(left - buttonRight) < xDist) {
+                    xPref = true;
+                    xDist = left - buttonRight;
+                }
+                if (Math.abs(right - buttonRight) < xDist) {
+                    xPref = true;
+                    xDist = right - buttonRight;
+                }
+                if (Math.abs(right - buttonLeft) < xDist) {
+                    xPref = true;
+                    xDist = right - buttonLeft;
+                }
+                if (Math.abs(up - buttonUp) < yDist) {
+                    yPref = true;
+                    yDist = up - buttonUp;
+                }
+                if (Math.abs(up - buttonDown) < yDist) {
+                    yPref = true;
+                    yDist = up - buttonDown;
+                }
+                if (Math.abs(down - buttonDown) < yDist) {
+                    yPref = true;
+                    yDist = down - buttonDown;
+                }
+                if (Math.abs(down - buttonUp) < yDist) {
+                    yPref = true;
+                    yDist = down - buttonUp;
                 }
             }
+        }
+
+        if (xPref) {
+            setX(left - xDist);
+        }
+        if (yPref) {
+            setY(up - yDist);
         }
     }
 
