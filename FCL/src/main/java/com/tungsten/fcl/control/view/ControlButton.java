@@ -309,6 +309,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(deleteRunnable);
                     }
+                    autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
@@ -398,6 +399,69 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
         return true;
+    }
+
+    private void autoFitPosition() {
+        ViewGroup viewGroup = (ViewGroup) getParent();
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            if (viewGroup.getChildAt(i) instanceof ControlButton) {
+                ControlButton button = (ControlButton) viewGroup.getChildAt(i);
+                if (button == this) {
+                    continue;
+                }
+                int left = (int) (getX() + getWidth() / 2);
+                int up = (int) (getY() + getHeight() / 2);
+                int buttonLeft = (int) (button.getX() + button.getWidth() / 2);
+                int buttonUp = (int) (button.getY() + button.getHeight() / 2);
+
+                double dist = Math.hypot(left - buttonLeft, up - buttonUp);
+                int minDist = getWidth() / 2 + button.getWidth() / 2;
+                int maxDist = getWidth() / 2 + button.getWidth() / 2 + ConvertUtils.dip2px(getContext(), 8);
+                if (dist < maxDist && dist > minDist) {
+                    minDist += ConvertUtils.dip2px(getContext(), 2);
+                    double degrees = Math.toDegrees(Math.atan2(up - buttonUp, left - buttonLeft));
+                    float x = getX();
+                    float y = getY();
+                    degrees = (degrees + 360) % 360;
+                    // 0: 22.5 - 67.5
+                    // 1: 67.5 - 112.5
+                    // 2: 112.5 - 157.5
+                    // 3: 157.5 - 202.5
+                    // 4: 202.5 - 247.5
+                    // 5: 247.5 - 292.5
+                    // 6: 292.5 - 337.5
+                    // 7: 337.5 - 360 / 0
+                    switch ((int) (degrees / 45)) {
+                        case 0:
+                            x = button.getX() + minDist;
+                            y = button.getY();
+                            break;
+                        case 1:
+                            break;
+                        case 2:
+                            x = button.getX();
+                            y = button.getY() + minDist;
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            x = button.getX() - minDist;
+                            y = button.getY();
+                            break;
+                        case 5:
+                            break;
+                        case 6:
+                            x = button.getX();
+                            y = button.getY() - minDist;
+                            break;
+                        case 7:
+                            break;
+                    }
+                    setX(x);
+                    setY(y);
+                }
+            }
+        }
     }
 
     private void cancelAllEvent() {
