@@ -144,7 +144,7 @@
     <string name="curse_category_4478">任务</string>
     <string name="curse_category_4484">多人</string>
     <string name="curse_category_4476">探索</string>
-    <string name="curse_category_6145">空岛</string>
+    <string name="curse_category_4736">空岛</string>
     <string name="curse_category_4475">冒险 RPG</string>
     <string name="curse_category_4487">FTB 整合包</string>
     <string name="curse_category_4480">有特定地图</string>
@@ -158,6 +158,11 @@
     <string name="curse_category_5232">额外行星</string>
     <string name="curse_category_5129">原版增强</string>
     <string name="curse_category_5189">实用与QOL</string>
+    <string name="curse_category_6814">性能</string>
+    <string name="curse_category_6954">动态联合/集成动力 (Integrated Dynamics)</string>
+    <string name="curse_category_6484">机械动力 (Create)</string>
+    <string name="curse_category_6821">错误修复</string>
+    <string name="curse_category_6145">空岛</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">实用与QoL</string>
     <string name="curse_category_5192">梦幻菜单</string>

@@ -154,7 +154,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         ArrayList<String> downloadTypeList = new ArrayList<>();
         downloadTypeList.add(getContext().getString(R.string.download_provider_mojang));
         downloadTypeList.add(getContext().getString(R.string.download_provider_bmclapi));
-        downloadTypeList.add(getContext().getString(R.string.download_provider_mcbbs));
         ArrayAdapter<String> downloadTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, downloadTypeList);
         downloadTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         downloadType.setAdapter(downloadTypeAdapter);
@@ -197,7 +196,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             case "mojang":
                 return 0;
             case "mirror":
-            case "mcbbs":
                 return 2;
             default:
                 return 1;
