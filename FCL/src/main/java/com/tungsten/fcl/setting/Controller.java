@@ -2,6 +2,8 @@ package com.tungsten.fcl.setting;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -17,6 +19,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
@@ -33,10 +36,12 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
 import java.io.File;
 import java.io.IOException;
@@ -260,6 +265,33 @@ public class Controller implements Cloneable, Observable {
         setName(newName);
     }
 
+    public void upgrade() {
+        this.controllerVersion.set(Constants.CONTROLLER_VERSION);
+    }
+
+    public static void showUpgradeDialog(Context context, String name) {
+        Schedulers.androidUIThread().execute(() -> {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setCancelable(false);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+            builder.setMessage(String.format(context.getString(R.string.control_upgrade), name));
+            builder.setPositiveButton(() -> Controllers.findControllerByName(name).upgrade());
+            builder.setNegativeButton(null);
+            builder.create().show();
+        });
+    }
+
+    public static void showIncompatibleDialog(Context context, String name) {
+        Schedulers.androidUIThread().execute(() -> {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setCancelable(false);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setMessage(String.format(context.getString(R.string.control_incompatible), name));
+            builder.setNegativeButton(null);
+            builder.create().show();
+        });
+    }
+
     public static final class Serializer implements JsonSerializer<Controller>, JsonDeserializer<Controller> {
         @Override
         public JsonElement serialize(Controller src, Type typeOfSrc, JsonSerializationContext context) {
@@ -293,12 +325,23 @@ public class Controller implements Cloneable, Observable {
             String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
             String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
             String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
+
             int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
+            if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
+                showIncompatibleDialog(FCLPath.CONTEXT, name);
+                return new Controller("Incompatible Controller - " + name);
+            }
+
             List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
             List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
             buttonStyles.forEach(ButtonStyles::addStyle);
             directionStyles.forEach(DirectionStyles::addStyle);
             ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
+
+            if (controllerVersion < Constants.CONTROLLER_VERSION) {
+                showUpgradeDialog(FCLPath.CONTEXT, name);
+            }
+
             return new Controller(name, version, author, description, controllerVersion, viewGroups);
         }
 

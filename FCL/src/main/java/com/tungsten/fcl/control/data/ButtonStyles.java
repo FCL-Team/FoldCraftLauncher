@@ -103,8 +103,10 @@ public class ButtonStyles {
         if (!initialized) return;
         boolean add = true;
         for (ControlButtonStyle buttonStyle : getStyles())
-            if (buttonStyle.getName().equals(style.getName())) add = false;
-        if (add) styles.add(style);
+            if (buttonStyle.getName().equals(style.getName()))
+                add = false;
+        if (add)
+            styles.add(style);
     }
 
     public static void removeStyles(ControlButtonStyle style) {

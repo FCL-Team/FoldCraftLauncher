@@ -103,8 +103,10 @@ public class DirectionStyles {
         if (!initialized) return;
         boolean add = true;
         for (ControlDirectionStyle directionStyle : getStyles())
-            if (directionStyle.getName().equals(style.getName())) add = false;
-        if (add) styles.add(style);
+            if (directionStyle.getName().equals(style.getName()))
+                add = false;
+        if (add)
+            styles.add(style);
     }
 
     public static void removeStyles(ControlDirectionStyle style) {

@@ -51,7 +51,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         void onStyleAdd(ControlDirectionStyle style);
     }
 
-    public AddDirectionStyleDialog(@NonNull Context context,ControlDirectionStyle beforeStyle, boolean isEdit, Callback callback) {
+    public AddDirectionStyleDialog(@NonNull Context context, ControlDirectionStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_direction_style);
         setCancelable(false);
@@ -282,21 +282,13 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             });
         }
 
-        container.addView(buttonStyleLayout);
-        typeSpinner.setSelection(0);
+        container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
+        typeSpinner.setSelection(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? 0 : 1);
         FXUtils.bindSelection(typeSpinner, style.styleTypeProperty());
         style.styleTypeProperty().addListener(observable -> {
             container.removeAllViewsInLayout();
-            if (style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON) {
-                container.addView(buttonStyleLayout);
-            } else {
-                container.addView(rockerStyleLayout);
-            }
+            container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
         });
-        if (style.getStyleType() == ControlDirectionStyle.Type.ROCKER) {
-            container.removeAllViewsInLayout();
-            container.addView(rockerStyleLayout);
-        }
     }
 
     private String getHex(int color) {

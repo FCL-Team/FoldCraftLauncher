@@ -145,6 +145,8 @@
     <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
     <string name="control_import_failed">Failed to import controller!</string>
+    <string name="control_upgrade">Controller: %s is an outdated controller, it may produce some unknown bugs, but we still support it, do you want to migrate it to a new version?</string>
+    <string name="control_incompatible">Controller: %s is an incompatible controller, it may be caused by the launcher version being too low or the controller version being too low, please check.</string>
     <string name="control_info_author">Author: </string>
     <string name="control_info_description">Description: </string>
     <string name="control_info_edit">Edit Controller Information</string>
