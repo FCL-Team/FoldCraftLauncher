@@ -40,6 +40,24 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
+            android:id="@+id/up"
+            android:src="@drawable/ic_baseline_arrow_upward_24"
+            android:tint="@android:color/darker_gray"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:id="@+id/down"
+            android:src="@drawable/ic_baseline_arrow_downward_24"
+            android:tint="@android:color/darker_gray"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
             android:id="@+id/edit"
             android:src="@drawable/ic_baseline_edit_24"
             android:tint="@android:color/darker_gray"/>
