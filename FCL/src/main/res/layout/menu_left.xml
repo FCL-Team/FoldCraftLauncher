@@ -143,6 +143,31 @@
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    app:auto_text_tint="true"
+                    android:singleLine="true"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="@string/menu_controls_auto_fit"
+                    android:textSize="12sp"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSwitch
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/auto_fit"/>
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:layout_width="match_parent"
@@ -156,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_gravity="center"
-                    android:text="@string/menu_controls_auto_fit"
+                    android:text="@string/menu_controls_auto_fit_dist"
                     android:textSize="12sp"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -177,7 +202,7 @@
                 android:min="0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/auto_fit"/>
+                android:id="@+id/auto_fit_dist"/>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:id="@+id/edit_layout"

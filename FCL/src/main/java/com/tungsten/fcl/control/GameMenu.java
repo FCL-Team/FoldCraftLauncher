@@ -255,8 +255,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
+        FCLSwitch autoFit = findViewById(R.id.auto_fit);
 
-        FCLSeekBar autoFitDist = findViewById(R.id.auto_fit);
+        FCLSeekBar autoFitDist = findViewById(R.id.auto_fit_dist);
         FCLTextView autoFitText = findViewById(R.id.auto_fit_text);
 
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
@@ -274,6 +275,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
+        FXUtils.bindBoolean(autoFit, menuSetting.autoFitProperty());
 
         autoFitDist.addProgressListener();
         autoFitDist.progressProperty().bindBidirectional(menuSetting.autoFitDistProperty());

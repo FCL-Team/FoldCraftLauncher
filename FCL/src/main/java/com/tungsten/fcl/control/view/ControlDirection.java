@@ -616,7 +616,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     }
 
     private void autoFitPosition() {
-        if (menu == null)
+        if (menu == null || !menu.getMenuSetting().isAutoFit())
             return;
 
         ViewGroup viewGroup = (ViewGroup) getParent();

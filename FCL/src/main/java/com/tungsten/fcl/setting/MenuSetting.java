@@ -27,6 +27,20 @@ import java.util.Optional;
 @JsonAdapter(MenuSetting.Serializer.class)
 public class MenuSetting {
 
+    private final BooleanProperty autoFitProperty = new SimpleBooleanProperty(this, "autoFit", true);
+
+    public BooleanProperty autoFitProperty() {
+        return autoFitProperty;
+    }
+
+    public boolean isAutoFit() {
+        return autoFitProperty.get();
+    }
+
+    public void setAutoFit(boolean autoFit) {
+        this.autoFitProperty.set(autoFit);
+    }
+
     private final IntegerProperty autoFitDistProperty = new SimpleIntegerProperty(this, "autoFitDist", 0);
 
     public IntegerProperty autoFitDistProperty() {
@@ -196,6 +210,7 @@ public class MenuSetting {
     }
 
     public void addPropertyChangedListener(InvalidationListener listener) {
+        autoFitProperty.addListener(listener);
         autoFitDistProperty.addListener(listener);
         lockMenuViewProperty.addListener(listener);
         menuPositionXProperty.addListener(listener);
@@ -216,6 +231,7 @@ public class MenuSetting {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
+            obj.addProperty("autoFit", src.isAutoFit());
             obj.addProperty("autoFitDist", src.getAutoFitDist());
             obj.addProperty("lockMenuView", src.isLockMenuView());
             obj.addProperty("menuPositionX", src.getMenuPositionX());
@@ -240,6 +256,7 @@ public class MenuSetting {
 
             MenuSetting ms = new MenuSetting();
 
+            ms.setAutoFit(Optional.ofNullable(obj.get("autoFit")).map(JsonElement::getAsBoolean).orElse(true));
             ms.setAutoFitDist(Optional.ofNullable(obj.get("autoFitDist")).map(JsonElement::getAsInt).orElse(0));
             ms.setLockMenuView(Optional.ofNullable(obj.get("lockMenuView")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setMenuPositionX(Optional.ofNullable(obj.get("menuPositionX")).map(JsonElement::getAsDouble).orElse(0.5d));

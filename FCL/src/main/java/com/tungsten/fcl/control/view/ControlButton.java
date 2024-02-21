@@ -419,7 +419,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
     }
 
     private void autoFitPosition() {
-        if (menu == null)
+        if (menu == null || !menu.getMenuSetting().isAutoFit())
             return;
 
         ViewGroup viewGroup = (ViewGroup) getParent();
