@@ -37,17 +37,20 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     private FCLLinearLayout normalStyleLayout;
     private FCLLinearLayout pressedStyleLayout;
 
-    private ControlButtonStyle style = new ControlButtonStyle("");
+    private ControlButtonStyle style;
+    private boolean isEdit;
 
     public interface Callback {
         void onStyleAdd(ControlButtonStyle style);
     }
 
-    public AddButtonStyleDialog(@NonNull Context context, Callback callback) {
+    public AddButtonStyleDialog(@NonNull Context context, ControlButtonStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_button_style);
         setCancelable(false);
         this.callback = callback;
+        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle;
+        this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
@@ -63,6 +66,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         normalStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_button_style, null);
         pressedStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_button_style, null);
 
+        editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
 
         {
@@ -295,7 +299,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
+            if (!isEdit && ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_exist), Toast.LENGTH_SHORT).show();
             } else if (StringUtils.isBlank(style.getName())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();

@@ -1,9 +1,58 @@
 {
   "name": "Default",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Tungsten",
   "description": "Default controller of Fold Craft Launcher.",
-  "controllerVersion": 0,
+  "controllerVersion": 10,
+  "buttonStyles": [
+    {
+      "name": "Default",
+      "textColor": -1,
+      "textSize": 12,
+      "strokeColor": -12303292,
+      "strokeWidth": 10,
+      "cornerRadius": 100,
+      "fillColor": 0,
+      "textColorPressed": -1,
+      "textSizePressed": 12,
+      "strokeColorPressed": -12303292,
+      "strokeWidthPressed": 10,
+      "cornerRadiusPressed": 100,
+      "fillColorPressed": -3355444
+    }
+  ],
+  "directionStyles": [
+    {
+      "name": "Default",
+      "styleType": "BUTTON",
+      "buttonStyle": {
+        "interval": 50,
+        "textColor": -1,
+        "textSize": 12,
+        "strokeColor": -12303292,
+        "strokeWidth": 10,
+        "cornerRadius": 100,
+        "fillColor": 0,
+        "textColorPressed": -1,
+        "textSizePressed": 12,
+        "strokeColorPressed": -12303292,
+        "strokeWidthPressed": 10,
+        "cornerRadiusPressed": 100,
+        "fillColorPressed": -3355444
+      },
+      "rockerStyle": {
+        "rockerSize": 400,
+        "bgCornerRadius": 500,
+        "bgStrokeWidth": 20,
+        "bgStrokeColor": -12303292,
+        "bgFillColor": 0,
+        "rockerCornerRadius": 500,
+        "rockerStrokeWidth": 10,
+        "rockerStrokeColor": -12303292,
+        "rockerFillColor": -7829368
+      }
+    }
+  ],
   "viewGroups": [
     {
       "id": "abe49027-5dac-4bb9-865a-dea564664654",
@@ -14,21 +63,7 @@
           {
             "id": "f93bfc52-e745-4277-a4db-5c85829fb35e",
             "text": "×",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 800,
@@ -99,21 +134,7 @@
           {
             "id": "37f97e88-efe1-4052-a2d6-55f82d0f8be6",
             "text": "■",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "IN_GAME",
               "xPosition": 875,
@@ -184,21 +205,7 @@
           {
             "id": "4881cb4c-6eb4-4183-8cd3-ba56ac969543",
             "text": "○",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 875,
@@ -269,21 +276,7 @@
           {
             "id": "5aafb6b5-e4e8-42bd-baf6-3385a06a5825",
             "text": "E",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 720,
@@ -354,21 +347,7 @@
           {
             "id": "bbd7a36c-fcc5-46d8-a927-180ed08a035f",
             "text": "▼",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 950,
@@ -439,21 +418,7 @@
           {
             "id": "049b35dd-999c-4de1-af52-53304659addf",
             "text": "Q",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "IN_GAME",
               "xPosition": 1000,
@@ -524,21 +489,7 @@
           {
             "id": "3bc32d1b-30ca-44d1-b1ab-f27561ca7edf",
             "text": "Esc",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 0,
@@ -609,21 +560,7 @@
           {
             "id": "cb02a199-990a-4a3b-9cad-aadcfa5ae046",
             "text": "F3",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 100,
@@ -694,21 +631,7 @@
           {
             "id": "68d941b2-ff89-4914-bfea-cb95942ccab5",
             "text": "T",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "IN_GAME",
               "xPosition": 200,
@@ -779,21 +702,7 @@
           {
             "id": "ed3c2149-7c48-46ae-86c9-5f931251c308",
             "text": "Input",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 500,
@@ -862,21 +771,7 @@
           {
             "id": "43606f98-b410-44de-b7d0-b36a17e54089",
             "text": "Enter",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 900,
@@ -947,21 +842,7 @@
           {
             "id": "9a4a8307-35fb-46bd-ab55-1e28538f0cd1",
             "text": "BackSp",
-            "style": {
-              "name": "Default",
-              "textColor": -1,
-              "textSize": 12,
-              "strokeColor": -12303292,
-              "strokeWidth": 10,
-              "cornerRadius": 100,
-              "fillColor": 0,
-              "textColorPressed": -1,
-              "textSizePressed": 12,
-              "strokeColorPressed": -12303292,
-              "strokeWidthPressed": 10,
-              "cornerRadiusPressed": 100,
-              "fillColorPressed": -3355444
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "ALWAYS",
               "xPosition": 1000,
@@ -1033,36 +914,7 @@
         "directionList": [
           {
             "id": "e8545a6e-3a35-4109-b2d5-9f17ff2babd0",
-            "style": {
-              "name": "Default",
-              "styleType": "BUTTON",
-              "buttonStyle": {
-                "interval": 50,
-                "textColor": -1,
-                "textSize": 12,
-                "strokeColor": -12303292,
-                "strokeWidth": 10,
-                "cornerRadius": 100,
-                "fillColor": 0,
-                "textColorPressed": -1,
-                "textSizePressed": 12,
-                "strokeColorPressed": -12303292,
-                "strokeWidthPressed": 10,
-                "cornerRadiusPressed": 100,
-                "fillColorPressed": -3355444
-              },
-              "rockerStyle": {
-                "rockerSize": 400,
-                "bgCornerRadius": 500,
-                "bgStrokeWidth": 20,
-                "bgStrokeColor": -12303292,
-                "bgFillColor": 0,
-                "rockerCornerRadius": 500,
-                "rockerStrokeWidth": 10,
-                "rockerStrokeColor": -12303292,
-                "rockerFillColor": -7829368
-              }
-            },
+            "style": "Default",
             "baseInfo": {
               "visibilityType": "IN_GAME",
               "xPosition": 50,

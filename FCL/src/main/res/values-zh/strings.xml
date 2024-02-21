@@ -123,6 +123,8 @@
     <string name="control_edit">编辑布局方案</string>
     <string name="control_import">导入布局</string>
     <string name="control_import_failed">导入布局失败！</string>
+    <string name="control_upgrade">布局方案：%s 是一个过时的布局方案，它可能导致一些未知的错误，但我们仍然支持加载它，是否将其迁移至新版？</string>
+    <string name="control_incompatible">布局方案：%s 是一个不兼容的布局方案，这可能是由于启动器版本过低或控件版本过低导致的，请检查。</string>
     <string name="control_info_author">作者：</string>
     <string name="control_info_description">描述：</string>
     <string name="control_info_edit">编辑布局信息</string>
@@ -457,6 +459,7 @@
     <string name="menu_control_set">设置</string>
     <string name="menu_control_style">样式设置</string>
     <string name="menu_control_style_add">添加样式</string>
+    <string name="menu_control_style_edit">编辑样式</string>
     <string name="menu_control_view_group_add">添加控件组</string>
     <string name="menu_control_view_group_delete">你确定要删除该控件组吗？</string>
     <string name="menu_control_view_group_name">名称</string>

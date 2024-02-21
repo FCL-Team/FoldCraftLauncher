@@ -42,19 +42,22 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     private FCLLinearLayout buttonStyleLayout;
     private FCLLinearLayout rockerStyleLayout;
 
-    private ControlDirectionStyle style = new ControlDirectionStyle("");
+    private ControlDirectionStyle style;
 
     private ControlButtonStyle buttonStyle;
+    private boolean isEdit;
 
     public interface Callback {
         void onStyleAdd(ControlDirectionStyle style);
     }
 
-    public AddDirectionStyleDialog(@NonNull Context context, Callback callback) {
+    public AddDirectionStyleDialog(@NonNull Context context, ControlDirectionStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_direction_style);
         setCancelable(false);
         this.callback = callback;
+        this.style = beforeStyle == null ? new ControlDirectionStyle("") : beforeStyle;
+        this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
@@ -79,6 +82,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         buttonStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_direction_style_button, null);
         rockerStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_direction_style_rocker, null);
 
+        editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
 
         {
@@ -278,16 +282,12 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             });
         }
 
-        container.addView(buttonStyleLayout);
-        typeSpinner.setSelection(0);
+        container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
+        typeSpinner.setSelection(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? 0 : 1);
         FXUtils.bindSelection(typeSpinner, style.styleTypeProperty());
         style.styleTypeProperty().addListener(observable -> {
             container.removeAllViewsInLayout();
-            if (style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON) {
-                container.addView(buttonStyleLayout);
-            } else {
-                container.addView(rockerStyleLayout);
-            }
+            container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
         });
     }
 
@@ -298,7 +298,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (DirectionStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
+            if (!isEdit && DirectionStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_exist), Toast.LENGTH_SHORT).show();
             } else if (StringUtils.isBlank(style.getName())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();
