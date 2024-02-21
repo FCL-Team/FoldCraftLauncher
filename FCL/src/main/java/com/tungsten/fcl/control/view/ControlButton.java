@@ -420,7 +420,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
                 View button = viewGroup.getChildAt(i);
-                if (button == this) {
+                if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
                     continue;
                 }
                 int buttonLeft = (int) button.getX();
