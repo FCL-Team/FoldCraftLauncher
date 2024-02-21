@@ -18,7 +18,6 @@ import java.util.logging.Level;
 public class ViewManager {
 
     private final GameMenu gameMenu;
-    public MenuView menuView;
 
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
@@ -26,11 +25,12 @@ public class ViewManager {
 
     public void setup() {
         // Initialize menu view
-        menuView = new MenuView(gameMenu.getActivity());
+        MenuView menuView = new MenuView(gameMenu.getActivity());
         menuView.setElevation(114.0f);
         menuView.setup(gameMenu);
         gameMenu.getBaseLayout().addView(menuView);
         menuView.initPosition();
+        gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));
 
         // Initialize controller
         initializeController();
