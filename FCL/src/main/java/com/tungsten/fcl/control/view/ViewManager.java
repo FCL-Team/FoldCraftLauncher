@@ -18,6 +18,7 @@ import java.util.logging.Level;
 public class ViewManager {
 
     private final GameMenu gameMenu;
+    public MenuView menuView;
 
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
@@ -25,7 +26,7 @@ public class ViewManager {
 
     public void setup() {
         // Initialize menu view
-        MenuView menuView = new MenuView(gameMenu.getActivity());
+        menuView = new MenuView(gameMenu.getActivity());
         menuView.setElevation(114.0f);
         menuView.setup(gameMenu);
         gameMenu.getBaseLayout().addView(menuView);

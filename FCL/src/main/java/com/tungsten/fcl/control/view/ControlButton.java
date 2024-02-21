@@ -130,7 +130,12 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> setAlpha(menu.isHideAllViews() ? 0 : 1));
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+            int value = menu.isHideAllViews() ? 0 : 1;
+            setAlpha(value);
+            gameMenu.getViewManager().menuView.setAlpha(value);
+            ((DrawerLayout) gameMenu.getLayout()).setDrawerLockMode(value);
+        });
 
         post(() -> {
             notifyData();
