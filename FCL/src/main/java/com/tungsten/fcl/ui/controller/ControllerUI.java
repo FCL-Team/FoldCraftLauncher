@@ -182,8 +182,6 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
                         Controller controller = new GsonBuilder().setPrettyPrinting().create().fromJson(content, Controller.class);
                         if (controller.getName().equals("Error")) {
                             Toast.makeText(getContext(), getContext().getString(R.string.control_import_failed), Toast.LENGTH_SHORT).show();
-                        } else if (controller.getName().startsWith("Incompatible Controller")) {
-                            Controller.showIncompatibleDialog(getContext(), controller.getName().replaceAll("Incompatible Controller - ", ""));
                         } else {
                             addController(controller);
                         }
