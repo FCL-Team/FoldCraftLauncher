@@ -55,11 +55,11 @@ import java.util.UUID;
 @SuppressLint("ViewConstructor")
 public class ControlButton extends AppCompatButton implements CustomView {
 
-    private final InvalidationListener notifyListener;
-    private final InvalidationListener dataChangeListener;
-    private final InvalidationListener boundaryListener;
-    private final InvalidationListener visibilityListener;
-    private final InvalidationListener alphaListener;
+    private InvalidationListener notifyListener;
+    private InvalidationListener dataChangeListener;
+    private InvalidationListener boundaryListener;
+    private InvalidationListener visibilityListener;
+    private InvalidationListener alphaListener;
 
     private final GameMenu menu;
     private Path boundaryPath;
@@ -135,6 +135,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         post(() -> {
             notifyData();
+            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
+                return;
+            }
             menu.editModeProperty().addListener(notifyListener);
             dataProperty.addListener(dataChangeListener);
             getData().addListener(notifyListener);
@@ -148,6 +151,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
     }
 
     private void notifyData() {
+        if (visibilityListener == null) {
+            return;
+        }
         ControlButtonData data = getData();
 
         setText(data.getText());
@@ -741,5 +747,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
         menu.showViewBoundariesProperty().removeListener(boundaryListener);
         visibilityProperty().removeListener(visibilityListener);
         menu.hideAllViewsProperty().removeListener(alphaListener);
+        notifyListener = null;
+        dataChangeListener = null;
+        boundaryListener = null;
+        visibilityListener = null;
+        alphaListener = null;
     }
 }
