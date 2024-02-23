@@ -10,10 +10,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.control.view.ControlDirection;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.util.StringUtils;
@@ -36,6 +38,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     private FCLButton negative;
 
     private FCLEditText editName;
+    private ControlDirection direction;
     private FCLSpinner<ControlDirectionStyle.Type> typeSpinner;
 
     private ScrollView container;
@@ -65,6 +68,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         negative.setOnClickListener(this);
 
         editName = findViewById(R.id.name);
+        direction = findViewById(R.id.direction);
         typeSpinner = findViewById(R.id.type);
         ArrayList<ControlDirectionStyle.Type> types = new ArrayList<>();
         types.add(ControlDirectionStyle.Type.BUTTON);
@@ -84,7 +88,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
 
         editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
-
+        changeDirectionStyle();
         {
             FCLPreciseSeekBar interval = buttonStyleLayout.findViewById(R.id.interval);
 
@@ -289,6 +293,13 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             container.removeAllViewsInLayout();
             container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
         });
+    }
+
+    private void changeDirectionStyle() {
+        direction.getData().setStyle(style);
+        direction.getData().getBaseInfo().setSizeType(BaseInfoData.SizeType.ABSOLUTE);
+        direction.getData().getBaseInfo().setAbsoluteWidth(60);
+        direction.getData().getBaseInfo().setAbsoluteHeight(60);
     }
 
     private String getHex(int color) {
