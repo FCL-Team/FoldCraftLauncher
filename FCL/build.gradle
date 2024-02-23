@@ -43,8 +43,8 @@ android {
         applicationId "com.tungsten.fcl.sweetrice"
         minSdk 26
         targetSdk 34
-        versionCode 1141
-        versionName "1.1.4.1"
+        versionCode 1143
+        versionName "1.1.4.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

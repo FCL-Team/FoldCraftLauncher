@@ -28,6 +28,8 @@ public class ButtonStyles {
     private static final ReadOnlyListWrapper<ControlButtonStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
 
     public static void checkStyles() {
+        if (!initialized)
+            return;
         if (styles.isEmpty()) {
             styles.add(ControlButtonStyle.DEFAULT_BUTTON_STYLE);
             saveStyles();
@@ -53,15 +55,16 @@ public class ButtonStyles {
     }
 
     static {
+        init();
         styles.addListener(onInvalidating(ButtonStyles::updateStylesStorages));
         styles.addListener(onInvalidating(ButtonStyles::checkStyles));
     }
 
     public static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
-        styles.addAll(getStylesFromDisk());
+        getStylesFromDisk().forEach(ButtonStyles::addStyle);
         checkStyles();
 
         initialized = true;
@@ -98,7 +101,12 @@ public class ButtonStyles {
 
     public static void addStyle(ControlButtonStyle style) {
         if (!initialized) return;
-        styles.add(style);
+        boolean add = true;
+        for (ControlButtonStyle buttonStyle : getStyles())
+            if (buttonStyle.getName().equals(style.getName()))
+                add = false;
+        if (add)
+            styles.add(style);
     }
 
     public static void removeStyles(ControlButtonStyle style) {

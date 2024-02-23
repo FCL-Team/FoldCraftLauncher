@@ -36,6 +36,15 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/edit_style"
+        android:text="@string/menu_control_style_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintLeft_toRightOf="@id/add_style"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
         android:text="@string/dialog_positive"
         android:layout_width="wrap_content"

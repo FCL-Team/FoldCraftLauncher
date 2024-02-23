@@ -83,6 +83,7 @@ public class ControlDirectionStyle implements Cloneable, Observable {
 
     public void setButtonStyle(ButtonStyle buttonStyle) {
         buttonStyleProperty.set(buttonStyle);
+        buttonStyle.addListener(onInvalidating(this::invalidate));
     }
 
     public ButtonStyle getButtonStyle() {
@@ -100,6 +101,7 @@ public class ControlDirectionStyle implements Cloneable, Observable {
 
     public void setRockerStyle(RockerStyle rockerStyle) {
         rockerStyleProperty.set(rockerStyle);
+        rockerStyle.addListener(onInvalidating(this::invalidate));
     }
 
     public RockerStyle getRockerStyle() {

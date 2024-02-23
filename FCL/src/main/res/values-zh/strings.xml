@@ -126,6 +126,8 @@
     <string name="control_edit">编辑布局方案</string>
     <string name="control_import">导入布局</string>
     <string name="control_import_failed">导入布局失败！</string>
+    <string name="control_upgrade">布局方案：%s 是一个过时的布局方案，它可能导致一些未知的错误，但我们仍然支持加载它，是否将其迁移至新版？</string>
+    <string name="control_incompatible">布局方案：%s 是一个不兼容的布局方案，这可能是由于启动器版本过低或控件版本过低导致的，请检查。</string>
     <string name="control_info_author">作者：</string>
     <string name="control_info_description">描述：</string>
     <string name="control_info_edit">编辑布局信息</string>
@@ -147,7 +149,7 @@
     <string name="curse_category_4478">任务</string>
     <string name="curse_category_4484">多人</string>
     <string name="curse_category_4476">探索</string>
-    <string name="curse_category_6145">空岛</string>
+    <string name="curse_category_4736">空岛</string>
     <string name="curse_category_4475">冒险 RPG</string>
     <string name="curse_category_4487">FTB 整合包</string>
     <string name="curse_category_4480">有特定地图</string>
@@ -161,6 +163,11 @@
     <string name="curse_category_5232">额外行星</string>
     <string name="curse_category_5129">原版增强</string>
     <string name="curse_category_5189">实用与QOL</string>
+    <string name="curse_category_6814">性能</string>
+    <string name="curse_category_6954">动态联合/集成动力 (Integrated Dynamics)</string>
+    <string name="curse_category_6484">机械动力 (Create)</string>
+    <string name="curse_category_6821">错误修复</string>
+    <string name="curse_category_6145">空岛</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">实用与QoL</string>
     <string name="curse_category_5192">梦幻菜单</string>
@@ -436,6 +443,8 @@
     <string name="menu_controls_edit_mode">编辑模式</string>
     <string name="menu_controls_show_boundary">显示控件边缘</string>
     <string name="menu_controls_hide_all">隐藏所有控件</string>
+    <string name="menu_controls_auto_fit">自动吸附</string>
+    <string name="menu_controls_auto_fit_dist">自动吸附间距</string>
     <string name="menu_controls_groups">控件组</string>
     <string name="menu_controls_manage">管理</string>
     <string name="menu_controls_current_view_group">当前控件组</string>
@@ -455,6 +464,7 @@
     <string name="menu_control_set">设置</string>
     <string name="menu_control_style">样式设置</string>
     <string name="menu_control_style_add">添加样式</string>
+    <string name="menu_control_style_edit">编辑样式</string>
     <string name="menu_control_view_group_add">添加控件组</string>
     <string name="menu_control_view_group_delete">你确定要删除该控件组吗？</string>
     <string name="menu_control_view_group_name">名称</string>

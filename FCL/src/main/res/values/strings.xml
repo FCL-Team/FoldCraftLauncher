@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">SweetRiceMC 甜米</string>
-    <string name="app_version" translatable="false">1.1.4.1</string>
+    <string name="app_version" translatable="false">1.1.4.3</string>
 
     <string name="oauth_api_key" translatable="false">null</string>
 
@@ -149,6 +149,8 @@
     <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
     <string name="control_import_failed">Failed to import controller!</string>
+    <string name="control_upgrade">Controller: %s is an outdated controller, it may produce some unknown bugs, but we still support it, do you want to migrate it to a new version?</string>
+    <string name="control_incompatible">Controller: %s is an incompatible controller, it may be caused by the launcher version being too low or the controller version being too low, please check.</string>
     <string name="control_info_author">Author: </string>
     <string name="control_info_description">Description: </string>
     <string name="control_info_edit">Edit Controller Information</string>
@@ -170,7 +172,7 @@
     <string name="curse_category_4478">Quests</string>
     <string name="curse_category_4484">Multiplayer</string>
     <string name="curse_category_4476">Exploration</string>
-    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_4736">Skyblock</string>
     <string name="curse_category_4475">Adventure and RPG</string>
     <string name="curse_category_4487">FTB</string>
     <string name="curse_category_4480">Map Based</string>
@@ -184,6 +186,11 @@
     <string name="curse_category_5232">Galacticraft</string>
     <string name="curse_category_5129">Vanilla+</string>
     <string name="curse_category_5189">Utility &#38; QOL</string>
+    <string name="curse_category_6814">Performance</string>
+    <string name="curse_category_6954">Integrated Dynamics</string>
+    <string name="curse_category_6484">Create</string>
+    <string name="curse_category_6821">Bug Fixes</string>
+    <string name="curse_category_6145">Skyblock</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">Utility &#38; QoL</string>
     <string name="curse_category_5192">FancyMenu</string>
@@ -468,6 +475,8 @@
     <string name="menu_controls_edit_mode">Edit Mode</string>
     <string name="menu_controls_show_boundary">Show View Boundaries</string>
     <string name="menu_controls_hide_all">Hide All Views</string>
+    <string name="menu_controls_auto_fit">Auto Fit Position</string>
+    <string name="menu_controls_auto_fit_dist">Auto Fit Position Distance</string>
     <string name="menu_controls_groups">View Groups</string>
     <string name="menu_controls_manage">Manage</string>
     <string name="menu_controls_current_view_group">Current View Group</string>
@@ -487,6 +496,7 @@
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
     <string name="menu_control_style_add">Add Style</string>
+    <string name="menu_control_style_edit">Edit Style</string>
     <string name="menu_control_view_group_add">Add View Group</string>
     <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
     <string name="menu_control_view_group_name">Name</string>

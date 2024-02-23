@@ -48,6 +48,7 @@
                     app:auto_edit_tint="true"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/download_source_text"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

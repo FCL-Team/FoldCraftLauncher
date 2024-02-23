@@ -1,11 +1,17 @@
 package com.tungsten.fcl.control.view;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.control.FCLInput;
@@ -32,18 +38,28 @@ public class TouchPad extends View {
         super(context);
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        init();
     }
 
     public TouchPad(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        init();
     }
 
     public TouchPad(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        init();
+    }
+
+    private void init() {
+        path = new Path();
+        linePaint.setAntiAlias(true);
+        linePaint.setColor(Color.GREEN);
+        linePaint.setStyle(Paint.Style.STROKE);
     }
 
     private int downX;
@@ -87,6 +103,61 @@ public class TouchPad extends View {
             } else {
                 return gameMenu.getMenuSetting().getGestureMode();
             }
+        }
+    }
+
+    private Path path;
+    private final Paint linePaint = new Paint();
+    private int prefX;
+    private int prefY;
+    private int selfX;
+    private int selfY;
+
+    private boolean showLineHorizontal = false;
+    private boolean showLineVertical = false;
+
+    public void drawLine(int orientation, int pref, int self) {
+        if (orientation == 0) {
+            showLineHorizontal = true;
+            prefX = pref;
+            selfX = self;
+        }
+        else {
+            showLineVertical = true;
+            prefY = pref;
+            selfY = self;
+        }
+
+        init();
+        invalidate();
+    }
+
+    public void removeLine(int orientation) {
+        if (orientation == 0)
+            showLineHorizontal = false;
+        else
+            showLineVertical = false;
+
+        init();
+        invalidate();
+    }
+
+    @Override
+    protected void onDraw(@NonNull Canvas canvas) {
+        super.onDraw(canvas);
+        if (showLineHorizontal) {
+            path.moveTo(prefX, 0);
+            path.lineTo(prefX, getHeight());
+            path.moveTo(selfX, 0);
+            path.lineTo(selfX, getHeight());
+            canvas.drawPath(path, linePaint);
+        }
+        if (showLineVertical) {
+            path.moveTo(0, prefY);
+            path.lineTo(getWidth(), prefY);
+            path.moveTo(0, selfY);
+            path.lineTo(getWidth(), selfY);
+            canvas.drawPath(path, linePaint);
         }
     }
 

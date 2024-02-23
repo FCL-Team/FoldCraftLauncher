@@ -24,14 +24,14 @@ import com.tungsten.fclcore.game.ReleaseType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 public final class GameRemoteVersion extends RemoteVersion {
 
     private final ReleaseType type;
 
-    public GameRemoteVersion(String gameVersion, String selfVersion, List<String> url, ReleaseType type, Date releaseDate) {
+    public GameRemoteVersion(String gameVersion, String selfVersion, List<String> url, ReleaseType type, Instant releaseDate) {
         super(LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId(), gameVersion, selfVersion, releaseDate, getReleaseType(type), url);
         this.type = type;
     }

@@ -256,9 +256,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
+        FCLSwitch autoFit = findViewById(R.id.auto_fit);
+
+        FCLSeekBar autoFitDist = findViewById(R.id.auto_fit_dist);
+        FCLTextView autoFitText = findViewById(R.id.auto_fit_text);
 
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
         FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
+        autoFitText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.autoFitDistProperty().get() + " dp", menuSetting.autoFitDistProperty()));
 
         FCLLinearLayout editLayout = findViewById(R.id.edit_layout);
 
@@ -271,6 +276,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
+        FXUtils.bindBoolean(autoFit, menuSetting.autoFitProperty());
+
+        autoFitDist.addProgressListener();
+        autoFitDist.progressProperty().bindBidirectional(menuSetting.autoFitDistProperty());
 
         ArrayList<String> controllerNameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toCollection(ArrayList::new));
         currentControllerSpinner.setDataList(new ArrayList<>(Controllers.getControllers()));
@@ -532,7 +541,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onLog(String log) {
         if (fclBridge != null) {
-            if (log.contains("OR:") || log.contains("ERROR:") || log.contains("INTERNAL ERROR:")) {
+            if (log.contains("version string:") || log.contains("OR:") || log.contains("ERROR:") || log.contains("INTERNAL ERROR:")) {
                 return;
             }
             logWindow.appendLog(log);
@@ -541,10 +550,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
             try {
                 if (firstLog) {
-                    FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");
+                    FileUtils.writeText(new File(fclBridge.getLogPath()), log);
                     firstLog = false;
                 } else {
-                    FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log + "\n");
+                    FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log);
                 }
             } catch (IOException e) {
                 Logging.LOG.log(Level.WARNING, "Can't log game log to target file", e.getMessage());

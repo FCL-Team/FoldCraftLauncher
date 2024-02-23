@@ -32,7 +32,7 @@ import java.util.logging.Level;
 
 public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
-    public static final String ANNOUNCEMENT_URL = "https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/announcement.txt?inline=false";
+    public static final String ANNOUNCEMENT_URL = "https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/announcement_v2.txt?inline=false";
 
     private LinearLayoutCompat announcementContainer;
     private LinearLayoutCompat announcementLayout;

@@ -22,15 +22,19 @@ import java.util.Map;
 
 public class FCLauncher {
 
+    private static void log(FCLBridge bridge, String log) {
+        bridge.getCallback().onLog(log + "\n");
+    }
+
     private static void printTaskTitle(FCLBridge bridge, String task) {
-        bridge.getCallback().onLog("==================== " + task + " ====================");
+        log(bridge, "==================== " + task + " ====================");
     }
 
     private static void logStartInfo(FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
-        bridge.getCallback().onLog("Device: " + DeviceName.getDeviceName());
-        bridge.getCallback().onLog("Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
-        bridge.getCallback().onLog("CPU:" + Build.HARDWARE);
+        log(bridge, "Device: " + DeviceName.getDeviceName());
+        log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
+        log(bridge, "CPU:" + Build.HARDWARE);
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
@@ -168,7 +172,7 @@ public class FCLauncher {
         }
         printTaskTitle(bridge, "Env Map");
         for (String key : envMap.keySet()) {
-            bridge.getCallback().onLog("Env: " + key + "=" + envMap.get(key));
+            log(bridge, "Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
         printTaskTitle(bridge, "Env Map");
@@ -221,11 +225,11 @@ public class FCLauncher {
         printTaskTitle(bridge, task + " Arguments");
         String[] args = rebaseArgs(config);
         for (String arg : args) {
-            bridge.getCallback().onLog(task + " argument: " + arg);
+            log(bridge, task + " argument: " + arg);
         }
         bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
-        bridge.getCallback().onLog("Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
+        log(bridge, "Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
         int exitCode = bridge.jliLaunch(args);
         bridge.onExit(exitCode);
     }
@@ -249,7 +253,7 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
+                log(bridge, "Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch game
@@ -285,7 +289,7 @@ public class FCLauncher {
                 setupGraphicAndSoundEngine(config, bridge);
 
                 // set working directory
-                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
+                log(bridge, "Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch jar executor
@@ -317,7 +321,7 @@ public class FCLauncher {
                 setUpJavaRuntime(config, bridge);
 
                 // set working directory
-                bridge.getCallback().onLog("Working directory: " + config.getWorkingDir());
+                log(bridge, "Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
                 // launch api installer

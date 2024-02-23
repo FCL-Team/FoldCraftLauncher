@@ -20,6 +20,7 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     private final Callback callback;
 
     private FCLButton addStyle;
+    private FCLButton editStyle;
     private FCLButton positive;
 
     private HorizontalListView listView;
@@ -37,12 +38,18 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         setCancelable(false);
 
         addStyle = findViewById(R.id.add_style);
+        editStyle = findViewById(R.id.edit_style);
         positive = findViewById(R.id.positive);
         addStyle.setOnClickListener(this);
+        editStyle.setOnClickListener(this);
         positive.setOnClickListener(this);
 
         listView = findViewById(R.id.list);
         refreshList();
+
+        if (!select) {
+            editStyle.setVisibility(View.GONE);
+        }
     }
 
     private ButtonStyleAdapter adapter;
@@ -55,7 +62,15 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == addStyle) {
-            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), style -> {
+            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), null, false, style -> {
+                ButtonStyles.addStyle(style);
+                refreshList();
+            });
+            dialog.show();
+        }
+        if (v == editStyle) {
+            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                ButtonStyles.removeStyles(adapter.getSelectedStyle());
                 ButtonStyles.addStyle(style);
                 refreshList();
             });

@@ -31,16 +31,14 @@ public class FileOperator {
         List<File> filterList = new ArrayList<>();
         if (fileBrowser.getSuffix().size() > 0) {
             for (File file : rawList) {
-                boolean add = false;
                 if (file.isFile()) {
                     for (String suffix : fileBrowser.getSuffix()) {
-                        add = file.getAbsolutePath().endsWith(suffix);
-                        break;
+                        if (file.getName().endsWith(suffix)) {
+                            filterList.add(file);
+                            break;
+                        }
                     }
                 } else {
-                    add = true;
-                }
-                if (add) {
                     filterList.add(file);
                 }
             }

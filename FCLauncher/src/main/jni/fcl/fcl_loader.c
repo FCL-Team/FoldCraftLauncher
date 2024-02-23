@@ -93,7 +93,7 @@ static void *logger_thread() {
     JNIEnv *env;
     JavaVM *vm = fcl->android_jvm;
     (*vm)->AttachCurrentThread(vm, &env, NULL);
-    char buffer[1024];
+    char buffer[2048];
     ssize_t _s;
     jstring str;
     while (1) {
