@@ -77,7 +77,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
         changeButtonStyle();
-        style.addPropertyChangedListener(observable -> {
+        style.addListener(observable -> {
             changeButtonStyle();
         });
         {

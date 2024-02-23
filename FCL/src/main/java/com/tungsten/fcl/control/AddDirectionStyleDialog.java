@@ -89,6 +89,9 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
         changeDirectionStyle();
+        style.addListener(observable -> {
+            changeDirectionStyle();
+        });
         {
             FCLPreciseSeekBar interval = buttonStyleLayout.findViewById(R.id.interval);
 
@@ -296,7 +299,8 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     }
 
     private void changeDirectionStyle() {
-        direction.getData().setStyle(style);
+        ControlDirectionStyle clone = style.clone();
+        direction.getData().setStyle(clone);
         direction.getData().getBaseInfo().setSizeType(BaseInfoData.SizeType.ABSOLUTE);
         direction.getData().getBaseInfo().setAbsoluteWidth(60);
         direction.getData().getBaseInfo().setAbsoluteHeight(60);
