@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
@@ -26,12 +27,13 @@ import com.tungsten.fcl.setting.ConfigHolder;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.version.Versions;
-import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.offline.Skin;
@@ -68,7 +70,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
 
     private static MainActivity instance;
 
-    public ConstraintLayout background;
+    public ImageView background;
     public FCLDynamicIsland titleView;
 
     private UIManager uiManager;
@@ -81,7 +83,6 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
     public FCLMenuView controller;
     public FCLMenuView multiplayer;
     public FCLMenuView setting;
-    public FCLMenuView back;
 
     private LinearLayoutCompat account;
     private FCLImageView avatar;
@@ -111,7 +112,7 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
         instance = this;
 
         background = findViewById(R.id.background);
-        background.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
+        background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackground(this));
 
         titleView = findViewById(R.id.title);
 
@@ -212,20 +213,16 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
                 controller = findViewById(R.id.controller);
                 multiplayer = findViewById(R.id.multiplayer);
                 setting = findViewById(R.id.setting);
-                back = findViewById(R.id.back);
                 home.setOnSelectListener(this);
                 manage.setOnSelectListener(this);
                 download.setOnSelectListener(this);
                 controller.setOnSelectListener(this);
                 multiplayer.setOnSelectListener(this);
                 setting.setOnSelectListener(this);
-                back.setOnClickListener(this);
                 home.setSelected(true);
 
                 setupAccountDisplay();
                 setupVersionDisplay();
-
-                UpdateChecker.getInstance().checkAuto(this).start();
             });
         });
     }
@@ -323,16 +320,16 @@ public class MainActivity extends FCLActivity implements FCLMenuView.OnSelectLis
             refreshMenuView(null);
             titleView.setTextWithAnim(getString(R.string.account));
             uiManager.switchUI(uiManager.getAccountUI());
+            Account account = Accounts.getSelectedAccount();
+            if (account == null) {
+                CreateAccountDialog dialog = new CreateAccountDialog(this, (AccountFactory<?>) null);
+                dialog.show();
+            }
         }
         if (view == version && uiManager.getCurrentUI() != uiManager.getVersionUI()) {
             refreshMenuView(null);
             titleView.setTextWithAnim(getString(R.string.version));
             uiManager.switchUI(uiManager.getVersionUI());
-        }
-        if (view == back) {
-            if (uiManager != null) {
-                uiManager.onBackPressed();
-            }
         }
         if (view == executeJar) {
             JarExecutorHelper.start(this, this);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name" translatable="false">SweetRiceMC 甜米</string>
     <string name="app_version" translatable="false">1.1.4.3</string>
 
     <string name="oauth_api_key" translatable="false">null</string>
@@ -18,6 +18,7 @@
     <string name="splash_runtime_java11" translatable="false">JRE 11</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_java21" translatable="false">JRE 21</string>
+    <string name="splash_runtime_client">Client</string>
     <string name="splash_runtime_install">Install / Update</string>
 
     <string name="account">Account</string>
@@ -29,11 +30,13 @@
     <string name="setting">Setting</string>
     
     <string name="about">About</string>
+    <string name="about_launcher_fork" translatable="false">FCL for Server Owner</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
-    <string name="about_sponsor">Sponsor</string>
+    <string name="about_sponsor_fork">Sponsor to MrXiaoM</string>
+    <string name="about_sponsor">Sponsor to FCL-Team</string>
     <string name="about_source">Open Source</string>
-    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
+    <string name="about_desc">FCL for Server Owner is an Android MC Launcher. It is made for convince creating a Minecraft client one-key pack.\n\nFold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
 
     <string name="account_add_server">Add Authentication Server</string>
     <string name="account_add_server_url">Server URL</string>
@@ -53,9 +56,10 @@
     <string name="account_injector_server">Authentication Server</string>
     <string name="account_login">Login</string>
     <string name="account_methods_offline">Offline Account</string>
+    <string name="account_methods_offline_tips">TEST ONLY</string>
     <string name="account_methods_offline_name_invalid">Under normal circumstances, the game username can only contain English characters, numbers and underscores, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
     <string name="account_methods_yggdrasil">Mojang Account</string>
-    <string name="account_methods_authlib_injector">External Account</string>
+    <string name="account_methods_authlib_injector">External Login</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
     <string name="account_failed">Account refresh failed</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>

@@ -310,7 +310,7 @@ public final class VersionSetting implements Cloneable {
         controllerProperty.set(controller);
     }
 
-    private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_GL4ES);
+    private final ObjectProperty<FCLConfig.Renderer> rendererProperty = new SimpleObjectProperty<>(this, "render", FCLConfig.Renderer.RENDERER_ZINK);
 
     public ObjectProperty<FCLConfig.Renderer> rendererProperty() {
         return rendererProperty;

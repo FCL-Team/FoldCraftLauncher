@@ -6,6 +6,7 @@
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
     <string name="splash_eula_next">同意并继续</string>
     <string name="splash_runtime_title">安装或更新运行环境</string>
+    <string name="splash_runtime_client">服务器客户端</string>
     <string name="splash_runtime_install">安装 / 更新</string>
 
     <string name="account">账户管理</string>
@@ -17,9 +18,10 @@
     <string name="setting">全局设置</string>
 
     <string name="about">关于</string>
-    <string name="about_sponsor">赞助</string>
+    <string name="about_sponsor_fork">赞助 MrXiaoM</string>
+    <string name="about_sponsor">赞助 FCL-Team</string>
     <string name="about_source">开源</string>
-    <string name="about_desc">Fold Craft Launcher 是一个 Android Minecraft 启动器，让用户能够在 Android 设备上启动 Minecraft: Java Edition。\n\nFold Craft Launcher 由 FCL-Team 开发。\n\nFold Craft Launcher 的主要功能是基于 HMCLCore 修改而成的。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
+    <string name="about_desc">FCL for Server Owner 是一个修改自 Fold Craft Launcher 的 Android 端启动器，集成了一些有用的功能，方便各服务器服主快速创建 Android 端整合包应用程序\n\nFold Craft Launcher 是一个 Android Minecraft 启动器，让用户能够在 Android 设备上启动 Minecraft: Java Edition。\n\nFold Craft Launcher 由 FCL-Team 开发。\n\nFold Craft Launcher 的主要功能是基于 HMCLCore 修改而成的。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
 
     <string name="account_add_server">添加认证服务器</string>
     <string name="account_add_server_url">服务器地址</string>
@@ -39,9 +41,10 @@
     <string name="account_create_server_not_select">没有认证服务器</string>
     <string name="account_login">登录</string>
     <string name="account_methods_offline">离线账户</string>
-    <string name="account_methods_offline_name_invalid">通常情况下，用户名只能包含英文字符，数字和下划线，且长度不得超过 16 个字符。\n一些有效的名称：Tungsten，Tungsten_123；\n一些无效的名称：Exam ple，Exam-a_%%%，Tungsten_hello_world_hello_world。\n如果你有相关模组或插件可以解除此限制，你可以忽略此警告。</string>
+    <string name="account_methods_offline_tips">如果你没有国际版正版 Minecraft 账户，请使用离线账户。</string>
+    <string name="account_methods_offline_name_invalid">通常情况下，用户名只能包含中文字符、英文字符，数字和下划线，且长度不得超过 16 个字符。\n一些有效的名称：猫猫uwu，LittleCatX；\n一些无效的名称：Exam ple，Exam-a_%%%，猫——哦。\n如果你有相关模组或插件可以解除此限制，你可以忽略此警告。</string>
     <string name="account_methods_yggdrasil">Mojang 账户</string>
-    <string name="account_methods_authlib_injector">外置账户</string>
+    <string name="account_methods_authlib_injector">外置登录</string>
     <string name="account_methods_microsoft">微软账户</string>
     <string name="account_failed">账户刷新失败</string>
     <string name="account_failed_no_character">该账户中无角色。</string>

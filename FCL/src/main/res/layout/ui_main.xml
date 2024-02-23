@@ -83,6 +83,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/skin_container"
         android:layout_width="0dp"
         android:layout_height="300dp"

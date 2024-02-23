@@ -157,6 +157,7 @@ public class FCLauncher {
             if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
                 envMap.put("GALLIUM_DRIVER", "virpipe");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
+                envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
             } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
                 envMap.put("GALLIUM_DRIVER", "zink");
             }

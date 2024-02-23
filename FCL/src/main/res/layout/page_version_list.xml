@@ -38,6 +38,7 @@
             app:ripple="true"
             android:id="@+id/new_profile"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/version_new_profile"/>
@@ -63,6 +64,20 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:id="@+id/progress"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:id="@+id/dir_path"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 

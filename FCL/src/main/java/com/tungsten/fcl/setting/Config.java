@@ -91,7 +91,7 @@ public final class Config implements Cloneable, Observable {
     private StringProperty downloadType = new SimpleStringProperty(DownloadProviders.DEFAULT_RAW_PROVIDER_ID);
 
     @SerializedName("autoChooseDownloadType")
-    private BooleanProperty autoChooseDownloadType = new SimpleBooleanProperty(true);
+    private BooleanProperty autoChooseDownloadType = new SimpleBooleanProperty(false);
 
     @SerializedName("versionListSource")
     private StringProperty versionListSource = new SimpleStringProperty("balanced");

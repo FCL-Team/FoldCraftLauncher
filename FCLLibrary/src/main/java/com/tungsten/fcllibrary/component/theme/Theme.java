@@ -33,8 +33,11 @@ public class Theme {
     private final IntegerProperty animationSpeed = new SimpleIntegerProperty();
     private final ObjectProperty<BitmapDrawable> backgroundLt = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundDk = new SimpleObjectProperty<>();
+    private final ObjectProperty<BitmapDrawable> backgroundLoadingLt = new SimpleObjectProperty<>();
+    private final ObjectProperty<BitmapDrawable> backgroundLoadingDk = new SimpleObjectProperty<>();
 
-    public Theme(int color, boolean fullscreen, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
+
+    public Theme(int color, boolean fullscreen, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk, BitmapDrawable backgroundLoadingLt, BitmapDrawable backgroundLoadingDk) {
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
         ltHsv[1] -= (1 - ltHsv[1]) * 0.3f;
@@ -51,6 +54,8 @@ public class Theme {
         this.autoTint.set(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
         this.backgroundLt.set(backgroundLt);
         this.backgroundDk.set(backgroundDk);
+        this.backgroundLoadingLt.set(backgroundLoadingLt);
+        this.backgroundLoadingDk.set(backgroundLoadingDk);
     }
 
     public int getColor() {
@@ -125,6 +130,10 @@ public class Theme {
         boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         return isNightMode ? backgroundDk.get() : backgroundLt.get();
     }
+    public BitmapDrawable getBackgroundLoading(Context context) {
+        boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return isNightMode ? backgroundLoadingDk.get() : backgroundLoadingLt.get();
+    }
 
     public void setColor(int color) {
         float[] ltHsv = new float[3];
@@ -160,14 +169,22 @@ public class Theme {
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
-        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
+        int color = sharedPreferences.getInt("theme_color", context.getColor(R.color.default_theme_color));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
+
         int animationSpeed = sharedPreferences.getInt("animation_speed", 8);
-        Bitmap lt = !new File(context.getFilesDir().getAbsolutePath() + "/background/lt.png").exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(context.getFilesDir().getAbsolutePath() + "/background/lt.png");
+  
+        Bitmap lt = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
         BitmapDrawable backgroundLt = new BitmapDrawable(lt);
-        Bitmap dk = !new File(context.getFilesDir().getAbsolutePath() + "/background/dk.png").exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(context.getFilesDir().getAbsolutePath() + "/background/dk.png");
+        Bitmap dk = ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark);
         BitmapDrawable backgroundDk = new BitmapDrawable(dk);
-        return new Theme(color, fullscreen, animationSpeed, backgroundLt, backgroundDk);
+
+        Bitmap ltl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_light);
+        BitmapDrawable backgroundLoadingLt = new BitmapDrawable(ltl);
+        Bitmap dkl = ConvertUtils.getBitmapFromRes(context, R.drawable.background_loading_dark);
+        BitmapDrawable backgroundLoadingDk = new BitmapDrawable(dkl);
+        return new Theme(color, fullscreen, animationSpeed, backgroundLt, backgroundDk, backgroundLoadingLt, backgroundLoadingDk);
+
     }
 
     public static void saveTheme(Context context, Theme theme) {

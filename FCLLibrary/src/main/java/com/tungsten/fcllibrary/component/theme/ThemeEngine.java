@@ -100,39 +100,14 @@ public class ThemeEngine {
         }
     }
 
-    private void applyBackground(Context context, View view, String ltPath, String dkPath) {
-        try {
-            if (ltPath != null && new File(ltPath).exists()) {
-                FileUtils.copyFile(new File(ltPath), new File(FCLPath.LT_BACKGROUND_PATH));
-            }
-            if (dkPath != null && new File(dkPath).exists()) {
-                FileUtils.copyFile(new File(dkPath), new File(FCLPath.DK_BACKGROUND_PATH));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
-        Bitmap dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
-        BitmapDrawable lt = new BitmapDrawable(ltBitmap);
-        BitmapDrawable dk = new BitmapDrawable(dkBitmap);
-        theme.setBackgroundLt(lt);
-        theme.setBackgroundDk(dk);
-        boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        view.setBackground(isNightMode ? dk : lt);
-    }
-
-    public void applyAndSave(Context context, int color) {
+    public void applyAndSave(Context context, Integer color) {
+        if (color == null) color = context.getColor(R.color.default_theme_color);
         applyColor(color);
         Theme.saveTheme(context, theme);
     }
 
     public void applyAndSave(Context context, Window window, boolean fullscreen) {
         applyFullscreen(window, fullscreen);
-        Theme.saveTheme(context, theme);
-    }
-
-    public void applyAndSave(Context context, View view, String lt, String dk) {
-        applyBackground(context, view, lt, dk);
         Theme.saveTheme(context, theme);
     }
 

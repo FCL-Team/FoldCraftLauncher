@@ -40,17 +40,18 @@ public class FCLButton extends AppCompatButton {
         protected void invalidated() {
             get();
             drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
-            drawableNormal.setColor(Color.TRANSPARENT);
+            drawableNormal.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
             drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             if (!ripple) {
                 if (isDown) {
                     setBackgroundDrawable(drawablePress);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                    //setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                    setTextColor(Color.GRAY);
                 }
                 else {
                     setBackgroundDrawable(drawableNormal);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                    setTextColor(Color.WHITE);
                 }
             } else {
                 setRipple();
@@ -134,12 +135,12 @@ public class FCLButton extends AppCompatButton {
             if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 isDown = true;
                 setBackgroundDrawable(drawablePress);
-                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                setTextColor(Color.GRAY);
             }
             if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
                 isDown = false;
                 setBackgroundDrawable(drawableNormal);
-                setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                setTextColor(Color.WHITE);
             }
         }
         return super.onTouchEvent(event);
@@ -157,7 +158,7 @@ public class FCLButton extends AppCompatButton {
                 ThemeEngine.getInstance().getTheme().getColor()
         };
         setBackgroundTintList(new ColorStateList(state, color));
-        setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+        setTextColor(Color.WHITE);
     }
 
     public boolean isRipple() {

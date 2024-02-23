@@ -10,6 +10,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/design_default_color_error"
+                android:text="@string/account_methods_offline_tips"/>
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -4,8 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/background"
     tools:context=".activity.MainActivity">
+
+    <ImageView
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background_light"/>
 
     <ScrollView
         android:id="@+id/left_scroll"
@@ -63,13 +69,6 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_baseline_settings_24"
                 android:id="@+id/setting"/>
-
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:id="@+id/back"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -147,15 +146,13 @@
                     android:singleLine="true"
                     android:id="@+id/account_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/account_state_no_account"/>
+                    android:layout_height="wrap_content"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     android:singleLine="true"
                     android:id="@+id/account_hint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/account_state_add"
                     android:textSize="11sp"/>
 
             </LinearLayout>
@@ -215,15 +212,13 @@
                     android:singleLine="true"
                     android:id="@+id/version_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/version_no_version"/>
+                    android:layout_height="wrap_content"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     android:singleLine="true"
                     android:id="@+id/version_hint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/version_manage"
                     android:textSize="11sp"/>
 
             </LinearLayout>
@@ -251,9 +246,12 @@
         
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/launch"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:paddingBottom="60dp"
+            android:textSize="20sp"
             android:text="@string/launch"
             app:ripple="true"/>
 

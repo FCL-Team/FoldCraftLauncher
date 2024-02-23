@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -84,12 +85,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private int pointerY;
 
     private View layout;
+    private ImageView background;
     private RelativeLayout baseLayout;
     private TouchPad touchPad;
     private GameItemBar gameItemBar;
     private LogWindow logWindow;
     private TouchCharInput touchCharInput;
-    private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
@@ -434,17 +435,16 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         editModeProperty.set(isSimulated());
         controllerProperty.set(Controllers.findControllerByName(activity.getIntent().getExtras().getString("controller")));
 
+        background = findViewById(R.id.background);
         baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);
         gameItemBar = findViewById(R.id.game_item_bar);
         logWindow = findViewById(R.id.log_window);
         touchCharInput = findViewById(R.id.input_scanner);
-        launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
-            baseLayout.setBackground(ThemeEngine.getInstance().getTheme().getBackground(activity));
-            launchProgress.setVisibility(View.VISIBLE);
+            background.setImageDrawable(ThemeEngine.getInstance().getTheme().getBackgroundLoading(getActivity()));
             touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
@@ -519,8 +519,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onGraphicOutput() {
-        baseLayout.setBackground(null);
-        baseLayout.removeView(launchProgress);
+        background.setVisibility(View.GONE);
     }
 
     @Override
