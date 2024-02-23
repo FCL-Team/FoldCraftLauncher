@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.ArrayList;
@@ -100,10 +99,6 @@ public class Announcement {
 
     public boolean shouldDisplay(Context context) {
         if (outdated)
-            return false;
-        if (minVersion != -1 && minVersion > UpdateChecker.getCurrentVersionCode(context))
-            return false;
-        if (maxVersion != -1 && maxVersion < UpdateChecker.getCurrentVersionCode(context))
             return false;
         if (specificLang.size() != 0 && !specificLang.contains(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString()))
             return false;
