@@ -150,6 +150,14 @@ public final class LauncherHelper {
                     }
                     return null;
                 })
+                .thenComposeAsync(() -> {
+                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLaunchWrapper.jar")) {
+                        Files.copy(input, new File(FCLPath.MIO_LAUNCH_WRAPPER).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
+                    }
+                    return null;
+                })
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
