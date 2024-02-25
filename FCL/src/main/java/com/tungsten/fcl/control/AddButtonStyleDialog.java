@@ -77,9 +77,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
         changeButtonStyle();
-        style.addListener(observable -> {
-            changeButtonStyle();
-        });
+        style.addListener(observable -> changeButtonStyle());
         {
             FCLPreciseSeekBar textSize = normalStyleLayout.findViewById(R.id.text_size);
             FCLPreciseSeekBar strokeWidth = normalStyleLayout.findViewById(R.id.stroke_width);
@@ -302,6 +300,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
 
         container.addView(normalStyleLayout);
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private void changeButtonStyle() {
         GradientDrawable drawableNormal = new GradientDrawable();

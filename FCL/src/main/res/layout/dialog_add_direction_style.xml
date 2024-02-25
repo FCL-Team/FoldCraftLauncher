@@ -36,7 +36,7 @@
         <com.tungsten.fcl.control.view.ControlDirection
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:id="@+id/direction"
             android:layout_gravity="center"/>
 
