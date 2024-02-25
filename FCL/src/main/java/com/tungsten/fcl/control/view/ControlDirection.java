@@ -194,7 +194,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             getData().addListener(notifyListener);
         });
         boundaryListener = null;
-        visibilityListener = null;
+        visibilityListener = observable -> {};
         alphaListener = null;
 
         post(() -> {
