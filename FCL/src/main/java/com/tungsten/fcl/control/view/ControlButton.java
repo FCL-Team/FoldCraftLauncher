@@ -430,8 +430,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         ViewGroup viewGroup = (ViewGroup) getParent();
 
-        final int autoFitDist = ConvertUtils.dip2px(getContext(), 5);
         int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
+        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
 
         boolean[] xyPref = {false, false};
         int[] prefXY = {0, 0};
