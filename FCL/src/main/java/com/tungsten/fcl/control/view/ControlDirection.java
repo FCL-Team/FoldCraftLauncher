@@ -153,6 +153,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
         post(() -> {
             notifyData();
+            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
+                return;
+            }
             if (menu != null) {
                 menu.editModeProperty().addListener(notifyListener);
             }
@@ -195,9 +198,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         alphaListener = null;
 
         post(() -> {
-            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
-                return;
-            }
             notifyData();
             dataProperty.addListener(dataChangeListener);
             getData().addListener(notifyListener);
