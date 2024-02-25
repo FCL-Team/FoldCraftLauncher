@@ -74,7 +74,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
         touchCharInput = findViewById(R.id.input_scanner);
         touchPad.setOnTouchListener(this);
         logWindow.setVisibilityValue(true);
-        touchCharInput.setCharacterSender(new AwtCharSender(awtInput));
+        touchCharInput.setCharacterSender(null, new AwtCharSender(awtInput));
 
         forceExit = findViewById(R.id.force_exit);
         showLog = findViewById(R.id.show_log);

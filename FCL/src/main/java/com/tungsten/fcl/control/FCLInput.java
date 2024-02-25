@@ -96,12 +96,20 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
         }
     }
 
+    private View focusableView;
+
+    public View getFocusableView() {
+        return focusableView;
+    }
+
     public void initExternalController(View view) {
         view.setFocusable(true);
         view.setOnCapturedPointerListener(this);
         view.setOnGenericMotionListener(this);
         view.requestFocus();
         view.requestPointerCapture();
+
+        this.focusableView = view;
     }
 
     private boolean handleExternalMouseEvent(MotionEvent event) {
@@ -153,12 +161,13 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
 
     @Override
     public boolean onGenericMotion(View v, MotionEvent event) {
-        if (menu instanceof GameMenu && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
-            ((GameMenu) menu).getBaseLayout().requestFocus();
-            ((GameMenu) menu).getBaseLayout().requestPointerCapture();
+        if (!((GameMenu) menu).getTouchCharInput().isEnabled()) {
+            focusableView.requestFocus();
+            focusableView.requestPointerCapture();
         }
         return true;
     }
+
 
     public boolean handleKeyEvent(KeyEvent event) {
         int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
@@ -168,9 +177,9 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
             return false;
         if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)
             return false;
-        if (event.getRepeatCount() != 0)
-            return true;
         if (event.getAction() == KeyEvent.ACTION_MULTIPLE)
+            return true;
+        if (event.getAction() == KeyEvent.ACTION_UP && (event.getFlags() & KeyEvent.FLAG_CANCELED) != 0)
             return true;
         if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE || (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -178,16 +187,18 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
                 return true;
             }
         }
-        if (event.getKeyCode() == KeyEvent.KEYCODE_ALT_RIGHT && menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
-            }
-            return true;
-        }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 return true;
             ((GameMenu) menu).getTouchCharInput().dispatchKeyEvent(event);
+            return true;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            if (!((GameMenu) menu).getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
+                ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
+            } else if (((GameMenu) menu).getTouchCharInput().isLock()) {
+                ((GameMenu) menu).getTouchCharInput().setLock(false);
+            }
             return true;
         }
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)

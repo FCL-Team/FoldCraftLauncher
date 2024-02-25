@@ -448,7 +448,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             touchPad.post(() -> gameItemBar.setup(this));
         }
         touchPad.init(this);
-        touchCharInput.setCharacterSender(new LwjglCharSender(this));
+        touchCharInput.setCharacterSender(this, new LwjglCharSender(this));
         ViewGroup.LayoutParams layoutParams = cursorView.getLayoutParams();
         layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
         layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
