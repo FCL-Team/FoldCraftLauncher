@@ -223,8 +223,18 @@ public class FCLauncher {
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
         printTaskTitle(bridge, task + " Arguments");
         String[] args = rebaseArgs(config);
+        boolean javaArgs = true;
+        int mainClass = 0;
         for (String arg : args) {
-            log(bridge, task + " argument: " + arg);
+            if (javaArgs)
+                javaArgs = !arg.equals("mio.Wrapper");
+            String title = task.equals("Minecraft") ? javaArgs ? "Java" : task : task;
+            String prefix = title + " argument: ";
+            if (task.equals("Minecraft") && !javaArgs && mainClass < 2) {
+                mainClass++;
+                prefix = "MainClass: ";
+            }
+            log(bridge, prefix + arg);
         }
         bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
