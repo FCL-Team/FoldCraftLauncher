@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1143,
-    "versionName": "1.1.4.3",
-    "date": "2024.02.17",
+    "versionCode": 1150,
+    "versionName": "1.1.5",
+    "date": "2024.03.01",
     "description": [
       {
         "lang": "en",
-        "text": "JRE 11 support.\nJRE 21 support.\nFix CurseForge download.\nFix log format.\nFix game crash on x64 device.\nFix some bugs, see github for details."
+        "text": "Fix some bug.\nAdd some features.\nFix some bugs, see github for details."
       },
       {
         "lang": "zh_CN",
-        "text": "支持 JRE 11。\n支持 JRE 21。\n修复 CurseForge 下载。\n修复日志格式。\n修复 x64 设备上游戏崩溃的错误。\n修复一些错误，详情见 Github，若无法下载或下载速度过慢，请使用网盘下载。"
+        "text": "1.增加样式编辑功能\n2.支持样式编辑时实时阅览样式\n3.优化按键样式\n4.移除mcbbs源\n5.增加按键间距自动适应\n6.增加按键对齐功能\n7.修复物理键盘输入bug\n8.增加控件组层级调整功能\n修复一些错误，详情见 Github，若无法下载或下载速度过慢，请使用网盘下载。"
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.4.3/FCL-release-1.1.4.3-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.5/FCL-release-1.1.5-all.apk"
   }
 ]
