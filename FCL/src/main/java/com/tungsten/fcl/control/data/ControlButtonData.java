@@ -137,7 +137,10 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        try {
+            observableHelper.invalidate();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Override
