@@ -117,7 +117,10 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        try {
+            observableHelper.invalidate();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Override
