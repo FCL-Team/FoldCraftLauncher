@@ -625,12 +625,8 @@ void _glfwPlatformSetCursorPos(_GLFWwindow* window, double x, double y)
     // fclSetCursorPos(x, y);
 }
 
-void _glfwPlatformSetInjectorMode(int mode) {
-    fclSetInjectorMode(mode);
-}
-
-int _glfwPlatformGetInjectorMode() {
-    return fclGetInjectorMode();
+void _glfwPlatformSetInjectorCallback(FCLinjectorfun callback) {
+    fclSetInjectorCallback(callback);
 }
 
 void _glfwPlatformSetHitResultType(int type) {
