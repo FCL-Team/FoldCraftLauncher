@@ -79,7 +79,7 @@ public class Announcement {
             throw new IllegalStateException("No title list!");
         }
         for (Content c : title) {
-            if (c.getLang().contains(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
@@ -91,7 +91,7 @@ public class Announcement {
             throw new IllegalStateException("No content list!");
         }
         for (Content c : content) {
-            if (c.getLang().contains(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
