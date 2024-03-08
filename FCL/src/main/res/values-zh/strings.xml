@@ -270,6 +270,7 @@
     <string name="download_provider_mirror">尽量使用镜像源</string>
 
     <string name="edit_view_clone">复制控件</string>
+    <string name="edit_view_delete">删除控件</string>
     <string name="edit_view_event">控件事件</string>
     <string name="edit_view_info">控件基本信息</string>
     <string name="edit_view_no_group">请先添加或选择一个控件组！</string>

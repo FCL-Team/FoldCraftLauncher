@@ -17,6 +17,7 @@ import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
+import com.tungsten.fcl.control.view.ControlButton;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -49,6 +50,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
     private FCLButton positive;
     private FCLButton negative;
     private FCLButton clone;
+    private FCLButton delete;
 
     private FCLLinearLayout container;
     private Details details;
@@ -56,6 +58,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
     public interface Callback {
         void onPositive(CustomControl view);
         void onClone(CustomControl view);
+        default void onDelete(){}
     }
 
     public EditViewDialog(@NonNull Context context, CustomControl cloneView, GameMenu menu, Callback callback, boolean cloneable) {
@@ -75,9 +78,11 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
         clone = findViewById(R.id.clone);
+        delete = findViewById(R.id.delete);
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
         clone.setOnClickListener(this);
+        delete.setOnClickListener(this);
 
         clone.setVisibility(cloneable ? View.VISIBLE : View.GONE);
 
@@ -100,6 +105,10 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == clone) {
             callback.onClone(customControl.cloneView());
+            dismiss();
+        }
+        if (v == delete) {
+            callback.onDelete();
             dismiss();
         }
         if (v == positive) {

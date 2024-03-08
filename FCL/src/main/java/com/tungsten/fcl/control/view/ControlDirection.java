@@ -424,20 +424,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private boolean startRecord = false;
 
     private final Handler handler = new Handler();
-    private final Runnable deleteRunnable = () -> {
-        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setCancelable(false);
-        builder.setMessage(getContext().getString(R.string.edit_direction_delete));
-        builder.setPositiveButton(this::deleteView);
-        builder.setNegativeButton(() -> {
-            setX(positionX);
-            setY(positionY);
-        });
-        builder.create().show();
-    };
 
     private void deleteView() {
         if (menu != null) {
@@ -456,7 +442,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
-                    handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
@@ -465,16 +450,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     float targetY = Math.max(0, Math.min(screenHeight - getSize(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
-                    if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(deleteRunnable);
-                    }
                     autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     removeLine(0);
                     removeLine(1);
-                    handler.removeCallbacks(deleteRunnable);
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
@@ -493,6 +474,11 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             @Override
                             public void onClone(CustomControl view) {
                                 menu.getViewManager().addView(view);
+                            }
+
+                            @Override
+                            public void onDelete() {
+                                menu.getViewManager().removeView(getData());
                             }
                         }, true);
                         dialog.show();

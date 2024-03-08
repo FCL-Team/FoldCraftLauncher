@@ -292,6 +292,7 @@
     <string name="download_provider_mirror">From Mirror</string>
 
     <string name="edit_view_clone">Clone View</string>
+    <string name="edit_view_delete">Delete View</string>
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
     <string name="edit_view_no_group">Please add or select a view group first!</string>

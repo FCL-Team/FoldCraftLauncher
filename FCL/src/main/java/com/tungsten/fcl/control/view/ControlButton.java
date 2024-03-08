@@ -271,21 +271,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
-    private final Runnable deleteRunnable = () -> {
-        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setCancelable(false);
-        builder.setMessage(getContext().getString(R.string.edit_button_delete));
-        builder.setPositiveButton(this::deleteView);
-        builder.setNegativeButton(() -> {
-            setX(positionX);
-            setY(positionY);
-        });
-        builder.create().show();
-    };
-
     private void deleteView() {
         if (menu != null) {
             menu.getViewManager().removeView(getData());
@@ -304,7 +289,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
-                    handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) (event.getX() - downX);
@@ -313,9 +297,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
-                    if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(deleteRunnable);
-                    }
                     autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
@@ -323,7 +304,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     removeLine(0);
                     removeLine(1);
                     setNormalStyle();
-                    handler.removeCallbacks(deleteRunnable);
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
@@ -343,6 +323,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             @Override
                             public void onClone(CustomControl view) {
                                 menu.getViewManager().addView(view);
+                            }
+
+                            @Override
+                            public void onDelete() {
+                                menu.getViewManager().removeView(getData());
                             }
                         }, true);
                         dialog.show();
