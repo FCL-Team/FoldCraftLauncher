@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1150,
-    "versionName": "1.1.5",
-    "date": "2024.03.01",
+    "versionCode": 1151,
+    "versionName": "1.1.5.1",
+    "date": "2024.03.08",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "1.增加样式编辑功能\n2.支持样式编辑时实时阅览样式\n3.优化按键样式\n4.移除mcbbs源\n5.增加按键间距自动适应\n6.增加按键对齐功能\n7.修复物理键盘输入bug\n8.增加控件组层级调整功能\n修复一些错误，详情见 Github，若无法下载或下载速度过慢，请使用网盘下载。"
+        "text": "1.修复编辑按键闪退\n2.修复cpu异常占用\n3.修复公告语言错误"
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.5/FCL-release-1.1.5-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.5.1/FCL-release-1.1.5.1-all.apk"
   }
 ]
