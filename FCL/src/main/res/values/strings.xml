@@ -402,6 +402,7 @@
     <string name="game_crash_reason_unknown">We are not able to figure out why the game crashed, please refer to the game logs.\n\nWhen asking someone else for help, please share the full game log and related crash report file with them!</string>
     <string name="game_crash_reason_unsatisfied_link_error">Unable to launch Minecraft due to missing libraries: %1$s.</string>
     <string name="game_crash_title">Game Crashed</string>
+    <string name="game_crash_title_add">You should send the full crash log file instead of taking a screenshot</string>
 
     <string name="help">Help</string>
     <string name="help_category">Category</string>

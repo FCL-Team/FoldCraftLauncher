@@ -380,6 +380,7 @@
     <string name="game_crash_reason_unknown">原因未知，请参考日志。\n如果你要求助他人，请你导出游戏崩溃信息后将导出的文件发送给他人以供分析。</string>
     <string name="game_crash_reason_unsatisfied_link_error">当前游戏因为缺少本地库，无法继续运行。</string>
     <string name="game_crash_title">游戏意外退出</string>
+    <string name="game_crash_title_add">(你应该将完整的日志文件发送出来，而不是在这个界面截图)</string>
 
     <string name="help">帮助</string>
     <string name="help_category">类别</string>

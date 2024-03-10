@@ -85,7 +85,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         renderer = getIntent().getExtras().getString("renderer");
         java = getIntent().getExtras().getString("java");
 
-        title.setText(game ? getString(R.string.game_crash_title) : getString(R.string.jar_executor_crash_title));
+        title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add): getString(R.string.jar_executor_crash_title));
         setLoading(true);
         try {
             init();
