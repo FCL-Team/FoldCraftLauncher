@@ -159,6 +159,9 @@ public class FCLauncher {
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
                 envMap.put("GALLIUM_DRIVER", "zink");
+            } else if (renderer == FCLConfig.Renderer.RENDERER_FREEDRENO) {
+                envMap.put("GALLIUM_DRIVER", "freedreno");
+                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
             }
         }
     }
