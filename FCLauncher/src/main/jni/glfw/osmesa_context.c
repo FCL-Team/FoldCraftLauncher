@@ -129,10 +129,10 @@ static void swapBuffersOSMesa(_GLFWwindow* window)
     if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
         window->context.Finish();
         vtest_swap_buffers();
-    } else if (strcmp(getenv("LIBGL_STRING"), "Zink") == 0) {
+    } else if (strcmp(getenv("LIBGL_STRING"), "Zink") == 0 || strcmp(getenv("LIBGL_STRING"), "Freedreno") == 0) {
         OSMesaContext context = OSMesaGetCurrentContext();
         if (context == NULL) {
-            printf("Zink: attempted to swap buffers without context!");
+            printf("OSMesa: attempted to swap buffers without context!");
             return;
         }
         OSMesaMakeCurrent(context, buf.bits, GL_UNSIGNED_BYTE, window->context.osmesa.width, window->context.osmesa.height);
@@ -195,6 +195,8 @@ GLFWbool _glfwInitOSMesa(void)
         _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
     } else if (strcmp(renderer, "Zink") == 0) {
         load_vulkan();
+        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
+    } else if (strcmp(renderer, "Freedreno") == 0) {
         _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
     }
 
