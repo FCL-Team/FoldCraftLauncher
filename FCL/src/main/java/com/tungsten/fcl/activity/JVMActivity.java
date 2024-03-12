@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
@@ -151,6 +152,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                     return true;
                 }
             }
+        }
+        return handleEvent;
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        boolean handleEvent = true;
+        if (menu != null && menuType == MenuType.GAME) {
+            handleEvent = menu.getInput().handleGenericMotionEvent(event);
         }
         return handleEvent;
     }
