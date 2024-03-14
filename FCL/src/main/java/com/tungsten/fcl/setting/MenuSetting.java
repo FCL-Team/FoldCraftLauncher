@@ -209,6 +209,20 @@ public class MenuSetting {
         this.mouseSizeProperty.set(mouseSize);
     }
 
+    private final DoubleProperty gamepadDeadzoneProperty = new SimpleDoubleProperty(this, "gamepadDeadzone", 1d);
+
+    public DoubleProperty gamepadDeadzoneProperty() {
+        return gamepadDeadzoneProperty;
+    }
+
+    public double getGamepadDeadzone() {
+        return gamepadDeadzoneProperty.get();
+    }
+
+    public void setGamepadDeadzone(double gamepadDeadzone) {
+        this.gamepadDeadzoneProperty.set(gamepadDeadzone);
+    }
+
     public void addPropertyChangedListener(InvalidationListener listener) {
         autoFitProperty.addListener(listener);
         autoFitDistProperty.addListener(listener);
@@ -223,6 +237,7 @@ public class MenuSetting {
         mouseMoveModeProperty.addListener(listener);
         mouseSensitivityProperty.addListener(listener);
         mouseSizeProperty.addListener(listener);
+        gamepadDeadzoneProperty.addListener(listener);
     }
 
     public static class Serializer implements JsonSerializer<MenuSetting>, JsonDeserializer<MenuSetting> {
@@ -244,7 +259,7 @@ public class MenuSetting {
             obj.addProperty("mouseMoveMode", src.getMouseMoveMode().getId());
             obj.addProperty("mouseSensitivity", src.getMouseSensitivity());
             obj.addProperty("mouseSize", src.getMouseSize());
-
+            obj.addProperty("gamepadDeadzone", src.getGamepadDeadzone());
             return obj;
         }
 
@@ -269,7 +284,7 @@ public class MenuSetting {
             ms.setMouseMoveMode(MouseMoveMode.getById(Optional.ofNullable(obj.get("mouseMoveMode")).map(JsonElement::getAsInt).orElse(0)));
             ms.setMouseSensitivity(Optional.ofNullable(obj.get("mouseSensitivity")).map(JsonElement::getAsDouble).orElse(1d));
             ms.setMouseSize(Optional.ofNullable(obj.get("mouseSize")).map(JsonElement::getAsInt).orElse(15));
-
+            ms.setGamepadDeadzone(Optional.ofNullable(obj.get("gamepadDeadzone")).map(JsonElement::getAsDouble).orElse(0.2d));
             return ms;
         }
     }

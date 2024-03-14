@@ -282,8 +282,7 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
         float xAxis = event.getAxisValue(MotionEvent.AXIS_X);
         float yAxis = event.getAxisValue(MotionEvent.AXIS_Y);
         double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        //todo: custom deadzone
-        if (dist >= 0.2) {
+        if (dist >= ((GameMenu) menu).getMenuSetting().getGamepadDeadzone()) {
             double degrees = Math.toDegrees(-Math.atan2(yAxis, xAxis));
             if (degrees < 0) {
                 degrees += 360;
@@ -327,8 +326,7 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
         float xAxis = event.getAxisValue(MotionEvent.AXIS_Z);
         float yAxis = event.getAxisValue(MotionEvent.AXIS_RZ);
         double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        //todo: custom deadzone
-        if (dist < 0.2) {
+        if (dist < ((GameMenu) menu).getMenuSetting().getGamepadDeadzone()) {
             lastXAxis = 0;
             lastYAxis = 0;
             return;

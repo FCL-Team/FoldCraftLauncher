@@ -526,6 +526,8 @@
     <string name="menu_settings_mouse_mode_slide">Slide</string>
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_gamepad">GamePad</string>
+    <string name="menu_settings_gamepad_deadzone">DeadZone</string>
     <string name="menu_settings_multiplayer">Multiplayer Menu</string>
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
