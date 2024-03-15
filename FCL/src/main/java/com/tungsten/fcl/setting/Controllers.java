@@ -28,16 +28,19 @@ public class Controllers {
 
     private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[] { controller });
     private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
+    public static Controller DEFAULT_CONTROLLER;
 
     public static void checkControllers() {
         if (controllers.isEmpty()) {
             try {
-                String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
-                Controller controller = new GsonBuilder()
-                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                        .setPrettyPrinting()
-                        .create().fromJson(str, Controller.class);
-                controller.saveToDisk();
+                if (DEFAULT_CONTROLLER == null) {
+                    String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
+                    DEFAULT_CONTROLLER = new GsonBuilder()
+                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                            .setPrettyPrinting()
+                            .create().fromJson(str, Controller.class);
+                }
+                DEFAULT_CONTROLLER.saveToDisk();
             } catch (IOException e) {
                 Logging.LOG.log(Level.SEVERE, "Failed to generate default controller!", e.getMessage());
             }
