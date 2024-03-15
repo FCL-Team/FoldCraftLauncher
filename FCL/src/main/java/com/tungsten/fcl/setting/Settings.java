@@ -19,7 +19,6 @@ package com.tungsten.fcl.setting;
 
 import com.tungsten.fcl.game.FCLCacheRepository;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.CacheRepository;
 
 public final class Settings {
@@ -44,7 +43,7 @@ public final class Settings {
         DownloadProviders.init();
         Accounts.init();
         Profiles.init();
-        Schedulers.io().execute(Controllers::init);
+        Controllers.init();
         AuthlibInjectorServers.init();
 
         CacheRepository.setInstance(FCLCacheRepository.REPOSITORY);

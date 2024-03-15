@@ -26,22 +26,18 @@ public class Controllers {
     private Controllers() {
     }
 
-    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[]{controller});
+    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[] { controller });
     private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
-
-    public static Controller DEFAULT_CONTROLLER;
 
     public static void checkControllers() {
         if (controllers.isEmpty()) {
             try {
-                if (DEFAULT_CONTROLLER == null) {
-                    String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
-                    DEFAULT_CONTROLLER = new GsonBuilder()
-                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                            .setPrettyPrinting()
-                            .create().fromJson(str, Controller.class);
-                }
-                DEFAULT_CONTROLLER.saveToDisk();
+                String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
+                Controller controller = new GsonBuilder()
+                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                        .setPrettyPrinting()
+                        .create().fromJson(str, Controller.class);
+                controller.saveToDisk();
             } catch (IOException e) {
                 Logging.LOG.log(Level.SEVERE, "Failed to generate default controller!", e.getMessage());
             }
@@ -108,9 +104,7 @@ public class Controllers {
                             .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
-                    if (controller != null) {
-                        list.add(controller);
-                    }
+                    list.add(controller);
                 } catch (IOException e) {
                     Logging.LOG.log(Level.WARNING, "Can't read file: " + json.getAbsolutePath(), e.getMessage());
                 }
