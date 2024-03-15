@@ -225,6 +225,7 @@ public class FCLauncher {
         String[] args = rebaseArgs(config);
         boolean javaArgs = true;
         int mainClass = 0;
+        boolean isToken = false;
         for (String arg : args) {
             if (javaArgs)
                 javaArgs = !arg.equals("mio.Wrapper");
@@ -234,6 +235,13 @@ public class FCLauncher {
                 mainClass++;
                 prefix = "MainClass: ";
             }
+            if (isToken) {
+                isToken = false;
+                log(bridge, prefix + "***");
+                continue;
+            }
+            if (arg.equals("--accessToken"))
+                isToken = true;
             log(bridge, prefix + arg);
         }
         bridge.setupJLI();
