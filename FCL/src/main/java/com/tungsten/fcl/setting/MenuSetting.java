@@ -69,6 +69,20 @@ public class MenuSetting {
         this.lockMenuViewProperty.set(lockMenuView);
     }
 
+    private final BooleanProperty disableSoftKeyAdjustProperty = new SimpleBooleanProperty(this, "disableSoftKeyAdjust", false);
+
+    public BooleanProperty disableSoftKeyAdjustProperty() {
+        return disableSoftKeyAdjustProperty;
+    }
+
+    public boolean isDisableSoftKeyAdjust() {
+        return disableSoftKeyAdjustProperty.get();
+    }
+
+    public void setDisableSoftKeyAdjust(boolean disableSoftKeyAdjust) {
+        this.disableSoftKeyAdjustProperty.set(disableSoftKeyAdjust);
+    }
+
     private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.5d);
 
     public DoubleProperty menuPositionXProperty() {
@@ -227,6 +241,7 @@ public class MenuSetting {
         autoFitProperty.addListener(listener);
         autoFitDistProperty.addListener(listener);
         lockMenuViewProperty.addListener(listener);
+        disableSoftKeyAdjustProperty.addListener(listener);
         menuPositionXProperty.addListener(listener);
         menuPositionYProperty.addListener(listener);
         disableGestureProperty.addListener(listener);
@@ -249,6 +264,7 @@ public class MenuSetting {
             obj.addProperty("autoFit", src.isAutoFit());
             obj.addProperty("autoFitDist", src.getAutoFitDist());
             obj.addProperty("lockMenuView", src.isLockMenuView());
+            obj.addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust());
             obj.addProperty("menuPositionX", src.getMenuPositionX());
             obj.addProperty("menuPositionY", src.getMenuPositionY());
             obj.addProperty("disableGesture", src.isDisableGesture());
@@ -274,6 +290,7 @@ public class MenuSetting {
             ms.setAutoFit(Optional.ofNullable(obj.get("autoFit")).map(JsonElement::getAsBoolean).orElse(true));
             ms.setAutoFitDist(Optional.ofNullable(obj.get("autoFitDist")).map(JsonElement::getAsInt).orElse(0));
             ms.setLockMenuView(Optional.ofNullable(obj.get("lockMenuView")).map(JsonElement::getAsBoolean).orElse(false));
+            ms.setDisableSoftKeyAdjust(Optional.ofNullable(obj.get("disableSoftKeyAdjust")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setMenuPositionX(Optional.ofNullable(obj.get("menuPositionX")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setMenuPositionY(Optional.ofNullable(obj.get("menuPositionY")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setDisableGesture(Optional.ofNullable(obj.get("disableGesture")).map(JsonElement::getAsBoolean).orElse(false));

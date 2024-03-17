@@ -314,6 +314,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private void initRightMenu() {
         FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
+        FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
         FCLSwitch disableGestureSwitch = findViewById(R.id.switch_gesture);
         FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
@@ -338,6 +339,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
+        FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.disableSoftKeyAdjustProperty());
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.disableGestureProperty());
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.disableBEGestureProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.enableGyroscopeProperty());

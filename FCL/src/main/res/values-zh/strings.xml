@@ -503,6 +503,7 @@
     <string name="menu_settings_quick_input_button">管理</string>
     <string name="menu_settings_send_key">发送键值</string>
     <string name="menu_settings_send_key_button">发送</string>
+    <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
