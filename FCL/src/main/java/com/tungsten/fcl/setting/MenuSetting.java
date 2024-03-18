@@ -83,6 +83,20 @@ public class MenuSetting {
         this.disableSoftKeyAdjustProperty.set(disableSoftKeyAdjust);
     }
 
+    private final BooleanProperty showLogProperty = new SimpleBooleanProperty(this, "showLog", false);
+
+    public BooleanProperty showLogProperty() {
+        return showLogProperty;
+    }
+
+    public boolean isshowLog() {
+        return showLogProperty.get();
+    }
+
+    public void setShowLog(boolean showLog) {
+        this.showLogProperty.set(showLog);
+    }
+
     private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.5d);
 
     public DoubleProperty menuPositionXProperty() {
@@ -242,6 +256,7 @@ public class MenuSetting {
         autoFitDistProperty.addListener(listener);
         lockMenuViewProperty.addListener(listener);
         disableSoftKeyAdjustProperty.addListener(listener);
+        showLogProperty.addListener(listener);
         menuPositionXProperty.addListener(listener);
         menuPositionYProperty.addListener(listener);
         disableGestureProperty.addListener(listener);
@@ -265,6 +280,7 @@ public class MenuSetting {
             obj.addProperty("autoFitDist", src.getAutoFitDist());
             obj.addProperty("lockMenuView", src.isLockMenuView());
             obj.addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust());
+            obj.addProperty("showLog", src.isshowLog());
             obj.addProperty("menuPositionX", src.getMenuPositionX());
             obj.addProperty("menuPositionY", src.getMenuPositionY());
             obj.addProperty("disableGesture", src.isDisableGesture());
@@ -291,6 +307,7 @@ public class MenuSetting {
             ms.setAutoFitDist(Optional.ofNullable(obj.get("autoFitDist")).map(JsonElement::getAsInt).orElse(0));
             ms.setLockMenuView(Optional.ofNullable(obj.get("lockMenuView")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setDisableSoftKeyAdjust(Optional.ofNullable(obj.get("disableSoftKeyAdjust")).map(JsonElement::getAsBoolean).orElse(false));
+            ms.setShowLog(Optional.ofNullable(obj.get("showLog")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setMenuPositionX(Optional.ofNullable(obj.get("menuPositionX")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setMenuPositionY(Optional.ofNullable(obj.get("menuPositionY")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setDisableGesture(Optional.ofNullable(obj.get("disableGesture")).map(JsonElement::getAsBoolean).orElse(false));

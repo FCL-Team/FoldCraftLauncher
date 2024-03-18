@@ -37,6 +37,8 @@ import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -343,7 +345,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.disableGestureProperty());
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.disableBEGestureProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.enableGyroscopeProperty());
-        FXUtils.bindBoolean(showLogSwitch, logWindow.visibilityProperty());
+        FXUtils.bindBoolean(showLogSwitch, menuSetting.showLogProperty());
+
+        logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
+        menuSetting.showLogProperty().addListener(observable -> {
+            logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
+        });
 
         ArrayList<GestureMode> gestureModeDataList = new ArrayList<>();
         gestureModeDataList.add(GestureMode.BUILD);
