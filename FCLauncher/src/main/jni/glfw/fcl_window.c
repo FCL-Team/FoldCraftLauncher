@@ -345,11 +345,10 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
         else if (ctxconfig->source == GLFW_OSMESA_CONTEXT_API)
         {
             const char *renderer = getenv("LIBGL_STRING");
-            if (strcmp(renderer, "VirGLRenderer") == 0) {
-                if (!_glfwInitEGL())
-                    return GLFW_FALSE;
-            }
-            if (strcmp(renderer, "Zink") == 0) {
+            if (strcmp(renderer, "Zink") == 0 ||
+               strcmp(renderer, "Freedreno") == 0 ||
+               strcmp(renderer, "VirGLRenderer") == 0)
+            {
                 if (!_glfwInitEGL())
                     return GLFW_FALSE;
             }
