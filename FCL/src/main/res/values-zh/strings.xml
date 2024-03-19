@@ -893,4 +893,5 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
+    <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
 </resources>

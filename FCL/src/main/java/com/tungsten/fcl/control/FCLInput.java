@@ -154,8 +154,17 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
                 deltaX = (int) (event.getX() * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
                 deltaY = (int) (event.getY() * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
             } else {
-                deltaX = (int) (lastXAxis * deltaTimeScale * 10 * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
-                deltaY = (int) (lastYAxis * deltaTimeScale * 10 * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
+                GameMenu gameMenu = (GameMenu) menu;
+                gameMenu.getBridge().refreshHitResultType();
+                deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+                deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+                double hypot = Math.hypot(Math.abs(lastXAxis), Math.abs(lastYAxis));
+                if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_ENTITY) {
+                    if (hypot <= ((GameMenu) menu).getMenuSetting().getGamepadAimAssistZone()) {
+                        deltaX /= 10;
+                        deltaY /= 10;
+                    }
+                }
             }
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
                 int targetX = Math.max(0, Math.min(screenWidth, ((GameMenu) menu).getCursorX() + deltaX));

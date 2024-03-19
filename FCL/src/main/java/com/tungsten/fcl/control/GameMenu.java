@@ -328,11 +328,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
         FCLSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
+        FCLSeekBar gamepadAimZoneSeekbar = findViewById(R.id.gamepad_aimzone_size);
         FCLSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
         FCLTextView mouseSensitivityText = findViewById(R.id.mouse_sensitivity_text);
         FCLTextView mouseSizeText = findViewById(R.id.mouse_size_text);
         FCLTextView gamepadDeadzoneText = findViewById(R.id.gamepad_deadzone_text);
+        FCLTextView gamepadAimZoneText = findViewById(R.id.gamepad_aimzone_text);
         FCLTextView gyroSensitivityText = findViewById(R.id.gyro_sensitivity_text);
 
         openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
@@ -399,12 +401,24 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         };
         gamepadDeadzoneSeekbar.progressProperty().bindBidirectional(gamepadDeadzoneProperty);
 
+        gamepadAimZoneSeekbar.addProgressListener();
+        IntegerProperty gamepadAimZoneProperty = new SimpleIntegerProperty((int) (menuSetting.getGamepadAimAssistZone() * 100)) {
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                double doubleValue = get() / 100d;
+                menuSetting.setGamepadAimAssistZone(doubleValue);
+            }
+        };
+        gamepadAimZoneSeekbar.progressProperty().bindBidirectional(gamepadAimZoneProperty);
+
         gyroSensitivitySeekbar.addProgressListener();
         gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.gyroscopeSensitivityProperty());
 
         mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
         mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.mouseSizeProperty().get() + " dp", menuSetting.mouseSizeProperty()));
         gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));
+        gamepadAimZoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadAimZoneProperty.get() + " %", gamepadAimZoneProperty));
         gyroSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.gyroscopeSensitivityProperty().get() + "", menuSetting.gyroscopeSensitivityProperty()));
 
         openMultiplayerMenu.setOnClickListener(this);

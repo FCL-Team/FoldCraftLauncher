@@ -251,6 +251,20 @@ public class MenuSetting {
         this.gamepadDeadzoneProperty.set(gamepadDeadzone);
     }
 
+    private final DoubleProperty gamepadAimAssistZoneProperty = new SimpleDoubleProperty(this, "gamepadAimAssistZone", 1d);
+
+    public DoubleProperty gamepadAimAssistZoneProperty() {
+        return gamepadAimAssistZoneProperty;
+    }
+
+    public double getGamepadAimAssistZone() {
+        return gamepadAimAssistZoneProperty.get();
+    }
+
+    public void setGamepadAimAssistZone(double gamepadAimAssistZone) {
+        this.gamepadAimAssistZoneProperty.set(gamepadAimAssistZone);
+    }
+
     public void addPropertyChangedListener(InvalidationListener listener) {
         autoFitProperty.addListener(listener);
         autoFitDistProperty.addListener(listener);
@@ -268,6 +282,7 @@ public class MenuSetting {
         mouseSensitivityProperty.addListener(listener);
         mouseSizeProperty.addListener(listener);
         gamepadDeadzoneProperty.addListener(listener);
+        gamepadAimAssistZoneProperty.addListener(listener);
     }
 
     public static class Serializer implements JsonSerializer<MenuSetting>, JsonDeserializer<MenuSetting> {
@@ -292,6 +307,7 @@ public class MenuSetting {
             obj.addProperty("mouseSensitivity", src.getMouseSensitivity());
             obj.addProperty("mouseSize", src.getMouseSize());
             obj.addProperty("gamepadDeadzone", src.getGamepadDeadzone());
+            obj.addProperty("gamepadAimAssistZone", src.getGamepadAimAssistZone());
             return obj;
         }
 
@@ -319,6 +335,7 @@ public class MenuSetting {
             ms.setMouseSensitivity(Optional.ofNullable(obj.get("mouseSensitivity")).map(JsonElement::getAsDouble).orElse(1d));
             ms.setMouseSize(Optional.ofNullable(obj.get("mouseSize")).map(JsonElement::getAsInt).orElse(15));
             ms.setGamepadDeadzone(Optional.ofNullable(obj.get("gamepadDeadzone")).map(JsonElement::getAsDouble).orElse(0.2d));
+            ms.setGamepadAimAssistZone(Optional.ofNullable(obj.get("gamepadAimAssistZone")).map(JsonElement::getAsDouble).orElse(0.98d));
             return ms;
         }
     }
