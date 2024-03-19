@@ -251,7 +251,7 @@ public class MenuSetting {
         this.gamepadDeadzoneProperty.set(gamepadDeadzone);
     }
 
-    private final DoubleProperty gamepadAimAssistZoneProperty = new SimpleDoubleProperty(this, "gamepadAimAssistZone", 1d);
+    private final DoubleProperty gamepadAimAssistZoneProperty = new SimpleDoubleProperty(this, "gamepadAimAssistZone", 0.95d);
 
     public DoubleProperty gamepadAimAssistZoneProperty() {
         return gamepadAimAssistZoneProperty;
