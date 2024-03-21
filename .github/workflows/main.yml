@@ -56,6 +56,43 @@ jobs:
           path: FCL/build/outputs/apk/release/*
         #  retention-days: 1
 
+      - if: startsWith(github.ref, 'refs/heads')
+        name: "[GitHub Pre-Release] Delete"
+        uses: 8Mi-Tech/delete-release-assets-action@main
+        with:
+          github_token: "${{ secrets.TOKEN }}"
+          tag: CI-Build-${{github.ref_name}}
+          deleteOnlyFromDrafts: false
+
+      - if: startsWith(github.ref, 'refs/heads')
+        name: 【GitHub Pre-Release】 Set CI-Build Text
+        run: |
+          cat > FCL/build/ci-build.md << 'EOF'
+          Build Time / 构建时间 : ${{ steps.cslenv-github.outputs.buildtime }}
+          自动同步分支 ${{ github.ref_name }} 的代码，以保持最新
+          Synchronize ${{ github.ref_name }} branch code updates, keeping only the latest version
+          <br>
+          EOF
+
+      - if: startsWith(github.ref, 'refs/heads')
+        name: "[GitHub Pre-Release] Upload Tag"
+        uses: richardsimko/update-tag@v1.0.7
+        with:
+          tag_name: CI-Build-${{github.ref_name}}
+        env:
+          GITHUB_TOKEN: "${{ secrets.TOKEN }}"
+
+      - if: ${{ matrix.website == 'GitHub-PreRelease' && startsWith(github.ref, 'refs/heads') }}
+        name: "[GitHub Pre-Release] Publish"
+        uses: softprops/action-gh-release@v1
+        with:
+          token: "${{ secrets.TOKEN }}"
+          name: FoldCraftLauncer CI-Build
+          tag_name: CI-Build-${{github.ref_name}}
+          prerelease: true
+          body_path: FCL/build/ci-build.md
+          files: FCL/build/outputs/apk/release/*.apk
+
 #only for fork
   DebugBuild:
     if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
