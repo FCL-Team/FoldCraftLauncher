@@ -12,6 +12,43 @@ on:
   workflow_dispatch:
 
 jobs:
+  init:
+    runs-on: ubuntu-20.04
+    if: startsWith(github.ref, 'refs/heads/')
+    name: Init & Prepare CI-Build
+    steps:
+      - name: Delete
+        uses: 8Mi-Tech/delete-release-assets-action@main
+        with:
+          github_token: "${{ secrets.TOKEN }}"
+          tag: CI-Build-${{github.ref_name}}
+          deleteOnlyFromDrafts: false
+      
+      - name: Set Text
+        run: |
+          cat > ci-build.md << 'EOF'
+          Build Time / 构建时间 : ${{ steps.cslenv-github.outputs.buildtime }}
+          自动同步分支 ${{ github.ref_name }} 的代码，以保持最新
+          Synchronize ${{ github.ref_name }} branch code updates, keeping only the latest version
+          <br>
+          EOF
+      
+      - name: Update Tag
+        uses: richardsimko/update-tag@v1.0.7
+        with:
+          tag_name: CI-Build-${{github.ref_name}}
+        env:
+          GITHUB_TOKEN: "${{ secrets.TOKEN }}"
+      
+      - if: startsWith(github.ref, 'refs/heads')
+        uses: softprops/action-gh-release@v1
+        with:
+          token: "${{ secrets.TOKEN }}"
+          name: FoldCraftLauncer CI-Build
+          tag_name: CI-Build-${{github.ref_name}}
+          prerelease: true
+          body_path: ci-build.md
+          
   FCLTeamBuild:
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
@@ -56,41 +93,14 @@ jobs:
           path: FCL/build/outputs/apk/release/*
         #  retention-days: 1
 
-      - if: startsWith(github.ref, 'refs/heads')
-        name: CI-Build Delete
-        uses: 8Mi-Tech/delete-release-assets-action@main
-        with:
-          github_token: "${{ secrets.TOKEN }}"
-          tag: CI-Build-${{github.ref_name}}
-          deleteOnlyFromDrafts: false
-
-      - if: startsWith(github.ref, 'refs/heads')
-        name: CI-Build Set Text
-        run: |
-          cat > FCL/build/ci-build.md << 'EOF'
-          Build Time / 构建时间 : ${{ steps.cslenv-github.outputs.buildtime }}
-          自动同步分支 ${{ github.ref_name }} 的代码，以保持最新
-          Synchronize ${{ github.ref_name }} branch code updates, keeping only the latest version
-          <br>
-          EOF
-
-      - if: startsWith(github.ref, 'refs/heads')
-        name: CI-Build Upload Tag
-        uses: richardsimko/update-tag@v1.0.7
-        with:
-          tag_name: CI-Build-${{github.ref_name}}
-        env:
-          GITHUB_TOKEN: "${{ secrets.TOKEN }}"
-
-      - if: && startsWith(github.ref, 'refs/heads')
-        name: CI-Build Publish
+      - name: CI-Build Publish
+        if: startsWith(github.ref, 'refs/heads')
         uses: softprops/action-gh-release@v1
         with:
           token: "${{ secrets.TOKEN }}"
           name: FoldCraftLauncer CI-Build
           tag_name: CI-Build-${{github.ref_name}}
           prerelease: true
-          body_path: FCL/build/ci-build.md
           files: FCL/build/outputs/apk/release/*.apk
 
 #only for fork
