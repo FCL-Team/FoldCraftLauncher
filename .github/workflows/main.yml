@@ -50,7 +50,6 @@ jobs:
           body_path: ci-build.md
           
   FCLTeamBuild:
-    needs: InitCIBuild
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
