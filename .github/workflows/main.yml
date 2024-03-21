@@ -57,7 +57,7 @@ jobs:
         #  retention-days: 1
 
       - if: startsWith(github.ref, 'refs/heads')
-        name: "[GitHub Pre-Release] Delete"
+        name: CI-Build Delete
         uses: 8Mi-Tech/delete-release-assets-action@main
         with:
           github_token: "${{ secrets.TOKEN }}"
@@ -65,7 +65,7 @@ jobs:
           deleteOnlyFromDrafts: false
 
       - if: startsWith(github.ref, 'refs/heads')
-        name: 【GitHub Pre-Release】 Set CI-Build Text
+        name: CI-Build Set Text
         run: |
           cat > FCL/build/ci-build.md << 'EOF'
           Build Time / 构建时间 : ${{ steps.cslenv-github.outputs.buildtime }}
@@ -75,15 +75,15 @@ jobs:
           EOF
 
       - if: startsWith(github.ref, 'refs/heads')
-        name: "[GitHub Pre-Release] Upload Tag"
+        name: CI-Build Upload Tag
         uses: richardsimko/update-tag@v1.0.7
         with:
           tag_name: CI-Build-${{github.ref_name}}
         env:
           GITHUB_TOKEN: "${{ secrets.TOKEN }}"
 
-      - if: ${{ matrix.website == 'GitHub-PreRelease' && startsWith(github.ref, 'refs/heads') }}
-        name: "[GitHub Pre-Release] Publish"
+      - if: && startsWith(github.ref, 'refs/heads')
+        name: CI-Build Publish
         uses: softprops/action-gh-release@v1
         with:
           token: "${{ secrets.TOKEN }}"
