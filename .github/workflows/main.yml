@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  init:
+  InitCIBuild:
     runs-on: ubuntu-20.04
     if: startsWith(github.ref, 'refs/heads/')
     name: Init & Prepare CI-Build
@@ -50,6 +50,7 @@ jobs:
           body_path: ci-build.md
           
   FCLTeamBuild:
+    needs: InitCIBuild
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
