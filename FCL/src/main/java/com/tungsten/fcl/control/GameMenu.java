@@ -325,12 +325,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSpinner<GestureMode> gestureModeSpinner = findViewById(R.id.gesture_mode_spinner);
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
 
+        FCLSeekBar itemBarScaleSeekbar = findViewById(R.id.item_bar_scale);
         FCLSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
         FCLSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
         FCLSeekBar gamepadAimZoneSeekbar = findViewById(R.id.gamepad_aimzone_size);
         FCLSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
+        FCLTextView itemBarScaleText = findViewById(R.id.item_bar_scale_text);
         FCLTextView mouseSensitivityText = findViewById(R.id.mouse_sensitivity_text);
         FCLTextView mouseSizeText = findViewById(R.id.mouse_size_text);
         FCLTextView gamepadDeadzoneText = findViewById(R.id.gamepad_deadzone_text);
@@ -377,6 +379,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(gestureModeSpinner, menuSetting.gestureModeProperty());
         FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.mouseMoveModeProperty());
 
+        itemBarScaleSeekbar.addProgressListener();
+        IntegerProperty itemBarScaleProperty = new SimpleIntegerProperty(menuSetting.getItemBarScale()) {
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                menuSetting.setItemBarScale(get());
+                gameItemBar.getOptionListener().onOptionChanged();
+            }
+        };
+        itemBarScaleSeekbar.progressProperty().bindBidirectional(itemBarScaleProperty);
+
         mouseSensitivitySeekbar.addProgressListener();
         IntegerProperty mouseSensitivityProperty = new SimpleIntegerProperty((int) (menuSetting.getMouseSensitivity() * 100)) {
             @Override
@@ -415,6 +428,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gyroSensitivitySeekbar.addProgressListener();
         gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.gyroscopeSensitivityProperty());
 
+        itemBarScaleText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(itemBarScaleProperty.get()), itemBarScaleProperty));
         mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
         mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.mouseSizeProperty().get() + " dp", menuSetting.mouseSizeProperty()));
         gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));

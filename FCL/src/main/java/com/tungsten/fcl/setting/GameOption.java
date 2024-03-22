@@ -30,6 +30,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,9 +44,9 @@ import java.util.logging.Level;
 public class GameOption {
 
     private final String optionPath;
-    private final HashMap<String, String> parameterMap = new HashMap<>();
-    private final ArrayList<GameOptionListener> optionListeners = new ArrayList<>();
-    private FileObserver fileObserver;
+    private static final HashMap<String, String> parameterMap = new HashMap<>();
+    private static final ArrayList<WeakReference<GameOptionListener>> optionListeners = new ArrayList<>();
+    private static FileObserver fileObserver;
 
     public GameOption(String gameDir) {
         this.optionPath = gameDir + "/options.txt";
@@ -138,7 +139,7 @@ public class GameOption {
     }
 
     /** @return The stored Minecraft GUI scale, also auto-computed if on auto-mode or improper setting */
-    public int getGuiScale(int width, int height) {
+    public int getGuiScale(int width, int height, int iscale) {
         String str = get("guiScale");
         int guiScale = (str == null ? 0 : Integer.parseInt(str));
 
@@ -147,13 +148,13 @@ public class GameOption {
             guiScale = scale;
         }
 
-        String lang = get("lang");
-        boolean isUnicode = lang != null && (lang.equals("zh_CN") || lang.equals("zh_cn"));
-        if (isUnicode && guiScale % 2 != 0 && guiScale != 1) {
-            --guiScale;
-        }
+//        String lang = get("lang");
+//        boolean isUnicode = lang != null && (lang.equals("zh_CN") || lang.equals("zh_cn"));
+//        if (isUnicode && guiScale % 2 != 0 && guiScale != 1) {
+//            --guiScale;
+//        }
 
-        return guiScale;
+        return guiScale + iscale;
     }
 
     /** Add a file observer to reload options on file change
@@ -182,21 +183,21 @@ public class GameOption {
 
     /** Notify the option listeners */
     public void notifyListeners() {
-        for (GameOptionListener optionListener : optionListeners) {
-            if(optionListener == null) continue;
+        for (WeakReference<GameOptionListener> optionListener : optionListeners) {
+            if(optionListener.get() == null) continue;
 
-            optionListener.onOptionChanged();
+            optionListener.get().onOptionChanged();
         }
     }
 
     /** Add an option listener, notice how we don't have a reference to it */
     public void addGameOptionListener(GameOptionListener listener) {
-        optionListeners.add(listener);
+        optionListeners.add(new WeakReference<>(listener));
     }
 
     /** Remove a listener from existence, or at least, its reference here */
     public void removeGameOptionListener(GameOptionListener listener) {
-        for(GameOptionListener optionListener : optionListeners) {
+        for(WeakReference<GameOptionListener> optionListener : optionListeners) {
             if(optionListener == null) continue;
             if(optionListener == listener) {
                 optionListeners.remove(optionListener);

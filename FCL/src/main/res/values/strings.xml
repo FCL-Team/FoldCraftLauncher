@@ -535,6 +535,7 @@
     <string name="menu_settings_send_key">Send Key</string>
     <string name="menu_settings_send_key_button">Send</string>
     <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
+    <string name="menu_settings_item_bar_scale">ItemBarScale</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
