@@ -18,7 +18,6 @@ jobs:
     name: Init & Prepare CI-Build
     steps:
       - name: Delete
-        if: startsWith(github.ref, 'refs/heads/')
         uses: 8Mi-Tech/delete-release-assets-action@main
         with:
           github_token: "${{ secrets.TOKEN }}"
@@ -26,7 +25,6 @@ jobs:
           deleteOnlyFromDrafts: false
       
       - name: Set Text
-        if: startsWith(github.ref, 'refs/heads/')
         run: |
           cat > ci-build.md << 'EOF'
           Build Time / 构建时间 : ${{ steps.cslenv-github.outputs.buildtime }}
@@ -36,7 +34,6 @@ jobs:
           EOF
       
       - name: Update Tag
-        if: startsWith(github.ref, 'refs/heads/')
         uses: richardsimko/update-tag@v1.0.7
         with:
           tag_name: CI-Build-${{github.ref_name}}
@@ -44,7 +41,6 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.TOKEN }}"
       
       - uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/heads/')
         with:
           token: "${{ secrets.TOKEN }}"
           name: FoldCraftLauncer CI-Build
@@ -53,7 +49,7 @@ jobs:
           body_path: ci-build.md
           
   FCLTeamBuild:
-    need: InitCIBuild
+    needs: InitCIBuild
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
@@ -98,7 +94,6 @@ jobs:
         #  retention-days: 1
 
       - name: CI-Build Publish
-        if: startsWith(github.ref, 'refs/heads')
         uses: softprops/action-gh-release@v1
         with:
           token: "${{ secrets.TOKEN }}"
