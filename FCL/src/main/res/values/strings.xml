@@ -57,6 +57,7 @@
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
     <string name="account_failed">Account refresh failed</string>
+    <string name="account_failed_expired">Credential has expired, you must delete your account and re-login.</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>
     <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
     <string name="account_failed_connect_injector_server">Unable to connect to the authentication server. Please check your network and make sure you entered the correct URL.</string>
