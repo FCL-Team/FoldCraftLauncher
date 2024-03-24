@@ -15,7 +15,7 @@ import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap;
 
 import java.util.HashMap;
 
-public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericMotionListener {
+public class FCLInput implements View.OnCapturedPointerListener {
 
     public static final int MOUSE_LEFT           = 1000;
     public static final int MOUSE_MIDDLE         = 1001;
@@ -116,7 +116,6 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
     public void initExternalController(View view) {
         view.setFocusable(true);
         view.setOnCapturedPointerListener(this);
-        view.setOnGenericMotionListener(this);
         view.requestFocus();
         view.requestPointerCapture();
 
@@ -191,15 +190,6 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
         return false;
     }
 
-    @Override
-    public boolean onGenericMotion(View v, MotionEvent event) {
-        if (!((GameMenu) menu).getTouchCharInput().isEnabled()) {
-            focusableView.requestFocus();
-            focusableView.requestPointerCapture();
-        }
-        return true;
-    }
-
 
     public boolean handleKeyEvent(KeyEvent event) {
         int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
@@ -250,6 +240,10 @@ public class FCLInput implements View.OnCapturedPointerListener, View.OnGenericM
     }
 
     public boolean handleGenericMotionEvent(MotionEvent event) {
+        if (!((GameMenu) menu).getTouchCharInput().isEnabled()) {
+            focusableView.requestFocus();
+            focusableView.requestPointerCapture();
+        }
         if (event.getDevice() != null && event.getSource() == InputDevice.SOURCE_JOYSTICK) {
             if (choreographer == null) {
                 choreographer = Choreographer.getInstance();
