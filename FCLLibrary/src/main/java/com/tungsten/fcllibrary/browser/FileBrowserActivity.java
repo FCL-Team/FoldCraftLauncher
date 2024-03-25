@@ -169,9 +169,14 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             }
         }
         if (view == openExternal) {
+            if (currentPath.toFile().getAbsolutePath().equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
+                return;
+            }
             Uri uri = FileProvider.getUriForFile(this, getString(R.string.file_browser_provider), currentPath.toFile());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setDataAndType(uri, "*/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             startActivity(intent);
         }
         if (view == confirm) {
