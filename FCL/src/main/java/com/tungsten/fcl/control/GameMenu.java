@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.BuildConfig;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.data.ButtonStyles;
@@ -32,6 +33,7 @@ import com.tungsten.fcl.control.view.ViewManager;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.MenuSetting;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -326,6 +328,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
 
         FCLSeekBar itemBarScaleSeekbar = findViewById(R.id.item_bar_scale);
+        FCLSeekBar windowScaleSeekbar = findViewById(R.id.window_scale);
         FCLSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
         FCLSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
@@ -333,6 +336,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
         FCLTextView itemBarScaleText = findViewById(R.id.item_bar_scale_text);
+        FCLTextView windowScaleText = findViewById(R.id.window_scale_text);
         FCLTextView mouseSensitivityText = findViewById(R.id.mouse_sensitivity_text);
         FCLTextView mouseSizeText = findViewById(R.id.mouse_size_text);
         FCLTextView gamepadDeadzoneText = findViewById(R.id.gamepad_deadzone_text);
@@ -390,6 +394,21 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         };
         itemBarScaleSeekbar.progressProperty().bindBidirectional(itemBarScaleProperty);
 
+        windowScaleSeekbar.addProgressListener();
+        IntegerProperty windowScaleProperty = new SimpleIntegerProperty((int) (menuSetting.getWindowScale() * 100)) {
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                double doubleValue = get() / 100d;
+                menuSetting.setWindowScale(doubleValue);
+                int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+                int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+                getBridge().setScaleFactor(doubleValue);
+                fclBridge.getSurfaceTexture().setDefaultBufferSize((int) (screenWidth * doubleValue), (int) (screenHeight*doubleValue));
+            }
+        };
+        windowScaleSeekbar.progressProperty().bindBidirectional(windowScaleProperty);
+
         mouseSensitivitySeekbar.addProgressListener();
         IntegerProperty mouseSensitivityProperty = new SimpleIntegerProperty((int) (menuSetting.getMouseSensitivity() * 100)) {
             @Override
@@ -429,6 +448,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.gyroscopeSensitivityProperty());
 
         itemBarScaleText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(itemBarScaleProperty.get()), itemBarScaleProperty));
+        windowScaleText.stringProperty().bind(Bindings.createStringBinding(() -> windowScaleProperty.get() + " %", windowScaleProperty));
         mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
         mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.mouseSizeProperty().get() + " dp", menuSetting.mouseSizeProperty()));
         gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));

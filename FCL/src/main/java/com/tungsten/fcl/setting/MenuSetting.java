@@ -223,6 +223,20 @@ public class MenuSetting {
         this.itemBarScaleProperty.set(itemBarScale);
     }
 
+    private final DoubleProperty windowScaleProperty = new SimpleDoubleProperty(this, "windowScale", 1d);
+
+    public DoubleProperty windowScaleProperty() {
+        return windowScaleProperty;
+    }
+
+    public double getWindowScale() {
+        return windowScaleProperty.get();
+    }
+
+    public void setWindowScale(double windowScale) {
+        this.windowScaleProperty.set(windowScale);
+    }
+
     private final DoubleProperty mouseSensitivityProperty = new SimpleDoubleProperty(this, "mouseSensitivity", 1d);
 
     public DoubleProperty mouseSensitivityProperty() {
@@ -296,6 +310,7 @@ public class MenuSetting {
         mouseSensitivityProperty.addListener(listener);
         mouseSizeProperty.addListener(listener);
         itemBarScaleProperty.addListener(listener);
+        windowScaleProperty.addListener(listener);
         gamepadDeadzoneProperty.addListener(listener);
         gamepadAimAssistZoneProperty.addListener(listener);
     }
@@ -322,6 +337,7 @@ public class MenuSetting {
             obj.addProperty("mouseSensitivity", src.getMouseSensitivity());
             obj.addProperty("mouseSize", src.getMouseSize());
             obj.addProperty("itemBarScale", src.getItemBarScale());
+            obj.addProperty("windowScale", src.getWindowScale());
             obj.addProperty("gamepadDeadzone", src.getGamepadDeadzone());
             obj.addProperty("gamepadAimAssistZone", src.getGamepadAimAssistZone());
             return obj;
@@ -351,6 +367,7 @@ public class MenuSetting {
             ms.setMouseSensitivity(Optional.ofNullable(obj.get("mouseSensitivity")).map(JsonElement::getAsDouble).orElse(1d));
             ms.setMouseSize(Optional.ofNullable(obj.get("mouseSize")).map(JsonElement::getAsInt).orElse(15));
             ms.setItemBarScale(Optional.ofNullable(obj.get("itemBarScale")).map(JsonElement::getAsInt).orElse(0));
+            ms.setWindowScale(Optional.ofNullable(obj.get("windowScale")).map(JsonElement::getAsDouble).orElse(1d));
             ms.setGamepadDeadzone(Optional.ofNullable(obj.get("gamepadDeadzone")).map(JsonElement::getAsDouble).orElse(0.2d));
             ms.setGamepadAimAssistZone(Optional.ofNullable(obj.get("gamepadAimAssistZone")).map(JsonElement::getAsDouble).orElse(0.98d));
             return ms;

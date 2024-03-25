@@ -94,6 +94,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
+        fclBridge.setSurfaceTexture(surfaceTexture);
         fclBridge.pushEventWindow(width, height);
     }
 
