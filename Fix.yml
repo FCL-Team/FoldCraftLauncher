@@ -1,0 +1,28 @@
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileCreator {
+    public static void main(String[] args) {
+        // File path where you want to save the text file
+        String filePath = "C:\\Path\\To\\Your\\File\\file.txt";
+
+        // Text content to be written to the file
+        String fileContent = "Hello, this is a sample text for the file.";
+
+        try {
+            // Create FileWriter object with the file path
+            FileWriter writer = new FileWriter(filePath);
+
+            // Write the content to the file
+            writer.write(fileContent);
+
+            // Close the writer
+            writer.close();
+
+            System.out.println("File created successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating the file.");
+            e.printStackTrace();
+        }
+    }
+}
