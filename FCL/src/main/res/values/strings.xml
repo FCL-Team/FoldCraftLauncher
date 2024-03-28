@@ -311,6 +311,7 @@
     <string name="edit_button_event_auto_click">Keep Clicking</string>
     <string name="edit_button_event_open_menu">Open Menu</string>
     <string name="edit_button_event_touch_mode">Switch Gesture Mode</string>
+    <string name="edit_button_event_mouse_mode">Switch Mouse Mode</string>
     <string name="edit_button_event_input">Input</string>
     <string name="edit_button_event_quick_input">Open Quick Input Dialog</string>
     <string name="edit_button_event_output_text">Send Text</string>

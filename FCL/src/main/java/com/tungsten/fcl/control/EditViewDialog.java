@@ -324,18 +324,21 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     FCLSwitch autoClick = layout.findViewById(R.id.auto_click);
                     FCLSwitch openMenu = layout.findViewById(R.id.open_menu);
                     FCLSwitch touchMode = layout.findViewById(R.id.touch_mode);
+                    FCLSwitch mouseMode = layout.findViewById(R.id.mouse_mode);
                     FCLSwitch input = layout.findViewById(R.id.input);
                     FCLSwitch quickInput = layout.findViewById(R.id.quick_input);
                     autoKeep.setChecked(e.isAutoKeep());
                     autoClick.setChecked(e.isAutoClick());
                     openMenu.setChecked(e.isOpenMenu());
                     touchMode.setChecked(e.isSwitchTouchMode());
+                    mouseMode.setChecked(e.isSwitchMouseMode());
                     input.setChecked(e.isInput());
                     quickInput.setChecked(e.isQuickInput());
                     FXUtils.bindBoolean(autoKeep, e.autoKeepProperty());
                     FXUtils.bindBoolean(autoClick, e.autoClickProperty());
                     FXUtils.bindBoolean(openMenu, e.openMenuProperty());
                     FXUtils.bindBoolean(touchMode, e.switchTouchModeProperty());
+                    FXUtils.bindBoolean(mouseMode, e.switchMouseModeProperty());
                     FXUtils.bindBoolean(input, e.inputProperty());
                     FXUtils.bindBoolean(quickInput, e.quickInputProperty());
 

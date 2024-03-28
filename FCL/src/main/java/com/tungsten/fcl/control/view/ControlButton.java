@@ -26,6 +26,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
+import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
@@ -656,6 +657,14 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
                             getContext().getString(R.string.menu_settings_gesture_mode_build) :
                             getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
+        }
+        if (event.isSwitchMouseMode()) {
+            menu.getMenuSetting().setMouseMoveMode(menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ? MouseMoveMode.SLIDE : MouseMoveMode.CLICK);
+            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+                    menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ?
+                            getContext().getString(R.string.menu_settings_mouse_mode_click) :
+                            getContext().getString(R.string.menu_settings_mouse_mode_slide)), Toast.LENGTH_SHORT).show();
+
         }
         if (event.isInput()) {
             menu.getTouchCharInput().switchKeyboardState();
