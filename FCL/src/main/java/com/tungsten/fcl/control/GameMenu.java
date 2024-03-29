@@ -32,6 +32,7 @@ import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -389,7 +390,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             protected void invalidated() {
                 super.invalidated();
                 menuSetting.setItemBarScale(get());
-                gameItemBar.getOptionListener().onOptionChanged();
+                GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
+                if (optionListener != null) {
+                    optionListener.onOptionChanged();
+                }
             }
         };
         itemBarScaleSeekbar.progressProperty().bindBidirectional(itemBarScaleProperty);
@@ -403,8 +407,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 menuSetting.setWindowScale(doubleValue);
                 int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
                 int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-                getBridge().setScaleFactor(doubleValue);
-                fclBridge.getSurfaceTexture().setDefaultBufferSize((int) (screenWidth * doubleValue), (int) (screenHeight*doubleValue));
+                if (fclBridge != null) {
+                    fclBridge.setScaleFactor(doubleValue);
+                    fclBridge.getSurfaceTexture().setDefaultBufferSize((int) (screenWidth * doubleValue), (int) (screenHeight * doubleValue));
+                }
             }
         };
         windowScaleSeekbar.progressProperty().bindBidirectional(windowScaleProperty);
