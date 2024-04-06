@@ -74,6 +74,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import fr.spse.gamepad_remapper.Remapper;
+
 public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private boolean simulated;
@@ -108,6 +110,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
     private FCLButton sendKeycode;
+    private FCLButton gamepadResetMapper;
     private FCLButton forceExit;
 
     public FCLActivity getActivity() {
@@ -347,6 +350,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
+        gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -464,6 +468,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
+        gamepadResetMapper.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -720,6 +725,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
             SelectKeycodeDialog dialog = new SelectKeycodeDialog(getActivity(), list, false, true, this);
             dialog.show();
+        }
+        if (v == gamepadResetMapper) {
+            Remapper.wipePreferences(getActivity());
+            getInput().resetMapper();
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);

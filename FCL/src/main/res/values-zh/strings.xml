@@ -497,6 +497,8 @@
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
     <string name="menu_settings_gamepad">手柄</string>
+    <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
+    <string name="menu_settings_gamepad_reset">重置</string>
     <string name="menu_settings_gamepad_deadzone">调整死区</string>
     <string name="menu_settings_multiplayer">联机菜单</string>
     <string name="menu_settings_multiplayer_button">打开</string>

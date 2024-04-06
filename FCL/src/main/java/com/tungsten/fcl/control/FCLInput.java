@@ -15,7 +15,11 @@ import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap;
 
 import java.util.HashMap;
 
-public class FCLInput implements View.OnCapturedPointerListener {
+import fr.spse.gamepad_remapper.GamepadHandler;
+import fr.spse.gamepad_remapper.RemapperManager;
+import fr.spse.gamepad_remapper.RemapperView;
+
+public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler {
 
     public static final int MOUSE_LEFT           = 1000;
     public static final int MOUSE_MIDDLE         = 1001;
@@ -35,6 +39,9 @@ public class FCLInput implements View.OnCapturedPointerListener {
     private Choreographer choreographer;
     private float lastXAxis;
     private float lastYAxis;
+    private RemapperManager remapperManager;
+    private boolean leftTriggerDown = false;
+    private boolean rightTriggerDown = false;
 
 
     public static final HashMap<Integer, Integer> MOUSE_MAP = new HashMap<Integer, Integer>() {
@@ -68,6 +75,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        resetMapper();
     }
 
     public void setPointer(int x, int y, String id) {
@@ -210,11 +218,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
             }
         }
         if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)) {
-            if (event.getRepeatCount() == 0) {
-                int converted = GamepadKeycodeMap.convert(event.getKeyCode());
-                sendKeyEvent(converted, event.getAction() == KeyEvent.ACTION_DOWN);
-            }
-            return true;
+            return remapperManager.handleKeyEventInput(((GameMenu) menu).getActivity(),event,this);
         }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
@@ -256,6 +260,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 };
                 choreographer.postFrameCallback(frameCallback);
             }
+            remapperManager.handleMotionEventInput(((GameMenu) menu).getActivity(),event,this);
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 handleDPad(event);
                 handleLeftJoyStick(event);
@@ -340,5 +345,78 @@ public class FCLInput implements View.OnCapturedPointerListener {
             doTick();
         }
     }
+public void resetMapper() {
+    remapperManager = new RemapperManager(((GameMenu) menu).getActivity(), new RemapperView.Builder(null)
+            .remapA(true)
+            .remapB(true)
+            .remapX(true)
+            .remapY(true)
+            .remapLeftJoystick(true)
+            .remapRightJoystick(true)
+            .remapStart(true)
+            .remapSelect(true)
+            .remapLeftShoulder(true)
+            .remapRightShoulder(true)
+            .remapLeftTrigger(true)
+            .remapRightTrigger(true));
+}
+    /**
+     * Function handling all gamepad actions.
+     *
+     * @param code  Either a keycode (Eg. KEYBODE_BUTTON_A), either an axis (Eg. AXIS_HAT_X)
+     * @param value For keycodes, 0 for released state, 1 for pressed state.
+     *              For Axis, the value of the axis. Varies between 0/1 or -1/1 depending on the axis.
+     */
+    @Override
+    public void handleGamepadInput(int code, float value) {
+        boolean isKeyDown = value == 1f;
+        switch (code) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+            case KeyEvent.KEYCODE_BUTTON_B:
+            case KeyEvent.KEYCODE_BUTTON_X:
+            case KeyEvent.KEYCODE_BUTTON_Y:
+                //Shoulders
+            case KeyEvent.KEYCODE_BUTTON_L1:
+            case KeyEvent.KEYCODE_BUTTON_R1:
+                //Triggers
+            case KeyEvent.KEYCODE_BUTTON_L2:
+            case KeyEvent.KEYCODE_BUTTON_R2:
+                //L3 || R3
+            case KeyEvent.KEYCODE_BUTTON_THUMBL:
+            case KeyEvent.KEYCODE_BUTTON_THUMBR:
+                //DPAD
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                //Start/select
+            case KeyEvent.KEYCODE_BUTTON_START:
+            case KeyEvent.KEYCODE_BUTTON_SELECT:
+                sendKeyEvent(GamepadKeycodeMap.convert(code), isKeyDown);
+                break;
+            // Triggers
+            case MotionEvent.AXIS_LTRIGGER:
+                if (!leftTriggerDown && value > 0.5) {
+                    leftTriggerDown = true;
+                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
+                } else if (leftTriggerDown && value < 0.5) {
+                    leftTriggerDown = false;
+                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
+                }
+                break;
+            case MotionEvent.AXIS_RTRIGGER:
+                if (!rightTriggerDown && value > 0.5) {
+                    rightTriggerDown = true;
+                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
+                } else if (rightTriggerDown && value < 0.5) {
+                    rightTriggerDown = false;
+                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
+                }
+                break;
+            default:
+                break;
+        }
 
+    }
 }

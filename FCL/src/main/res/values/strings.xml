@@ -528,6 +528,8 @@
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
     <string name="menu_settings_gamepad">GamePad</string>
+    <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
+    <string name="menu_settings_gamepad_reset">Reset</string>
     <string name="menu_settings_gamepad_deadzone">DeadZone</string>
     <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
     <string name="menu_settings_multiplayer">Multiplayer Menu</string>
