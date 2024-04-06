@@ -117,6 +117,7 @@ public class Controllers {
     }
 
     public static ObservableList<Controller> getControllers() {
+        if (controllers.isEmpty()) controllers.add(DEFAULT_CONTROLLER);
         return controllers;
     }
 
