@@ -55,7 +55,6 @@ public class DirectionStyles {
     }
 
     static {
-        init();
         styles.addListener(onInvalidating(DirectionStyles::updateStylesStorages));
         styles.addListener(onInvalidating(DirectionStyles::checkStyles));
     }

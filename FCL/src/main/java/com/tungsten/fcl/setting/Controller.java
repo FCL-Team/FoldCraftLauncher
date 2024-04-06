@@ -334,6 +334,8 @@ public class Controller implements Cloneable, Observable {
 
             List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
             List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
+            ButtonStyles.init();
+            DirectionStyles.init();
             buttonStyles.forEach(ButtonStyles::addStyle);
             directionStyles.forEach(DirectionStyles::addStyle);
             ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));

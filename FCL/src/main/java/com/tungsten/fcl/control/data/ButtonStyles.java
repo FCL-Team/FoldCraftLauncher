@@ -55,7 +55,6 @@ public class ButtonStyles {
     }
 
     static {
-        init();
         styles.addListener(onInvalidating(ButtonStyles::updateStylesStorages));
         styles.addListener(onInvalidating(ButtonStyles::checkStyles));
     }
