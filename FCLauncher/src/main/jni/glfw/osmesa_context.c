@@ -125,7 +125,7 @@ static void swapBuffersOSMesa(_GLFWwindow* window)
     if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
         window->context.Finish();
         vtest_swap_buffers();
-    } else if (strcmp(getenv("LIBGL_STRING"), "Zink") == 0 || strcmp(getenv("LIBGL_STRING"), "Freedreno") == 0) {
+    } else {
         OSMesaContext context = OSMesaGetCurrentContext();
         if (context == NULL) {
             printf("OSMesa: attempted to swap buffers without context!");
@@ -165,17 +165,14 @@ static void set_vulkan_ptr(void* ptr) {
 }
 
 void load_vulkan() {
-    if(getenv("FCL_ZINK_PREFER_SYSTEM_DRIVER") == NULL && android_get_device_api_level() >= 28) {
-    // the loader does not support below that
 #ifdef ADRENO_POSSIBLE
-        void* result = load_turnip_vulkan();
-        if(result != NULL) {
-            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
-            set_vulkan_ptr(result);
-            return;
-        }
-#endif
+    void* result = load_turnip_vulkan();
+    if(result != NULL) {
+        printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+        set_vulkan_ptr(result);
+        return;
     }
+#endif
     printf("OSMDroid: loading vulkan regularly...\n");
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
     printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
@@ -186,17 +183,13 @@ GLFWbool _glfwInitOSMesa(void)
 {
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
-    
+
+    _glfw.osmesa.handle = _glfw_dlopen(getenv("LIBGL_NAME"));
+
     const char *renderer = getenv("LIBGL_STRING");
     
-    if (strcmp(renderer, "VirGLRenderer") == 0) {
-        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
-    } else if (strcmp(renderer, "Zink") == 0) {
+    if (strcmp(renderer, "Zink") == 0)
         load_vulkan();
-        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
-    } else if (strcmp(renderer, "Freedreno") == 0) {
-        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
-    }
 
     if (!_glfw.osmesa.handle)
     {
