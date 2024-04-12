@@ -9,6 +9,7 @@ import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 
 import java.io.BufferedReader;
@@ -110,7 +111,8 @@ public class FCLauncher {
                 "/hw" +
                 split +
 
-                nativeDir;
+                nativeDir +
+                (FFmpegPlugin.isAvailable ? split + FFmpegPlugin.libraryPath : "");
     }
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {
@@ -224,6 +226,7 @@ public class FCLauncher {
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
+        FFmpegPlugin.discover(config.getContext());
         printTaskTitle(bridge, task + " Arguments");
         String[] args = rebaseArgs(config);
         boolean javaArgs = true;

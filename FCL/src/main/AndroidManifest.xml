@@ -126,5 +126,7 @@
                 android:resource="@xml/provider_paths"/>
         </provider>
     </application>
-
+    <queries>
+        <package android:name="net.kdt.pojavlaunch.ffmpeg"/>
+    </queries>
 </manifest>
