@@ -96,7 +96,7 @@ jobs:
       - name: Delete old files
         uses: 8Mi-Tech/delete-release-assets-action@main
         with:
-          github_token: "${{ secrets.TOKEN }}"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
           tag: CI-Build-${{github.ref_name}}
           deleteOnlyFromDrafts: false
       
@@ -114,12 +114,12 @@ jobs:
         with:
           tag_name: CI-Build-${{github.ref_name}}
         env:
-          GITHUB_TOKEN: "${{ secrets.TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
       
       - name: CI-Release
         uses: softprops/action-gh-release@v1
         with:
-          token: "${{ secrets.TOKEN }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
           name: FoldCraftLauncer CI-Build
           tag_name: CI-Build-${{github.ref_name}}
           prerelease: true
@@ -131,6 +131,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          token: "${{ secrets.TOKEN }}"
+          token: "${{ secrets.GITHUB_TOKEN }}"
           files: |
             FCL/build/outputs/apk/release/*.apk
