@@ -13,7 +13,7 @@ on:
 
 jobs:          
   FCLTeamBuild:
-    if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
+    if: github.repository_owner == 'FCL-Team' || !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
         arch: [ "all", "arm", "arm64", "x86", "x64" ]
@@ -78,7 +78,7 @@ jobs:
   Release:
     needs: FCLTeamBuild
     runs-on: ubuntu-20.04
-    if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
+    if: github.repository_owner == 'FCL-Team' || !startsWith(github.ref, 'refs/pull/')
     name: Init & Prepare CI-Build
     steps:
       - name: Download Artifact Zips
