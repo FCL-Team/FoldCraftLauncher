@@ -136,6 +136,7 @@ public class FCLauncher {
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
+            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath);
         }
     }
 
