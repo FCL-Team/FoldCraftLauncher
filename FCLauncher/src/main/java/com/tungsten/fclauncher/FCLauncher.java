@@ -5,6 +5,7 @@ import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
 import android.os.Build;
+import android.system.Os;
 import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
@@ -131,6 +132,11 @@ public class FCLauncher {
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
+        envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
+        FFmpegPlugin.discover(config.getContext());
+        if (FFmpegPlugin.isAvailable) {
+            envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
+        }
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
@@ -226,7 +232,6 @@ public class FCLauncher {
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
-        FFmpegPlugin.discover(config.getContext());
         printTaskTitle(bridge, task + " Arguments");
         String[] args = rebaseArgs(config);
         boolean javaArgs = true;
