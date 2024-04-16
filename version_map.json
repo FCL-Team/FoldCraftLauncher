@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1160,
-    "versionName": "1.1.6",
-    "date": "2024.04.01",
+    "versionCode": 1161,
+    "versionName": "1.1.6.1",
+    "date": "2024.04.16",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.6更新内容\n1.增加手柄支持（暂时只能兼容部分手柄）\n2.增加Freedreno渲染器（只支持骁龙CPU）\n3.增加游戏内分辨率缩放\n4.允许调整物品栏大小\n5.修复账户凭据过期导致无法启动的bug\n6.在启动器内的文件了浏览器中添加使用外部应用打开的功能（墙裂建议\n安装一个MT管理器）\n7.允许禁用软键盘自适应（游戏内打开输入法自动顶起画面）\n8.调整删除自定义按键的方式（长按删除改为点击后打开的对话框内删除）\n9.修复公告语言错误的bug\n10.允许控件隐藏时侧滑打开菜单\n11.允许自定义按键名称中使用换行\n......"
+        "text": "FCL 1.1.6.1更新内容\n临时修复少许bug（jar执行闪退，增加手柄映射）"
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.6/FCL-release-1.1.6-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.6.1/FCL-release-1.1.6.1-all.apk"
   }
 ]
