@@ -63,7 +63,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            if (((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
+            if (menuType == MenuType.GAME && ((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
                 return;
             }
             int screenHeight = getWindow().getDecorView().getHeight();
