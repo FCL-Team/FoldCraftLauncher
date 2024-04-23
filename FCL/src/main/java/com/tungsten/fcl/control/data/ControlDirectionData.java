@@ -175,9 +175,11 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
             ControlDirectionData data = new ControlDirectionData(Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+            if (!DirectionStyles.isInitialized()) {
+                DirectionStyles.init();
+            }
             if (obj.get("style").toString().contains("\"name\"")) {
                 data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>(){}.getType()));
-                DirectionStyles.init();
                 DirectionStyles.addStyle(data.getStyle());
             } else {
                 data.setStyle(DirectionStyles.findStyleByName(obj.get("style").getAsString()));
