@@ -625,7 +625,7 @@ public class ZipPath implements Path {
 
     @Override
     public final File toFile() {
-        throw new UnsupportedOperationException();
+        return toFile();
     }
 
     @Override
