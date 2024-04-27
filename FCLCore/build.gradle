@@ -31,7 +31,7 @@ android {
 
 dependencies {
     implementation project(path: ':FCLauncher')
-    implementation 'com.github.marschall:zipfilesystem-standalone:1.0.1'
+    implementation project(path: ':ZipFileSystem')
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'com.github.steveice10:opennbt:1.5'
     implementation 'org.tukaani:xz:1.9'
