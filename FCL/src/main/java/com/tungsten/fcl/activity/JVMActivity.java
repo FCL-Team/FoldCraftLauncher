@@ -88,8 +88,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (menuType == MenuType.GAME) {
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
             gameOption.set("fullscreen", "false");
-            gameOption.set("overrideWidth", "" + width);
-            gameOption.set("overrideHeight", "" + height);
+            gameOption.set("overrideWidth", String.valueOf(width));
+            gameOption.set("overrideHeight", String.valueOf(height));
             gameOption.save();
         }
         surfaceTexture.setDefaultBufferSize(width, height);
