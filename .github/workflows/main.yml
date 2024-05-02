@@ -1,19 +1,4 @@
 name: Android CI
-
-on:
-  pull_request:
-    branches-ignore:
-      - ''
-  push:
-    tags:
-      - '*'
-    branches-ignore:
-      - ''
-  workflow_dispatch:
-
-jobs:
-  FCLTeamBuild:
-    if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
         arch: [ "all", "arm", "arm64", "x86", "x64" ]
@@ -39,7 +24,6 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assemblerelease -Darch=${{matrix.arch}}
-
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
@@ -47,7 +31,6 @@ jobs:
           token: "${{ secrets.TOKEN }}"
           files: |
             FCL/build/outputs/apk/release/*.apk
-
       - name: Upload apk
         if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v4
@@ -59,7 +42,14 @@ jobs:
 #only for fork
   DebugBuild:
     if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
-    name: Build Debug
+    strategy:
+      matrix:
+        arch: [ "all", "arm", "arm64", "x86", "x64" ]
+      fail-fast: false
+    env:
+      CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
+      OAUTH_API_KEY: ${{ secrets.OAUTH_API_KEY }}
+    name: Build for ${{matrix.arch}} debug
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
@@ -72,13 +62,12 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Build debug apk
+      - name: Build ${{matrix.arch}} debug apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblefordebug -Darch=all
-
+          ./gradlew assemblefordebug -Darch=${{matrix.arch}}
       - name: Upload debug apk
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-all
+          name: app-debug-${{matrix.arch}}
           path: FCL/build/outputs/apk/fordebug/*
