@@ -71,3 +71,4 @@ name: Android CI
         with:
           name: app-debug-${{matrix.arch}}
           path: FCL/build/outputs/apk/fordebug/*
+
