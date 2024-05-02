@@ -171,6 +171,9 @@ public class FCLauncher {
             } else if (renderer == FCLConfig.Renderer.RENDERER_FREEDRENO) {
                 envMap.put("GALLIUM_DRIVER", "freedreno");
                 envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
+            } else if (renderer == FCLConfig.Renderer.RENDERER_PANFROST) {
+                envMap.put("GALLIUM_DRIVER", "panfrost");
+                envMap.put("PAN_DEBUG", "gofaster");
             }
         }
     }
