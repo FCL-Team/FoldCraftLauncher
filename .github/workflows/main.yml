@@ -1,4 +1,12 @@
 name: Android CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+ build:
+    if: github.repository_owner == 'FCL-Team'
     strategy:
       matrix:
         arch: [ "all", "arm", "arm64", "x86", "x64" ]
@@ -40,7 +48,7 @@ name: Android CI
         #  retention-days: 1
 
 #only for fork
-  DebugBuild:
+ DebugBuild:
     if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
