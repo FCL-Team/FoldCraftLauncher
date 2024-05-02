@@ -348,7 +348,7 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
             if (strcmp(renderer, "Zink") == 0 ||
                strcmp(renderer, "Freedreno") == 0 ||
                strcmp(renderer, "VirGLRenderer") == 0 ||
-               strcmp(renderer, "Panforst") == 0)
+               strcmp(renderer, "Panfrost") == 0)
             {
                 if (!_glfwInitEGL())
                     return GLFW_FALSE;
