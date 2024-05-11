@@ -284,8 +284,8 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivity(Intent.createChooser(intent, getString(com.tungsten.fcllibrary.R.string.crash_reporter_share)));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LOG.log(Level.INFO, "Share error: " + e);
             }
         }
     }
