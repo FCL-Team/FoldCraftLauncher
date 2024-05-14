@@ -226,7 +226,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
             ((GameMenu) menu).getTouchCharInput().dispatchKeyEvent(event);
             return true;
         }
-        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
             if (!((GameMenu) menu).getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
                 ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
             } else if (((GameMenu) menu).getTouchCharInput().isLock()) {
