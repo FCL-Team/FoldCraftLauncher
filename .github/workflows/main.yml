@@ -16,7 +16,7 @@ jobs:
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
       matrix:
-        arch: [ "all", "arm", "arm64", "x86", "x64" ]
+        arch: [ "all", "arm", "arm64", "x86", "x86_64" ]
       fail-fast: false
     env:
       FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
