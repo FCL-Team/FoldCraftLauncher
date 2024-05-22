@@ -117,7 +117,7 @@ android {
                     case 'x86':
                         include 'x86'
                         break
-                    case 'x64':
+                    case 'x86_64':
                         include 'x86_64'
                         break
                 }
