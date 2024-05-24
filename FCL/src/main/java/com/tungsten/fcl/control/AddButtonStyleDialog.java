@@ -1,12 +1,17 @@
 package com.tungsten.fcl.control;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
@@ -22,6 +27,7 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListener, TabLayout.OnTabSelectedListener {
 
@@ -31,23 +37,27 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     private FCLButton negative;
 
     private FCLEditText editName;
+    private AppCompatButton button;
     private FCLTabLayout tabLayout;
 
     private ScrollView container;
     private FCLLinearLayout normalStyleLayout;
     private FCLLinearLayout pressedStyleLayout;
 
-    private ControlButtonStyle style = new ControlButtonStyle("");
+    private ControlButtonStyle style;
+    private boolean isEdit;
 
     public interface Callback {
         void onStyleAdd(ControlButtonStyle style);
     }
 
-    public AddButtonStyleDialog(@NonNull Context context, Callback callback) {
+    public AddButtonStyleDialog(@NonNull Context context, ControlButtonStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_button_style);
         setCancelable(false);
         this.callback = callback;
+        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle;
+        this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
@@ -55,6 +65,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         negative.setOnClickListener(this);
 
         editName = findViewById(R.id.name);
+        button = findViewById(R.id.button);
         tabLayout = findViewById(R.id.tab_layout);
         tabLayout.addOnTabSelectedListener(this);
 
@@ -63,8 +74,10 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         normalStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_button_style, null);
         pressedStyleLayout = (FCLLinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.view_button_style, null);
 
+        editName.setText(style.getName());
         style.nameProperty().bind(editName.stringProperty());
-
+        changeButtonStyle();
+        style.addListener(observable -> changeButtonStyle());
         {
             FCLPreciseSeekBar textSize = normalStyleLayout.findViewById(R.id.text_size);
             FCLPreciseSeekBar strokeWidth = normalStyleLayout.findViewById(R.id.stroke_width);
@@ -288,6 +301,38 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         container.addView(normalStyleLayout);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void changeButtonStyle() {
+        GradientDrawable drawableNormal = new GradientDrawable();
+        drawableNormal.setCornerRadius(ConvertUtils.dip2px(getContext(), style.getCornerRadius() / 10f));
+        drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), style.getStrokeWidth() / 10f), style.getStrokeColor());
+        drawableNormal.setColor(style.getFillColor());
+        GradientDrawable drawablePressed = new GradientDrawable();
+        drawablePressed.setCornerRadius(ConvertUtils.dip2px(getContext(), style.getCornerRadiusPressed() / 10f));
+        drawablePressed.setStroke(ConvertUtils.dip2px(getContext(), style.getStrokeWidthPressed() / 10f), style.getStrokeColorPressed());
+        drawablePressed.setColor(style.getFillColorPressed());
+        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, 0, 0);
+        button.setText("S");
+        button.setAllCaps(false);
+        button.setTextSize(style.getTextSize());
+        button.setTextColor(style.getTextColor());
+        button.setBackground(drawableNormal);
+        button.setOnTouchListener((view, event) -> {
+            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                ((AppCompatButton) view).setTextSize(style.getTextSizePressed());
+                ((AppCompatButton) view).setTextColor(style.getTextColorPressed());
+                ((AppCompatButton) view).setBackground(drawablePressed);
+            }
+            if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                ((AppCompatButton) view).setTextSize(style.getTextSize());
+                ((AppCompatButton) view).setTextColor(style.getTextColor());
+                ((AppCompatButton) view).setBackground(drawableNormal);
+            }
+            return true;
+        });
+    }
+
     private String getHex(int color) {
         return "#" + String.format("%08X", (color));
     }
@@ -295,7 +340,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
+            if (!isEdit && ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_exist), Toast.LENGTH_SHORT).show();
             } else if (StringUtils.isBlank(style.getName())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();

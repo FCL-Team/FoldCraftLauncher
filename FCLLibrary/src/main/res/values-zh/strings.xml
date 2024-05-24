@@ -5,6 +5,7 @@
     <string name="file_browser_close">退出</string>
     <string name="file_browser_shared">共有目录</string>
     <string name="file_browser_private">私有目录</string>
+    <string name="file_browser_open_external">使用外部应用打开</string>
     <string name="file_browser_private_alert">无法进入私有目录，请检查应用权限</string>
     <string name="file_browser_mode">模式：</string>
     <string name="file_browser_mode_browse">浏览文件</string>

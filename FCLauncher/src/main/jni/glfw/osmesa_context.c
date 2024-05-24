@@ -81,7 +81,8 @@ static void makeContextCurrentOSMesa(_GLFWwindow* window)
         window->context.Clear = (PFNGLCLEAR) window->context.getProcAddress("glClear");
         window->context.ClearColor = (PFNGLCLEARCOLOR) window->context.getProcAddress("glClearColor");
         window->context.ReadPixels = (PFNGLREADPIXELS) window->context.getProcAddress("glReadPixels");
-        if (!window->context.Clear || !window->context.ClearColor || !window->context.ReadPixels) {
+        window->context.Finish = (PFNGLFINISH) window->context.getProcAddress("glFinish");
+        if (!window->context.Clear || !window->context.ClearColor || !window->context.ReadPixels || !window->context.Finish) {
             _glfwInputError(GLFW_PLATFORM_ERROR, "Entry point retrieval is broken");
             return;
         }
@@ -121,21 +122,18 @@ static void destroyContextOSMesa(_GLFWwindow* window)
 
 static void swapBuffersOSMesa(_GLFWwindow* window)
 {
-    window->context.Finish = (PFNGLFINISH) window->context.getProcAddress("glFinish");
-    if (!window->context.Finish) {
-        _glfwInputError(GLFW_PLATFORM_ERROR, "Entry point retrieval is broken");
-        return;
-    }
     if (strcmp(getenv("LIBGL_STRING"), "VirGLRenderer") == 0) {
         window->context.Finish();
         vtest_swap_buffers();
-    } else if (strcmp(getenv("LIBGL_STRING"), "Zink") == 0) {
+    } else {
         OSMesaContext context = OSMesaGetCurrentContext();
         if (context == NULL) {
-            printf("Zink: attempted to swap buffers without context!");
+            printf("OSMesa: attempted to swap buffers without context!");
             return;
         }
-        OSMesaMakeCurrent(context, buf.bits, GL_UNSIGNED_BYTE, window->context.osmesa.width, window->context.osmesa.height);
+        OSMesaMakeCurrent(context, buf.bits, GL_UNSIGNED_BYTE, buf.width, buf.height);
+        if (stride != buf.stride) OSMesaPixelStore(OSMESA_ROW_LENGTH, buf.stride);
+        stride = buf.stride;
         window->context.Finish();
         ANativeWindow_unlockAndPost(window->fcl.handle);
         ANativeWindow_lock(window->fcl.handle, &buf, NULL);
@@ -167,17 +165,14 @@ static void set_vulkan_ptr(void* ptr) {
 }
 
 void load_vulkan() {
-    if(getenv("FCL_ZINK_PREFER_SYSTEM_DRIVER") == NULL && android_get_device_api_level() >= 28) {
-    // the loader does not support below that
 #ifdef ADRENO_POSSIBLE
-        void* result = load_turnip_vulkan();
-        if(result != NULL) {
-            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
-            set_vulkan_ptr(result);
-            return;
-        }
-#endif
+    void* result = load_turnip_vulkan();
+    if(result != NULL) {
+        printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+        set_vulkan_ptr(result);
+        return;
     }
+#endif
     printf("OSMDroid: loading vulkan regularly...\n");
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
     printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
@@ -188,15 +183,13 @@ GLFWbool _glfwInitOSMesa(void)
 {
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
-    
+
+    _glfw.osmesa.handle = _glfw_dlopen(getenv("LIBGL_NAME"));
+
     const char *renderer = getenv("LIBGL_STRING");
     
-    if (strcmp(renderer, "VirGLRenderer") == 0) {
-        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_81.so");
-    } else if (strcmp(renderer, "Zink") == 0) {
+    if (strcmp(renderer, "Zink") == 0)
         load_vulkan();
-        _glfw.osmesa.handle = _glfw_dlopen("libOSMesa_8.so");
-    }
 
     if (!_glfw.osmesa.handle)
     {

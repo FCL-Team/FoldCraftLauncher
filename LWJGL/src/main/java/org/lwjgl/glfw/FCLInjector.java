@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 
 import static org.lwjgl.system.APIUtil.apiGetFunctionAddress;
 import static org.lwjgl.system.APIUtil.apiLog;
+import static org.lwjgl.system.JNI.invokePP;
+import static org.lwjgl.system.MemoryUtil.memAddressSafe;
 
 /**
  * By Tungsten
@@ -16,8 +18,7 @@ import static org.lwjgl.system.APIUtil.apiLog;
  */
 public class FCLInjector {
 
-    public static final long GetInjectorMode = apiGetFunctionAddress(GLFW.GLFW, "glfwGetInjectorMode");
-    public static final long SetInjectorMode = apiGetFunctionAddress(GLFW.GLFW, "glfwSetInjectorMode");
+    public static final long SetInjectorCallBack = apiGetFunctionAddress(GLFW.GLFW, "glfwSetInjectorCallback");
     public static final long SetHitResultType = apiGetFunctionAddress(GLFW.GLFW, "glfwSetHitResultType");
 
     private static boolean get = false;
@@ -71,22 +72,23 @@ public class FCLInjector {
         FCLInjector.param2 = param2;
         FCLInjector.param3 = param3;
         get = true;
-        new Thread(() -> {
-            while (true) {
-                if (nglfwGetInjectorMode() == INJECTOR_MODE_ENABLE) {
-                    getHitResultType();
-                    nglfwSetInjectorMode(INJECTOR_MODE_DISABLE);
-                }
+        FCLInjectorCallback callback = new FCLInjectorCallback() {
+            @Override
+            public void invoke() {
+                getHitResultType();
             }
-        }).start();
+        };
+        glfwSetFCLInjectorCallback(callback);
     }
 
-    public static int nglfwGetInjectorMode() {
-        return JNI.invokeI(GetInjectorMode);
+    @Nullable
+    @NativeType("FCLinjectorfun")
+    public static FCLInjectorCallback glfwSetFCLInjectorCallback(@Nullable @NativeType("FCLinjectorfun") FCLInjectorCallbackI cbfun) {
+        return FCLInjectorCallback.createSafe(nglfwSetFCLInjectorCallback(memAddressSafe(cbfun)));
     }
 
-    public static void nglfwSetInjectorMode(int mode) {
-        JNI.invokeV(mode, SetInjectorMode);
+    public static long nglfwSetFCLInjectorCallback(long cbfun) {
+        return invokePP(cbfun, SetInjectorCallBack);
     }
 
     public static void nglfwSetHitResultType(String type) {
@@ -112,7 +114,7 @@ public class FCLInjector {
     public static void getHitResultType() {
         if (!get) {
             nglfwSetHitResultType(HIT_RESULT_TYPE_UNKNOWN);
-            apiLog("FCL Injector not initialized!");
+            apiLog("FCL Injector not initialized!\n");
             return;
         }
         if (param0 != null && param1 != null && param2 != null && param3 != null) {

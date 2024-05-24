@@ -145,15 +145,14 @@ void _glfwCenterCursorInContentArea(_GLFWwindow* window)
 //////                        GLFW public API                       //////
 //////////////////////////////////////////////////////////////////////////
 
-GLFWAPI void glfwSetInjectorMode(int mode) {
-    _glfwPlatformSetInjectorMode(mode);
+GLFWAPI FCLinjectorfun glfwSetInjectorCallback(FCLinjectorfun cbfun)
+{
+    _glfwPlatformSetInjectorCallback(cbfun);
+    return cbfun;
 }
 
-GLFWAPI int glfwGetInjectorMode() {
-    return _glfwPlatformGetInjectorMode();
-}
-
-GLFWAPI void glfwSetHitResultType(int type) {
+GLFWAPI void glfwSetHitResultType(int type)
+{
     _glfwPlatformSetHitResultType(type);
 }
 

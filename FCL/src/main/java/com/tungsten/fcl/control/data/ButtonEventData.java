@@ -287,6 +287,23 @@ public class ButtonEventData implements Cloneable, Observable {
         }
 
         /**
+         * Switch mouse mode
+         */
+        private final BooleanProperty switchMouseModeProperty = new SimpleBooleanProperty(this, "switchMouseMode", false);
+
+        public BooleanProperty switchMouseModeProperty() {
+            return switchMouseModeProperty;
+        }
+
+        public void setSwitchMouseMode(boolean switchMouseMode) {
+            switchMouseModeProperty.set(switchMouseMode);
+        }
+
+        public boolean isSwitchMouseMode() {
+            return switchMouseModeProperty.get();
+        }
+
+        /**
          * Input words
          */
         private final BooleanProperty inputProperty = new SimpleBooleanProperty(this, "input", false);
@@ -372,6 +389,7 @@ public class ButtonEventData implements Cloneable, Observable {
             autoClickProperty.addListener(listener);
             openMenuProperty.addListener(listener);
             switchTouchModeProperty.addListener(listener);
+            switchMouseModeProperty.addListener(listener);
             inputProperty.addListener(listener);
             quickInputProperty.addListener(listener);
             outputTextProperty.addListener(listener);
@@ -402,6 +420,7 @@ public class ButtonEventData implements Cloneable, Observable {
             event.setAutoClick(isAutoClick());
             event.setOpenMenu(isOpenMenu());
             event.setSwitchTouchMode(isSwitchTouchMode());
+            event.setSwitchMouseMode(isSwitchMouseMode());
             event.setInput(isInput());
             event.setQuickInput(isQuickInput());
             event.setOutputText(getOutputText());
@@ -422,6 +441,7 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("autoClick", src.isAutoClick());
                 obj.addProperty("openMenu", src.isOpenMenu());
                 obj.addProperty("switchTouchMode", src.isSwitchTouchMode());
+                obj.addProperty("switchMouseMode", src.isSwitchMouseMode());
                 obj.addProperty("input", src.isInput());
                 obj.addProperty("quickInput", src.isQuickInput());
                 obj.addProperty("outputText", src.getOutputText());
@@ -444,6 +464,7 @@ public class ButtonEventData implements Cloneable, Observable {
                 event.setAutoClick(Optional.ofNullable(obj.get("autoClick")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOpenMenu(Optional.ofNullable(obj.get("openMenu")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setSwitchTouchMode(Optional.ofNullable(obj.get("switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setSwitchMouseMode(Optional.ofNullable(obj.get("switchMouseMode")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));

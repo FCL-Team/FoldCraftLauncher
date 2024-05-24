@@ -95,7 +95,11 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
     public void onCreate() {
         super.onCreate();
 
-        selectedController.set(Controllers.controllersProperty().get(0));
+        if (Controllers.controllersProperty().size() != 0) {
+            selectedController.set(Controllers.controllersProperty().get(0));
+        } else {
+            selectedController.set(Controllers.DEFAULT_CONTROLLER);
+        }
 
         listView = findViewById(R.id.controller_list);
         importController = findViewById(R.id.import_controller);

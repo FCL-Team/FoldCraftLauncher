@@ -27,6 +27,34 @@ import java.util.Optional;
 @JsonAdapter(MenuSetting.Serializer.class)
 public class MenuSetting {
 
+    private final BooleanProperty autoFitProperty = new SimpleBooleanProperty(this, "autoFit", true);
+
+    public BooleanProperty autoFitProperty() {
+        return autoFitProperty;
+    }
+
+    public boolean isAutoFit() {
+        return autoFitProperty.get();
+    }
+
+    public void setAutoFit(boolean autoFit) {
+        this.autoFitProperty.set(autoFit);
+    }
+
+    private final IntegerProperty autoFitDistProperty = new SimpleIntegerProperty(this, "autoFitDist", 0);
+
+    public IntegerProperty autoFitDistProperty() {
+        return autoFitDistProperty;
+    }
+
+    public int getAutoFitDist() {
+        return autoFitDistProperty.get();
+    }
+
+    public void setAutoFitDist(int autoFitDist) {
+        this.autoFitDistProperty.set(autoFitDist);
+    }
+
     private final BooleanProperty lockMenuViewProperty = new SimpleBooleanProperty(this, "lockMenuView", false);
 
     public BooleanProperty lockMenuViewProperty() {
@@ -39,6 +67,34 @@ public class MenuSetting {
 
     public void setLockMenuView(boolean lockMenuView) {
         this.lockMenuViewProperty.set(lockMenuView);
+    }
+
+    private final BooleanProperty disableSoftKeyAdjustProperty = new SimpleBooleanProperty(this, "disableSoftKeyAdjust", false);
+
+    public BooleanProperty disableSoftKeyAdjustProperty() {
+        return disableSoftKeyAdjustProperty;
+    }
+
+    public boolean isDisableSoftKeyAdjust() {
+        return disableSoftKeyAdjustProperty.get();
+    }
+
+    public void setDisableSoftKeyAdjust(boolean disableSoftKeyAdjust) {
+        this.disableSoftKeyAdjustProperty.set(disableSoftKeyAdjust);
+    }
+
+    private final BooleanProperty showLogProperty = new SimpleBooleanProperty(this, "showLog", false);
+
+    public BooleanProperty showLogProperty() {
+        return showLogProperty;
+    }
+
+    public boolean isshowLog() {
+        return showLogProperty.get();
+    }
+
+    public void setShowLog(boolean showLog) {
+        this.showLogProperty.set(showLog);
     }
 
     private final DoubleProperty menuPositionXProperty = new SimpleDoubleProperty(this, "menuPositionX", 0.5d);
@@ -153,6 +209,34 @@ public class MenuSetting {
         mouseMoveModeProperty.set(mouseMoveMode);
     }
 
+    private final IntegerProperty itemBarScaleProperty = new SimpleIntegerProperty(this, "itemBarScale", 0);
+
+    public IntegerProperty itemBarScaleProperty() {
+        return itemBarScaleProperty;
+    }
+
+    public int getItemBarScale() {
+        return itemBarScaleProperty.get();
+    }
+
+    public void setItemBarScale(int itemBarScale) {
+        this.itemBarScaleProperty.set(itemBarScale);
+    }
+
+    private final DoubleProperty windowScaleProperty = new SimpleDoubleProperty(this, "windowScale", 1d);
+
+    public DoubleProperty windowScaleProperty() {
+        return windowScaleProperty;
+    }
+
+    public double getWindowScale() {
+        return windowScaleProperty.get();
+    }
+
+    public void setWindowScale(double windowScale) {
+        this.windowScaleProperty.set(windowScale);
+    }
+
     private final DoubleProperty mouseSensitivityProperty = new SimpleDoubleProperty(this, "mouseSensitivity", 1d);
 
     public DoubleProperty mouseSensitivityProperty() {
@@ -181,8 +265,40 @@ public class MenuSetting {
         this.mouseSizeProperty.set(mouseSize);
     }
 
+    private final DoubleProperty gamepadDeadzoneProperty = new SimpleDoubleProperty(this, "gamepadDeadzone", 1d);
+
+    public DoubleProperty gamepadDeadzoneProperty() {
+        return gamepadDeadzoneProperty;
+    }
+
+    public double getGamepadDeadzone() {
+        return gamepadDeadzoneProperty.get();
+    }
+
+    public void setGamepadDeadzone(double gamepadDeadzone) {
+        this.gamepadDeadzoneProperty.set(gamepadDeadzone);
+    }
+
+    private final DoubleProperty gamepadAimAssistZoneProperty = new SimpleDoubleProperty(this, "gamepadAimAssistZone", 0.95d);
+
+    public DoubleProperty gamepadAimAssistZoneProperty() {
+        return gamepadAimAssistZoneProperty;
+    }
+
+    public double getGamepadAimAssistZone() {
+        return gamepadAimAssistZoneProperty.get();
+    }
+
+    public void setGamepadAimAssistZone(double gamepadAimAssistZone) {
+        this.gamepadAimAssistZoneProperty.set(gamepadAimAssistZone);
+    }
+
     public void addPropertyChangedListener(InvalidationListener listener) {
+        autoFitProperty.addListener(listener);
+        autoFitDistProperty.addListener(listener);
         lockMenuViewProperty.addListener(listener);
+        disableSoftKeyAdjustProperty.addListener(listener);
+        showLogProperty.addListener(listener);
         menuPositionXProperty.addListener(listener);
         menuPositionYProperty.addListener(listener);
         disableGestureProperty.addListener(listener);
@@ -193,6 +309,10 @@ public class MenuSetting {
         mouseMoveModeProperty.addListener(listener);
         mouseSensitivityProperty.addListener(listener);
         mouseSizeProperty.addListener(listener);
+        itemBarScaleProperty.addListener(listener);
+        windowScaleProperty.addListener(listener);
+        gamepadDeadzoneProperty.addListener(listener);
+        gamepadAimAssistZoneProperty.addListener(listener);
     }
 
     public static class Serializer implements JsonSerializer<MenuSetting>, JsonDeserializer<MenuSetting> {
@@ -201,7 +321,11 @@ public class MenuSetting {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
+            obj.addProperty("autoFit", src.isAutoFit());
+            obj.addProperty("autoFitDist", src.getAutoFitDist());
             obj.addProperty("lockMenuView", src.isLockMenuView());
+            obj.addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust());
+            obj.addProperty("showLog", src.isshowLog());
             obj.addProperty("menuPositionX", src.getMenuPositionX());
             obj.addProperty("menuPositionY", src.getMenuPositionY());
             obj.addProperty("disableGesture", src.isDisableGesture());
@@ -212,7 +336,10 @@ public class MenuSetting {
             obj.addProperty("mouseMoveMode", src.getMouseMoveMode().getId());
             obj.addProperty("mouseSensitivity", src.getMouseSensitivity());
             obj.addProperty("mouseSize", src.getMouseSize());
-
+            obj.addProperty("itemBarScale", src.getItemBarScale());
+            obj.addProperty("windowScale", src.getWindowScale());
+            obj.addProperty("gamepadDeadzone", src.getGamepadDeadzone());
+            obj.addProperty("gamepadAimAssistZone", src.getGamepadAimAssistZone());
             return obj;
         }
 
@@ -224,7 +351,11 @@ public class MenuSetting {
 
             MenuSetting ms = new MenuSetting();
 
+            ms.setAutoFit(Optional.ofNullable(obj.get("autoFit")).map(JsonElement::getAsBoolean).orElse(true));
+            ms.setAutoFitDist(Optional.ofNullable(obj.get("autoFitDist")).map(JsonElement::getAsInt).orElse(0));
             ms.setLockMenuView(Optional.ofNullable(obj.get("lockMenuView")).map(JsonElement::getAsBoolean).orElse(false));
+            ms.setDisableSoftKeyAdjust(Optional.ofNullable(obj.get("disableSoftKeyAdjust")).map(JsonElement::getAsBoolean).orElse(false));
+            ms.setShowLog(Optional.ofNullable(obj.get("showLog")).map(JsonElement::getAsBoolean).orElse(false));
             ms.setMenuPositionX(Optional.ofNullable(obj.get("menuPositionX")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setMenuPositionY(Optional.ofNullable(obj.get("menuPositionY")).map(JsonElement::getAsDouble).orElse(0.5d));
             ms.setDisableGesture(Optional.ofNullable(obj.get("disableGesture")).map(JsonElement::getAsBoolean).orElse(false));
@@ -235,7 +366,10 @@ public class MenuSetting {
             ms.setMouseMoveMode(MouseMoveMode.getById(Optional.ofNullable(obj.get("mouseMoveMode")).map(JsonElement::getAsInt).orElse(0)));
             ms.setMouseSensitivity(Optional.ofNullable(obj.get("mouseSensitivity")).map(JsonElement::getAsDouble).orElse(1d));
             ms.setMouseSize(Optional.ofNullable(obj.get("mouseSize")).map(JsonElement::getAsInt).orElse(15));
-
+            ms.setItemBarScale(Optional.ofNullable(obj.get("itemBarScale")).map(JsonElement::getAsInt).orElse(0));
+            ms.setWindowScale(Optional.ofNullable(obj.get("windowScale")).map(JsonElement::getAsDouble).orElse(1d));
+            ms.setGamepadDeadzone(Optional.ofNullable(obj.get("gamepadDeadzone")).map(JsonElement::getAsDouble).orElse(0.2d));
+            ms.setGamepadAimAssistZone(Optional.ofNullable(obj.get("gamepadAimAssistZone")).map(JsonElement::getAsDouble).orElse(0.98d));
             return ms;
         }
     }

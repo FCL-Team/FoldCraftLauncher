@@ -4,22 +4,34 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.ArrayList;
 
+/**
+ * @author Tungsten
+ *
+ * Announcement v2.
+ */
 public class Announcement {
 
     private final int id;
     private final boolean significant;
-    private final String specificLang;
+    private final boolean outdated;
+    private final int minVersion;
+    private final int maxVersion;
+    private final ArrayList<String> specificLang;
     private final ArrayList<Content> title;
     private final String date;
     private final ArrayList<Content> content;
 
-    public Announcement(int id, boolean significant, String specificLang, ArrayList<Content> title, String date, ArrayList<Content> content) {
+    public Announcement(int id, boolean significant, boolean outdated, int minVersion, int maxVersion, ArrayList<String> specificLang, ArrayList<Content> title, String date, ArrayList<Content> content) {
         this.id = id;
         this.significant = significant;
+        this.outdated = outdated;
+        this.minVersion = minVersion;
+        this.maxVersion = maxVersion;
         this.specificLang = specificLang;
         this.title = title;
         this.date = date;
@@ -34,7 +46,19 @@ public class Announcement {
         return significant;
     }
 
-    public String getSpecificLang() {
+    public boolean isOutdated() {
+        return outdated;
+    }
+
+    public int getMinVersion() {
+        return minVersion;
+    }
+
+    public int getMaxVersion() {
+        return maxVersion;
+    }
+
+    public ArrayList<String> getSpecificLang() {
         return specificLang;
     }
 
@@ -55,7 +79,7 @@ public class Announcement {
             throw new IllegalStateException("No title list!");
         }
         for (Content c : title) {
-            if (c.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
@@ -67,7 +91,7 @@ public class Announcement {
             throw new IllegalStateException("No content list!");
         }
         for (Content c : content) {
-            if (c.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
@@ -75,7 +99,13 @@ public class Announcement {
     }
 
     public boolean shouldDisplay(Context context) {
-        if (!specificLang.equals("") && !specificLang.equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString()))
+        if (outdated)
+            return false;
+        if (minVersion != -1 && minVersion > UpdateChecker.getCurrentVersionCode(context))
+            return false;
+        if (maxVersion != -1 && maxVersion < UpdateChecker.getCurrentVersionCode(context))
+            return false;
+        if (specificLang.size() != 0 && !specificLang.contains(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString()))
             return false;
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("ignore_announcement", 0) < id;

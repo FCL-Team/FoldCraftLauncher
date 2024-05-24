@@ -83,7 +83,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         viewHolder.tag.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
         viewHolder.tag.setText(getTag(remoteVersion));
         viewHolder.date.setVisibility(remoteVersion.getReleaseDate() == null ? View.GONE : View.VISIBLE);
-        viewHolder.date.setText(remoteVersion.getReleaseDate() == null ? "" : formatDateTime(getContext(), remoteVersion.getReleaseDate().toInstant()));
+        viewHolder.date.setText(remoteVersion.getReleaseDate() == null ? "" : formatDateTime(getContext(), remoteVersion.getReleaseDate()));
         return view;
     }
 

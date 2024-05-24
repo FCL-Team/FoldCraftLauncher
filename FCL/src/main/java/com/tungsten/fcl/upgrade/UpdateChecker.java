@@ -75,7 +75,7 @@ public class UpdateChecker {
         });
     }
 
-    private int getCurrentVersionCode(Context context) {
+    public static int getCurrentVersionCode(Context context) {
         PackageManager pm = context.getPackageManager();
         try {
             PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), 0);

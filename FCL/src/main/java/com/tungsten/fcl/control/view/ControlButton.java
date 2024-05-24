@@ -12,6 +12,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -25,14 +26,15 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
+import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -54,11 +56,11 @@ import java.util.UUID;
 @SuppressLint("ViewConstructor")
 public class ControlButton extends AppCompatButton implements CustomView {
 
-    private final InvalidationListener notifyListener;
-    private final InvalidationListener dataChangeListener;
-    private final InvalidationListener boundaryListener;
-    private final InvalidationListener visibilityListener;
-    private final InvalidationListener alphaListener;
+    private InvalidationListener notifyListener;
+    private InvalidationListener dataChangeListener;
+    private InvalidationListener boundaryListener;
+    private InvalidationListener visibilityListener;
+    private InvalidationListener alphaListener;
 
     private final GameMenu menu;
     private Path boundaryPath;
@@ -130,10 +132,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> setAlpha(menu.isHideAllViews() ? 0 : 1));
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+            setAlpha(menu.isHideAllViews() ? 0 : 1);
+            ((DrawerLayout) gameMenu.getLayout()).setDrawerLockMode(menu.isHideAllViews() ? 0 : 1);
+        });
 
         post(() -> {
             notifyData();
+            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
+                return;
+            }
             menu.editModeProperty().addListener(notifyListener);
             dataProperty.addListener(dataChangeListener);
             getData().addListener(notifyListener);
@@ -147,6 +155,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
     }
 
     private void notifyData() {
+        if (visibilityListener == null) {
+            return;
+        }
         ControlButtonData data = getData();
 
         setText(data.getText());
@@ -264,21 +275,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
-    private final Runnable deleteRunnable = () -> {
-        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setCancelable(false);
-        builder.setMessage(getContext().getString(R.string.edit_button_delete));
-        builder.setPositiveButton(this::deleteView);
-        builder.setNegativeButton(() -> {
-            setX(positionX);
-            setY(positionY);
-        });
-        builder.create().show();
-    };
-
     private void deleteView() {
         if (menu != null) {
             menu.getViewManager().removeView(getData());
@@ -297,7 +293,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
-                    handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) (event.getX() - downX);
@@ -306,14 +301,13 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
-                    if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(deleteRunnable);
-                    }
+                    autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+                    removeLine(0);
+                    removeLine(1);
                     setNormalStyle();
-                    handler.removeCallbacks(deleteRunnable);
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
@@ -333,6 +327,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             @Override
                             public void onClone(CustomControl view) {
                                 menu.getViewManager().addView(view);
+                            }
+
+                            @Override
+                            public void onDelete() {
+                                menu.getViewManager().removeView(getData());
                             }
                         }, true);
                         dialog.show();
@@ -398,6 +397,93 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
         return true;
+    }
+
+    private void showLine(int orientation, int pref, int self) {
+        if (menu == null)
+            return;
+
+        menu.getTouchPad().drawLine(orientation, pref, self);
+    }
+
+    private void removeLine(int orientation) {
+        if (menu == null)
+            return;
+
+        menu.getTouchPad().removeLine(orientation);
+    }
+
+    private void autoFitPosition() {
+        if (menu == null || !menu.getMenuSetting().isAutoFit())
+            return;
+
+        ViewGroup viewGroup = (ViewGroup) getParent();
+
+        int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
+        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
+
+        boolean[] xyPref = {false, false};
+        int[] prefXY = {0, 0};
+        int[] selfXY = {0, 0};
+        int[] xyDist = {autoFitDist, autoFitDist};
+        int left = (int) getX();
+        int right = (int) (getX() + getWidth());
+        int up = (int) getY();
+        int down = (int) (getY() + getHeight());
+        int[] posArr = {left, right, up, down};
+
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
+                View button = viewGroup.getChildAt(i);
+                if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
+                    continue;
+                }
+                //buttonLeft, buttonRight, buttonUp, buttonDown
+                int[] buttonPosArr = {
+                        (int) button.getX(),
+                        (int) (button.getX() + button.getWidth()),
+                        (int) button.getY(),
+                        (int) (button.getY() + button.getHeight())
+                };
+                /*
+                left - buttonLeft, left - buttonRight
+                right - buttonRight, right - buttonLeft
+                up - buttonUp, up - buttonDown
+                down - buttonDown, down - buttonUp
+                */
+                int flag = -1;
+                for (int j = 0; j < posArr.length; j++) {
+                    flag *= -1;
+                    int xyIndex = j / 2 % 2;
+                    if (Math.abs(posArr[j] - buttonPosArr[j]) < xyDist[xyIndex]) {
+                        xyPref[xyIndex] = true;
+                        prefXY[xyIndex] = buttonPosArr[j];
+                        xyDist[xyIndex] = posArr[j] - buttonPosArr[j];
+                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
+                    }
+                    int buttonDist = posArr[j] - buttonPosArr[j + flag];
+                    if (flag * buttonDist >= 0 && flag * buttonDist < xyDist[xyIndex]) {
+                        xyPref[xyIndex] = true;
+                        prefXY[xyIndex] = buttonPosArr[j + flag];
+                        xyDist[xyIndex] = buttonDist - flag * dist;
+                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
+                    }
+                }
+            }
+        }
+
+        if (xyPref[0]) {
+            setX(left - xyDist[0]);
+            showLine(0, prefXY[0], selfXY[0]);
+        } else {
+            removeLine(0);
+        }
+        if (xyPref[1]) {
+            setY(up - xyDist[1]);
+            showLine(1, prefXY[1], selfXY[1]);
+        } else {
+            removeLine(1);
+        }
     }
 
     private void cancelAllEvent() {
@@ -482,10 +568,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private boolean keycodeOutputting = false;
 
     private void handleKeyEvent(ButtonEventData.Event event, boolean press) {
-        if (!press && !keycodeOutputting)
+        if (!press && !keycodeOutputting) {
             return;
-        keycodeOutputting = press;
+        }
         for (int keycode : event.outputKeycodesList()) {
+            keycodeOutputting = press;
             menu.getInput().sendKeyEvent(keycode, press);
         }
     }
@@ -525,8 +612,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     /**
      * Handle event
-     * @param enable true is start event, false is end event
-     * @param event event data
+     *
+     * @param enable    true is start event, false is end event
+     * @param event     event data
      * @param eventType 0 is press, 1 is long press, 2 is click, 3 is double click
      */
     private void handleTickEvent(boolean enable, ButtonEventData.Event event, int eventType) {
@@ -569,6 +657,14 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
                             getContext().getString(R.string.menu_settings_gesture_mode_build) :
                             getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
+        }
+        if (event.isSwitchMouseMode()) {
+            menu.getMenuSetting().setMouseMoveMode(menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ? MouseMoveMode.SLIDE : MouseMoveMode.CLICK);
+            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+                    menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ?
+                            getContext().getString(R.string.menu_settings_mouse_mode_click) :
+                            getContext().getString(R.string.menu_settings_mouse_mode_slide)), Toast.LENGTH_SHORT).show();
+
         }
         if (event.isInput()) {
             menu.getTouchCharInput().switchKeyboardState();
@@ -648,5 +744,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
         menu.showViewBoundariesProperty().removeListener(boundaryListener);
         visibilityProperty().removeListener(visibilityListener);
         menu.hideAllViewsProperty().removeListener(alphaListener);
+        notifyListener = null;
+        dataChangeListener = null;
+        boundaryListener = null;
+        visibilityListener = null;
+        alphaListener = null;
     }
 }

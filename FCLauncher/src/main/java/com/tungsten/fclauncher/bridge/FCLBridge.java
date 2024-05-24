@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
@@ -79,6 +80,7 @@ public class FCLBridge implements Serializable {
     private boolean surfaceDestroyed;
     private Handler handler;
     private Thread thread;
+    private SurfaceTexture surfaceTexture;
 
     static {
         System.loadLibrary("xhook");
@@ -114,6 +116,14 @@ public class FCLBridge implements Serializable {
 
     public Thread getThread() {
         return thread;
+    }
+
+    public SurfaceTexture getSurfaceTexture() {
+        return surfaceTexture;
+    }
+
+    public void setSurfaceTexture(SurfaceTexture surfaceTexture) {
+        this.surfaceTexture = surfaceTexture;
     }
 
     public FCLBridgeCallback getCallback() {

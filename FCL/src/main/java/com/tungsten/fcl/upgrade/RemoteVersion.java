@@ -68,7 +68,7 @@ public class RemoteVersion {
             throw new IllegalStateException("No update description list!");
         }
         for (Description d : description) {
-            if (d.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(d.getLang())) {
                 return d.getText();
             }
         }

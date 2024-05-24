@@ -34,7 +34,6 @@ import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.account.AccountListItem;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
@@ -147,6 +146,14 @@ public final class LauncherHelper {
                         } catch (IOException e) {
                             Logging.LOG.log(Level.WARNING, "Unable to unpack MultiplayerFix.jar", e);
                         }
+                    }
+                    return null;
+                })
+                .thenComposeAsync(() -> {
+                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLaunchWrapper.jar")) {
+                        Files.copy(input, new File(FCLPath.MIO_LAUNCH_WRAPPER).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
                     }
                     return null;
                 })
@@ -303,7 +310,12 @@ public final class LauncherHelper {
             } catch (CredentialExpiredException e) {
                 LOG.log(Level.INFO, "Credential has expired", e);
 
-                return Task.completed(AccountListItem.logIn(account));
+                CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
+                Schedulers.androidUIThread().execute(() -> {
+                    TipReLoginLoginDialog dialog = new TipReLoginLoginDialog(context, account, future);
+                    dialog.show();
+                });
+                return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             } catch (AuthenticationException e) {
                 LOG.log(Level.WARNING, "Authentication failed, try skipping refresh", e);
 
@@ -354,6 +366,43 @@ public final class LauncherHelper {
                 }
             }
             if (view == cancel) {
+                future.completeExceptionally(new CancellationException());
+            }
+            dismiss();
+        }
+    }
+
+    static class TipReLoginLoginDialog extends FCLDialog implements View.OnClickListener {
+
+        private final Account account;
+        private final CompletableFuture<Task<AuthInfo>> future;
+
+        private FCLButton skip;
+        private FCLButton ok;
+
+        public TipReLoginLoginDialog(@NonNull Context context, Account account, CompletableFuture<Task<AuthInfo>> future) {
+            super(context);
+            this.account = account;
+            this.future = future;
+            setContentView(R.layout.dialog_tip_relogin);
+            setCancelable(false);
+
+            skip = findViewById(R.id.skip);
+            ok = findViewById(R.id.ok);
+            skip.setOnClickListener(this);
+            ok.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (view == skip) {
+                try {
+                    future.complete(Task.completed(account.playOffline()));
+                } catch (AuthenticationException e2) {
+                    future.completeExceptionally(e2);
+                }
+            }
+            if (view == ok) {
                 future.completeExceptionally(new CancellationException());
             }
             dismiss();

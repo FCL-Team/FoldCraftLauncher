@@ -89,7 +89,7 @@
         android:layout_height="match_parent"
         app:layout_constraintEnd_toStartOf="@id/right_menu"/>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:background="@color/ui_bg_color"
         android:id="@+id/right_menu"
         android:layout_width="0dp"
@@ -101,6 +101,7 @@
         app:layout_constraintWidth_percent="0.25">
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/account_textview"
             android:singleLine="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
@@ -108,15 +109,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/account"
-            android:textSize="11sp"/>
+            android:textSize="11sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <View
+            android:id="@+id/view"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/account_textview"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_marginTop="10dp"
@@ -127,7 +132,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/view">
 
             <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="30dp"
@@ -169,6 +175,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/version_textview"
             android:singleLine="true"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
@@ -176,15 +183,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/version"
-            android:textSize="11sp"/>
+            android:textSize="11sp"
+            app:layout_constraintTop_toBottomOf="@id/account"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <View
+            android:id="@+id/view2"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/version_textview"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_marginTop="10dp"
@@ -195,7 +207,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:padding="10dp"
+            app:layout_constraintTop_toBottomOf="@id/view2"
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="30dp"
@@ -236,28 +250,24 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/execute_jar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/jar_execute"
-            android:layout_marginTop="10dp"
-            app:ripple="true"/>
-        
+            android:layout_marginBottom="10dp"
+            app:ripple="true"
+            app:layout_constraintBottom_toTopOf="@id/launch"/>
+
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/launch"
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/launch"
-            app:ripple="true"/>
+            app:ripple="true"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLUILayout
         android:id="@+id/ui_layout"

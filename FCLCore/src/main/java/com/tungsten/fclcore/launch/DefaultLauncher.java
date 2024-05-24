@@ -168,7 +168,7 @@ public class DefaultLauncher extends Launcher {
         }
 
         Set<String> classpath = repository.getClasspath(version);
-
+        classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
         File jar = new File(repository.getVersionRoot(version.getId()), version.getId() + ".jar");
 //        if (!jar.exists() || !jar.isFile())
 //            throw new IOException("Minecraft jar does not exist");
@@ -192,6 +192,13 @@ public class DefaultLauncher extends Launcher {
             res.add("-javaagent:" + javaAgent);
         }
 
+        if (javaVersion.getVersion() != JavaVersion.JAVA_VERSION_8) {
+            res.add("--add-exports");
+            String pkg = version.getMainClass().substring(0, version.getMainClass().lastIndexOf("."));
+            res.add(pkg + "/" + pkg + "=ALL-UNNAMED");
+        }
+
+        res.add("mio.Wrapper");
         res.add(version.getMainClass());
 
         res.addAll(Arguments.parseStringArguments(version.getMinecraftArguments().map(StringUtils::tokenize).orElseGet(ArrayList::new), configuration));

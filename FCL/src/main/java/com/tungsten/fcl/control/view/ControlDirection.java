@@ -14,6 +14,7 @@ import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -50,11 +51,11 @@ import java.util.UUID;
 @SuppressLint("ViewConstructor")
 public class ControlDirection extends RelativeLayout implements CustomView {
 
-    private final InvalidationListener notifyListener;
-    private final InvalidationListener dataChangeListener;
-    private final InvalidationListener boundaryListener;
-    private final InvalidationListener visibilityListener;
-    private final InvalidationListener alphaListener;
+    private InvalidationListener notifyListener;
+    private InvalidationListener dataChangeListener;
+    private InvalidationListener boundaryListener;
+    private InvalidationListener visibilityListener;
+    private InvalidationListener alphaListener;
 
     @Nullable
     private final GameMenu menu;
@@ -152,6 +153,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
         post(() -> {
             notifyData();
+            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
+                return;
+            }
             if (menu != null) {
                 menu.editModeProperty().addListener(notifyListener);
             }
@@ -190,7 +194,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             getData().addListener(notifyListener);
         });
         boundaryListener = null;
-        visibilityListener = null;
+        visibilityListener = observable -> {};
         alphaListener = null;
 
         post(() -> {
@@ -201,6 +205,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     }
 
     private void notifyData() {
+        if (visibilityListener == null) {
+            return;
+        }
         ControlDirectionData data = getData();
 
         refreshBaseInfo(data);
@@ -417,20 +424,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private boolean startRecord = false;
 
     private final Handler handler = new Handler();
-    private final Runnable deleteRunnable = () -> {
-        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setCancelable(false);
-        builder.setMessage(getContext().getString(R.string.edit_direction_delete));
-        builder.setPositiveButton(this::deleteView);
-        builder.setNegativeButton(() -> {
-            setX(positionX);
-            setY(positionY);
-        });
-        builder.create().show();
-    };
 
     private void deleteView() {
         if (menu != null) {
@@ -449,7 +442,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
-                    handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
@@ -458,13 +450,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     float targetY = Math.max(0, Math.min(screenHeight - getSize(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
-                    if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(deleteRunnable);
-                    }
+                    autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    handler.removeCallbacks(deleteRunnable);
+                    removeLine(0);
+                    removeLine(1);
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
@@ -483,6 +474,11 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             @Override
                             public void onClone(CustomControl view) {
                                 menu.getViewManager().addView(view);
+                            }
+
+                            @Override
+                            public void onDelete() {
+                                menu.getViewManager().removeView(getData());
                             }
                         }, true);
                         dialog.show();
@@ -595,6 +591,93 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             return true;
         }
         return true;
+    }
+
+    private void showLine(int orientation, int pref, int self) {
+        if (menu == null)
+            return;
+
+        menu.getTouchPad().drawLine(orientation, pref, self);
+    }
+
+    private void removeLine(int orientation) {
+        if (menu == null)
+            return;
+
+        menu.getTouchPad().removeLine(orientation);
+    }
+
+    private void autoFitPosition() {
+        if (menu == null || !menu.getMenuSetting().isAutoFit())
+            return;
+
+        ViewGroup viewGroup = (ViewGroup) getParent();
+
+        int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
+        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
+
+        boolean[] xyPref = {false, false};
+        int[] prefXY = {0, 0};
+        int[] selfXY = {0, 0};
+        int[] xyDist = {autoFitDist, autoFitDist};
+        int left = (int) getX();
+        int right = (int) (getX() + getWidth());
+        int up = (int) getY();
+        int down = (int) (getY() + getHeight());
+        int[] posArr = {left, right, up, down};
+
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
+                View button = viewGroup.getChildAt(i);
+                if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
+                    continue;
+                }
+                //buttonLeft, buttonRight, buttonUp, buttonDown
+                int[] buttonPosArr = {
+                        (int) button.getX(),
+                        (int) (button.getX() + button.getWidth()),
+                        (int) button.getY(),
+                        (int) (button.getY() + button.getHeight())
+                };
+                /*
+                left - buttonLeft, left - buttonRight
+                right - buttonRight, right - buttonLeft
+                up - buttonUp, up - buttonDown
+                down - buttonDown, down - buttonUp
+                */
+                int flag = -1;
+                for (int j = 0; j < posArr.length; j++) {
+                    flag *= -1;
+                    int xyIndex = j / 2 % 2;
+                    if (Math.abs(posArr[j] - buttonPosArr[j]) < xyDist[xyIndex]) {
+                        xyPref[xyIndex] = true;
+                        prefXY[xyIndex] = buttonPosArr[j];
+                        xyDist[xyIndex] = posArr[j] - buttonPosArr[j];
+                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
+                    }
+                    int buttonDist = posArr[j] - buttonPosArr[j + flag];
+                    if (flag * buttonDist >= 0 && flag * buttonDist < xyDist[xyIndex]) {
+                        xyPref[xyIndex] = true;
+                        prefXY[xyIndex] = buttonPosArr[j + flag];
+                        xyDist[xyIndex] = buttonDist - flag * dist;
+                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
+                    }
+                }
+            }
+        }
+
+        if (xyPref[0]) {
+            setX(left - xyDist[0]);
+            showLine(0, prefXY[0], selfXY[0]);
+        } else {
+            removeLine(0);
+        }
+        if (xyPref[1]) {
+            setY(up - xyDist[1]);
+            showLine(1, prefXY[1], selfXY[1]);
+        } else {
+            removeLine(1);
+        }
     }
 
     private void handleButtonEvent(int x, int y) {
@@ -843,5 +926,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         }
         dataProperty.removeListener(dataChangeListener);
         getData().removeListener(notifyListener);
+        notifyListener = null;
+        dataChangeListener = null;
+        boundaryListener = null;
+        visibilityListener = null;
+        alphaListener = null;
     }
 }

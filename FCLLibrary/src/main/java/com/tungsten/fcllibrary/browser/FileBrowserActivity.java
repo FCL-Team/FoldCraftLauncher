@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserAdapter;
@@ -41,6 +42,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
     private FCLButton sharedDir;
     private FCLButton privateDir;
+    private FCLButton openExternal;
     private FCLButton confirm;
 
     private Path currentPath;
@@ -70,9 +72,11 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
         sharedDir = findViewById(R.id.shared_dir);
         privateDir = findViewById(R.id.private_dir);
+        openExternal = findViewById(R.id.open_external);
         confirm = findViewById(R.id.confirm);
         sharedDir.setOnClickListener(this);
         privateDir.setOnClickListener(this);
+        openExternal.setOnClickListener(this);
         confirm.setOnClickListener(this);
 
         selectedFiles = new ArrayList<>();
@@ -163,6 +167,17 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             } else {
                 Toast.makeText(this, getString(R.string.file_browser_private_alert), Toast.LENGTH_SHORT).show();
             }
+        }
+        if (view == openExternal) {
+            if (currentPath.toFile().getAbsolutePath().equals(Environment.getExternalStorageDirectory().getAbsolutePath())) {
+                return;
+            }
+            Uri uri = FileProvider.getUriForFile(this, getString(R.string.file_browser_provider), currentPath.toFile());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setDataAndType(uri, "*/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivity(intent);
         }
         if (view == confirm) {
             if (selectedFiles.size() == 0 && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {

@@ -30,6 +30,7 @@ public class ViewManager {
         menuView.setup(gameMenu);
         gameMenu.getBaseLayout().addView(menuView);
         menuView.initPosition();
+        gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));
 
         // Initialize controller
         initializeController();
