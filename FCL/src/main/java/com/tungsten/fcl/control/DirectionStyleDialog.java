@@ -20,6 +20,7 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     private final Callback callback;
 
     private FCLButton addStyle;
+    private FCLButton editStyle;
     private FCLButton positive;
 
     private HorizontalListView listView;
@@ -37,12 +38,18 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
         setCancelable(false);
 
         addStyle = findViewById(R.id.add_style);
+        editStyle = findViewById(R.id.edit_style);
         positive = findViewById(R.id.positive);
         addStyle.setOnClickListener(this);
+        editStyle.setOnClickListener(this);
         positive.setOnClickListener(this);
 
         listView = findViewById(R.id.list);
         refreshList();
+
+        if (!select) {
+            editStyle.setVisibility(View.GONE);
+        }
     }
 
     private DirectionStyleAdapter adapter;
@@ -55,7 +62,15 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == addStyle) {
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), style -> {
+            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), null, false, style -> {
+                DirectionStyles.addStyle(style);
+                refreshList();
+            });
+            dialog.show();
+        }
+        if (v == editStyle) {
+            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                DirectionStyles.removeStyles(adapter.getSelectedStyle());
                 DirectionStyles.addStyle(style);
                 refreshList();
             });

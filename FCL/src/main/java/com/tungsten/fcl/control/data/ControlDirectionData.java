@@ -117,7 +117,10 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        try {
+            observableHelper.invalidate();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Override
@@ -156,7 +159,7 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             obj.addProperty("id", src.getId());
-            obj.add("style", gson.toJsonTree(src.getStyle()).getAsJsonObject());
+            obj.addProperty("style", src.getStyle().getName());
             obj.add("baseInfo", gson.toJsonTree(src.getBaseInfo()).getAsJsonObject());
             obj.add("event", gson.toJsonTree(src.getEvent()).getAsJsonObject());
 
@@ -172,7 +175,15 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
             ControlDirectionData data = new ControlDirectionData(Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>(){}.getType()));
+            if (!DirectionStyles.isInitialized()) {
+                DirectionStyles.init();
+            }
+            if (obj.get("style").toString().contains("\"name\"")) {
+                data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>(){}.getType()));
+                DirectionStyles.addStyle(data.getStyle());
+            } else {
+                data.setStyle(DirectionStyles.findStyleByName(obj.get("style").getAsString()));
+            }
             data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new BaseInfoData()).getAsJsonObject()), new TypeToken<BaseInfoData>(){}.getType()));
             data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new DirectionEventData()).getAsJsonObject()), new TypeToken<DirectionEventData>(){}.getType()));
 

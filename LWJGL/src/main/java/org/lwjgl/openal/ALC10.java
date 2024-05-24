@@ -279,6 +279,19 @@ public class ALC10 {
     }
 
     /**
+     * Verify that a given extension is available for the current context and the device it
+     * is associated with.
+     * A <code>null</code> name argument returns <code>ALC_FALSE</code>, as do invalid and unsupported string
+     * tokens.
+     *
+     * @param extName name of extension to find
+     * @return true if extension is available, false if not
+     */
+    public static boolean alcIsExtensionPresent(ALCdevice device, String extName) {
+        return alcIsExtensionPresent(device.device, extName);
+    }
+
+    /**
      * Verifies that a given extension is available for the current context and the device it is associated with.
      * 
      * <p>Invalid and unsupported string tokens return ALC_FALSE. A {@code NULL} deviceHandle is acceptable. {@code extName} is not case sensitive – the implementation

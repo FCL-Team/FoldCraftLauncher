@@ -4,22 +4,22 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.Objects;
+import com.tungsten.fcl.control.GameMenu;
 
 /**
  * From PojavLauncher
  * This class is intended for sending characters used in chat via the virtual keyboard
  */
 public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText {
+
+    public static final String TEXT_FILLER = "                              ";
 
     public TouchCharInput(@NonNull Context context) {
         this(context, null);
@@ -34,8 +34,18 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         setup();
     }
 
+    private GameMenu menu;
+    private boolean lock = false;
     private boolean isDoingInternalChanges = false;
     private CharacterSenderStrategy characterSender;
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
 
     /**
      * We take the new chars, and send them to the game.
@@ -58,8 +68,8 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
             }
         }
 
-        //Reset the keyboard state
-        if(text.length() < 1)
+        // Reset the keyboard state
+        if (text.length() < 1)
             clear();
     }
 
@@ -87,25 +97,27 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
 
     /**
      * Toggle on and off the soft keyboard, depending of the state
-     *
-     * @return if the keyboard is set to be shown.
      */
-    public boolean switchKeyboardState() {
+    public void switchKeyboardState() {
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
-        // If an hard keyboard is present, never trigger the soft one
-        if (hasFocus()
-                || (getResources().getConfiguration().keyboard == Configuration.KEYBOARD_QWERTY
-                && getResources().getConfiguration().hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES)) {
+        if (hasFocus()) {
             inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
             clear();
             disable();
-            return false;
-        } else {
+            if (menu != null && menu.getInput().getFocusableView() != null) {
+                menu.getInput().getFocusableView().requestFocus();
+                menu.getInput().getFocusableView().requestPointerCapture();
+            }
+        } else{
+            if (menu != null && menu.getInput().getFocusableView() != null) {
+                menu.getInput().getFocusableView().releasePointerCapture();
+                menu.getInput().getFocusableView().clearFocus();
+            }
             enable();
             inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
-            return true;
         }
     }
+
 
     /**
      * Clear the EditText from any leftover inputs
@@ -114,10 +126,8 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
     @SuppressLint("SetTextI18n")
     public void clear() {
         isDoingInternalChanges = true;
-        //Braille space, doesn't trigger keyboard auto-complete
-        //replacing directly the text without though setText avoids notifying changes
-        setText("                              ");
-        setSelection(Objects.requireNonNull(getText()).length());
+        setText(TEXT_FILLER);
+        setSelection(TEXT_FILLER.length());
         isDoingInternalChanges = false;
     }
 
@@ -135,8 +145,6 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         setVisibility(GONE);
         clearFocus();
         setEnabled(false);
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
     }
 
     /** Send the enter key. */
@@ -146,16 +154,24 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
     }
 
     /** Just sets the char sender that should be used. */
-    public void setCharacterSender(CharacterSenderStrategy characterSender) {
+    public void setCharacterSender(GameMenu gameMenu, CharacterSenderStrategy characterSender) {
+        this.menu = gameMenu;
         this.characterSender = characterSender;
     }
 
     /** This function deals with anything that has to be executed when the constructor is called */
     private void setup() {
         setOnEditorActionListener((textView, i, keyEvent) -> {
+            setLock(true);
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getWindowToken(), 0);
             sendEnter();
             clear();
             disable();
+            if (menu != null && menu.getInput().getFocusableView() != null) {
+                menu.getInput().getFocusableView().requestFocus();
+                menu.getInput().getFocusableView().requestPointerCapture();
+            }
             return false;
         });
         clear();

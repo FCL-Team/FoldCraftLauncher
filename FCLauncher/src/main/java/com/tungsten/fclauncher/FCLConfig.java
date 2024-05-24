@@ -13,7 +13,8 @@ public class FCLConfig implements Serializable {
         RENDERER_VIRGL("VirGLRenderer:libOSMesa_81.so:libEGL.so"),
         RENDERER_ANGLE("ANGLE:libtinywrapper.so:libEGL_angle.so"),
         RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so"),
-        RENDERER_ZINK("Zink:libOSMesa_8.so:libEGL.so");
+        RENDERER_ZINK("Zink:libOSMesa_8.so:libEGL.so"),
+        RENDERER_FREEDRENO("Freedreno:libOSMesa_8.so:libEGL.so");
 
         private final String glInfo;
         private String glVersion;

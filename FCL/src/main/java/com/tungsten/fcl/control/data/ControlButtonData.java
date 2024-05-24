@@ -137,7 +137,10 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        try {
+            observableHelper.invalidate();
+        } catch (NullPointerException ignore) {
+        }
     }
 
     @Override
@@ -178,7 +181,7 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
 
             obj.addProperty("id", src.getId());
             obj.addProperty("text", src.getText());
-            obj.add("style", gson.toJsonTree(src.getStyle()).getAsJsonObject());
+            obj.addProperty("style", src.getStyle().getName());
             obj.add("baseInfo", gson.toJsonTree(src.getBaseInfo()).getAsJsonObject());
             obj.add("event", gson.toJsonTree(src.getEvent()).getAsJsonObject());
 
@@ -195,7 +198,15 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             data.setText(Optional.ofNullable(obj.get("text")).map(JsonElement::getAsString).orElse(""));
-            data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlButtonStyle.DEFAULT_BUTTON_STYLE).getAsJsonObject()), new TypeToken<ControlButtonStyle>(){}.getType()));
+            if (!ButtonStyles.isInitialized()) {
+                ButtonStyles.init();
+            }
+            if (obj.get("style").toString().contains("\"name\"")) {
+                data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlButtonStyle.DEFAULT_BUTTON_STYLE).getAsJsonObject()), new TypeToken<ControlButtonStyle>() {}.getType()));
+                ButtonStyles.addStyle(data.getStyle());
+            } else {
+                data.setStyle(ButtonStyles.findStyleByName(obj.get("style").getAsString()));
+            }
             data.setBaseInfo(gson.fromJson(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new BaseInfoData()).getAsJsonObject()), new TypeToken<BaseInfoData>(){}.getType()));
             data.setEvent(gson.fromJson(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonEventData()).getAsJsonObject()), new TypeToken<ButtonEventData>(){}.getType()));
 

@@ -92,7 +92,7 @@ public class SplashActivity extends FCLActivity {
     private void init() {
         FCLPath.loadPaths(this);
         transFile();
-        Logging.start(new File(FCLPath.FILES_DIR, "logs").toPath());
+        Logging.start(Paths.get(FCLPath.LOG_DIR));
         initFragments();
         start();
     }

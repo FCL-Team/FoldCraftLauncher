@@ -186,7 +186,7 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
 
         name.setText(modVersion.getName());
         tag.setText(ModVersionAdapter.getTag(getContext(), modVersion));
-        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.getDatePublished().toInstant()));
+        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.getDatePublished()));
 
         loadDependencies(modVersion);
     }

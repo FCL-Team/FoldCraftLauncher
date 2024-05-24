@@ -17,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
-import com.tungsten.fcllibrary.R;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

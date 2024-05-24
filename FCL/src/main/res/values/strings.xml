@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
-    <string name="app_version" translatable="false">1.1.4.2</string>
 
     <string name="oauth_api_key" translatable="false">null</string>
 
@@ -58,6 +57,7 @@
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
     <string name="account_failed">Account refresh failed</string>
+    <string name="account_failed_expired">Credential has expired, you must delete your account and re-login.</string>
     <string name="account_failed_no_character">There are no characters linked to this account.</string>
     <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
     <string name="account_failed_connect_injector_server">Unable to connect to the authentication server. Please check your network and make sure you entered the correct URL.</string>
@@ -145,6 +145,8 @@
     <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
     <string name="control_import_failed">Failed to import controller!</string>
+    <string name="control_upgrade">Controller: %s is an outdated controller, it may produce some unknown bugs, but we still support it, do you want to migrate it to a new version?</string>
+    <string name="control_incompatible">Controller: %s is an incompatible controller, it may be caused by the launcher version being too low or the controller version being too low, please check.</string>
     <string name="control_info_author">Author: </string>
     <string name="control_info_description">Description: </string>
     <string name="control_info_edit">Edit Controller Information</string>
@@ -166,7 +168,7 @@
     <string name="curse_category_4478">Quests</string>
     <string name="curse_category_4484">Multiplayer</string>
     <string name="curse_category_4476">Exploration</string>
-    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_4736">Skyblock</string>
     <string name="curse_category_4475">Adventure and RPG</string>
     <string name="curse_category_4487">FTB</string>
     <string name="curse_category_4480">Map Based</string>
@@ -180,6 +182,11 @@
     <string name="curse_category_5232">Galacticraft</string>
     <string name="curse_category_5129">Vanilla+</string>
     <string name="curse_category_5189">Utility &#38; QOL</string>
+    <string name="curse_category_6814">Performance</string>
+    <string name="curse_category_6954">Integrated Dynamics</string>
+    <string name="curse_category_6484">Create</string>
+    <string name="curse_category_6821">Bug Fixes</string>
+    <string name="curse_category_6145">Skyblock</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">Utility &#38; QoL</string>
     <string name="curse_category_5192">FancyMenu</string>
@@ -285,6 +292,7 @@
     <string name="download_provider_mirror">From Mirror</string>
 
     <string name="edit_view_clone">Clone View</string>
+    <string name="edit_view_delete">Delete View</string>
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
     <string name="edit_view_no_group">Please add or select a view group first!</string>
@@ -303,6 +311,7 @@
     <string name="edit_button_event_auto_click">Keep Clicking</string>
     <string name="edit_button_event_open_menu">Open Menu</string>
     <string name="edit_button_event_touch_mode">Switch Gesture Mode</string>
+    <string name="edit_button_event_mouse_mode">Switch Mouse Mode</string>
     <string name="edit_button_event_input">Input</string>
     <string name="edit_button_event_quick_input">Open Quick Input Dialog</string>
     <string name="edit_button_event_output_text">Send Text</string>
@@ -394,6 +403,7 @@
     <string name="game_crash_reason_unknown">We are not able to figure out why the game crashed, please refer to the game logs.\n\nWhen asking someone else for help, please share the full game log and related crash report file with them!</string>
     <string name="game_crash_reason_unsatisfied_link_error">Unable to launch Minecraft due to missing libraries: %1$s.</string>
     <string name="game_crash_title">Game Crashed</string>
+    <string name="game_crash_title_add">You should send the full crash log file instead of taking a screenshot</string>
 
     <string name="help">Help</string>
     <string name="help_category">Category</string>
@@ -464,6 +474,8 @@
     <string name="menu_controls_edit_mode">Edit Mode</string>
     <string name="menu_controls_show_boundary">Show View Boundaries</string>
     <string name="menu_controls_hide_all">Hide All Views</string>
+    <string name="menu_controls_auto_fit">Auto Fit Position</string>
+    <string name="menu_controls_auto_fit_dist">Auto Fit Position Distance</string>
     <string name="menu_controls_groups">View Groups</string>
     <string name="menu_controls_manage">Manage</string>
     <string name="menu_controls_current_view_group">Current View Group</string>
@@ -483,6 +495,7 @@
     <string name="menu_control_set">Set</string>
     <string name="menu_control_style">Style Setting</string>
     <string name="menu_control_style_add">Add Style</string>
+    <string name="menu_control_style_edit">Edit Style</string>
     <string name="menu_control_view_group_add">Add View Group</string>
     <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
     <string name="menu_control_view_group_name">Name</string>
@@ -514,12 +527,19 @@
     <string name="menu_settings_mouse_mode_slide">Slide</string>
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_gamepad">GamePad</string>
+    <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
+    <string name="menu_settings_gamepad_reset">Reset</string>
+    <string name="menu_settings_gamepad_deadzone">DeadZone</string>
+    <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
     <string name="menu_settings_multiplayer">Multiplayer Menu</string>
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
     <string name="menu_settings_quick_input_button">Manage</string>
     <string name="menu_settings_send_key">Send Key</string>
     <string name="menu_settings_send_key_button">Send</string>
+    <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
+    <string name="menu_settings_item_bar_scale">ItemBarScale</string>
     <string name="menu_settings_show_log">Show Log</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
@@ -732,6 +752,7 @@
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, only support 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
+    <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>

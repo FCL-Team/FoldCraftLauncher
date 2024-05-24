@@ -84,6 +84,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/delete"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/delete"
+        android:text="@string/edit_view_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toEndOf="@id/clone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 

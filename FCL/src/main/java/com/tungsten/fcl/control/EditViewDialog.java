@@ -17,6 +17,7 @@ import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
+import com.tungsten.fcl.control.view.ControlButton;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -49,6 +50,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
     private FCLButton positive;
     private FCLButton negative;
     private FCLButton clone;
+    private FCLButton delete;
 
     private FCLLinearLayout container;
     private Details details;
@@ -56,6 +58,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
     public interface Callback {
         void onPositive(CustomControl view);
         void onClone(CustomControl view);
+        default void onDelete(){}
     }
 
     public EditViewDialog(@NonNull Context context, CustomControl cloneView, GameMenu menu, Callback callback, boolean cloneable) {
@@ -75,9 +78,11 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
         clone = findViewById(R.id.clone);
+        delete = findViewById(R.id.delete);
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
         clone.setOnClickListener(this);
+        delete.setOnClickListener(this);
 
         clone.setVisibility(cloneable ? View.VISIBLE : View.GONE);
 
@@ -100,6 +105,10 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == clone) {
             callback.onClone(customControl.cloneView());
+            dismiss();
+        }
+        if (v == delete) {
+            callback.onDelete();
             dismiss();
         }
         if (v == positive) {
@@ -315,18 +324,21 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     FCLSwitch autoClick = layout.findViewById(R.id.auto_click);
                     FCLSwitch openMenu = layout.findViewById(R.id.open_menu);
                     FCLSwitch touchMode = layout.findViewById(R.id.touch_mode);
+                    FCLSwitch mouseMode = layout.findViewById(R.id.mouse_mode);
                     FCLSwitch input = layout.findViewById(R.id.input);
                     FCLSwitch quickInput = layout.findViewById(R.id.quick_input);
                     autoKeep.setChecked(e.isAutoKeep());
                     autoClick.setChecked(e.isAutoClick());
                     openMenu.setChecked(e.isOpenMenu());
                     touchMode.setChecked(e.isSwitchTouchMode());
+                    mouseMode.setChecked(e.isSwitchMouseMode());
                     input.setChecked(e.isInput());
                     quickInput.setChecked(e.isQuickInput());
                     FXUtils.bindBoolean(autoKeep, e.autoKeepProperty());
                     FXUtils.bindBoolean(autoClick, e.autoClickProperty());
                     FXUtils.bindBoolean(openMenu, e.openMenuProperty());
                     FXUtils.bindBoolean(touchMode, e.switchTouchModeProperty());
+                    FXUtils.bindBoolean(mouseMode, e.switchMouseModeProperty());
                     FXUtils.bindBoolean(input, e.inputProperty());
                     FXUtils.bindBoolean(quickInput, e.quickInputProperty());
 

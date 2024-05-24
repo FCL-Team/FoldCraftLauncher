@@ -33,11 +33,6 @@
             android:layout_gravity="center"
             android:text="@string/style_name"/>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
         <com.tungsten.fcllibrary.component.view.FCLEditText
             android:singleLine="true"
             android:textSize="12sp"
@@ -45,6 +40,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:id="@+id/name"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="@string/style_name"
+            android:layout_marginStart="10dp"
+            android:id="@+id/button"
+            android:layout_gravity="center"/>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

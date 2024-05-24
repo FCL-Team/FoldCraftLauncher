@@ -38,7 +38,6 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLEditText
-            android:singleLine="true"
             android:textSize="12sp"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

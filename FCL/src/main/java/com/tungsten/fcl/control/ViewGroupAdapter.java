@@ -17,6 +17,7 @@ import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class ViewGroupAdapter extends FCLAdapter {
@@ -46,6 +47,8 @@ public class ViewGroupAdapter extends FCLAdapter {
     static class ViewHolder {
         FCLCheckBox checkBox;
         FCLTextView name;
+        FCLImageButton up;
+        FCLImageButton down;
         FCLImageButton edit;
         FCLImageButton delete;
     }
@@ -74,6 +77,8 @@ public class ViewGroupAdapter extends FCLAdapter {
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_view_group, null);
             viewHolder.checkBox = view.findViewById(R.id.check);
             viewHolder.name = view.findViewById(R.id.name);
+            viewHolder.up = view.findViewById(R.id.up);
+            viewHolder.down = view.findViewById(R.id.down);
             viewHolder.edit = view.findViewById(R.id.edit);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
@@ -84,10 +89,14 @@ public class ViewGroupAdapter extends FCLAdapter {
         viewHolder.name.setText(group.getName());
         if (select) {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
+            viewHolder.up.setVisibility(View.GONE);
+            viewHolder.down.setVisibility(View.GONE);
             viewHolder.edit.setVisibility(View.GONE);
             viewHolder.delete.setVisibility(View.GONE);
         } else {
             viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.up.setVisibility(View.VISIBLE);
+            viewHolder.down.setVisibility(View.VISIBLE);
             viewHolder.edit.setVisibility(View.VISIBLE);
             viewHolder.delete.setVisibility(View.VISIBLE);
         }
@@ -102,6 +111,17 @@ public class ViewGroupAdapter extends FCLAdapter {
                 selectedGroups.removeIf(it -> it.getId().equals(group.getId()));
             }
         });
+        View.OnClickListener upDownListener = v -> {
+            int pos = v == viewHolder.up ? i - 1 : i + 1;
+            if (pos < 0 || pos > list.size() - 1) {
+                return;
+            }
+            Collections.swap(list, i, pos);
+            menu.getController().updateViewGroup(group);
+            notifyDataSetChanged();
+        };
+        viewHolder.up.setOnClickListener(upDownListener);
+        viewHolder.down.setOnClickListener(upDownListener);
         viewHolder.edit.setOnClickListener(v -> {
             EditViewGroupDialog dialog = new EditViewGroupDialog(getContext(), menu, group, (n, vi) -> {
                 group.setName(n);

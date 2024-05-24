@@ -57,14 +57,10 @@ void EventQueue_clear(EventQueue* queue) {
     }
 }
 
-int injector_mode = 0;
+FCLinjectorfun injectorCallback;
 
-void fclSetInjectorMode(int mode) {
-    injector_mode = mode;
-}
-
-int fclGetInjectorMode() {
-    return injector_mode;
+void fclSetInjectorCallback(FCLinjectorfun callback) {
+    injectorCallback = callback;
 }
 
 void fclSetHitResultType(int type) {
@@ -123,7 +119,8 @@ int fclPollEvent(FCLEvent* event) {
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_refreshHitResultType(JNIEnv *env, jobject thiz) {
-    injector_mode = 1;
+    if (injectorCallback)
+        injectorCallback();
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(JNIEnv* env, jclass clazz, jlong time, jint type, jint p1, jint p2) {

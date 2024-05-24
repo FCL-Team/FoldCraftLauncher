@@ -24,6 +24,8 @@
 //    distribution.
 //
 //========================================================================
+#ifndef INTERNAL_H
+#define INTERNAL_H
 
 #pragma once
 
@@ -587,8 +589,7 @@ const char* _glfwPlatformGetVersionString(void);
 
 void _glfwPlatformGetCursorPos(_GLFWwindow* window, double* xpos, double* ypos);
 void _glfwPlatformSetCursorPos(_GLFWwindow* window, double xpos, double ypos);
-void _glfwPlatformSetInjectorMode(int mode);
-int _glfwPlatformGetInjectorMode();
+void _glfwPlatformSetInjectorCallback(FCLinjectorfun callback);
 void _glfwPlatformSetHitResultType(int type);
 void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode);
 void _glfwPlatformSetRawMouseMotion(_GLFWwindow *window, GLFWbool enabled);
@@ -768,3 +769,4 @@ char* _glfw_strdup(const char* source);
 float _glfw_fminf(float a, float b);
 float _glfw_fmaxf(float a, float b);
 
+#endif

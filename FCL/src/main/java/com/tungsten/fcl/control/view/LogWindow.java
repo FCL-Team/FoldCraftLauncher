@@ -57,9 +57,9 @@ public class LogWindow extends ScrollView {
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         addView(textView);
         textView.setTextColor(Color.WHITE);
-        textView.setTextIsSelectable(true);
         textView.setTextSize(15);
         textView.setLineSpacing(0, 1f);
+        textView.setEllipsize(null);
     }
 
     public final void setVisibilityValue(boolean visibility) {
@@ -112,7 +112,7 @@ public class LogWindow extends ScrollView {
                 } else {
                     cleanLog();
                 }
-                postDelayed(() -> toBottom(LogWindow.this, textView), 50);
+                fullScroll(View.FOCUS_DOWN);
             }
         });
     }
@@ -120,14 +120,5 @@ public class LogWindow extends ScrollView {
     public void cleanLog() {
         this.textView.setText("");
         lineCount = 0;
-    }
-
-    private void toBottom(ScrollView scrollView, View view) {
-        int offset = view.getHeight()
-                - scrollView.getHeight();
-        if (offset < 0) {
-            offset = 0;
-        }
-        scrollView.scrollTo(0, offset);
     }
 }

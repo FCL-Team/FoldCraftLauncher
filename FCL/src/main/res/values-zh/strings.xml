@@ -123,6 +123,8 @@
     <string name="control_edit">编辑布局方案</string>
     <string name="control_import">导入布局</string>
     <string name="control_import_failed">导入布局失败！</string>
+    <string name="control_upgrade">布局方案：%s 是一个过时的布局方案，它可能导致一些未知的错误，但我们仍然支持加载它，是否将其迁移至新版？</string>
+    <string name="control_incompatible">布局方案：%s 是一个不兼容的布局方案，这可能是由于启动器版本过低或控件版本过低导致的，请检查。</string>
     <string name="control_info_author">作者：</string>
     <string name="control_info_description">描述：</string>
     <string name="control_info_edit">编辑布局信息</string>
@@ -144,7 +146,7 @@
     <string name="curse_category_4478">任务</string>
     <string name="curse_category_4484">多人</string>
     <string name="curse_category_4476">探索</string>
-    <string name="curse_category_6145">空岛</string>
+    <string name="curse_category_4736">空岛</string>
     <string name="curse_category_4475">冒险 RPG</string>
     <string name="curse_category_4487">FTB 整合包</string>
     <string name="curse_category_4480">有特定地图</string>
@@ -158,6 +160,11 @@
     <string name="curse_category_5232">额外行星</string>
     <string name="curse_category_5129">原版增强</string>
     <string name="curse_category_5189">实用与QOL</string>
+    <string name="curse_category_6814">性能</string>
+    <string name="curse_category_6954">动态联合/集成动力 (Integrated Dynamics)</string>
+    <string name="curse_category_6484">机械动力 (Create)</string>
+    <string name="curse_category_6821">错误修复</string>
+    <string name="curse_category_6145">空岛</string>
     <string name="curse_category_5190">QoL</string>
     <string name="curse_category_5191">实用与QoL</string>
     <string name="curse_category_5192">梦幻菜单</string>
@@ -263,6 +270,7 @@
     <string name="download_provider_mirror">尽量使用镜像源</string>
 
     <string name="edit_view_clone">复制控件</string>
+    <string name="edit_view_delete">删除控件</string>
     <string name="edit_view_event">控件事件</string>
     <string name="edit_view_info">控件基本信息</string>
     <string name="edit_view_no_group">请先添加或选择一个控件组！</string>
@@ -281,6 +289,7 @@
     <string name="edit_button_event_auto_click">自动点击</string>
     <string name="edit_button_event_open_menu">打开菜单</string>
     <string name="edit_button_event_touch_mode">切换触控手势模式</string>
+    <string name="edit_button_event_mouse_mode">切换鼠标控制模式</string>
     <string name="edit_button_event_input">呼出输入法</string>
     <string name="edit_button_event_quick_input">打开快捷输入</string>
     <string name="edit_button_event_output_text">发送文本</string>
@@ -372,6 +381,7 @@
     <string name="game_crash_reason_unknown">原因未知，请参考日志。\n如果你要求助他人，请你导出游戏崩溃信息后将导出的文件发送给他人以供分析。</string>
     <string name="game_crash_reason_unsatisfied_link_error">当前游戏因为缺少本地库，无法继续运行。</string>
     <string name="game_crash_title">游戏意外退出</string>
+    <string name="game_crash_title_add">(你应该将完整的日志文件发送出来，而不是在这个界面截图)</string>
 
     <string name="help">帮助</string>
     <string name="help_category">类别</string>
@@ -433,6 +443,8 @@
     <string name="menu_controls_edit_mode">编辑模式</string>
     <string name="menu_controls_show_boundary">显示控件边缘</string>
     <string name="menu_controls_hide_all">隐藏所有控件</string>
+    <string name="menu_controls_auto_fit">自动吸附</string>
+    <string name="menu_controls_auto_fit_dist">自动吸附间距</string>
     <string name="menu_controls_groups">控件组</string>
     <string name="menu_controls_manage">管理</string>
     <string name="menu_controls_current_view_group">当前控件组</string>
@@ -452,6 +464,7 @@
     <string name="menu_control_set">设置</string>
     <string name="menu_control_style">样式设置</string>
     <string name="menu_control_style_add">添加样式</string>
+    <string name="menu_control_style_edit">编辑样式</string>
     <string name="menu_control_view_group_add">添加控件组</string>
     <string name="menu_control_view_group_delete">你确定要删除该控件组吗？</string>
     <string name="menu_control_view_group_name">名称</string>
@@ -483,12 +496,18 @@
     <string name="menu_settings_mouse_mode_slide">拖动</string>
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_gamepad">手柄</string>
+    <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
+    <string name="menu_settings_gamepad_reset">重置</string>
+    <string name="menu_settings_gamepad_deadzone">调整死区</string>
     <string name="menu_settings_multiplayer">联机菜单</string>
     <string name="menu_settings_multiplayer_button">打开</string>
     <string name="menu_settings_quick_input">快捷输入</string>
     <string name="menu_settings_quick_input_button">管理</string>
     <string name="menu_settings_send_key">发送键值</string>
     <string name="menu_settings_send_key_button">发送</string>
+    <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
+    <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
@@ -696,6 +715,7 @@
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
     <string name="settings_game_java_version">Java 版本</string>
@@ -877,4 +897,6 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
+    <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
+    <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
 </resources>
