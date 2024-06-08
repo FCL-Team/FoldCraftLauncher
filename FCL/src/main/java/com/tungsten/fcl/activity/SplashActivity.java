@@ -143,32 +143,26 @@ public class SplashActivity extends FCLActivity {
             } else {
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) || !ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
                     // 用户勾选了“始终拒绝”
-                    showManualPermissionSettingDialog();
+                    enableAlertDialog((dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        ResultListener.startActivityForResult(this, intent, RequestCodes.PERMISSION_REQUEST_CODE, (requestCode1, resultCode, data) -> {
+                            if (requestCode1 == RequestCodes.PERMISSION_REQUEST_CODE) {
+                                if (ActivityCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) init();
+                                else onRequestPermissionsResult(requestCode1, permissions, grantResults);
+
+                            }
+                        });
+
+                        dialog.dismiss();
+                    }, "需要存储权限", "您已选择不再询问权限。请在设置中手动授予存储权限。", "去设置", "关闭应用");
                 } else {
                     // 用户只是拒绝了权限
                     checkPermission();
                 }
             }
         }
-    }
-
-    // 始终拒绝则跳转到设置内授予
-    private void showManualPermissionSettingDialog() {
-        enableAlertDialog((dialog, which) -> {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            Uri uri = Uri.fromParts("package", getPackageName(), null);
-            intent.setData(uri);
-            ResultListener.startActivityForResult(this, intent, RequestCodes.PERMISSION_REQUEST_CODE, (requestCode1, resultCode, data) -> {
-                if (requestCode1 == RequestCodes.PERMISSION_REQUEST_CODE) {
-                    if (ActivityCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                        init();
-                    } else showManualPermissionSettingDialog();
-
-                }
-            });
-
-            dialog.dismiss();
-        }, "需要存储权限", "您已选择不再询问权限。请在设置中手动授予存储权限。", "去设置", "关闭应用");
     }
 
     private void enableAlertDialog(DialogInterface.OnClickListener positiveButtonEvent, String... strings) {
