@@ -31,6 +31,9 @@ public class Controllers {
     public static Controller DEFAULT_CONTROLLER;
 
     public static void checkControllers() {
+        if (controllers.contains(null)) {
+            controllers.remove(null);
+        }
         if (controllers.isEmpty()) {
             try {
                 if (DEFAULT_CONTROLLER == null) {
@@ -117,6 +120,9 @@ public class Controllers {
     }
 
     public static ObservableList<Controller> getControllers() {
+        if (controllers.contains(null)) {
+            controllers.remove(null);
+        }
         if (controllers.isEmpty()) controllers.add(DEFAULT_CONTROLLER);
         return controllers;
     }

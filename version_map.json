@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1161,
-    "versionName": "1.1.6.1",
-    "date": "2024.04.16",
+    "versionCode": 1162,
+    "versionName": "1.1.6.2",
+    "date": "2024.05.27",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.6.1更新内容\n临时修复少许bug（jar执行闪退，增加手柄映射）"
+        "text": "FCL 1.1.6.2更新内容\n修复少许bug"
       }
     ],
     "netdiskUrl": "https://alist.8mi.tech/FCL",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.6.1/FCL-release-1.1.6.1-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.6.2/FCL-release-1.1.6.2-all.apk"
   }
 ]

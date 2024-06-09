@@ -37,6 +37,7 @@ public class FCLauncher {
         log(bridge, "Device: " + DeviceName.getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU:" + Build.HARDWARE);
+        log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
