@@ -174,6 +174,7 @@ public class FCLauncher {
             } else if (renderer == FCLConfig.Renderer.RENDERER_PANFROST) {
                 envMap.put("GALLIUM_DRIVER", "panfrost");
                 envMap.put("PAN_DEBUG", "gofaster");
+                envMap.put("PAN_MESA_DEBUG", "gl3");
             }
         }
     }
