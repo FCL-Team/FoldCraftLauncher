@@ -3,12 +3,12 @@
 
     <string name="oauth_api_key" translatable="false">null</string>
 
-    <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
+    <string name="splash_permission_msg">Sem permissão de armazenamento, por favor conceda a permissão ao Fold Craft Launcher.</string>
 
-    <string name="splash_title">Welcome to Fold Craft Launcher</string>
-    <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
-    <string name="splash_eula_next">Agree and Continue</string>
-    <string name="splash_runtime_title">Install or update app runtime</string>
+    <string name="splash_title">Bem-vindo ao Fold Craft Launcher</string>
+    <string name="splash_eula_error">Não foi possível acessar o EULA, por favor verifique a sua conexão.</string>
+    <string name="splash_eula_next">Concordar e continuar</string>
+    <string name="splash_runtime_title">Instalar ou atualizar a runtime do aplicativo</string>
     <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
     <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
     <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
@@ -17,7 +17,7 @@
     <string name="splash_runtime_java11" translatable="false">JRE 11</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_java21" translatable="false">JRE 21</string>
-    <string name="splash_runtime_install">Install / Update</string>
+    <string name="splash_runtime_install">Instalar / Atualizar</string>
 
     <string name="account">Conta</string>
     <string name="version">Versão</string>
@@ -30,104 +30,104 @@
     <string name="about">Sobre</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
-    <string name="about_sponsor">Sponsor</string>
-    <string name="about_source">Open Source</string>
-    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
+    <string name="about_sponsor">Patrocinador</string>
+    <string name="about_source">Código aberto</string>
+    <string name="about_desc">Fold Craft é um Launcher de Minecraft no Android, que lhe permite jogar Minecraft: Java Edition no seu aparelho Android.\n\nO Fold Craft Launcher é desenvolvido pela FCL-Team.\n\nA maioria das funcionalidades do Fold Craft Launcher são baseadas no HMCLCore.\n\nO aplicativo usa partes do código de PojavLauncher e Boat, então se deseja distribuir este aplicativo, por favor seguir as regras da Licença GPL-v3.</string>
 
-    <string name="account_add_server">Add Authentication Server</string>
-    <string name="account_add_server_url">Server URL</string>
-    <string name="account_add_server_name">Server Name</string>
-    <string name="account_cape">Cape</string>
-    <string name="account_create">Create Account</string>
-    <string name="account_create_offline">Create Offline Account</string>
-    <string name="account_create_microsoft">Create Microsoft Account</string>
-    <string name="account_create_external">Create External Account</string>
-    <string name="account_create_username">Username</string>
-    <string name="account_create_password">Password</string>
-    <string name="account_create_server">Authentication server</string>
-    <string name="account_create_server_not_select">No Authentication Server</string>
-    <string name="account_create_home">Home</string>
-    <string name="account_create_register">Register</string>
-    <string name="account_create_alert">Please provide enough account info first!</string>
-    <string name="account_injector_server">Authentication Server</string>
+    <string name="account_add_server">Adicionar Servidor de Autenticação</string>
+    <string name="account_add_server_url">Endereço do Servidor</string>
+    <string name="account_add_server_name">Nome do Servidor</string>
+    <string name="account_cape">Capa</string>
+    <string name="account_create">Criar Conta</string>
+    <string name="account_create_offline">Criar Conta Offline</string>
+    <string name="account_create_microsoft">Criar Conta Microsoft</string>
+    <string name="account_create_external">Criar Conta Externa</string>
+    <string name="account_create_username">Usuário</string>
+    <string name="account_create_password">Senha</string>
+    <string name="account_create_server">Servidor de autenticação</string>
+    <string name="account_create_server_not_select">Nenhum servidor de autenticação encontrado</string>
+    <string name="account_create_home">Início</string>
+    <string name="account_create_register">Registrar</string>
+    <string name="account_create_alert">Por favor, primeiramente forneça as informações necessárias da conta!</string>
+    <string name="account_injector_server">Servidor de Autenticação</string>
     <string name="account_login">Login</string>
-    <string name="account_methods_offline">Offline Account</string>
-    <string name="account_methods_offline_name_invalid">Under normal circumstances, the game username can only contain English characters, numbers and underscores, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
-    <string name="account_methods_yggdrasil">Mojang Account</string>
-    <string name="account_methods_authlib_injector">External Account</string>
-    <string name="account_methods_microsoft">Microsoft Account</string>
-    <string name="account_failed">Account refresh failed</string>
-    <string name="account_failed_expired">Credential has expired, you must delete your account and re-login.</string>
-    <string name="account_failed_no_character">There are no characters linked to this account.</string>
-    <string name="account_failed_connect_authentication_server">Unable to contact authentication servers, your Internet connection may be down.</string>
-    <string name="account_failed_connect_injector_server">Unable to connect to the authentication server. Please check your network and make sure you entered the correct URL.</string>
-    <string name="account_failed_server_disconnected">Cannot access authentication server. You can log in offline or try to re-login.</string>
-    <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
-    <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
-    <string name="account_failed_invalid_token">Please try to re-login again.</string>
-    <string name="account_failed_invalid_password">Invalid password</string>
-    <string name="account_failed_migration">Your account needs to be migrated to a Microsoft account. If you already did, you should re-login to your migrated Microsoft account instead.</string>
-    <string name="account_failed_injector_download_failure">Unable to download authlib-injector. Please check your network, or try switching to a different download mirror.</string>
-    <string name="account_failed_character_deleted">The character has already been deleted.</string>
-    <string name="account_failed_ssl">An SSL error occurred while connecting to the server.</string>
-    <string name="account_failed_wrong_account">You have logged in to the wrong account.</string>
-    <string name="account_skin_invalid_skin">Invalid skin file</string>
-    <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
-    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live is not available in your current country/region.</string>
-    <string name="account_methods_microsoft_error_missing_xbox_account">Your Microsoft account does not have a linked Xbox account yet. Please create one before continuing.</string>
-    <string name="account_methods_microsoft_error_unknown">Failed to log in</string>
-    <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
-    <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
-    <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
-    <string name="account_methods_microsoft_hint">Please click on the "Login" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
-    <string name="account_login_refresh">Re-login</string>
-    <string name="account_login_refresh_microsoft_hint">Because the account authorization is invalid, you need to re-add your Microsoft account\nPlease click on the "OK" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
-    <string name="account_select_character">Select character</string>
+    <string name="account_methods_offline">Conta Offline</string>
+    <string name="account_methods_offline_name_invalid">O nome de usuário deve conter apenas letras, números e underline, e no máximo 16 caracteres.\nPossíveis nomes de usuário: Tungsten, Tungsten_123;\nNomes de usuário não permitido: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nSe houver algum mod ou plugin no servidor que possa remover esta restrição, ignore este aviso.</string>
+    <string name="account_methods_yggdrasil">Conta Mojang</string>
+    <string name="account_methods_authlib_injector">Conta Externa</string>
+    <string name="account_methods_microsoft">Conta Microsoft</string>
+    <string name="account_failed">Atualização de conta falhou</string>
+    <string name="account_failed_expired">As credenciais expiraram, você deve remover sua conta e re-logar.</string>
+    <string name="account_failed_no_character">Não há personagens vinculados à essa conta.</string>
+    <string name="account_failed_connect_authentication_server">Não foi possível se conectar aos servidores de autenticação, por favor verifique a sua conexão.</string>
+    <string name="account_failed_connect_injector_server">Não foi possível se conectar aos servidores de autenticação. Por favor, verifique sua conexão ou se certifique que inseriu o endereço correto.</string>
+    <string name="account_failed_server_disconnected">Não foi possível acessar o servidor de autenticação. Você pode logar com conta offline ou tentar re-logar.</string>
+    <string name="account_failed_server_response_malformed">Resposta de servidor inválida, o servidor de autenticação pode não estar funcionando.</string>
+    <string name="account_failed_invalid_credentials">Senha incorreta ou limitação de conexão, por favor tente novamente mais tarde.</string>
+    <string name="account_failed_invalid_token">Por favor tente re-logar novamente.</string>
+    <string name="account_failed_invalid_password">Senha inválida</string>
+    <string name="account_failed_migration">Você precisa migrar sua conta para uma conta Microsoft. Se você já fez isso, você deve re-logar na sua conta Microsoft.</string>
+    <string name="account_failed_injector_download_failure">Não foi possível baixar authlib-injector. Por favor verifique sua conexão, ou tente mudar a fonte de download.</string>
+    <string name="account_failed_character_deleted">O personagem já foi excluído.</string>
+    <string name="account_failed_ssl">Ocorreu um erro de SSL ao tentar se conectar ao servidor.</string>
+    <string name="account_failed_wrong_account">Você logou com a conta errada.</string>
+    <string name="account_skin_invalid_skin">Arquivo de skin inválido</string>
+    <string name="account_methods_microsoft_error_add_family">Como você ainda não tem 18 anos, um adulto deve adicionar você em uma família para que você possa jogar Minecraft.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live não está disponível no seu país ou região atual.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">Sua conta Microsoft ainda não tem uma conta Xbox vinculada. Por favor crie uma antes de prosseguir.</string>
+    <string name="account_methods_microsoft_error_unknown">Falha no login</string>
+    <string name="account_methods_microsoft_error_no_character">Sua conta não possui o Minecraft Java Edition.\nO perfil do jogo pode não ter sido criado.</string>
+    <string name="account_methods_microsoft_error_add_family_probably">Por favor verifique se a idade indicada na sua conta é pelo de 18 anos. Caso contrário e você acredita que isto é um erro, você pode ir ao site oficial e alterar.</string>
+    <string name="account_methods_microsoft_close_page">Autorização de conta Microsoft concluída.</string>
+    <string name="account_methods_microsoft_hint">Por favor clique no botão de "Login", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_login_refresh">Re-logar</string>
+    <string name="account_login_refresh_microsoft_hint">Por causa da autorização de conta estar inválida, você precisa adicionar novamente sua conta Microsoft.\nPor favor clique no botão "OK", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_select_character">Selecionar personagem</string>
     <string name="account_skin">Skin</string>
-    <string name="account_skin_type_default">Default</string>
+    <string name="account_skin_type_default">Padrão</string>
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
-    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
+    <string name="account_skin_type_csl_api" translatable="false">Sistema de Skins personalizado</string>
     <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
-    <string name="account_skin_type_csl_api_hint">You need to create a character with the same name as your offline account on your skin provider website. Your skin will then be your uploaded skin to that site.</string>
-    <string name="account_skin_type_local_file">Local Skin File</string>
-    <string name="account_skin_upload">Select skin file</string>
-    <string name="account_state_no_account">No account</string>
-    <string name="account_state_add">Click to add</string>
+    <string name="account_skin_type_csl_api_hint">Você deve criar um personagem com o mesmo nome que a sua conta offline na página do seu fornecedor de skin. Sua skin será então enviada para esse site.</string>
+    <string name="account_skin_type_local_file">Arquivo de Skin Local</string>
+    <string name="account_skin_upload">Selecione o arquivo de skin</string>
+    <string name="account_state_no_account">Sem conta</string>
+    <string name="account_state_add">Clique para adicionar</string>
 
-    <string name="action_refresh">Refresh</string>
-    <string name="action_retry">Retry</string>
-    <string name="action_skip">Skip</string>
+    <string name="action_refresh">Atualizar</string>
+    <string name="action_retry">Tentar novamente</string>
+    <string name="action_skip">Pular</string>
 
-    <string name="announcement">Announcement: %s</string>
-    <string name="announcement_significant">This announcement is an important announcement. Please confirm that you have read this announcement before hiding it. Do you want to continue hiding it?</string>
+    <string name="announcement">Anúncio: %s</string>
+    <string name="announcement_significant">Este anúncio é importante. Por favor certifique que você leu o anúncio antes de desativa-lo. Você quer deixar desativado?</string>
 
-    <string name="archive_author">Author(s)</string>
-    <string name="archive_date">Publish Date</string>
-    <string name="archive_game_version">Game Version</string>
-    <string name="archive_name">Filename</string>
-    <string name="archive_version">Version</string>
+    <string name="archive_author">Autor(es)</string>
+    <string name="archive_date">Data de Publicação</string>
+    <string name="archive_game_version">Versão do Jogo</string>
+    <string name="archive_name">Nome do arquivo</string>
+    <string name="archive_version">Versão</string>
 
-    <string name="assets_download">Downloading Assets</string>
-    <string name="assets_download_all">Validating assets integrity</string>
-    <string name="assets_index_malformed">Index files of downloaded assets were corrupted.</string>
+    <string name="assets_download">Baixando Assets</string>
+    <string name="assets_download_all">Validando a integridade dos assets </string>
+    <string name="assets_index_malformed">Os arquivos baixados dos assets foram corrompidos.</string>
 
-    <string name="button_back">Back</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_copy">Copy</string>
-    <string name="button_download">Download</string>
-    <string name="button_export">Export</string>
-    <string name="button_hide">Hide</string>
-    <string name="button_install">Install</string>
+    <string name="button_back">Voltar</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_copy">Copiar</string>
+    <string name="button_download">Baixar</string>
+    <string name="button_export">Exportar</string>
+    <string name="button_hide">Esconder</string>
+    <string name="button_install">Instalar</string>
     <string name="button_mouse_left">Mouse Left</string>
     <string name="button_mouse_right">Mouse Right</string>
-    <string name="button_next">Next</string>
-    <string name="button_paste">Paste</string>
-    <string name="button_prev">Prev</string>
-    <string name="button_remove">Remove</string>
-    <string name="button_remove_confirm">Are you sure you want to permanently remove it? This action cannot be undone!</string>
-    <string name="button_save_as">Save As</string>
-    <string name="button_select_all">Select All</string>
+    <string name="button_next">Próximo</string>
+    <string name="button_paste">Colar</string>
+    <string name="button_prev">Anterior</string>
+    <string name="button_remove">Remover</string>
+    <string name="button_remove_confirm">Você tem certeza que quer remover permanentemente? Esta ação não pode ser desfeita!</string>
+    <string name="button_save_as">Salvar Como</string>
+    <string name="button_select_all">Selecionar Tudo</string>
     <string name="button_set">Set</string>
     <string name="button_reset">Reset</string>
     <string name="button_up" translatable="false">▲</string>
@@ -135,31 +135,31 @@
     <string name="button_left" translatable="false">◀</string>
     <string name="button_right" translatable="false">▶</string>
 
-    <string name="community">Community</string>
-    <string name="community_hint">Join our community to get latest version, report bugs, etc. Please follow the community rules if you join.</string>
+    <string name="community">Comunidade</string>
+    <string name="community_hint">Entre na nossa comunidade para ter as últimas versões, reportar bugs, etc. Por favor seguir as regras da comunidade se entrar!</string>
     <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">QQ-Group</string>
 
-    <string name="control_create">Create Controller</string>
-    <string name="control_delete">Are you sure to delete this controller?</string>
-    <string name="control_edit">Edit Controller</string>
-    <string name="control_import">Import Controller</string>
-    <string name="control_import_failed">Failed to import controller!</string>
-    <string name="control_upgrade">Controller: %s is an outdated controller, it may produce some unknown bugs, but we still support it, do you want to migrate it to a new version?</string>
-    <string name="control_incompatible">Controller: %s is an incompatible controller, it may be caused by the launcher version being too low or the controller version being too low, please check.</string>
-    <string name="control_info_author">Author: </string>
-    <string name="control_info_description">Description: </string>
-    <string name="control_info_edit">Edit Controller Information</string>
-    <string name="control_info_more">More Info</string>
-    <string name="control_info_name">Name: </string>
-    <string name="control_info_name_exist">The controller already exist, please change the name!</string>
-    <string name="control_info_name_invalid">Invalid Name</string>
-    <string name="control_info_version">Version: </string>
-    <string name="control_list">Controller List</string>
-    <string name="control_select">Select Controller</string>
-    <string name="control_share">Share Controller</string>
+    <string name="control_create">Criar Controle</string>
+    <string name="control_delete">Você tem certeza que quer excluir este controle?</string>
+    <string name="control_edit">Editar Controle</string>
+    <string name="control_import">Importar Controle</string>
+    <string name="control_import_failed">Falha ao importar o controle!</string>
+    <string name="control_upgrade">Controle: %s é uma versão antiga de controle, pode haver alguns bugs, mas ainda suportamos, você quer migrar para uma nova versão?</string>
+    <string name="control_incompatible">Controle: %s é um controle incompatível, isto pode ser devido a versão do launcher ou controle ser antiga, por favor verifique.</string>
+    <string name="control_info_author">Autor: </string>
+    <string name="control_info_description">Descrição: </string>
+    <string name="control_info_edit">Editar Informações do Controle</string>
+    <string name="control_info_more">Mais Informações</string>
+    <string name="control_info_name">Nome: </string>
+    <string name="control_info_name_exist">O controle já existe, por favor mude o nome!</string>
+    <string name="control_info_name_invalid">Nome Inválido</string>
+    <string name="control_info_version">Versão: </string>
+    <string name="control_list">Lista de Controles</string>
+    <string name="control_select">Selecionar Controle</string>
+    <string name="control_share">Compartilhar Controle</string>
 
-    <string name="curse_category_0">All</string>
+    <string name="curse_category_0">Todos</string>
 
     <string name="curse_category_4474">Sci-Fi</string>
     <string name="curse_category_4481">Small / Light</string>
@@ -276,8 +276,8 @@
     <string name="curse_sort_popularity">Popularity</string>
     <string name="curse_sort_total_downloads">Total Downloads</string>
 
-    <string name="datapack_add">Install datapack</string>
-    <string name="datapack_choose_datapack">Select a datapack to import</string>
+    <string name="datapack_add">Instalar datapack</string>
+    <string name="datapack_choose_datapack">Selecione uma datapack para importar</string>
 
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
@@ -291,8 +291,8 @@
     <string name="download_provider_balanced">From Fastest Available</string>
     <string name="download_provider_mirror">From Mirror</string>
 
-    <string name="edit_view_clone">Clone View</string>
-    <string name="edit_view_delete">Delete View</string>
+    <string name="edit_view_clone">Clonar</string>
+    <string name="edit_view_delete">Excluir</string>
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
     <string name="edit_view_no_group">Please add or select a view group first!</string>
