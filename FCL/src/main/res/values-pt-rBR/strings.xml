@@ -125,7 +125,7 @@
     <string name="button_paste">Colar</string>
     <string name="button_prev">Anterior</string>
     <string name="button_remove">Remover</string>
-    <string name="button_remove_confirm">Você tem certeza de que deseja remover-lo permanentemente? Esta ação não pode ser desfeita!</string>
+    <string name="button_remove_confirm">Tem certeza de que deseja remover-lo permanentemente? Esta ação não pode ser desfeita!</string>
     <string name="button_save_as">Salvar como</string>
     <string name="button_select_all">Selecionar tudo</string>
     <string name="button_set">Definir</string>
@@ -141,7 +141,7 @@
     <string name="community_qq">QQ-Group</string>
 
     <string name="control_create">Criar</string>
-    <string name="control_delete">Você tem certeza de que deseja excluir este controle?</string>
+    <string name="control_delete">Tem certeza de que deseja excluir este controle?</string>
     <string name="control_edit">Editar</string>
     <string name="control_import">Importar</string>
     <string name="control_import_failed">Falha ao importar o controle!</string>
@@ -299,7 +299,7 @@
     <string name="edit_view_style">Estilo de botão</string>
 
     <string name="edit_button_title">Editar Botão</string>
-    <string name="edit_button_delete">Você tem certeza de que deseja excluir este botão?</string>
+    <string name="edit_button_delete">Tem certeza de que deseja excluir este botão?</string>
     <string name="edit_button_text">Texto em exibição</string>
     <string name="edit_button_event_follow">Mover câmera com botão pressionado</string>
     <string name="edit_button_event_movable">Móvel</string>
@@ -321,7 +321,7 @@
     <string name="edit_button_event_bind_group">Mudar visibilidade de grupo de botões</string>
 
     <string name="edit_direction_title">Editar Direcional</string>
-    <string name="edit_direction_delete">Você tem certeza de que deseja remover este controle direcional?</string>
+    <string name="edit_direction_delete">Tem certeza de que deseja remover este controle direcional?</string>
     <string name="edit_direction_event_up">Tecla para frente</string>
     <string name="edit_direction_event_down">Tecla para trás</string>
     <string name="edit_direction_event_left">Tecla para esquerda</string>
@@ -371,35 +371,35 @@
     <string name="game_crash_reason_gl_operation_failure">O jogo fechou por causa de algum mod, pacote de shader, ou pacote de recurso.\n\nPor favor desative os mods/pacotes de shader/pacotes de recurso que você está usando e tente novamente.</string>
     <string name="game_crash_reason_illegal_access_error">O jogo fechou por causa de algum mod.\nPor favor verificar: %1$s, você pode tentar remover o mod e tentar novamente.</string>
     <string name="game_crash_reason_optifine_is_not_compatible_with_forge">O jogo fechou por causa que o OptiFine instalado é incompatível com a versão atual do Forge.</string>
-    <string name="game_crash_reason_mod_files_are_decompressed">The current game cannot continue to run because the Mod file has been decompressed.\nPlease put the entire Mod file directly into the Mod folder!\nIf unzipping will cause errors in the game, please delete the unzipped Mod in the Mod folder, and then start the game.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">O jogo não pôde ser iniciado porque um arquivo de mod foi descompactado.\nPor favor, coloque o arquivo de mod diretamente na pasta mods!\nSe a descompactação causar erros no jogo, exclua o mod descompactado da pasta mods e inicie o jogo.</string>
     <string name="game_crash_reason_cannot_find_launch_target_fmlclient">O jogo fechou devido ao Forge não ter sido instalado corretamente.\nPor favor, reinstalar Forge.</string>
     <string name="game_crash_reason_shaders_mod">O jogo não pôde ser iniciado devido ao OptiFine e Shaders Mod estarem instalados ao mesmo tempo.\nOptiFine já possui as funções do Shaders Mod integrado, remova-o.</string>
     <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">O jogo não pode ser iniciado por ter muitos mods instalados, excedendo o limite de IDs do jogo.\nPor favor tente instalar JEID, ou remova alguns mods grandes.</string>
-    <string name="game_crash_reason_night_config_fixes">The current game cannot continue to run due to some problems with Night Config.\nYou can try to install the Night Config Fixes mod, which may help you this problem.\nFor more information, visit the mod\'s Github repository.</string>
-    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">The current game may not continue to run because of OptiFine.\nThis problem only occurs in a specific version of OptiFine. You can try changing the version of OptiFine.</string>
-    <string name="game_crash_reason_jvm_32bit">The game crashed because the current memory allocation exceeds the limit of the 32-bit Java VM.</string>
+    <string name="game_crash_reason_night_config_fixes">O jogo não pôde ser iniciado devido a alguns problemas com o Night Config.\nVocê pode tentar instalar o mod Night Config Fixes, que pode ajudá-lo com esse problema.\nPara mais informações, visite o repositório Github do mod.</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">O jogo pode não continuar a funcionar por causa do OptiFine.\nEste problema ocorre apenas em algumas versões específicas do OptiFine. Você pode tentar alterar a versão do OptiFine.</string>
+    <string name="game_crash_reason_jvm_32bit">O jogo fechou porque a alocação de memória excede o limite do Java de 32 bits.</string>
     <string name="game_crash_reason_loading_crashed_forge">O jogo fechou por causa do mod %1$s (%2$s).\n\nVocê pode tentar remover ou atualizar.</string>
     <string name="game_crash_reason_loading_crashed_fabric">O jogo fechou por causa do mod %1$s.\n\nVocê pode tentar remover ou atualizar.</string>
-    <string name="game_crash_reason_forge_repeat_installation">The current game cannot continue to run due to a duplicate installation of Forge. This is a known issue.\nIt is recommended to upload the log feedback to Github so that we can find more clues and fix this question.\nCurrently you can uninstall Forge and reinstall it.</string>
-    <string name="game_crash_reason_optifine_repeat_installation">The current game cannot continue to run due to repeated installation of OptiFine. \nPlease delete OptiFine under the Mod folder or uninstall OptiFine that is automatically installed.</string>
-    <string name="game_crash_reason_memory_exceeded">The game crashed due to too much memory allocated.</string>
-    <string name="game_crash_reason_mod">The game crashed due to mod %1$s.\n\nYou may update or delete the mod and then try again.</string>
-    <string name="game_crash_reason_mod_resolution">The game crashed due to mod resolution failure.\n\nFabric provided the following details:\n%1$s</string>
-    <string name="game_crash_reason_forgemod_resolution">The game crashed due to mod resolution failure.\n\nForge provided the following details:\n%1$s</string>
-    <string name="game_crash_reason_mod_resolution_collection">The game crashed because the mod version is not compatible.\n\n%1$s requires %2$s.\n\nYou need to upgrade or downgrade %3$s before continuing.</string>
-    <string name="game_crash_reason_mod_resolution_conflict">The game crashed because of conflicting mods.\n\n%1$s is incompatible with %2$s.</string>
-    <string name="game_crash_reason_mod_resolution_missing">The game crashed because some dependency mods are not installed.\n\n%1$s requires mod: %2$s.\n\nThis means that you have to download and install %2$s first to continue playing.</string>
-    <string name="game_crash_reason_mod_resolution_missing_minecraft">The game crashed because a mod is incompatible with the current Minecraft version.\n\n%1$s requires Minecraft version %2$s.\n\nIf you want to play with this version of the mod installed, you should change the instance version.\nOtherwise, you should install a version that is compatible with this Minecraft version.</string>
+    <string name="game_crash_reason_forge_repeat_installation">O jogo não pôde ser iniciado devido a uma instalação duplicada do Forge. Este é um problema comum.\nRecomenda-se enviar o feedback do log para o Github para que possamos encontrar mais pistas e corrigir este problema.\nVocê pode tentar desinstalar o Forge e reinstalá-lo.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">O jogo não pôde ser iniciado devido à instalação repetida do OptiFine.\nExclua OptiFine da pasta mods ou desinstale o OptiFine que é instalado automaticamente.</string>
+    <string name="game_crash_reason_memory_exceeded">O jogo fechou devido ao excesso de memória alocada.</string>
+    <string name="game_crash_reason_mod">O jogo fechou devido ao mod %1$s.\n\nVocê pode tentar atualizar ou excluir o mod e tentar novamente.</string>
+    <string name="game_crash_reason_mod_resolution">O jogo fechou devido a falha na resolução do mod.\n\nFabric forneceu os seguintes detalhes:\n%1$s</string>
+    <string name="game_crash_reason_forgemod_resolution">O jogo fechou devido a falha na resolução do mod.\n\nForge forneceu os seguintes detalhes:\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution_collection">O jogo fechou porque a versão mod não é compatível.\n\n%1$s requer %2$s.\n\nVocê precisa atualizar ou desatualizar %3$s antes de continuar.</string>
+    <string name="game_crash_reason_mod_resolution_conflict">O jogo fechou por causa de mods conflitantes.\n\n%1$s é incompatível com %2$s.</string>
+    <string name="game_crash_reason_mod_resolution_missing">O jogo fechou porque alguns mods de dependência não estão instalados.\n\n%1$s requer o mod: %2$s.\n\nIsso significa que você precisa baixar e instalar %2$s para poder jogar.</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">O jogo fechou porque um mod é incompatível com a versão atual do Minecraft.\n\n%1$s requer a versão %2$s do Minecraft.\n\nSe quiser jogar com esta versão do mod instalada, você deve alterar a versão da instância.\nCaso contrário, você deve instalar uma versão compatível com esta versão do Minecraft.</string>
     <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Versão: %2$s)</string>
     <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Qualquer versão)</string>
-    <string name="game_crash_reason_modlauncher_8">The game crashed because your current Forge version is not compatible with your Java installation, please try updating Forge.</string>
-    <string name="game_crash_reason_no_class_def_found_error">The game cannot run because of incomplete code.\n\nYour game instance is missing %1$s, this might be due to a mod missing, an incompatible mod installed, or some files might be corrupted.\n\nYou may need to reinstall the game and all mods or ask someone for help.</string>
-    <string name="game_crash_reason_no_such_method_error">The game cannot run because of incomplete code.\n\nYour game instance might be missing a mod, installed an incompatible mod, or some files might be corrupted.\n\nYou may need to reinstall the game and all mods or ask someone for help.</string>
-    <string name="game_crash_reason_opengl_not_supported">The game crashed because OpenGL is not supported by your renderer.</string>
-    <string name="game_crash_reason_out_of_memory">The game crashed because it ran out of memory.\n\nThis may be because there is not enough memory available, or too many mods installed. You can try fixing it by increasing the allocated memory under the game settings.\n\nIf you still encounter these problems, well, you may need a better device.</string>
-    <string name="game_crash_reason_resolution_too_high">The game crashed because you are using a resource pack whose texture resolution was too high.\n\nYou should switch to a resource pack with lower resolution.</string>
-    <string name="game_crash_reason_processing_of_javaagent_failed">The current game crashed because processing of -javaagent failed.\nIf you add relevant parameters to the Java virtual machine parameters, please check whether they are legal and correct.</string>
-    <string name="game_crash_reason_stacktrace">The crash reason is unknown.\n\nThere are some keywords that might contain some Mod IDs. You can search them online to figure out the issue yourself.\n\n%s</string>
+    <string name="game_crash_reason_modlauncher_8">O jogo fechou porque sua versão atual do Forge não é compatível com a versão do Java. Tente atualizar o Forge.</string>
+    <string name="game_crash_reason_no_class_def_found_error">O jogo não pôde ser iniciado devido ao código incompleto.\n\nSua instância do jogo está faltando %1$s, isso pode ser devido à falta de um mod, ter um mod incompatível instalado ou alguns arquivos podem estar corrompidos.\n\nPode ser necessário reinstalar o jogo e todos os mods ou pedir ajuda a alguém.</string>
+    <string name="game_crash_reason_no_such_method_error">O jogo não pôde ser iniciado devido ao código incompleto.\n\nSua instância do jogo pode estar faltando um mod, ter instalado um mod incompatível ou alguns arquivos podem estar corrompidos.\n\nPode ser necessário reinstalar o jogo e todos os mods ou pedir ajuda a alguém.</string>
+    <string name="game_crash_reason_opengl_not_supported">O jogo fechou porque OpenGL não é compatível com seu renderizador.</string>
+    <string name="game_crash_reason_out_of_memory">O jogo fechou porque ficou sem memória.\n\nIsso pode ocorrer porque não há memória suficiente disponível ou há muitos mods instalados. Você pode tentar aumentar a memória alocada nas configurações do jogo.\n\nSe você ainda encontrar esses problemas, talvez precise de um dispositivo melhor.</string>
+    <string name="game_crash_reason_resolution_too_high">O jogo fechou porque você está usando um pacote de recursos cuja resolução de textura era muito alta.\n\nVocê deve mudar para um pacote de recursos com resolução mais baixa.</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">O jogo fechou porque o processamento de -javaagent falhou.\nSe você adicionar parâmetros relevantes aos parâmetros da máquina virtual Java, verifique se eles são legais e corretos.</string>
+    <string name="game_crash_reason_stacktrace">O motivo da falha é desconhecido.\n\nExistem algumas palavras-chave que podem conter alguns IDs de mods. Você pode pesquisá-los online para descobrir o problema sozinho.\n\n%s</string>
     <string name="game_crash_reason_unknown">Não foi possível identificar a causa da falha do jogo, por favor consulte as logs do jogo.\n\nCaso for pedir por ajuda, por favor compartilhe a log completa e arquivos de erro relacionados.</string>
     <string name="game_crash_reason_unsatisfied_link_error">Não foi possível iniciar o Minecraft por causa de bibliotecas faltantes: %1$s.</string>
     <string name="game_crash_title">O jogo fechou</string>
@@ -416,7 +416,7 @@
     <string name="input_url">A entrada deve ser um endereço URL válido.</string>
 
     <string name="install_change_version">Mudar versão</string>
-    <string name="install_change_version_confirm">Você tem certeza de que deseja trocar a versão de %s de %s para %s?</string>
+    <string name="install_change_version_confirm">Tem certeza de que deseja trocar a versão de %s de %s para %s?</string>
     <string name="install_failed">Instalação falhou</string>
     <string name="install_failed_downloading">Não foi possível baixar os arquivos necessários.</string>
     <string name="install_failed_downloading_detail">Não foi possível baixar o arquivo: %s</string>
@@ -490,7 +490,7 @@
     <string name="menu_control_button">Botão</string>
     <string name="menu_control_button_text">Texto</string>
     <string name="menu_control_direction">Direcional</string>
-    <string name="menu_control_event">Config de ação</string>
+    <string name="menu_control_event">Config. de ação</string>
     <string name="menu_control_select">Selecionar</string>
     <string name="menu_control_set">Definir</string>
     <string name="menu_control_style">Config. dos estilos</string>
@@ -514,7 +514,7 @@
     <string name="menu_settings_force_exit_msg">Tem certeza de que deseja sair?</string>
     <string name="menu_settings_function">Função</string>
     <string name="menu_settings_gesture">Gesto</string>
-    <string name="menu_settings_gesture_mode">Modo de gesto</string>
+    <string name="menu_settings_gesture_mode">Modo</string>
     <string name="menu_settings_gesture_mode_build">Construir</string>
     <string name="menu_settings_gesture_mode_fight">Lutar</string>
     <string name="menu_settings_gesture_current">Modo atual: %s</string>
@@ -528,9 +528,9 @@
     <string name="menu_settings_mouse_sensitivity">Sensibilidade do mouse</string>
     <string name="menu_settings_mouse_size">Tamanho do mouse</string>
     <string name="menu_settings_gamepad">Controle físico</string>
-    <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
+    <string name="menu_settings_gamepad_reset_mapper">Mapeamento</string>
     <string name="menu_settings_gamepad_reset">Redefinir</string>
-    <string name="menu_settings_gamepad_deadzone">DeadZone</string>
+    <string name="menu_settings_gamepad_deadzone">Deadzone</string>
     <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
     <string name="menu_settings_multiplayer">Menu de multijogador</string>
     <string name="menu_settings_multiplayer_button">Abrir</string>
@@ -568,59 +568,59 @@
     <string name="modpack_file_api">Modpack URL Prefix</string>
     <string name="modpack_files_blueprints">BuildCraft Blueprints</string>
     <string name="modpack_files_config">Mod Configs</string>
-    <string name="modpack_files_dumps">NEI Debug Output File</string>
-    <string name="modpack_files_fclversion_cfg">Launcher Configuration File</string>
-    <string name="modpack_files_liteconfig">Mod Configuration File</string>
+    <string name="modpack_files_dumps">Arquivo de depuração de saída NEI</string>
+    <string name="modpack_files_fclversion_cfg">Arquivos de configuração do launcher</string>
+    <string name="modpack_files_liteconfig">Arquivo de configurações de mods</string>
     <string name="modpack_files_mods">Mods</string>
-    <string name="modpack_files_mods_voxelmods">VoxelMods options</string>
-    <string name="modpack_files_options_txt">Minecraft Settings File</string>
-    <string name="modpack_files_optionsshaders_txt">Shaders Settings File</string>
-    <string name="modpack_files_resourcepacks">Resource/Texture Packs</string>
-    <string name="modpack_files_saves">Game Saves</string>
-    <string name="modpack_files_scripts">MineTweaker Configuration File</string>
-    <string name="modpack_files_servers_dat">Server List File</string>
-    <string name="modpack_install">Install Modpack %s</string>
-    <string name="modpack_installing">Installing Modpack</string>
-    <string name="modpack_introduction">CurseForge, Modrinth, MultiMC, and MCBBS modpacks are currently supported.</string>
-    <string name="modpack_invalid">Invalid modpack, you can try to redownload it.</string>
-    <string name="modpack_mismatched_type">Modpack type mismatched, the current instance is a %s type, but the provided one is %s type.</string>
-    <string name="modpack_name">Modpack Name</string>
-    <string name="modpack_not_a_valid_name">Invalid Modpack Name</string>
-    <string name="modpack_origin">Source</string>
-    <string name="modpack_origin_url">Official Website</string>
+    <string name="modpack_files_mods_voxelmods">Opções VoxelMods</string>
+    <string name="modpack_files_options_txt">Arquivo de configurações do Minecraft</string>
+    <string name="modpack_files_optionsshaders_txt">Arquivo de configurações de shaders</string>
+    <string name="modpack_files_resourcepacks">Pacotes de recurso/textura</string>
+    <string name="modpack_files_saves">Mundos</string>
+    <string name="modpack_files_scripts">Arquivo de configuração do MineTweaker</string>
+    <string name="modpack_files_servers_dat">Arquivo de lista de servidores</string>
+    <string name="modpack_install">Instalar Modpack %s</string>
+    <string name="modpack_installing">Instalando Modpack</string>
+    <string name="modpack_introduction">Modpacks de CurseForge, Modrinth, MultiMC, e MCBBS são suportados.</string>
+    <string name="modpack_invalid">Modpack inválido, você pode tentar baixá-lo novamente.</string>
+    <string name="modpack_mismatched_type">Tipo de modpack incompatível, a instância atual é do tipo %s, mas a fornecida é do tipo %s.</string>
+    <string name="modpack_name">Nome do modpack</string>
+    <string name="modpack_not_a_valid_name">Nome de modpack inválido</string>
+    <string name="modpack_origin">Fonte</string>
+    <string name="modpack_origin_url">Site oficial</string>
     <string name="modpack_origin_mcbbs">MCBBS</string>
-    <string name="modpack_origin_mcbbs_prompt">Post ID</string>
-    <string name="modpack_scan">Parsing Modpack Index</string>
-    <string name="modpack_task_install">Install Modpack</string>
-    <string name="modpack_task_install_error">Unable to identify this modpack. We currently only support Curse, Modrinth, MultiMC, and MCBBS modpacks.</string>
-    <string name="modpack_task_install_will">You are going to install modpack:</string>
+    <string name="modpack_origin_mcbbs_prompt">ID do post</string>
+    <string name="modpack_scan">Analisando index do modpack</string>
+    <string name="modpack_task_install">Instalando modpack</string>
+    <string name="modpack_task_install_error">Não foi possível identificar este modpack. Atualmente, oferecemos suporte apenas aos modpacks Curse, Modrinth, MultiMC e MCBBS.</string>
+    <string name="modpack_task_install_will">Você vai instalar o modpack:</string>
     <string name="modpack_type_curse">Curse</string>
-    <string name="modpack_type_curse_tolerable_error">Unable to download dependencies, you can try to continue downloading by launching this game instance.</string>
-    <string name="modpack_type_curse_error">Unable to download dependencies from CurseForge, please try again or use a proxy connection.</string>
-    <string name="modpack_type_curse_not_found">Some dependencies are no longer available, please try to install a newer version of the modpack.</string>
-    <string name="modpack_type_manual_warning">The modpack is manually packaged by the publisher, which may already contain a launcher. It is recommended to try to decompress and run the game with its own launcher. FCL can still import it, with no guarantee of its usability, still continue?</string>
-    <string name="modpack_type_mcbbs">MCBBS Type</string>
-    <string name="modpack_type_mcbbs_export">Can be imported by FCL, HMCL and MultiMC</string>
+    <string name="modpack_type_curse_tolerable_error">Não foi possível baixar as dependências. Você pode tentar continuar o download iniciando esta instância do jogo.</string>
+    <string name="modpack_type_curse_error">Não foi possível baixar dependências do CurseForge, tente novamente ou use uma conexão proxy.</string>
+    <string name="modpack_type_curse_not_found">Algumas dependências não estão mais disponíveis, tente instalar uma versão mais recente do modpack.</string>
+    <string name="modpack_type_manual_warning">O modpack é feito manualmente pelo autor, que já pode conter um inicializador. Recomenda-se tentar descompactar e rodar o jogo com seu próprio launcher. O FCL ainda pode importá-lo, sem garantia de sua usabilidade, ainda assim continuar?</string>
+    <string name="modpack_type_mcbbs">Tipo MCBBS</string>
+    <string name="modpack_type_mcbbs_export">Pode ser importado por FCL, HMCL e MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
-    <string name="modpack_type_server">Auto-Update Modpack from Server</string>
-    <string name="modpack_type_server_export">Allows server owner to update the game instance remotely</string>
-    <string name="modpack_type_server_malformed">Invalid modpack manifest, please refer to the server modpack maker to fix this issue.</string>
-    <string name="modpack_unsupported">Unsupported modpack format</string>
-    <string name="modpack_update">Updating modpack</string>
-    <string name="modpack_wizard">Modpack Export Wizard</string>
-    <string name="modpack_wizard_step_1">Basic Settings</string>
-    <string name="modpack_wizard_step_1_title">Some basic settings for the modpack.</string>
-    <string name="modpack_wizard_step_2">Select Files</string>
-    <string name="modpack_wizard_step_2_title">Select files you wanted to add to the modpack.</string>
-    <string name="modpack_wizard_step_3">Modpack Type</string>
-    <string name="modpack_wizard_step_3_title">Choose the modpack type you wanted to export as.</string>
-    <string name="modpack_wizard_step_initialization_exported_version">Game version to export</string>
-    <string name="modpack_wizard_step_initialization_force_update">Force updating the modpack to the latest version (you\'ll need a file-hosting service)</string>
-    <string name="modpack_wizard_step_initialization_include_launcher">Include the launcher</string>
-    <string name="modpack_wizard_step_initialization_save">Export to…</string>
-    <string name="modpack_wizard_step_initialization_warning">Before creating a modpack, please make sure the game launches, and it is a release version instead of a snapshot version.\n\nKeep in mind that you are not allowed to add mods and resource packs that are explicitly said not to be distributed or put in a modpack.</string>
+    <string name="modpack_type_multimc_export">Pode ser importado por FCL, HMCL e MultiMC</string>
+    <string name="modpack_type_server">Atualizar automaticamente o modpack do servidor</string>
+    <string name="modpack_type_server_export">Permite que o proprietário do servidor atualize a instância do jogo remotamente</string>
+    <string name="modpack_type_server_malformed">Manifesto do modpack inválido. Consulte o fabricante do modpack do servidor para corrigir este problema.</string>
+    <string name="modpack_unsupported">Formato de modpack não suportado</string>
+    <string name="modpack_update">Atualizando modpack</string>
+    <string name="modpack_wizard">Exportação de modpack</string>
+    <string name="modpack_wizard_step_1">Configurações básicas</string>
+    <string name="modpack_wizard_step_1_title">Algumas configurações básicas para o modpack.</string>
+    <string name="modpack_wizard_step_2">Selecionar arquivos</string>
+    <string name="modpack_wizard_step_2_title">Selecione os arquivos que você deseja adicionar ao modpack.</string>
+    <string name="modpack_wizard_step_3">Tipo de modpack</string>
+    <string name="modpack_wizard_step_3_title">Escolha o tipo de modpack que você deseja exportar.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">Versão do jogo para exportar</string>
+    <string name="modpack_wizard_step_initialization_force_update">Forçar a atualização do modpack para a versão mais recente (você precisará de um serviço de hospedagem de arquivos)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">Incluir o launcher</string>
+    <string name="modpack_wizard_step_initialization_save">Exportar para…</string>
+    <string name="modpack_wizard_step_initialization_warning">Antes de criar um modpack, por favor se certifique que o jogo inicie corretamente, e que seja uma versão release ao invés de versão snapshot.\n\nTenha em mente que você não tem permissão para adicionar mods e pacotes de recursos que não sejam permitidos em um modpack.</string>
 
     <string name="modrinth_category_adventure">Adventure</string>
     <string name="modrinth_category_bukkit">Bukkit</string>
@@ -672,7 +672,7 @@
     <string name="mods_broken_dependency_title">Dependência com falha</string>
     <string name="mods_broken_dependency_desc">Esta dependência já existiu. Porém, não existe agora, Tente usar outra fonte de download.</string>
     <string name="mods_category">Categoria</string>
-    <string name="mods_check_updates">Verificar por atualizações</string>
+    <string name="mods_check_updates">Verificar atualizações</string>
     <string name="mods_check_updates_current_version">Versão atual</string>
     <string name="mods_check_updates_empty">Nenhum mod precisa ser atualizado</string>
     <string name="mods_check_updates_failed">Não foi possível baixar alguns dos arquivos.</string>
@@ -683,36 +683,36 @@
     <string name="mods_choose_mod">Escolha um mod</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Dependência</string>
-    <string name="mods_dependency_embedded">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
-    <string name="mods_dependency_optional">optional pre-mod (if the game is missing, but mod functionality may be missing)</string>
-    <string name="mods_dependency_required">required pre-mod (must be downloaded separately, missing may cause the game to fail to launch)</string>
-    <string name="mods_dependency_tool">precursor library (must be downloaded separately, missing may cause the game to fail to launch)</string>
-    <string name="mods_dependency_include">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
-    <string name="mods_dependency_incompatible">incompatible mod (installing both the mod and the mod being downloaded will cause the game to fail to launch)</string>
-    <string name="mods_dependency_broken">Broken pre-mod (This premod used to exist on the mod repository, but is now deleted.) Try a different download source.</string>
-    <string name="mods_disable">Disable</string>
-    <string name="mods_download">Mod Download</string>
-    <string name="mods_download_title">Mod Download - %1s</string>
-    <string name="mods_download_recommend">Recommended Mod Version - Minecraft %1s</string>
-    <string name="mods_enable">Enable</string>
-    <string name="mods_manage">Manage Mods</string>
+    <string name="mods_dependency_embedded">mod incluso (este mod já vêm empacotado no mod pelo autor, não há necessidade de baixar separadamente)</string>
+    <string name="mods_dependency_optional">mod opcional (este mod não é necessário para o funcionamento do mod)</string>
+    <string name="mods_dependency_required">mod necessário (este mod deve ser baixado separadamente, a falta dele pode fazer com que o jogo não seja iniciado)</string>
+    <string name="mods_dependency_tool">mod biblioteca (este mod deve ser baixado separadamente, a falta dele pode fazer com que o jogo não seja iniciado)</string>
+    <string name="mods_dependency_include">mod incluso (já empacotado no mod pelo autor, não há necessidade de baixar separadamente)</string>
+    <string name="mods_dependency_incompatible">mod incompatível (installing both the mod and the mod being downloaded will cause the game to fail to launch)</string>
+    <string name="mods_dependency_broken">inexistente (Este mod existia no repositório de mod, mas agora foi excluído, tente uma fonte de download diferente)</string>
+    <string name="mods_disable">Desativar</string>
+    <string name="mods_download">Baixar mod</string>
+    <string name="mods_download_title">Baixando mod - %1s</string>
+    <string name="mods_download_recommend">Versão recomendada do mod - Minecraft %1s</string>
+    <string name="mods_enable">Ativar</string>
+    <string name="mods_manage">Gerenciar mods</string>
     <string name="mods_mcbbs">MCBBS</string>
     <string name="mods_mcmod">MCMOD</string>
-    <string name="mods_mcmod_page">MCMOD Page</string>
-    <string name="mods_mcmod_search">Search in MCMOD</string>
+    <string name="mods_mcmod_page">Página MCMOD</string>
+    <string name="mods_mcmod_search">Pesquisar em MCMOD</string>
     <string name="mods_modrinth">Modrinth</string>
-    <string name="mods_name">Name</string>
-    <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
-    <string name="mods_restore">Rollback</string>
-    <string name="mods_url">Official Page</string>
-    <string name="mods_update_modpack_mod_warning">Updating mods in a modpack can lead to irreparable results, possibly corrupting the modpack so that it cannot start. Are you sure you want to update?</string>
+    <string name="mods_name">Nome</string>
+    <string name="mods_not_modded">Você deve instalar um mod loader (Fabric, Forge ou LiteLoader) primeiro para gerenciar mods!</string>
+    <string name="mods_restore">Reverter</string>
+    <string name="mods_url">Página oficial</string>
+    <string name="mods_update_modpack_mod_warning">Atualizar mods em um modpack pode levar à resultados irreparáveis, possivelmente corrompendo o modpack de forma que ele não possa ser iniciado. Tem certeza de que deseja atualizar?</string>
 
     <string name="profile_shared">Diretório compartilhado</string>
     <string name="profile_private">Diretório privado</string>
     <string name="profile_name">Nome</string>
     <string name="profile_path">Caminho</string>
     <string name="profile_select">Selecione Diretório</string>
-    <string name="profile_already_exist">This name already exists, please use a different name.</string>
+    <string name="profile_already_exist">Este nome já existe, por favor use um nome diferente.</string>
 
     <string name="quick_input_title">Área de transferência</string>
     <string name="quick_input_add">Adicionar novo texto</string>
@@ -723,8 +723,8 @@
     <string name="resourcepack">Pacotes de recurso</string>
 
     <string name="search">Pesquisar</string>
-    <string name="search_hint_chinese">Search queries support both Chinese and English</string>
-    <string name="search_hint_english">Somente Inglês é suportado</string>
+    <string name="search_hint_chinese">Pesquisar...</string>
+    <string name="search_hint_english">Pesquisar...</string>
     <string name="search_sort">Ordenar por</string>
     <string name="search_first_page">Primeiro</string>
     <string name="search_previous_page" translatable="false">◀</string>
@@ -754,7 +754,7 @@
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
 
-    <string name="settings_game">Configurações do Jogo</string>
+    <string name="settings_game">Config. do Jogo</string>
     <string name="settings_game_dimension">Resolução</string>
     <string name="settings_game_java_version">Versão do Java</string>
     <string name="settings_game_java_version_auto">Automático</string>
@@ -764,7 +764,7 @@
 
     <string name="settings_icon">Ícone</string>
 
-    <string name="settings_launcher">Configurações do Launcher</string>
+    <string name="settings_launcher">Config. do Launcher</string>
     <string name="settings_launcher_debug">Depuração</string>
     <string name="settings_launcher_upgrade">Atualizar launcher</string>
     <string name="settings_launcher_upgrade_check">Verificar</string>
@@ -778,7 +778,7 @@
     <string name="settings_launcher_language">Linguagem</string>
     <string name="settings_launcher_language_system">Usar linguagem do sistema</string>
     <string name="settings_launcher_language_english" translatable="false">Inglês</string>
-    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_language_simplified_chinese" translatable="false">Chinês Simplificado</string>
     <string name="settings_launcher_launcher_log_export">Exportar logs do launcher</string>
     <string name="settings_launcher_launcher_log_export_failed">Não foi possível exportar as logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs foram exportadas para %s</string>
@@ -798,7 +798,7 @@
     <string name="settings_memory_used_per_total">%1$.1f GB usados / %2$.1f GB total</string>
     <string name="settings_physical_memory">Tamanho da memória física</string>
     <string name="settings_tabs_installers">Modloaders</string>
-    <string name="settings_type_global_manage">Configurações Globais</string>
+    <string name="settings_type_global_manage">Config. Globais</string>
     <string name="settings_type_special_enable">Ativar configurações por instância</string>
 
     <string name="style_name">Nome</string>
@@ -814,20 +814,20 @@
     <string name="style_button_stroke_color">Cor da borda</string>
     <string name="style_button_corner_radius">Raios dos cantos</string>
     <string name="style_button_fill_color">Cor de preenchimento</string>
-    <string name="style_button_interval">Intervalo de botão</string>
+    <string name="style_button_interval">Espaçamento</string>
     <string name="style_direction">Estilo de direcional</string>
     <string name="style_direction_button">Botão</string>
     <string name="style_direction_rocker">Joystick</string>
     <string name="style_rocker">Estilo do joystick</string>
-    <string name="style_rocker_size">Tamanho do joystick</string>
-    <string name="style_rocker_bg_stroke_width">Largura da borda</string>
+    <string name="style_rocker_size">Tamanho</string>
+    <string name="style_rocker_bg_stroke_width">Borda</string>
     <string name="style_rocker_bg_stroke_color">Cor da borda</string>
     <string name="style_rocker_bg_corner_radius">Raio de canto</string>
     <string name="style_rocker_bg_fill_color">Cor de preenchimento</string>
-    <string name="style_rocker_stroke_width">Largura da borda do centro</string>
+    <string name="style_rocker_stroke_width">Borda do centro</string>
     <string name="style_rocker_stroke_color">Cor da borda do centro</string>
     <string name="style_rocker_corner_radius">Raio de canto do centro</string>
-    <string name="style_rocker_fill_color">Cor de preenchimento do centro</string>
+    <string name="style_rocker_fill_color">Cor do centro</string>
 
     <string name="update">Atualizar</string>
     <string name="update_netdisk">Netdisk</string>
@@ -846,12 +846,12 @@
     <string name="update_version_beta">Beta</string>
 
     <string name="version_game">Versões</string>
-    <string name="version_game_old">Historical</string>
-    <string name="version_game_release">Release</string>
-    <string name="version_game_releases">Releases</string>
+    <string name="version_game_old">Antigas</string>
+    <string name="version_game_release">Versão final</string>
+    <string name="version_game_releases">Versões finais</string>
     <string name="version_game_snapshot">Snapshot</string>
     <string name="version_game_snapshots">Snapshots</string>
-    <string name="version_empty_launch">No instances, please install one before launch.</string>
+    <string name="version_empty_launch">Nenhuma instância, crie uma antes de iniciar.</string>
     <string name="version_launch">Iniciar jogo</string>
     <string name="version_no_version">Nenhuma versão</string>
     <string name="version_manage">Clique para gerenciar</string>
@@ -878,7 +878,7 @@ desfeita!</string>
     <string name="view_info_visibility_menu">Visível nos menus</string>
     <string name="view_info_x">Posição X</string>
     <string name="view_info_y">Posição Y</string>
-    <string name="view_info_size_type">Tipo de medição</string>
+    <string name="view_info_size_type">Tipo de medida</string>
     <string name="view_info_size_type_percentage">Porcentagem</string>
     <string name="view_info_size_type_absolute">Absoluto</string>
     <string name="view_info_width">Largura</string>
@@ -891,7 +891,7 @@ desfeita!</string>
     <string name="view_info_reference_height">Altura da tela</string>
 
     <string name="world">Mundos</string>
-    <string name="world_add">Adicionar mundo (.zip)</string>
+    <string name="world_add">Adc mundo (.zip)</string>
     <string name="world_datapack">Gerenciar Datapacks</string>
     <string name="world_datapack_1_13">Somente Minecraft 1.13 ou superior suporta datapacks.</string>
     <string name="world_description">%s. Última vez jogado %s. Versão do jogo: %s.</string>
@@ -905,7 +905,7 @@ desfeita!</string>
     <string name="world_import_already_exists">Este mundo já existe.</string>
     <string name="world_import_choose">Selecione o arquivo de mundo que deseja importar</string>
     <string name="world_import_failed">Não foi possível importar este mundo: %s</string>
-    <string name="world_import_invalid">Unable to parse the save.</string>
+    <string name="world_import_invalid">Não foi possível analisar o mundo.</string>
     <string name="world_info_title">Mundo %s - Informações</string>
     <string name="world_info_basic">Informações básicas</string>
     <string name="world_info_allow_cheats">Permitir trapaças</string>
