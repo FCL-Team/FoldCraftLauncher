@@ -117,10 +117,18 @@ public class SelectKeycodeDialog extends FCLDialog implements View.OnClickListen
     public void onClick(View v) {
         if (v == positive) {
             if (gameMenu != null) {
-                list.forEach(key -> {
-                    gameMenu.getInput().sendKeyEvent(key, true);
-                    gameMenu.getInput().sendKeyEvent(key, false);
-                });
+                new Thread(() -> {
+                    list.forEach(key -> {
+                        gameMenu.getInput().sendKeyEvent(key, true);
+                    });
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignore) {
+                    }
+                    list.forEach(key -> {
+                        gameMenu.getInput().sendKeyEvent(key, false);
+                    });
+                }).start();
             }
             dismiss();
         }
