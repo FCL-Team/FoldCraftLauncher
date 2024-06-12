@@ -4,6 +4,11 @@
     <string name="oauth_api_key" translatable="false">null</string>
 
     <string name="splash_permission_msg">Sem permissão de armazenamento, por favor conceda a permissão ao Fold Craft Launcher.</string>
+    <string name="splash_permission_grant">Grant</string>
+    <string name="splash_permission_title">Permission to store needed</string>
+    <string name="splash_permission_close">Close the app</string>
+    <string name="splash_permission_settings">Settings</string>
+    <string name="splash_permission_settings_msg">You have chosen "Never Allow." Please manually grant storage permissions in settings.</string>
 
     <string name="splash_title">Bem-vindo ao Fold Craft Launcher</string>
     <string name="splash_eula_error">Não foi possível acessar o EULA, por favor verifique a sua conexão.</string>

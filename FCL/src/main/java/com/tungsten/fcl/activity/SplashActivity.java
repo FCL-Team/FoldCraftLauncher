@@ -75,7 +75,7 @@ public class SplashActivity extends FCLActivity {
                     enableAlertDialog((dialog, which) -> {
                         ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, RequestCodes.PERMISSION_REQUEST_CODE);
                         dialog.dismiss();
-                    }, "需要存储权限", getString(R.string.splash_permission_msg), "授予", "关闭应用");
+                    }, getString(R.string.splash_permission_title), getString(R.string.splash_permission_msg), getString(R.string.splash_permission_grant), getString(R.string.splash_permission_close));
                 } else {
                     // 没有勾选始终拒绝的化则继续请求权限
                     ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, RequestCodes.PERMISSION_REQUEST_CODE);
@@ -156,7 +156,7 @@ public class SplashActivity extends FCLActivity {
                         });
 
                         dialog.dismiss();
-                    }, "需要存储权限", "您已选择不再询问权限。请在设置中手动授予存储权限。", "去设置", "关闭应用");
+                    }, getString(R.string.splash_permission_title), getString(R.string.splash_permission_settings_msg), getString(R.string.splash_permission_settings), getString(R.string.splash_permission_close));
                 } else {
                     // 用户只是拒绝了权限
                     checkPermission();
