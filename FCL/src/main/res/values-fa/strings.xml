@@ -62,10 +62,10 @@
     <string name="account_failed_connect_authentication_server">خطا در تماس با سرور احراز هویت، شاید اینترنت شما ضعیف یا قطع است.</string>
     <string name="account_failed_connect_injector_server">خطا در اتصال به سرور احراز هویت. لطفا اتصال اینترنت خود را چک کنید و مطمعن شوید که لینک درست را وارد کرده اید.</string>
     <string name="account_failed_server_disconnected">نمیتوان به سرور احراز هویت دسترسی پیدا کرد. شما میتواند آفلاین لاگین کنید یا برای دوباره لاگین کردن تلاش کنید.</string>
-    <string name="account_failed_server_response_malformed">Invalid server response, the authentication server may not be working.</string>
-    <string name="account_failed_invalid_credentials">Incorrect password or rate limited, please try again later.</string>
-    <string name="account_failed_invalid_token">Please try to re-login again.</string>
-    <string name="account_failed_invalid_password">Invalid password</string>
+    <string name="account_failed_server_response_malformed">جواب سرور غیرقابل تشخیص بود، شاید سرور احراز هویت کار نمیکند.</string>
+    <string name="account_failed_invalid_credentials">پسورد نادرست یا ریت لیمیت، لطفا بعدا تلاش کنید.</string>
+    <string name="account_failed_invalid_token">لطفا برای لاگین دوباره تلاش کنید.</string>
+    <string name="account_failed_invalid_password">پسورد اشتباه</string>
     <string name="account_failed_migration">Your account needs to be migrated to a Microsoft account. If you already did, you should re-login to your migrated Microsoft account instead.</string>
     <string name="account_failed_injector_download_failure">Unable to download authlib-injector. Please check your network, or try switching to a different download mirror.</string>
     <string name="account_failed_character_deleted">The character has already been deleted.</string>
