@@ -3,12 +3,12 @@
 
     <string name="oauth_api_key" translatable="false">null</string>
 
-    <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
+    <string name="splash_permission_msg">دسترسی به فایل ها انجام نشد، لطفا دسترسی به فایل ها را به فولد کرفت لانچر بدهید.</string>
 
-    <string name="splash_title">Welcome to Fold Craft Launcher</string>
-    <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
-    <string name="splash_eula_next">Agree and Continue</string>
-    <string name="splash_runtime_title">Install or update app runtime</string>
+    <string name="splash_title">به فولد‌کرفت لانچر خوش آمدید.</string>
+    <string name="splash_eula_error">نمیتوان متن EULA را دریافت کرد، لطفا اینترنت خود را بررسی کنید.</string>
+    <string name="splash_eula_next">موافقت کردن و ادامه دادن</string>
+    <string name="splash_runtime_title">ران‌تایم اپ را یا نصب کنید یا آپدیت کنید</string>
     <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
     <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
     <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
@@ -17,42 +17,42 @@
     <string name="splash_runtime_java11" translatable="false">JRE 11</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_java21" translatable="false">JRE 21</string>
-    <string name="splash_runtime_install">Install / Update</string>
+    <string name="splash_runtime_install">نصب / آپدیت</string>
 
-    <string name="account">Account</string>
-    <string name="version">Version</string>
-    <string name="manage">Manage</string>
-    <string name="download">Download</string>
-    <string name="controller">Controller</string>
-    <string name="multiplayer">Multiplayer</string>
-    <string name="setting">Setting</string>
+    <string name="account">حساب</string>
+    <string name="version">نسخه</string>
+    <string name="manage">مدیریت</string>
+    <string name="download">دانلود</string>
+    <string name="controller">کنترلر</string>
+    <string name="multiplayer">چند‌نفره</string>
+    <string name="setting">تنظیمات</string>
     
-    <string name="about">About</string>
+    <string name="about">درباره‌ما</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
-    <string name="about_sponsor">Sponsor</string>
-    <string name="about_source">Open Source</string>
-    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
+    <string name="about_sponsor">اسپانسر</string>
+    <string name="about_source">متن باز</string>
+    <string name="about_desc">فولد کرفت لانچر یک لانچر ماینکرافت برای اندروید است، به کاربر امکان نصب ماینکرافت: جاوا ادیشن را میدهد.\n\nفولد کرفت لانچر توسط FCL-Team توسعه داده شده است.\n\nبیشتر امکانات فولد کرفت لانچر بر پایه نسخه ویرایش شده HMCLPE است.\n\nاین اپ کد هایی را از پوجاو لانچر و boat را دارد، پس اگر شما قصد توسعه اپ به اسم دیگری را دارید، لطفا لایسنس GPL-v3 را دنبال کنید.</string>
 
-    <string name="account_add_server">Add Authentication Server</string>
-    <string name="account_add_server_url">Server URL</string>
-    <string name="account_add_server_name">Server Name</string>
-    <string name="account_cape">Cape</string>
-    <string name="account_create">Create Account</string>
-    <string name="account_create_offline">Create Offline Account</string>
-    <string name="account_create_microsoft">Create Microsoft Account</string>
-    <string name="account_create_external">Create External Account</string>
-    <string name="account_create_username">Username</string>
-    <string name="account_create_password">Password</string>
-    <string name="account_create_server">Authentication server</string>
-    <string name="account_create_server_not_select">No Authentication Server</string>
-    <string name="account_create_home">Home</string>
-    <string name="account_create_register">Register</string>
-    <string name="account_create_alert">Please provide enough account info first!</string>
-    <string name="account_injector_server">Authentication Server</string>
-    <string name="account_login">Login</string>
-    <string name="account_methods_offline">Offline Account</string>
-    <string name="account_methods_offline_name_invalid">Under normal circumstances, the game username can only contain English characters, numbers and underscores, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
+    <string name="account_add_server">اضافه کردن سرور احراز اکانت</string>
+    <string name="account_add_server_url">لینک سرور</string>
+    <string name="account_add_server_name">نام سرور</string>
+    <string name="account_cape">شنل اکانت</string>
+    <string name="account_create">ساخت اکانت</string>
+    <string name="account_create_offline">ساخت اکانت آفلاین</string>
+    <string name="account_create_microsoft">ساخت اکانت مایکروسافت</string>
+    <string name="account_create_external">ساخت اکانت خارجی</string>
+    <string name="account_create_username">نام‌کاربری</string>
+    <string name="account_create_password">رمز ورود</string>
+    <string name="account_create_server">سرور احراز هویت اکانت</string>
+    <string name="account_create_server_not_select">سرور احراز هویتی وجود ندارد</string>
+    <string name="account_create_home">خانه</string>
+    <string name="account_create_register">ثبت نام</string>
+    <string name="account_create_alert">لطفا اول اطلاعات بیشتری از اکانت بنویسید!</string>
+    <string name="account_injector_server">سرور احراز هویت</string>
+    <string name="account_login">ورود</string>
+    <string name="account_methods_offline">حساب آفلاین</string>
+    <string name="account_methods_offline_name_invalid">بنابر موقعیت عادی، نام کاربری شما باید فقط با حروف انگلیسی باشد، اعداد و زیرخط باشد, and the length cannot exceed 16 characters.\nSome legitimate usernames: Tungsten, Tungsten_123;\nSome illegal usernames: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nIf you believe that there is a corresponding mod or plugin on the server side to remove this restriction, you can ignore this warning.</string>
     <string name="account_methods_yggdrasil">Mojang Account</string>
     <string name="account_methods_authlib_injector">External Account</string>
     <string name="account_methods_microsoft">Microsoft Account</string>
