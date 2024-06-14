@@ -117,13 +117,17 @@
             android:process=":processService"
             android:enabled="true"/>
         <provider
-            android:name="androidx.core.content.FileProvider"
+            android:name=".scoped.FolderProvider"
             android:authorities="@string/file_browser_provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
         </provider>
     </application>
     <queries>
