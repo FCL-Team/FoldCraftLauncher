@@ -4,6 +4,15 @@
     <string name="oauth_api_key" translatable="false">null</string>
 
     <string name="splash_permission_msg">دسترسی به فایل ها انجام نشد، لطفا دسترسی به فایل ها را به فولد کرفت لانچر بدهید.</string>
+    <string name="splash_permission_grant">مجوز دادن</string>
+
+    <string name="splash_permission_title">مجوز به حافظه لازم است</string>
+
+    <string name="splash_permission_close">بستن اپ</string>
+
+    <string name="splash_permission_settings">تنظیمات</string>
+
+    <string name="splash_permission_settings_msg">شما گزینه "Never Allow" را انتخاب کرده اید. لطفا به صورت دستی مجوز حافظه را در تنظیمات بدهید.</string>
 
     <string name="splash_title">به فولد‌کرفت لانچر خوش آمدید.</string>
     <string name="splash_eula_error">نمیتوان متن EULA را دریافت کرد، لطفا اینترنت خود را بررسی کنید.</string>
