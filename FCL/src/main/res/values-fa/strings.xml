@@ -26,7 +26,7 @@
 
     <string name="account">حساب</string>
     <string name="version">نسخه</string>
-    <string name="manage">مدیریت کنید</string>
+    <string name="manage">مدیریت</string>
     <string name="download">دانلود</string>
     <string name="controller">کنترل کننده</string>
     <string name="multiplayer">چند نفره</string>
@@ -41,8 +41,8 @@
 
     <string name="account_add_server">افزودن سرور احراز هویت</string>
     <string name="account_add_server_url">آدرس سرور</string>
-    <string name="account_add_server_name">نام ارائهکننده</string>
-    <string name="account_cape">کیپ</string>
+    <string name="account_add_server_name">نام ارائه‌کننده</string>
+    <string name="account_cape">کِیپ</string>
     <string name="account_create">ایجاد حساب کاربری</string>
     <string name="account_create_offline">ایجاد حساب آفلاین</string>
     <string name="account_create_microsoft">یک حساب مایکروسافت ایجاد کنید</string>
@@ -72,11 +72,11 @@
     <string name="account_failed_invalid_token">لطفا سعی کنید دوباره وارد سیستم شوید.</string>
     <string name="account_failed_invalid_password">رمز عبور نامعتبر</string>
     <string name="account_failed_migration">حساب شما باید به یک حساب مایکروسافت منتقل شود. اگر قبلاً این کار را انجام داده اید، به جای آن باید دوباره به حساب مایکروسافت منتقل شده خود وارد شوید.</string>
-    <string name="account_failed_injector_download_failure">دانلود authlib-injector ممکن نیست. لطفاً شبکه خود را بررسی کنید یا سعی کنید به آینه بارگیری دیگری بروید.</string>
+    <string name="account_failed_injector_download_failure">دانلود authlib-injector ممکن نیست. لطفاً شبکه خود را بررسی کنید یا سعی کنید به میرور بارگیری دیگری بروید.</string>
     <string name="account_failed_character_deleted">شخصیت قبلاً حذف شده است.</string>
     <string name="account_failed_ssl">هنگام اتصال به سرور یک خطای SSL رخ داد.</string>
     <string name="account_failed_wrong_account">شما به حساب اشتباهی وارد شده اید.</string>
-    <string name="account_skin_invalid_skin">فایل پوسته نامعتبر است</string>
+    <string name="account_skin_invalid_skin">فایل اسکین نامعتبر است</string>
     <string name="account_methods_microsoft_error_add_family">از آنجایی که هنوز 18 ساله نشده اید، یک فرد بزرگسال باید شما را به یک خانواده اضافه کند تا بتوانید Minecraft بازی کنید.</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live در کشور/منطقه فعلی شما در دسترس نیست.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">حساب مایکروسافت شما هنوز یک حساب Xbox پیوندی ندارد. لطفاً قبل از ادامه یکی ایجاد کنید.</string>
@@ -88,21 +88,21 @@
     <string name="account_login_refresh">دوباره وارد شوید</string>
     <string name="account_login_refresh_microsoft_hint">از آنجا که مجوز حساب نامعتبر است، باید حساب مایکروسافت خود را دوباره اضافه کنید\nلطفاً روی دکمه "OK" کلیک کنید، بخشی از کد بعداً به طور خودکار کپی می شود، کد را در مرورگر باز شده وارد کنید تا فرآیند ورود به سیستم تمام شود.</string>
     <string name="account_select_character">شخصیت را انتخاب کنید</string>
-    <string name="account_skin">پوست</string>
+    <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
     <string name="account_skin_type_csl_api_location_hint">URL CustomSkinAPI</string>
-    <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده پوست خود ایجاد کنید. سپس پوسته شما پوسته آپلود شده شما در آن سایت خواهد بود.</string>
-    <string name="account_skin_type_local_file">فایل محلی پوست</string>
-    <string name="account_skin_upload">فایل پوسته را انتخاب کنید</string>
+    <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده پوست خود ایجاد کنید. سپس اسکین شما اسکین آپلود شده شما در آن سایت خواهد بود.</string>
+    <string name="account_skin_type_local_file">فایل محلی اسکین</string>
+    <string name="account_skin_upload">فایل اسکین را انتخاب کنید</string>
     <string name="account_state_no_account">بدون حساب</string>
     <string name="account_state_add">برای افزودن کلیک کنید</string>
 
     <string name="action_refresh">تازه کردن</string>
     <string name="action_retry">دوباره امتحان کنید</string>
-    <string name="action_skip">پرش کنید</string>
+    <string name="action_skip">رد کردن</string>
 
     <string name="announcement">اطلاعیه ها</string>
     <string name="announcement_significant">این اطلاعیه یک اطلاعیه مهم است. لطفاً قبل از پنهان کردن این اعلامیه، تأیید کنید که آن را خوانده اید. آیا می خواهید به پنهان کردن آن ادامه دهید؟</string>
@@ -113,34 +113,34 @@
     <string name="archive_name">نام فایل</string>
     <string name="archive_version">نسخه</string>
 
-    <string name="assets_download">دانلود دارایی ها</string>
-    <string name="assets_download_all">اعتبارسنجی یکپارچگی دارایی</string>
-    <string name="assets_index_malformed">فایل‌های فهرست دارایی‌های دانلود شده خراب شدند.</string>
+    <string name="assets_download">دانلود فایل ها</string>
+    <string name="assets_download_all">اعتبارسنجی یکپارچگی فایل</string>
+    <string name="assets_index_malformed">فایل‌های فهرست دانلود شده خراب شدند.</string>
 
     <string name="button_back">بازگشت</string>
     <string name="button_cancel">لغو کنید</string>
-    <string name="button_copy">کپی 🀄</string>
+    <string name="button_copy">کپی</string>
     <string name="button_download">دانلود</string>
     <string name="button_export">صادر کردن</string>
     <string name="button_hide">پنهان شدن</string>
     <string name="button_install">نصب</string>
     <string name="button_mouse_left">ماوس سمت چپ</string>
-    <string name="button_mouse_right">درست موش</string>
+    <string name="button_mouse_right">ماوس سمت راست</string>
     <string name="button_next">بعد</string>
-    <string name="button_paste">خمیر</string>
-    <string name="button_prev">سعادت</string>
+    <string name="button_paste">الصاق</string>
+    <string name="button_prev">قبلی</string>
     <string name="button_remove">برداشتن</string>
     <string name="button_remove_confirm">آیا مطمئناً آن را به طور دائم حذف می کنید؟ این عمل نمی تواند خنثی شود!</string>
     <string name="button_save_as">ذخیره به عنوان</string>
     <string name="button_select_all">انتخاب همه</string>
     <string name="button_set">تنظیم</string>
-    <string name="button_reset">بازپا</string>
+    <string name="button_reset">بازتنظیم</string>
     <string name="button_up" translatable="false">▲</string>
     <string name="button_down" translatable="false">▼</string>
     <string name="button_left" translatable="false">◀</string>
     <string name="button_right" translatable="false">▶</string>
 
-    <string name="community">کمون</string>
+    <string name="community">کامیونیتی</string>
     <string name="community_hint">برای دریافت آخرین نسخه ، گزارش اشکالات و غیره به جامعه ما بپیوندید. لطفاً در صورت پیوستن ، قوانین جامعه را دنبال کنید.</string>
     <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">گروه qq</string>
@@ -149,12 +149,12 @@
     <string name="control_delete">آیا مطمئناً این کنترلر را حذف می کنید؟</string>
     <string name="control_edit">ویرایش کنترل کننده</string>
     <string name="control_import">کنترل کننده وارد کردن</string>
-    <string name="control_import_failed">واردات کنترلر را وارد نکرد!</string>
-    <string name="control_upgrade">کنترل کننده: ٪ S یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، اما شما می خواهید آن را به نسخه جدید مهاجرت کنید؟</string>
-    <string name="control_incompatible">Controller: ٪ S یک کنترل کننده ناسازگار افغانستان است ، ممکن است توسط نسخه پرتابگر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
+    <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
+    <string name="control_upgrade">کنترل کننده: ٪ S یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
+    <string name="control_incompatible">Controller: ٪ S یک کنترل کننده ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
     <string name="control_info_author">نویسنده:</string>
     <string name="control_info_description">شرح:</string>
-    <string name="control_info_edit">اطلاعات کنترل کننده را ویرایش کنید</string>
+    <string name="control_info_edit">ویرایش اطلاعات کنترل کننده</string>
     <string name="control_info_more">اطلاعات بیشتر</string>
     <string name="control_info_name">نام:</string>
     <string name="control_info_name_exist">کنترل کننده از قبل وجود دارد ، لطفاً نام را تغییر دهید!</string>
@@ -168,8 +168,8 @@
 
     <string name="curse_category_4474">علمی تخیلی</string>
     <string name="curse_category_4481">کوچک /سبک</string>
-    <string name="curse_category_4483">مبارزه کن</string>
-    <string name="curse_category_4477">مینی بازی</string>
+    <string name="curse_category_4483">مبارزه</string>
+    <string name="curse_category_4477">مینی گیم</string>
     <string name="curse_category_4478">کوشش</string>
     <string name="curse_category_4484">چند نفره</string>
     <string name="curse_category_4476">کاوش کردن</string>
@@ -181,11 +181,11 @@
     <string name="curse_category_4482">فوق العاده بزرگ</string>
     <string name="curse_category_4472">فن</string>
     <string name="curse_category_4473">شعبده بازي</string>
-    <string name="curse_category_5128">وانیل</string>
+    <string name="curse_category_5128">وانیلا</string>
 
     <string name="curse_category_5299">تحصیلات</string>
     <string name="curse_category_5232">بناچه کهکشان</string>
-    <string name="curse_category_5129">وانیل</string>
+    <string name="curse_category_5129">وانیلا</string>
     <string name="curse_category_5189">ابزار و آمپ ؛ قول</string>
     <string name="curse_category_6814">کارایی</string>
     <string name="curse_category_6954">پویایی یکپارچه</string>
@@ -198,7 +198,7 @@
     <string name="curse_category_423">نقشه و اطلاعات</string>
     <string name="curse_category_426">ترکیب</string>
     <string name="curse_category_434">زره ، ابزار و سلاح</string>
-    <string name="curse_category_409">سازه های</string>
+    <string name="curse_category_409">سازه ها</string>
     <string name="curse_category_4485">سحر</string>
     <string name="curse_category_420">ذخیره سازی</string>
     <string name="curse_category_429">کاردستی صنعتی</string>
@@ -207,7 +207,7 @@
     <string name="curse_category_4557">سنگ فرش</string>
     <string name="curse_category_428">سازه تینکر</string>
     <string name="curse_category_414">حمل و نقل بازیکن</string>
-    <string name="curse_category_4486">بلوک های خوش شانس</string>
+    <string name="curse_category_4486">بلاک های خوش شانس</string>
     <string name="curse_category_432">ساخت و ساز</string>
     <string name="curse_category_418">ژنتیک</string>
     <string name="curse_category_4671">ادغام پیچش</string>
@@ -226,7 +226,7 @@
     <string name="curse_category_421">API و کتابخانه</string>
     <string name="curse_category_4780">پارچه</string>
     <string name="curse_category_424">وابسته به لوازم آرایشی</string>
-    <string name="curse_category_406">ژنرال</string>
+    <string name="curse_category_406">کلی</string>
     <string name="curse_category_435">ابزار سرور</string>
     <string name="curse_category_411">اوباش</string>
     <string name="curse_category_407">بومیان</string>
@@ -271,7 +271,7 @@
     <string name="curse_category_4549">کتاب راهنما</string>
     <string name="curse_category_4547">پیکربندی</string>
     <string name="curse_category_4550">کوشش</string>
-    <string name="curse_category_4555">ژنرال</string>
+    <string name="curse_category_4555">کلی</string>
     <string name="curse_category_4552">اسکریپت</string>
 
     <string name="curse_sort_author">نویسنده</string>
@@ -281,7 +281,7 @@
     <string name="curse_sort_popularity">محبوبیت</string>
     <string name="curse_sort_total_downloads">بارگیری کل</string>
 
-    <string name="datapack_add">Datapack را نصب کنید</string>
+    <string name="datapack_add">نصب Datapack</string>
     <string name="datapack_choose_datapack">برای واردات یک Datapack را انتخاب کنید</string>
 
     <string name="download_code_404">پرونده در سرور از راه دور یافت نشد: ٪ s</string>
