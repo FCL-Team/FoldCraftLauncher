@@ -102,8 +102,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
             while ((line = bfr.readLine()) != null) {
                 if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite && lang != null) {
                     str.append("lang:").append(lang).append("\n");
-                } else if (line.contains("forceUnicodeFont:")) {
-                    str.append("forceUnicodeFont:false\n");
                 } else {
                     str.append(line).append("\n");
                 }
