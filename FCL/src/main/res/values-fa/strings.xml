@@ -94,7 +94,7 @@
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
     <string name="account_skin_type_csl_api_location_hint">URL CustomSkinAPI</string>
-    <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده پوست خود ایجاد کنید. سپس اسکین شما اسکین آپلود شده شما در آن سایت خواهد بود.</string>
+    <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده اسکین خود ایجاد کنید. سپس اسکین شما اسکین آپلود شده شما در آن سایت خواهد بود.</string>
     <string name="account_skin_type_local_file">فایل محلی اسکین</string>
     <string name="account_skin_upload">فایل اسکین را انتخاب کنید</string>
     <string name="account_state_no_account">بدون حساب</string>
@@ -118,18 +118,18 @@
     <string name="assets_index_malformed">فایل‌های فهرست دانلود شده خراب شدند.</string>
 
     <string name="button_back">بازگشت</string>
-    <string name="button_cancel">لغو کنید</string>
+    <string name="button_cancel">لغو</string>
     <string name="button_copy">کپی</string>
     <string name="button_download">دانلود</string>
-    <string name="button_export">صادر کردن</string>
-    <string name="button_hide">پنهان شدن</string>
+    <string name="button_export">خارج کردن</string>
+    <string name="button_hide">پنهانسازی</string>
     <string name="button_install">نصب</string>
     <string name="button_mouse_left">ماوس سمت چپ</string>
     <string name="button_mouse_right">ماوس سمت راست</string>
     <string name="button_next">بعد</string>
     <string name="button_paste">الصاق</string>
     <string name="button_prev">قبلی</string>
-    <string name="button_remove">برداشتن</string>
+    <string name="button_remove">حذف</string>
     <string name="button_remove_confirm">آیا مطمئناً آن را به طور دائم حذف می کنید؟ این عمل نمی تواند خنثی شود!</string>
     <string name="button_save_as">ذخیره به عنوان</string>
     <string name="button_select_all">انتخاب همه</string>
@@ -148,10 +148,10 @@
     <string name="control_create">کنترلر ایجاد کنید</string>
     <string name="control_delete">آیا مطمئناً این کنترلر را حذف می کنید؟</string>
     <string name="control_edit">ویرایش کنترل کننده</string>
-    <string name="control_import">کنترل کننده وارد کردن</string>
+    <string name="control_import">وارد کردن کنترلر</string>
     <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
-    <string name="control_upgrade">کنترل کننده: ٪ S یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
-    <string name="control_incompatible">Controller: ٪ S یک کنترل کننده ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
+    <string name="control_upgrade">کنترل کننده: %s یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
+    <string name="control_incompatible">Controller: %s یک کنترل کننده ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
     <string name="control_info_author">نویسنده:</string>
     <string name="control_info_description">شرح:</string>
     <string name="control_info_edit">ویرایش اطلاعات کنترل کننده</string>
@@ -207,7 +207,7 @@
     <string name="curse_category_4557">سنگ فرش</string>
     <string name="curse_category_428">سازه تینکر</string>
     <string name="curse_category_414">حمل و نقل بازیکن</string>
-    <string name="curse_category_4486">بلاک های خوش شانس</string>
+    <string name="curse_category_4486">بلاک های شانسی</string>
     <string name="curse_category_432">ساخت و ساز</string>
     <string name="curse_category_418">ژنتیک</string>
     <string name="curse_category_4671">ادغام پیچش</string>
@@ -237,8 +237,8 @@
     <string name="curse_category_4843">اتوماسیون</string>
     <string name="curse_category_4906">کرکس</string>
 
-    <string name="curse_category_5244">بسته های قلم</string>
-    <string name="curse_category_5193">بسته های داده</string>
+    <string name="curse_category_5244">فونت ها</string>
+    <string name="curse_category_5193">دیتاپک ها</string>
     <string name="curse_category_399">مروارید</string>
     <string name="curse_category_396">128x</string>
     <string name="curse_category_398">512x و زیاد</string>
@@ -263,7 +263,7 @@
     <string name="curse_category_252">معما</string>
 
     <string name="curse_category_4551">حالت جستجوی هاردکور</string>
-    <string name="curse_category_4548">بلوک های خوش شانس</string>
+    <string name="curse_category_4548">بلاک های شانسی</string>
     <string name="curse_category_4556">پیشرفت</string>
     <string name="curse_category_4752">وسایل ساختمانی</string>
     <string name="curse_category_4553">کاردستی</string>
@@ -282,10 +282,10 @@
     <string name="curse_sort_total_downloads">بارگیری کل</string>
 
     <string name="datapack_add">نصب Datapack</string>
-    <string name="datapack_choose_datapack">برای واردات یک Datapack را انتخاب کنید</string>
+    <string name="datapack_choose_datapack">برای وارد‌کردن یک Datapack را انتخاب کنید</string>
 
-    <string name="download_code_404">پرونده در سرور از راه دور یافت نشد: ٪ s</string>
-    <string name="download_failed">بارگیری ٪ 1 $ S ، کد پاسخ: ٪ 2 $ D بارگیری نشد</string>
+    <string name="download_code_404">پرونده در سرور از راه دور یافت نشد: %s</string>
+    <string name="download_failed">بارگیری % 1 $ s ، کد پاسخ: % 2 $ D بارگیری نشد</string>
     <string name="download_failed_empty">هیچ نسخه ای در دسترس نیست</string>
     <string name="download_failed_refresh">نمی توان لیست نسخه را واکشی کرد. لطفا دوباره امتحان کنید.</string>
 
@@ -293,66 +293,66 @@
     <string name="download_provider_bmclapi">BMCLAPI (Bangbang93 ، https://bmclapi2.bangbang93.com)</string>
     <string name="download_provider_mojang">Mojang (Optifine توسط BMCLAPI تهیه شده است)</string>
     <string name="download_provider_official">از منابع رسمی</string>
-    <string name="download_provider_balanced">از سریعترین موجود</string>
-    <string name="download_provider_mirror">از آینه</string>
+    <string name="download_provider_balanced">از سریعترین</string>
+    <string name="download_provider_mirror">از میرور</string>
 
     <string name="edit_view_clone">نمای کلون</string>
-    <string name="edit_view_delete">نمایش را حذف کنید</string>
+    <string name="edit_view_delete">حذف نما</string>
     <string name="edit_view_event">مشاهده رویداد</string>
-    <string name="edit_view_info">اطلاعات مشاهده پایه</string>
-    <string name="edit_view_no_group">لطفاً ابتدا یک گروه View را اضافه یا انتخاب کنید!</string>
-    <string name="edit_view_style">سبک مشاهده</string>
+    <string name="edit_view_info">اطلاعات نما پایه</string>
+    <string name="edit_view_no_group">لطفاً ابتدا یک گروه نما را اضافه یا انتخاب کنید!</string>
+    <string name="edit_view_style">سبک نما</string>
 
-    <string name="edit_button_title">دکمه ویرایش</string>
+    <string name="edit_button_title">ویرایش دکمه</string>
     <string name="edit_button_delete">آیا مطمئناً این دکمه را حذف می کنید؟</string>
-    <string name="edit_button_text">متن نمایش داده شده</string>
+    <string name="edit_button_text">متن نمایشی</string>
     <string name="edit_button_event_follow">نشانگر از انگشت پیروی می کند</string>
     <string name="edit_button_event_movable">متحرک</string>
-    <string name="edit_button_event_press">مطبوعات</string>
+    <string name="edit_button_event_press">فشردن</string>
     <string name="edit_button_event_long_press">فشار طولانی</string>
     <string name="edit_button_event_click">کلیک</string>
-    <string name="edit_button_event_double_click">دو بار کلیک کنید</string>
-    <string name="edit_button_event_auto_keep">فشار دادن</string>
-    <string name="edit_button_event_auto_click">کلیک کنید</string>
+    <string name="edit_button_event_double_click">دبل‌کلیک(کلیک ۲ بار)</string>
+    <string name="edit_button_event_auto_keep">نگه داشتن فشرده</string>
+    <string name="edit_button_event_auto_click">کلیک خودکار</string>
     <string name="edit_button_event_open_menu">منوی باز</string>
-    <string name="edit_button_event_touch_mode">حالت ژست سوئیچ</string>
+    <string name="edit_button_event_touch_mode"> سوییچ کردن حالت تاچ</string>
     <string name="edit_button_event_mouse_mode">سوئیچ کردن حالت ماوس</string>
     <string name="edit_button_event_input">ورودی</string>
-    <string name="edit_button_event_quick_input">گفتگوی ورودی سریع را باز کنید</string>
+    <string name="edit_button_event_quick_input">ورودی سریع</string>
     <string name="edit_button_event_output_text">ارسال متن</string>
     <string name="edit_button_event_keycodes">کد های کلیدی خروجی</string>
     <string name="edit_button_event_keycodes_keyboard">صفحه کلیدی</string>
-    <string name="edit_button_event_keycodes_mouse">موش</string>
+    <string name="edit_button_event_keycodes_mouse">ماوس</string>
     <string name="edit_button_event_bind_group">دیدگاه گروه مشاهده را تغییر دهید</string>
 
     <string name="edit_direction_title">کنترل کننده جهت ویرایش</string>
     <string name="edit_direction_delete">آیا مطمئناً این کنترلر مستقیم را حذف می کنید؟</string>
     <string name="edit_direction_event_up">کد کلیدی جلو</string>
-    <string name="edit_direction_event_down">کد کلیدی برگشتی</string>
+    <string name="edit_direction_event_down">کد کلیدی عقب</string>
     <string name="edit_direction_event_left">کد کلیدی سمت چپ</string>
-    <string name="edit_direction_event_right">کد کلیدی راست</string>
+    <string name="edit_direction_event_right">کد کلیدی سمت راست</string>
     <string name="edit_direction_event_follow">گزینه را دنبال کنید (فقط برای سبک Rocker)</string>
-    <string name="edit_direction_event_follow_fix">درست شد</string>
-    <string name="edit_direction_event_follow_center">انگشت را دنبال می کند</string>
+    <string name="edit_direction_event_follow_fix">رفع دنبال‌کننده</string>
+    <string name="edit_direction_event_follow_center">دنبال کننده انگشت</string>
     <string name="edit_direction_event_follow_always">همه قسمت ها انگشت را دنبال می کنند</string>
-    <string name="edit_direction_event_sneak">برای دزدکی حرکت کردن بر روی مرکز دوبار کلیک کنید</string>
+    <string name="edit_direction_event_sneak">برای نشستن بر روی مرکز دوبار کلیک کنید</string>
     <string name="edit_direction_event_sneak_code">کد کلیدی</string>
 
-    <string name="exception_access_denied">دسترسی به پرونده ٪ s امکان پذیر نیست.</string>
+    <string name="exception_access_denied">دسترسی به پرونده %s امکان پذیر نیست.</string>
     <string name="exception_artifact_malformed">نمی توان یکپارچگی پرونده های بارگیری شده را تأیید کرد.</string>
     <string name="exception_ssl_handshake">ایجاد اتصال SSL به دلیل از دست رفتن گواهینامه های SSL در نصب جاوا فعلی امکان پذیر نیست.</string>
 
-    <string name="folder_config">تنظیمات را مرور کنید</string>
-    <string name="folder_game">فهرست راهنمای بازی را مرور کنید</string>
-    <string name="folder_log">فهرست فهرست ورود را مرور کنید</string>
-    <string name="folder_mod">حالت ها را مرور کنید</string>
-    <string name="folder_resourcepacks">بسته های منابع را مرور کنید</string>
-    <string name="folder_saves">ذخیره ها را مرور کنید</string>
-    <string name="folder_screenshots">اسکرین شات ها را مرور کنید</string>
-    <string name="folder_shaderpacks">بسته های سایه زن را مرور کنید</string>
+    <string name="folder_config">مرور تنظیمات</string>
+    <string name="folder_game">مرور فهرست بازی ها</string>
+    <string name="folder_log">مرور لاگ ها</string>
+    <string name="folder_mod">مرور ماد ها</string>
+    <string name="folder_resourcepacks">مرور ریسورس پک ها</string>
+    <string name="folder_saves">مرور سیو ها</string>
+    <string name="folder_screenshots">مرور اسکرینشات ها</string>
+    <string name="folder_shaderpacks">مرور شیدر ها</string>
 
     <string name="game_crash_info">اطلاعات خرابی</string>
-    <string name="game_crash_reason">علت تصادف</string>
+    <string name="game_crash_reason">علت خرابی</string>
     <string name="game_crash_reason_multiple">دلایل متعددی شناسایی شد:\n\n</string>
     <string name="game_crash_reason_block">بازی به دلیل مسدود شدن خراب شد.\n\nمی‌توانید این بلوک را با استفاده از MCEdit حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع مسدود کردن: %1$s\nمکان: %2$s</string>
     <string name="game_crash_reason_bootstrap_failed">بازی به دلیل مود %1$s خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
