@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="file_browser_provider" translatable="false">com.tungsten.fcl.provider</string>
+    <string name="file_browser_document_provider" translatable="false">com.tungsten.fcl.document.provider</string>
     <string name="file_browser_title">File Browser</string>
     <string name="file_browser_back">Back</string>
     <string name="file_browser_close">Exit</string>
