@@ -784,6 +784,9 @@
     <string name="settings_launcher_language_system">Use System Language</string>
     <string name="settings_launcher_language_english" translatable="false">English</string>
     <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
+    <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
+    <string name="settings_launcher_language_persian" translatable="false">Persian</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
