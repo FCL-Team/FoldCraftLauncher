@@ -74,9 +74,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
             modifyOptions(optionsFile, false);
             return;
         }
-        if (configFolder.isDirectory())
-            if (findFiles(configFolder, "options.txt"))
-                return;
         try {
             RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
         } catch (IOException e) {
