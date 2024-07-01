@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1170,
-    "versionName": "1.1.7",
-    "date": "2024.06.26",
+    "versionCode": 1171,
+    "versionName": "1.1.7.1",
+    "date": "2024.07.01",
     "description": [
       {
         "lang": "en",
-        "text": "Fix some bug.\nAdd some features.\nFix some bugs, see github for details."
+        "text": "Fix some fatal error.\nAdd some features. \nSee github for details."
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.6更新内容（若启动器内下载缓慢请使用网盘下载）\n1.添加对pojav FFMPEG plugin的支持\n2.修复微软登录相关bug\n3.新增俄语/波斯语\n4.修复ipv6连接问题\n5.移除强制unicode为false的功能\n6.允许使用外部应用（例如MT）管理FCL位于/data/data/目录下的文件\n7.修复少许bug"
+        "text": "FCL 1.1.7.1更新内容（若启动器内下载缓慢请使用网盘下载）\n1.修复java8相关的ipv6问题\n2.修复分享显示“文件不存在”的问题\n3.修复按键文件错误导致进启动器闪退的问题\n4.添加更多语言切换选项\n5.修复新安装的游戏无法自动设置为中文的bug\n6.修复mod下载页面的mc版本缺失bug"
       }
     ],
     "netdiskUrl": "https://pan.quark.cn/s/75959ecbca76",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7/FCL-release-1.1.7-all.apk"
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.1/FCL-release-1.1.7.1-all.apk"
   }
 ]
