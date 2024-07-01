@@ -14,7 +14,7 @@
         "text": "FCL 1.1.7.1更新内容（若启动器内下载缓慢请使用网盘下载）\n1.修复java8相关的ipv6问题\n2.修复分享显示“文件不存在”的问题\n3.修复按键文件错误导致进启动器闪退的问题\n4.添加更多语言切换选项\n5.修复新安装的游戏无法自动设置为中文的bug\n6.修复mod下载页面的mc版本缺失bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/75959ecbca76",
+    "netdiskUrl": "https://pan.quark.cn/s/59c0a69e0fdc",
     "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.1/FCL-release-1.1.7.1-all.apk"
   }
 ]
