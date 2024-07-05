@@ -716,6 +716,7 @@
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
+    <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
