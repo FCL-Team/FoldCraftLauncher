@@ -139,6 +139,9 @@ public class FCLauncher {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
             envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath);
         }
+        if (config.isUseVKDriverSystem()) {
+            envMap.put("VULKAN_DRIVER_SYSTEM", "1");
+        }
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {

@@ -4,6 +4,11 @@
     <string name="oauth_api_key" translatable="false">null</string>
 
     <string name="splash_permission_msg">Нет доступа к хранилищу, предоствьте разрешение приложению Fold Craft Launcher в настройках.</string>
+    <string name="splash_permission_grant">Grant</string>
+    <string name="splash_permission_title">Permission to store needed</string>
+    <string name="splash_permission_close">Close the app</string>
+    <string name="splash_permission_settings">Settings</string>
+    <string name="splash_permission_settings_msg">You have chosen "Never Allow." Please manually grant storage permissions in settings.</string>
 
     <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии, из за проблем с соединением.</string>

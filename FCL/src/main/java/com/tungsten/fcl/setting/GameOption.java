@@ -141,8 +141,12 @@ public class GameOption {
     /** @return The stored Minecraft GUI scale, also auto-computed if on auto-mode or improper setting */
     public int getGuiScale(int width, int height, int iscale) {
         String str = get("guiScale");
-        int guiScale = (str == null ? 0 : Integer.parseInt(str));
-
+        int guiScale;
+        try {
+            guiScale = (str == null ? 0 : Integer.parseInt(str));
+        } catch (NumberFormatException ignore) {
+            guiScale = 0;
+        }
         int scale = Math.max(Math.min(width / 320, height / 240), 1);
         if (scale < guiScale || guiScale == 0) {
             guiScale = scale;

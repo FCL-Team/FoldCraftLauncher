@@ -278,11 +278,10 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 File file = File.createTempFile("fcl-latest", ".log");
                 FileUtils.writeText(file, error.getText().toString());
                 Uri uri = FileProvider.getUriForFile(this, getString(com.tungsten.fcllibrary.R.string.file_browser_provider), file);
-                intent.setType("*/*");
+                intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivity(Intent.createChooser(intent, getString(com.tungsten.fcllibrary.R.string.crash_reporter_share)));
             } catch (Exception e) {
                 LOG.log(Level.INFO, "Share error: " + e);

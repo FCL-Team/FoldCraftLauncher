@@ -165,14 +165,16 @@ static void set_vulkan_ptr(void* ptr) {
 }
 
 void load_vulkan() {
+    if(getenv("VULKAN_DRIVER_SYSTEM") == NULL && android_get_device_api_level() >= 28) {
 #ifdef ADRENO_POSSIBLE
-    void* result = load_turnip_vulkan();
-    if(result != NULL) {
-        printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
-        set_vulkan_ptr(result);
-        return;
-    }
+        void* result = load_turnip_vulkan();
+        if(result != NULL) {
+            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+            set_vulkan_ptr(result);
+            return;
+        }
 #endif
+    }
     printf("OSMDroid: loading vulkan regularly...\n");
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
     printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);

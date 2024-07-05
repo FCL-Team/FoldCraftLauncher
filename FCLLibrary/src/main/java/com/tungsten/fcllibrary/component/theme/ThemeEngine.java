@@ -111,8 +111,17 @@ public class ThemeEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
-        Bitmap dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
+        Bitmap ltBitmap;
+        Bitmap dkBitmap;
+        try {
+            ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
+            dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
+        } catch (RuntimeException e) {
+            new File(FCLPath.LT_BACKGROUND_PATH).delete();
+            new File(FCLPath.DK_BACKGROUND_PATH).delete();
+            ltBitmap = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
+            dkBitmap = ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark);
+        }
         BitmapDrawable lt = new BitmapDrawable(ltBitmap);
         BitmapDrawable dk = new BitmapDrawable(dkBitmap);
         theme.setBackgroundLt(lt);

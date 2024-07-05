@@ -17,6 +17,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class ButtonStyles {
@@ -70,14 +71,21 @@ public class ButtonStyles {
     }
 
     private static ArrayList<ControlButtonStyle> getStylesFromDisk() {
+        ArrayList<ControlButtonStyle> list = new ArrayList<>();
         try {
             String json = FileUtils.readText(new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json"));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            return gson.fromJson(json, new TypeToken<ArrayList<ControlButtonStyle>>(){}.getType());
+            ArrayList<ControlButtonStyle> styles = gson.fromJson(json, new TypeToken<ArrayList<ControlButtonStyle>>() {
+            }.getType());
+            if (Objects.isNull(styles)) {
+                new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
+            } else {
+                list.addAll(styles);
+            }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get button styles", e);
-            return new ArrayList<>();
         }
+        return list;
     }
 
     public static ObservableList<ControlButtonStyle> getStyles() {
