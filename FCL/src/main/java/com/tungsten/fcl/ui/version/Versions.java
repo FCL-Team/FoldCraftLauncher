@@ -102,7 +102,7 @@ public class Versions {
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setMessage(message);
-        builder.setPositiveButton(() -> profile.getRepository().removeVersionFromDisk(version));
+        builder.setPositiveButton(() -> Task.runAsync(() -> profile.getRepository().removeVersionFromDisk(version)).start());
         builder.setNegativeButton(null);
         builder.create().show();
     }
