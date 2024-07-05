@@ -751,6 +751,7 @@
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
+    <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
