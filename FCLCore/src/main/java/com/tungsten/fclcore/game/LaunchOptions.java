@@ -399,7 +399,7 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setVkDriverSystem(boolean beGesture) {
+        public Builder setVkDriverSystem(boolean vulkanDriverSystem) {
             options.vulkanDriverSystem = vulkanDriverSystem;
             return this;
         }
