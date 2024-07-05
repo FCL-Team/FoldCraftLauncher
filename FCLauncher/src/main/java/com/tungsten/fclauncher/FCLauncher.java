@@ -140,7 +140,7 @@ public class FCLauncher {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
             envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath);
         }
-        if (options.isVKDriverSystem()) {
+        if (config.isUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
         }
     }

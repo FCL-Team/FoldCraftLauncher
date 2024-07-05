@@ -56,6 +56,7 @@ public class FCLConfig implements Serializable {
     private final String workingDir;
     private final Renderer renderer;
     private final String[] args;
+    private boolean useVKDriverSystem = false;
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -88,6 +89,14 @@ public class FCLConfig implements Serializable {
 
     public String[] getArgs() {
         return args;
+    }
+
+    public void setUseVKDriverSystem(boolean useVKDriverSystem) {
+        this.useVKDriverSystem = useVKDriverSystem;
+    }
+
+    public boolean isUseVKDriverSystem() {
+        return useVKDriverSystem;
     }
 
 }

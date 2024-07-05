@@ -426,6 +426,7 @@ public class DefaultLauncher extends Launcher {
                 renderer,
                 finalArgs
         );
+        config.setUseVKDriverSystem(options.isVKDriverSystem());
         return FCLauncher.launchMinecraft(config);
     }
 }
