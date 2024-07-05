@@ -12,7 +12,6 @@ import com.jaredrummler.android.device.DeviceName;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
-import com.tungsten.fclcore.game.LaunchOptions;
 
 import java.io.BufferedReader;
 import java.io.File;
