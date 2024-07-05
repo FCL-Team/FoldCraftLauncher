@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableAr
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.Observable;
@@ -84,6 +85,8 @@ public class ButtonStyles {
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get button styles", e);
+        } catch (JsonSyntaxException e) {
+            new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
         }
         return list;
     }
