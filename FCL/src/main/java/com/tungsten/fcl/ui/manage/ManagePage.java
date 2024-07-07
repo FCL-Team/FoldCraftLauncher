@@ -10,6 +10,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.task.Task;
@@ -31,6 +32,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     private ScrollView left;
     private ScrollView right;
 
+    private FCLImageButton browseFCLLog;
     private FCLImageButton browseGame;
     private FCLImageButton browseMod;
     private FCLImageButton browseConfig;
@@ -70,6 +72,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         ThemeEngine.getInstance().registerEvent(left, () -> left.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
         ThemeEngine.getInstance().registerEvent(right, () -> right.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
 
+        browseFCLLog = findViewById(R.id.browse_fcl_logs);
         browseGame = findViewById(R.id.browse_game_dir);
         browseMod = findViewById(R.id.browse_mods);
         browseConfig = findViewById(R.id.browse_config);
@@ -85,6 +88,7 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         redownload = findViewById(R.id.update_assets);
         deleteLibs = findViewById(R.id.delete_libs);
         deleteLogs = findViewById(R.id.delete_logs);
+        browseFCLLog.setOnClickListener(this);
         browseGame.setOnClickListener(this);
         browseMod.setOnClickListener(this);
         browseConfig.setOnClickListener(this);
@@ -105,10 +109,11 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
         updateLayout.visibilityProperty().bind(currentVersionUpgradable);
     }
 
-    private void onBrowse(String sub) {
+    private void onBrowse(String dir) {
         FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
         builder.setLibMode(LibMode.FILE_BROWSER);
-        builder.setInitDir(new File(getProfile().getRepository().getRunDirectory(getVersion()), sub).getAbsolutePath());
+        dir = dir.startsWith("/") ? dir : new File(getProfile().getRepository().getRunDirectory(getVersion()), dir).getAbsolutePath();
+        builder.setInitDir(dir);
         builder.create().browse(getActivity(), RequestCodes.BROWSE_DIR_CODE, null);
     }
 
@@ -151,6 +156,9 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
 
     @Override
     public void onClick(View view) {
+        if (view == browseFCLLog) {
+            onBrowse(FCLPath.LOG_DIR);
+        }
         if (view == browseGame) {
             onBrowse("");
         }

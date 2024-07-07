@@ -177,7 +177,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             intent.setDataAndType(uri, "*/*");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            startActivity(intent);
+            startActivity(Intent.createChooser(intent,getString(R.string.file_browser_open_external)));
         }
         if (view == confirm) {
             if (selectedFiles.size() == 0 && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
