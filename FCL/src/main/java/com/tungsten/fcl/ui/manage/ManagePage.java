@@ -7,16 +7,19 @@ import android.widget.ScrollView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.ProgressDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -122,11 +125,35 @@ public class ManagePage extends FCLCommonPage implements ManageUI.VersionLoadabl
     }
 
     private void clearLibraries() {
-        FileUtils.deleteDirectoryQuietly(new File(getProfile().getRepository().getBaseDirectory(), "libraries"));
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), "libraries"));
+        builder.setPositiveButton(() -> {
+            ProgressDialog progress = new ProgressDialog(getContext());
+            Task.runAsync(() -> {
+                FileUtils.deleteDirectoryQuietly(new File(getProfile().getRepository().getBaseDirectory(), "libraries"));
+            }).whenComplete(Schedulers.androidUIThread(), (e) -> {
+                progress.dismiss();
+            }).start();
+        });
+        builder.setNegativeButton(null);
+        builder.create().show();
     }
 
     private void clearJunkFiles() {
-        Versions.cleanVersion(getProfile(), getVersion());
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), "logs"));
+        builder.setPositiveButton(() -> {
+            ProgressDialog progress = new ProgressDialog(getContext());
+            Task.runAsync(() -> {
+                Versions.cleanVersion(getProfile(), getVersion());
+            }).whenComplete(Schedulers.androidUIThread(), (e) -> {
+                progress.dismiss();
+            }).start();
+        });
+        builder.setNegativeButton(null);
+        builder.create().show();
     }
 
     private void updateGame() {
