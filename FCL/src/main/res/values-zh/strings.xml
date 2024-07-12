@@ -820,7 +820,7 @@
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
-    <string name="version_manage_clean">清理游戏目录</string>
+    <string name="version_manage_clean">清理游戏日志</string>
     <string name="version_manage_duplicate">复制游戏实例</string>
     <string name="version_manage_duplicate_duplicate_save">复制存档</string>
     <string name="version_manage_duplicate_prompt">实例名称</string>
