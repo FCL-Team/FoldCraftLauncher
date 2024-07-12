@@ -14,7 +14,7 @@
         "text": "FCL 1.1.7.2更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复按键文件损坏导致启动器无限闪退的bug\n2.修复读取“guiScale”错误可能导致闪退的bug\n3.允许zink使用系统Vulkan驱动\n4.修复删除版本可能导致启动器卡住闪退的bug\n5.增加libsqlite以支持部分模组（Distant Horizons)"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/664827c8567f",
+    "netdiskUrl": "https://pan.quark.cn/s/f9d78e3b91fa",
     "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.2/FCL-release-1.1.7.2-all.apk"
   }
 ]
