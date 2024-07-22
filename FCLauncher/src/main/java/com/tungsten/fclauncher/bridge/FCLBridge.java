@@ -19,7 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.utils.FCLPath;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.Serializable;
@@ -46,13 +49,13 @@ public class FCLBridge implements Serializable {
     public static final int ConfigureNotify                  = 22;
     public static final int FCLMessage                       = 37;
 
-    public static final int Button1                          = 1;
-    public static final int Button2                          = 2;
-    public static final int Button3                          = 3;
-    public static final int Button4                          = 4;
-    public static final int Button5                          = 5;
-    public static final int Button6                          = 6;
-    public static final int Button7                          = 7;
+    public static final int Button1                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_1;
+    public static final int Button2                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_2;
+    public static final int Button3                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_3;
+    public static final int Button4                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_4;
+    public static final int Button5                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_5;
+    public static final int Button6                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_6;
+    public static final int Button7                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_7;
 
     public static final int CursorEnabled                    = 1;
     public static final int CursorDisabled                   = 0;
@@ -93,22 +96,19 @@ public class FCLBridge implements Serializable {
 
     public native int[] renderAWTScreenFrame();
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
+    public static native void nativeClipboardReceived(String data, String mimeTypeSub);
     public native void nativeMoveWindow(int x, int y);
 
-    public native void setFCLNativeWindow(Surface surface);
     public native int redirectStdio(String path);
     public native int chdir(String path);
     public native void setenv(String key, String value);
     public native int dlopen(String path);
     public native void setLdLibraryPath(String path);
     public native int setupExitTrap(FCLBridge bridge);
-    public native void setEventPipe();
-    public native void pushEvent(long time, int type, int keycode, int keyChar);
     public native void refreshHitResultType();
     public native void setupJLI();
     public native int jliLaunch(String[] args);
 
-    public native void setFCLBridge(FCLBridge fclBridge);
 
     public void setThread(Thread thread) {
         this.thread = thread;
@@ -134,7 +134,7 @@ public class FCLBridge implements Serializable {
         this.handler = new Handler();
         this.callback = callback;
         this.surface = surface;
-        setFCLBridge(this);
+        CallbackBridge.setFCLBridge(this);
         receiveLog("invoke redirectStdio" + "\n");
         int errorCode = redirectStdio(getLogPath());
         if (errorCode != 0) {
@@ -145,9 +145,6 @@ public class FCLBridge implements Serializable {
         if (surface != null) {
             handleWindow();
         }
-        receiveLog("invoke setEventPipe" + "\n");
-        setEventPipe();
-
         // start
         if (thread != null) {
             thread.start();
@@ -155,27 +152,32 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button, 0);
+        switch (button) {
+            case Button4:
+                if (press) {
+                    CallbackBridge.sendScroll(0, 1d);
+                }
+                break;
+            case Button5:
+                if (press) {
+                    CallbackBridge.sendScroll(0, -1d);
+                }
+                break;
+            default:
+                CallbackBridge.sendMouseButton(button, press);
+        }
     }
 
     public void pushEventPointer(int x, int y) {
-        pushEvent(System.nanoTime(), MotionNotify, x, y);
+        CallbackBridge.sendCursorPos(x, y);
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
-        pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
-    }
-
-    public void pushEventChar(int keyChar) {
-        pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar);
+        CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
     }
 
     public void pushEventWindow(int width, int height) {
-        pushEvent(System.nanoTime(), ConfigureNotify, width, height);
-    }
-
-    public void pushEventMessage(int msg) {
-        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
+        CallbackBridge.sendUpdateWindowSize(width, height);
     }
 
     // FCLBridge callbacks
@@ -196,21 +198,6 @@ public class FCLBridge implements Serializable {
         if (callback != null) {
             callback.onCursorModeChange(mode);
         }
-    }
-
-    public void setPrimaryClipString(String string) {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("FCL Clipboard", string);
-        clipboard.setPrimaryClip(clip);
-    }
-
-    public String getPrimaryClipString() {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
-        if (!clipboard.hasPrimaryClip()) {
-            return null;
-        }
-        ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
-        return item.getText().toString();
     }
 
     public static void openLink(final String link) {
@@ -301,6 +288,48 @@ public class FCLBridge implements Serializable {
         if (callback != null) {
             callback.onLog(log);
         }
+    }
+
+    public void setFCLNativeWindow(Surface surface) {
+        CallbackBridge.setupBridgeWindow(surface);
+    }
+
+    public static void querySystemClipboard() {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
+            ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clipData = clipboardManager.getPrimaryClip();
+            if (clipData == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            ClipData.Item firstClipItem = clipData.getItemAt(0);
+            CharSequence clipItemText = firstClipItem.getText();
+            if (clipItemText == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            nativeClipboardReceived(clipItemText.toString(), "plain");
+        });
+    }
+
+    public static void putClipboardData(String data, String mimeType) {
+        Context context = FCLPath.CONTEXT;
+        ((Activity) context).runOnUiThread(() -> {
+            ClipData clipData = null;
+            switch (mimeType) {
+                case "text/plain":
+                    clipData = ClipData.newPlainText("AWT Paste", data);
+                    break;
+                case "text/html":
+                    clipData = ClipData.newHtmlText("AWT Paste", data, data);
+                    break;
+            }
+            if (clipData != null) {
+                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboardManager.setPrimaryClip(clipData);
+            }
+        });
     }
 
     private void handleWindow() {
