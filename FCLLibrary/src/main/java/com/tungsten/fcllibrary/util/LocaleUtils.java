@@ -85,7 +85,11 @@ public class LocaleUtils {
     public static DateTimeFormatter getDateTimeFormatter(Context context) {
         if (dateTimeFormatter == null) {
             @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier("world_time", "string", context.getPackageName());
-            dateTimeFormatter = DateTimeFormatter.ofPattern(context.getString(resId)).withZone(ZoneId.systemDefault());
+            String time = "EEE, MMM d, yyyy HH:mm:ss";
+            if (resId != 0) {
+                time = context.getString(resId);
+            }
+            dateTimeFormatter = DateTimeFormatter.ofPattern(time).withZone(ZoneId.systemDefault());
         }
         return dateTimeFormatter;
     }

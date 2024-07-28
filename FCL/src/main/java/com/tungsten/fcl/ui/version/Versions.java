@@ -12,6 +12,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
@@ -102,7 +103,14 @@ public class Versions {
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setMessage(message);
-        builder.setPositiveButton(() -> profile.getRepository().removeVersionFromDisk(version));
+        builder.setPositiveButton(() -> {
+            ProgressDialog progress = new ProgressDialog(context);
+            Task.runAsync(() -> {
+                profile.getRepository().removeVersionFromDisk(version);
+            }).whenComplete(Schedulers.androidUIThread(), (e) -> {
+                progress.dismiss();
+            }).start();
+        });
         builder.setNegativeButton(null);
         builder.create().show();
     }
@@ -113,17 +121,23 @@ public class Versions {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
                 return;
             }
-            if (profile.getRepository().renameVersion(version, newName)) {
-                resolve.run();
-                profile.getRepository().refreshVersionsAsync()
-                        .thenRunAsync(Schedulers.androidUIThread(), () -> {
-                            if (profile.getRepository().hasVersion(newName)) {
-                                profile.setSelectedVersion(newName);
-                            }
-                        }).start();
-            } else {
-                reject.accept(context.getString(R.string.version_manage_rename_fail));
-            }
+            ProgressDialog progress = new ProgressDialog(context);
+            Task.supplyAsync(() -> profile.getRepository().renameVersion(version, newName))
+                    .thenComposeAsync(Schedulers.androidUIThread(), result -> {
+                        progress.dismiss();
+                        if (result) {
+                            resolve.run();
+                            profile.getRepository().refreshVersionsAsync()
+                                    .thenRunAsync(Schedulers.androidUIThread(), () -> {
+                                        if (profile.getRepository().hasVersion(newName)) {
+                                            profile.setSelectedVersion(newName);
+                                        }
+                                    }).start();
+                        } else {
+                            reject.accept(context.getString(R.string.version_manage_rename_fail));
+                        }
+                        return null;
+                    }).start();
         });
         dialog.show();
         return dialog.getFuture();
@@ -138,9 +152,11 @@ public class Versions {
         DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, (res, resolve, reject) -> {
             String newVersionName = (String) res.get(0);
             boolean copySaves = (boolean) res.get(1);
+            ProgressDialog progress = new ProgressDialog(context);
             Task.runAsync(() -> profile.getRepository().duplicateVersion(version, newVersionName, copySaves))
                     .thenComposeAsync(profile.getRepository().refreshVersionsAsync())
                     .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                        progress.dismiss();
                         if (exception == null) {
                             resolve.run();
                         } else {

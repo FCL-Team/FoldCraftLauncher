@@ -613,6 +613,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
+                getInput().setPointer(AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) / 2, AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) / 2, "Gyro");
             } else {
                 getCursor().setVisibility(View.GONE);
                 gameItemBar.setVisibility(View.VISIBLE);

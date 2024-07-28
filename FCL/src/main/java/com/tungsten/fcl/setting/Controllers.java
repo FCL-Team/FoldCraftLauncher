@@ -4,6 +4,7 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
@@ -113,6 +114,9 @@ public class Controllers {
                     list.add(controller);
                 } catch (IOException e) {
                     Logging.LOG.log(Level.WARNING, "Can't read file: " + json.getAbsolutePath(), e.getMessage());
+                } catch (JsonSyntaxException e) {
+                    Logging.LOG.log(Level.WARNING, "File: " + json.getAbsolutePath(), e.getMessage() + " is broken!");
+                    json.renameTo(new File(FCLPath.CONTROLLER_DIR, json.getName() + ".bak"));
                 }
             }
         }

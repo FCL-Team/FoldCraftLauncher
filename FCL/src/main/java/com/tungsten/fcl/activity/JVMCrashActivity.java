@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -69,6 +70,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jvm_crash);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         restart = findViewById(R.id.restart);
         close = findViewById(R.id.close);

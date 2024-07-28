@@ -345,6 +345,7 @@
     <string name="folder_config">Browse configs</string>
     <string name="folder_game">Browse game directory</string>
     <string name="folder_log">Browse log directory</string>
+    <string name="folder_fcl_log">Browse FCL log directory</string>
     <string name="folder_mod">Browse mods</string>
     <string name="folder_resourcepacks">Browse resource packs</string>
     <string name="folder_saves">Browse saves</string>
@@ -949,4 +950,7 @@
     <string name="world_reveal">Reveal in Explorer</string>
     <string name="world_show_all">Show All</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+
+    <string name="install_apk">Install .apk</string>
+
 </resources>

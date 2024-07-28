@@ -323,6 +323,7 @@
     <string name="folder_config">浏览配置文件夹</string>
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
+    <string name="folder_fcl_log">浏览FCL日志文件夹</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
@@ -819,7 +820,7 @@
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
-    <string name="version_manage_clean">清理游戏目录</string>
+    <string name="version_manage_clean">清理游戏日志</string>
     <string name="version_manage_duplicate">复制游戏实例</string>
     <string name="version_manage_duplicate_duplicate_save">复制存档</string>
     <string name="version_manage_duplicate_prompt">实例名称</string>
@@ -905,4 +906,5 @@
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
     <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
     <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
+    <string name="install_apk">安装apk文件</string>
 </resources>
