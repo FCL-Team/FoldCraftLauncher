@@ -264,7 +264,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor, true);
                 }
 
                 @Override
@@ -303,7 +303,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             }));
         }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
+            ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
         }
         if (v == resetLtBackground) {
             new Thread(() -> {
