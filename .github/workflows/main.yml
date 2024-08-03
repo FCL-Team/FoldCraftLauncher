@@ -11,7 +11,7 @@ on:
       - ''
   workflow_dispatch:
 
-jobs:
+jobs:          
   FCLTeamBuild:
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
     strategy:
@@ -28,6 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          #repository: "FCL-Team/FoldCraftLauncher"
 
       - name: set up JDK 17
         uses: actions/setup-java@v4
@@ -40,25 +41,17 @@ jobs:
           chmod +x gradlew
           ./gradlew assemblerelease -Darch=${{matrix.arch}}
 
-      - name: Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          token: "${{ secrets.TOKEN }}"
-          files: |
-            FCL/build/outputs/apk/release/*.apk
-
-      - name: Upload apk
+      - name: Upload to Artifact
         if: startsWith(github.ref, 'refs/heads/')
         uses: actions/upload-artifact@v4
         with:
           name: app-${{matrix.arch}}
           path: FCL/build/outputs/apk/release/*
-        #  retention-days: 1
+          #retention-days: 1
 
 #only for fork
   DebugBuild:
-    if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
+    if: startsWith(github.ref, 'refs/pull/')
     name: Build Debug
     runs-on: ubuntu-20.04
     steps:
@@ -82,3 +75,63 @@ jobs:
         with:
           name: app-debug-all
           path: FCL/build/outputs/apk/fordebug/*
+
+  Release:
+    needs: FCLTeamBuild
+    runs-on: ubuntu-20.04
+    if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
+    name: Init & Prepare CI-Build
+    steps:
+      - name: Download Artifact Zips
+        uses: actions/download-artifact@v4
+        with:
+          path: FCL/build/outputs/apk/temp
+
+      - name: "CI Release Prepare"
+        id: github-text
+        run: |
+          echo "build_time=$(TZ=Asia/Shanghai date "+%Y.%m.%d %H:%M")" >> $GITHUB_OUTPUT
+          mkdir -p FCL/build/outputs/apk/release
+          find FCL/build/outputs/apk/temp/ -mindepth 1 -maxdepth 1 -type d -exec sh -c 'mv -v "$0"/* FCL/build/outputs/apk/release/' {} \;
+      
+      - name: Delete old files
+        uses: 8Mi-Tech/delete-release-assets-action@main
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: CI-Build-${{github.ref_name}}
+          deleteOnlyFromDrafts: false
+      
+      - name: Set Text
+        run: |
+          cat > ci-build.md << 'EOF'
+          Build Time / 构建时间 : ${{ steps.github-text.outputs.build_time }}
+          自动同步分支 ${{ github.ref_name }} 的代码，以保持最新
+          Synchronize ${{ github.ref_name }} branch code updates, keeping only the latest version
+          <br>
+          EOF
+      
+      - name: Update Tag
+        uses: richardsimko/update-tag@v1.0.7
+        with:
+          tag_name: CI-Build-${{github.ref_name}}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: CI-Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          name: FoldCraftLauncer CI-Build
+          tag_name: CI-Build-${{github.ref_name}}
+          prerelease: true
+          body_path: ci-build.md
+          files: |
+            FCL/build/outputs/apk/release/*.apk
+      
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          files: |
+            FCL/build/outputs/apk/release/*.apk
