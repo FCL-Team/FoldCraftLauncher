@@ -951,5 +951,6 @@
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 
     <string name="install_apk">Install .apk</string>
+    <string name="edit">Edit</string>
 
 </resources>

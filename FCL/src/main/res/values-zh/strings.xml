@@ -907,4 +907,5 @@
     <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
     <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
     <string name="install_apk">安装apk文件</string>
+    <string name="edit">编辑</string>
 </resources>
