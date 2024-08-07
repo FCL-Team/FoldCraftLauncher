@@ -20,18 +20,18 @@ public class FileBrowser implements Serializable {
 
     public static final String SELECTED_FILES = "SELECTED_FILES";
 
-    public static ArrayList<String> getSelectedFiles(Intent data) {
-        if (data == null) {
+    public static ArrayList<String> getSelectedFiles(Intent intentData) {
+        if (intentData == null) {
             return null;
         }
-        ArrayList<Uri> selectedFiles  = data.getParcelableArrayListExtra(SELECTED_FILES);
+        ArrayList<Uri> selectedFiles  = intentData.getParcelableArrayListExtra(SELECTED_FILES);
         return (ArrayList<String>) selectedFiles.stream().map(Uri::toString).collect(Collectors.toList());
     }
 
     private LibMode libMode = LibMode.FILE_BROWSER;
     private SelectionMode selectionMode = SelectionMode.SINGLE_SELECTION;
     private String initDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-    private ArrayList<String> suffix = new ArrayList<>();
+    private ArrayList<String> suffixes = new ArrayList<>();
     private String title;
 
     public FileBrowser(String title) {
@@ -50,8 +50,8 @@ public class FileBrowser implements Serializable {
         return initDir;
     }
 
-    public ArrayList<String> getSuffix() {
-        return suffix;
+    public ArrayList<String> getSuffixes() {
+        return suffixes;
     }
 
     public String getTitle() {
@@ -94,7 +94,7 @@ public class FileBrowser implements Serializable {
         }
 
         public Builder setSuffix(ArrayList<String> suffix) {
-            fileBrowser.suffix = suffix;
+            fileBrowser.suffixes = suffix;
             return this;
         }
 
@@ -116,7 +116,7 @@ public class FileBrowser implements Serializable {
         }
 
         public ArrayList<String> getSuffix() {
-            return fileBrowser.suffix;
+            return fileBrowser.suffixes;
         }
 
         public String getTitle() {

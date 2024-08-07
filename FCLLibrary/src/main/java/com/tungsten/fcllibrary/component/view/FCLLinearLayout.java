@@ -86,8 +86,8 @@ public class FCLLinearLayout extends LinearLayoutCompat {
 
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        boolean isVisible = get();
+                        setVisibility(isVisible ? VISIBLE : GONE);
                     });
                 }
 
