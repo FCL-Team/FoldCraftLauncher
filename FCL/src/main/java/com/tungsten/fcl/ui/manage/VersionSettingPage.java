@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
@@ -15,6 +16,7 @@ import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -342,6 +344,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                     return;
 
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (path == null)
                     return;
 

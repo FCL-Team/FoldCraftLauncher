@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,8 +13,10 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.GetTask;
@@ -70,6 +73,10 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
         builder.create().browse(getActivity(), RequestCodes.SELECT_MODPACK_CODE, ((requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_MODPACK_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (path == null)
                     return;
                 File selectedFile = new File(path);

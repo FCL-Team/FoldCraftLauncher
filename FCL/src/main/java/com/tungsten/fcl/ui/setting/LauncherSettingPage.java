@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -284,6 +285,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
                     String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
                     ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, path, null);
                 }
             }));
@@ -298,6 +303,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
                     String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
                     ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, null, path);
                 }
             }));

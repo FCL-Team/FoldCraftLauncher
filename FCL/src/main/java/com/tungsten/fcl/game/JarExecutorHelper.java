@@ -5,14 +5,17 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
@@ -42,6 +45,10 @@ public class JarExecutorHelper {
         builder.create().browse(activity, RequestCodes.SELECT_MANUAL_INSTALLER_CODE, ((requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_MANUAL_INSTALLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (new File(path).exists()) {
                     launchJarExecutor(context, new File(path));
                 }

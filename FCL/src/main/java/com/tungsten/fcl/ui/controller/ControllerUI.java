@@ -181,6 +181,10 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
             builder.create().browse(getActivity(), RequestCodes.SELECT_CONTROLLER_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_CONTROLLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
                     String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
                     try {
                         String content = FileUtils.readText(new File(path));
                         Controller controller = new GsonBuilder().setPrettyPrinting().create().fromJson(content, Controller.class);
