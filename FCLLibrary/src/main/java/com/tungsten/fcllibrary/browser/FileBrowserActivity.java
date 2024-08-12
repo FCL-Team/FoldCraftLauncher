@@ -132,7 +132,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         listView = findViewById(R.id.list);
         refreshList(currentPath != null ? currentPath : new File(fileBrowser.getInitDir()).toPath());
 
-        if (fileBrowser.getLibMode() != LibMode.FILE_CHOOSER) {
+        if (fileBrowser.getLibMode() != LibMode.FILE_CHOOSER || fileBrowser.getCode() != 400) {
             selectExternal.setVisibility(View.GONE);
         }
     }

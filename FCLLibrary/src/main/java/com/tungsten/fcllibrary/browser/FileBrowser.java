@@ -33,6 +33,7 @@ public class FileBrowser implements Serializable {
     private String initDir = Environment.getExternalStorageDirectory().getAbsolutePath();
     private ArrayList<String> suffix = new ArrayList<>();
     private String title;
+    private int code;
 
     public FileBrowser(String title) {
         this.title = title;
@@ -58,11 +59,16 @@ public class FileBrowser implements Serializable {
         return title;
     }
 
+    public int getCode() {
+        return code;
+    }
+
     public void browse(Activity activity, int code, ResultListener.Listener listener) {
         Intent intent = new Intent(activity, FileBrowserActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("config", this);
         intent.putExtras(bundle);
+        this.code = code;
         ResultListener.startActivityForResult(activity, intent, code, listener);
     }
 
