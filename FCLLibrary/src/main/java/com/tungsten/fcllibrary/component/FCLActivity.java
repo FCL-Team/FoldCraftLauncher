@@ -20,6 +20,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 public class FCLActivity extends AppCompatActivity {
+    public boolean callback = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +65,8 @@ public class FCLActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ResultListener.onActivityResult(requestCode, resultCode, data);
+        if (callback) {
+            ResultListener.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

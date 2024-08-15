@@ -1,0 +1,948 @@
+<resources>
+    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+
+    <string name="oauth_api_key" translatable="false">null</string>
+
+    <string name="splash_permission_msg">Sem permissão de armazenamento, por favor conceda a permissão ao Fold Craft Launcher.</string>
+    <string name="splash_permission_grant">Grant</string>
+    <string name="splash_permission_title">Permission to store needed</string>
+    <string name="splash_permission_close">Close the app</string>
+    <string name="splash_permission_settings">Settings</string>
+    <string name="splash_permission_settings_msg">You have chosen "Never Allow." Please manually grant storage permissions in settings.</string>
+
+    <string name="splash_title">Bem-vindo ao Fold Craft Launcher</string>
+    <string name="splash_eula_error">Não foi possível acessar o EULA, por favor verifique a sua conexão.</string>
+    <string name="splash_eula_next">Concordar e continuar</string>
+    <string name="splash_runtime_title">Instalar ou atualizar a runtime do aplicativo</string>
+    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
+    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
+    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
+    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
+    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
+    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
+    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
+    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
+    <string name="splash_runtime_install">Instalar / Atualizar</string>
+
+    <string name="account">Conta</string>
+    <string name="version">Versão</string>
+    <string name="manage">Gerenciar</string>
+    <string name="download">Download</string>
+    <string name="controller">Controle</string>
+    <string name="multiplayer">Multijogador</string>
+    <string name="setting">Configurações</string>
+    
+    <string name="about">Sobre</string>
+    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
+    <string name="about_developer" translatable="false">FCL-Team</string>
+    <string name="about_sponsor">Patrocinadores</string>
+    <string name="about_source">Código fonte</string>
+    <string name="about_desc">Fold Craft é um Launcher de Minecraft no Android, que lhe permite jogar Minecraft: Java Edition no seu aparelho Android.\n\nO Fold Craft Launcher é desenvolvido pela FCL-Team.\n\nA maioria das funcionalidades do Fold Craft Launcher são baseadas no HMCLCore.\n\nO aplicativo usa partes do código de PojavLauncher e Boat, então se deseja distribuir este aplicativo, por favor siga as regras da Licença GPL-v3.</string>
+
+    <string name="account_add_server">Adicionar servidor de autenticação</string>
+    <string name="account_add_server_url">Endereço do servidor</string>
+    <string name="account_add_server_name">Nome do servidor</string>
+    <string name="account_cape">Capa</string>
+    <string name="account_create">Criar conta</string>
+    <string name="account_create_offline">Criar conta offline</string>
+    <string name="account_create_microsoft">Criar conta Microsoft</string>
+    <string name="account_create_external">Criar conta externa</string>
+    <string name="account_create_username">Usuário</string>
+    <string name="account_create_password">Senha</string>
+    <string name="account_create_server">Servidor de autenticação</string>
+    <string name="account_create_server_not_select">Nenhum servidor de autenticação encontrado</string>
+    <string name="account_create_home">Início</string>
+    <string name="account_create_register">Registrar</string>
+    <string name="account_create_alert">Por favor, primeiramente forneça as informações necessárias da conta!</string>
+    <string name="account_injector_server">Servidor de autenticação</string>
+    <string name="account_login">Login</string>
+    <string name="account_methods_offline">Conta offline</string>
+    <string name="account_methods_offline_name_invalid">O nome de usuário deve conter apenas letras, números e underline, e no máximo 16 caracteres.\nPossíveis nomes de usuário: Tungsten, Tungsten_123;\nNomes de usuário não permitido: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nSe houver algum mod ou plugin no servidor que possa remover esta restrição, ignore este aviso.</string>
+    <string name="account_methods_yggdrasil">Conta Mojang</string>
+    <string name="account_methods_authlib_injector">Conta externa</string>
+    <string name="account_methods_microsoft">Conta Microsoft</string>
+    <string name="account_failed">Atualização de conta falhou</string>
+    <string name="account_failed_expired">As credenciais expiraram, você deve remover sua conta e re-logar.</string>
+    <string name="account_failed_no_character">Não há personagens vinculados à essa conta.</string>
+    <string name="account_failed_connect_authentication_server">Não foi possível se conectar aos servidores de autenticação, por favor verifique a sua conexão.</string>
+    <string name="account_failed_connect_injector_server">Não foi possível se conectar aos servidores de autenticação. Por favor, verifique sua conexão ou se certifique que inseriu o endereço URL correto.</string>
+    <string name="account_failed_server_disconnected">Não foi possível acessar o servidor de autenticação. Você pode logar com conta offline ou tentar re-logar.</string>
+    <string name="account_failed_server_response_malformed">Resposta de servidor inválida, o servidor de autenticação pode não estar funcionando.</string>
+    <string name="account_failed_invalid_credentials">Senha incorreta ou limitação de conexão, por favor tente novamente mais tarde.</string>
+    <string name="account_failed_invalid_token">Por favor tente re-logar novamente.</string>
+    <string name="account_failed_invalid_password">Senha inválida</string>
+    <string name="account_failed_migration">Você precisa migrar sua conta para uma conta Microsoft. Se você já fez isso, você deve re-logar na sua conta Microsoft.</string>
+    <string name="account_failed_injector_download_failure">Não foi possível baixar authlib-injector. Por favor verifique sua conexão, ou tente mudar a fonte de download.</string>
+    <string name="account_failed_character_deleted">O personagem já foi excluído.</string>
+    <string name="account_failed_ssl">Ocorreu um erro de SSL ao tentar se conectar ao servidor.</string>
+    <string name="account_failed_wrong_account">Você logou com a conta errada.</string>
+    <string name="account_skin_invalid_skin">Arquivo de skin inválido</string>
+    <string name="account_methods_microsoft_error_add_family">Como você ainda não tem 18 anos, um adulto deve adicionar você em uma família para que você possa jogar Minecraft.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live não está disponível no seu país ou região atual.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">Sua conta Microsoft ainda não tem uma conta Xbox vinculada. Por favor crie uma antes de prosseguir.</string>
+    <string name="account_methods_microsoft_error_unknown">Falha no login</string>
+    <string name="account_methods_microsoft_error_no_character">Sua conta não possui o Minecraft Java Edition.\nO perfil do jogo pode não ter sido criado.</string>
+    <string name="account_methods_microsoft_error_add_family_probably">Por favor verifique se a idade indicada na sua conta é pelo de 18 anos. Caso contrário e você acredita que isto é um erro, você pode ir ao site oficial e alterar.</string>
+    <string name="account_methods_microsoft_close_page">Autorização de conta Microsoft concluída.</string>
+    <string name="account_methods_microsoft_hint">Por favor clique no botão de "Login", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_login_refresh">Re-logar</string>
+    <string name="account_login_refresh_microsoft_hint">Por causa da autorização de conta estar inválida, você precisa adicionar novamente sua conta Microsoft.\nPor favor clique no botão "OK", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_select_character">Selecionar personagem</string>
+    <string name="account_skin">Skin</string>
+    <string name="account_skin_type_default">Padrão</string>
+    <string name="account_skin_type_steve" translatable="false">Steve</string>
+    <string name="account_skin_type_alex" translatable="false">Alex</string>
+    <string name="account_skin_type_csl_api" translatable="false">Sistema de skins personalizado</string>
+    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
+    <string name="account_skin_type_csl_api_hint">Você deve criar um personagem com o mesmo nome que a sua conta offline na página do seu fornecedor de skin. Sua skin será então enviada para esse site.</string>
+    <string name="account_skin_type_local_file">Arquivo de skin local</string>
+    <string name="account_skin_upload">Selecione o arquivo de skin</string>
+    <string name="account_state_no_account">Sem conta</string>
+    <string name="account_state_add">Clique para adicionar</string>
+
+    <string name="action_refresh">Atualizar</string>
+    <string name="action_retry">Tentar novamente</string>
+    <string name="action_skip">Pular</string>
+
+    <string name="announcement">Anúncio: %s</string>
+    <string name="announcement_significant">Este anúncio é importante. Por favor certifique que você leu o anúncio antes de desativar. Você deseja desativar-lo?</string>
+
+    <string name="archive_author">Autor(es)</string>
+    <string name="archive_date">Data de publicação</string>
+    <string name="archive_game_version">Versão do jogo</string>
+    <string name="archive_name">Nome do arquivo</string>
+    <string name="archive_version">Versão</string>
+
+    <string name="assets_download">Baixando assets</string>
+    <string name="assets_download_all">Validando a integridade dos assets </string>
+    <string name="assets_index_malformed">Os arquivos baixados dos assets foram corrompidos.</string>
+
+    <string name="button_back">Voltar</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_copy">Copiar</string>
+    <string name="button_download">Baixar</string>
+    <string name="button_export">Exportar</string>
+    <string name="button_hide">Esconder</string>
+    <string name="button_install">Instalar</string>
+    <string name="button_mouse_left">Mouse Left</string>
+    <string name="button_mouse_right">Mouse Right</string>
+    <string name="button_next">Próximo</string>
+    <string name="button_paste">Colar</string>
+    <string name="button_prev">Anterior</string>
+    <string name="button_remove">Remover</string>
+    <string name="button_remove_confirm">Tem certeza de que deseja remover-lo permanentemente? Esta ação não pode ser desfeita!</string>
+    <string name="button_save_as">Salvar como</string>
+    <string name="button_select_all">Selecionar tudo</string>
+    <string name="button_set">Definir</string>
+    <string name="button_reset">Redefinir</string>
+    <string name="button_up" translatable="false">▲</string>
+    <string name="button_down" translatable="false">▼</string>
+    <string name="button_left" translatable="false">◀</string>
+    <string name="button_right" translatable="false">▶</string>
+
+    <string name="community">Comunidade</string>
+    <string name="community_hint">Entre na nossa comunidade para ter as últimas versões, reportar bugs, etc. Por favor seguir as regras da comunidade se entrar!</string>
+    <string name="community_discord" translatable="false">Discord</string>
+    <string name="community_qq">QQ-Group</string>
+
+    <string name="control_create">Criar</string>
+    <string name="control_delete">Tem certeza de que deseja excluir este controle?</string>
+    <string name="control_edit">Editar</string>
+    <string name="control_import">Importar</string>
+    <string name="control_import_failed">Falha ao importar o controle!</string>
+    <string name="control_upgrade">Controle: %s é uma versão antiga de controle, pode haver alguns bugs, mas ainda suportamos, você quer migrar para uma nova versão?</string>
+    <string name="control_incompatible">Controle: %s é um controle incompatível, isto pode ser devido a versão do launcher ou controle ser antiga, por favor verifique.</string>
+    <string name="control_info_author">Autor: </string>
+    <string name="control_info_description">Descrição: </string>
+    <string name="control_info_edit">Editar Informações</string>
+    <string name="control_info_more">Mais Informações</string>
+    <string name="control_info_name">Nome: </string>
+    <string name="control_info_name_exist">O controle já existe, por favor mude o nome!</string>
+    <string name="control_info_name_invalid">Nome Inválido</string>
+    <string name="control_info_version">Versão: </string>
+    <string name="control_list">Lista de Controles</string>
+    <string name="control_select">Selecionar Controle</string>
+    <string name="control_share">Compartilhar</string>
+
+    <string name="curse_category_0">Todos</string>
+
+    <string name="curse_category_4474">Sci-Fi</string>
+    <string name="curse_category_4481">Small / Light</string>
+    <string name="curse_category_4483">Combat</string>
+    <string name="curse_category_4477">Mini Game</string>
+    <string name="curse_category_4478">Quests</string>
+    <string name="curse_category_4484">Multiplayer</string>
+    <string name="curse_category_4476">Exploration</string>
+    <string name="curse_category_4736">Skyblock</string>
+    <string name="curse_category_4475">Adventure and RPG</string>
+    <string name="curse_category_4487">FTB</string>
+    <string name="curse_category_4480">Map Based</string>
+    <string name="curse_category_4479">Hardcore</string>
+    <string name="curse_category_4482">Extra Large</string>
+    <string name="curse_category_4472">Tech</string>
+    <string name="curse_category_4473">Magic</string>
+    <string name="curse_category_5128">Vanilla+</string>
+
+    <string name="curse_category_5299">Education</string>
+    <string name="curse_category_5232">Galacticraft</string>
+    <string name="curse_category_5129">Vanilla+</string>
+    <string name="curse_category_5189">Utility &#38; QOL</string>
+    <string name="curse_category_6814">Performance</string>
+    <string name="curse_category_6954">Integrated Dynamics</string>
+    <string name="curse_category_6484">Create</string>
+    <string name="curse_category_6821">Bug Fixes</string>
+    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_5190">QoL</string>
+    <string name="curse_category_5191">Utility &#38; QoL</string>
+    <string name="curse_category_5192">FancyMenu</string>
+    <string name="curse_category_423">Map and Information</string>
+    <string name="curse_category_426">Addons</string>
+    <string name="curse_category_434">Armor, Tools, and Weapons</string>
+    <string name="curse_category_409">Structures</string>
+    <string name="curse_category_4485">Blood Magic</string>
+    <string name="curse_category_420">Storage</string>
+    <string name="curse_category_429">Industrial Craft</string>
+    <string name="curse_category_419">Magic</string>
+    <string name="curse_category_412">Technology</string>
+    <string name="curse_category_4557">Redstone</string>
+    <string name="curse_category_428">Tinker\'s Construct</string>
+    <string name="curse_category_414">Player Transport</string>
+    <string name="curse_category_4486">Lucky Blocks</string>
+    <string name="curse_category_432">Buildcraft</string>
+    <string name="curse_category_418">Genetics</string>
+    <string name="curse_category_4671">Twitch Integration</string>
+    <string name="curse_category_5314">KubeJS</string>
+    <string name="curse_category_408">Ores and Resources</string>
+    <string name="curse_category_4773">CraftTweaker</string>
+    <string name="curse_category_430">Thaumcraft</string>
+    <string name="curse_category_422">Adventure and RPG</string>
+    <string name="curse_category_413">Processing</string>
+    <string name="curse_category_417">Energy</string>
+    <string name="curse_category_415">Energy, Fluid and Item Transport</string>
+    <string name="curse_category_433">Forestry</string>
+    <string name="curse_category_425">Miscellaneous</string>
+    <string name="curse_category_4545">Applied Energistics 2</string>
+    <string name="curse_category_416">Farming</string>
+    <string name="curse_category_421">API and Library</string>
+    <string name="curse_category_4780">Fabric</string>
+    <string name="curse_category_424">Cosmetic</string>
+    <string name="curse_category_406">World gen</string>
+    <string name="curse_category_435">Server Utility</string>
+    <string name="curse_category_411">Mobs</string>
+    <string name="curse_category_407">Biomes</string>
+    <string name="curse_category_427">Thermal Expansion</string>
+    <string name="curse_category_410">Dimensions</string>
+    <string name="curse_category_436">Food</string>
+    <string name="curse_category_4558">Redstone</string>
+    <string name="curse_category_4843">Automation</string>
+    <string name="curse_category_4906">MCreator</string>
+
+    <string name="curse_category_5244">Font Packs</string>
+    <string name="curse_category_5193">Data Packs</string>
+    <string name="curse_category_399">Steampunk</string>
+    <string name="curse_category_396">128x</string>
+    <string name="curse_category_398">512x and Higher</string>
+    <string name="curse_category_397">256x</string>
+    <string name="curse_category_405">Miscellaneous</string>
+    <string name="curse_category_395">64x</string>
+    <string name="curse_category_400">Photo Realistic</string>
+    <string name="curse_category_393">16x</string>
+    <string name="curse_category_403">Traditional</string>
+    <string name="curse_category_394">32x</string>
+    <string name="curse_category_404">Animated</string>
+    <string name="curse_category_4465">Mod Support</string>
+    <string name="curse_category_402">Medieval</string>
+    <string name="curse_category_401">Modern</string>
+
+    <string name="curse_category_4464">Modded World</string>
+    <string name="curse_category_250">Game Map</string>
+    <string name="curse_category_249">Creation</string>
+    <string name="curse_category_251">Parkour</string>
+    <string name="curse_category_253">Survival</string>
+    <string name="curse_category_248">Adventure</string>
+    <string name="curse_category_252">Puzzle</string>
+
+    <string name="curse_category_4551">Hardcore Questing Mode</string>
+    <string name="curse_category_4548">Lucky Blocks</string>
+    <string name="curse_category_4556">Progression</string>
+    <string name="curse_category_4752">Building Gadgets</string>
+    <string name="curse_category_4553">CraftTweaker</string>
+    <string name="curse_category_4554">Recipes</string>
+    <string name="curse_category_4549">Guidebook</string>
+    <string name="curse_category_4547">Configuration</string>
+    <string name="curse_category_4550">Quests</string>
+    <string name="curse_category_4555">World Gen</string>
+    <string name="curse_category_4552">Scripts</string>
+
+    <string name="curse_sort_author">Autor</string>
+    <string name="curse_sort_date_created">Data de criação</string>
+    <string name="curse_sort_last_updated">Mais recente</string>
+    <string name="curse_sort_name">Nome</string>
+    <string name="curse_sort_popularity">Popularidade</string>
+    <string name="curse_sort_total_downloads">Downloads totais</string>
+
+    <string name="datapack_add">Instalar datapack</string>
+    <string name="datapack_choose_datapack">Selecione uma datapack para importar</string>
+
+    <string name="download_code_404">Arquivo não encontrado no servidor remoto: %s</string>
+    <string name="download_failed">Falha ao baixar %1$s, código de erro: %2$d</string>
+    <string name="download_failed_empty">Nenhuma versão está disponível</string>
+    <string name="download_failed_refresh">Não foi possível atualizar a lista de versões, por favor tente novamente.</string>
+
+    <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
+    <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
+    <string name="download_provider_mojang">Mojang (OptiFine é fornecido por BMCLAPI)</string>
+    <string name="download_provider_official">Fonte oficial</string>
+    <string name="download_provider_balanced">Fonte mais rápida</string>
+    <string name="download_provider_mirror">Fonte Mirror (?)</string>
+
+    <string name="edit_view_clone">Clonar</string>
+    <string name="edit_view_delete">Excluir</string>
+    <string name="edit_view_event">Ação do botão</string>
+    <string name="edit_view_info">Informações do botão</string>
+    <string name="edit_view_no_group">Por favor adicione ou selecione um grupo de botões primeiro!</string>
+    <string name="edit_view_style">Estilo de botão</string>
+
+    <string name="edit_button_title">Editar Botão</string>
+    <string name="edit_button_delete">Tem certeza de que deseja excluir este botão?</string>
+    <string name="edit_button_text">Texto em exibição</string>
+    <string name="edit_button_event_follow">Mover câmera com botão pressionado</string>
+    <string name="edit_button_event_movable">Móvel</string>
+    <string name="edit_button_event_press">Pressionar</string>
+    <string name="edit_button_event_long_press">Press. Longo</string>
+    <string name="edit_button_event_click">Clique</string>
+    <string name="edit_button_event_double_click">Clique Duplo</string>
+    <string name="edit_button_event_auto_keep">Manter pressionado</string>
+    <string name="edit_button_event_auto_click">Manter clicando</string>
+    <string name="edit_button_event_open_menu">Abrir menu</string>
+    <string name="edit_button_event_touch_mode">Mudar modo de gestos</string>
+    <string name="edit_button_event_mouse_mode">Mudar modo de mouse</string>
+    <string name="edit_button_event_input">Abrir teclado virtual</string>
+    <string name="edit_button_event_quick_input">Abrir área de transferência</string>
+    <string name="edit_button_event_output_text">Enviar Texto</string>
+    <string name="edit_button_event_keycodes">Teclas de entrada</string>
+    <string name="edit_button_event_keycodes_keyboard">Teclado</string>
+    <string name="edit_button_event_keycodes_mouse">Mouse</string>
+    <string name="edit_button_event_bind_group">Mudar visibilidade de grupo de botões</string>
+
+    <string name="edit_direction_title">Editar Direcional</string>
+    <string name="edit_direction_delete">Tem certeza de que deseja remover este controle direcional?</string>
+    <string name="edit_direction_event_up">Tecla para frente</string>
+    <string name="edit_direction_event_down">Tecla para trás</string>
+    <string name="edit_direction_event_left">Tecla para esquerda</string>
+    <string name="edit_direction_event_right">Tecla para direita</string>
+    <string name="edit_direction_event_follow">Directional dinâmico (Apenas para joystick)</string>
+    <string name="edit_direction_event_follow_fix">Fixado</string>
+    <string name="edit_direction_event_follow_center">Centro segue o dedo</string>
+    <string name="edit_direction_event_follow_always">Todas as partes seguem o dedo</string>
+    <string name="edit_direction_event_sneak">Clique duplo no centro para agachar</string>
+    <string name="edit_direction_event_sneak_code">Tecla para agachar</string>
+
+    <string name="exception_access_denied">Não foi possível acessar o arquivo %s.</string>
+    <string name="exception_artifact_malformed">Não foi possível verificar a integridade dos arquivos baixados.</string>
+    <string name="exception_ssl_handshake">Não foi possível estabelecer uma conexão SSL devido a falta de certificados nesta instalação do Java.</string>
+
+    <string name="folder_config">Configurações</string>
+    <string name="folder_game">Diretório do jogo</string>
+    <string name="folder_log">Diretório de logs</string>
+    <string name="folder_mod">Mods</string>
+    <string name="folder_resourcepacks">Pacotes de recurso</string>
+    <string name="folder_saves">Mundos</string>
+    <string name="folder_screenshots">Capturas de tela</string>
+    <string name="folder_shaderpacks">Pacotes de shader</string>
+
+    <string name="game_crash_info">Informação de falha</string>
+    <string name="game_crash_reason">Causa da falha</string>
+    <string name="game_crash_reason_multiple">Vários motivos detectado:\n\n</string>
+    <string name="game_crash_reason_block">O jogo fechou por causa de algum bloco.\n\nVocê pode tentar remover usando MCEdit ou remover o mod que o adicionou.\n\nTipo de bloco: %1$s\nLocalização: %2$s</string>
+    <string name="game_crash_reason_bootstrap_failed">O jogo fechou por causa do mod %1$s.\n\nVocê pode tentar remover ou atualizar.</string>
+    <string name="game_crash_reason_config">O jogo fechou por quê um mod (%1$s) não pôde ser configurado corretamente. (%2$s)</string>
+    <string name="game_crash_reason_debug_crash">O jogo fechou por quê você o causou manualmente.\n\nEntão, você sabe o porquê.</string>
+    <string name="game_crash_reason_duplicated_mod">O jogo não pôde ser iniciado por causa de mods duplicados: %1$s.\n\n%2$s\n\nCada mod pode ser instalado apenas uma vez, por favor remova o mod duplicado e tente novamente.</string>
+    <string name="game_crash_reason_entity">O jogo fechou devido à uma entidade/mob.\n\nVocê pode remover essa entidade/mob usando o MCEdit ou remover o mod que o adicionou.\n\nTipo de entidade: %1$s\nLocalização: %2$s</string>
+    <string name="game_crash_reason_modmixin_failure">O jogo não pôde ser iniciado por causa de uma falha de Mod/Mixin injection.\nIsso geralmente significa que o mod tem algum bug ou é incompatível com a instalação atual.\nPor favor, verifique a log.</string>
+    <string name="game_crash_reason_mod_repeat_installation">Foi identificado múltiplos mods idênticos. Por favor remova os mods duplicados e tente novamente.</string>
+    <string name="game_crash_reason_forge_error">O Forge pode ter falhado.\nVocê pode verificar a log e resolver de acordo com as informações contidas na log.\nSe você não identificar nenhum erro, você pode verificar o relatório de erro (error report) e entender como o erro ocorreu.\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution0">O jogo não pôde ser iniciado por causa de falha de algum Mod.\nPor favor, verifique a log.</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">O jogo não pôde ser iniciado por causa de um problema causado pela configuração de algum Mod.\nPor favor, verifique a log e o arquivo de configuração.</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">O Fabric pode ter falhado.\nVocê pode verificar a log e resolver de acordo com as informações contidas na log.\nSe você não identificar nenhum erro, você pode verificar o relatório de erro (error report) e entender como o erro ocorreu.</string>
+    <string name="game_crash_reason_need_jdk11">O jogo não pôde ser iniciado por causa de uma versão inapropriada do Java.\nEsta versão requer o Java 11.</string>
+    <string name="game_crash_reason_mod_name">O jogo não pôde ser iniciado por causa de nome de arquivo de mod inapropriado.\nO arquivo deve conter apenas letras maiúsculas e minúsculas (Aa~Zz), números (0~9), hífen (-), underline (_), e pontos (.).\nPor favor, vá até a pasta de Mods e mude o nome dos arquivos não apropriados.</string>
+    <string name="game_crash_reason_incomplete_forge_installation">O jogo não pôde ser iniciado por causa de uma instalação incompleta do Forge.\nPor favor reinstalar o Forge.</string>
+    <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 ou superior é incompatível com os mods instalados. Você precisa desatualizar o Fabric para 0.11.7.</string>
+    <string name="game_crash_reason_fabric_warnings">Aviso do Fabric modloader:\n%1$s</string>
+    <string name="game_crash_reason_file_already_exists">O jogo fechou por quê o arquivo %1$s já existe.\n\nVocê pode tentar fazer backup e remover esse arquivo, então tente novamente.</string>
+    <string name="game_crash_reason_file_changed">O jogo fechou por não ter passado na verificação de integridade.\n\nSe você modificou o .jar do Minecraft, você terá que reverter as mudanças, ou baixar novamente o jogo.</string>
+    <string name="game_crash_reason_gl_operation_failure">O jogo fechou por causa de algum mod, pacote de shader, ou pacote de recurso.\n\nPor favor desative os mods/pacotes de shader/pacotes de recurso que você está usando e tente novamente.</string>
+    <string name="game_crash_reason_illegal_access_error">O jogo fechou por causa de algum mod.\nPor favor verificar: %1$s, você pode tentar remover o mod e tentar novamente.</string>
+    <string name="game_crash_reason_optifine_is_not_compatible_with_forge">O jogo fechou por causa que o OptiFine instalado é incompatível com a versão atual do Forge.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">O jogo não pôde ser iniciado porque um arquivo de mod foi descompactado.\nPor favor, coloque o arquivo de mod diretamente na pasta mods!\nSe a descompactação causar erros no jogo, exclua o mod descompactado da pasta mods e inicie o jogo.</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">O jogo fechou devido ao Forge não ter sido instalado corretamente.\nPor favor, reinstalar Forge.</string>
+    <string name="game_crash_reason_shaders_mod">O jogo não pôde ser iniciado devido ao OptiFine e Shaders Mod estarem instalados ao mesmo tempo.\nOptiFine já possui as funções do Shaders Mod integrado, remova-o.</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">O jogo não pode ser iniciado por ter muitos mods instalados, excedendo o limite de IDs do jogo.\nPor favor tente instalar JEID, ou remova alguns mods grandes.</string>
+    <string name="game_crash_reason_night_config_fixes">O jogo não pôde ser iniciado devido a alguns problemas com o Night Config.\nVocê pode tentar instalar o mod Night Config Fixes, que pode ajudá-lo com esse problema.\nPara mais informações, visite o repositório Github do mod.</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">O jogo pode não continuar a funcionar por causa do OptiFine.\nEste problema ocorre apenas em algumas versões específicas do OptiFine. Você pode tentar alterar a versão do OptiFine.</string>
+    <string name="game_crash_reason_jvm_32bit">O jogo fechou porque a alocação de memória excede o limite do Java de 32 bits.</string>
+    <string name="game_crash_reason_loading_crashed_forge">O jogo fechou por causa do mod %1$s (%2$s).\n\nVocê pode tentar remover ou atualizar.</string>
+    <string name="game_crash_reason_loading_crashed_fabric">O jogo fechou por causa do mod %1$s.\n\nVocê pode tentar remover ou atualizar.</string>
+    <string name="game_crash_reason_forge_repeat_installation">O jogo não pôde ser iniciado devido a uma instalação duplicada do Forge. Este é um problema comum.\nRecomenda-se enviar o feedback do log para o Github para que possamos encontrar mais pistas e corrigir este problema.\nVocê pode tentar desinstalar o Forge e reinstalá-lo.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">O jogo não pôde ser iniciado devido à instalação repetida do OptiFine.\nExclua OptiFine da pasta mods ou desinstale o OptiFine que é instalado automaticamente.</string>
+    <string name="game_crash_reason_memory_exceeded">O jogo fechou devido ao excesso de memória alocada.</string>
+    <string name="game_crash_reason_mod">O jogo fechou devido ao mod %1$s.\n\nVocê pode tentar atualizar ou excluir o mod e tentar novamente.</string>
+    <string name="game_crash_reason_mod_resolution">O jogo fechou devido a falha na resolução do mod.\n\nFabric forneceu os seguintes detalhes:\n%1$s</string>
+    <string name="game_crash_reason_forgemod_resolution">O jogo fechou devido a falha na resolução do mod.\n\nForge forneceu os seguintes detalhes:\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution_collection">O jogo fechou porque a versão mod não é compatível.\n\n%1$s requer %2$s.\n\nVocê precisa atualizar ou desatualizar %3$s antes de continuar.</string>
+    <string name="game_crash_reason_mod_resolution_conflict">O jogo fechou por causa de mods conflitantes.\n\n%1$s é incompatível com %2$s.</string>
+    <string name="game_crash_reason_mod_resolution_missing">O jogo fechou porque alguns mods de dependência não estão instalados.\n\n%1$s requer o mod: %2$s.\n\nIsso significa que você precisa baixar e instalar %2$s para poder jogar.</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">O jogo fechou porque um mod é incompatível com a versão atual do Minecraft.\n\n%1$s requer a versão %2$s do Minecraft.\n\nSe quiser jogar com esta versão do mod instalada, você deve alterar a versão da instância.\nCaso contrário, você deve instalar uma versão compatível com esta versão do Minecraft.</string>
+    <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Versão: %2$s)</string>
+    <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Qualquer versão)</string>
+    <string name="game_crash_reason_modlauncher_8">O jogo fechou porque sua versão atual do Forge não é compatível com a versão do Java. Tente atualizar o Forge.</string>
+    <string name="game_crash_reason_no_class_def_found_error">O jogo não pôde ser iniciado devido ao código incompleto.\n\nSua instância do jogo está faltando %1$s, isso pode ser devido à falta de um mod, ter um mod incompatível instalado ou alguns arquivos podem estar corrompidos.\n\nPode ser necessário reinstalar o jogo e todos os mods ou pedir ajuda a alguém.</string>
+    <string name="game_crash_reason_no_such_method_error">O jogo não pôde ser iniciado devido ao código incompleto.\n\nSua instância do jogo pode estar faltando um mod, ter instalado um mod incompatível ou alguns arquivos podem estar corrompidos.\n\nPode ser necessário reinstalar o jogo e todos os mods ou pedir ajuda a alguém.</string>
+    <string name="game_crash_reason_opengl_not_supported">O jogo fechou porque OpenGL não é compatível com seu renderizador.</string>
+    <string name="game_crash_reason_out_of_memory">O jogo fechou porque ficou sem memória.\n\nIsso pode ocorrer porque não há memória suficiente disponível ou há muitos mods instalados. Você pode tentar aumentar a memória alocada nas configurações do jogo.\n\nSe você ainda encontrar esses problemas, talvez precise de um dispositivo melhor.</string>
+    <string name="game_crash_reason_resolution_too_high">O jogo fechou porque você está usando um pacote de recursos cuja resolução de textura era muito alta.\n\nVocê deve mudar para um pacote de recursos com resolução mais baixa.</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">O jogo fechou porque o processamento de -javaagent falhou.\nSe você adicionar parâmetros relevantes aos parâmetros da máquina virtual Java, verifique se eles são legais e corretos.</string>
+    <string name="game_crash_reason_stacktrace">O motivo da falha é desconhecido.\n\nExistem algumas palavras-chave que podem conter alguns IDs de mods. Você pode pesquisá-los online para descobrir o problema sozinho.\n\n%s</string>
+    <string name="game_crash_reason_unknown">Não foi possível identificar a causa da falha do jogo, por favor consulte as logs do jogo.\n\nCaso for pedir por ajuda, por favor compartilhe a log completa e arquivos de erro relacionados.</string>
+    <string name="game_crash_reason_unsatisfied_link_error">Não foi possível iniciar o Minecraft por causa de bibliotecas faltantes: %1$s.</string>
+    <string name="game_crash_title">O jogo fechou</string>
+    <string name="game_crash_title_add">Você deve mandar a log completa ao invés de uma captura de tela.</string>
+
+    <string name="help">Ajuda</string>
+    <string name="help_category">Categoria</string>
+    <string name="help_website">Site</string>
+
+    <string name="input_hint_not_empty">Obrigatório</string>
+    <string name="input_hint_optional">Opcional</string>
+    <string name="input_not_empty">Preencha a caixa de entrada.</string>
+    <string name="input_number">A entrada deve ser um número.</string>
+    <string name="input_url">A entrada deve ser um endereço URL válido.</string>
+
+    <string name="install_change_version">Mudar versão</string>
+    <string name="install_change_version_confirm">Tem certeza de que deseja trocar a versão de %s de %s para %s?</string>
+    <string name="install_failed">Instalação falhou</string>
+    <string name="install_failed_downloading">Não foi possível baixar os arquivos necessários.</string>
+    <string name="install_failed_downloading_detail">Não foi possível baixar o arquivo: %s</string>
+    <string name="install_failed_downloading_timeout">O download demorou muito: %s</string>
+    <string name="install_failed_install_online">Não foi possível identificar o arquivo fornecido. Se você está tentando instalar um mod, vá para a página de Mods.</string>
+    <string name="install_failed_malformed">Os arquivos baixados estão corrompidos. Você pode tentar mudar para outra fonte de download.</string>
+    <string name="install_failed_optifine_conflict">Não é possível instalar ambos Fabric, Optifine, e Forge no Minecraft 1.13 ou superior.</string>
+    <string name="install_failed_optifine_forge_1.17">Para Minecraft 1.17.1 ou inferior, Forge apenas suporta OptiFine H1 Pre2 ou superior. Você pode instalar-los na parte de snapshot.</string>
+    <string name="install_failed_version_mismatch">Esta biblioteca requer a versão %s do jogo, mas a que está instalada é %s.</string>
+    <string name="install_installer_change_version">A versão %s não é compatível com a versão atual.do jogo. Clique aqui para mudar para outra versão ou excluir.</string>
+    <string name="install_installer_choose">Escolha sua versão de %s</string>
+    <string name="install_installer_depend">Requer %s</string>
+    <string name="install_installer_fabric" translatable="false">Fabric</string>
+    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
+    <string name="install_installer_fabric_api_warning">Aviso: Fabric API é um mod, e será instalado no diretório de mods da instância. Por favor, não mude o diretório responsável pelo jogo, caso contrário o Fabric API não irá funcionar. Se você deseja mudar essas configurações, você deve reinstalar-lo.</string>
+    <string name="install_installer_forge" translatable="false">Forge</string>
+    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
+    <string name="install_installer_game" translatable="false">Minecraft</string>
+    <string name="install_installer_incompatible">Incompatível com %s</string>
+    <string name="install_installer_install">Instalar %s</string>
+    <string name="install_installer_install_offline">Instalar/atualizar de arquivo local</string>
+    <string name="install_installer_install_offline_extension">Instalador Forge/OptiFine</string>
+    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
+    <string name="install_installer_not_installed">Não selecionado</string>
+    <string name="install_installer_optifine" translatable="false">OptiFine</string>
+    <string name="install_installer_quilt" translatable="false">Quilt</string>
+    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_modpack">Instalar modpack</string>
+    <string name="install_new_game">Adicionar uma nova instância</string>
+    <string name="install_new_game_already_exists">Esta instância já existe. Por favor use outro nome.</string>
+    <string name="install_new_game_malformed">Nome Inválido</string>
+    <string name="install_success">Instalado com sucesso.</string>
+
+    <string name="jar_execute">Executar .jar</string>
+    <string name="jar_execute_custom_args">Executar com JVM arguments</string>
+    <string name="jar_executor_crash_title">Execução de .jar falhou</string>
+    <string name="jar_executor_crash_reason">O motivo da falha ainda não é suportado.</string>
+
+    <string name="launch">Jogar</string>
+    <string name="launch_error_java">Você está usando uma versão não suportada do Java, tem certeza que deseja continuar?</string>
+    <string name="launch_error_java_auto">Seleção automática</string>
+    <string name="launch_error_java_continue">Continuar</string>
+    <string name="launch_failed">Não foi possível iniciar</string>
+    <string name="launch_failed_download_library">Não foi possível baixar a biblioteca %s.</string>
+
+    <string name="launch_state_dependencies">Resolvendo dependências</string>
+    <string name="launch_state_modpack">Baixando dependências</string>
+    <string name="launch_state_java">Verificando versão do Java</string>
+    <string name="launch_state_logging_in">Logando</string>
+    <string name="launch_state_waiting_launching">Aguardando o jogo iniciar</string>
+    <string name="launch_state_done">Completando inicialização</string>
+
+    <string name="menu_controls">Controle</string>
+    <string name="menu_controls_current">Controle atual</string>
+    <string name="menu_controls_edit_mode">Modo de edição</string>
+    <string name="menu_controls_show_boundary">Mostrar limites</string>
+    <string name="menu_controls_hide_all">Esconder botões</string>
+    <string name="menu_controls_auto_fit">Encaixe automático</string>
+    <string name="menu_controls_auto_fit_dist">Distância do encaixe</string>
+    <string name="menu_controls_groups">Grupo de botões</string>
+    <string name="menu_controls_manage">Gerenciar</string>
+    <string name="menu_controls_current_view_group">Grupo atual</string>
+    <string name="menu_controls_add_button">Adicionar botão</string>
+    <string name="menu_controls_add_direction">Adicionar direcional</string>
+    <string name="menu_controls_add_view_button">+</string>
+    <string name="menu_controls_style">Estilos</string>
+    <string name="menu_controls_button_style">Botão</string>
+    <string name="menu_controls_direction_style">Direcional</string>
+
+    <string name="menu_control_base">Configurações básicas</string>
+    <string name="menu_control_button">Botão</string>
+    <string name="menu_control_button_text">Texto</string>
+    <string name="menu_control_direction">Direcional</string>
+    <string name="menu_control_event">Config. de ação</string>
+    <string name="menu_control_select">Selecionar</string>
+    <string name="menu_control_set">Definir</string>
+    <string name="menu_control_style">Config. dos estilos</string>
+    <string name="menu_control_style_add">Adicionar estilo</string>
+    <string name="menu_control_style_edit">Editar estilo</string>
+    <string name="menu_control_view_group_add">Adicionar grupo de botões</string>
+    <string name="menu_control_view_group_delete">Tem certeza de que deseja remover este grupo de botões?</string>
+    <string name="menu_control_view_group_name">Nome</string>
+    <string name="menu_control_view_group_visibility">Visibilidade inicial</string>
+    <string name="menu_control_view_group_exist">O grupo de botões já existe</string>
+    <string name="menu_control_view_group_empty">Por favor, preencha o nome do grupo de botões</string>
+    <string name="menu_control_view_group_visible">Visível</string>
+    <string name="menu_control_view_group_invisible">Invisível</string>
+
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_settings_debug">Depuração</string>
+    <string name="menu_settings_disable_be_gesture">Desativar gestos avançados</string>
+    <string name="menu_settings_disable_gesture">Desativar gestos</string>
+    <string name="menu_settings_force_exit">Forçar parada</string>
+    <string name="menu_settings_force_exit_button">Sair</string>
+    <string name="menu_settings_force_exit_msg">Tem certeza de que deseja sair?</string>
+    <string name="menu_settings_function">Função</string>
+    <string name="menu_settings_gesture">Gesto</string>
+    <string name="menu_settings_gesture_mode">Modo</string>
+    <string name="menu_settings_gesture_mode_build">Construir</string>
+    <string name="menu_settings_gesture_mode_fight">Lutar</string>
+    <string name="menu_settings_gesture_current">Modo atual: %s</string>
+    <string name="menu_settings_gyro">Giroscópio</string>
+    <string name="menu_settings_gyro_sensitivity">Sensibilidade</string>
+    <string name="menu_settings_lock_view">Travar botão de menu</string>
+    <string name="menu_settings_mouse">Mouse</string>
+    <string name="menu_settings_mouse_mode">Modo</string>
+    <string name="menu_settings_mouse_mode_click">Clique</string>
+    <string name="menu_settings_mouse_mode_slide">Deslizar</string>
+    <string name="menu_settings_mouse_sensitivity">Sensibilidade do mouse</string>
+    <string name="menu_settings_mouse_size">Tamanho do mouse</string>
+    <string name="menu_settings_gamepad">Controle físico</string>
+    <string name="menu_settings_gamepad_reset_mapper">Mapeamento</string>
+    <string name="menu_settings_gamepad_reset">Redefinir</string>
+    <string name="menu_settings_gamepad_deadzone">Deadzone</string>
+    <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
+    <string name="menu_settings_multiplayer">Menu de multijogador</string>
+    <string name="menu_settings_multiplayer_button">Abrir</string>
+    <string name="menu_settings_quick_input">Área de transferência</string>
+    <string name="menu_settings_quick_input_button">Gerenciar</string>
+    <string name="menu_settings_send_key">Enviar tecla</string>
+    <string name="menu_settings_send_key_button">Enviar</string>
+    <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
+    <string name="menu_settings_item_bar_scale">Escala da hotbar</string>
+    <string name="menu_settings_show_log">Mostrar log</string>
+
+    <string name="message_cancelled">Operação foi cancelada</string>
+    <string name="message_copy">Copiado com sucesso!</string>
+    <string name="message_doing">Por favor aguarde</string>
+    <string name="message_downloading">Baixando</string>
+    <string name="message_error">Erro</string>
+    <string name="message_failed">Falha na operação</string>
+    <string name="message_file_exist">Arquivo já existente</string>
+    <string name="message_success">Operação completada com sucesso</string>
+    <string name="message_unknown">Desconhecido</string>
+    <string name="message_warning">Aviso</string>
+
+    <string name="modpack">Modpack</string>
+    <string name="modpack_choose">Selecione um modpack</string>
+    <string name="modpack_choose_local">Importar de um arquivo local</string>
+    <string name="modpack_choose_remote">Baixar da internet</string>
+    <string name="modpack_choose_remote_tooltip">Por favor insira o URL do modpack</string>
+    <string name="modpack_completion">Baixando dependências</string>
+    <string name="modpack_desc">Descreva o seu modpack, incluindo uma introdução e também changelogs. Markdown e imagens de URL são suportadas.</string>
+    <string name="modpack_description">Descrição</string>
+    <string name="modpack_download">Baixar modpack</string>
+    <string name="modpack_enter_name">Insira um nome para este modpack.</string>
+    <string name="modpack_export">Exportar modpack</string>
+    <string name="modpack_export_as">Exportar modpack como…</string>
+    <string name="modpack_file_api">Modpack URL Prefix</string>
+    <string name="modpack_files_blueprints">BuildCraft Blueprints</string>
+    <string name="modpack_files_config">Mod Configs</string>
+    <string name="modpack_files_dumps">Arquivo de depuração de saída NEI</string>
+    <string name="modpack_files_fclversion_cfg">Arquivos de configuração do launcher</string>
+    <string name="modpack_files_liteconfig">Arquivo de configurações de mods</string>
+    <string name="modpack_files_mods">Mods</string>
+    <string name="modpack_files_mods_voxelmods">Opções VoxelMods</string>
+    <string name="modpack_files_options_txt">Arquivo de configurações do Minecraft</string>
+    <string name="modpack_files_optionsshaders_txt">Arquivo de configurações de shaders</string>
+    <string name="modpack_files_resourcepacks">Pacotes de recurso/textura</string>
+    <string name="modpack_files_saves">Mundos</string>
+    <string name="modpack_files_scripts">Arquivo de configuração do MineTweaker</string>
+    <string name="modpack_files_servers_dat">Arquivo de lista de servidores</string>
+    <string name="modpack_install">Instalar Modpack %s</string>
+    <string name="modpack_installing">Instalando Modpack</string>
+    <string name="modpack_introduction">Modpacks de CurseForge, Modrinth, MultiMC, e MCBBS são suportados.</string>
+    <string name="modpack_invalid">Modpack inválido, você pode tentar baixá-lo novamente.</string>
+    <string name="modpack_mismatched_type">Tipo de modpack incompatível, a instância atual é do tipo %s, mas a fornecida é do tipo %s.</string>
+    <string name="modpack_name">Nome do modpack</string>
+    <string name="modpack_not_a_valid_name">Nome de modpack inválido</string>
+    <string name="modpack_origin">Fonte</string>
+    <string name="modpack_origin_url">Site oficial</string>
+    <string name="modpack_origin_mcbbs">MCBBS</string>
+    <string name="modpack_origin_mcbbs_prompt">ID do post</string>
+    <string name="modpack_scan">Analisando index do modpack</string>
+    <string name="modpack_task_install">Instalando modpack</string>
+    <string name="modpack_task_install_error">Não foi possível identificar este modpack. Atualmente, oferecemos suporte apenas aos modpacks Curse, Modrinth, MultiMC e MCBBS.</string>
+    <string name="modpack_task_install_will">Você vai instalar o modpack:</string>
+    <string name="modpack_type_curse">Curse</string>
+    <string name="modpack_type_curse_tolerable_error">Não foi possível baixar as dependências. Você pode tentar continuar o download iniciando esta instância do jogo.</string>
+    <string name="modpack_type_curse_error">Não foi possível baixar dependências do CurseForge, tente novamente ou use uma conexão proxy.</string>
+    <string name="modpack_type_curse_not_found">Algumas dependências não estão mais disponíveis, tente instalar uma versão mais recente do modpack.</string>
+    <string name="modpack_type_manual_warning">O modpack é feito manualmente pelo autor, que já pode conter um inicializador. Recomenda-se tentar descompactar e rodar o jogo com seu próprio launcher. O FCL ainda pode importá-lo, sem garantia de sua usabilidade, ainda assim continuar?</string>
+    <string name="modpack_type_mcbbs">Tipo MCBBS</string>
+    <string name="modpack_type_mcbbs_export">Pode ser importado por FCL, HMCL e MultiMC</string>
+    <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_multimc">MultiMC</string>
+    <string name="modpack_type_multimc_export">Pode ser importado por FCL, HMCL e MultiMC</string>
+    <string name="modpack_type_server">Atualizar automaticamente o modpack do servidor</string>
+    <string name="modpack_type_server_export">Permite que o proprietário do servidor atualize a instância do jogo remotamente</string>
+    <string name="modpack_type_server_malformed">Manifesto do modpack inválido. Consulte o fabricante do modpack do servidor para corrigir este problema.</string>
+    <string name="modpack_unsupported">Formato de modpack não suportado</string>
+    <string name="modpack_update">Atualizando modpack</string>
+    <string name="modpack_wizard">Exportação de modpack</string>
+    <string name="modpack_wizard_step_1">Configurações básicas</string>
+    <string name="modpack_wizard_step_1_title">Algumas configurações básicas para o modpack.</string>
+    <string name="modpack_wizard_step_2">Selecionar arquivos</string>
+    <string name="modpack_wizard_step_2_title">Selecione os arquivos que você deseja adicionar ao modpack.</string>
+    <string name="modpack_wizard_step_3">Tipo de modpack</string>
+    <string name="modpack_wizard_step_3_title">Escolha o tipo de modpack que você deseja exportar.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">Versão do jogo para exportar</string>
+    <string name="modpack_wizard_step_initialization_force_update">Forçar a atualização do modpack para a versão mais recente (você precisará de um serviço de hospedagem de arquivos)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">Incluir o launcher</string>
+    <string name="modpack_wizard_step_initialization_save">Exportar para…</string>
+    <string name="modpack_wizard_step_initialization_warning">Antes de criar um modpack, por favor se certifique que o jogo inicie corretamente, e que seja uma versão release ao invés de versão snapshot.\n\nTenha em mente que você não tem permissão para adicionar mods e pacotes de recursos que não sejam permitidos em um modpack.</string>
+
+    <string name="modrinth_category_adventure">Adventure</string>
+    <string name="modrinth_category_bukkit">Bukkit</string>
+    <string name="modrinth_category_bungeecord">BungeeCord</string>
+    <string name="modrinth_category_challenging">Challenging</string>
+    <string name="modrinth_category_combat">Combat</string>
+    <string name="modrinth_category_cursed">Cursed</string>
+    <string name="modrinth_category_decoration">Decoration</string>
+    <string name="modrinth_category_economy">Economy</string>
+    <string name="modrinth_category_equipment">Equipment</string>
+    <string name="modrinth_category_fabric">Fabric</string>
+    <string name="modrinth_category_food">Food</string>
+    <string name="modrinth_category_forge">Forge</string>
+    <string name="modrinth_category_game_mechanics">Game Mechanics</string>
+    <string name="modrinth_category_kitchen_sink">Kitchen-Sink</string>
+    <string name="modrinth_category_library">Library</string>
+    <string name="modrinth_category_lightweight">Lightweight</string>
+    <string name="modrinth_category_magic">Magic</string>
+    <string name="modrinth_category_management">Management</string>
+    <string name="modrinth_category_minigame">Minigame</string>
+    <string name="modrinth_category_misc">Misc</string>
+    <string name="modrinth_category_mobs">Mobs</string>
+    <string name="modrinth_category_modloader">Modloader</string>
+    <string name="modrinth_category_multiplayer">Multiplayer</string>
+    <string name="modrinth_category_neoforge">NeoForge</string>
+    <string name="modrinth_category_optimization">Optimization</string>
+    <string name="modrinth_category_paper">Paper</string>
+    <string name="modrinth_category_purpur">Purpur</string>
+    <string name="modrinth_category_quests">Quests</string>
+    <string name="modrinth_category_quilt">Quilt</string>
+    <string name="modrinth_category_rift">Rift</string>
+    <string name="modrinth_category_social">Social</string>
+    <string name="modrinth_category_spigot">Spigot</string>
+    <string name="modrinth_category_sponge">Sponge</string>
+    <string name="modrinth_category_storage">Storage</string>
+    <string name="modrinth_category_technology">Technology</string>
+    <string name="modrinth_category_transportation">Transportation</string>
+    <string name="modrinth_category_utility">Utility</string>
+    <string name="modrinth_category_velocity">Velocity</string>
+    <string name="modrinth_category_waterfall">Waterfall</string>
+    <string name="modrinth_category_worldgen">Worldgen</string>
+    <string name="modrinth_category_datapack">Datapack</string>
+    <string name="modrinth_category_folia">Folia</string>
+
+    <string name="mods">Mods</string>
+    <string name="mods_add">Adicionar mods</string>
+    <string name="mods_add_failed">Falha ao instalar %s.</string>
+    <string name="mods_add_success">%s foi instalado com sucesso.</string>
+    <string name="mods_broken_dependency_title">Dependência com falha</string>
+    <string name="mods_broken_dependency_desc">Esta dependência já existiu. Porém, não existe agora, Tente usar outra fonte de download.</string>
+    <string name="mods_category">Categoria</string>
+    <string name="mods_check_updates">Verificar atualizações</string>
+    <string name="mods_check_updates_current_version">Versão atual</string>
+    <string name="mods_check_updates_empty">Nenhum mod precisa ser atualizado</string>
+    <string name="mods_check_updates_failed">Não foi possível baixar alguns dos arquivos.</string>
+    <string name="mods_check_updates_file">Arquivo</string>
+    <string name="mods_check_updates_source">Fonte</string>
+    <string name="mods_check_updates_target_version">Versão</string>
+    <string name="mods_check_updates_update">Atualizar</string>
+    <string name="mods_choose_mod">Escolha um mod</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependency">Dependência</string>
+    <string name="mods_dependency_embedded">mod incluso (este mod já vêm empacotado no mod pelo autor, não há necessidade de baixar separadamente)</string>
+    <string name="mods_dependency_optional">mod opcional (este mod não é necessário para o funcionamento do mod)</string>
+    <string name="mods_dependency_required">mod necessário (este mod deve ser baixado separadamente, a falta dele pode fazer com que o jogo não seja iniciado)</string>
+    <string name="mods_dependency_tool">mod biblioteca (este mod deve ser baixado separadamente, a falta dele pode fazer com que o jogo não seja iniciado)</string>
+    <string name="mods_dependency_include">mod incluso (já empacotado no mod pelo autor, não há necessidade de baixar separadamente)</string>
+    <string name="mods_dependency_incompatible">mod incompatível (installing both the mod and the mod being downloaded will cause the game to fail to launch)</string>
+    <string name="mods_dependency_broken">inexistente (Este mod existia no repositório de mod, mas agora foi excluído, tente uma fonte de download diferente)</string>
+    <string name="mods_disable">Desativar</string>
+    <string name="mods_download">Baixar mod</string>
+    <string name="mods_download_title">Baixando mod - %1s</string>
+    <string name="mods_download_recommend">Versão recomendada do mod - Minecraft %1s</string>
+    <string name="mods_enable">Ativar</string>
+    <string name="mods_manage">Gerenciar mods</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">Página MCMOD</string>
+    <string name="mods_mcmod_search">Pesquisar em MCMOD</string>
+    <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_name">Nome</string>
+    <string name="mods_not_modded">Você deve instalar um mod loader (Fabric, Forge ou LiteLoader) primeiro para gerenciar mods!</string>
+    <string name="mods_restore">Reverter</string>
+    <string name="mods_url">Página oficial</string>
+    <string name="mods_update_modpack_mod_warning">Atualizar mods em um modpack pode levar à resultados irreparáveis, possivelmente corrompendo o modpack de forma que ele não possa ser iniciado. Tem certeza de que deseja atualizar?</string>
+
+    <string name="profile_shared">Diretório compartilhado</string>
+    <string name="profile_private">Diretório privado</string>
+    <string name="profile_name">Nome</string>
+    <string name="profile_path">Caminho</string>
+    <string name="profile_select">Selecione Diretório</string>
+    <string name="profile_already_exist">Este nome já existe, por favor use um nome diferente.</string>
+
+    <string name="quick_input_title">Área de transferência</string>
+    <string name="quick_input_add">Adicionar novo texto</string>
+    <string name="quick_input_text">Texto</string>
+    <string name="quick_input_exist">Este texto já existe!</string>
+    <string name="quick_input_empty">Preencha a caixa de texto!</string>
+
+    <string name="resourcepack">Pacotes de recurso</string>
+
+    <string name="search">Pesquisar</string>
+    <string name="search_hint_chinese">Pesquisar...</string>
+    <string name="search_hint_english">Pesquisar...</string>
+    <string name="search_sort">Ordenar por</string>
+    <string name="search_first_page">Primeiro</string>
+    <string name="search_previous_page" translatable="false">◀</string>
+    <string name="search_next_page" translatable="false">▶</string>
+    <string name="search_last_page">Último</string>
+    <string name="search_page_n" translatable="false">%d / %s</string>
+
+    <string name="settings_advanced_dont_check_game_completeness">Não verificar integridade do jogo</string>
+    <string name="settings_advanced_dont_check_jvm_validity">Não verificar compatibilidade do Java</string>
+    <string name="settings_advanced_game_dir_default">Padrão (.minecraft/)</string>
+    <string name="settings_advanced_game_dir_independent">Isolado (.minecraft/versions/&#60;instance name>/, exceto por assets e bibliotecas)</string>
+    <string name="settings_advanced_java_permanent_generation_space">Espaço PermGen</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">em MB</string>
+    <string name="settings_advanced_jvm_args">Argumentos Java VM</string>
+    <string name="settings_advanced_minecraft_arguments">Argumentos de inicialização</string>
+    <string name="settings_advanced_minecraft_arguments_prompt">Padrão</string>
+    <string name="settings_advanced_server_ip">Endereço de servidor</string>
+    <string name="settings_advanced_server_ip_prompt">Entra automaticamente após iniciar o jogo.</string>
+
+    <string name="settings_fcl_controller">Controle</string>
+    <string name="settings_fcl_controller_injector">Gestos do Bedrock</string>
+    <string name="settings_fcl_renderer">Renderizador</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
+    <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, suporta 1.17+)</string>
+    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, suporta 1.17-)</string>
+    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
+    <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
+
+    <string name="settings_game">Config. do Jogo</string>
+    <string name="settings_game_dimension">Resolução</string>
+    <string name="settings_game_java_version">Versão do Java</string>
+    <string name="settings_game_java_version_auto">Automático</string>
+    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
+    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
+    <string name="settings_game_working_directory">Diretório isolado</string>
+
+    <string name="settings_icon">Ícone</string>
+
+    <string name="settings_launcher">Config. do Launcher</string>
+    <string name="settings_launcher_debug">Depuração</string>
+    <string name="settings_launcher_upgrade">Atualizar launcher</string>
+    <string name="settings_launcher_upgrade_check">Verificar</string>
+    <string name="settings_launcher_cache">Diretório de cache</string>
+    <string name="settings_launcher_clear_cache">Limpar cache</string>
+    <string name="settings_launcher_download">Baixar</string>
+    <string name="settings_launcher_download_threads">Threads</string>
+    <string name="settings_launcher_download_threads_auto">Automático</string>
+    <string name="settings_launcher_download_source">Fonte de download</string>
+    <string name="settings_launcher_download_source_auto">Seleção automática</string>
+    <string name="settings_launcher_language">Linguagem</string>
+    <string name="settings_launcher_language_system">Usar linguagem do sistema</string>
+    <string name="settings_launcher_language_english" translatable="false">Inglês</string>
+    <string name="settings_launcher_language_simplified_chinese" translatable="false">Chinês Simplificado</string>
+    <string name="settings_launcher_launcher_log_export">Exportar logs do launcher</string>
+    <string name="settings_launcher_launcher_log_export_failed">Não foi possível exportar as logs</string>
+    <string name="settings_launcher_launcher_log_export_success">Logs foram exportadas para %s</string>
+    <string name="settings_launcher_theme">Tema</string>
+    <string name="settings_launcher_background_lt">Plano de fundo, modo claro</string>
+    <string name="settings_launcher_background_dk">Plano de fundo, modo escuro</string>
+    <string name="settings_launcher_ignore_notch">Ignorar entalhe</string>
+    <string name="settings_launcher_animation_speed">Velocidade de animação</string>
+
+    <string name="settings_memory">Memória</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB mínimo / %2$.1f GB alocado</string>
+    <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB mínimo / %2$.1f GB alocado (%3$.1f GB disponível)</string>
+    <string name="settings_memory_allocate_manual">%1$.1f GB alocado</string>
+    <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB alocado (%3$.1f GB disponível)</string>
+    <string name="settings_memory_auto_allocate">Alocar automaticamente</string>
+    <string name="settings_memory_lower_bound">Memória mínima</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB usados / %2$.1f GB total</string>
+    <string name="settings_physical_memory">Tamanho da memória física</string>
+    <string name="settings_tabs_installers">Modloaders</string>
+    <string name="settings_type_global_manage">Config. Globais</string>
+    <string name="settings_type_special_enable">Ativar configurações por instância</string>
+
+    <string name="style_name">Nome</string>
+    <string name="style_warning_delete">Tem certeza de que deseja excluir este estilo?</string>
+    <string name="style_warning_exist">Este estilo já existe!</string>
+    <string name="style_warning_name">Preencha o nome do estilo!</string>
+    <string name="style_button">Estilo de Botão</string>
+    <string name="style_button_normal">Normal</string>
+    <string name="style_button_pressed">Ativado</string>
+    <string name="style_button_text_size">Tamanho do texto</string>
+    <string name="style_button_text_color">Cor do texto</string>
+    <string name="style_button_stroke_width">Largura da borda</string>
+    <string name="style_button_stroke_color">Cor da borda</string>
+    <string name="style_button_corner_radius">Raios dos cantos</string>
+    <string name="style_button_fill_color">Cor de preenchimento</string>
+    <string name="style_button_interval">Espaçamento</string>
+    <string name="style_direction">Estilo de direcional</string>
+    <string name="style_direction_button">Botão</string>
+    <string name="style_direction_rocker">Joystick</string>
+    <string name="style_rocker">Estilo do joystick</string>
+    <string name="style_rocker_size">Tamanho</string>
+    <string name="style_rocker_bg_stroke_width">Borda</string>
+    <string name="style_rocker_bg_stroke_color">Cor da borda</string>
+    <string name="style_rocker_bg_corner_radius">Raio de canto</string>
+    <string name="style_rocker_bg_fill_color">Cor de preenchimento</string>
+    <string name="style_rocker_stroke_width">Borda do centro</string>
+    <string name="style_rocker_stroke_color">Cor da borda do centro</string>
+    <string name="style_rocker_corner_radius">Raio de canto do centro</string>
+    <string name="style_rocker_fill_color">Cor do centro</string>
+
+    <string name="update">Atualizar</string>
+    <string name="update_netdisk">Netdisk</string>
+    <string name="update_checking">Procurando por atualizações</string>
+    <string name="update_check_failed">Falha ao procurar atualização</string>
+    <string name="update_date">Data: %s</string>
+    <string name="update_description">Descrição:\n%s</string>
+    <string name="update_exist">Nova versão disponível</string>
+    <string name="update_failed">Falha ao baixar a versão mais recente, tente novamente ou baixe da fonte oficial.</string>
+    <string name="update_ignore">Ignorar</string>
+    <string name="update_launcher">Atualizando launcher</string>
+    <string name="update_not_exist">Nenhuma atualização disponível</string>
+    <string name="update_type">Tipo: %s</string>
+    <string name="update_version">Versão: %s</string>
+    <string name="update_version_release">Release</string>
+    <string name="update_version_beta">Beta</string>
+
+    <string name="version_game">Versões</string>
+    <string name="version_game_old">Antigas</string>
+    <string name="version_game_release">Versão final</string>
+    <string name="version_game_releases">Versões finais</string>
+    <string name="version_game_snapshot">Snapshot</string>
+    <string name="version_game_snapshots">Snapshots</string>
+    <string name="version_empty_launch">Nenhuma instância, crie uma antes de iniciar.</string>
+    <string name="version_launch">Iniciar jogo</string>
+    <string name="version_no_version">Nenhuma versão</string>
+    <string name="version_manage">Clique para gerenciar</string>
+    <string name="version_manage_clean">Excluir arquivos de log</string>
+    <string name="version_manage_duplicate">Duplicar instância</string>
+    <string name="version_manage_duplicate_duplicate_save">Duplicar mundo</string>
+    <string name="version_manage_duplicate_prompt">Nome da instância</string>
+    <string name="version_manage_duplicate_confirm">A instância duplicada terá uma cópia de todos os arquivos desta instância, com diretório e configurações de jogo isolados.</string>
+    <string name="version_manage_redownload_assets_index">Atualizar assets do jogo</string>
+    <string name="version_manage_remove_confirm">Tem certeza de que deseja remover permanentemente a versão %s? Esta ação não pode ser 
+desfeita!</string>
+    <string name="version_manage_remove_confirm_independent">Como esta instância está armazenada em um diretório isolado, excluí-la também excluirá seus mundos e outros dados. Você ainda deseja excluir a instância %s?</string>
+    <string name="version_manage_remove_libraries">Excluir bibliotecas</string>
+    <string name="version_manage_rename">Renomear instância</string>
+    <string name="version_manage_rename_message">Renomear versão</string>
+    <string name="version_manage_rename_new">Novo nome</string>
+    <string name="version_manage_rename_fail">Falhou</string>
+    <string name="version_new_profile">Novo diretório</string>
+    <string name="version_update">Atualizar launcher</string>
+
+    <string name="view_info_visibility">Visibilidade</string>
+    <string name="view_info_visibility_always">Sempre visível</string>
+    <string name="view_info_visibility_game">Visível no jogo</string>
+    <string name="view_info_visibility_menu">Visível nos menus</string>
+    <string name="view_info_x">Posição X</string>
+    <string name="view_info_y">Posição Y</string>
+    <string name="view_info_size_type">Tipo de medida</string>
+    <string name="view_info_size_type_percentage">Porcentagem</string>
+    <string name="view_info_size_type_absolute">Absoluto</string>
+    <string name="view_info_width">Largura</string>
+    <string name="view_info_height">Altura</string>
+    <string name="view_info_width_reference">Referência de largura</string>
+    <string name="view_info_height_reference">Referência de altura</string>
+    <string name="view_info_size">Tamanho</string>
+    <string name="view_info_reference">Referência de tamanho</string>
+    <string name="view_info_reference_width">Largura da tela</string>
+    <string name="view_info_reference_height">Altura da tela</string>
+
+    <string name="world">Mundos</string>
+    <string name="world_add">Adc mundo (.zip)</string>
+    <string name="world_datapack">Gerenciar Datapacks</string>
+    <string name="world_datapack_1_13">Somente Minecraft 1.13 ou superior suporta datapacks.</string>
+    <string name="world_description">%s. Última vez jogado %s. Versão do jogo: %s.</string>
+    <string name="world_download">Baixar um mundo</string>
+    <string name="world_export">Exportar mundo</string>
+    <string name="world_export_title">Selecione um diretório para este mundo exportado</string>
+    <string name="world_export_location">Exportar para</string>
+    <string name="world_export_wizard">Exportar mundo %s</string>
+    <string name="world_extension">Arquivo de mundo</string>
+    <string name="world_game_version">Versão do jogo</string>
+    <string name="world_import_already_exists">Este mundo já existe.</string>
+    <string name="world_import_choose">Selecione o arquivo de mundo que deseja importar</string>
+    <string name="world_import_failed">Não foi possível importar este mundo: %s</string>
+    <string name="world_import_invalid">Não foi possível analisar o mundo.</string>
+    <string name="world_info_title">Mundo %s - Informações</string>
+    <string name="world_info_basic">Informações básicas</string>
+    <string name="world_info_allow_cheats">Permitir trapaças</string>
+    <string name="world_info_dimension_the_nether">The Nether</string>
+    <string name="world_info_dimension_the_end">The End</string>
+    <string name="world_info_difficulty">Dificuldade</string>
+    <string name="world_info_difficulty_peaceful">Pacífico</string>
+    <string name="world_info_difficulty_easy">Fácil</string>
+    <string name="world_info_difficulty_normal">Normal</string>
+    <string name="world_info_difficulty_hard">Difícil</string>
+    <string name="world_info_game_version">Versão do jogo</string>
+    <string name="world_info_last_played">Última vez jogado</string>
+    <string name="world_info_generate_features">Gerar estruturas</string>
+    <string name="world_info_player">Informação de jogador</string>
+    <string name="world_info_player_food_level">Nível de fome</string>
+    <string name="world_info_player_game_type">Modo de jogo</string>
+    <string name="world_info_player_game_type_adventure">Aventura</string>
+    <string name="world_info_player_game_type_creative">Criativo</string>
+    <string name="world_info_player_game_type_spectator">Espectador</string>
+    <string name="world_info_player_game_type_survival">Sobrevivência</string>
+    <string name="world_info_player_health">Vida</string>
+    <string name="world_info_player_last_death_location">Último local de morte</string>
+    <string name="world_info_player_location">Localização</string>
+    <string name="world_info_player_spawn">Localização do spawn</string>
+    <string name="world_info_player_xp_level">Nível de experiência</string>
+    <string name="world_info_random_seed">Semente</string>
+    <string name="world_info_time">Tempo de jogo</string>
+    <string name="world_info_time_format">%s dias</string>
+    <string name="world_manage">Mundos / Datapacks</string>
+    <string name="world_name">Nome do mundo</string>
+    <string name="world_name_enter">Insira o nome do mundo</string>
+    <string name="world_reveal">Mostrar no explorador</string>
+    <string name="world_show_all">Mostrar tudo</string>
+    <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+</resources>

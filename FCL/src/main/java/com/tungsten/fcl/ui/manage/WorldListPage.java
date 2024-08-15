@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ListView;
 
@@ -9,6 +10,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
@@ -153,6 +155,10 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
         builder.create().browse(getActivity(), RequestCodes.SELECT_WORLD_CODE, ((requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_WORLD_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                }
                 File file = new File(path);
                 installWorld(file);
             }

@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -120,6 +121,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         languageList.add(getContext().getString(R.string.settings_launcher_language_system));
         languageList.add(getContext().getString(R.string.settings_launcher_language_english));
         languageList.add(getContext().getString(R.string.settings_launcher_language_simplified_chinese));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_russian));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_brazilian_portuguese));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_persian));
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, languageList);
         languageAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         language.setAdapter(languageAdapter);
@@ -261,7 +265,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor, true);
                 }
 
                 @Override
@@ -281,6 +285,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
                     String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
                     ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, path, null);
                 }
             }));
@@ -295,12 +303,16 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
                     String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
                     ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).background, null, path);
                 }
             }));
         }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
+            ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
         }
         if (v == resetLtBackground) {
             new Thread(() -> {

@@ -2,9 +2,12 @@ package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
+import static com.tungsten.fcllibrary.browser.FileBrowser.SELECTED_FILES;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -277,22 +280,42 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         builder.setSelectionMode(SelectionMode.MULTIPLE_SELECTION);
         builder.create().browse(getActivity(), RequestCodes.SELECT_MODS_CODE, (requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_MODS_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                List<File> res = FileBrowser.getSelectedFiles(data).stream().filter(Objects::nonNull).map(File::new).collect(Collectors.toList());
-
+                ArrayList<Uri> selectedFiles = data.getParcelableArrayListExtra(SELECTED_FILES);
+                List<Object> res = selectedFiles.stream().filter(Objects::nonNull).map(uri -> {
+                    if (Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT) || Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE)) {
+                        return uri;
+                    } else {
+                        return new File(uri.toString());
+                    }
+                }).collect(Collectors.toList());
                 // It's guaranteed that succeeded and failed are thread safe here.
                 List<String> succeeded = new ArrayList<>(res.size());
                 List<String> failed = new ArrayList<>();
 
                 Task.runAsync(() -> {
-                    for (File file : res) {
-                        try {
-                            modManager.addMod(file.toPath());
-                            succeeded.add(file.getName());
-                        } catch (Exception e) {
-                            LOG.log(Level.WARNING, "Unable to add mod " + file, e);
-                            failed.add(file.getName());
+                    for (Object obj : res) {
+                        if (obj instanceof File) {
+                            File file = (File) obj;
+                            try {
+                                modManager.addMod(file.toPath());
+                                succeeded.add(file.getName());
+                            } catch (Exception e) {
+                                LOG.log(Level.WARNING, "Unable to add mod " + file, e);
+                                failed.add(file.getName());
 
-                            // Actually addMod will not throw exceptions because FileChooser has already filtered files.
+                                // Actually addMod will not throw exceptions because FileChooser has already filtered files.
+                            }
+                        } else {
+                            try {
+                                Uri uri = (Uri) obj;
+                                modManager.addMod(getActivity(), uri);
+                                succeeded.add(new File(uri.getPath()).getName());
+                            } catch (Exception e) {
+                                LOG.log(Level.WARNING, "Unable to add mod " + obj.toString(), e);
+                                failed.add(obj.toString());
+
+                                // Actually addMod will not throw exceptions because FileChooser has already filtered files.
+                            }
                         }
                     }
                 }).withRunAsync(Schedulers.androidUIThread(), () -> {

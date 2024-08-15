@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
+    <string name="splash_permission_grant">授予</string>
+    <string name="splash_permission_title">需要存储权限</string>
+    <string name="splash_permission_close">关闭应用</string>
+    <string name="splash_permission_settings">去设置</string>
+    <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
 
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
@@ -318,6 +323,7 @@
     <string name="folder_config">浏览配置文件夹</string>
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
+    <string name="folder_fcl_log">浏览FCL日志文件夹</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
@@ -711,6 +717,7 @@
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
+    <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
@@ -813,7 +820,7 @@
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
-    <string name="version_manage_clean">清理游戏目录</string>
+    <string name="version_manage_clean">清理游戏日志</string>
     <string name="version_manage_duplicate">复制游戏实例</string>
     <string name="version_manage_duplicate_duplicate_save">复制存档</string>
     <string name="version_manage_duplicate_prompt">实例名称</string>
@@ -899,4 +906,6 @@
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
     <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
     <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
+    <string name="install_apk">安装apk文件</string>
+    <string name="edit">编辑</string>
 </resources>

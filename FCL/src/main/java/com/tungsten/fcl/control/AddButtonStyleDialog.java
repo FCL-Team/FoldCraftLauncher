@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -17,7 +18,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
+import com.tungsten.fcl.ui.manage.EditDialog;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -86,6 +89,10 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
             FCLTextView textSizeText = normalStyleLayout.findViewById(R.id.text_size_text);
             FCLTextView strokeWidthText = normalStyleLayout.findViewById(R.id.stroke_width_text);
             FCLTextView cornerRadiusText = normalStyleLayout.findViewById(R.id.corner_radius_text);
+
+            textSizeText.setOnClickListener(v -> openTextEditDialog(context, textSize.progressProperty(), false));
+            strokeWidthText.setOnClickListener(v -> openTextEditDialog(context, strokeWidth.progressProperty(), true));
+            cornerRadiusText.setOnClickListener(v -> openTextEditDialog(context, cornerRadius.progressProperty(), true));
 
             textSize.setProgress(style.getTextSize());
             strokeWidth.setProgress(style.getStrokeWidth());
@@ -196,6 +203,10 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
             FCLTextView textSizeText = pressedStyleLayout.findViewById(R.id.text_size_text);
             FCLTextView strokeWidthText = pressedStyleLayout.findViewById(R.id.stroke_width_text);
             FCLTextView cornerRadiusText = pressedStyleLayout.findViewById(R.id.corner_radius_text);
+
+            textSizeText.setOnClickListener(v -> openTextEditDialog(context, textSize.progressProperty(), false));
+            strokeWidthText.setOnClickListener(v -> openTextEditDialog(context, strokeWidth.progressProperty(), true));
+            cornerRadiusText.setOnClickListener(v -> openTextEditDialog(context, cornerRadius.progressProperty(), true));
 
             textSize.setProgress(style.getTextSizePressed());
             strokeWidth.setProgress(style.getStrokeWidthPressed());
@@ -372,5 +383,21 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    private void openTextEditDialog(Context context, IntegerProperty property, boolean isPercentage) {
+        EditDialog dialog = new EditDialog(context, s -> {
+            if (s.matches("\\d+(\\.\\d+)?$")) {
+                float progress = Float.parseFloat(s);
+                if (isPercentage) {
+                    progress = progress > 100 ? 100 : progress;
+                    property.set((int) (progress * 10));
+                } else {
+                    property.set((int) progress);
+                }
+            }
+        });
+        dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+        dialog.show();
     }
 }

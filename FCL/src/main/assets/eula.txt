@@ -1,0 +1,20 @@
+Fold Craft Launcher end-user license agreements
+
+Before you using the software, please read the eula first.
+The software is developed by FCL-Team.
+
+1. User's obligations
+1) Get a qualified device, FCL requires Android 8.0 or higher.
+2) Pay for the cost of Internet access and other services.
+3) Take responsibility for all the consequences of your own use of the software.
+
+2. Disclaimer
+1) The risk caused by the user's use of this software shall be borne by the user.
+2) The software is not guaranteed to meet all user needs.
+3) The software is not responsible for the correctness, security, legality, etc. of these third-party services.
+4) The developer is not responsible for any problems caused by users' use of third-party services, and will not and cannot assume any legal responsibility.
+
+3. Copyright
+1) The copyright, patent rights and other intellectual property rights of the software are owned by the developer or the designated copyright owner.
+2) The third-party components used by the software are owned by the relevant copyright owners.
+3) The software is fully open source, please follow the open source license of the software.

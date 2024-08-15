@@ -296,6 +296,20 @@ public final class VersionSetting implements Cloneable {
         beGestureProperty.set(beGesture);
     }
 
+    private final BooleanProperty VKDriverSystemProperty = new SimpleBooleanProperty(this, "vulkanDriverSystem", true);
+
+    public BooleanProperty VKDriverSystemProperty() {
+        return VKDriverSystemProperty;
+    }
+
+    public boolean isVKDriverSystem() {
+        return VKDriverSystemProperty.get();
+    }
+
+    public void setVKDriverSystem(boolean vulkanDriverSystem) {
+        VKDriverSystemProperty.set(vulkanDriverSystem);
+    }
+
     private final StringProperty controllerProperty = new SimpleStringProperty(this, "controller", "Default");
 
     public StringProperty controllerProperty() {
@@ -370,6 +384,7 @@ public final class VersionSetting implements Cloneable {
         scaleFactorProperty.addListener(listener);
         isolateGameDirProperty.addListener(listener);
         beGestureProperty.addListener(listener);
+        VKDriverSystemProperty.addListener(listener);
         controllerProperty.addListener(listener);
         rendererProperty.addListener(listener);
     }
@@ -391,6 +406,7 @@ public final class VersionSetting implements Cloneable {
         versionSetting.setScaleFactor(getScaleFactor());
         versionSetting.setIsolateGameDir(isIsolateGameDir());
         versionSetting.setBeGesture(isBeGesture());
+        versionSetting.setVKDriverSystem(isVKDriverSystem());
         versionSetting.setController(getController());
         versionSetting.setRenderer(getRenderer());
         return versionSetting;
@@ -415,6 +431,7 @@ public final class VersionSetting implements Cloneable {
             obj.addProperty("notCheckGame", src.isNotCheckGame());
             obj.addProperty("notCheckJVM", src.isNotCheckJVM());
             obj.addProperty("beGesture", src.isBeGesture());
+            obj.addProperty("vulkanDriverSystem", src.isVKDriverSystem());
             obj.addProperty("controller", src.getController());
             obj.addProperty("renderer", src.getRenderer().ordinal());
             obj.addProperty("isolateGameDir", src.isIsolateGameDir());
@@ -446,6 +463,7 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckGame(Optional.ofNullable(obj.get("notCheckGame")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
+            vs.setVKDriverSystem(Optional.ofNullable(obj.get("vulkanDriverSystem")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("Default"));
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));

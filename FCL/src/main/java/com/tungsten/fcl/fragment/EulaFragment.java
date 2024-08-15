@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
-import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -22,8 +22,6 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import java.io.IOException;
 
 public class EulaFragment extends FCLFragment implements View.OnClickListener {
-
-    public static final String EULA_URL = "https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/eula.txt?inline=false";
 
     private FCLProgressBar progressBar;
     private FCLTextView eula;
@@ -52,7 +50,7 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
         new Thread(() -> {
             String str;
             try {
-                str = NetworkUtils.doGet(NetworkUtils.toURL(EULA_URL));
+                str = IOUtils.readFullyAsString(requireActivity().getAssets().open( "eula.txt"));
                 load = true;
             } catch (IOException e) {
                 e.printStackTrace();

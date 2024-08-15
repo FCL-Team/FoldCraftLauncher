@@ -17,6 +17,9 @@
  */
 package com.tungsten.fclcore.mod;
 
+import android.app.Activity;
+import android.net.Uri;
+
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.mod.modinfo.FabricModMetadata;
@@ -31,9 +34,24 @@ import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public final class ModManager {
     @FunctionalInterface
@@ -167,6 +185,28 @@ public final class ModManager {
         addModInfo(newFile);
     }
 
+    public void addMod(Activity activity, Uri uri) throws IOException {
+        if (!isFileNameMod(uri))
+            throw new IllegalArgumentException("File " + uri.toString() + " is not a valid mod file.");
+
+        if (!loaded)
+            refreshMods();
+
+        Path modsDirectory = getModsDirectory();
+        Files.createDirectories(modsDirectory);
+        String name = new File(uri.getPath()).getName();
+        Path newFile = modsDirectory.resolve(name);
+        InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+        if(inputStream == null) {
+            throw new IOException("Failed to open content stream");
+        }
+        try (FileOutputStream outputStream = new FileOutputStream(newFile.toFile())){
+            IOUtils.copy(inputStream,outputStream);
+        }
+        inputStream.close();
+        addModInfo(newFile);
+    }
+
     public void removeMods(LocalModFile... localModFiles) throws IOException {
         for (LocalModFile localModFile : localModFiles) {
             Files.deleteIfExists(localModFile.getFile());
@@ -277,6 +317,10 @@ public final class ModManager {
     public static boolean isFileNameMod(Path file) {
         String name = getModName(file);
         return name.endsWith(".zip") || name.endsWith(".jar") || name.endsWith(".litemod");
+    }
+
+    public static boolean isFileNameMod(Uri uri) {
+        return isFileNameMod(new File(uri.toString()).toPath());
     }
 
     public static boolean isFileMod(Path modFile) {

@@ -4,6 +4,11 @@
     <string name="oauth_api_key" translatable="false">null</string>
 
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
+    <string name="splash_permission_grant">Grant</string>
+    <string name="splash_permission_title">Permission to store needed</string>
+    <string name="splash_permission_close">Close the app</string>
+    <string name="splash_permission_settings">Settings</string>
+    <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
 
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
@@ -340,6 +345,7 @@
     <string name="folder_config">Browse configs</string>
     <string name="folder_game">Browse game directory</string>
     <string name="folder_log">Browse log directory</string>
+    <string name="folder_fcl_log">Browse FCL log directory</string>
     <string name="folder_mod">Browse mods</string>
     <string name="folder_resourcepacks">Browse resource packs</string>
     <string name="folder_saves">Browse saves</string>
@@ -746,6 +752,7 @@
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
+    <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
@@ -779,6 +786,9 @@
     <string name="settings_launcher_language_system">Use System Language</string>
     <string name="settings_launcher_language_english" translatable="false">English</string>
     <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
+    <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
+    <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
@@ -939,4 +949,8 @@
     <string name="world_reveal">Reveal in Explorer</string>
     <string name="world_show_all">Show All</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+
+    <string name="install_apk">Install .apk</string>
+    <string name="edit">Edit</string>
+
 </resources>

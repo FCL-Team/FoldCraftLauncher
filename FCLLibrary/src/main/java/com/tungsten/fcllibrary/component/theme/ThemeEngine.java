@@ -1,5 +1,7 @@
 package com.tungsten.fcllibrary.component.theme;
 
+import android.app.WallpaperColors;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -44,6 +46,9 @@ public class ThemeEngine {
         if (!initialized) {
             handler = new Handler();
             theme = Theme.getTheme(context);
+            if (!theme.isModified()) {
+                theme.setColor(getWallpaperColor(context));
+            }
             runnables = new HashMap<>();
             initialized = true;
         }
@@ -111,8 +116,17 @@ public class ThemeEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
-        Bitmap dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
+        Bitmap ltBitmap;
+        Bitmap dkBitmap;
+        try {
+            ltBitmap = !new File(FCLPath.LT_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_light) : BitmapFactory.decodeFile(FCLPath.LT_BACKGROUND_PATH);
+            dkBitmap = !new File(FCLPath.DK_BACKGROUND_PATH).exists() ? ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark) : BitmapFactory.decodeFile(FCLPath.DK_BACKGROUND_PATH);
+        } catch (RuntimeException e) {
+            new File(FCLPath.LT_BACKGROUND_PATH).delete();
+            new File(FCLPath.DK_BACKGROUND_PATH).delete();
+            ltBitmap = ConvertUtils.getBitmapFromRes(context, R.drawable.background_light);
+            dkBitmap = ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark);
+        }
         BitmapDrawable lt = new BitmapDrawable(ltBitmap);
         BitmapDrawable dk = new BitmapDrawable(dkBitmap);
         theme.setBackgroundLt(lt);
@@ -121,9 +135,9 @@ public class ThemeEngine {
         view.setBackground(isNightMode ? dk : lt);
     }
 
-    public void applyAndSave(Context context, int color) {
+    public void applyAndSave(Context context, int color, boolean modified) {
         applyColor(color);
-        Theme.saveTheme(context, theme);
+        Theme.saveTheme(context, theme, modified);
     }
 
     public void applyAndSave(Context context, Window window, boolean fullscreen) {
@@ -140,6 +154,17 @@ public class ThemeEngine {
         applyColor(theme.getColor());
         applyFullscreen(window, theme.isFullscreen());
         Theme.saveTheme(context, theme);
+    }
+
+    public static int getWallpaperColor(Context context) {
+        int color = Color.parseColor("#7797CF");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            WallpaperColors colors = WallpaperManager.getInstance(context).getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
+            if (colors != null) {
+                color = colors.getPrimaryColor().toArgb();
+            }
+        }
+        return color;
     }
 
 }

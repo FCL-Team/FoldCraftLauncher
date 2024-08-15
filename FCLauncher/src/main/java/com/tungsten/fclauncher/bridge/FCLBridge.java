@@ -83,7 +83,6 @@ public class FCLBridge implements Serializable {
     private SurfaceTexture surfaceTexture;
 
     static {
-        System.loadLibrary("xhook");
         System.loadLibrary("fcl");
         System.loadLibrary("fcl_awt");
     }
@@ -101,12 +100,10 @@ public class FCLBridge implements Serializable {
     public native void setenv(String key, String value);
     public native int dlopen(String path);
     public native void setLdLibraryPath(String path);
-    public native int setupExitTrap(FCLBridge bridge);
+    public native void setupExitTrap(FCLBridge bridge);
     public native void setEventPipe();
     public native void pushEvent(long time, int type, int keycode, int keyChar);
     public native void refreshHitResultType();
-    public native void setupJLI();
-    public native int jliLaunch(String[] args);
 
     public native void setFCLBridge(FCLBridge fclBridge);
 

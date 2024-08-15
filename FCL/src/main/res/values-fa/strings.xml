@@ -1,0 +1,947 @@
+<resources>
+    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+
+    <string name="oauth_api_key" translatable="false">null</string>
+
+    <string name="splash_permission_msg">بدون مجوز ذخیره سازی، لطفاً به Fold Craft Launcher اجازه دهید.</string>
+    <string name="splash_permission_grant">اعطا کردن</string>
+    <string name="splash_permission_title">مجوز ذخیره مورد نیاز است</string>
+    <string name="splash_permission_close">برنامه را ببندید</string>
+    <string name="splash_permission_settings">تنظیمات</string>
+    <string name="splash_permission_settings_msg">شما "هرگز اجازه داده نشود" را انتخاب کرده اید لطفاً به صورت دستی مجوزهای ذخیره سازی را در تنظیمات اعطا کنید.</string>
+
+    <string name="splash_title">به Fold Craft Launcher خوش آمدید</string>
+    <string name="splash_eula_error">نمی توان EULA دریافت کرد، لطفاً شبکه را بررسی کنید.</string>
+    <string name="splash_eula_next">پذیرش و ادامه</string>
+    <string name="splash_runtime_title">زمان اجرا برنامه را نصب یا به روز کنید</string>
+    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
+    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
+    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
+    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
+    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
+    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
+    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
+    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
+    <string name="splash_runtime_install">نصب/به روز رسانی</string>
+
+    <string name="account">حساب</string>
+    <string name="version">نسخه</string>
+    <string name="manage">مدیریت</string>
+    <string name="download">دانلود</string>
+    <string name="controller">کنترل کننده</string>
+    <string name="multiplayer">چند نفره</string>
+    <string name="setting">تنظیمات</string>
+
+    <string name="about">در باره</string>
+    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
+    <string name="about_developer" translatable="false">FCL-Team</string>
+    <string name="about_sponsor">حامی مالی</string>
+    <string name="about_source">متن باز</string>
+    <string name="about_desc">Fold Craft Launcher یک راه‌انداز Minecraft Android است که به کاربر امکان می‌دهد Minecraft: Java Edition را در دستگاه Android راه‌اندازی کند.\n\nFold Craft Launcher توسط FCL-Team توسعه داده شده است.\n\nبیشترین ویژگی‌های Fold Craft Launcher بر اساس HMCLCore اصلاح شده‌اند.\n\nبرنامه برخی از کدهای PojavLauncher و Boat را قرض می گیرد و نقل قول می کند، بنابراین اگر می خواهید این برنامه را توزیع کنید، لطفاً مجوز GPL-v3 را دنبال کنید.</string>
+
+    <string name="account_add_server">افزودن سرور احراز هویت</string>
+    <string name="account_add_server_url">آدرس سرور</string>
+    <string name="account_add_server_name">نام ارائه‌کننده</string>
+    <string name="account_cape">کِیپ</string>
+    <string name="account_create">ایجاد حساب کاربری</string>
+    <string name="account_create_offline">ایجاد حساب آفلاین</string>
+    <string name="account_create_microsoft">یک حساب مایکروسافت ایجاد کنید</string>
+    <string name="account_create_external">ایجاد حساب خارجی</string>
+    <string name="account_create_username">نام کاربری</string>
+    <string name="account_create_password">کلمه عبور</string>
+    <string name="account_create_server">سرور احراز هویت</string>
+    <string name="account_create_server_not_select">بدون سرور احراز هویت</string>
+    <string name="account_create_home">صفحه اصلی</string>
+    <string name="account_create_register">ثبت نام</string>
+    <string name="account_create_alert">لطفا ابتدا اطلاعات حساب کافی را ارائه دهید!</string>
+    <string name="account_injector_server">سرور احراز هویت</string>
+    <string name="account_login">وارد شدن</string>
+    <string name="account_methods_offline">حساب آفلاین</string>
+    <string name="account_methods_offline_name_invalid">در شرایط عادی، نام کاربری بازی فقط می‌تواند شامل کاراکترها، اعداد و زیرخط انگلیسی باشد و طول آن نمی‌تواند از 16 کاراکتر تجاوز کند.\nبرخی از نام‌های کاربری قانونی: Tungsten, Tungsten_123;\nبرخی از نام‌های کاربری غیرقانونی: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world .\nاگر فکر می کنید که یک مد یا افزونه مربوطه در سمت سرور برای حذف این محدودیت وجود دارد، می توانید این هشدار را نادیده بگیرید.</string>
+    <string name="account_methods_yggdrasil">حساب Mojang</string>
+    <string name="account_methods_authlib_injector">حساب خارجی</string>
+    <string name="account_methods_microsoft">حساب کاربری مایکروسافت</string>
+    <string name="account_failed">بازخوانی حساب انجام نشد</string>
+    <string name="account_failed_expired">اعتبارنامه منقضی شده است، شما باید حساب خود را حذف کرده و دوباره وارد شوید.</string>
+    <string name="account_failed_no_character">هیچ شخصیتی به این حساب پیوند داده نشده است.</string>
+    <string name="account_failed_connect_authentication_server">تماس با سرورهای احراز هویت ممکن نیست، ممکن است اتصال اینترنت شما قطع باشد.</string>
+    <string name="account_failed_connect_injector_server">اتصال به سرور احراز هویت امکان پذیر نیست. لطفاً شبکه خود را بررسی کنید و مطمئن شوید که URL صحیح را وارد کرده اید.</string>
+    <string name="account_failed_server_disconnected">دسترسی به سرور احراز هویت امکان پذیر نیست. می توانید به صورت آفلاین وارد شوید یا سعی کنید دوباره وارد شوید.</string>
+    <string name="account_failed_server_response_malformed">پاسخ سرور نامعتبر است، سرور احراز هویت ممکن است کار نکند.</string>
+    <string name="account_failed_invalid_credentials">رمز عبور نادرست یا نرخ محدود است، لطفاً بعداً دوباره امتحان کنید.</string>
+    <string name="account_failed_invalid_token">لطفا سعی کنید دوباره وارد سیستم شوید.</string>
+    <string name="account_failed_invalid_password">رمز عبور نامعتبر</string>
+    <string name="account_failed_migration">حساب شما باید به یک حساب مایکروسافت منتقل شود. اگر قبلاً این کار را انجام داده اید، به جای آن باید دوباره به حساب مایکروسافت منتقل شده خود وارد شوید.</string>
+    <string name="account_failed_injector_download_failure">دانلود authlib-injector ممکن نیست. لطفاً شبکه خود را بررسی کنید یا سعی کنید به میرور بارگیری دیگری بروید.</string>
+    <string name="account_failed_character_deleted">شخصیت قبلاً حذف شده است.</string>
+    <string name="account_failed_ssl">هنگام اتصال به سرور یک خطای SSL رخ داد.</string>
+    <string name="account_failed_wrong_account">شما به حساب اشتباهی وارد شده اید.</string>
+    <string name="account_skin_invalid_skin">فایل اسکین نامعتبر است</string>
+    <string name="account_methods_microsoft_error_add_family">از آنجایی که هنوز 18 ساله نشده اید، یک فرد بزرگسال باید شما را به یک خانواده اضافه کند تا بتوانید Minecraft بازی کنید.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live در کشور/منطقه فعلی شما در دسترس نیست.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">حساب مایکروسافت شما هنوز یک حساب Xbox پیوندی ندارد. لطفاً قبل از ادامه یکی ایجاد کنید.</string>
+    <string name="account_methods_microsoft_error_unknown">ورود ناموفق بود</string>
+    <string name="account_methods_microsoft_error_no_character">حساب شما متعلق به Minecraft Java Edition نیست.\nممکن است نمایه بازی ایجاد نشده باشد.</string>
+    <string name="account_methods_microsoft_error_add_family_probably">لطفاً بررسی کنید که آیا سن ذکر شده در تنظیمات حساب شما حداقل 18 سال است یا خیر. اگر نه و فکر می کنید این یک خطا است، می توانید برای تغییر آن به وب سایت رسمی بروید.</string>
+    <string name="account_methods_microsoft_close_page">مجوز حساب مایکروسافت اکنون تکمیل شده است.</string>
+    <string name="account_methods_microsoft_hint">لطفا روی دکمه "ورود" کلیک کنید، یک قطعه کد بعداً به طور خودکار کپی می شود، کد را در مرورگر باز شده وارد کنید تا فرآیند ورود به سیستم به پایان برسد.</string>
+    <string name="account_login_refresh">دوباره وارد شوید</string>
+    <string name="account_login_refresh_microsoft_hint">از آنجا که مجوز حساب نامعتبر است، باید حساب مایکروسافت خود را دوباره اضافه کنید\nلطفاً روی دکمه "OK" کلیک کنید، بخشی از کد بعداً به طور خودکار کپی می شود، کد را در مرورگر باز شده وارد کنید تا فرآیند ورود به سیستم تمام شود.</string>
+    <string name="account_select_character">شخصیت را انتخاب کنید</string>
+    <string name="account_skin">اسکین</string>
+    <string name="account_skin_type_default">پیش فرض</string>
+    <string name="account_skin_type_steve" translatable="false">Steve</string>
+    <string name="account_skin_type_alex" translatable="false">Alex</string>
+    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
+    <string name="account_skin_type_csl_api_location_hint">URL CustomSkinAPI</string>
+    <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده اسکین خود ایجاد کنید. سپس اسکین شما اسکین آپلود شده شما در آن سایت خواهد بود.</string>
+    <string name="account_skin_type_local_file">فایل محلی اسکین</string>
+    <string name="account_skin_upload">فایل اسکین را انتخاب کنید</string>
+    <string name="account_state_no_account">بدون حساب</string>
+    <string name="account_state_add">برای افزودن کلیک کنید</string>
+
+    <string name="action_refresh">تازه کردن</string>
+    <string name="action_retry">دوباره امتحان کنید</string>
+    <string name="action_skip">رد کردن</string>
+
+    <string name="announcement">اطلاعیه ها</string>
+    <string name="announcement_significant">این اطلاعیه یک اطلاعیه مهم است. لطفاً قبل از پنهان کردن این اعلامیه، تأیید کنید که آن را خوانده اید. آیا می خواهید به پنهان کردن آن ادامه دهید؟</string>
+
+    <string name="archive_author">نویسنده(های)</string>
+    <string name="archive_date">تاریخ انتشار</string>
+    <string name="archive_game_version">نسخه بازی</string>
+    <string name="archive_name">نام فایل</string>
+    <string name="archive_version">نسخه</string>
+
+    <string name="assets_download">دانلود فایل ها</string>
+    <string name="assets_download_all">اعتبارسنجی یکپارچگی فایل</string>
+    <string name="assets_index_malformed">فایل‌های فهرست دانلود شده خراب شدند.</string>
+
+    <string name="button_back">بازگشت</string>
+    <string name="button_cancel">لغو</string>
+    <string name="button_copy">کپی</string>
+    <string name="button_download">دانلود</string>
+    <string name="button_export">خارج کردن</string>
+    <string name="button_hide">پنهانسازی</string>
+    <string name="button_install">نصب</string>
+    <string name="button_mouse_left">ماوس سمت چپ</string>
+    <string name="button_mouse_right">ماوس سمت راست</string>
+    <string name="button_next">بعد</string>
+    <string name="button_paste">الصاق</string>
+    <string name="button_prev">قبلی</string>
+    <string name="button_remove">حذف</string>
+    <string name="button_remove_confirm">آیا مطمئناً آن را به طور دائم حذف می کنید؟ این عمل نمی تواند خنثی شود!</string>
+    <string name="button_save_as">ذخیره به عنوان</string>
+    <string name="button_select_all">انتخاب همه</string>
+    <string name="button_set">تنظیم</string>
+    <string name="button_reset">بازتنظیم</string>
+    <string name="button_up" translatable="false">▲</string>
+    <string name="button_down" translatable="false">▼</string>
+    <string name="button_left" translatable="false">◀</string>
+    <string name="button_right" translatable="false">▶</string>
+
+    <string name="community">کامیونیتی</string>
+    <string name="community_hint">برای دریافت آخرین نسخه ، گزارش اشکالات و غیره به جامعه ما بپیوندید. لطفاً در صورت پیوستن ، قوانین جامعه را دنبال کنید.</string>
+    <string name="community_discord" translatable="false">Discord</string>
+    <string name="community_qq">گروه qq</string>
+
+    <string name="control_create">کنترلر ایجاد کنید</string>
+    <string name="control_delete">آیا مطمئناً این کنترلر را حذف می کنید؟</string>
+    <string name="control_edit">ویرایش کنترل کننده</string>
+    <string name="control_import">وارد کردن کنترلر</string>
+    <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
+    <string name="control_upgrade">کنترل کننده: %s یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
+    <string name="control_incompatible">Controller: %s یک کنترل کننده ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
+    <string name="control_info_author">نویسنده:</string>
+    <string name="control_info_description">شرح:</string>
+    <string name="control_info_edit">ویرایش اطلاعات کنترل کننده</string>
+    <string name="control_info_more">اطلاعات بیشتر</string>
+    <string name="control_info_name">نام:</string>
+    <string name="control_info_name_exist">کنترل کننده از قبل وجود دارد ، لطفاً نام را تغییر دهید!</string>
+    <string name="control_info_name_invalid">نام نامعتبر</string>
+    <string name="control_info_version">نسخه:</string>
+    <string name="control_list">لیست کنترل کننده</string>
+    <string name="control_select">کنترلر را انتخاب کنید</string>
+    <string name="control_share">کنترل کننده</string>
+
+    <string name="curse_category_0">همه</string>
+
+    <string name="curse_category_4474">علمی تخیلی</string>
+    <string name="curse_category_4481">کوچک /سبک</string>
+    <string name="curse_category_4483">مبارزه</string>
+    <string name="curse_category_4477">مینی گیم</string>
+    <string name="curse_category_4478">کوشش</string>
+    <string name="curse_category_4484">چند نفره</string>
+    <string name="curse_category_4476">کاوش کردن</string>
+    <string name="curse_category_4736">ارباب</string>
+    <string name="curse_category_4475">ماجراجویی و RPG</string>
+    <string name="curse_category_4487">FTB</string>
+    <string name="curse_category_4480">بر اساس نقشه</string>
+    <string name="curse_category_4479">هاردکور</string>
+    <string name="curse_category_4482">فوق العاده بزرگ</string>
+    <string name="curse_category_4472">فن</string>
+    <string name="curse_category_4473">شعبده بازي</string>
+    <string name="curse_category_5128">وانیلا</string>
+
+    <string name="curse_category_5299">تحصیلات</string>
+    <string name="curse_category_5232">بناچه کهکشان</string>
+    <string name="curse_category_5129">وانیلا</string>
+    <string name="curse_category_5189">ابزار و آمپ ؛ قول</string>
+    <string name="curse_category_6814">کارایی</string>
+    <string name="curse_category_6954">پویایی یکپارچه</string>
+    <string name="curse_category_6484">ايجاد كردن</string>
+    <string name="curse_category_6821">رفع اشکال</string>
+    <string name="curse_category_6145">ارباب</string>
+    <string name="curse_category_5190">قول</string>
+    <string name="curse_category_5191">ابزار و آمپ ؛ قول</string>
+    <string name="curse_category_5192">فانتزی</string>
+    <string name="curse_category_423">نقشه و اطلاعات</string>
+    <string name="curse_category_426">ترکیب</string>
+    <string name="curse_category_434">زره ، ابزار و سلاح</string>
+    <string name="curse_category_409">سازه ها</string>
+    <string name="curse_category_4485">سحر</string>
+    <string name="curse_category_420">ذخیره سازی</string>
+    <string name="curse_category_429">کاردستی صنعتی</string>
+    <string name="curse_category_419">شعبده بازي</string>
+    <string name="curse_category_412">فن آوری</string>
+    <string name="curse_category_4557">سنگ فرش</string>
+    <string name="curse_category_428">سازه تینکر</string>
+    <string name="curse_category_414">حمل و نقل بازیکن</string>
+    <string name="curse_category_4486">بلاک های شانسی</string>
+    <string name="curse_category_432">ساخت و ساز</string>
+    <string name="curse_category_418">ژنتیک</string>
+    <string name="curse_category_4671">ادغام پیچش</string>
+    <string name="curse_category_5314">کوبه</string>
+    <string name="curse_category_408">سنگ معدن و منابع</string>
+    <string name="curse_category_4773">کاردستی</string>
+    <string name="curse_category_430">صنایع دستی</string>
+    <string name="curse_category_422">ماجراجویی و RPG</string>
+    <string name="curse_category_413">در حال پردازش</string>
+    <string name="curse_category_417">انرژی</string>
+    <string name="curse_category_415">انرژی ، مایعات و حمل و نقل کالا</string>
+    <string name="curse_category_433">جنگل</string>
+    <string name="curse_category_425">متفاوتی</string>
+    <string name="curse_category_4545">انرژی کاربردی 2</string>
+    <string name="curse_category_416">کشاورزی</string>
+    <string name="curse_category_421">API و کتابخانه</string>
+    <string name="curse_category_4780">پارچه</string>
+    <string name="curse_category_424">وابسته به لوازم آرایشی</string>
+    <string name="curse_category_406">کلی</string>
+    <string name="curse_category_435">ابزار سرور</string>
+    <string name="curse_category_411">اوباش</string>
+    <string name="curse_category_407">بومیان</string>
+    <string name="curse_category_427">انبساط حرارتی</string>
+    <string name="curse_category_410">ابعاد</string>
+    <string name="curse_category_436">غذا</string>
+    <string name="curse_category_4558">سنگ فرش</string>
+    <string name="curse_category_4843">اتوماسیون</string>
+    <string name="curse_category_4906">کرکس</string>
+
+    <string name="curse_category_5244">فونت ها</string>
+    <string name="curse_category_5193">دیتاپک ها</string>
+    <string name="curse_category_399">مروارید</string>
+    <string name="curse_category_396">128x</string>
+    <string name="curse_category_398">512x و زیاد</string>
+    <string name="curse_category_397">256x</string>
+    <string name="curse_category_405">متفاوتی</string>
+    <string name="curse_category_395">64x</string>
+    <string name="curse_category_400">عکس واقع بینانه</string>
+    <string name="curse_category_393">16x</string>
+    <string name="curse_category_403">سنتی</string>
+    <string name="curse_category_394">32x</string>
+    <string name="curse_category_404">متحرک</string>
+    <string name="curse_category_4465">پشتیبانی مود</string>
+    <string name="curse_category_402">قرون وسطایی</string>
+    <string name="curse_category_401">نوین</string>
+
+    <string name="curse_category_4464">دنیای مودب</string>
+    <string name="curse_category_250">نقشه بازی</string>
+    <string name="curse_category_249">ایجاد</string>
+    <string name="curse_category_251">پارکور</string>
+    <string name="curse_category_253">بقا</string>
+    <string name="curse_category_248">ماجرا</string>
+    <string name="curse_category_252">معما</string>
+
+    <string name="curse_category_4551">حالت جستجوی هاردکور</string>
+    <string name="curse_category_4548">بلاک های شانسی</string>
+    <string name="curse_category_4556">پیشرفت</string>
+    <string name="curse_category_4752">وسایل ساختمانی</string>
+    <string name="curse_category_4553">کاردستی</string>
+    <string name="curse_category_4554">دستور پخت</string>
+    <string name="curse_category_4549">کتاب راهنما</string>
+    <string name="curse_category_4547">پیکربندی</string>
+    <string name="curse_category_4550">کوشش</string>
+    <string name="curse_category_4555">کلی</string>
+    <string name="curse_category_4552">اسکریپت</string>
+
+    <string name="curse_sort_author">نویسنده</string>
+    <string name="curse_sort_date_created">تاریخ ایجاد</string>
+    <string name="curse_sort_last_updated">اخرین به روز رسانی</string>
+    <string name="curse_sort_name">نام</string>
+    <string name="curse_sort_popularity">محبوبیت</string>
+    <string name="curse_sort_total_downloads">بارگیری کل</string>
+
+    <string name="datapack_add">نصب Datapack</string>
+    <string name="datapack_choose_datapack">برای وارد‌کردن یک Datapack را انتخاب کنید</string>
+
+    <string name="download_code_404">پرونده در سرور از راه دور یافت نشد: %s</string>
+    <string name="download_failed">بارگیری % 1 $ s ، کد پاسخ: % 2 $ D بارگیری نشد</string>
+    <string name="download_failed_empty">هیچ نسخه ای در دسترس نیست</string>
+    <string name="download_failed_refresh">نمی توان لیست نسخه را واکشی کرد. لطفا دوباره امتحان کنید.</string>
+
+    <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
+    <string name="download_provider_bmclapi">BMCLAPI (Bangbang93 ، https://bmclapi2.bangbang93.com)</string>
+    <string name="download_provider_mojang">Mojang (Optifine توسط BMCLAPI تهیه شده است)</string>
+    <string name="download_provider_official">از منابع رسمی</string>
+    <string name="download_provider_balanced">از سریعترین</string>
+    <string name="download_provider_mirror">از میرور</string>
+
+    <string name="edit_view_clone">نمای کلون</string>
+    <string name="edit_view_delete">حذف نما</string>
+    <string name="edit_view_event">مشاهده رویداد</string>
+    <string name="edit_view_info">اطلاعات نما پایه</string>
+    <string name="edit_view_no_group">لطفاً ابتدا یک گروه نما را اضافه یا انتخاب کنید!</string>
+    <string name="edit_view_style">سبک نما</string>
+
+    <string name="edit_button_title">ویرایش دکمه</string>
+    <string name="edit_button_delete">آیا مطمئناً این دکمه را حذف می کنید؟</string>
+    <string name="edit_button_text">متن نمایشی</string>
+    <string name="edit_button_event_follow">نشانگر از انگشت پیروی می کند</string>
+    <string name="edit_button_event_movable">متحرک</string>
+    <string name="edit_button_event_press">فشردن</string>
+    <string name="edit_button_event_long_press">فشار طولانی</string>
+    <string name="edit_button_event_click">کلیک</string>
+    <string name="edit_button_event_double_click">دبل‌کلیک(کلیک ۲ بار)</string>
+    <string name="edit_button_event_auto_keep">نگه داشتن فشرده</string>
+    <string name="edit_button_event_auto_click">کلیک خودکار</string>
+    <string name="edit_button_event_open_menu">منوی باز</string>
+    <string name="edit_button_event_touch_mode"> سوییچ کردن حالت تاچ</string>
+    <string name="edit_button_event_mouse_mode">سوئیچ کردن حالت ماوس</string>
+    <string name="edit_button_event_input">ورودی</string>
+    <string name="edit_button_event_quick_input">ورودی سریع</string>
+    <string name="edit_button_event_output_text">ارسال متن</string>
+    <string name="edit_button_event_keycodes">کد های کلیدی خروجی</string>
+    <string name="edit_button_event_keycodes_keyboard">صفحه کلیدی</string>
+    <string name="edit_button_event_keycodes_mouse">ماوس</string>
+    <string name="edit_button_event_bind_group">دیدگاه گروه مشاهده را تغییر دهید</string>
+
+    <string name="edit_direction_title">کنترل کننده جهت ویرایش</string>
+    <string name="edit_direction_delete">آیا مطمئناً این کنترلر مستقیم را حذف می کنید؟</string>
+    <string name="edit_direction_event_up">کد کلیدی جلو</string>
+    <string name="edit_direction_event_down">کد کلیدی عقب</string>
+    <string name="edit_direction_event_left">کد کلیدی سمت چپ</string>
+    <string name="edit_direction_event_right">کد کلیدی سمت راست</string>
+    <string name="edit_direction_event_follow">گزینه را دنبال کنید (فقط برای سبک Rocker)</string>
+    <string name="edit_direction_event_follow_fix">رفع دنبال‌کننده</string>
+    <string name="edit_direction_event_follow_center">دنبال کننده انگشت</string>
+    <string name="edit_direction_event_follow_always">همه قسمت ها انگشت را دنبال می کنند</string>
+    <string name="edit_direction_event_sneak">برای نشستن بر روی مرکز دوبار کلیک کنید</string>
+    <string name="edit_direction_event_sneak_code">کد کلیدی</string>
+
+    <string name="exception_access_denied">دسترسی به پرونده %s امکان پذیر نیست.</string>
+    <string name="exception_artifact_malformed">نمی توان یکپارچگی پرونده های بارگیری شده را تأیید کرد.</string>
+    <string name="exception_ssl_handshake">ایجاد اتصال SSL به دلیل از دست رفتن گواهینامه های SSL در نصب جاوا فعلی امکان پذیر نیست.</string>
+
+    <string name="folder_config">مرور تنظیمات</string>
+    <string name="folder_game">مرور فهرست بازی ها</string>
+    <string name="folder_log">مرور لاگ ها</string>
+    <string name="folder_mod">مرور ماد ها</string>
+    <string name="folder_resourcepacks">مرور ریسورس پک ها</string>
+    <string name="folder_saves">مرور سیو ها</string>
+    <string name="folder_screenshots">مرور اسکرینشات ها</string>
+    <string name="folder_shaderpacks">مرور شیدر ها</string>
+
+    <string name="game_crash_info">اطلاعات خرابی</string>
+    <string name="game_crash_reason">علت خرابی</string>
+    <string name="game_crash_reason_multiple">دلایل متعددی شناسایی شد:\n\n</string>
+    <string name="game_crash_reason_block">بازی به دلیل مسدود شدن خراب شد.\n\nمی‌توانید این بلوک را با استفاده از MCEdit حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع مسدود کردن: %1$s\nمکان: %2$s</string>
+    <string name="game_crash_reason_bootstrap_failed">بازی به دلیل مود %1$s خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
+    <string name="game_crash_reason_config">بازی خراب شد زیرا مود %1$s نمی‌تواند فایل پیکربندی %2$s خود را تجزیه کند.</string>
+    <string name="game_crash_reason_debug_crash">بازی از کار افتاد زیرا شما آن را به صورت دستی فعال کردید.\n\nپس، احتمالاً می‌دانید چرا.</string>
+    <string name="game_crash_reason_duplicated_mod">بازی به دلیل حالت‌های تکراری راه‌اندازی نمی‌شود: %1$s.\n\n%2$s\n\nهر مد فقط یک بار قابل نصب است، لطفاً مد تکراری را حذف کنید و دوباره امتحان کنید.</string>
+    <string name="game_crash_reason_entity">بازی به دلیل وجود موجودی خراب شد.\n\nمی‌توانید با استفاده از MCEdit این موجود را حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع مسدود کردن: %1$s\nمکان: %2$s</string>
+    <string name="game_crash_reason_modmixin_failure">بازی فعلی نمی تواند به اجرا ادامه دهد زیرا برخی از تزریق Mod انجام نشد.\nاین به طور کلی به این معنی است که Mod دارای اشکال است یا با محیط فعلی ناسازگار است.\nبرای یافتن ماژول خطا می توانید گزارش را بررسی کنید.</string>
+    <string name="game_crash_reason_mod_repeat_installation">از آنجایی که بازی فعلی چندین مود یکسان را به طور مکرر نصب کرده است، هر مد فقط یک بار می تواند ظاهر شود. لطفا مودهای تکراری را حذف کنید و سپس بازی را دوباره راه اندازی کنید.</string>
+    <string name="game_crash_reason_forge_error">Forge ممکن است اطلاعات خطا را ارائه کرده باشد.\nشما می توانید گزارش را مشاهده کرده و پردازش های مربوطه را با توجه به اطلاعات گزارش در گزارش خطا انجام دهید.\nاگر پیام خطا را نمی بینید، می توانید گزارش خطا را مشاهده کنید تا متوجه شوید که خطا چگونه رخ داده است. \n%1$s</string>
+    <string name="game_crash_reason_mod_resolution0">بازی فعلی به دلیل برخی مشکلات مود نمی‌تواند به اجرا ادامه دهد.\nمی‌توانید گزارش را بررسی کنید تا ماژول خطا را پیدا کنید.</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">بازی فعلی به دلیل مشکل در فایل پیکربندی Mod نمی‌تواند به اجرا ادامه دهد.\nمی‌توانید گزارش را بررسی کنید تا ماژول خطا و فایل پیکربندی آن را پیدا کنید.</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">Forge ممکن است اطلاعات خطا را ارائه کرده باشد.\nشما می توانید گزارش را مشاهده کرده و پردازش های مربوطه را با توجه به اطلاعات گزارش در گزارش خطا انجام دهید.\nاگر پیام خطا را نمی بینید، می توانید گزارش خطا را مشاهده کنید تا متوجه شوید که خطا چگونه رخ داده است.</string>
+    <string name="game_crash_reason_need_jdk11">بازی فعلی به دلیل نسخه نامناسب ماشین مجازی جاوا نمی‌تواند به اجرا ادامه دهد.\nنسخه به جاوا 11 نیاز دارد.</string>
+    <string name="game_crash_reason_mod_name">بازی فعلی به دلیل مشکلات نام فایل Mod نمی‌تواند به اجرا ادامه دهد.\nنام فایل‌های مود باید فقط از حروف بزرگ و کوچک (Aa~Zz)، اعداد (0~9)، خطوط افقی (-)، زیرخط (_) استفاده کنند. و نقطه‌ها (.) به زبان انگلیسی نیم‌زاویه کامل.\nلطفاً به پوشه Mod بروید و همه نام‌های فایل‌های Mod غیرمنطبق را با یکی از نویسه‌های سازگار بالا اضافه کنید.</string>
+    <string name="game_crash_reason_incomplete_forge_installation">به دلیل نصب ناقص Forge، بازی فعلی نمی‌تواند ادامه یابد.\nلطفاً Forge را حذف نصب و دوباره نصب کنید.</string>
+    <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 یا بالاتر با مودهای نصب شده فعلی سازگار نیست. باید آن را به 0.11.7 کاهش دهید.</string>
+    <string name="game_crash_reason_fabric_warnings">Modloader Fabric هشدار داد:\n%1$s</string>
+    <string name="game_crash_reason_file_already_exists">بازی خراب شد زیرا فایل %1$s از قبل وجود دارد.\n\nمی‌توانید از آن فایل نسخه پشتیبان تهیه کرده و حذف کنید، سپس بازی را دوباره راه‌اندازی کنید.</string>
+    <string name="game_crash_reason_file_changed">بازی خراب شد زیرا بررسی‌های یکپارچگی را رد نکرد.\n\nاگر شیشه Minecraft را تغییر داده‌اید، باید تغییرات را برگردانید یا بازی را دوباره دانلود کنید.</string>
+    <string name="game_crash_reason_gl_operation_failure">بازی به دلیل برخی از حالت‌ها، بسته‌های سایه‌زن و بسته‌های منابع از کار افتاد.\n\nلطفاً mods/shaderpacks/بسته‌های منبعی را که استفاده می‌کنید غیرفعال کنید و سپس دوباره امتحان کنید.</string>
+    <string name="game_crash_reason_illegal_access_error">بازی به دلیل برخی مدها خراب شد.\nاگر می دانید: %1$s، می توانید مود را حذف کرده و دوباره امتحان کنید.</string>
+    <string name="game_crash_reason_optifine_is_not_compatible_with_forge">بازی فعلی خراب می شود زیرا OptiFine با نسخه فعلی Forge سازگار نیست.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">بازی فعلی نمی تواند به اجرا ادامه دهد زیرا فایل Mod از حالت فشرده خارج شده است.\nلطفاً کل فایل Mod را مستقیماً در پوشه Mod قرار دهید!\nاگر باز کردن زیپ باعث ایجاد خطا در بازی می شود، لطفاً Mod غیرزیپ شده را در پوشه Mod حذف کنید و سپس شروع بازی.</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">بازی فعلی پیدا نمی شود زیرا Forge به طور کامل نصب نشده است.\nمی توانید سعی کنید Forge را حذف نصب کنید و دوباره آن را نصب کنید.</string>
+    <string name="game_crash_reason_shaders_mod">بازی فعلی نمی‌تواند به اجرا ادامه دهد زیرا OptiFine و Shaders Mod نصب شده‌اند.\nاز آنجا که OptiFine عملکردهای Shaders Mod را یکپارچه کرده است، فقط Shaders Mod را حذف کنید.</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">بازی فعلی نمی‌تواند به اجرا ادامه دهد زیرا تعداد زیادی مود نصب کرده‌اید که از حد شناسه بازی فراتر رفته است.\nلطفاً سعی کنید JEID را نصب کنید یا چند مود بزرگ را حذف کنید.</string>
+    <string name="game_crash_reason_night_config_fixes">بازی فعلی به دلیل مشکلاتی در Night Config نمی‌تواند به اجرا ادامه دهد.\nمی‌توانید مد Night Config Fixes را نصب کنید، که ممکن است به شما در این مشکل کمک کند.\nبرای اطلاعات بیشتر، از مخزن Github این مود دیدن کنید.</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">ممکن است بازی فعلی به دلیل OptiFine به اجرا خود ادامه ندهد.\nاین مشکل فقط در نسخه خاصی از OptiFine رخ می دهد. می توانید نسخه OptiFine را تغییر دهید.</string>
+    <string name="game_crash_reason_jvm_32bit">بازی از کار افتاد زیرا تخصیص حافظه فعلی از حد مجاز جاوا VM 32 بیتی فراتر رفت.</string>
+    <string name="game_crash_reason_loading_crashed_forge">بازی به دلیل مود %1$s (%2$s) خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
+    <string name="game_crash_reason_loading_crashed_fabric">بازی به دلیل مود %1$s خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
+    <string name="game_crash_reason_forge_repeat_installation">بازی فعلی به دلیل نصب تکراری Forge نمی تواند به اجرا ادامه دهد. این یک مشکل شناخته شده است.\nتوصیه می‌شود بازخورد گزارش را در Github بارگذاری کنید تا بتوانیم سرنخ‌های بیشتری پیدا کنیم و این سؤال را برطرف کنیم.\nدر حال حاضر می‌توانید Forge را حذف نصب کنید و دوباره آن را نصب کنید.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">بازی فعلی به دلیل نصب مکرر OptiFine نمی تواند به اجرا ادامه دهد. \nلطفاً OptiFine را در پوشه Mod حذف کنید یا OptiFine را که به طور خودکار نصب می‌شود حذف کنید.</string>
+    <string name="game_crash_reason_memory_exceeded">بازی به دلیل تخصیص حافظه زیاد از کار افتاد.</string>
+    <string name="game_crash_reason_mod">بازی به دلیل مود %1$s خراب شد.\n\nمی‌توانید مود را به‌روزرسانی یا حذف کنید و سپس دوباره امتحان کنید.</string>
+    <string name="game_crash_reason_mod_resolution">بازی به دلیل خرابی وضوح مد خراب شد.\n\nFabric جزئیات زیر را ارائه کرد:\n%1$s</string>
+    <string name="game_crash_reason_forgemod_resolution">بازی به دلیل خرابی وضوح مد خراب شد.\n\nForge جزئیات زیر را ارائه کرد:\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution_collection">بازی خراب شد زیرا نسخه مود سازگار نیست.\n\n%1$s به %2$s نیاز دارد.\n\nقبل از ادامه باید %3$s را ارتقا یا کاهش دهید.</string>
+    <string name="game_crash_reason_mod_resolution_conflict">بازی به دلیل حالت‌های متناقض از کار افتاد.\n\n%1$s با %2$s ناسازگار است.</string>
+    <string name="game_crash_reason_mod_resolution_missing">بازی خراب شد زیرا برخی از مدهای وابستگی نصب نشده‌اند.\n\n%1$s به مد: %2$s نیاز دارد.\n\nبه این معنی است که برای ادامه بازی ابتدا باید %2$s را دانلود و نصب کنید.</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">بازی خراب شد زیرا یک مد با نسخه فعلی Minecraft سازگار نیست.\n\n%1$s به نسخه Minecraft %2$s نیاز دارد.\n\nاگر می‌خواهید با این نسخه از مود نصب شده بازی کنید، باید آن را تغییر دهید. نسخه نمونه.\nدر غیر این صورت، باید نسخه ای را نصب کنید که با این نسخه Minecraft سازگار باشد.</string>
+    <string name="game_crash_reason_mod_resolution_mod_version">%1$s (نسخه: %2$s)</string>
+    <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (هر نسخه)</string>
+    <string name="game_crash_reason_modlauncher_8">بازی خراب شد زیرا نسخه فعلی Forge شما با نصب جاوا سازگار نیست، لطفاً Forge را به‌روزرسانی کنید.</string>
+    <string name="game_crash_reason_no_class_def_found_error">بازی نمی‌تواند به دلیل کد ناقص اجرا شود.\n\nنمونه بازی شما %1$s وجود ندارد، این ممکن است به دلیل عدم وجود یک مود، نصب یک مود ناسازگار، یا ممکن است برخی فایل‌ها خراب شده باشد.\n\nشاید لازم باشد بازی و همه مودها را دوباره نصب کنید یا از کسی کمک بخواهید.</string>
+    <string name="game_crash_reason_no_such_method_error">بازی نمی‌تواند به دلیل کد ناقص اجرا شود.\n\nممکن است نمونه بازی شما یک مد ندارد، یک مد ناسازگار نصب کرده باشد، یا ممکن است برخی فایل‌ها خراب شده باشند.\n\nممکن است لازم باشد بازی و همه مودها را دوباره نصب کنید یا از شخصی بخواهید. کمک.</string>
+    <string name="game_crash_reason_opengl_not_supported">بازی خراب شد زیرا OpenGL توسط رندر شما پشتیبانی نمی شود.</string>
+    <string name="game_crash_reason_out_of_memory">بازی به دلیل تمام شدن حافظه از کار افتاد.\n\nممکن است به این دلیل باشد که حافظه کافی در دسترس نیست، یا تعداد زیادی مود نصب شده است. می‌توانید با افزایش حافظه اختصاص‌یافته در تنظیمات بازی، آن را برطرف کنید.\n\nاگر همچنان با این مشکلات روبرو هستید، خوب، ممکن است به دستگاه بهتری نیاز داشته باشید.</string>
+    <string name="game_crash_reason_resolution_too_high">بازی خراب شد زیرا شما از یک بسته منبع استفاده می‌کنید که وضوح بافت آن خیلی بالا بود.\n\nباید به بسته منابع با وضوح پایین‌تر بروید.</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">بازی فعلی خراب شد زیرا پردازش -javaagent انجام نشد.\nاگر پارامترهای مربوطه را به پارامترهای ماشین مجازی جاوا اضافه می‌کنید، لطفاً بررسی کنید که آیا آنها قانونی و صحیح هستند.</string>
+    <string name="game_crash_reason_stacktrace">دلیل خرابی ناشناخته است.\n\nچند کلمه کلیدی ممکن است حاوی شناسه‌های Mod باشد. می‌توانید آن‌ها را آنلاین جستجو کنید تا خودتان متوجه مشکل شوید.\n\n%s</string>
+    <string name="game_crash_reason_unknown">ما نمی‌توانیم دلیل خرابی بازی را بفهمیم، لطفاً به گزارش‌های بازی مراجعه کنید.\n\nوقتی از شخص دیگری کمک می‌خواهید، لطفا گزارش کامل بازی و فایل گزارش خرابی مربوطه را با او به اشتراک بگذارید!</string>
+    <string name="game_crash_reason_unsatisfied_link_error">راه‌اندازی Minecraft به دلیل از دست رفتن کتابخانه‌ها امکان‌پذیر نیست: %1$s.</string>
+    <string name="game_crash_title">بازی خراب شد</string>
+    <string name="game_crash_title_add">به جای گرفتن اسکرین شات باید فایل گزارش خرابی کامل را ارسال کنید</string>
+
+    <string name="help">کمک</string>
+    <string name="help_category">دسته بندی</string>
+    <string name="help_website">سایت اینترنتی</string>
+
+    <string name="input_hint_not_empty">ضروری</string>
+    <string name="input_hint_optional">اختیاری</string>
+    <string name="input_not_empty">ابتدا کادر ورودی مورد نیاز را پر کنید.</string>
+    <string name="input_number">ورودی باید یک عدد باشد.</string>
+    <string name="input_url">ورودی باید یک URL معتبر باشد.</string>
+
+    <string name="install_change_version">تغییر نسخه</string>
+    <string name="install_change_version_confirm">آیا مطمئنید که می‌خواهید %s را از نسخه %s به %s تغییر دهید؟</string>
+    <string name="install_failed">نصب انجام نشد</string>
+    <string name="install_failed_downloading">ما نمی توانیم برخی از فایل های مورد نیاز را دانلود کنیم.</string>
+    <string name="install_failed_downloading_detail">فایل دانلود نشد: %s</string>
+    <string name="install_failed_downloading_timeout">مهلت دانلود هنگام واکشی: %s</string>
+    <string name="install_failed_install_online">شناسایی فایل ارائه شده ممکن نیست. اگر در حال نصب مود هستید، به صفحه Mods بروید.</string>
+    <string name="install_failed_malformed">فایل های دانلود شده خراب هستند. می توانید سعی کنید این مشکل را با جابجایی به آینه دانلود دیگری برطرف کنید.</string>
+    <string name="install_failed_optifine_conflict">نمی‌توان Fabric، OptiFine و Forge را روی Minecraft 1.13 یا بالاتر نصب کرد.</string>
+    <string name="install_failed_optifine_forge_1.17">برای نسخه Minecraft 1.17.1 یا پایین تر، Forge فقط از OptiFine H1 Pre2 یا جدیدتر پشتیبانی می کند. می توانید آنها را در تب نسخه های فوری نصب کنید.</string>
+    <string name="install_failed_version_mismatch">این کتابخانه به نسخه بازی %s نیاز دارد، اما نسخه نصب شده %s است.</string>
+    <string name="install_installer_change_version">نسخه %s با نسخه فعلی بازی سازگار نیست. اینجا را کلیک کنید تا آن را با نسخه دیگری جایگزین کنید یا آن را حذف کنید.</string>
+    <string name="install_installer_choose">نسخه %s خود را انتخاب کنید</string>
+    <string name="install_installer_depend">%s نیاز دارد</string>
+    <string name="install_installer_fabric" translatable="false">Fabric</string>
+    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
+    <string name="install_installer_fabric_api_warning">هشدار: Fabric API یک مد است و در فهرست مدهای نمونه بازی نصب خواهد شد. لطفاً دایرکتوری کاری بازی را تغییر ندهید، در غیر این صورت Fabric API کار نخواهد کرد. اگر می خواهید این تنظیمات را تغییر دهید، باید آن را دوباره نصب کنید.</string>
+    <string name="install_installer_forge" translatable="false">Forge</string>
+    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
+    <string name="install_installer_game" translatable="false">Minecraft</string>
+    <string name="install_installer_incompatible">با %s ناسازگار است</string>
+    <string name="install_installer_install">%s را نصب کنید</string>
+    <string name="install_installer_install_offline">نصب/به روز رسانی از فایل محلی</string>
+    <string name="install_installer_install_offline_extension">نصب کننده Forge/OptiFine</string>
+    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
+    <string name="install_installer_not_installed">انتخاب نشده</string>
+    <string name="install_installer_optifine" translatable="false">OptiFine</string>
+    <string name="install_installer_quilt" translatable="false">Quilt</string>
+    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_modpack">یک Modpack نصب کنید</string>
+    <string name="install_new_game">یک نمونه جدید اضافه کنید</string>
+    <string name="install_new_game_already_exists">این نمونه از قبل وجود دارد. لطفا از نام دیگری استفاده کنید.</string>
+    <string name="install_new_game_malformed">نام نامعتبر</string>
+    <string name="install_success">با موفقیت نصب شد.</string>
+
+    <string name="jar_execute">Jar را اجرا کنید</string>
+    <string name="jar_execute_custom_args">با args سفارشی اجرا کنید</string>
+    <string name="jar_executor_crash_title">مجری کوزه سقوط کرد</string>
+    <string name="jar_executor_crash_reason">تحلیل دلیل خرابی Jar Executor اکنون پشتیبانی نمی‌شود.</string>
+
+    <string name="launch">راه اندازی</string>
+    <string name="launch_error_java">شما از یک نسخه جاوا منسوخ استفاده می کنید، آیا مطمئن هستید که می خواهید ادامه دهید؟</string>
+    <string name="launch_error_java_auto">انتخاب خودکار</string>
+    <string name="launch_error_java_continue">ادامه هید</string>
+    <string name="launch_failed">راه اندازی نشد</string>
+    <string name="launch_failed_download_library">دانلود کتابخانه %s ممکن نیست.</string>
+
+    <string name="launch_state_dependencies">رفع وابستگی ها</string>
+    <string name="launch_state_modpack">دانلود وابستگی ها</string>
+    <string name="launch_state_java">بررسی نسخه جاوا</string>
+    <string name="launch_state_logging_in">ورود به سیستم در</string>
+    <string name="launch_state_waiting_launching">منتظر راه اندازی بازی هستیم</string>
+    <string name="launch_state_done">تکمیل راه اندازی</string>
+
+    <string name="menu_controls">کنترل کننده</string>
+    <string name="menu_controls_current">کنترل کننده جریان</string>
+    <string name="menu_controls_edit_mode">حالت ویرایش</string>
+    <string name="menu_controls_show_boundary">نمایش مرزهای مشاهده</string>
+    <string name="menu_controls_hide_all">پنهان کردن همه نماها</string>
+    <string name="menu_controls_auto_fit">موقعیت تناسب خودکار</string>
+    <string name="menu_controls_auto_fit_dist">فاصله موقعیت مناسب خودکار</string>
+    <string name="menu_controls_groups">مشاهده گروه ها</string>
+    <string name="menu_controls_manage">مدیریت کنید</string>
+    <string name="menu_controls_current_view_group">گروه نمایش فعلی</string>
+    <string name="menu_controls_add_button">دکمه افزودن</string>
+    <string name="menu_controls_add_direction">کنترل کننده جهت را اضافه کنید</string>
+    <string name="menu_controls_add_view_button">اضافه کردن</string>
+    <string name="menu_controls_style">سبک ها</string>
+    <string name="menu_controls_button_style">سبک های دکمه</string>
+    <string name="menu_controls_direction_style">سبک های کنترل کننده جهت</string>
+
+    <string name="menu_control_base">تنظیم اولیه</string>
+    <string name="menu_control_button">دکمه</string>
+    <string name="menu_control_button_text">متن</string>
+    <string name="menu_control_direction">کنترل کننده جهت</string>
+    <string name="menu_control_event">تنظیم رویداد</string>
+    <string name="menu_control_select">انتخاب کنید</string>
+    <string name="menu_control_set">تنظیم</string>
+    <string name="menu_control_style">تنظیم سبک</string>
+    <string name="menu_control_style_add">اضافه کردن سبک</string>
+    <string name="menu_control_style_edit">ویرایش سبک</string>
+    <string name="menu_control_view_group_add">افزودن گروه مشاهده</string>
+    <string name="menu_control_view_group_delete">آیا مطمئن هستید که این گروه مشاهده را حذف می کنید؟</string>
+    <string name="menu_control_view_group_name">نام</string>
+    <string name="menu_control_view_group_visibility">دید اولیه</string>
+    <string name="menu_control_view_group_exist">گروه مشاهده از قبل وجود دارد</string>
+    <string name="menu_control_view_group_empty">لطفا ابتدا نام گروه مشاهده را پر کنید</string>
+    <string name="menu_control_view_group_visible">قابل رویت</string>
+    <string name="menu_control_view_group_invisible">نامرئی</string>
+
+    <string name="menu_settings">تنظیمات</string>
+    <string name="menu_settings_debug">اشکال زدایی</string>
+    <string name="menu_settings_disable_be_gesture">ژست پیشرفته را غیرفعال کنید</string>
+    <string name="menu_settings_disable_gesture">ژست را غیرفعال کنید</string>
+    <string name="menu_settings_force_exit">خروج اجباری</string>
+    <string name="menu_settings_force_exit_button">خارج شوید</string>
+    <string name="menu_settings_force_exit_msg">آیا مطمئن هستید که به اجبار خروج می کنید؟</string>
+    <string name="menu_settings_function">تابع</string>
+    <string name="menu_settings_gesture">ژست</string>
+    <string name="menu_settings_gesture_mode">حالت اشاره</string>
+    <string name="menu_settings_gesture_mode_build">ساختن</string>
+    <string name="menu_settings_gesture_mode_fight">مبارزه کردن</string>
+    <string name="menu_settings_gesture_current">حالت فعلی %s است</string>
+    <string name="menu_settings_gyro">ژیروسکوپ</string>
+    <string name="menu_settings_gyro_sensitivity">حساسیت ژیروسکوپی</string>
+    <string name="menu_settings_lock_view">قفل نمای منو</string>
+    <string name="menu_settings_mouse">موش</string>
+    <string name="menu_settings_mouse_mode">حالت ماوس</string>
+    <string name="menu_settings_mouse_mode_click">کلیک</string>
+    <string name="menu_settings_mouse_mode_slide">اسلاید</string>
+    <string name="menu_settings_mouse_sensitivity">حساسیت موشواره</string>
+    <string name="menu_settings_mouse_size">اندازه ماوس</string>
+    <string name="menu_settings_gamepad">گیم پد</string>
+    <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
+    <string name="menu_settings_gamepad_reset">بازنشانی کنید</string>
+    <string name="menu_settings_gamepad_deadzone">منطقه مرده</string>
+    <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
+    <string name="menu_settings_multiplayer">منوی چند نفره</string>
+    <string name="menu_settings_multiplayer_button">باز کن</string>
+    <string name="menu_settings_quick_input">ورودی سریع</string>
+    <string name="menu_settings_quick_input_button">مدیریت کنید</string>
+    <string name="menu_settings_send_key">ارسال کلید</string>
+    <string name="menu_settings_send_key_button">ارسال</string>
+    <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
+    <string name="menu_settings_item_bar_scale">ItemBarScale</string>
+    <string name="menu_settings_show_log">نمایش گزارش</string>
+
+    <string name="message_cancelled">عملیات لغو شد</string>
+    <string name="message_copy">کپی با موفقیت!</string>
+    <string name="message_doing">لطفا صبر کنید</string>
+    <string name="message_downloading">در حال دانلود</string>
+    <string name="message_error">خطا</string>
+    <string name="message_failed">عملیات ناموفق بود</string>
+    <string name="message_file_exist">فایل از قبل وجود دارد</string>
+    <string name="message_success">عملیات با موفقیت به پایان رسید</string>
+    <string name="message_unknown">ناشناخته</string>
+    <string name="message_warning">هشدار</string>
+
+    <string name="modpack">مودپک</string>
+    <string name="modpack_choose">یک modpack را انتخاب کنید</string>
+    <string name="modpack_choose_local">وارد کردن از فایل محلی</string>
+    <string name="modpack_choose_remote">از اینترنت دانلود کنید</string>
+    <string name="modpack_choose_remote_tooltip">لطفا URL modpack خود را وارد کنید</string>
+    <string name="modpack_completion">دانلود وابستگی ها</string>
+    <string name="modpack_desc">بسته modpack خود را شرح دهید، از جمله یک مقدمه و احتمالاً برخی تغییرات. علامت گذاری و تصاویر از URL در حال حاضر پشتیبانی می شوند.</string>
+    <string name="modpack_description">شرح</string>
+    <string name="modpack_download">Modpack را دانلود کنید</string>
+    <string name="modpack_enter_name">یک نام برای این modpack وارد کنید.</string>
+    <string name="modpack_export">صادرات مودپک</string>
+    <string name="modpack_export_as">صادرات Modpack به عنوان…</string>
+    <string name="modpack_file_api">پیشوند URL Modpack</string>
+    <string name="modpack_files_blueprints">طرح های BuildCraft</string>
+    <string name="modpack_files_config">تنظیمات مد</string>
+    <string name="modpack_files_dumps">فایل خروجی اشکال زدایی NEI</string>
+    <string name="modpack_files_fclversion_cfg">فایل پیکربندی لانچر</string>
+    <string name="modpack_files_liteconfig">فایل پیکربندی مود</string>
+    <string name="modpack_files_mods">مدها</string>
+    <string name="modpack_files_mods_voxelmods">گزینه های VoxelMods</string>
+    <string name="modpack_files_options_txt">فایل تنظیمات Minecraft</string>
+    <string name="modpack_files_optionsshaders_txt">فایل تنظیمات Shaders</string>
+    <string name="modpack_files_resourcepacks">بسته های منابع/بافت</string>
+    <string name="modpack_files_saves">بازی ذخیره می کند</string>
+    <string name="modpack_files_scripts">فایل پیکربندی MineTweaker</string>
+    <string name="modpack_files_servers_dat">فایل لیست سرور</string>
+    <string name="modpack_install">Modpack %s را نصب کنید</string>
+    <string name="modpack_installing">در حال نصب Modpack</string>
+    <string name="modpack_introduction">مودپک‌های CurseForge، Modrinth، MultiMC و MCBBS در حال حاضر پشتیبانی می‌شوند.</string>
+    <string name="modpack_invalid">modpack نامعتبر است، می توانید آن را دوباره دانلود کنید.</string>
+    <string name="modpack_mismatched_type">نوع Modpack مطابقت ندارد، نمونه فعلی از نوع %s است، اما نمونه ارائه شده از نوع %s است.</string>
+    <string name="modpack_name">نام Modpack</string>
+    <string name="modpack_not_a_valid_name">نام Modpack نامعتبر است</string>
+    <string name="modpack_origin">منبع</string>
+    <string name="modpack_origin_url">وب سایت رسمی</string>
+    <string name="modpack_origin_mcbbs">MCBBS</string>
+    <string name="modpack_origin_mcbbs_prompt">شناسه پست</string>
+    <string name="modpack_scan">تجزیه فهرست مودپک</string>
+    <string name="modpack_task_install">Modpack را نصب کنید</string>
+    <string name="modpack_task_install_error">قادر به شناسایی این modpack نیست. ما در حال حاضر فقط از modpack های Curse، Modrinth، MultiMC و MCBBS پشتیبانی می کنیم.</string>
+    <string name="modpack_task_install_will">شما می خواهید modpack را نصب کنید:</string>
+    <string name="modpack_type_curse">لعنت</string>
+    <string name="modpack_type_curse_tolerable_error">دانلود وابستگی ها ممکن نیست، می توانید با راه اندازی این نمونه بازی، دانلود را ادامه دهید.</string>
+    <string name="modpack_type_curse_error">دانلود وابستگی ها از CurseForge ممکن نیست، لطفاً دوباره امتحان کنید یا از یک اتصال پراکسی استفاده کنید.</string>
+    <string name="modpack_type_curse_not_found">برخی از وابستگی ها دیگر در دسترس نیستند، لطفاً سعی کنید نسخه جدیدتری از modpack را نصب کنید.</string>
+    <string name="modpack_type_manual_warning">بسته modpack به صورت دستی توسط ناشر بسته بندی می شود، که ممکن است از قبل حاوی یک لانچر باشد. پیشنهاد می شود سعی کنید بازی را از حالت فشرده خارج کرده و با لانچر مخصوص خود اجرا کنید. FCL هنوز هم می‌تواند آن را وارد کند، بدون هیچ تضمینی برای قابلیت استفاده، همچنان ادامه دارد؟</string>
+    <string name="modpack_type_mcbbs">نوع MCBBS</string>
+    <string name="modpack_type_mcbbs_export">می تواند توسط FCL، HMCL و MultiMC وارد شود</string>
+    <string name="modpack_type_modrinth">مدرینث</string>
+    <string name="modpack_type_multimc">MultiMC</string>
+    <string name="modpack_type_multimc_export">می تواند توسط FCL، HMCL و MultiMC وارد شود</string>
+    <string name="modpack_type_server">به روز رسانی خودکار Modpack از سرور</string>
+    <string name="modpack_type_server_export">به مالک سرور اجازه می دهد تا نمونه بازی را از راه دور به روز کند</string>
+    <string name="modpack_type_server_malformed">مانیفست modpack نامعتبر است، لطفاً برای رفع این مشکل به سازنده modpack سرور مراجعه کنید.</string>
+    <string name="modpack_unsupported">قالب modpack پشتیبانی نشده است</string>
+    <string name="modpack_update">در حال به روز رسانی modpack</string>
+    <string name="modpack_wizard">Modpack Export Wizard</string>
+    <string name="modpack_wizard_step_1">تنظیمات پایه</string>
+    <string name="modpack_wizard_step_1_title">برخی از تنظیمات اولیه برای modpack.</string>
+    <string name="modpack_wizard_step_2">Files را انتخاب کنید</string>
+    <string name="modpack_wizard_step_2_title">فایل هایی را که می خواهید به modpack اضافه کنید انتخاب کنید.</string>
+    <string name="modpack_wizard_step_3">نوع مودپک</string>
+    <string name="modpack_wizard_step_3_title">نوع modpack مورد نظر برای صادرات را انتخاب کنید.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">نسخه بازی برای صادرات</string>
+    <string name="modpack_wizard_step_initialization_force_update">به‌روزرسانی اجباری modpack به آخرین نسخه (به یک سرویس میزبانی فایل نیاز دارید)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">شامل لانچر</string>
+    <string name="modpack_wizard_step_initialization_save">صادرات به…</string>
+    <string name="modpack_wizard_step_initialization_warning">قبل از ایجاد مودپک، لطفاً مطمئن شوید که بازی راه‌اندازی می‌شود و به جای نسخه فوری، نسخه منتشر شده است.\n\nبه‌خاطر داشته باشید که اجازه ندارید مودها و بسته‌های منابعی را اضافه کنید که به صراحت گفته شده است که توزیع نمی‌شوند یا در مودپک قرار دهید</string>
+
+    <string name="modrinth_category_adventure">ماجرا</string>
+    <string name="modrinth_category_bukkit">بوکیت</string>
+    <string name="modrinth_category_bungeecord">بانجی کورد</string>
+    <string name="modrinth_category_challenging">چالش برانگیز</string>
+    <string name="modrinth_category_combat">مبارزه کن</string>
+    <string name="modrinth_category_cursed">نفرین شده</string>
+    <string name="modrinth_category_decoration">تزیین</string>
+    <string name="modrinth_category_economy">اقتصاد</string>
+    <string name="modrinth_category_equipment">تجهیزات</string>
+    <string name="modrinth_category_fabric">پارچه</string>
+    <string name="modrinth_category_food">غذا</string>
+    <string name="modrinth_category_forge">ساختن</string>
+    <string name="modrinth_category_game_mechanics">مکانیک بازی</string>
+    <string name="modrinth_category_kitchen_sink">سینک آشپزخانه</string>
+    <string name="modrinth_category_library">کتابخانه</string>
+    <string name="modrinth_category_lightweight">سبک وزن</string>
+    <string name="modrinth_category_magic">شعبده بازي</string>
+    <string name="modrinth_category_management">مدیریت</string>
+    <string name="modrinth_category_minigame">مینی بازی</string>
+    <string name="modrinth_category_misc">متفرقه</string>
+    <string name="modrinth_category_mobs">اوباش</string>
+    <string name="modrinth_category_modloader">Modloader</string>
+    <string name="modrinth_category_multiplayer">چند نفره</string>
+    <string name="modrinth_category_neoforge">NeoForge</string>
+    <string name="modrinth_category_optimization">بهينه سازي</string>
+    <string name="modrinth_category_paper">کاغذ</string>
+    <string name="modrinth_category_purpur">پورپور</string>
+    <string name="modrinth_category_quests">ماموریت ها</string>
+    <string name="modrinth_category_quilt">لحاف</string>
+    <string name="modrinth_category_rift">بریدگی</string>
+    <string name="modrinth_category_social">اجتماعی</string>
+    <string name="modrinth_category_spigot">اسپیگوت</string>
+    <string name="modrinth_category_sponge">اسفنج</string>
+    <string name="modrinth_category_storage">ذخیره سازی</string>
+    <string name="modrinth_category_technology">فن آوری</string>
+    <string name="modrinth_category_transportation">حمل و نقل</string>
+    <string name="modrinth_category_utility">سودمند</string>
+    <string name="modrinth_category_velocity">سرعت</string>
+    <string name="modrinth_category_waterfall">آبشار</string>
+    <string name="modrinth_category_worldgen">Worldgen</string>
+    <string name="modrinth_category_datapack">دیتاپک</string>
+    <string name="modrinth_category_folia">فولیا</string>
+
+    <string name="mods">مدها</string>
+    <string name="mods_add">Mods را اضافه کنید</string>
+    <string name="mods_add_failed">مود %s نصب نشد.</string>
+    <string name="mods_add_success">%s با موفقیت نصب شد.</string>
+    <string name="mods_broken_dependency_title">وابستگی شکسته</string>
+    <string name="mods_broken_dependency_desc">این وابستگی قبلا وجود داشت. با این حال، اکنون وجود ندارد. سعی کنید از منبع دانلود دیگری استفاده کنید.</string>
+    <string name="mods_category">دسته بندی</string>
+    <string name="mods_check_updates">به روز رسانی ها را بررسی کنید</string>
+    <string name="mods_check_updates_current_version">نسخه فعلی</string>
+    <string name="mods_check_updates_empty">هیچ مود نیازی به آپدیت نیست</string>
+    <string name="mods_check_updates_failed">امکان دانلود برخی از فایل ها وجود ندارد.</string>
+    <string name="mods_check_updates_file">فایل</string>
+    <string name="mods_check_updates_source">منبع</string>
+    <string name="mods_check_updates_target_version">نسخه هدف</string>
+    <string name="mods_check_updates_update">به روز رسانی</string>
+    <string name="mods_choose_mod">یک مد را انتخاب کنید</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependency">وابستگی</string>
+    <string name="mods_dependency_embedded">پیش مود داخلی (از قبل توسط نویسنده در فایل مود بسته بندی شده است، نیازی به دانلود جداگانه نیست)</string>
+    <string name="mods_dependency_optional">پیش-مود اختیاری (اگر بازی از دست رفته باشد، اما عملکرد mod ممکن است از دست رفته باشد)</string>
+    <string name="mods_dependency_required">قبل از مود مورد نیاز (باید جداگانه دانلود شود، ممکن است از دست رفتن بازی باعث اجرا نشدن بازی شود)</string>
+    <string name="mods_dependency_tool">کتابخانه پیشرو (باید جداگانه دانلود شود، ممکن است از دست رفتن بازی باعث اجرا نشدن بازی شود)</string>
+    <string name="mods_dependency_include">پیش مود داخلی (از قبل توسط نویسنده در فایل مود بسته بندی شده است، نیازی به دانلود جداگانه نیست)</string>
+    <string name="mods_dependency_incompatible">مد ناسازگار (نصب مود و مود در حال دانلود باعث می شود بازی راه اندازی نشود)</string>
+    <string name="mods_dependency_broken">پیش مود شکسته (این premod قبلاً در مخزن mod وجود داشت، اما اکنون حذف شده است.) منبع دانلود دیگری را امتحان کنید.</string>
+    <string name="mods_disable">غیر فعال کردن</string>
+    <string name="mods_download">مد دانلود</string>
+    <string name="mods_download_title">دانلود مد - %1s</string>
+    <string name="mods_download_recommend">نسخه مود پیشنهادی - Minecraft %1s</string>
+    <string name="mods_enable">فعال کردن</string>
+    <string name="mods_manage">مدها را مدیریت کنید</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">صفحه MCMOD</string>
+    <string name="mods_mcmod_search">جستجو در MCMOD</string>
+    <string name="mods_modrinth">مدرینث</string>
+    <string name="mods_name">نام</string>
+    <string name="mods_not_modded">برای مدیریت مودهای خود ابتدا باید یک مد لودر (Fabric، Forge یا LiteLoader) نصب کنید!</string>
+    <string name="mods_restore">بازگشت به عقب</string>
+    <string name="mods_url">صفحه رسمی</string>
+    <string name="mods_update_modpack_mod_warning">به‌روزرسانی مود‌ها در یک مودپک می‌تواند منجر به نتایج جبران‌ناپذیری شود و احتمالاً مودپک را خراب کند به طوری که شروع به کار نشود. آیا مطمئن هستید که می خواهید به روز رسانی کنید؟</string>
+
+    <string name="profile_shared">دایرکتوری مشترک</string>
+    <string name="profile_private">دایرکتوری خصوصی</string>
+    <string name="profile_name">نام</string>
+    <string name="profile_path">مسیر</string>
+    <string name="profile_select">دایرکتوری را انتخاب کنید</string>
+    <string name="profile_already_exist">این نام از قبل وجود دارد، لطفاً از نام دیگری استفاده کنید.</string>
+
+    <string name="quick_input_title">ورودی سریع</string>
+    <string name="quick_input_add">اضافه کردن متن جدید</string>
+    <string name="quick_input_text">متن ورودی سریع</string>
+    <string name="quick_input_exist">متن از قبل وجود دارد!</string>
+    <string name="quick_input_empty">ابتدا متن را پر کنید!</string>
+
+    <string name="resourcepack">بسته های منابع</string>
+
+    <string name="search">جستجو کردن</string>
+    <string name="search_hint_chinese">عبارت های جستجو از هر دو زبان چینی و انگلیسی پشتیبانی می کنند</string>
+    <string name="search_hint_english">فقط انگلیسی پشتیبانی می شود</string>
+    <string name="search_sort">مرتب سازی بر اساس</string>
+    <string name="search_first_page">اولین</string>
+    <string name="search_previous_page" translatable="false">◀</string>
+    <string name="search_next_page" translatable="false">▶</string>
+    <string name="search_last_page">آخر</string>
+    <string name="search_page_n" translatable="false">%d / %s</string>
+
+    <string name="settings_advanced_dont_check_game_completeness">یکپارچگی بازی را بررسی نکنید</string>
+    <string name="settings_advanced_dont_check_jvm_validity">سازگاری JVM را بررسی نکنید</string>
+    <string name="settings_advanced_game_dir_default">پیش فرض (.minecraft/)</string>
+    <string name="settings_advanced_game_dir_independent">جدا شده (minecraft/versions/&lt;نام نمونه&gt;/، به جز دارایی ها و کتابخانه ها)</string>
+    <string name="settings_advanced_java_permanent_generation_space">فضای PermGen</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">در مگابایت</string>
+    <string name="settings_advanced_jvm_args">آرگومان های جاوا VM</string>
+    <string name="settings_advanced_minecraft_arguments">Arguments را راه اندازی کنید</string>
+    <string name="settings_advanced_minecraft_arguments_prompt">پیش فرض</string>
+    <string name="settings_advanced_server_ip">آدرس سرور</string>
+    <string name="settings_advanced_server_ip_prompt">پس از راه اندازی بازی به صورت خودکار عضو شوید.</string>
+
+    <string name="settings_fcl_controller">کنترل کننده</string>
+    <string name="settings_fcl_controller_injector">ژست باشید</string>
+    <string name="settings_fcl_renderer">رندر</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
+    <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6، فقط از 1.17+ پشتیبانی می کند)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از 1.17- پشتیبانی می کند)</string>
+    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از GPU a616-a660 پشتیبانی می کند)</string>
+
+    <string name="settings_game">تنظیمات بازی</string>
+    <string name="settings_game_dimension">وضوح</string>
+    <string name="settings_game_java_version">نسخه جاوا</string>
+    <string name="settings_game_java_version_auto">خودکار</string>
+    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
+    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
+    <string name="settings_game_working_directory">جداسازی دایرکتوری کاری</string>
+
+    <string name="settings_icon">آیکون</string>
+
+    <string name="settings_launcher">تنظیمات لانچر</string>
+    <string name="settings_launcher_debug">اشکال زدایی</string>
+    <string name="settings_launcher_upgrade">به روز رسانی لانچر</string>
+    <string name="settings_launcher_upgrade_check">بررسی</string>
+    <string name="settings_launcher_cache">فهرست کش</string>
+    <string name="settings_launcher_clear_cache">پاک کردن حافظه پنهان</string>
+    <string name="settings_launcher_download">دانلود</string>
+    <string name="settings_launcher_download_threads">موضوعات</string>
+    <string name="settings_launcher_download_threads_auto">تعیین خودکار</string>
+    <string name="settings_launcher_download_source">منبع دانلود</string>
+    <string name="settings_launcher_download_source_auto">انتخاب خودکار دانلود Mirror</string>
+    <string name="settings_launcher_language">زبان</string>
+    <string name="settings_launcher_language_system">از زبان سیستم استفاده کنید</string>
+    <string name="settings_launcher_language_english" translatable="false">English</string>
+    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_launcher_log_export">گزارش های راه اندازی را صادر کنید</string>
+    <string name="settings_launcher_launcher_log_export_failed">گزارش‌ها صادر نمی‌شوند</string>
+    <string name="settings_launcher_launcher_log_export_success">گزارش‌ها به %s صادر شده‌اند</string>
+    <string name="settings_launcher_theme">موضوع</string>
+    <string name="settings_launcher_background_lt">پس زمینه لانچر حالت نور</string>
+    <string name="settings_launcher_background_dk">پس‌زمینه راه‌انداز حالت تاریک</string>
+    <string name="settings_launcher_ignore_notch">ناچ را نادیده بگیرید</string>
+    <string name="settings_launcher_animation_speed">سرعت انیمیشن</string>
+
+    <string name="settings_memory">حافظه</string>
+    <string name="settings_memory_allocate_auto">%1$.1f گیگابایت حداقل /%2$.1f گیگابایت اختصاص داده شده است</string>
+    <string name="settings_memory_allocate_auto_exceeded">%1$.1f گیگابایت حداقل /%2$.1f گیگابایت اختصاص داده شده (%3$.1f گیگابایت موجود است)</string>
+    <string name="settings_memory_allocate_manual">%1$.1f گیگابایت اختصاص داده شده است</string>
+    <string name="settings_memory_allocate_manual_exceeded">%1$.1f گیگابایت اختصاص داده شد (%3$.1f گیگابایت موجود است)</string>
+    <string name="settings_memory_auto_allocate">تخصیص خودکار</string>
+    <string name="settings_memory_lower_bound">حداقل حافظه</string>
+    <string name="settings_memory_used_per_total">%1$.1f گیگابایت استفاده شده /%2$.1f گیگابایت کل</string>
+    <string name="settings_physical_memory">اندازه حافظه فیزیکی</string>
+    <string name="settings_tabs_installers">مدلودرها</string>
+    <string name="settings_type_global_manage">تنظیمات جهانی بازی</string>
+    <string name="settings_type_special_enable">تنظیمات هر نمونه را فعال کنید</string>
+
+    <string name="style_name">نام</string>
+    <string name="style_warning_delete">آیا مطمئن هستید که این سبک را حذف می کنید؟</string>
+    <string name="style_warning_exist">این سبک از قبل وجود دارد!</string>
+    <string name="style_warning_name">ابتدا نام سبک را پر کنید!</string>
+    <string name="style_button">سبک دکمه</string>
+    <string name="style_button_normal">طبیعی</string>
+    <string name="style_button_pressed">فعال شد</string>
+    <string name="style_button_text_size">اندازه متن</string>
+    <string name="style_button_text_color">رنگ متن</string>
+    <string name="style_button_stroke_width">عرض سکته مغزی</string>
+    <string name="style_button_stroke_color">رنگ سکته مغزی</string>
+    <string name="style_button_corner_radius">شعاع گوشه</string>
+    <string name="style_button_fill_color">رنگ را پر کنید</string>
+    <string name="style_button_interval">فاصله دکمه</string>
+    <string name="style_direction">سبک کنترل کننده جهت</string>
+    <string name="style_direction_button">دکمه</string>
+    <string name="style_direction_rocker">راکر</string>
+    <string name="style_rocker">سبک راکر</string>
+    <string name="style_rocker_size">اندازه راکر</string>
+    <string name="style_rocker_bg_stroke_width">عرض ضربه پس زمینه</string>
+    <string name="style_rocker_bg_stroke_color">رنگ سکته پس زمینه</string>
+    <string name="style_rocker_bg_corner_radius">شعاع گوشه پس زمینه</string>
+    <string name="style_rocker_bg_fill_color">رنگ پر کردن پس زمینه</string>
+    <string name="style_rocker_stroke_width">عرض ضربه راکر</string>
+    <string name="style_rocker_stroke_color">راکر استروک رنگ</string>
+    <string name="style_rocker_corner_radius">شعاع گوشه راکر</string>
+    <string name="style_rocker_fill_color">راکر پر رنگ</string>
+
+    <string name="update">به روز رسانی</string>
+    <string name="update_netdisk">نت دیسک</string>
+    <string name="update_checking">بررسی به‌روزرسانی‌ها</string>
+    <string name="update_check_failed">به روز رسانی بررسی نشد</string>
+    <string name="update_date">تاریخ</string>
+    <string name="update_description">توضیحات:\n%s</string>
+    <string name="update_exist">نسخه قابل به روز رسانی شناسایی شد</string>
+    <string name="update_failed">آخرین نسخه دانلود نشد، لطفا دوباره امتحان کنید یا آن را از وب سایت رسمی دانلود کنید.</string>
+    <string name="update_ignore">این نسخه را نادیده بگیرید</string>
+    <string name="update_launcher">در حال به روز رسانی لانچر</string>
+    <string name="update_not_exist">به روز رسانی در دسترس نیست</string>
+    <string name="update_type">نوع: %s</string>
+    <string name="update_version">نسخه: %s</string>
+    <string name="update_version_release">رهایی</string>
+    <string name="update_version_beta">بتا</string>
+
+    <string name="version_game">بازی ها</string>
+    <string name="version_game_old">تاریخی</string>
+    <string name="version_game_release">رهایی</string>
+    <string name="version_game_releases">منتشر شده</string>
+    <string name="version_game_snapshot">عکس فوری</string>
+    <string name="version_game_snapshots">عکس های فوری</string>
+    <string name="version_empty_launch">هیچ نمونه ای وجود ندارد، لطفاً قبل از راه اندازی یکی را نصب کنید.</string>
+    <string name="version_launch">راه اندازی بازی</string>
+    <string name="version_no_version">بدون نسخه</string>
+    <string name="version_manage">برای مدیریت کلیک کنید</string>
+    <string name="version_manage_clean">حذف فایل های گزارش</string>
+    <string name="version_manage_duplicate">نمونه تکراری</string>
+    <string name="version_manage_duplicate_duplicate_save">ذخیره تکراری</string>
+    <string name="version_manage_duplicate_prompt">نام نمونه</string>
+    <string name="version_manage_duplicate_confirm">نمونه تکراری یک کپی از تمام فایل‌های این نمونه با فهرست و تنظیمات بازی جدا شده خواهد داشت.</string>
+    <string name="version_manage_redownload_assets_index">به روز رسانی دارایی های بازی</string>
+    <string name="version_manage_remove_confirm">آیا مطمئن هستید که می خواهید نسخه %s را برای همیشه حذف کنید؟ این عمل قابل لغو نیست!</string>
+    <string name="version_manage_remove_confirm_independent">از آنجایی که این نمونه در یک دایرکتوری ایزوله ذخیره می شود، با حذف آن، ذخیره ها و سایر داده های آن نیز حذف می شود. آیا همچنان می خواهید نمونه %s را حذف کنید؟</string>
+    <string name="version_manage_remove_libraries">حذف همه کتابخانه ها</string>
+    <string name="version_manage_rename">تغییر نام نمونه</string>
+    <string name="version_manage_rename_message">تغییر نام نسخه</string>
+    <string name="version_manage_rename_new">نام جدید</string>
+    <string name="version_manage_rename_fail">تغییر نام انجام نشد</string>
+    <string name="version_new_profile">دایرکتوری جدید</string>
+    <string name="version_update">Modpack را به روز کنید</string>
+
+    <string name="view_info_visibility">گزینه دید</string>
+    <string name="view_info_visibility_always">همیشه قابل مشاهده</string>
+    <string name="view_info_visibility_game">قابل مشاهده در بازی</string>
+    <string name="view_info_visibility_menu">خارج از بازی قابل مشاهده است</string>
+    <string name="view_info_x">موقعیت X</string>
+    <string name="view_info_y">موقعیت Y</string>
+    <string name="view_info_size_type">اندازه گیری اندازه</string>
+    <string name="view_info_size_type_percentage">اندازه درصد</string>
+    <string name="view_info_size_type_absolute">اندازه مطلق</string>
+    <string name="view_info_width">عرض</string>
+    <string name="view_info_height">ارتفاع</string>
+    <string name="view_info_width_reference">مرجع عرض</string>
+    <string name="view_info_height_reference">مرجع ارتفاع</string>
+    <string name="view_info_size">اندازه</string>
+    <string name="view_info_reference">مرجع اندازه</string>
+    <string name="view_info_reference_width">عرض صفحه نمایش</string>
+    <string name="view_info_reference_height">ارتفاع صفحه نمایش</string>
+
+    <string name="world">دنیاها</string>
+    <string name="world_add">افزودن یک جهان (zip.)</string>
+    <string name="world_datapack">Datapacks را مدیریت کنید</string>
+    <string name="world_datapack_1_13">فقط Minecraft 1.13 یا جدیدتر از بسته های داده پشتیبانی می کند.</string>
+    <string name="world_description">%s آخرین بازی در %s. نسخه بازی: %s.</string>
+    <string name="world_download">دانلود یک جهان</string>
+    <string name="world_export">دنیای صادرات</string>
+    <string name="world_export_title">یک دایرکتوری برای این دنیای صادراتی انتخاب کنید</string>
+    <string name="world_export_location">صادرات به</string>
+    <string name="world_export_wizard">جهان صادرات %s</string>
+    <string name="world_extension">آرشیو جهانی</string>
+    <string name="world_game_version">نسخه بازی</string>
+    <string name="world_import_already_exists">این جهان از قبل وجود دارد.</string>
+    <string name="world_import_choose">آرشیو ذخیره ای را که می خواهید وارد کنید انتخاب کنید</string>
+    <string name="world_import_failed">نمی‌توان این جهان را وارد کرد: %s</string>
+    <string name="world_import_invalid">امکان تجزیه ذخیره وجود ندارد.</string>
+    <string name="world_info_title">جهان %s - اطلاعات</string>
+    <string name="world_info_basic">اطلاعات اولیه</string>
+    <string name="world_info_allow_cheats">مجاز به تقلب ها</string>
+    <string name="world_info_dimension_the_nether">Nether</string>
+    <string name="world_info_dimension_the_end">پایان</string>
+    <string name="world_info_difficulty">دشواری</string>
+    <string name="world_info_difficulty_peaceful">صلح آمیز</string>
+    <string name="world_info_difficulty_easy">آسان</string>
+    <string name="world_info_difficulty_normal">طبیعی</string>
+    <string name="world_info_difficulty_hard">سخت</string>
+    <string name="world_info_game_version">نسخه بازی</string>
+    <string name="world_info_last_played">آخرین بازی</string>
+    <string name="world_info_generate_features">ساخت سازه ها</string>
+    <string name="world_info_player">اطلاعات بازیکن</string>
+    <string name="world_info_player_food_level">سطح گرسنگی</string>
+    <string name="world_info_player_game_type">حالت بازی</string>
+    <string name="world_info_player_game_type_adventure">ماجرا</string>
+    <string name="world_info_player_game_type_creative">خلاق</string>
+    <string name="world_info_player_game_type_spectator">تماشاگر</string>
+    <string name="world_info_player_game_type_survival">بقا</string>
+    <string name="world_info_player_health">سلامتی</string>
+    <string name="world_info_player_last_death_location">مکان آخرین مرگ</string>
+    <string name="world_info_player_location">محل</string>
+    <string name="world_info_player_spawn">مکان تخم ریزی</string>
+    <string name="world_info_player_xp_level">سطح تجربه</string>
+    <string name="world_info_random_seed">بذر</string>
+    <string name="world_info_time">زمان بازی</string>
+    <string name="world_info_time_format">%s روز</string>
+    <string name="world_manage">دنیاها /بسته های داده</string>
+    <string name="world_name">نام جهان</string>
+    <string name="world_name_enter">نام جهان را وارد کنید</string>
+    <string name="world_reveal">در اکسپلورر آشکار کنید</string>
+    <string name="world_show_all">نمایش همه</string>
+    <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+</resources>

@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
@@ -15,6 +16,7 @@ import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -75,6 +77,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
+    private FCLSwitch vulkanDriverSystemSwitch;
     private FCLSwitch noGameCheckSwitch;
     private FCLSwitch noJVMCheckSwitch;
 
@@ -119,6 +122,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         specialSettingSwitch.addCheckedChangeListener();
         isolateWorkingDirSwitch = findViewById(R.id.edit_game_dir);
         beGestureSwitch = findViewById(R.id.edit_controller_injector);
+        vulkanDriverSystemSwitch = findViewById(R.id.vulkan_driver_system);
         noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
         noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
 
@@ -286,6 +290,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(noGameCheckSwitch, lastVersionSetting.notCheckGameProperty());
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.notCheckJVMProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.beGestureProperty());
+            FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.VKDriverSystemProperty());
             FXUtils.unbindSelection(javaSpinner, lastVersionSetting.javaProperty());
             FXUtils.unbindSelection(rendererSpinner, lastVersionSetting.rendererProperty());
             scaleFactorSeekbar.percentProgressProperty().unbindBidirectional(lastVersionSetting.scaleFactorProperty());
@@ -307,6 +312,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(noGameCheckSwitch, versionSetting.notCheckGameProperty());
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.notCheckJVMProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.beGestureProperty());
+        FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.VKDriverSystemProperty());
         FXUtils.bindSelection(javaSpinner, versionSetting.javaProperty());
         FXUtils.bindSelection(rendererSpinner, versionSetting.rendererProperty());
         scaleFactorSeekbar.percentProgressProperty().bindBidirectional(versionSetting.scaleFactorProperty());
@@ -338,6 +344,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                     return;
 
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (path == null)
                     return;
 

@@ -112,10 +112,34 @@
             android:name="com.tungsten.fcllibrary.crash.CrashReportActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"/>
+        <activity
+            android:name=".activity.InstallActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter
+                android:label="@string/install_apk"
+                tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:mimeType="*/*" />
+                <data android:scheme="content" />
+            </intent-filter>
+        </activity>
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
             android:process=":processService"
             android:enabled="true"/>
+        <provider
+            android:name=".scoped.FolderProvider"
+            android:authorities="@string/file_browser_document_provider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="@string/file_browser_provider"

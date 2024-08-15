@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,12 @@ import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.control.view.ControlButton;
+import com.tungsten.fcl.ui.manage.EditDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -169,6 +172,9 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLTextView xPositionText = findInfoView(R.id.x_position_text);
                 FCLTextView yPositionText = findInfoView(R.id.y_position_text);
 
+                xPositionText.setOnClickListener(v -> openTextEditDialog(context, xPosition.progressProperty(), true));
+                yPositionText.setOnClickListener(v -> openTextEditDialog(context, yPosition.progressProperty(), true));
+
                 xPosition.setProgress(data.getBaseInfo().getXPosition());
                 yPosition.setProgress(data.getBaseInfo().getYPosition());
                 data.getBaseInfo().xPositionProperty().bindBidirectional(xPosition.progressProperty());
@@ -224,6 +230,9 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 FCLTextView widthText = findInfoView(R.id.width_text);
                 FCLTextView heightText = findInfoView(R.id.height_text);
+
+                widthText.setOnClickListener(v -> openTextEditDialog(context, width.progressProperty(), false));
+                heightText.setOnClickListener(v -> openTextEditDialog(context, height.progressProperty(), false));
 
                 if (data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE) {
                     width.setMax(1000);
@@ -408,6 +417,22 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         @NonNull
         public final <T extends View> T findEventView(int id) {
             return eventLayout.findViewById(id);
+        }
+
+        private void openTextEditDialog(Context context, IntegerProperty property, boolean isPercentage) {
+            EditDialog dialog = new EditDialog(context, s -> {
+                if (s.matches("\\d+(\\.\\d+)?$")) {
+                    float progress = Float.parseFloat(s);
+                    if (isPercentage) {
+                        progress = progress > 100 ? 100 : progress;
+                        property.set((int) (progress * 10));
+                    } else {
+                        property.set((int) progress);
+                    }
+                }
+            });
+            dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+            dialog.show();
         }
     }
 

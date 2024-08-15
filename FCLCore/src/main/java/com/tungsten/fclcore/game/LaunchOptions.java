@@ -46,6 +46,7 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private String serverIp;
     private boolean beGesture;
+    private boolean vulkanDriverSystem;
     private FCLConfig.Renderer renderer;
 
     /**
@@ -163,6 +164,13 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isBeGesture() {
         return beGesture;
+    }
+
+    /**
+     * vulkan Driver System
+     */
+    public boolean isVKDriverSystem() {
+        return vulkanDriverSystem;
     }
 
     /**
@@ -294,6 +302,13 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
+         * vulkanDriverSystem
+         */
+        public boolean isVKDriverSystem() {
+            return options.vulkanDriverSystem;
+        }
+
+        /**
          * Renderer
          */
         public FCLConfig.Renderer getRenderer() {
@@ -381,6 +396,11 @@ public class LaunchOptions implements Serializable {
 
         public Builder setBEGesture(boolean beGesture) {
             options.beGesture = beGesture;
+            return this;
+        }
+
+        public Builder setVkDriverSystem(boolean vulkanDriverSystem) {
+            options.vulkanDriverSystem = vulkanDriverSystem;
             return this;
         }
 
