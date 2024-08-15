@@ -8,24 +8,11 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <android/log.h>
-#include <xhook.h>
+#include <bytehook.h>
 #include <string.h>
 #include <fcl_internal.h>
 #include <sys/mman.h>
 #include <pthread.h>
-
-#define FULL_VERSION "1.8.0-internal"
-#define DOT_VERSION "1.8"
-#define PROGNAME "java"
-#define LAUNCHER_NAME "openjdk"
-
-static char* const_progname = PROGNAME;
-static const char* const_launcher = LAUNCHER_NAME;
-static const char** const_jargs = NULL;
-static const char** const_appclasspath = NULL;
-static const jboolean const_cpwildcard = JNI_TRUE;
-static const jboolean const_javaw = JNI_FALSE;
-static const jint const_ergo_class = 0;    //DEFAULT_POLICY
 
 typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
@@ -35,6 +22,7 @@ static volatile jmethodID log_method;
 static JavaVM *log_pipe_jvm;
 static int fclFd[2];
 static pthread_t logger;
+static _Atomic bool exit_tripped = false;
 
 void correctUtfBytes(char *bytes) {
     char three = 0;
@@ -204,72 +192,80 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibrar
     (*env)->ReleaseStringUTFChars(env, ldLibraryPath, ldLibPathUtf);
 }
 
-void (*old_exit)(int code);
-void custom_exit(int code) {
-    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "JVM exit with code %d.", code);
+typedef void (*exit_func)(int);
+
+_Noreturn static void nominal_exit(int code) {
     JNIEnv *env;
-    (*exitTrap_jvm)->AttachCurrentThread(exitTrap_jvm, &env, NULL);
-    (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
+    jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void**)&env, JNI_VERSION_1_6);
+    if(errorCode == JNI_EDETACHED) {
+        errorCode = (*exitTrap_jvm)->AttachCurrentThread(exitTrap_jvm, &env, NULL);
+    }
+    if(errorCode != JNI_OK) {
+        // Step on a landmine and die, since we can't invoke the Dalvik exit without attaching to
+        // Dalvik.
+        // I mean, if Zygote can do that, why can't I?
+        killpg(getpgrp(), SIGTERM);
+    }
+    if(code != 0) {
+        // Exit code 0 is pretty established as "eh it's fine"
+        // so only open the GUI if the code is != 0
+        (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
+    }
+    // Delete the reference, not gonna need 'em later anyway
     (*env)->DeleteGlobalRef(env, exitTrap_bridge);
-    (*exitTrap_jvm)->DetachCurrentThread(exitTrap_jvm);
-    old_exit(code);
+
+    // A hat trick, if you will
+    // Call the Android System.exit() to perform Android's shutdown hooks and do a
+    // fully clean exit.
+    // After doing this, either of these will happen:
+    // 1. Runtime calls exit() for real and it will be handled by ByteHook's recurse handler
+    // and redirected back to the OS
+    // 2. Zygote sends SIGTERM (no handling necessary, the process perishes)
+    // 3. A different thread calls exit() and the hook will go through the exit_tripped path
+    jclass systemClass = (*env)->FindClass(env,"java/lang/System");
+    jmethodID exitMethod = (*env)->GetStaticMethodID(env, systemClass, "exit", "(I)V");
+    (*env)->CallStaticVoidMethod(env, systemClass, exitMethod, 0);
+    // System.exit() should not ever return, but the compiler doesn't know about that
+    // so put a while loop here
+    while(1) {}
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1, jobject bridge) {
+static void custom_exit(int code) {
+    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "JVM exit with code %d.", code);
+    // If the exit was already done (meaning it is recursive or from a different thread), pass the call through
+    if(exit_tripped) {
+        BYTEHOOK_CALL_PREV(custom_exit, exit_func, code);
+        BYTEHOOK_POP_STACK();
+        return;
+    }
+    exit_tripped = true;
+    // Perform a nominal exit, as we expect.
+    nominal_exit(code);
+    BYTEHOOK_POP_STACK();
+}
+
+static void custom_atexit() {
+    // Same as custom_exit, but without the code or the exit passthrough.
+    if(exit_tripped) {
+        return;
+    }
+    exit_tripped = true;
+    nominal_exit(0);
+}
+
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1, jobject bridge) {
     exitTrap_bridge = (*env)->NewGlobalRef(env, bridge);
     (*env)->GetJavaVM(env, &exitTrap_jvm);
     jclass exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
     exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
-    // Enable xhook debug mode here
-    // xhook_enable_debug(1);
-    xhook_register(".*\\.so$", "exit", custom_exit, (void **) &old_exit);
-    return xhook_refresh(1);
-}
-
-int
-(*JLI_Launch)(int argc, char ** argv,              /* main argc, argc */
-              int jargc, const char** jargv,          /* java args */
-              int appclassc, const char** appclassv,  /* app classpath */
-              const char* fullversion,                /* full version defined */
-              const char* dotversion,                 /* dot version defined */
-              const char* pname,                      /* program name */
-              const char* lname,                      /* launcher name */
-              jboolean javaargs,                      /* JAVA_ARGS */
-              jboolean cpwildcard,                    /* classpath wildcard */
-              jboolean javaw,                         /* windows-only javaw */
-              jint     ergo_class                     /* ergnomics policy */
-);
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupJLI(JNIEnv* env, jobject jobject){
-
-    void* handle;
-    handle = dlopen("libjli.so", RTLD_LAZY | RTLD_GLOBAL);
-    JLI_Launch = (int (*)(int, char **, int, const char**, int, const char**, const char*, const char*, const char*, const char*, jboolean, jboolean, jboolean, jint))dlsym(handle, "JLI_Launch");
-
-}
-
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_jliLaunch(JNIEnv *env, jobject jobject, jobjectArray argsArray){
-    int argc = (*env)->GetArrayLength(env, argsArray);
-    char* argv[argc];
-    for (int i = 0; i < argc; i++) {
-        jstring str = (*env)->GetObjectArrayElement(env, argsArray, i);
-        int len = (*env)->GetStringUTFLength(env, str);
-        char* buf = malloc(len + 1);
-        int characterLen = (*env)->GetStringLength(env, str);
-        (*env)->GetStringUTFRegion(env, str, 0, characterLen, buf);
-        buf[len] = 0;
-        argv[i] = buf;
+    if(bytehook_init(BYTEHOOK_MODE_AUTOMATIC, false) == BYTEHOOK_STATUS_CODE_OK) {
+        bytehook_hook_all(NULL,
+                          "exit",
+                          &custom_exit,
+                          NULL,
+                          NULL);
+    }else {
+        atexit(custom_atexit);
     }
-
-    return JLI_Launch(argc, argv,
-                      sizeof(const_jargs) / sizeof(char *), const_jargs,
-                      sizeof(const_appclasspath) / sizeof(char *), const_appclasspath,
-                      FULL_VERSION,
-                      DOT_VERSION,
-                      (const_progname != NULL) ? const_progname : *argv,
-                      (const_launcher != NULL) ? const_launcher : *argv,
-                      (const_jargs != NULL) ? JNI_TRUE : JNI_FALSE,
-                      const_cpwildcard, const_javaw, const_ergo_class);
-
 }

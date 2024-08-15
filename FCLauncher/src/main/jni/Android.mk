@@ -13,28 +13,13 @@ LOCAL_C_INCLUDES        := $(LOCAL_PATH)/tinywrapper
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE            := xhook
-LOCAL_SRC_FILES         := xhook/xhook.c \
-                           xhook/xh_core.c \
-                           xhook/xh_elf.c \
-                           xhook/xh_jni.c \
-                           xhook/xh_log.c \
-                           xhook/xh_util.c \
-                           xhook/xh_version.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/xhook/include
-LOCAL_CFLAGS            := -Wall -Wextra -Werror -fvisibility=hidden
-LOCAL_CONLYFLAGS        := -std=c11
-LOCAL_LDLIBS            := -llog
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE            := fcl
-LOCAL_SHARED_LIBRARIES  := xhook
+LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
-                           fcl/fcl_loader.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/xhook/include \
-                           $(LOCAL_PATH)/fcl/include
+                           fcl/fcl_loader.c \
+                           fcl/jre_launcher.c
+LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
 include $(BUILD_SHARED_LIBRARY)
 
@@ -347,3 +332,4 @@ LOCAL_SRC_FILES         := lwjgl/opengl/org_lwjgl_opengl_AMDDebugOutput.c \
                            lwjgl/opengl/org_lwjgl_opengl_OVRMultiview.c
 LOCAL_CFLAGS            := -O2 -Wall -c -fPIC -std=c99 -Wunused -DLWJGL_FCL -Wunused-value
 include $(BUILD_SHARED_LIBRARY)
+$(call import-module,prefab/bytehook)

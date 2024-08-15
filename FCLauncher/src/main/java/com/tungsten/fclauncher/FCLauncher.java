@@ -9,6 +9,7 @@ import android.system.Os;
 import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
+import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -234,6 +235,7 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
+        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
@@ -260,10 +262,10 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
-        log(bridge, "Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
-        int exitCode = bridge.jliLaunch(args);
+        bridge.setupExitTrap(bridge);
+        log(bridge, "Hook success");
+        int exitCode = VMLauncher.launchJVM(args);
         bridge.onExit(exitCode);
     }
 

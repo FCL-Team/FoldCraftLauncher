@@ -33,10 +33,13 @@ android {
         }
     }
     ndkVersion '25.1.8937393'
+    buildFeatures {
+        prefab true
+    }
 }
 
 dependencies {
-
+    implementation 'com.bytedance:bytehook:1.0.9'
     implementation 'com.jaredrummler:android-device-names:2.1.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
