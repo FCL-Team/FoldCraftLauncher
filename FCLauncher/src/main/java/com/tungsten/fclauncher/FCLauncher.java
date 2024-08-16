@@ -114,8 +114,27 @@ public class FCLauncher {
                 "/hw" +
                 split +
 
-                nativeDir +
-                (FFmpegPlugin.isAvailable ? split + FFmpegPlugin.libraryPath : "");
+                nativeDir;
+    }
+
+    private static String getLibraryPath(Context context) {
+        String nativeDir = context.getApplicationInfo().nativeLibraryDir;
+        String libDirName = is64BitsDevice() ? "lib64" : "lib";
+        String split = ":";
+        return  "/system/" +
+                libDirName +
+                split +
+
+                "/vendor/" +
+                libDirName +
+                split +
+
+                "/vendor/" +
+                libDirName +
+                "/hw" +
+                split +
+
+                nativeDir;
     }
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {
@@ -135,10 +154,11 @@ public class FCLauncher {
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext()));
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
-            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath);
+            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
         }
         if (config.isUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
