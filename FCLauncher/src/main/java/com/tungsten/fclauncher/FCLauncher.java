@@ -13,6 +13,7 @@ import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -112,6 +113,9 @@ public class FCLauncher {
                 "/vendor/" +
                 libDirName +
                 "/hw" +
+                split +
+
+                FCLPath.RUNTIME_DIR + "/jna" +
                 split +
 
                 nativeDir;
