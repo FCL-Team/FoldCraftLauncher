@@ -62,7 +62,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
                     MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
+                    MainActivity.getInstance().bind.home.setSelected(true);
                 }
             });
             return;
@@ -158,7 +158,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                     loadVersion(preferredVersionName, this.version.get().getProfile());
                 } else if (isShowing()) {
                     MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
+                    MainActivity.getInstance().bind.home.setSelected(true);
                 }
             }
         });
@@ -176,7 +176,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
                     MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
+                    MainActivity.getInstance().bind.home.setSelected(true);
                 }
             });
             return;

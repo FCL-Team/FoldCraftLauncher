@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android' version '1.9.20'
     id "org.hidetake.ssh" version "2.11.2"
 }
 
@@ -101,6 +102,15 @@ android {
             useLegacyPackaging true
         }
         pickFirst '**/libbytehook.so'
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    dataBinding {
+        enabled true
+    }
+    buildFeatures {
+        buildConfig true
     }
     splits {
         def arch = System.getProperty("arch", "all")
