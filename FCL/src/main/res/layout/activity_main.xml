@@ -15,6 +15,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/menu"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:paddingTop="10dp"

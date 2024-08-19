@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
@@ -77,8 +78,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
         bind.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
 
-        Skin.registerDefaultSkinLoader { type: Skin.Type? ->
-            when (type) {
+        Skin.registerDefaultSkinLoader {
+            when (it) {
                 Skin.Type.ALEX -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
                     "/assets/img/alex.png"
                 )
@@ -289,20 +290,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
-        bind.apply {
-            val views = arrayOf(
-                home,
-                manage,
-                download,
-                controller,
-                multiplayer,
-                setting
-            )
-
-            for (v in views) {
-                if (v !== view) {
-                    v.isSelected = false
-                }
+        bind.menu.forEach {
+            if (it is FCLMenuView && it != view) {
+                it.isSelected = false
             }
         }
     }
