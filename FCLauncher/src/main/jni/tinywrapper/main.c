@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <string.h>
 
-#include "gl/gl.h"
+#include "pojav/GL/gl.h"
 #include "GLES3/gl32.h"
 #include "include/string_utils.h"
 

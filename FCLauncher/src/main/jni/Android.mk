@@ -48,4 +48,30 @@ LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES         := awt/awt_bridge.c
 include $(BUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
+# Link GLESv2 for test
+LOCAL_LDLIBS := -ldl -llog -landroid
+# -lGLESv2
+LOCAL_MODULE := pojavexec
+LOCAL_SHARED_LIBRARIES  := fcl
+# LOCAL_CFLAGS += -DDEBUG
+# -DGLES_TEST
+LOCAL_SRC_FILES := \
+    pojav/bigcoreaffinity.c \
+    pojav/egl_bridge.c \
+    pojav/ctxbridges/gl_bridge.c \
+    pojav/ctxbridges/osm_bridge.c \
+    pojav/ctxbridges/egl_loader.c \
+    pojav/ctxbridges/osmesa_loader.c \
+    pojav/ctxbridges/swap_interval_no_egl.c \
+    pojav/environ/environ.c \
+    pojav/input_bridge_v3.c \
+    driver_helper/nsbypass.c
+
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+LOCAL_CFLAGS += -DADRENO_POSSIBLE
+LOCAL_LDLIBS += -lEGL -lGLESv2
+endif
+include $(BUILD_SHARED_LIBRARY)
+
 $(call import-module,prefab/bytehook)
