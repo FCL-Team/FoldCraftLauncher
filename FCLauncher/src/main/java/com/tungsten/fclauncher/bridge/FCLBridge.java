@@ -49,13 +49,13 @@ public class FCLBridge implements Serializable {
     public static final int ConfigureNotify = 22;
     public static final int FCLMessage = 37;
 
-    public static final int Button1                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_1;
-    public static final int Button2                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_2;
-    public static final int Button3                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_3;
-    public static final int Button4                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_4;
-    public static final int Button5                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_5;
-    public static final int Button6                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_6;
-    public static final int Button7                          = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_7;
+    public static final int Button1 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_1;
+    public static final int Button2 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_2;
+    public static final int Button3 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_3;
+    public static final int Button4 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_4;
+    public static final int Button5 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_5;
+    public static final int Button6 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_6;
+    public static final int Button7 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_7;
 
     public static final int CursorEnabled = 1;
     public static final int CursorDisabled = 0;
@@ -248,7 +248,7 @@ public class FCLBridge implements Serializable {
                 intent.setDataAndType(uri, "*/*");
                 context.startActivity(intent);
             } catch (Exception e) {
-                Log.e("openLink error", e.toString());
+                Log.e("openLink error", "link:" + link + " err:" + e.toString());
             }
         });
     }
