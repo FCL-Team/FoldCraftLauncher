@@ -15,7 +15,8 @@
         android:background="@drawable/bg_container_white_clickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:stateListAnimator="@xml/anim_scale">
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:layout_width="30dp"

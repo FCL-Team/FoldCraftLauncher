@@ -1,5 +1,6 @@
 package com.tungsten.fcllibrary.component.view;
 
+import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.RippleDrawable;
@@ -11,6 +12,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -68,6 +70,7 @@ public class FCLMenuView extends AppCompatImageButton {
                 setSelected(true);
             }
         });
+        setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.xml.anim_scale_large));
     }
 
     public void setSelected(boolean selected) {

@@ -22,7 +22,9 @@
                 android:paddingBottom="10dp"
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <com.tungsten.fcllibrary.component.view.FCLMenuView
                     android:layout_width="wrap_content"
@@ -135,13 +137,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                app:layout_constraintTop_toBottomOf="@+id/view">
+                app:layout_constraintTop_toBottomOf="@+id/view"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:stateListAnimator="@xml/anim_scale">
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:id="@+id/avatar"/>
+                    android:id="@+id/avatar"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:stateListAnimator="@xml/anim_scale_large"/>
 
                 <LinearLayout
                     android:layout_marginStart="10dp"
@@ -211,7 +219,8 @@
                 android:orientation="horizontal"
                 android:padding="10dp"
                 app:layout_constraintTop_toBottomOf="@id/view2"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                android:stateListAnimator="@xml/anim_scale">
 
                 <com.tungsten.fcllibrary.component.view.FCLImageView
                     android:layout_width="30dp"
