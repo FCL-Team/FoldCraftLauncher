@@ -96,6 +96,10 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         return "asc";
     }
 
+    private int calculateTotalPages(Response<List<CurseAddon>> response, int pageSize) {
+        return (int) Math.ceil((double) Math.min(response.pagination.totalCount, 10000) / pageSize);
+    }
+
     @Override
     public SearchResult search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
@@ -115,7 +119,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 }.getType());
         Stream<RemoteMod> res = response.getData().stream().map(CurseAddon::toMod);
         if (sortType != SortType.NAME || searchFilter.isEmpty()) {
-            return new SearchResult(res, (int)Math.ceil((double)response.pagination.totalCount / pageSize));
+            return new SearchResult(res, calculateTotalPages(response, pageSize));
         }
 
         String lowerCaseSearchFilter = searchFilter.toLowerCase();
@@ -137,7 +141,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
             }
 
             return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), res, response.pagination.totalCount);
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), res, calculateTotalPages(response, pageSize));
     }
 
     @Override

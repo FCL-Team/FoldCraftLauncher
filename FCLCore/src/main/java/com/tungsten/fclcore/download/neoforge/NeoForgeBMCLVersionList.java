@@ -29,6 +29,7 @@ import com.tungsten.fclcore.util.gson.Validation;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -61,8 +62,7 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
     @Override
     public Optional<NeoForgeRemoteVersion> getVersion(String gameVersion, String remoteVersion) {
         if (gameVersion.equals("1.20.1")) {
-            remoteVersion = NeoForgeRemoteVersion.fixInvalidVersion(remoteVersion);
-            remoteVersion = VersionNumber.compare(remoteVersion, "47.1.85") >= 0 ? "1.20.1-" + remoteVersion : remoteVersion;
+            remoteVersion = NeoForgeRemoteVersion.normalize(remoteVersion);
         }
         return super.getVersion(gameVersion, remoteVersion);
     }
@@ -78,16 +78,10 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
                     try {
                         versions.clear(gameVersion);
                         for (NeoForgeVersion neoForgeVersion : neoForgeVersions) {
-                            String nf = StringUtils.removePrefix(
-                                    neoForgeVersion.version,
-                                    "1.20.1".equals(gameVersion) ? "1.20.1-forge-" : "neoforge-" // Som of the version numbers for 1.20.1 are like forge.
-                            );
                             versions.put(gameVersion, new NeoForgeRemoteVersion(
                                     neoForgeVersion.mcVersion,
-                                    nf,
-                                    Lang.immutableListOf(
-                                            apiRoot + "/neoforge/version/" + neoForgeVersion.version + "/download/installer.jar"
-                                    )
+                                    NeoForgeRemoteVersion.normalize(neoForgeVersion.version),
+                                    Collections.singletonList(apiRoot + "/neoforge/version/" + neoForgeVersion.version + "/download/installer.jar")
                             ));
                         }
                     } finally {
