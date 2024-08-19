@@ -61,6 +61,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         @JvmStatic
         lateinit var instance: MainActivity
     }
+
     lateinit var bind: ActivityMainBinding
     private var _uiManager: UIManager? = null
     private lateinit var uiManager: UIManager
@@ -75,7 +76,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         bind = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         bind.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
-        
+
         Skin.registerDefaultSkinLoader { type: Skin.Type? ->
             when (type) {
                 Skin.Type.ALEX -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
@@ -153,7 +154,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         ThemeEngine.getInstance().getTheme().color
                     )
                 }
-                
+
                 account.setOnClickListener(this@MainActivity)
                 version.setOnClickListener(this@MainActivity)
                 executeJar.setOnClickListener(this@MainActivity)
@@ -199,7 +200,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
                 uiManager = UIManager(this@MainActivity, uiLayout)
                 _uiManager = uiManager
-                uiManager.registerDefaultBackEvent(backToMainUI)
+                uiManager.registerDefaultBackEvent() {
+                    if (uiManager.currentUI === uiManager.mainUI) {
+                        val i = Intent(Intent.ACTION_MAIN)
+                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        i.addCategory(Intent.CATEGORY_HOME)
+                        startActivity(i)
+                    } else {
+                        home.isSelected = true
+                    }
+                }
                 uiManager.init {
                     home.setOnSelectListener(this@MainActivity)
                     manage.setOnSelectListener(this@MainActivity)
@@ -215,17 +225,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
             }
-        }
-    }
-
-    var backToMainUI: Runnable = Runnable {
-        if (uiManager.currentUI === uiManager.mainUI) {
-            val i = Intent(Intent.ACTION_MAIN)
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            i.addCategory(Intent.CATEGORY_HOME)
-            startActivity(i)
-        } else {
-            bind.home.isSelected = true
         }
     }
 
@@ -247,11 +246,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onSelect(view: FCLMenuView) {
         refreshMenuView(view)
         bind.apply {
-            when(view) {
+            when (view) {
                 home -> {
                     title.setTextWithAnim(getString(R.string.app_name))
                     uiManager.switchUI(uiManager.mainUI)
                 }
+
                 manage -> {
                     val version = Profiles.getSelectedVersion()
                     if (version == null) {
@@ -264,18 +264,22 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         uiManager.switchUI(uiManager.manageUI)
                     }
                 }
+
                 download -> {
                     title.setTextWithAnim(getString(R.string.download))
                     uiManager.switchUI(uiManager.downloadUI)
                 }
+
                 controller -> {
                     title.setTextWithAnim(getString(R.string.controller))
                     uiManager.switchUI(uiManager.controllerUI)
                 }
+
                 multiplayer -> {
                     title.setTextWithAnim(getString(R.string.multiplayer))
                     uiManager.switchUI(uiManager.multiplayerUI)
                 }
+
                 setting -> {
                     title.setTextWithAnim(getString(R.string.setting))
                     uiManager.switchUI(uiManager.settingUI)
@@ -351,7 +355,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     } else {
                         accountName.stringProperty()
                             .bind(BindingMapping.of(account) { obj: Account -> obj.character })
-                        accountHint.stringProperty().bind(accountSubtitle(this@MainActivity, account))
+                        accountHint.stringProperty()
+                            .bind(accountSubtitle(this@MainActivity, account))
                         avatar.imageProperty().unbind()
                         avatar.imageProperty().bind(
                             TexturesLoader.avatarBinding(
