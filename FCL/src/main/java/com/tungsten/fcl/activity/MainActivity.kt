@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
@@ -228,9 +229,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         _uiManager?.onBackPressed()
-        super.onBackPressed()
+        return true
     }
 
     override fun onPause() {
