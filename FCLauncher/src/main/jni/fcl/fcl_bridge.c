@@ -29,10 +29,6 @@ __attribute__((constructor)) void env_init() {
     __android_log_print(ANDROID_LOG_INFO, "Environ", "%p", fcl);
 }
 
-ANativeWindow* fclGetNativeWindow() {
-    return fcl->window;
-}
-
 void fclSetPrimaryClipString(const char* string) {
     PrepareFCLBridgeJNI();
     CallFCLBridgeJNIFunc( , Void, setPrimaryClipString, "(Ljava/lang/String;)V", (*env)->NewStringUTF(env, string));
@@ -53,11 +49,6 @@ const char* fclGetPrimaryClipString() {
         }
     }
     return fcl->clipboard_string;
-}
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativeWindow(JNIEnv* env, jclass clazz, jobject surface) {
-    fcl->window = ANativeWindow_fromSurface(env, surface);
-    FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl->window, ANativeWindow_getWidth(fcl->window), ANativeWindow_getHeight(fcl->window));
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLBridge(JNIEnv *env, jobject thiz, jobject fcl_bridge) {

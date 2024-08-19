@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
+import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.util.function.Consumer;
@@ -49,7 +50,11 @@ public class CallbackBridge {
     public static void sendKeycode(int keycode, char keychar, int scancode, int modifiers, boolean isDown) {
         // TODO CHECK: This may cause input issue, not receive input!
         if (keycode != 0) {
-            nativeSendKey(keycode, scancode, isDown ? 1 : 0, modifiers);
+            int code = LwjglKeycodeMap.convertKeycode(keycode);
+            if (code <= 0) {
+                return;
+            }
+            nativeSendKey(code, scancode, isDown ? 1 : 0, modifiers);
         }
         if (isDown && keychar != '\u0000') {
             nativeSendCharMods(keychar, modifiers);
@@ -223,7 +228,7 @@ public class CallbackBridge {
     private static native void nativeSendScreenSize(int width, int height);
 
     public static native void nativeSetWindowAttrib(int attrib, int value);
-
+    public static native void setupBridgeWindow(Object surface);
     static {
         System.loadLibrary("pojavexec");
     }
