@@ -87,7 +87,7 @@ public class FCLBridge implements Serializable {
 
     static {
         System.loadLibrary("fcl");
-        System.loadLibrary("fcl_awt");
+        System.loadLibrary("pojavexec_awt");
     }
 
     public FCLBridge() {
