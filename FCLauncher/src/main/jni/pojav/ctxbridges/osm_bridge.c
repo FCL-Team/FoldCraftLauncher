@@ -11,6 +11,7 @@ static const char* g_LogTag = "GLBridge";
 static __thread osm_render_window_t* currentBundle;
 // a tiny buffer for rendering when there's nowhere t render
 static char no_render_buffer[4];
+static bool hasSetNoRendererBuffer = false;
 
 // Its not in a .h file because it is not supposed to be used outsife of this file.
 void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInterval);
@@ -92,7 +93,6 @@ void osm_make_current(osm_render_window_t* bundle) {
         currentBundle = NULL;
         return;
     }
-    bool hasSetNoRendererBuffer = false;
     bool hasSetMainWindow = false;
     currentBundle = bundle;
     if(pojav_environ->mainWindowBundle == NULL) {
