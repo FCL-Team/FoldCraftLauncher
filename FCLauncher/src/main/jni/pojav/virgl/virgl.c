@@ -10,12 +10,10 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "virgl.h"
-#include "pojav/environ/environ.h"
-#include "pojav/ctxbridges/osm_bridge.h"
-#include "pojav/egl_bridge.h"
-#include "pojav/ctxbridges/egl_loader.h"
-
-#define RENDERER_VIRGL 3
+#include "environ/environ.h"
+#include "ctxbridges/osm_bridge.h"
+#include "egl_bridge.h"
+#include "ctxbridges/egl_loader.h"
 
 int (*vtest_main_p)(int argc, char **argv);
 
@@ -89,11 +87,9 @@ void *egl_make_current(void *window) {
         printf("EGLBridge: eglMakeCurrent() succeed!\n");
     }
 
-    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
-        printf("VirGL: vtest_main = %p\n", vtest_main_p);
-        printf("VirGL: Calling VTest server's main function\n");
-        vtest_main_p(3, (const char *[]) {"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
-    }
+    printf("VirGL: vtest_main = %p\n", vtest_main_p);
+    printf("VirGL: Calling VTest server's main function\n");
+    vtest_main_p(3, (const char *[]) {"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
 }
 
 void virglSwapInterval(int interval) {
