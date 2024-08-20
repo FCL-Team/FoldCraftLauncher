@@ -202,16 +202,12 @@ public class FCLauncher {
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
             if (renderer == FCLConfig.Renderer.RENDERER_VIRGL) {
-                envMap.put("GALLIUM_DRIVER", "virpipe");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
-                envMap.put("POJAV_RENDERER","opengles3_virgl");
+                envMap.put("POJAV_RENDERER","gallium_virgl");
             } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
-                envMap.put("GALLIUM_DRIVER", "zink");
                 envMap.put("POJAV_RENDERER","vulkan_zink");
             } else if (renderer == FCLConfig.Renderer.RENDERER_FREEDRENO) {
-                envMap.put("GALLIUM_DRIVER", "freedreno");
-                envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
-                envMap.put("POJAV_RENDERER","vulkan_zink");
+                envMap.put("POJAV_RENDERER","gallium_freedreno");
             }
         }
     }
