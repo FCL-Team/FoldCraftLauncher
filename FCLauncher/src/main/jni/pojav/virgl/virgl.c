@@ -185,7 +185,6 @@ int virglInit() {
     usleep(100 * 1000); // need enough time for the server to init
 
     if (OSMesaCreateContext_p == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "测试", "null");
         printf("OSMDroid: %s\n", dlerror());
     }
     return 0;
