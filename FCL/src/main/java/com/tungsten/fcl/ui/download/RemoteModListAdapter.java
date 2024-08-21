@@ -7,12 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -76,21 +79,7 @@ public class RemoteModListAdapter extends FCLAdapter {
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(remoteMod));
         viewHolder.icon.setImageDrawable(null);
         viewHolder.icon.setTag(i);
-        new Thread(() -> {
-            try {
-                URL url = new URL(remoteMod.getIconUrl());
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.connect();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                Bitmap icon = BitmapFactory.decodeStream(inputStream);
-                if (viewHolder.icon.getTag().equals(i)) {
-                    Schedulers.androidUIThread().execute(() -> viewHolder.icon.setImageBitmap(icon));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
         ModTranslations.Mod mod = ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType()).getModByCurseForgeId(remoteMod.getSlug());
         viewHolder.name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : remoteMod.getTitle());
         List<String> categories = remoteMod.getCategories().stream().map(downloadPage::getLocalizedCategory).collect(Collectors.toList());
@@ -99,6 +88,7 @@ public class RemoteModListAdapter extends FCLAdapter {
         String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
         viewHolder.tag.setText(tag);
         viewHolder.description.setText(remoteMod.getDescription());
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 

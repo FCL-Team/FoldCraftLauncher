@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion;
@@ -84,6 +85,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         viewHolder.tag.setText(getTag(remoteVersion));
         viewHolder.date.setVisibility(remoteVersion.getReleaseDate() == null ? View.GONE : View.VISIBLE);
         viewHolder.date.setText(remoteVersion.getReleaseDate() == null ? "" : formatDateTime(getContext(), remoteVersion.getReleaseDate()));
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
@@ -100,19 +101,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         super.onStart();
 
         icon.setImageDrawable(null);
-        new Thread(() -> {
-            try {
-                URL url = new URL(addon.getIconUrl());
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.connect();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                Bitmap icon = BitmapFactory.decodeStream(inputStream);
-                Schedulers.androidUIThread().execute(() -> RemoteModInfoPage.this.icon.setImageBitmap(icon));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
         ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
         name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
         description.setText(addon.getDescription());
