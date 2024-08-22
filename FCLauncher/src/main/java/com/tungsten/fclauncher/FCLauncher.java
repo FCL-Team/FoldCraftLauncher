@@ -173,9 +173,6 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
-        envMap.put("LIBGL_STRING", renderer.toString());
-        envMap.put("LIBGL_NAME", renderer.getGlLibName());
-        envMap.put("LIBEGL_NAME", renderer.getEglLibName());
         if (renderer == FCLConfig.Renderer.RENDERER_GL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU) {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
