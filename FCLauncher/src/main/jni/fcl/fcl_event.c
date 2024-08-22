@@ -12,19 +12,8 @@ void fclSetInjectorCallback(FCLinjectorfun callback) {
 }
 
 void fclSetHitResultType(int type) {
-    if (!fcl->has_event_pipe) {
-        return;
-    }
     PrepareFCLBridgeJNI();
     CallFCLBridgeJNIFunc( , Void, setHitResultType, "(I)V", type);
-}
-
-void fclSetCursorMode(int mode) {
-    if (!fcl->has_event_pipe) {
-        return;
-    }
-    PrepareFCLBridgeJNI();
-    CallFCLBridgeJNIFunc( , Void, setCursorMode, "(I)V", mode);
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_refreshHitResultType(JNIEnv *env, jobject thiz) {

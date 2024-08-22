@@ -17,29 +17,12 @@
 #include "fcl_bridge.h"
 #include "fcl_keycodes.h"
 
-typedef struct _QueueElement {
-    struct _QueueElement* next;
-    FCLEvent event;
-} QueueElement;
-
-typedef struct {
-    int count;
-    int capacity;
-    QueueElement* head;
-    QueueElement* tail;
-} EventQueue;
-
 struct FCLInternal {
     JavaVM* android_jvm;
     jclass class_FCLBridge;
     jobject object_FCLBridge;
     ANativeWindow* window;
     char* clipboard_string;
-    EventQueue event_queue;
-    pthread_mutex_t event_queue_mutex;
-    int has_event_pipe;
-    int event_pipe_fd[2];
-    int epoll_fd;
     FILE* logFile;
 };
 

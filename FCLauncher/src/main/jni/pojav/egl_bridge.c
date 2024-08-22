@@ -45,6 +45,7 @@ struct PotatoBridge potatoBridge;
 #include "ctxbridges/egl_loader.h"
 #include "ctxbridges/osmesa_loader.h"
 #include "pojav/virgl/virgl.h"
+#include "fcl/include/fcl_bridge.h"
 
 #define RENDERER_GL4ES 1
 #define RENDERER_VK_ZINK 2
@@ -286,3 +287,10 @@ EXTERNAL_API void pojavSwapInterval(int interval) {
     else br_swap_interval(interval);
 }
 
+EXTERNAL_API void pojavSetInjectorCallback(FCLinjectorfun callback) {
+    fclSetInjectorCallback(callback);
+}
+
+EXTERNAL_API void pojavSetHitResultType(int type) {
+    fclSetHitResultType(type);
+}

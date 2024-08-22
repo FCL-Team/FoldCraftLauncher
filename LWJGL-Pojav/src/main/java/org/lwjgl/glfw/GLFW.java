@@ -608,7 +608,7 @@ public class GLFW
         throw new UnsupportedOperationException();
     }
 
-    private static final SharedLibrary GLFW = Library.loadNative(GLFW.class, "org.lwjgl.glfw", "libpojavexec.so", true);
+    public static final SharedLibrary GLFW = Library.loadNative(GLFW.class, "org.lwjgl.glfw", "libpojavexec.so", true);
 
     /** Contains the function pointers loaded from the glfw {@link SharedLibrary}. */
     public static final class Functions {
@@ -818,6 +818,7 @@ public class GLFW
             mGLFWInitialTime = (double) System.nanoTime();
             long __functionAddress = Functions.Init;
             isGLFWReady = invokeI(__functionAddress) != 0;
+            FCLInjector.setClassLoader(Thread.currentThread().getContextClassLoader());
         }
         return isGLFWReady;
     }
