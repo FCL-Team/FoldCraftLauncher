@@ -27,6 +27,7 @@
 #include <android/dlext.h>
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
+#include "fcl/include/utils.h"
 
 #define GLFW_CLIENT_API 0x22001
 /* Consider GLFW_NO_API as Vulkan API */
@@ -181,6 +182,7 @@ void load_vulkan() {
     void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
     printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
     set_vulkan_ptr(vulkan_ptr);
+    printVulkanInfo(vulkan_ptr);
 }
 
 int pojavInitOpenGL() {

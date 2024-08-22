@@ -18,7 +18,8 @@ LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
                            fcl/fcl_loader.c \
-                           fcl/jre_launcher.c
+                           fcl/jre_launcher.c \
+                           fcl/utils.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
 include $(BUILD_SHARED_LIBRARY)
