@@ -202,18 +202,8 @@ public class FCLauncher {
                 envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
             } else if (renderer == FCLConfig.Renderer.RENDERER_PANFROST) {
                 envMap.put("GALLIUM_DRIVER", "panfrost");
-                envMap.put("PAN_MESA_DEBUG", "gofaster");
+                envMap.put("PAN_DEBUG", "gofaster");
                 envMap.put("PAN_MESA_DEBUG", "gl3");
-                envMap.put("PAN_MESA_DEBUG", "indirect");
-                envMap.put("PAN_MESA_DEBUG", "nocache");
-                envMap.put("PAN_MESA_DEBUG", "nogpuc");
-                envMap.put("PAN_MESA_DEBUG", "nocpuc");
-                envMap.put("PAN_MESA_DEBUG", "dirty");
-                envMap.put("PAN_MESA_DEBUG", "noafbc");
-                envMap.put("PAN_MESA_DEBUG", "nocrc");
-                envMap.put("PAN_MESA_DEBUG", "nofp16");
-                envMap.put("PAN_MESA_DEBUG", "deqp");
-
             }
         }
     }
