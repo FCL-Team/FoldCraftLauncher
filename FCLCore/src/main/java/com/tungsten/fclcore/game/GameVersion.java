@@ -17,7 +17,6 @@
  */
 package com.tungsten.fclcore.game;
 
-import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonParseException;
@@ -47,8 +46,11 @@ public final class GameVersion {
     private static Optional<String> getVersionFromJson(InputStream versionJson) {
         try {
             Map<?, ?> version = JsonUtils.fromNonNullJsonFully(versionJson, Map.class);
-            return tryCast(version.get("id"), String.class);
-        } catch (IOException | JsonParseException e) {
+            String id = (String) version.get("id");
+            if (id != null && id.contains(" / "))
+                id = id.substring(0, id.indexOf(" / "));
+            return Optional.ofNullable(id);
+        } catch (IOException | JsonParseException | ClassCastException e) {
             LOG.log(Level.WARNING, "Failed to parse version.json", e);
             return Optional.empty();
         }
