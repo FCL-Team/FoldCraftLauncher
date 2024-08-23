@@ -23,7 +23,7 @@ import com.tungsten.fclcore.download.forge.ForgeVersionList;
 import com.tungsten.fclcore.download.game.GameVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeOfficialVersionList;
-import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
+import com.tungsten.fclcore.download.optifine.OptiFine302VersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
 
@@ -37,7 +37,7 @@ public class MojangDownloadProvider implements DownloadProvider {
     private final ForgeVersionList forge;
     private final NeoForgeOfficialVersionList neoforge;
     private final LiteLoaderVersionList liteLoader;
-    private final OptiFineBMCLVersionList optifine;
+    private final OptiFine302VersionList optifine;
     private final QuiltVersionList quilt;
     private final QuiltAPIVersionList quiltApi;
 
@@ -50,7 +50,7 @@ public class MojangDownloadProvider implements DownloadProvider {
         this.forge = new ForgeVersionList(this);
         this.neoforge = new NeoForgeOfficialVersionList(this);
         this.liteLoader = new LiteLoaderVersionList(this);
-        this.optifine = new OptiFineBMCLVersionList(apiRoot);
+        this.optifine = new OptiFine302VersionList("https://zkitefly.github.io/optifine-download-list/index.json");
         this.quilt = new QuiltVersionList(this);
         this.quiltApi = new QuiltAPIVersionList(this);
     }
