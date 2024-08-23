@@ -25,7 +25,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.download.VersionList;
-import org.jackhuang.hmcl.util.Lang;
+import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.Validation;
 import com.tungsten.fclcore.util.io.HttpRequest;
