@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,8 +25,12 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.WebActivity;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.IOUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 @SuppressLint("DiscouragedApi")
@@ -121,6 +126,28 @@ public class AndroidUtils {
             }
         }
         return mime;
+    }
+
+    public static String copyFileToDir(Activity activity, Uri uri, File destDir) {
+        String name = new File(uri.getPath()).getName();
+        File dest = new File(destDir, name);
+        try {
+            InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                throw new IOException("Failed to open content stream");
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(dest)) {
+                IOUtils.copyTo(inputStream, outputStream);
+            }
+            inputStream.close();
+        } catch (Exception e) {
+
+        }
+        return dest.getAbsolutePath();
+    }
+
+    public static boolean isDocUri(Uri uri) {
+        return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE) || Objects.equals(uri.getScheme(),ContentResolver.SCHEME_CONTENT);
     }
 
 }

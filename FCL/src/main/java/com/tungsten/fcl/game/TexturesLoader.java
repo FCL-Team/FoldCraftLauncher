@@ -115,16 +115,18 @@ public final class TexturesLoader {
 
         if (texture.getUrl().equals("offline") && accounts.length == 1) {
             OfflineAccount account = accounts[0];
-            Skin.LoadedSkin loadedSkin = account.getSkin().load(account.getUsername()).run();
-            if (loadedSkin != null) {
-                Bitmap img = loadedSkin.getSkin() == null ? null : loadedSkin.getSkin().getImage();
-                if (img == null) {
-                    img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+            Skin skin = account.getSkin();
+            if (skin != null) {
+                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                if (loadedSkin != null) {
+                    Bitmap img = loadedSkin.getSkin() == null ? null : loadedSkin.getSkin().getImage();
+                    if (img == null) {
+                        img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+                    }
+                    return new LoadedTexture(img, metadata);
                 }
-                return new LoadedTexture(img, metadata);
-            } else {
-                return getDefaultSkin(TextureModel.detectUUID(account.getUUID()));
             }
+            return getDefaultSkin(TextureModel.detectUUID(account.getUUID()));
         }
 
         Path file = getTexturePath(texture);
@@ -160,12 +162,14 @@ public final class TexturesLoader {
 
         if (texture.getUrl().equals("offline") && accounts.length == 1) {
             OfflineAccount account = accounts[0];
-            Skin.LoadedSkin loadedSkin = account.getSkin().load(account.getUsername()).run();
-            if (loadedSkin != null) {
-                return loadedSkin.getSkin() == null ? null : loadedSkin.getCape().getImage();
-            } else {
-                return getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+            Skin skin = account.getSkin();
+            if (skin != null) {
+                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                if (loadedSkin != null) {
+                    return loadedSkin.getSkin() == null ? null : loadedSkin.getCape().getImage();
+                }
             }
+            return getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
         }
 
         Path file = getTexturePath(texture);

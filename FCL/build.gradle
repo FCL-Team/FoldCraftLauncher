@@ -43,8 +43,8 @@ android {
         applicationId "com.tungsten.fcl"
         minSdk 26
         targetSdk 34
-        versionCode 1173
-        versionName "1.1.7.3"
+        versionCode 1176
+        versionName "1.1.7.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,6 +100,7 @@ android {
         jniLibs {
             useLegacyPackaging true
         }
+        pickFirst '**/libbytehook.so'
     }
     splits {
         def arch = System.getProperty("arch", "all")

@@ -14,12 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.MenuCallback;
-import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
+import com.tungsten.fcl.control.MenuCallback;
+import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.util.Logging;
@@ -116,9 +115,6 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
-        if (textureView != null && textureView.getSurfaceTexture() != null) {
-            textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
-        }
         if (output == 1) {
             menu.onGraphicOutput();
             output++;

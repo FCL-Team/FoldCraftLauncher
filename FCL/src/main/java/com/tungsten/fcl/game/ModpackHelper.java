@@ -21,12 +21,13 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Lang.toIterable;
 import static com.tungsten.fclcore.util.Pair.pair;
 
+import android.os.Environment;
+
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.mod.MismatchedModpackTypeException;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
@@ -181,7 +182,7 @@ public final class ModpackHelper {
     }
 
     public static boolean isExternalGameNameConflicts(String name) {
-        return Files.exists(Paths.get("externalgames").resolve(name));
+        return Files.exists(Paths.get(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL").resolve(name));
     }
 
     public static Task<?> getInstallManuallyCreatedModpackTask(Profile profile, File zipFile, String name, Charset charset) {

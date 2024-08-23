@@ -1,6 +1,8 @@
 package com.tungsten.fcllibrary.browser;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +12,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
@@ -43,11 +48,51 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
     private FCLButton sharedDir;
     private FCLButton privateDir;
     private FCLButton openExternal;
+    private FCLButton selectExternal;
     private FCLButton confirm;
 
     private Path currentPath;
 
     private ArrayList<String> selectedFiles;
+    private ArrayList<Uri> extSelected;
+
+    private final ActivityResultLauncher<Object> launcher = registerForActivityResult(new ActivityResultContract<Object, Uri>() {
+        @NonNull
+        @Override
+        public Intent createIntent(@NonNull Context context, Object o) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, fileBrowser.getSelectionMode() == SelectionMode.MULTIPLE_SELECTION);
+            return intent;
+        }
+
+        @Override
+        public Uri parseResult(int resultCode, @Nullable Intent data) {
+            if (data == null || resultCode != Activity.RESULT_OK) {
+                return null;
+            }
+            ClipData clipData = data.getClipData();
+            if (clipData != null && clipData.getItemCount() > 0) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    Uri uri = clipData.getItemAt(i).getUri();
+                    if (uri != null) {
+                        extSelected.add(uri);
+                    }
+                }
+            } else {
+                extSelected.add(data.getData());
+            }
+            return null;
+        }
+    }, result -> {
+        if (!extSelected.isEmpty()) {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra(FileBrowser.SELECTED_FILES, extSelected);
+            FileBrowserActivity.this.setResult(Activity.RESULT_OK, intent);
+            FileBrowserActivity.this.finish();
+        }
+    });
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,16 +118,35 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         sharedDir = findViewById(R.id.shared_dir);
         privateDir = findViewById(R.id.private_dir);
         openExternal = findViewById(R.id.open_external);
+        selectExternal = findViewById(R.id.select_external);
         confirm = findViewById(R.id.confirm);
         sharedDir.setOnClickListener(this);
         privateDir.setOnClickListener(this);
         openExternal.setOnClickListener(this);
+        selectExternal.setOnClickListener(this);
         confirm.setOnClickListener(this);
 
         selectedFiles = new ArrayList<>();
+        extSelected = new ArrayList<>();
         currentText = findViewById(R.id.current_folder);
         listView = findViewById(R.id.list);
         refreshList(currentPath != null ? currentPath : new File(fileBrowser.getInitDir()).toPath());
+
+        if (fileBrowser.getLibMode() != LibMode.FILE_CHOOSER) {
+            selectExternal.setVisibility(View.GONE);
+        }
+        switch (fileBrowser.getCode()) {
+            case 100:
+            case 150:
+            case 200:
+            case 500:
+            case 600:
+            case 700:
+            case 750:
+                selectExternal.setVisibility(View.GONE);
+                break;
+                default:
+        }
     }
 
     private String getMode() {
@@ -177,7 +241,10 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             intent.setDataAndType(uri, "*/*");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            startActivity(Intent.createChooser(intent,getString(R.string.file_browser_open_external)));
+            startActivity(Intent.createChooser(intent, getString(R.string.file_browser_open_external)));
+        }
+        if (view == selectExternal) {
+            launcher.launch(null);
         }
         if (view == confirm) {
             if (selectedFiles.size() == 0 && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
@@ -189,5 +256,11 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
                 finish();
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        callback = false;
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

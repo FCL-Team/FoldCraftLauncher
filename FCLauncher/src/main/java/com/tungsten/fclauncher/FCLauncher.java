@@ -9,9 +9,11 @@ import android.system.Os;
 import android.util.ArrayMap;
 
 import com.jaredrummler.android.device.DeviceName;
+import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -113,8 +115,30 @@ public class FCLauncher {
                 "/hw" +
                 split +
 
-                nativeDir +
-                (FFmpegPlugin.isAvailable ? split + FFmpegPlugin.libraryPath : "");
+                FCLPath.RUNTIME_DIR + "/jna" +
+                split +
+
+                nativeDir;
+    }
+
+    private static String getLibraryPath(Context context) {
+        String nativeDir = context.getApplicationInfo().nativeLibraryDir;
+        String libDirName = is64BitsDevice() ? "lib64" : "lib";
+        String split = ":";
+        return  "/system/" +
+                libDirName +
+                split +
+
+                "/vendor/" +
+                libDirName +
+                split +
+
+                "/vendor/" +
+                libDirName +
+                "/hw" +
+                split +
+
+                nativeDir;
     }
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {
@@ -134,10 +158,11 @@ public class FCLauncher {
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext()));
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
-            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath);
+            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
         }
         if (config.isUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
@@ -248,6 +273,7 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
+        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
@@ -274,10 +300,10 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setupJLI();
         bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
-        log(bridge, "Hook exit " + (bridge.setupExitTrap(bridge) == 0 ? "success" : "failed"));
-        int exitCode = bridge.jliLaunch(args);
+        bridge.setupExitTrap(bridge);
+        log(bridge, "Hook success");
+        int exitCode = VMLauncher.launchJVM(args);
         bridge.onExit(exitCode);
     }
 

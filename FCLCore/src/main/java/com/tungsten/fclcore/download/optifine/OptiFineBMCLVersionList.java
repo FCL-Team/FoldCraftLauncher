@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.download.optifine;
 
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.util.StringUtils;
@@ -47,31 +48,46 @@ public final class OptiFineBMCLVersionList extends VersionList<OptiFineRemoteVer
     @Override
     public CompletableFuture<?> refreshAsync() {
         return HttpRequest.GET(apiRoot + "/optifine/versionlist").<List<OptiFineVersion>>getJsonAsync(new TypeToken<List<OptiFineVersion>>() {
-        }.getType())
-                .thenAcceptAsync(root -> {
-                    lock.writeLock().lock();
+        }.getType()).thenAcceptAsync(root -> {
+            lock.writeLock().lock();
 
-                    try {
-                        versions.clear();
-                        Set<String> duplicates = new HashSet<>();
-                        for (OptiFineVersion element : root) {
-                            String version = element.getType() + "_" + element.getPatch();
-                            String mirror = "https://bmclapi2.bangbang93.com/optifine/" + element.getGameVersion() + "/" + element.getType() + "/" + element.getPatch();
-                            if (!duplicates.add(mirror))
-                                continue;
+            try {
+                versions.clear();
+                Set<String> duplicates = new HashSet<>();
+                for (OptiFineVersion element : root) {
+                    String version = element.type + "_" + element.patch;
+                    String mirror = apiRoot + "/optifine/" + element.gameVersion + "/" + element.type + "/" + element.patch;
+                    if (!duplicates.add(mirror))
+                        continue;
 
-                            boolean isPre = element.getPatch() != null && (element.getPatch().startsWith("pre") || element.getPatch().startsWith("alpha"));
+                    boolean isPre = element.patch != null && (element.patch.startsWith("pre") || element.patch.startsWith("alpha"));
 
-                            if (StringUtils.isBlank(element.getGameVersion()))
-                                continue;
+                    if (StringUtils.isBlank(element.gameVersion))
+                        continue;
 
-                            String gameVersion = VersionNumber.normalize(element.getGameVersion());
-                            versions.put(gameVersion, new OptiFineRemoteVersion(gameVersion, version, Collections.singletonList(mirror), isPre));
-                        }
-                    } finally {
-                        lock.writeLock().unlock();
-                    }
-                });
+                    String gameVersion = VersionNumber.normalize(element.gameVersion);
+                    versions.put(gameVersion, new OptiFineRemoteVersion(gameVersion, version, Collections.singletonList(mirror), isPre));
+                }
+            } finally {
+                lock.writeLock().unlock();
+            }
+        });
     }
 
+    private static final class OptiFineVersion {
+        @SerializedName("type")
+        private final String type;
+
+        @SerializedName("patch")
+        private final String patch;
+
+        @SerializedName("mcversion")
+        private final String gameVersion;
+
+        public OptiFineVersion(String type, String patch, String gameVersion) {
+            this.type = type;
+            this.patch = patch;
+            this.gameVersion = gameVersion;
+        }
+    }
 }

@@ -88,7 +88,7 @@ public class MicrosoftSession {
                 .orElseThrow(() -> new IllegalArgumentException("accessToken is missing"));
         String refreshToken = tryCast(storage.get("refreshToken"), String.class)
                 .orElseThrow(() -> new IllegalArgumentException("refreshToken is missing"));
-        Long notAfter = tryCast(storage.get("notAfter"), Long.class).orElse(0L);
+        Long notAfter = tryCast(storage.get("notAfter"), Number.class).map(Number::longValue).orElse(0L);
         String userId = tryCast(storage.get("userid"), String.class)
                 .orElseThrow(() -> new IllegalArgumentException("userid is missing"));
         return new MicrosoftSession(tokenType, accessToken, notAfter, refreshToken, new User(userId), new GameProfile(uuid, name));

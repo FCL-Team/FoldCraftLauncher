@@ -150,8 +150,9 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
         res.addDefault("-Duser.language=", System.getProperty("user.language"));
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
-        res.addDefault("-Djna.boot.library.path=", context.getApplicationInfo().nativeLibraryDir);
         res.addDefault("-Dorg.lwjgl.vulkan.libname=", "libvulkan.so");
+        File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
+        res.addDefault("-Djna.boot.library.path=", libJna.exists() ? libJna.getAbsolutePath() : context.getApplicationInfo().nativeLibraryDir);
 
         if (getInjectorArg() != null && options.isBeGesture()) {
             res.addDefault("-Dfcl.injector=", getInjectorArg());
@@ -183,7 +184,13 @@ public class DefaultLauncher extends Launcher {
 
         configuration.put("${natives_directory}", "${natives_directory}");
         List<String> jvmArgs = Arguments.parseArguments(version.getArguments().map(Arguments::getJvm).orElseGet(this::getDefaultJVMArguments), configuration);
-        res.addAll(jvmArgs.stream().filter(arg -> !arg.contains("-Djna.tmpdir=") && !arg.contains("-Dorg.lwjgl.system.SharedLibraryExtractPath=")).collect(Collectors.toList()));
+        res.addAll(jvmArgs.stream().map(arg -> {
+            String result = arg;
+            if (arg.contains("-Dio.netty.native.workdir") || arg.contains("-Djna.tmpdir") || arg.contains("-Dorg.lwjgl.system.SharedLibraryExtractPath")) {
+                result = arg.replace("${natives_directory}", FCLPath.CACHE_DIR);
+            }
+            return result;
+        }).collect(Collectors.toList()));
         Arguments argumentsFromAuthInfo = authInfo.getLaunchArguments(options);
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getJvm() != null && !argumentsFromAuthInfo.getJvm().isEmpty())
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getJvm(), configuration));

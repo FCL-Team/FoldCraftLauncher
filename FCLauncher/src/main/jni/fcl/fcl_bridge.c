@@ -65,7 +65,6 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLBridg
 }
 
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-    env_init();
     if (fcl->android_jvm == NULL) {
         fcl->android_jvm = vm;
         JNIEnv* env = 0;

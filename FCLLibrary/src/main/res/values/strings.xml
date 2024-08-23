@@ -8,6 +8,7 @@
     <string name="file_browser_shared">Shared directory</string>
     <string name="file_browser_private">Private directory</string>
     <string name="file_browser_open_external">Open in external APP(Like MT)</string>
+    <string name="file_browser_select_external">Select with external APP</string>
     <string name="file_browser_private_alert">Cannot access to private directory, please check the permission.</string>
     <string name="file_browser_mode">Mode:</string>
     <string name="file_browser_mode_browse">Browse File</string>

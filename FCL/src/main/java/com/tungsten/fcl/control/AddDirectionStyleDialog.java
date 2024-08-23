@@ -3,6 +3,7 @@ package com.tungsten.fcl.control;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -16,8 +17,10 @@ import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
+import com.tungsten.fcl.ui.manage.EditDialog;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -95,6 +98,8 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
 
             FCLTextView intervalText = buttonStyleLayout.findViewById(R.id.interval_text);
 
+            intervalText.setOnClickListener(v -> openTextEditDialog(context, interval.progressProperty(), true));
+
             interval.setProgress(style.getButtonStyle().getInterval());
             style.getButtonStyle().intervalProperty().bindBidirectional(interval.progressProperty());
 
@@ -151,6 +156,12 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             FCLTextView bgCornerRadiusText = rockerStyleLayout.findViewById(R.id.bg_corner_radius_text);
             FCLTextView strokeWidthText = rockerStyleLayout.findViewById(R.id.stroke_width_text);
             FCLTextView cornerRadiusText = rockerStyleLayout.findViewById(R.id.corner_radius_text);
+
+            rockerSizeText.setOnClickListener(v -> openTextEditDialog(context, rockerSize.progressProperty(), true));
+            bgStrokeWidthText.setOnClickListener(v -> openTextEditDialog(context, bgStrokeWidth.progressProperty(), true));
+            bgCornerRadiusText.setOnClickListener(v -> openTextEditDialog(context, bgCornerRadius.progressProperty(), true));
+            strokeWidthText.setOnClickListener(v -> openTextEditDialog(context, strokeWidth.progressProperty(), true));
+            cornerRadiusText.setOnClickListener(v -> openTextEditDialog(context, cornerRadius.progressProperty(), true));
 
             rockerSize.setProgress(style.getRockerStyle().getRockerSize());
             bgStrokeWidth.setProgress(style.getRockerStyle().getBgStrokeWidth());
@@ -323,5 +334,21 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         if (v == negative) {
             dismiss();
         }
+    }
+
+    private void openTextEditDialog(Context context, IntegerProperty property, boolean isPercentage) {
+        EditDialog dialog = new EditDialog(context, s -> {
+            if (s.matches("\\d+(\\.\\d+)?$")) {
+                float progress = Float.parseFloat(s);
+                if (isPercentage) {
+                    progress = progress > 100 ? 100 : progress;
+                    property.set((int) (progress * 10));
+                } else {
+                    property.set((int) progress);
+                }
+            }
+        });
+        dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+        dialog.show();
     }
 }

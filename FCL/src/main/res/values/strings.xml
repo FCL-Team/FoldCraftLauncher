@@ -81,6 +81,7 @@
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live is not available in your current country/region.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">Your Microsoft account does not have a linked Xbox account yet. Please create one before continuing.</string>
     <string name="account_methods_microsoft_error_unknown">Failed to log in</string>
+    <string name="account_methods_microsoft_error_wrong_verify_method">Please log in using your account(like phone number) and password on the Microsoft account login page. Please do not use a verification code to log in.</string>
     <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Please check if the age indicated in your account settings is at least 18 years old. If not and you believe this is an error, you can go to official website to change it.</string>
     <string name="account_methods_microsoft_close_page">Microsoft account authorization is now completed.</string>
@@ -291,7 +292,7 @@
 
     <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
-    <string name="download_provider_mojang">Mojang (OptiFine is provided by BMCLAPI)</string>
+    <string name="download_provider_mojang">Mojang (OptiFine is provided by OF-302)</string>
     <string name="download_provider_official">From Official Sources</string>
     <string name="download_provider_balanced">From Fastest Available</string>
     <string name="download_provider_mirror">From Mirror</string>
@@ -952,5 +953,6 @@
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 
     <string name="install_apk">Install .apk</string>
+    <string name="edit">Edit</string>
 
 </resources>

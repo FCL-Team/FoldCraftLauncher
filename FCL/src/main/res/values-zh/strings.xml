@@ -67,6 +67,7 @@
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
+    <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
     <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
@@ -269,7 +270,7 @@
 
     <string name="download_provider_mcbbs">我的世界中文论坛 (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
-    <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 BMCLAPI 下载源)</string>
+    <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 OF-302 下载源)</string>
     <string name="download_provider_official">尽量使用官方源</string>
     <string name="download_provider_balanced">选择加载速度快的下载源</string>
     <string name="download_provider_mirror">尽量使用镜像源</string>
@@ -907,4 +908,5 @@
     <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
     <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
     <string name="install_apk">安装apk文件</string>
+    <string name="edit">编辑</string>
 </resources>
