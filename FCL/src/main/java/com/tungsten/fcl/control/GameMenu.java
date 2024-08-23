@@ -413,7 +413,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
                 if (fclBridge != null) {
                     fclBridge.setScaleFactor(doubleValue);
-                    fclBridge.getSurfaceTexture().setDefaultBufferSize((int) (screenWidth * doubleValue), (int) (screenHeight * doubleValue));
+                    int width = (int) (screenWidth * doubleValue);
+                    int height = (int) (screenHeight * doubleValue);
+                    fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+                    fclBridge.pushEventWindow(width, height);
                 }
             }
         };
