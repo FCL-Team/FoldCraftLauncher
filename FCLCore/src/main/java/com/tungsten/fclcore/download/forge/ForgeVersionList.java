@@ -23,9 +23,13 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+
+import static com.tungsten.fclcore.util.Logging.LOG;
 
 public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
     private final DownloadProvider downloadProvider;
@@ -75,8 +79,19 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
 
                                 if (jar == null)
                                     continue;
+
+                                Instant releaseDate = null;
+                                if (version.getModified() != null) {
+                                    try {
+                                        long timestamp = Long.parseLong(version.getModified());
+                                        releaseDate = Instant.ofEpochSecond(timestamp);
+                                    } catch (NumberFormatException e) {
+                                        LOG.log(Level.WARNING, "Failed to parse instant " + version.getModified(), e);
+                                    }
+                                }
+
                                 versions.put(gameVersion, new ForgeRemoteVersion(
-                                        toLookupVersion(version.getGameVersion()), version.getVersion(), null, Collections.singletonList(jar)
+                                        toLookupVersion(version.getGameVersion()), version.getVersion(), releaseDate, Collections.singletonList(jar)
                                 ));
                             }
                         }
