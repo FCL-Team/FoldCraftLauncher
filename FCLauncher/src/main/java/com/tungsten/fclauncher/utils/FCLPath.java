@@ -19,6 +19,7 @@ public class FCLPath {
     public static String JAVA_11_PATH;
     public static String JAVA_17_PATH;
     public static String JAVA_21_PATH;
+    public static String JNA_PATH;
     public static String LWJGL_DIR;
     public static String CACIOCAVALLO_8_DIR;
     public static String CACIOCAVALLO_11_DIR;
@@ -51,6 +52,7 @@ public class FCLPath {
         JAVA_11_PATH = RUNTIME_DIR + "/java/jre11";
         JAVA_17_PATH = RUNTIME_DIR + "/java/jre17";
         JAVA_21_PATH = RUNTIME_DIR + "/java/jre21";
+        JNA_PATH = RUNTIME_DIR + "/jna";
         LWJGL_DIR = RUNTIME_DIR + "/lwjgl";
         CACIOCAVALLO_8_DIR = RUNTIME_DIR + "/caciocavallo";
         CACIOCAVALLO_11_DIR = RUNTIME_DIR + "/caciocavallo11";

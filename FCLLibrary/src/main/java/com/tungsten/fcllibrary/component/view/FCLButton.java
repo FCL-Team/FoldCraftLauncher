@@ -1,5 +1,6 @@
 package com.tungsten.fcllibrary.component.view;
 
+import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -95,6 +96,7 @@ public class FCLButton extends AppCompatButton {
         drawablePress.setCornerRadius(ConvertUtils.dip2px(getContext(), 8));
         drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
+        setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.xml.anim_scale));
     }
 
     public FCLButton(@NonNull Context context) {

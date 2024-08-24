@@ -5,10 +5,12 @@ import android.system.Os;
 
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.Pack200Utils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
+import com.tungsten.fclcore.util.io.Unzipper;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -35,6 +37,15 @@ public class RuntimeUtils {
         FileUtils.deleteDirectory(new File(targetDir));
         new File(targetDir).mkdirs();
         copyAssets(context, srcDir, targetDir);
+    }
+
+    public static void installJna(Context context, String targetDir, String srcDir) throws IOException {
+        FileUtils.deleteDirectory(new File(targetDir));
+        new File(targetDir).mkdirs();
+        copyAssets(context, srcDir, targetDir);
+        File file = new File(FCLPath.JNA_PATH, "jna-arm64.zip");
+        new Unzipper(file, new File(FCLPath.RUNTIME_DIR)).unzip();
+        file.delete();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

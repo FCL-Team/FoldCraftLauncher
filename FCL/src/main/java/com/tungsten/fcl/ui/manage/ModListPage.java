@@ -406,7 +406,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     public void download() {
         MainActivity.getInstance().refreshMenuView(null);
-        MainActivity.getInstance().download.setSelected(true);
+        MainActivity.getInstance().bind.download.setSelected(true);
         DownloadPageManager.getInstance().switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
     }
 
