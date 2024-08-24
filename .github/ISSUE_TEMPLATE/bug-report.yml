@@ -1,74 +1,110 @@
-name: Bug Feedback
+name: Bug Feedback / 错误反馈
 description:
-  Report a bug.
+  Report a bug. 报告错误。
 labels: bug
 body:
   - type: markdown
     attributes:
       value: |
         Please ensure you are using the **latest bata version** before you submit, you can get the latest beta version by checking update in launcher setting page.
-        
+        请确认在你提交之前你使用的是最新版本，你可以在启动器的设置页内通过检测更新获取最新版本。
+        Please confirm that the question you are asking is not related to modpacks.If you ask about modpacks, we will directly delete it.
+        请确认你询问的不是整合包相关的问题。如果你询问整合包相关问题，我们会直接删除。
         To improve communication efficiency, we suggest you join our community to report bugs.
+        为了提高交流效率，我们建议你加入我们的社区报告错误。
         You can find our community in community page of the launcher.
+        你可以在启动器的社区页内找到我们的社区。
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before making issue / 在发布提问之前...
+      options:
+      - label: I have read the content above.我已经阅读了上方的内容。
+        required: true
+      - label: I understand what I'm asking is not about modpack.我明白我询问的不是整合包相关的问题。
+        required: true
+      - label: I have searched for existing issues.我已经搜索了现有的 issues。
+        required: true
+      - label: I have tried switching renderer.我已经尝试过切换渲染器。
   - type: input
     id: fcl-version
     attributes:
-      label: Launcher Version
-      description: Please enter the Fold Craft Launcher version you are using.
-      placeholder: e.g. 1.0.1
+      label: Launcher Version / 启动器版本
+      description: |
+        Please enter the Fold Craft Launcher version you are using.
+        请输入你正在使用的Fold Craft Launcher版本。
+      placeholder: e.g. 1.0.1 / 例如1.0.1
     validations:
       required: true
   - type: input
     id: device
     attributes:
-      label: Device Information
-      description: Please enter the information of the device on which you encountered the bug.
+      label: Device Information / 设备信息
+      description: |
+        Please enter the information of the device on which you encountered the bug.
+        请输入你遇到错误的设备的信息。
       placeholder: e.g. OPPO Find X3 Pro, Android 13, arm64
     validations:
       required: true
   - type: textarea
     id: bug-report
     attributes:
-      label: Problem Description
-      description: Please describe the problem in as much detail as possible, especially how you encountered this bug.
+      label: Problem Description / 问题描述
+      description: |
+        Please describe the problem in as much detail as possible, especially how you encountered this bug.
+        请尽可能详细地描述问题，特别是你是如何遇到这个bug的。
     validations:
       required: true
   - type: input
     id: java-version
     attributes:
       label: Java
-      description: Please enter the version of Java you are using.
+      description: |
+        Please enter the version of Java you are using.
+        请输入你正在使用的Java版本。
       placeholder: e.g. Java 17
   - type: input
     id: renderer
     attributes:
-      label: Renderer
-      description: Please enter the renderer you are using.
+      label: Renderer / 渲染器
+      description: |
+        Please enter the renderer you are using.
+        请输入你正在使用的渲染器。
       placeholder: e.g. Holy-GL4ES
   - type: input
     id: game-version
     attributes:
-      label: Game Version
-      description: If you are having trouble launching a game that was automatically downloaded through the Fold Craft Launcher, please enter the version of the game you are launching.
+      label: Game Version / 游戏版本
+      description: |
+        If you are having trouble launching a game that was automatically downloaded through the Fold Craft Launcher, please enter the version of the game you are launching.
+        如果你在启动通过Fold Craft Launcher自动下载的游戏时遇到问题，请输入你要启动的游戏版本。
       placeholder: e.g. 1.19
   - type: input
     id: game-modify
     attributes:
-      label: Modifications Made to the Game
-      description: If you have OptiFine, Forge, or other mods installed for the game, please enter your modifications below.
+      label: Modifications Made to the Game / 对游戏所做的修改
+      description: |
+        If you have OptiFine, Forge, or other mods installed for the game, please enter your modifications below.
+        如果你为游戏安装了OptiFine、Forge或其他模组，请在下面输入你的修改。
       placeholder: e.g. OptiFine HD_U_G9, Rift
   - type: textarea
     id: game-crash-report
     attributes:
-      label: Game Crash Report
-      description: If there is a game crash report, please upload it below.
+      label: Game Crash Report / 游戏崩溃报告
+      description: |
+        If there is a game crash report, please upload it(file) below.
+        如果有游戏崩溃报告，请在下面上传(文件)。
   - type: textarea
     id: fcl-crash-report
     attributes:
-      label: Launcher Crash Report
-      description: If there is a launcher crash report, please upload it below.
+      label: Launcher Crash Report / 启动器崩溃报告
+      description: |
+        If there is a launcher crash report, please upload it(file) below.
+        如果有启动器崩溃报告，请在下面上传(文件)。
   - type: textarea
     id: fcl-logs
     attributes:
-      label: Launcher Log File
-      description: After encountering a problem, please click "Export Launcher Log" in the launcher setting page, and upload the exported log to the input field below.
+      label: Launcher Log File / 启动器日志文件
+      description: |
+        After encountering a problem, please click "Export Launcher Log" in the launcher setting page, and upload the exported log to the input field below.
+        遇到问题后，请在启动器设置页面中单击“导出启动器日志”，并将导出的日志上传到下面的输入字段。

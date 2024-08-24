@@ -1,21 +1,36 @@
-name: "Feature Request"
-description: "Propose new features for Fold Craft Launcher"
+name: Feature Request / 功能请求
+description: |
+  Propose new features for Fold Craft Launcher.
+  为Fold Craft Launcher提出新功能。
 labels: feature request
 body:
 - type: markdown
   attributes:
-    value: "Make sure to check the issues list for duplicates before submitting!"
+    value: |
+      Make sure to check the issues list for duplicates before submitting!
+      提交前，请务必检查问题列表中的重复项！
+- type: checkboxes
+  id: checks
+  attributes:
+    label: Before making issue / 在发布提问之前...
+    options:
+    - label: I understand this is a request, not a wish.我明白这是在提出请求而不是在许愿。
+      required: true
 - type: textarea
   id: "feature"
   attributes:
-    label: Description
-    description: "Describe in detail the new features you would like to add."
+    label: Description / 描述
+    description: |
+      Describe in detail the new features you would like to add.
+      详细描述你要添加的新功能。
   validations:
     required: true
 - type: textarea
   id: "reason"
   attributes:
-    label: Why
-    description: "Describe the benefits of this feature and why."
+    label: Why / 原因
+    description: |
+      Describe the benefits of this feature and why.
+      描述此功能的好处及其原因。
   validations:
     required: true

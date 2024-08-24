@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLConfig;
@@ -59,6 +61,13 @@ public class JarExecutorHelper {
     private static void launchJarExecutor(Context context, File file) {
         int version = getJavaVersion(file);
         int javaVersion = getNearestJavaVersion(version);
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile != null) {
+            String java = profile.getGlobal().getJava();
+            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
+                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
+            }
+        }
         exec(context, file, javaVersion, null);
     }
 

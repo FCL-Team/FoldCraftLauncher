@@ -293,7 +293,7 @@
 
     <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
-    <string name="download_provider_mojang">Mojang (OptiFine is provided by BMCLAPI)</string>
+    <string name="download_provider_mojang">Mojang (OptiFine is provided by OF-302)</string>
     <string name="download_provider_official">From Official Sources</string>
     <string name="download_provider_balanced">From Fastest Available</string>
     <string name="download_provider_mirror">From Mirror</string>

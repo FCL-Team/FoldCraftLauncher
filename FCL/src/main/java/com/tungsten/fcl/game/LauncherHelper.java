@@ -207,7 +207,7 @@ public final class LauncherHelper {
                 launchingStepsPane.dismiss();
                 if (!success) {
                     Exception ex = executor.getException();
-                    if (!(ex instanceof CancellationException)) {
+                    if (ex != null && !(ex instanceof CancellationException)) {
                         Schedulers.androidUIThread().execute(() -> {
                             String message;
                             if (ex instanceof ModpackCompletionException) {
