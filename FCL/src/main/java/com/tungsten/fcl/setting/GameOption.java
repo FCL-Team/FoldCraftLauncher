@@ -143,9 +143,9 @@ public class GameOption {
         String str = get("guiScale");
         int guiScale;
         try {
-            guiScale = (str == null ? 0 : Integer.parseInt(str));
+            guiScale = (str == null ? 4 : Integer.parseInt(str));
         } catch (NumberFormatException ignore) {
-            guiScale = 0;
+            guiScale = 4;
         }
         int scale = Math.max(Math.min(width / 320, height / 240), 1);
         if (scale < guiScale || guiScale == 0) {
