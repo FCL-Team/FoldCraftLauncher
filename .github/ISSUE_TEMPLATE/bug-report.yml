@@ -8,10 +8,24 @@ body:
       value: |
         Please ensure you are using the **latest bata version** before you submit, you can get the latest beta version by checking update in launcher setting page.
         请确认在你提交之前你使用的是最新版本，你可以在启动器的设置页内通过检测更新获取最新版本。
+        Please confirm that the question you are asking is not related to modpacks.If you ask about modpacks, we will directly delete it.
+        请确认你询问的不是整合包相关的问题。如果你询问整合包相关问题，我们会直接删除。
         To improve communication efficiency, we suggest you join our community to report bugs.
         为了提高交流效率，我们建议你加入我们的社区报告错误。
         You can find our community in community page of the launcher.
         你可以在启动器的社区页内找到我们的社区。
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before making issue / 在发布提问之前...
+      options:
+      - label: I have read the content above.我已经阅读了上方的内容。
+        required: true
+      - label: I understand what I'm asking is not about modpack.我明白我询问的不是整合包相关的问题。
+        required: true
+      - label: I have searched for existing issues.我已经搜索了现有的 issues。
+        required: true
+      - label: I have tried switching renderer.我已经尝试过切换渲染器。
   - type: input
     id: fcl-version
     attributes:
@@ -78,15 +92,15 @@ body:
     attributes:
       label: Game Crash Report / 游戏崩溃报告
       description: |
-        If there is a game crash report, please upload it below.
-        如果有游戏崩溃报告，请在下面上传。
+        If there is a game crash report, please upload it(file) below.
+        如果有游戏崩溃报告，请在下面上传(文件)。
   - type: textarea
     id: fcl-crash-report
     attributes:
       label: Launcher Crash Report / 启动器崩溃报告
       description: |
-        If there is a launcher crash report, please upload it below.
-        如果有启动器崩溃报告，请在下面上传。
+        If there is a launcher crash report, please upload it(file) below.
+        如果有启动器崩溃报告，请在下面上传(文件)。
   - type: textarea
     id: fcl-logs
     attributes:
