@@ -797,6 +797,7 @@
     <string name="settings_launcher_theme">Theme</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background</string>
+    <string name="settings_launcher_cursor">Cursor Picture</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
 
