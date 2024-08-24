@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
@@ -85,7 +86,7 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
                                         long timestamp = Long.parseLong(version.getModified());
                                         releaseDate = Instant.ofEpochSecond(timestamp);
                                     } catch (NumberFormatException e) {
-                                        LOG.warning("Failed to parse timestamp " + version.getModified(), e);
+                                        LOG.log(Level.WARNING, "Failed to parse instant " + version.getModified(), e);
                                     }
                                 }
 
