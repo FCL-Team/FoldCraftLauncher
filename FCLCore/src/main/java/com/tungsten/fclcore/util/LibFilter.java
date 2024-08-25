@@ -44,12 +44,6 @@ public class LibFilter {
                     } else {
                         newLibraries.add(JNA_5_13);
                     }
-                } else if (library.getName().startsWith("com.github.oshi:oshi-core:")) {
-                    if (Integer.parseInt(version[0]) != 6 || Integer.parseInt(version[1]) != 2) {
-                        newLibraries.add(library);
-                    } else {
-                        newLibraries.add(OSHI_6_3);
-                    }
                 } else {
                     newLibraries.add(library);
                 }
