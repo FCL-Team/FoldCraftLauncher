@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1176,
-    "versionName": "1.1.7.6",
-    "date": "2024.08.23",
+    "versionCode": 1177,
+    "versionName": "1.1.7.7",
+    "date": "2024.08.27",
     "description": [
       {
         "lang": "en",
-        "text": "Fix some fatal error.\nAdd some features. \nSee github for details."
+        "text": "1.Fix oshi core.\n2.Fix windows scale.\n3.Add custom cursor.\n4.Fix some bug.\nSee github for more details."
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.7.6更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复微软登录时的错误提示\n2.修复neoforge整合包版本错误\n3.修复手动选择整合包时的整合包为非正常格式时无法安装的bug\n4.可手动选择执行jar文件使用的java\n5.同步部分HMCL Core，修复些许bug"
+        "text": "FCL 1.1.7.7更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复oshi core\n2.修复窗口缩放\n3.添加自定义光标\n4.添加更多动画效果"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/04bc07022a7d",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.6/FCL-release-1.1.7.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/5fac965e464b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.7/FCL-release-1.1.7.7-all.apk"
   }
 ]
