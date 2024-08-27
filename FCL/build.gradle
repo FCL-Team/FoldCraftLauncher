@@ -44,8 +44,8 @@ android {
         applicationId "com.tungsten.fcl"
         minSdk 26
         targetSdk 34
-        versionCode 1176
-        versionName "1.1.7.6"
+        versionCode 1177
+        versionName "1.1.7.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
