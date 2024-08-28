@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
-    <string name="oauth_api_key" translatable="false">null</string>
-
     <string name="splash_permission_msg">Sem permissão de armazenamento, por favor conceda a permissão ao Fold Craft Launcher.</string>
     <string name="splash_permission_grant">Grant</string>
     <string name="splash_permission_title">Permission to store needed</string>
