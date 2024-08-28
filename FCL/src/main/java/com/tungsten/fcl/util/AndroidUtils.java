@@ -146,6 +146,22 @@ public class AndroidUtils {
         return dest.getAbsolutePath();
     }
 
+    public static String copyFile(Activity activity, Uri uri, File dest) {
+        try {
+            InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                throw new IOException("Failed to open content stream");
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(dest)) {
+                IOUtils.copyTo(inputStream, outputStream);
+            }
+            inputStream.close();
+        } catch (Exception e) {
+
+        }
+        return dest.getAbsolutePath();
+    }
+
     public static boolean isDocUri(Uri uri) {
         return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE) || Objects.equals(uri.getScheme(),ContentResolver.SCHEME_CONTENT);
     }

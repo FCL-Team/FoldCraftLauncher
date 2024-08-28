@@ -35,4 +35,6 @@ public class RequestCodes {
     public static final int SELECT_DATAPACK_CODE = 750;
 
     public static final int SELECT_LAUNCHER_BACKGROUND_CODE = 800;
+
+    public static final int SELECT_CURSOR_CODE = 850;
 }

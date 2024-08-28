@@ -751,6 +751,7 @@
     <string name="settings_launcher_theme">主题</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片</string>
+    <string name="settings_launcher_cursor">鼠标图片</string>
     <string name="settings_launcher_ignore_notch">忽略刘海屏</string>
     <string name="settings_launcher_animation_speed">动画速度</string>
 

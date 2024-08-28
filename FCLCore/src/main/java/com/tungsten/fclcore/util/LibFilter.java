@@ -18,10 +18,16 @@ public class LibFilter {
             "{\n" +
                     "  \"name\": \"net.java.dev.jna:jna:5.13.0\"\n" +
                     "}";
-    private static final String OSHI_6_3_STRING =
-            "{\n" +
-                    "  \"name\": \"com.github.oshi:oshi-core:6.3.0\"\n" +
-                    "}";
+    private static final String OSHI_6_3_STRING = "{\n" +
+            "      \"name\": \"com.github.oshi:oshi-core:6.3.0\",\n" +
+            "      \"downloads\": {\n" +
+            "        \"artifact\": {\n" +
+            "          \"path\": \"com/github/oshi/oshi-core/6.3.0/oshi-core-6.3.0.jar\",\n" +
+            "          \"sha1\": \"9e98cf55be371cafdb9c70c35d04ec2a8c2b42ac\",\n" +
+            "          \"url\": \"https://repo1.maven.org/maven2/com/github/oshi/oshi-core/6.3.0/oshi-core-6.3.0.jar\"\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }";
 
     private static final Library ASM_ALL_5_2 = GSON.fromJson(ASM_ALL_5_2_STRING, Library.class);
     private static final Library JNA_5_13 = GSON.fromJson(JNA_5_13_STRING, Library.class);
