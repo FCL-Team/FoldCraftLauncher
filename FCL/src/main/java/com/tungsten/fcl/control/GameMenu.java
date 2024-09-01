@@ -336,6 +336,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         FCLSeekBar itemBarScaleSeekbar = findViewById(R.id.item_bar_scale);
         FCLSeekBar windowScaleSeekbar = findViewById(R.id.window_scale);
+        FCLSeekBar cursorOffsetSeekbar = findViewById(R.id.cursor_offset);
         FCLSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
         FCLSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
@@ -344,6 +345,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         FCLTextView itemBarScaleText = findViewById(R.id.item_bar_scale_text);
         FCLTextView windowScaleText = findViewById(R.id.window_scale_text);
+        FCLTextView cursorOffsetText = findViewById(R.id.cursor_offset_text);
         FCLTextView mouseSensitivityText = findViewById(R.id.mouse_sensitivity_text);
         FCLTextView mouseSizeText = findViewById(R.id.mouse_size_text);
         FCLTextView gamepadDeadzoneText = findViewById(R.id.gamepad_deadzone_text);
@@ -425,6 +427,25 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         };
         windowScaleSeekbar.progressProperty().bindBidirectional(windowScaleProperty);
 
+        cursorOffsetSeekbar.addProgressListener();
+        IntegerProperty cursorOffsetProperty = new SimpleIntegerProperty((int) (menuSetting.getCursorOffset())) {
+            @Override
+            protected void invalidated() {
+                super.invalidated();
+                menuSetting.setCursorOffset(get());
+                int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+                int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+                if (fclBridge != null) {
+                    double scaleFactor = fclBridge.getScaleFactor();
+                    int width = (int) ((screenWidth + get()) * scaleFactor);
+                    int height = (int) (screenHeight * scaleFactor);
+                    fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+                    fclBridge.pushEventWindow(width, height);
+                }
+            }
+        };
+        cursorOffsetSeekbar.progressProperty().bindBidirectional(cursorOffsetProperty);
+
         mouseSensitivitySeekbar.addProgressListener();
         IntegerProperty mouseSensitivityProperty = new SimpleIntegerProperty((int) (menuSetting.getMouseSensitivity() * 100)) {
             @Override
@@ -465,6 +486,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         itemBarScaleText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(itemBarScaleProperty.get()), itemBarScaleProperty));
         windowScaleText.stringProperty().bind(Bindings.createStringBinding(() -> windowScaleProperty.get() + " %", windowScaleProperty));
+        cursorOffsetText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(cursorOffsetProperty.get()), cursorOffsetProperty));
         mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
         mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.mouseSizeProperty().get() + " dp", menuSetting.mouseSizeProperty()));
         gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));
