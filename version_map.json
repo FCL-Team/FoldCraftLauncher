@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1177,
-    "versionName": "1.1.7.7",
-    "date": "2024.08.27",
+    "versionCode": 1178,
+    "versionName": "1.1.7.8",
+    "date": "2024.09.04",
     "description": [
       {
         "lang": "en",
-        "text": "1.Fix oshi core.\n2.Fix windows scale.\n3.Add custom cursor.\n4.Fix some bug.\nSee github for more details."
+        "text": "1. Fix bug that triggers error return when deleting text\n2. Fix bug that Microsoft login cannot be used when the language is not Chinese or English\n3. Update HolyGL4ES\n4. Add the function of adjusting cursor offset in the game"
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.7.7更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复oshi core\n2.修复窗口缩放\n3.添加自定义光标\n4.添加更多动画效果"
+        "text": "FCL 1.1.7.8更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复删除文本时错误触发返回的bug\n2.修复语言为非中文或英文时无法使用微软登录的bug\n3.更新HolyGL4ES\n4.增加游戏内光标偏移调节的功能"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/5fac965e464b",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.7/FCL-release-1.1.7.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/5fa82d8bb512",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.8/FCL-release-1.1.7.8-all.apk"
   }
 ]
