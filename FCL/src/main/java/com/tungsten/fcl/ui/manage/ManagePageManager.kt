@@ -24,6 +24,7 @@ class ManagePageManager(
         const val PAGE_ID_MANAGE_MOD: Int = 15003
         const val PAGE_ID_MANAGE_WORLD: Int = 15004
     }
+
     var profile: Profile? = null
     var version: String? = null
 
@@ -61,6 +62,7 @@ class ManagePageManager(
                 )
                 versionSettingPage
             }
+
             PAGE_ID_MANAGE_INSTALL -> {
                 installerListPage = InstallerListPage(
                     context,
@@ -70,6 +72,7 @@ class ManagePageManager(
                 )
                 installerListPage
             }
+
             PAGE_ID_MANAGE_MOD -> {
                 modListPage = ModListPage(
                     context,
@@ -79,6 +82,7 @@ class ManagePageManager(
                 )
                 modListPage
             }
+
             PAGE_ID_MANAGE_WORLD -> {
                 worldListPage = WorldListPage(
                     context,
@@ -88,6 +92,7 @@ class ManagePageManager(
                 )
                 worldListPage
             }
+
             else -> null
         }
         if (page != null) {

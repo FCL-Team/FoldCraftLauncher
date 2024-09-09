@@ -243,7 +243,7 @@ public final class Accounts {
      */
     static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
         loadGlobalAccountStorages();
 

@@ -135,7 +135,7 @@ public final class Profiles {
 
     static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
         HashSet<String> names = new HashSet<>();
         config().getConfigurations().forEach((name, profile) -> {

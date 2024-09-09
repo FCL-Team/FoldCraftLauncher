@@ -95,7 +95,7 @@ public class Controllers {
 
     public static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
         controllers.addAll(getControllersFromDisk());
         checkControllers();
