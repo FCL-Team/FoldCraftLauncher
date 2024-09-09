@@ -18,7 +18,7 @@ public abstract class PageManager {
     private final FCLUILayout parent;
     private final int defaultPageId;
 
-    private final ArrayList<FCLCommonPage> allPages;
+    public final ArrayList<FCLCommonPage> allPages;
     private FCLCommonPage currentPage;
 
     public PageManager (Context context, FCLUILayout parent, int defaultPageId, UIListener listener) {
@@ -53,6 +53,10 @@ public abstract class PageManager {
 
     public abstract ArrayList<FCLCommonPage> getAllPages();
 
+    public FCLCommonPage createPageById(int id){
+        return null;
+    }
+
     public FCLCommonPage getPageById(int id) {
         for (FCLCommonPage page : allPages) {
             if (page.getId() == id) {
@@ -66,7 +70,10 @@ public abstract class PageManager {
         if (allPages.size() > 0) {
             FCLCommonPage targetPage = getPageById(id);
             if (targetPage == null) {
-                throw new IllegalStateException("Wrong page id, this should not happen!");
+                targetPage = createPageById(id);
+                if (targetPage == null){
+                    throw new IllegalStateException("Wrong page id, this should not happen!");
+                }
             }
             if (currentPage != null && currentPage != targetPage) {
                 if (currentPage.isShowing()) {
