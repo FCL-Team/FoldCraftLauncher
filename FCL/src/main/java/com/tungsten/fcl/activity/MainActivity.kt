@@ -9,10 +9,14 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.BounceInterpolator
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
+import com.mio.util.AnimUtil
+import com.mio.util.AnimUtil.Companion.interpolator
+import com.mio.util.AnimUtil.Companion.startAfter
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -246,6 +250,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         _uiManager?.onResume()
     }
 
+    override fun onStart() {
+        super.onStart()
+        playAnim()
+    }
+
     override fun onSelect(view: FCLMenuView) {
         refreshMenuView(view)
         bind.apply {
@@ -394,41 +403,45 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 version
             )
         ) {
-            val game = Profiles.getSelectedProfile().repository.getGameVersion(version)
-                .orElse(getString(R.string.message_unknown))
-            val libraries = StringBuilder(game)
-            val analyzer = LibraryAnalyzer.analyze(
-                Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(version)
-            )
-            for (mark in analyzer) {
-                val libraryId = mark.libraryId
-                val libraryVersion = mark.libraryVersion
-                if (libraryId == LibraryType.MINECRAFT.patchId) continue
-                if (AndroidUtils.hasStringId(
-                        this,
-                        "install_installer_" + libraryId.replace("-", "_")
-                    )
-                ) {
-                    libraries.append(", ").append(
-                        AndroidUtils.getLocalizedText(
+            Schedulers.defaultScheduler().execute {
+                val game = Profiles.getSelectedProfile().repository.getGameVersion(version)
+                    .orElse(getString(R.string.message_unknown))
+                val libraries = StringBuilder(game)
+                val analyzer = LibraryAnalyzer.analyze(
+                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(version)
+                )
+                for (mark in analyzer) {
+                    val libraryId = mark.libraryId
+                    val libraryVersion = mark.libraryVersion
+                    if (libraryId == LibraryType.MINECRAFT.patchId) continue
+                    if (AndroidUtils.hasStringId(
                             this,
                             "install_installer_" + libraryId.replace("-", "_")
                         )
-                    )
-                    if (libraryVersion != null) libraries.append(": ").append(
-                        libraryVersion.replace(
-                            "(?i)$libraryId".toRegex(), ""
+                    ) {
+                        libraries.append(", ").append(
+                            AndroidUtils.getLocalizedText(
+                                this,
+                                "install_installer_" + libraryId.replace("-", "_")
+                            )
+                        )
+                        if (libraryVersion != null) libraries.append(": ").append(
+                            libraryVersion.replace(
+                                "(?i)$libraryId".toRegex(), ""
+                            )
+                        )
+                    }
+                }
+                Schedulers.androidUIThread().execute {
+                    bind.versionName.text = version
+                    bind.versionHint.text = libraries.toString()
+                    bind.icon.setBackgroundDrawable(
+                        Profiles.getSelectedProfile().repository.getVersionIconImage(
+                            version
                         )
                     )
                 }
             }
-            bind.versionName.text = version
-            bind.versionHint.text = libraries.toString()
-            bind.icon.setBackgroundDrawable(
-                Profiles.getSelectedProfile().repository.getVersionIconImage(
-                    version
-                )
-            )
         } else {
             bind.versionName.text = getString(R.string.version_no_version)
             bind.versionHint.text = getString(R.string.version_manage)
@@ -452,6 +465,23 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     Accounts.getAccountFactory(account)
                 )
             })
+        }
+    }
+
+    private fun playAnim() {
+        bind.apply {
+            AnimUtil.playTranslationX(
+                leftMenu,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+                -100f,
+                0f
+            ).interpolator(BounceInterpolator()).start()
+            AnimUtil.playTranslationX(
+                rightMenu,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+                100f,
+                0f
+            ).interpolator(BounceInterpolator()).start()
         }
     }
 }

@@ -95,5 +95,11 @@ class AnimUtil {
             this.interpolator = interpolator
             return this
         }
+
+        @JvmStatic
+        fun ObjectAnimator.startAfter(delayTime: Long) {
+            this.startDelay = delayTime
+            this.start()
+        }
     }
 }

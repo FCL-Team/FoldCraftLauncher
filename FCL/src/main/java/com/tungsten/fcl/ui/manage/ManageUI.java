@@ -68,6 +68,9 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
             return;
         }
 
+        if (pageManager == null) {
+            pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_MANAGE, null);
+        }
         loadVersion(getVersion(), getProfile());
     }
 

@@ -8,6 +8,8 @@ import android.os.StrictMode;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mio.util.PerfUtil;
+
 import java.lang.ref.WeakReference;
 
 public class FCLApplication extends Application implements Application.ActivityLifecycleCallbacks {
@@ -18,6 +20,7 @@ public class FCLApplication extends Application implements Application.ActivityL
         // enabledStrictMode();
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
+        PerfUtil.install();
     }
 
     public static Activity getCurrentActivity() {
