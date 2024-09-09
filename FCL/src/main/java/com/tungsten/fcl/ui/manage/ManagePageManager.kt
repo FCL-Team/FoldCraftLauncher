@@ -29,10 +29,39 @@ class ManagePageManager(
     var version: String? = null
 
     lateinit var managePage: ManagePage
-    lateinit var versionSettingPage: VersionSettingPage
-    lateinit var installerListPage: InstallerListPage
-    lateinit var modListPage: ModListPage
-    lateinit var worldListPage: WorldListPage
+    val versionSettingPage: VersionSettingPage by lazy {
+        VersionSettingPage(
+            context,
+            PAGE_ID_MANAGE_SETTING,
+            parent,
+            R.layout.page_version_setting,
+            false
+        )
+    }
+    val installerListPage: InstallerListPage by lazy {
+        InstallerListPage(
+            context,
+            PAGE_ID_MANAGE_INSTALL,
+            parent,
+            R.layout.page_installer_list
+        )
+    }
+    val modListPage: ModListPage by lazy {
+        ModListPage(
+            context,
+            PAGE_ID_MANAGE_MOD,
+            parent,
+            R.layout.page_mod_list
+        )
+    }
+    val worldListPage: WorldListPage by lazy {
+        WorldListPage(
+            context,
+            PAGE_ID_MANAGE_WORLD,
+            parent,
+            R.layout.page_world_list
+        )
+    }
 
     init {
         instance = this
@@ -52,47 +81,10 @@ class ManagePageManager(
 
     override fun createPageById(id: Int): FCLCommonPage? {
         val page: FCLCommonPage? = when (id) {
-            PAGE_ID_MANAGE_SETTING -> {
-                versionSettingPage = VersionSettingPage(
-                    context,
-                    PAGE_ID_MANAGE_SETTING,
-                    parent,
-                    R.layout.page_version_setting,
-                    false
-                )
-                versionSettingPage
-            }
-
-            PAGE_ID_MANAGE_INSTALL -> {
-                installerListPage = InstallerListPage(
-                    context,
-                    PAGE_ID_MANAGE_INSTALL,
-                    parent,
-                    R.layout.page_installer_list
-                )
-                installerListPage
-            }
-
-            PAGE_ID_MANAGE_MOD -> {
-                modListPage = ModListPage(
-                    context,
-                    PAGE_ID_MANAGE_MOD,
-                    parent,
-                    R.layout.page_mod_list
-                )
-                modListPage
-            }
-
-            PAGE_ID_MANAGE_WORLD -> {
-                worldListPage = WorldListPage(
-                    context,
-                    PAGE_ID_MANAGE_WORLD,
-                    parent,
-                    R.layout.page_world_list
-                )
-                worldListPage
-            }
-
+            PAGE_ID_MANAGE_SETTING -> versionSettingPage
+            PAGE_ID_MANAGE_INSTALL -> installerListPage
+            PAGE_ID_MANAGE_MOD -> modListPage
+            PAGE_ID_MANAGE_WORLD -> worldListPage
             else -> null
         }
         if (page != null) {
