@@ -228,6 +228,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     setupVersionDisplay()
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
+                playAnim()
             }
         }
     }
@@ -247,11 +248,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onResume() {
         super.onResume()
         _uiManager?.onResume()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        playAnim()
     }
 
     override fun onSelect(view: FCLMenuView) {
@@ -389,6 +385,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun loadVersion(version: String?) {
+        bind.versionProgress.visibility = View.VISIBLE
         if (Profiles.getSelectedProfile() != profile) {
             profile = Profiles.getSelectedProfile()
             if (profile != null) {
@@ -431,17 +428,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         )
                     }
                 }
+                val drawable = Profiles.getSelectedProfile().repository.getVersionIconImage(version)
                 Schedulers.androidUIThread().execute {
+                    bind.versionProgress.visibility = View.GONE
                     bind.versionName.text = version
                     bind.versionHint.text = libraries.toString()
-                    bind.icon.setBackgroundDrawable(
-                        Profiles.getSelectedProfile().repository.getVersionIconImage(
-                            version
-                        )
-                    )
+                    bind.icon.setBackgroundDrawable(drawable)
                 }
             }
         } else {
+            bind.versionProgress.visibility = View.GONE
             bind.versionName.text = getString(R.string.version_no_version)
             bind.versionHint.text = getString(R.string.version_manage)
             bind.icon.setBackgroundDrawable(getDrawable(R.drawable.img_grass))
@@ -471,13 +467,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         bind.apply {
             AnimUtil.playTranslationX(
                 leftMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 200L,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
                 -100f,
                 0f
             ).interpolator(BounceInterpolator()).start()
             AnimUtil.playTranslationX(
                 rightMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 200L,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
                 100f,
                 0f
             ).interpolator(BounceInterpolator()).start()
