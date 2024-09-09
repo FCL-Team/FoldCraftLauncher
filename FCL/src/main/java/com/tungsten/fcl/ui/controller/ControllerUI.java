@@ -75,9 +75,7 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        Controllers.addCallback(unused -> {
-            init();
-        });
+        Controllers.addCallback(this::init);
     }
 
     private void init() {

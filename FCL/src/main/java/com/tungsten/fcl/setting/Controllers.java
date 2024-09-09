@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -29,11 +28,11 @@ public class Controllers {
     private Controllers() {
     }
 
-    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[] { controller });
+    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[]{controller});
     private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
     public static Controller DEFAULT_CONTROLLER;
 
-    private static final List<Consumer<Void>> CALLBACKS = new ArrayList<>();
+    private static final List<Runnable> CALLBACKS = new ArrayList<>();
 
     public static void checkControllers() {
         if (controllers.contains(null)) {
@@ -103,7 +102,7 @@ public class Controllers {
 
         initialized = true;
         CALLBACKS.forEach(callback -> {
-            Schedulers.androidUIThread().execute(()->callback.accept(null));
+            Schedulers.androidUIThread().execute(() -> callback.run());
         });
     }
 
@@ -157,12 +156,12 @@ public class Controllers {
         return controllers.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(controllers.get(0));
     }
 
-    public static void addCallback(Consumer<Void> consumer) {
+    public static void addCallback(Runnable callback) {
         if (initialized) {
-            consumer.accept(null);
+            callback.run();
             return;
         }
-        CALLBACKS.add(consumer);
+        CALLBACKS.add(callback);
     }
 
 }
