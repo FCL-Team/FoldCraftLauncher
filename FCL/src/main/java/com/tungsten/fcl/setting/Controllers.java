@@ -102,7 +102,7 @@ public class Controllers {
 
         initialized = true;
         CALLBACKS.forEach(callback -> {
-            Schedulers.androidUIThread().execute(() -> callback.run());
+            Schedulers.androidUIThread().execute(callback::run);
         });
     }
 
