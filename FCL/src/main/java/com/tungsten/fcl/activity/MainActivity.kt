@@ -16,7 +16,6 @@ import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
-import com.mio.util.AnimUtil.Companion.startAfter
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -265,7 +264,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
 
                 manage -> {
-                    val version = Profiles.getSelectedVersion()
+                    val version = Profiles.getSelectedProfile().selectedVersion
                     if (version == null) {
                         refreshMenuView(null)
                         title.setTextWithAnim(getString(R.string.version))
@@ -472,13 +471,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         bind.apply {
             AnimUtil.playTranslationX(
                 leftMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 200L,
                 -100f,
                 0f
             ).interpolator(BounceInterpolator()).start()
             AnimUtil.playTranslationX(
                 rightMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 200L,
                 100f,
                 0f
             ).interpolator(BounceInterpolator()).start()

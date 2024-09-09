@@ -47,31 +47,28 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);
-        container.post(this::initPages);
-
+        initPages();
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // If we jumped to game list page and deleted this version
-        // and back to this page, we should return to main page.
-        if (!getProfile().getRepository().isLoaded() ||
-                !getProfile().getRepository().hasVersion(getVersion())) {
-            Schedulers.androidUIThread().execute(() -> {
-                if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().bind.home.setSelected(true);
-                }
-            });
-            return;
-        }
-
-        if (pageManager == null) {
-            pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_MANAGE, null);
-        }
-        loadVersion(getVersion(), getProfile());
+        addLoadingCallback(()->{
+            // If we jumped to game list page and deleted this version
+            // and back to this page, we should return to main page.
+            if (!getProfile().getRepository().isLoaded() ||
+                    !getProfile().getRepository().hasVersion(getVersion())) {
+                Schedulers.androidUIThread().execute(() -> {
+                    if (isShowing()) {
+                        MainActivity.getInstance().refreshMenuView(null);
+                        MainActivity.getInstance().bind.home.setSelected(true);
+                    }
+                });
+                return;
+            }
+            loadVersion(getVersion(), getProfile());
+        });
     }
 
     @Override

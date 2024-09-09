@@ -17,11 +17,14 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     private UILoadingCallback callback;
 
+    private boolean init = false;
+
     public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
         super(context);
         this.parent = parent;
         setContentView(id, () -> {
             onCreate();
+            init = true;
             if (callback != null) {
                 callback.onLoad();
             }
@@ -78,5 +81,8 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     public void addLoadingCallback(UILoadingCallback callback) {
         this.callback = callback;
+        if (init) {
+            callback.onLoad();
+        }
     }
 }

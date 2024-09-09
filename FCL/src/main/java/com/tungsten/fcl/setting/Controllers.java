@@ -102,8 +102,9 @@ public class Controllers {
 
         initialized = true;
         CALLBACKS.forEach(callback -> {
-            Schedulers.androidUIThread().execute(callback::run);
+            Schedulers.androidUIThread().execute(callback);
         });
+        CALLBACKS.clear();
     }
 
     private static ArrayList<Controller> getControllersFromDisk() {
