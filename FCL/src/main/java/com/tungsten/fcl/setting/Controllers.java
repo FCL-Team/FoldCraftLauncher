@@ -10,6 +10,7 @@ import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,8 @@ public class Controllers {
     private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[] { controller });
     private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
     public static Controller DEFAULT_CONTROLLER;
+
+    private static final List<Consumer<Void>> CALLBACKS = new ArrayList<>();
 
     public static void checkControllers() {
         if (controllers.contains(null)) {
@@ -98,6 +102,9 @@ public class Controllers {
         checkControllers();
 
         initialized = true;
+        CALLBACKS.forEach(callback -> {
+            Schedulers.androidUIThread().execute(()->callback.accept(null));
+        });
     }
 
     private static ArrayList<Controller> getControllersFromDisk() {
@@ -148,6 +155,14 @@ public class Controllers {
     public static Controller findControllerByName(String name) {
         checkControllers();
         return controllers.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(controllers.get(0));
+    }
+
+    public static void addCallback(Consumer<Void> consumer) {
+        if (initialized) {
+            consumer.accept(null);
+            return;
+        }
+        CALLBACKS.add(consumer);
     }
 
 }
