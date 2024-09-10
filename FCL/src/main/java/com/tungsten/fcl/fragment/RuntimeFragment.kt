@@ -1,6 +1,5 @@
 package com.tungsten.fcl.fragment
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,11 +11,9 @@ import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fcl.databinding.FragmentRuntimeBinding
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLFragment
-import com.tungsten.fcllibrary.component.view.FCLButton
-import com.tungsten.fcllibrary.component.view.FCLImageView
-import com.tungsten.fcllibrary.component.view.FCLProgressBar
 import com.tungsten.fcllibrary.util.LocaleUtils
 import java.io.File
 import java.io.IOException
@@ -41,10 +38,12 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_runtime, container, false)
         bind = FragmentRuntimeBinding.bind(view)
-        initState()
-        refreshDrawables()
-        check()
         bind.install.setOnClickListener(this)
+        Schedulers.defaultScheduler().execute {
+            initState()
+            refreshDrawables()
+            check()
+        }
         return view
     }
 

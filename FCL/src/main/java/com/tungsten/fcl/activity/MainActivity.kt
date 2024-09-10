@@ -9,10 +9,13 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.BounceInterpolator
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
+import com.mio.util.AnimUtil
+import com.mio.util.AnimUtil.Companion.interpolator
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -225,6 +228,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     setupVersionDisplay()
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
+                playAnim()
             }
         }
     }
@@ -256,7 +260,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
 
                 manage -> {
-                    val version = Profiles.getSelectedVersion()
+                    val version = Profiles.getSelectedProfile().selectedVersion
                     if (version == null) {
                         refreshMenuView(null)
                         title.setTextWithAnim(getString(R.string.version))
@@ -381,6 +385,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun loadVersion(version: String?) {
+        bind.versionProgress.visibility = View.VISIBLE
         if (Profiles.getSelectedProfile() != profile) {
             profile = Profiles.getSelectedProfile()
             if (profile != null) {
@@ -394,42 +399,45 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 version
             )
         ) {
-            val game = Profiles.getSelectedProfile().repository.getGameVersion(version)
-                .orElse(getString(R.string.message_unknown))
-            val libraries = StringBuilder(game)
-            val analyzer = LibraryAnalyzer.analyze(
-                Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(version)
-            )
-            for (mark in analyzer) {
-                val libraryId = mark.libraryId
-                val libraryVersion = mark.libraryVersion
-                if (libraryId == LibraryType.MINECRAFT.patchId) continue
-                if (AndroidUtils.hasStringId(
-                        this,
-                        "install_installer_" + libraryId.replace("-", "_")
-                    )
-                ) {
-                    libraries.append(", ").append(
-                        AndroidUtils.getLocalizedText(
+            Schedulers.defaultScheduler().execute {
+                val game = Profiles.getSelectedProfile().repository.getGameVersion(version)
+                    .orElse(getString(R.string.message_unknown))
+                val libraries = StringBuilder(game)
+                val analyzer = LibraryAnalyzer.analyze(
+                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(version)
+                )
+                for (mark in analyzer) {
+                    val libraryId = mark.libraryId
+                    val libraryVersion = mark.libraryVersion
+                    if (libraryId == LibraryType.MINECRAFT.patchId) continue
+                    if (AndroidUtils.hasStringId(
                             this,
                             "install_installer_" + libraryId.replace("-", "_")
                         )
-                    )
-                    if (libraryVersion != null) libraries.append(": ").append(
-                        libraryVersion.replace(
-                            "(?i)$libraryId".toRegex(), ""
+                    ) {
+                        libraries.append(", ").append(
+                            AndroidUtils.getLocalizedText(
+                                this,
+                                "install_installer_" + libraryId.replace("-", "_")
+                            )
                         )
-                    )
+                        if (libraryVersion != null) libraries.append(": ").append(
+                            libraryVersion.replace(
+                                "(?i)$libraryId".toRegex(), ""
+                            )
+                        )
+                    }
+                }
+                val drawable = Profiles.getSelectedProfile().repository.getVersionIconImage(version)
+                Schedulers.androidUIThread().execute {
+                    bind.versionProgress.visibility = View.GONE
+                    bind.versionName.text = version
+                    bind.versionHint.text = libraries.toString()
+                    bind.icon.setBackgroundDrawable(drawable)
                 }
             }
-            bind.versionName.text = version
-            bind.versionHint.text = libraries.toString()
-            bind.icon.setBackgroundDrawable(
-                Profiles.getSelectedProfile().repository.getVersionIconImage(
-                    version
-                )
-            )
         } else {
+            bind.versionProgress.visibility = View.GONE
             bind.versionName.text = getString(R.string.version_no_version)
             bind.versionHint.text = getString(R.string.version_manage)
             bind.icon.setBackgroundDrawable(getDrawable(R.drawable.img_grass))
@@ -452,6 +460,23 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     Accounts.getAccountFactory(account)
                 )
             })
+        }
+    }
+
+    private fun playAnim() {
+        bind.apply {
+            AnimUtil.playTranslationX(
+                leftMenu,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
+                -100f,
+                0f
+            ).interpolator(BounceInterpolator()).start()
+            AnimUtil.playTranslationX(
+                rightMenu,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
+                100f,
+                0f
+            ).interpolator(BounceInterpolator()).start()
         }
     }
 }

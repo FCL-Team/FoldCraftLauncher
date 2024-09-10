@@ -42,33 +42,14 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
 
     private final BooleanProperty refreshProperty = new SimpleBooleanProperty(false);
 
-    private final ObjectProperty<Controller> selectedController = new SimpleObjectProperty<Controller>() {
-        {
-            Controllers.getControllers().addListener(onInvalidating(this::invalidated));
-        }
-
-        @Override
-        protected void invalidated() {
-            if (!Controllers.isInitialized()) return;
-
-            Controller controller = get();
-            if (Controllers.getControllers().isEmpty()) {
-                if (controller != null) {
-                    set(null);
-                }
-            } else {
-                if (!Controllers.getControllers().contains(controller)) {
-                    set(Controllers.getControllers().get(0));
-                }
-            }
-        }
-    };
+    private ObjectProperty<Controller> selectedController;
 
     public Controller getSelectedController() {
         return selectedController.get();
@@ -94,8 +75,32 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onCreate() {
         super.onCreate();
+        Controllers.addCallback(this::init);
+    }
 
-        if (Controllers.controllersProperty().size() != 0) {
+    private void init() {
+        selectedController = new SimpleObjectProperty<Controller>() {
+            {
+                Controllers.getControllers().addListener(onInvalidating(this::invalidated));
+            }
+
+            @Override
+            protected void invalidated() {
+                if (!Controllers.isInitialized()) return;
+
+                Controller controller = get();
+                if (Controllers.getControllers().isEmpty()) {
+                    if (controller != null) {
+                        set(null);
+                    }
+                } else {
+                    if (!Controllers.getControllers().contains(controller)) {
+                        set(Controllers.getControllers().get(0));
+                    }
+                }
+            }
+        };
+        if (!Controllers.controllersProperty().isEmpty()) {
             selectedController.set(Controllers.controllersProperty().get(0));
         } else {
             selectedController.set(Controllers.DEFAULT_CONTROLLER);

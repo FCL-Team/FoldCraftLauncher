@@ -8,6 +8,8 @@ import android.os.StrictMode;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mio.util.PerfUtil;
+
 import java.lang.ref.WeakReference;
 
 public class FCLApplication extends Application implements Application.ActivityLifecycleCallbacks {
@@ -18,6 +20,7 @@ public class FCLApplication extends Application implements Application.ActivityL
         // enabledStrictMode();
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
+        PerfUtil.install();
     }
 
     public static Activity getCurrentActivity() {
@@ -28,9 +31,9 @@ public class FCLApplication extends Application implements Application.ActivityL
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectNetwork()
                 .detectCustomSlowCalls()
                 .detectDiskReads()
-                .detectDiskWrites() 
+                .detectDiskWrites()
                 .detectAll()
-                .penaltyLog() 
+                .penaltyLog()
                 .build());
 
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects()
@@ -73,7 +76,7 @@ public class FCLApplication extends Application implements Application.ActivityL
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-        if (currentActivity.get() == activity) {
+        if (currentActivity != null && currentActivity.get() == activity) {
             currentActivity = null;
         }
     }
