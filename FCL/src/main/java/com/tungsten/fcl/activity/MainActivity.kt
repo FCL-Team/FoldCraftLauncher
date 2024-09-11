@@ -176,7 +176,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .setView(layout)
                         .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive) { _: DialogInterface?, _: Int ->
                             JarExecutorHelper.exec(
-                                this@MainActivity, null, 8, editText.text.toString()
+                                this@MainActivity,
+                                null,
+                                JarExecutorHelper.getJava(null),
+                                editText.text.toString()
                             )
                         }
                         .setNegativeButton(com.tungsten.fcllibrary.R.string.dialog_negative, null)

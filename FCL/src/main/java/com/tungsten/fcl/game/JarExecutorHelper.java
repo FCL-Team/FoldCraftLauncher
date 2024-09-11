@@ -59,16 +59,7 @@ public class JarExecutorHelper {
     }
 
     private static void launchJarExecutor(Context context, File file) {
-        int version = getJavaVersion(file);
-        int javaVersion = getNearestJavaVersion(version);
-        Profile profile = Profiles.getSelectedProfile();
-        if (profile != null) {
-            String java = profile.getGlobal().getJava();
-            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
-                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
-            }
-        }
-        exec(context, file, javaVersion, null);
+        exec(context, file, getJava(file), null);
     }
 
     public static void exec(Context context, File file, int javaVersion, String args) {
@@ -88,6 +79,22 @@ public class JarExecutorHelper {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int getJava(File file) {
+        int javaVersion = JavaVersion.JAVA_VERSION_8;
+        if (file != null) {
+            int version = getJavaVersion(file);
+            javaVersion = getNearestJavaVersion(version);
+        }
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile != null) {
+            String java = profile.getGlobal().getJava();
+            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
+                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
+            }
+        }
+        return javaVersion;
     }
 
     private static int getNearestJavaVersion(int majorVersion) {
@@ -135,6 +142,7 @@ public class JarExecutorHelper {
             return -1;
         }
     }
+
     private static int classVersionToJavaVersion(int majorVersion) {
         if (majorVersion < 46)
             return 2;
