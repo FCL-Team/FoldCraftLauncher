@@ -20,7 +20,7 @@ public class FCLApplication extends Application implements Application.ActivityL
         // enabledStrictMode();
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
-        PerfUtil.install();
+//        PerfUtil.install();
     }
 
     public static Activity getCurrentActivity() {
