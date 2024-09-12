@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1178,
-    "versionName": "1.1.7.8",
-    "date": "2024.09.04",
+    "versionCode": 1179,
+    "versionName": "1.1.7.9",
+    "date": "2024.09.12",
     "description": [
       {
         "lang": "en",
-        "text": "1. Fix bug that triggers error return when deleting text\n2. Fix bug that Microsoft login cannot be used when the language is not Chinese or English\n3. Update HolyGL4ES\n4. Add the function of adjusting cursor offset in the game"
+        "text": "1. Fix ASM download error\n2. Optimize the loading logic during launcher startup\n3. Fix the bug of crash when switching to dark mode\n4. Allow custom parameters to execute jar using Java specified in global settings\n5. Fix bug where mouse pointer offset does not take effect when restarting/modifying window resolution"
       },
       {
         "lang": "zh_CN",
-        "text": "FCL 1.1.7.8更新内容（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复删除文本时错误触发返回的bug\n2.修复语言为非中文或英文时无法使用微软登录的bug\n3.更新HolyGL4ES\n4.增加游戏内光标偏移调节的功能"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复asm下载错误\n2.优化启动器启动时的加载逻辑\n3.修复切换黑暗模式时闪退的bug\n4.允许自定义参数执行jar时使用全局设置中指定的Java\n5.修复鼠标指针偏移重启/修改窗口分辨率时不生效的bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/5fa82d8bb512",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.8/FCL-release-1.1.7.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/d146b9282224",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.9/FCL-release-1.1.7.9-all.apk"
   }
 ]
