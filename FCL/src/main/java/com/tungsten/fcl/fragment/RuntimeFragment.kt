@@ -41,8 +41,10 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
         bind.install.setOnClickListener(this)
         Schedulers.defaultScheduler().execute {
             initState()
-            refreshDrawables()
-            check()
+            Schedulers.androidUIThread().execute {
+                refreshDrawables()
+                check()
+            }
         }
         return view
     }
