@@ -50,30 +50,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/default_skin"
+                    app:text_with_theme_color="true"
                     android:text="@string/account_skin_type_default"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLRadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/steve"
+                    app:text_with_theme_color="true"
                     android:text="@string/account_skin_type_steve"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLRadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/alex"
+                    app:text_with_theme_color="true"
                     android:text="@string/account_skin_type_alex"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLRadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/local"
+                    app:text_with_theme_color="true"
                     android:text="@string/account_skin_type_local_file"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLRadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/csl"
+                    app:text_with_theme_color="true"
                     android:text="@string/account_skin_type_csl_api"/>
 
                 <com.tungsten.fcllibrary.component.view.FCLLinearLayout
@@ -92,6 +97,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
+                            app:auto_text_tint="true"
                             android:text="@string/account_skin"/>
 
                         <View
@@ -128,6 +134,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
+                            app:auto_text_tint="true"
                             android:text="@string/account_cape"/>
 
                         <View
