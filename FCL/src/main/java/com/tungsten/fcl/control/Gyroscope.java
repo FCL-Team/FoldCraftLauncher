@@ -63,7 +63,7 @@ public class Gyroscope implements SensorEventListener {
 
     public void enableSensor() {
         timestamp = 0;
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     public void disableSensor() {
@@ -73,7 +73,7 @@ public class Gyroscope implements SensorEventListener {
         }
     }
 
-    private float timestamp;
+    private long timestamp;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -83,7 +83,7 @@ public class Gyroscope implements SensorEventListener {
                 angle[0] += event.values[0] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
                 angle[1] += event.values[1] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
                 if (gameMenu.getBridge() != null) {
-                    gameMenu.getBridge().pushEventPointer((int) (gameMenu.getPointerX() - angle[0]), (int) (gameMenu.getPointerY() + angle[1]));
+                    gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() - angle[0]), (gameMenu.getPointerY() + angle[1]));
                 }
             }
             timestamp = event.timestamp;
