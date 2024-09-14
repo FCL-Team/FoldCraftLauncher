@@ -67,6 +67,8 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
+import org.lwjgl.glfw.CallbackBridge;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -177,6 +179,7 @@ public final class LauncherHelper {
                 }).thenComposeAsync(launcher -> { // launcher is prev task's result
                     return Task.supplyAsync(launcher::launch);
                 }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                    CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                     Intent intent = new Intent(context, JVMActivity.class);
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
                     fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());

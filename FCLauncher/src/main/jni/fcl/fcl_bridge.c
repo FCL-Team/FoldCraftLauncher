@@ -14,7 +14,7 @@ struct FCLInternal *fcl;
 __attribute__((constructor)) void env_init() {
     char* strptr_env = getenv("FCL_ENVIRON");
     if (strptr_env == NULL) {
-        __android_log_print(ANDROID_LOG_INFO, "Environ", "No environ found, creating...");
+        __android_log_print(ANDROID_LOG_INFO, "Environ", "No FCL environ found, creating...");
         fcl = malloc(sizeof(struct FCLInternal));
         assert(fcl);
         memset(fcl, 0 , sizeof(struct FCLInternal));
@@ -23,14 +23,10 @@ __attribute__((constructor)) void env_init() {
         setenv("FCL_ENVIRON", strptr_env, 1);
         free(strptr_env);
     } else {
-        __android_log_print(ANDROID_LOG_INFO, "Environ", "Found existing environ: %s", strptr_env);
+        __android_log_print(ANDROID_LOG_INFO, "Environ", "Found existing FCL environ: %s", strptr_env);
         fcl = (void*) strtoul(strptr_env, NULL, 0x10);
     }
     __android_log_print(ANDROID_LOG_INFO, "Environ", "%p", fcl);
-}
-
-ANativeWindow* fclGetNativeWindow() {
-    return fcl->window;
 }
 
 void fclSetPrimaryClipString(const char* string) {
@@ -53,11 +49,6 @@ const char* fclGetPrimaryClipString() {
         }
     }
     return fcl->clipboard_string;
-}
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativeWindow(JNIEnv* env, jclass clazz, jobject surface) {
-    fcl->window = ANativeWindow_fromSurface(env, surface);
-    FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl->window, ANativeWindow_getWidth(fcl->window), ANativeWindow_getHeight(fcl->window));
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLBridge(JNIEnv *env, jobject thiz, jobject fcl_bridge) {

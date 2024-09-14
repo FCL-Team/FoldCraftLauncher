@@ -79,6 +79,22 @@ Java_sun_awt_peer_cacio_FCLClipboard_clipboardCopy(JNIEnv *env, jclass clazz, js
     (*env)->ReleaseStringUTFChars(env, str, stringChars);
 }
 
+JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_ctc_CTCClipboard_nQuerySystemClipboard(JNIEnv *env, jclass clazz) {
+//TODO: implement
+}
+
+JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_ctc_CTCClipboard_nPutClipboardData(JNIEnv* env, jclass clazz, jstring clipboardData, jstring clipboardDataMime) {
+//TODO: implement
+}
+
+JNIEXPORT void JNICALL Java_com_github_caciocavallosilano_cacio_ctc_CTCClipboard_nQuerySystemClipboard(JNIEnv *env, jclass clazz) {
+    Java_net_java_openjdk_cacio_ctc_CTCClipboard_nQuerySystemClipboard(env, clazz);
+}
+
+JNIEXPORT void JNICALL Java_com_github_caciocavallosilano_cacio_ctc_CTCClipboard_nPutClipboardData(JNIEnv* env, jclass clazz, jstring clipboardData, jstring clipboardDataMime) {
+    Java_net_java_openjdk_cacio_ctc_CTCClipboard_nPutClipboardData(env, clazz, clipboardData, clipboardDataMime);
+}
+
 JNIEXPORT jintArray JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_renderAWTScreenFrame(JNIEnv* env, jclass clazz) {
     if (runtimeJNIEnvPtr_GRAPHICS == NULL) {
         if (runtimeJavaVMPtr == NULL) {

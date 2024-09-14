@@ -47,8 +47,8 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
     public static final HashMap<Integer, Integer> MOUSE_MAP = new HashMap<Integer, Integer>() {
         {
             put(MOUSE_LEFT, FCLBridge.Button1);
-            put(MOUSE_MIDDLE, FCLBridge.Button2);
-            put(MOUSE_RIGHT, FCLBridge.Button3);
+            put(MOUSE_MIDDLE, FCLBridge.Button3);
+            put(MOUSE_RIGHT, FCLBridge.Button2);
             put(MOUSE_SCROLL_UP, FCLBridge.Button4);
             put(MOUSE_SCROLL_DOWN, FCLBridge.Button5);
         }

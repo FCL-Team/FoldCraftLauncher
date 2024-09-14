@@ -145,9 +145,12 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dos.name=", "Linux");
         res.addDefault("-Dos.version=Android-", Build.VERSION.RELEASE);
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
+        res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dwindow.width=", options.getWidth() + "");
-        res.addDefault("-Dwindow.height=", options.getHeight() + "");
+        res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
+        res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
+        res.addDefault("-Dglfwstub.initEgl=", "false");
+        res.addDefault("-Dloader.disable_forked_guis=", "true");
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
         res.addDefault("-Duser.language=", System.getProperty("user.language"));
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
