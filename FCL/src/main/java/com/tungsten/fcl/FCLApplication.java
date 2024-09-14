@@ -8,8 +8,6 @@ import android.os.StrictMode;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.mio.util.PerfUtil;
-
 import java.lang.ref.WeakReference;
 
 public class FCLApplication extends Application implements Application.ActivityLifecycleCallbacks {
@@ -24,7 +22,10 @@ public class FCLApplication extends Application implements Application.ActivityL
     }
 
     public static Activity getCurrentActivity() {
-        return currentActivity.get();
+        if (currentActivity != null) {
+            return currentActivity.get();
+        }
+        return null;
     }
 
     private void enabledStrictMode() {
@@ -46,7 +47,7 @@ public class FCLApplication extends Application implements Application.ActivityL
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
-
+        currentActivity = new WeakReference<>(activity);
     }
 
     @Override
