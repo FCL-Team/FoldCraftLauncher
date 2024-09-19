@@ -102,7 +102,7 @@ public class DocIndex {
         }
 
         public boolean isVisible(Context context) {
-            return lang.equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString());
+            return LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(lang);
         }
 
     }
