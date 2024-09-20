@@ -344,6 +344,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         accountHint.text = getString(R.string.account_state_add)
                         avatar.setBackgroundDrawable(
                             BitmapDrawable(
+                                resources,
                                 TexturesLoader.toAvatar(
                                     TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
                                     ConvertUtils.dip2px(
@@ -473,7 +474,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         bind.apply {
             val speed = ThemeEngine.getInstance().getTheme().animationSpeed
             AnimUtil.playTranslationX(
-                listOf(leftMenu, splitLeft),
+                listOf(leftMenu),
                 speed * 100L,
                 -100f,
                 0f

@@ -24,6 +24,7 @@ public class FCLTextView extends AppCompatTextView {
 
     private boolean autoTint;
     private boolean autoBackgroundTint;
+    private boolean useThemeColor;
     private StringProperty string;
     private BooleanProperty visibilityProperty;
 
@@ -37,6 +38,9 @@ public class FCLTextView extends AppCompatTextView {
             }
             if (autoBackgroundTint) {
                 setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
+            }
+            if (useThemeColor) {
+                setTextColor(ThemeEngine.getInstance().getTheme().getColor());
             }
         }
 
@@ -63,6 +67,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
+        useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -72,6 +77,7 @@ public class FCLTextView extends AppCompatTextView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTextView);
         autoTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_tint, false);
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
+        useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -94,6 +100,14 @@ public class FCLTextView extends AppCompatTextView {
 
     public boolean isAutoTint() {
         return autoTint;
+    }
+
+    public void setUseThemeColor(boolean useThemeColor) {
+        this.useThemeColor = useThemeColor;
+    }
+
+    public boolean isUseThemeColor() {
+        return useThemeColor;
     }
 
     public void setAutoBackgroundTint(boolean autoBackgroundTint) {

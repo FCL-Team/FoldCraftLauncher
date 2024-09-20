@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="use_theme_color" format="boolean"/>
+    <declare-styleable name="FCLView">
+        <attr name="use_theme_color"/>
+    </declare-styleable>
     <declare-styleable name="FCLButton">
         <attr name="ripple" format="boolean"/>
         <attr name="shape" format="integer"/>
@@ -8,13 +12,16 @@
     <declare-styleable name="FCLImageButton">
         <attr name="auto_tint" format="boolean"/>
         <attr name="no_padding" format="boolean"/>
+        <attr name="use_theme_color"/>
     </declare-styleable>
     <declare-styleable name="FCLImageView">
         <attr name="auto_src_tint" format="boolean"/>
+        <attr name="use_theme_color"/>
     </declare-styleable>
     <declare-styleable name="FCLTextView">
         <attr name="auto_text_background_tint" format="boolean"/>
         <attr name="auto_text_tint" format="boolean"/>
+        <attr name="use_theme_color"/>
     </declare-styleable>
     <declare-styleable name="FCLCheckedTextView">
         <attr name="auto_checked_text_background_tint" format="boolean"/>

@@ -24,6 +24,7 @@ public class FCLImageView extends AppCompatImageView {
 
     private ObjectProperty<Drawable> image;
     private boolean autoTint;
+    private boolean useThemeColor;
     private BooleanProperty visibilityProperty;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
@@ -41,6 +42,9 @@ public class FCLImageView extends AppCompatImageView {
                         ThemeEngine.getInstance().getTheme().getAutoTint()
                 };
                 setImageTintList(new ColorStateList(state, color));
+            }
+            if (useThemeColor && getBackground() != null) {
+                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor());
             }
         }
 
@@ -64,6 +68,7 @@ public class FCLImageView extends AppCompatImageView {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
+        useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -72,6 +77,7 @@ public class FCLImageView extends AppCompatImageView {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLImageView);
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
+        useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
@@ -82,6 +88,14 @@ public class FCLImageView extends AppCompatImageView {
 
     public boolean isAutoTint() {
         return autoTint;
+    }
+
+    public void setUseThemeColor(boolean useThemeColor) {
+        this.useThemeColor = useThemeColor;
+    }
+
+    public boolean isUseThemeColor() {
+        return useThemeColor;
     }
 
     public final void setImage(Drawable drawable) {
