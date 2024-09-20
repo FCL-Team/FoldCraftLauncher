@@ -1,46 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="10dp">
 
     <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
-        android:background="@drawable/bg_container_white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/bg_container_white"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="5dp"
+        android:stateListAnimator="@xml/anim_scale"
         app:auto_constraint_background_tint="true"
-        android:padding="5dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.tungsten.fcllibrary.component.view.FCLRadioButton
             android:id="@+id/radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/icon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/radio"
-            app:layout_constraintVertical_bias="0.5"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            app:layout_constraintStart_toEndOf="@+id/icon"
-            app:layout_constraintEnd_toStartOf="@+id/delete"
-            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delete"
+            app:layout_constraintStart_toEndOf="@+id/icon"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -49,36 +52,36 @@
                 android:orientation="horizontal">
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
                     android:layout_gravity="center"
-                    android:id="@+id/title"/>
+                    android:singleLine="true"
+                    app:auto_text_tint="true" />
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:layout_marginStart="10dp"
+                    android:id="@+id/tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="11sp"
-                    android:id="@+id/tag"
                     android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="2dp"
                     android:singleLine="true"
-                    app:auto_text_tint="true"/>
+                    android:textSize="11sp"
+                    app:auto_text_tint="true" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                app:auto_text_tint="true"
-                android:textSize="11sp"
+                android:id="@+id/subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:id="@+id/subtitle"/>
+                android:textSize="11sp"
+                app:auto_text_tint="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -87,11 +90,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_delete_24"
+            android:stateListAnimator="@xml/anim_scale_large"
             app:auto_tint="true"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
+            app:layout_constraintVertical_bias="0.5" />
 
     </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
 

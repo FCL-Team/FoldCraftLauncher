@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -71,6 +73,7 @@ public class VersionListAdapter extends FCLAdapter {
         viewHolder.subtitle.setText(versionListItem.getLibraries());
         viewHolder.radioButton.setOnClickListener(view1 -> versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion()));
         viewHolder.delete.setOnClickListener(view1 -> Versions.deleteVersion(getContext(), versionListItem.getProfile(), versionListItem.getVersion()));
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 }

@@ -16,6 +16,7 @@ import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
+import com.mio.util.AnimUtil.Companion.startAfter
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -299,7 +300,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
-        bind.menu.forEach {
+        bind.leftMenu.forEach {
             if (it is FCLMenuView && it != view) {
                 it.isSelected = false
             }
@@ -407,7 +408,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     .orElse(getString(R.string.message_unknown))
                 val libraries = StringBuilder(game)
                 val analyzer = LibraryAnalyzer.analyze(
-                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(version)
+                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
+                        version
+                    )
                 )
                 for (mark in analyzer) {
                     val libraryId = mark.libraryId
@@ -468,18 +471,35 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun playAnim() {
         bind.apply {
+            val speed = ThemeEngine.getInstance().getTheme().animationSpeed
             AnimUtil.playTranslationX(
-                leftMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
+                listOf(leftMenu, splitLeft),
+                speed * 100L,
                 -100f,
                 0f
-            ).interpolator(BounceInterpolator()).start()
+            ).forEach {
+                it.interpolator(BounceInterpolator()).start()
+            }
             AnimUtil.playTranslationX(
-                rightMenu,
-                ThemeEngine.getInstance().getTheme().animationSpeed * 100L,
+                listOf(rightMenu, splitRight),
+                speed * 100L,
                 100f,
                 0f
-            ).interpolator(BounceInterpolator()).start()
+            ).forEach {
+                it.interpolator(BounceInterpolator()).start()
+            }
+            AnimUtil.playTranslationY(listOf(launch, executeJar), speed * 100L, -200f, 0f)
+                .forEachIndexed { index, objectAnimator ->
+                    objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
+                }
+            AnimUtil.playTranslationY(
+                listOf(home, manage, download, controller, setting, back),
+                speed * 100L,
+                -300f,
+                0f
+            ).forEachIndexed { index, objectAnimator ->
+                objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
+            }
         }
     }
 }

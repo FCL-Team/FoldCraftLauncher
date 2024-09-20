@@ -19,6 +19,19 @@ class AnimUtil {
         }
 
         @JvmStatic
+        fun playTranslationY(
+            views: List<View>,
+            duration: Long,
+            vararg values: Float
+        ): List<ObjectAnimator> {
+            return mutableListOf<ObjectAnimator>().apply {
+                for (view in views) {
+                    add(playTranslationY(view, duration, *values))
+                }
+            }
+        }
+
+        @JvmStatic
         fun playTranslationX(
             view: View,
             duration: Long,
@@ -30,6 +43,19 @@ class AnimUtil {
         }
 
         @JvmStatic
+        fun playTranslationX(
+            views: List<View>,
+            duration: Long,
+            vararg values: Float
+        ): List<ObjectAnimator> {
+            return mutableListOf<ObjectAnimator>().apply {
+                for (view in views) {
+                    add(playTranslationX(view, duration, *values))
+                }
+            }
+        }
+
+        @JvmStatic
         fun playTranslationZ(
             view: View,
             duration: Long,
@@ -37,6 +63,19 @@ class AnimUtil {
         ): ObjectAnimator {
             return ObjectAnimator.ofFloat(view, "translationZ", *values).apply {
                 this.duration = duration
+            }
+        }
+
+        @JvmStatic
+        fun playTranslationZ(
+            views: List<View>,
+            duration: Long,
+            vararg values: Float
+        ): List<ObjectAnimator> {
+            return mutableListOf<ObjectAnimator>().apply {
+                for (view in views) {
+                    add(playTranslationZ(view, duration, *values))
+                }
             }
         }
 
@@ -63,6 +102,19 @@ class AnimUtil {
         }
 
         @JvmStatic
+        fun playScaleX(
+            views: List<View>,
+            duration: Long,
+            vararg values: Float
+        ): List<ObjectAnimator> {
+            return mutableListOf<ObjectAnimator>().apply {
+                for (view in views) {
+                    add(playScaleX(view, duration, *values))
+                }
+            }
+        }
+
+        @JvmStatic
         fun playScaleY(
             view: View,
             duration: Long,
@@ -70,6 +122,19 @@ class AnimUtil {
         ): ObjectAnimator {
             return ObjectAnimator.ofFloat(view, "scaleY", *values).apply {
                 this.duration = duration
+            }
+        }
+
+        @JvmStatic
+        fun playScaleY(
+            views: List<View>,
+            duration: Long,
+            vararg values: Float
+        ): List<ObjectAnimator> {
+            return mutableListOf<ObjectAnimator>().apply {
+                for (view in views) {
+                    add(playScaleY(view, duration, *values))
+                }
             }
         }
 
