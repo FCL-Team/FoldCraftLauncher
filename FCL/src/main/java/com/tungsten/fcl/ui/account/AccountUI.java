@@ -47,12 +47,14 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        refresh().start();
+        addLoadingCallback(() -> {
+            refresh().start();
+        });
     }
 
     @Override
     public Task<?> refresh(Object... param) {
-        if (listView != null) {
+        addLoadingCallback(() -> {
             if (accountListAdapter == null) {
                 ObservableList<AccountListItem> list = new ObservableListBase<AccountListItem>() {
                     @Override
@@ -70,7 +72,7 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
             } else {
                 accountListAdapter.notifyDataSetChanged();
             }
-        }
+        });
         return Task.runAsync(() -> {
 
         });
