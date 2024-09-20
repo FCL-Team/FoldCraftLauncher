@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1179,
-    "versionName": "1.1.7.9",
-    "date": "2024.09.12",
+    "versionCode": 1180,
+    "versionName": "1.1.8",
+    "date": "2024.09.20",
     "description": [
       {
         "lang": "en",
-        "text": "1. Fix ASM download error\n2. Optimize the loading logic during launcher startup\n3. Fix the bug of crash when switching to dark mode\n4. Allow custom parameters to execute jar using Java specified in global settings\n5. Fix bug where mouse pointer offset does not take effect when restarting/modifying window resolution"
+        "text": "1. Fixe crashing during app startup\n2. Fix gyroscope not working properly\n3. Fix crashing when switching to night mode\n4. Use Pojav as the backend"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复asm下载错误\n2.优化启动器启动时的加载逻辑\n3.修复切换黑暗模式时闪退的bug\n4.允许自定义参数执行jar时使用全局设置中指定的Java\n5.修复鼠标指针偏移重启/修改窗口分辨率时不生效的bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复应用启动时有概率闪退的bug\n2.修复陀螺仪无法正常工作的bug\n3.修复切换夜间模式闪退的bug\n4.使用Pojav作为启动器后端"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/d146b9282224",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.7.9/FCL-release-1.1.7.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/78f980d00971",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8/FCL-release-1.1.8-all.apk"
   }
 ]
