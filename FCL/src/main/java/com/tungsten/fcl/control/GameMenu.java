@@ -543,7 +543,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         });
 
         editModeProperty.set(isSimulated());
-        controllerProperty.set(Controllers.findControllerByName(activity.getIntent().getExtras().getString("controller")));
+        controllerProperty.set(Controllers.findControllerById(activity.getIntent().getExtras().getString("controller")));
 
         baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);

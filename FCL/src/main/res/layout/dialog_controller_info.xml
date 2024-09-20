@@ -99,6 +99,32 @@
                         android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:text="@string/control_info_version_code"
+                        android:layout_gravity="center"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLEditText
+                        android:singleLine="true"
+                        android:textSize="14sp"
+                        android:inputType="number"
+                        android:hint="@string/input_hint_not_empty"
+                        android:id="@+id/version_code"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_marginTop="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/control_info_author"
                         android:layout_gravity="center"/>
 

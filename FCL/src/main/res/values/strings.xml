@@ -160,6 +160,7 @@
     <string name="control_info_name_exist">The controller already exist, please change the name!</string>
     <string name="control_info_name_invalid">Invalid Name</string>
     <string name="control_info_version">Version: </string>
+    <string name="control_info_version_code">Version Code: </string>
     <string name="control_list">Controller List</string>
     <string name="control_select">Select Controller</string>
     <string name="control_share">Share Controller</string>

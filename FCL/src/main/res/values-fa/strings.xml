@@ -158,6 +158,7 @@
     <string name="control_info_name_exist">کنترل کننده از قبل وجود دارد ، لطفاً نام را تغییر دهید!</string>
     <string name="control_info_name_invalid">نام نامعتبر</string>
     <string name="control_info_version">نسخه:</string>
+    <string name="control_info_version_code">کد نسخه:</string>
     <string name="control_list">لیست کنترل کننده</string>
     <string name="control_select">کنترلر را انتخاب کنید</string>
     <string name="control_share">کنترل کننده</string>

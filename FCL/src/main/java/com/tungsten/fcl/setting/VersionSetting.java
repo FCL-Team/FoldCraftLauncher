@@ -310,7 +310,7 @@ public final class VersionSetting implements Cloneable {
         VKDriverSystemProperty.set(vulkanDriverSystem);
     }
 
-    private final StringProperty controllerProperty = new SimpleStringProperty(this, "controller", "Default");
+    private final StringProperty controllerProperty = new SimpleStringProperty(this, "controller", "00000000");
 
     public StringProperty controllerProperty() {
         return controllerProperty;
@@ -362,11 +362,11 @@ public final class VersionSetting implements Cloneable {
         Controllers.addCallback(() -> {
             Controllers.checkControllers();
             Controller controller = Controllers.getControllers().stream()
-                    .filter(it -> it.getName().equals(getController()))
+                    .filter(it -> it.getId().equals(getController()))
                     .findFirst()
                     .orElse(Controllers.getControllers().get(0));
 
-            setController(controller.getName());
+            setController(controller.getId());
         });
     }
 
@@ -465,7 +465,7 @@ public final class VersionSetting implements Cloneable {
             vs.setNotCheckJVM(Optional.ofNullable(obj.get("notCheckJVM")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setBeGesture(Optional.ofNullable(obj.get("beGesture")).map(JsonElement::getAsBoolean).orElse(false));
             vs.setVKDriverSystem(Optional.ofNullable(obj.get("vulkanDriverSystem")).map(JsonElement::getAsBoolean).orElse(false));
-            vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("Default"));
+            vs.setController(Optional.ofNullable(obj.get("controller")).map(JsonElement::getAsString).orElse("00000000"));
             vs.setRenderer(FCLConfig.Renderer.values()[Optional.ofNullable(obj.get("renderer")).map(JsonElement::getAsInt).orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal())]);
             vs.setIsolateGameDir(Optional.ofNullable(obj.get("isolateGameDir")).map(JsonElement::getAsBoolean).orElse(false));
 

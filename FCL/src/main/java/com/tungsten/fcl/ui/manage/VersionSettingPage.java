@@ -394,9 +394,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             onDeleteIcon();
         }
         if (view == controllerButton) {
-            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
-                lastVersionSetting.setController(controller.getName());
-            });
+            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> lastVersionSetting.setController(controller.getId()));
             dialog.show();
         }
     }

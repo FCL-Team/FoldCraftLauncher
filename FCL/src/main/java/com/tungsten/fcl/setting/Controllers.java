@@ -41,7 +41,7 @@ public class Controllers {
         if (controllers.isEmpty()) {
             try {
                 if (DEFAULT_CONTROLLER == null) {
-                    String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/Default.json"));
+                    String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/00000000.json"));
                     DEFAULT_CONTROLLER = new GsonBuilder()
                             .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
@@ -74,7 +74,7 @@ public class Controllers {
         if (files != null) {
             ArrayList<String> fileNames = (ArrayList<String>) controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
             for (File file : files) {
-                if (file.isDirectory() || !fileNames.contains(file.getName())) {
+                if (((file.isDirectory() && !file.getName().equals("styles")) || !fileNames.contains(file.getName())) && !file.getName().endsWith(".bak")) {
                     file.delete();
                 }
             }
@@ -101,9 +101,7 @@ public class Controllers {
         checkControllers();
 
         initialized = true;
-        CALLBACKS.forEach(callback -> {
-            Schedulers.androidUIThread().execute(callback);
-        });
+        CALLBACKS.forEach(callback -> Schedulers.androidUIThread().execute(callback));
         CALLBACKS.clear();
     }
 
@@ -118,6 +116,9 @@ public class Controllers {
                             .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
+                    if (!json.getName().equals(controller.getFileName())) {
+                        controller.renameFile(json.getName(), controller.getFileName());
+                    }
                     list.add(controller);
                 } catch (IOException e) {
                     Logging.LOG.log(Level.WARNING, "Can't read file: " + json.getAbsolutePath(), e.getMessage());
@@ -152,9 +153,9 @@ public class Controllers {
         controllers.remove(controller);
     }
 
-    public static Controller findControllerByName(String name) {
+    public static Controller findControllerById(String id) {
         checkControllers();
-        return controllers.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(controllers.get(0));
+        return controllers.stream().filter(it -> it.getId().equals(id)).findFirst().orElse(controllers.get(0));
     }
 
     public static void addCallback(Runnable callback) {

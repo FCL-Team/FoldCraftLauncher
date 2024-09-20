@@ -139,6 +139,7 @@
     <string name="control_info_name_exist">该布局已存在，请换一个名字！</string>
     <string name="control_info_name_invalid">无效的名称</string>
     <string name="control_info_version">版本：</string>
+    <string name="control_info_version_code">版本号：</string>
     <string name="control_list">布局列表</string>
     <string name="control_select">选择布局</string>
     <string name="control_share">分享布局</string>

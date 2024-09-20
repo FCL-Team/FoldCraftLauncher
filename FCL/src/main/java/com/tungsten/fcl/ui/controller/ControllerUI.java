@@ -42,7 +42,6 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
@@ -154,17 +153,20 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
     }
 
     public void changeControllerInfo(Controller old, Controller newValue) {
+        old.setName(newValue.getName());
         old.setVersion(newValue.getVersion());
+        old.setVersionCode(newValue.getVersionCode());
         old.setAuthor(newValue.getAuthor());
         old.setDescription(newValue.getDescription());
 
-        if (!old.getName().equals(newValue.getName())) {
+        if (!old.getId().equals(newValue.getId())) {
             try {
-                old.rename(newValue.getName());
+                old.changeId(newValue.getId());
             } catch (IOException e) {
-                Logging.LOG.log(Level.SEVERE, "Failed to rename controller!", e.getMessage());
+                Logging.LOG.log(Level.SEVERE, "Failed to change controller id!", e.getMessage());
             }
         }
+
         refreshProperty.set(!refreshProperty.get());
     }
 
@@ -225,7 +227,7 @@ public class ControllerUI extends FCLCommonUI implements View.OnClickListener {
         if (view == editController) {
             Intent intent = new Intent(getContext(), ControllerActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putString("controller", getSelectedController().getName());
+            bundle.putString("controller", getSelectedController().getId());
             intent.putExtras(bundle);
             getActivity().startActivity(intent);
         }
