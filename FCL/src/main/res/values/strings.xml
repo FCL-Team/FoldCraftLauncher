@@ -957,5 +957,5 @@
     <string name="edit">Edit</string>
     <string name="modpack_download_warn_title">Notice</string>
     <string name="modpack_download_warn_msg">Before installation, you should understand that most modpacks are designed for PC, so there is a high probability that you will encounter crashes or other issues when trying to launch. This is often not a problem that can be solved at the launcher level. Therefore, you need to understand the relevant knowledge and try to solve the problem yourself or seek help from others (do not ask the launcher developer!).</string>
-
+    <string name="view_incompatible">View incompatible mods</string>
 </resources>
