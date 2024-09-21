@@ -145,6 +145,14 @@
 
     <string name="control_create">Criar</string>
     <string name="control_delete">Tem certeza de que deseja excluir este controle?</string>
+    <string name="control_download">Controlador de download</string>
+    <string name="control_download_latest">Baixe a versão mais recente</string>
+    <string name="control_download_history">Baixe versões históricas</string>
+    <string name="control_download_lang_current">Idioma atual</string>
+    <string name="control_download_source_cn">Fonte de download da China continental</string>
+    <string name="control_download_device_phone">Telefone</string>
+    <string name="control_download_device_pad">Almofada</string>
+    <string name="control_download_device_other">Outros</string>
     <string name="control_edit">Editar</string>
     <string name="control_import">Importar</string>
     <string name="control_import_failed">Falha ao importar o controle!</string>
@@ -162,6 +170,7 @@
     <string name="control_list">Lista de Controles</string>
     <string name="control_select">Selecionar Controle</string>
     <string name="control_share">Compartilhar</string>
+    <string name="control_upload">Controlador de upload</string>
 
     <string name="curse_category_0">Todos</string>
 
@@ -729,6 +738,7 @@
     <string name="search">Pesquisar</string>
     <string name="search_hint_chinese">Pesquisar...</string>
     <string name="search_hint_english">Pesquisar...</string>
+    <string name="search_device">Tipo de dispositivo</string>
     <string name="search_sort">Ordenar por</string>
     <string name="search_first_page">Primeiro</string>
     <string name="search_previous_page" translatable="false">◀</string>
