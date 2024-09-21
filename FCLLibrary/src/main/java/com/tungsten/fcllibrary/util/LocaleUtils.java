@@ -29,7 +29,7 @@ public class LocaleUtils {
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || (lang == 0 && getSystemLocale().toString().equals(Locale.CHINA.toString()));
+        return lang == 2 || (lang == 0 && getSystemLocale().toString().contains(Locale.CHINA.toString()));
     }
 
     public static int getLanguage(Context context) {
