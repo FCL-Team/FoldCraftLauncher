@@ -507,7 +507,6 @@ public class GLFW
 
     private static ArrayMap<Long, GLFWWindowProperties> mGLFWWindowMap;
     public static boolean mGLFWIsInputReady;
-    private static boolean mGLFWInputPumping;
     public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(317);
     public static final ByteBuffer mouseDownBuffer = ByteBuffer.allocateDirect(8);
 
@@ -628,8 +627,8 @@ public class GLFW
         SwapBuffers = apiGetFunctionAddress(GLFW, "pojavSwapBuffers"),
         SwapInterval = apiGetFunctionAddress(GLFW, "pojavSwapInterval"),
         PumpEvents = apiGetFunctionAddress(GLFW, "pojavPumpEvents"),
-        StopPumping = apiGetFunctionAddress(GLFW, "pojavStopPumping"),
-        StartPumping = apiGetFunctionAddress(GLFW, "pojavStartPumping");
+        RewindEvents = apiGetFunctionAddress(GLFW, "pojavRewindEvents"),
+        SetupEvents = apiGetFunctionAddress(GLFW, "pojavComputeEventTarget");
     }
 
     public static SharedLibrary getLibrary() {
@@ -1082,15 +1081,9 @@ public class GLFW
             mGLFWIsInputReady = true;
             CallbackBridge.nativeSetInputReady(true);
         }
-        // During interactions with UI elements, Minecraft likes to update the screen as events related to those inputs arrive.
-        // This leads to calls to glfwPollEvents within glfwPollEvents, which is not good for our queue system.
-        // Prevent these with this code.
-        if (mGLFWInputPumping) return;
-        mGLFWInputPumping = true;
-        callV(Functions.StartPumping);
+        callV(Functions.SetupEvents);
         for (Long ptr : mGLFWWindowMap.keySet()) callJV(ptr, Functions.PumpEvents);
-        callV(Functions.StopPumping);
-        mGLFWInputPumping = false;
+        callV(Functions.RewindEvents);
     }
 
     public static void internalWindowSizeChanged(long window, int w, int h) {

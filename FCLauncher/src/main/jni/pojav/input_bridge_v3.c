@@ -104,7 +104,14 @@ void handleFramebufferSizeJava(long window, int w, int h) {
 }
 
 void pojavPumpEvents(void* window) {
-    if (pojav_environ->shouldUpdateMouse) {
+    if(pojav_environ->isPumpingEvents) return;
+    // prevent further calls until we exit the loop
+    // by spec, they will be called on the same thread so no synchronization here
+    pojav_environ->isPumpingEvents = true;
+
+    if((pojav_environ->cLastX != pojav_environ->cursorX || pojav_environ->cLastY != pojav_environ->cursorY) && pojav_environ->GLFW_invoke_CursorPos) {
+        pojav_environ->cLastX = pojav_environ->cursorX;
+        pojav_environ->cLastY = pojav_environ->cursorY;
         pojav_environ->GLFW_invoke_CursorPos(window, floor(pojav_environ->cursorX),
                                              floor(pojav_environ->cursorY));
     }
@@ -144,10 +151,13 @@ void pojavPumpEvents(void* window) {
         if (index >= EVENT_WINDOW_SIZE)
             index -= EVENT_WINDOW_SIZE;
     }
+
+    // The out target index is updated by the rewinder
+    pojav_environ->isPumpingEvents = false;
 }
 
-/** Prepare the library for sending out callbacks to all windows */
-void pojavStartPumping() {
+/** Setup the amount of event that will get pumped into each window */
+void pojavComputeEventTarget() {
     size_t counter = atomic_load_explicit(&pojav_environ->eventCounter, memory_order_acquire);
     size_t index = pojav_environ->outEventIndex;
 
@@ -158,24 +168,14 @@ void pojavStartPumping() {
     // Only accessed by one unique thread, no need for atomic store
     pojav_environ->inEventCount = counter;
     pojav_environ->outTargetIndex = targetIndex;
-
-    //PumpEvents is called for every window, so this logic should be there in order to correctly distribute events to all windows.
-    if ((pojav_environ->cLastX != pojav_environ->cursorX ||
-         pojav_environ->cLastY != pojav_environ->cursorY) && pojav_environ->GLFW_invoke_CursorPos) {
-        pojav_environ->cLastX = pojav_environ->cursorX;
-        pojav_environ->cLastY = pojav_environ->cursorY;
-        pojav_environ->shouldUpdateMouse = true;
-    }
 }
 
-/** Prepare the library for the next round of new events */
-void pojavStopPumping() {
+/** Apply index offsets after events have been pumped */
+void pojavRewindEvents() {
     pojav_environ->outEventIndex = pojav_environ->outTargetIndex;
 
     // New events may have arrived while pumping, so remove only the difference before the start and end of execution
     atomic_fetch_sub_explicit(&pojav_environ->eventCounter, pojav_environ->inEventCount, memory_order_acquire);
-    // Make sure the next frame won't send mouse updates if it's unnecessary
-    pojav_environ->shouldUpdateMouse = false;
 }
 
 JNIEXPORT void JNICALL
