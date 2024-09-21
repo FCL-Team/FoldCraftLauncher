@@ -78,6 +78,7 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
             dialog.setMessage(getContext().getString(R.string.modpack_download_warn_msg));
             dialog.setCanceledOnTouchOutside(false);
             dialog.setPositiveButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), this::onInstall);
+            dialog.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_negative), null);
             dialog.show();
         }
         if (v == describe) {

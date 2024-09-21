@@ -1,14 +1,23 @@
 package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
+import android.text.Html;
+import android.view.View;
+
+import androidx.core.text.HtmlCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.LocalizedRemoteModRepository;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
+import com.tungsten.fclcore.util.io.IOUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+
+import java.io.IOException;
 
 public class ModDownloadPage extends DownloadPage {
 
@@ -25,6 +34,18 @@ public class ModDownloadPage extends DownloadPage {
             downloadSource.set(context.getString(R.string.mods_modrinth));
 
         create();
+        View showIncompatible = findViewById(R.id.show_incompatible);
+        showIncompatible.setVisibility(View.VISIBLE);
+        showIncompatible.setOnClickListener(v -> {
+            try {
+                FCLAlertDialog dialog = new FCLAlertDialog(context);
+                dialog.setMessage(Html.fromHtml(IOUtils.readFullyAsString(context.getAssets().open("incompatible_mod_list.html")), 0));
+                dialog.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                dialog.show();
+            } catch (Exception ignore) {
+                ignore.printStackTrace();
+            }
+        });
     }
 
     private class Repository extends LocalizedRemoteModRepository {
