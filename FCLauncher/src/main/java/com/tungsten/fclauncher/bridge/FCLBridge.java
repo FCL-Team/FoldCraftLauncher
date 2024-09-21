@@ -159,10 +159,6 @@ public class FCLBridge implements Serializable {
         pushEvent(System.nanoTime(), MotionNotify, x, y);
     }
 
-    public void pushEventPointer(float x, float y) {
-        CallbackBridge.sendCursorPos(x, y);
-    }
-
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
         pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
     }
