@@ -10,9 +10,11 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
+import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
+import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -164,17 +166,18 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 version.setOnClickListener(this@MainActivity)
                 executeJar.setOnClickListener(this@MainActivity)
                 executeJar.setOnLongClickListener {
-                    val padding = ConvertUtils.dip2px(this@MainActivity, 15f)
-                    val editText = FCLEditText(this@MainActivity)
-                    val layout = RelativeLayout(this@MainActivity)
-                    editText.hint = "-jar xxx"
-                    editText.setLines(1)
-                    editText.maxLines = 1
-                    layout.setPadding(padding, padding, padding, padding)
-                    layout.addView(editText)
-                    val dialog = AlertDialog.Builder(this@MainActivity)
+                    val editText = FCLEditText(this@MainActivity).apply {
+                        hint = "-jar xxx"
+                        setLines(1)
+                        maxLines = 1
+                        layoutParams = FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+                    AlertDialog.Builder(this@MainActivity)
                         .setTitle(R.string.jar_execute_custom_args)
-                        .setView(layout)
+                        .setView(editText)
                         .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive) { _: DialogInterface?, _: Int ->
                             JarExecutorHelper.exec(
                                 this@MainActivity,
@@ -185,19 +188,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         }
                         .setNegativeButton(com.tungsten.fcllibrary.R.string.dialog_negative, null)
                         .create()
-                    layout.layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    editText.layoutParams = RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    )
-                    ThemeEngine.getInstance().applyFullscreen(
-                        dialog.window,
-                        ThemeEngine.getInstance().getTheme().isFullscreen
-                    )
-                    dialog.show()
+                        .show()
                     true
                 }
                 launch.setOnClickListener(this@MainActivity)
