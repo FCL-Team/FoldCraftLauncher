@@ -19,10 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.utils.FCLPath;
-
-import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.Serializable;
@@ -32,44 +29,44 @@ public class FCLBridge implements Serializable {
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
 
-    public static final int HIT_RESULT_TYPE_UNKNOWN = 0;
-    public static final int HIT_RESULT_TYPE_MISS = 1;
-    public static final int HIT_RESULT_TYPE_BLOCK = 2;
-    public static final int HIT_RESULT_TYPE_ENTITY = 3;
+    public static final int HIT_RESULT_TYPE_UNKNOWN          = 0;
+    public static final int HIT_RESULT_TYPE_MISS             = 1;
+    public static final int HIT_RESULT_TYPE_BLOCK            = 2;
+    public static final int HIT_RESULT_TYPE_ENTITY           = 3;
 
-    public static final int INJECTOR_MODE_ENABLE = 1;
-    public static final int INJECTOR_MODE_DISABLE = 0;
+    public static final int INJECTOR_MODE_ENABLE             = 1;
+    public static final int INJECTOR_MODE_DISABLE            = 0;
 
-    public static final int KeyPress = 2;
-    public static final int KeyRelease = 3;
-    public static final int ButtonPress = 4;
-    public static final int ButtonRelease = 5;
-    public static final int MotionNotify = 6;
-    public static final int KeyChar = 7;
-    public static final int ConfigureNotify = 22;
-    public static final int FCLMessage = 37;
+    public static final int KeyPress                         = 2;
+    public static final int KeyRelease                       = 3;
+    public static final int ButtonPress                      = 4;
+    public static final int ButtonRelease                    = 5;
+    public static final int MotionNotify                     = 6;
+    public static final int KeyChar                          = 7;
+    public static final int ConfigureNotify                  = 22;
+    public static final int FCLMessage                       = 37;
 
-    public static final int Button1 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_1;
-    public static final int Button2 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_2;
-    public static final int Button3 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_3;
-    public static final int Button4 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_4;
-    public static final int Button5 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_5;
-    public static final int Button6 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_6;
-    public static final int Button7 = LwjglGlfwKeycode.GLFW_MOUSE_BUTTON_7;
+    public static final int Button1                          = 1;
+    public static final int Button2                          = 2;
+    public static final int Button3                          = 3;
+    public static final int Button4                          = 4;
+    public static final int Button5                          = 5;
+    public static final int Button6                          = 6;
+    public static final int Button7                          = 7;
 
-    public static final int CursorEnabled = 1;
-    public static final int CursorDisabled = 0;
+    public static final int CursorEnabled                    = 1;
+    public static final int CursorDisabled                   = 0;
 
-    public static final int ShiftMask = 1 << 0;
-    public static final int LockMask = 1 << 1;
-    public static final int ControlMask = 1 << 2;
-    public static final int Mod1Mask = 1 << 3;
-    public static final int Mod2Mask = 1 << 4;
-    public static final int Mod3Mask = 1 << 5;
-    public static final int Mod4Mask = 1 << 6;
-    public static final int Mod5Mask = 1 << 7;
+    public static final int ShiftMask                        = 1 << 0;
+    public static final int LockMask                         = 1 << 1;
+    public static final int ControlMask                      = 1 << 2;
+    public static final int Mod1Mask                         = 1 << 3;
+    public static final int Mod2Mask                         = 1 << 4;
+    public static final int Mod3Mask                         = 1 << 5;
+    public static final int Mod4Mask                         = 1 << 6;
+    public static final int Mod5Mask                         = 1 << 7;
 
-    public static final int CloseRequest = 0;
+    public static final int CloseRequest                     = 0;
 
     private FCLBridgeCallback callback;
 
@@ -87,30 +84,25 @@ public class FCLBridge implements Serializable {
 
     static {
         System.loadLibrary("fcl");
-        System.loadLibrary("pojavexec_awt");
+        System.loadLibrary("fcl_awt");
     }
 
     public FCLBridge() {
     }
 
     public native int[] renderAWTScreenFrame();
-
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
-
     public native void nativeMoveWindow(int x, int y);
 
+    public native void setFCLNativeWindow(Surface surface);
     public native int redirectStdio(String path);
-
     public native int chdir(String path);
-
     public native void setenv(String key, String value);
-
     public native int dlopen(String path);
-
     public native void setLdLibraryPath(String path);
-
     public native void setupExitTrap(FCLBridge bridge);
-
+    public native void setEventPipe();
+    public native void pushEvent(long time, int type, int keycode, int keyChar);
     public native void refreshHitResultType();
 
     public native void setFCLBridge(FCLBridge fclBridge);
@@ -140,7 +132,6 @@ public class FCLBridge implements Serializable {
         this.callback = callback;
         this.surface = surface;
         setFCLBridge(this);
-        CallbackBridge.setFCLBridge(this);
         receiveLog("invoke redirectStdio" + "\n");
         int errorCode = redirectStdio(getLogPath());
         if (errorCode != 0) {
@@ -152,6 +143,7 @@ public class FCLBridge implements Serializable {
             handleWindow();
         }
         receiveLog("invoke setEventPipe" + "\n");
+        setEventPipe();
 
         // start
         if (thread != null) {
@@ -160,24 +152,11 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        switch (button) {
-            case Button4:
-                if (press) {
-                    CallbackBridge.sendScroll(0, 1d);
-                }
-                break;
-            case Button5:
-                if (press) {
-                    CallbackBridge.sendScroll(0, -1d);
-                }
-                break;
-            default:
-                CallbackBridge.sendMouseButton(button, press);
-        }
+        pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button, 0);
     }
 
     public void pushEventPointer(int x, int y) {
-        CallbackBridge.sendCursorPos(x, y);
+        pushEvent(System.nanoTime(), MotionNotify, x, y);
     }
 
     public void pushEventPointer(float x, float y) {
@@ -185,15 +164,19 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
-        CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
+        pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
     }
 
-    public void pushEventChar(char keyChar) {
-        CallbackBridge.sendChar(keyChar, 0);
+    public void pushEventChar(int keyChar) {
+        pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar);
     }
 
     public void pushEventWindow(int width, int height) {
-        CallbackBridge.sendUpdateWindowSize(width, height);
+        pushEvent(System.nanoTime(), ConfigureNotify, width, height);
+    }
+
+    public void pushEventMessage(int msg) {
+        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
     }
 
     // FCLBridge callbacks
@@ -252,7 +235,7 @@ public class FCLBridge implements Serializable {
                 intent.setDataAndType(uri, "*/*");
                 context.startActivity(intent);
             } catch (Exception e) {
-                Log.e("openLink error", "link:" + link + " err:" + e.toString());
+                Log.e("openLink error", e.toString());
             }
         });
     }
@@ -324,7 +307,7 @@ public class FCLBridge implements Serializable {
     private void handleWindow() {
         if (gameDir != null) {
             receiveLog("invoke setFCLNativeWindow" + "\n");
-            CallbackBridge.setupBridgeWindow(surface);
+            setFCLNativeWindow(surface);
         } else {
             receiveLog("start Android AWT Renderer thread" + "\n");
             Thread canvasThread = new Thread(() -> {
