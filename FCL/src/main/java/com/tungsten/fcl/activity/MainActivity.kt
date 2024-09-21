@@ -231,8 +231,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
             _uiManager?.onBackPressed()
+            return true
         }
-        return true
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onPause() {
