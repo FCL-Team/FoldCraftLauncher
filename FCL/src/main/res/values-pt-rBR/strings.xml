@@ -148,11 +148,13 @@
     <string name="control_download">Controlador de download</string>
     <string name="control_download_latest">Baixe a versão mais recente</string>
     <string name="control_download_history">Baixe versões históricas</string>
+    <string name="control_download_history_empty">Não existe versão histórica!</string>
     <string name="control_download_lang_current">Idioma atual</string>
     <string name="control_download_source_cn">Fonte de download da China continental</string>
     <string name="control_download_device_phone">Telefone</string>
     <string name="control_download_device_pad">Almofada</string>
     <string name="control_download_device_other">Outros</string>
+    <string name="control_download_exist">O controlador atual já existe. O download substituirá o controlador local. Tem certeza de que deseja continuar?</string>
     <string name="control_edit">Editar</string>
     <string name="control_import">Importar</string>
     <string name="control_import_failed">Falha ao importar o controle!</string>

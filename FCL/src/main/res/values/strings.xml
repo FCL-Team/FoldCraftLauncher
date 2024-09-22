@@ -150,12 +150,14 @@
     <string name="control_download">Download Controller</string>
     <string name="control_download_latest">Download Latest Version</string>
     <string name="control_download_history">Download Historical Versions</string>
+    <string name="control_download_history_empty">No historical Version!</string>
     <string name="control_download_lang_current">Current Language</string>
     <string name="control_download_source_github" translatable="false">Github</string>
     <string name="control_download_source_cn">Download Source of Mainland China</string>
     <string name="control_download_device_phone">Phone</string>
     <string name="control_download_device_pad">Pad</string>
     <string name="control_download_device_other">Others</string>
+    <string name="control_download_exist">The current controller already exist. Downloading will overwrite the local controller. Are you sure to continue?</string>
     <string name="control_edit">Edit Controller</string>
     <string name="control_import">Import Controller</string>
     <string name="control_import_failed">Failed to import controller!</string>
