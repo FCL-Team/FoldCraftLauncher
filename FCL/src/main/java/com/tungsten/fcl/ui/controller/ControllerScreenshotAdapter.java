@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ControllerScreenshotAdapter extends FCLAdapter {
         String url = urls.get(i);
         Glide.with(getContext())
                 .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
         return imageView;
     }
