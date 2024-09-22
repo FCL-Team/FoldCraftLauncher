@@ -81,6 +81,4 @@ along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://afdian.com/@tungs)
 
-<iframe src="https://afdian.com/leaflet?slug=tungs" width="640" scrolling="no" height="200" frameborder="0"></iframe>
-
 </div>
