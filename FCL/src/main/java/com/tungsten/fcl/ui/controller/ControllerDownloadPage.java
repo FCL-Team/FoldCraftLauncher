@@ -189,11 +189,13 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         String destPath = FCLPath.CONTROLLER_DIR + "/" + index.getId() + ".json";
         String cache = FCLPath.CACHE_DIR + "/control/" + index.getId() + ".json";
         boolean exist = new File(destPath).exists();
+        Controller old = exist ? Controllers.findControllerById(index.getId()) : null;
         TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
         taskDialog.setTitle(getContext().getString(R.string.message_downloading));
         TaskExecutor executor = Task.composeAsync(() -> {
-            if (exist) {
+            if (exist && old != null) {
                 FileUtils.copyFile(new File(destPath), new File(cache));
+                Controllers.removeControllers(old);
             }
             FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
             task.setName(index.getName());
@@ -202,6 +204,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             if (exception != null) {
                 if (new File(cache).exists()) {
                     FileUtils.copyFile(new File(cache), new File(destPath));
+                    Controllers.addController(old);
                 }
                 Schedulers.androidUIThread().execute(() -> {
                     if (exception instanceof CancellationException) {
@@ -218,9 +221,6 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                 });
             } else {
                 FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
-                if (exist) {
-                    Controllers.removeControllers(Controllers.findControllerById(index.getId()));
-                }
                 Controller controller = JsonUtils.GSON.fromJson(FileUtils.readText(new File(destPath)), Controller.class);
                 Controllers.addController(controller);
                 Schedulers.androidUIThread().execute(() -> {

@@ -847,6 +847,7 @@
 
     <string name="update">به روز رسانی</string>
     <string name="update_netdisk">نت دیسک</string>
+    <string name="update_check">به روز رسانی ها را بررسی کنید</string>
     <string name="update_checking">بررسی به‌روزرسانی‌ها</string>
     <string name="update_check_failed">به روز رسانی بررسی نشد</string>
     <string name="update_date">تاریخ</string>

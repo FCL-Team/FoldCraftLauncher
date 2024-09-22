@@ -123,10 +123,20 @@
         </ScrollView>
 
         <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:singleLine="true"
+            android:text="@string/update_check"
+            app:ripple="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:singleLine="true"
             android:text="@string/search"
             app:ripple="true" />
 

@@ -847,6 +847,7 @@
 
     <string name="update">Atualizar</string>
     <string name="update_netdisk">Netdisk</string>
+    <string name="update_check">Verificar atualizações</string>
     <string name="update_checking">Procurando por atualizações</string>
     <string name="update_check_failed">Falha ao procurar atualização</string>
     <string name="update_date">Data: %s</string>

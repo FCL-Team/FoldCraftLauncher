@@ -847,6 +847,7 @@
 
     <string name="update">Обновить</string>
     <string name="update_netdisk">Netdisk</string>
+    <string name="update_check">Проверить наличие обновлений</string>
     <string name="update_checking">Проверка обновлений</string>
     <string name="update_check_failed">Ошибка во время проверки обновления</string>
     <string name="update_date">Дата: %s</string>

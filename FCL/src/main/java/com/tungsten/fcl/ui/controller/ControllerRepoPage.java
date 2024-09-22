@@ -9,23 +9,36 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerCategory;
 import com.tungsten.fcl.control.download.ControllerIndex;
+import com.tungsten.fcl.control.download.ControllerVersion;
+import com.tungsten.fcl.setting.Controller;
+import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -36,8 +49,10 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.CancellationException;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -59,6 +74,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
     private FCLSpinner<ControllerCategory> categorySpinner;
     private AppCompatSpinner deviceSpinner;
 
+    private FCLButton check;
     private FCLButton search;
 
     private ListView listView;
@@ -177,13 +193,117 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         }
     }
 
+    private void checkUpdate(int source, boolean toast) {
+        check.setEnabled(false);
+        String head = source == 0 ? CONTROLLER_GITHUB : CONTROLLER_GIT_CN;
+        String indexUrl = head + "index.json";
+        if (toast)
+            Toast.makeText(getContext(), getContext().getString(R.string.update_checking), Toast.LENGTH_SHORT).show();
+        Task.supplyAsync(() -> {
+            ArrayList<String[]> data = new ArrayList<>();
+            String indexStr = NetworkUtils.doGet(NetworkUtils.toURL(indexUrl));
+            ArrayList<ControllerIndex> indexes = JsonUtils.GSON.fromJson(indexStr, new TypeToken<ArrayList<ControllerIndex>>(){}.getType());
+            for (Controller controller : Controllers.getControllers()) {
+                ControllerIndex index = indexes.stream().filter(i -> i.getId().equals(controller.getId())).findFirst().orElse(null);
+                if (index != null) {
+                    String versionStr = NetworkUtils.doGet(NetworkUtils.toURL(head + "repo_json/" + index.getId() + "/version.json"));
+                    ControllerVersion version = JsonUtils.GSON.fromJson(versionStr, ControllerVersion.class);
+                    if (version.getLatest().getVersionCode() > controller.getVersionCode()) {
+                        String[] d = new String[] {
+                                controller.getId(),
+                                controller.getName(),
+                                controller.getVersion(),
+                                version.getLatest().getVersionName(),
+                                head + "repo_json/" + index.getId() + "/versions/" + version.getLatest().getVersionCode() + ".json"
+                        };
+                        data.add(d);
+                    }
+                }
+            }
+            return data;
+        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<ArrayList<String[]>, Exception>) s -> {
+            if (s.isEmpty()) {
+                if (toast)
+                    Toast.makeText(getContext(), getContext().getString(R.string.update_not_exist), Toast.LENGTH_SHORT).show();
+            } else {
+                for (String[] data : s) {
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                    builder.setCancelable(false);
+                    builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                    builder.setTitle(getContext().getString(R.string.update_exist));
+                    builder.setMessage(data[1] + ": " + data[2] + " ===> " + data[3]);
+                    builder.setPositiveButton(getContext().getString(R.string.update), () -> downloadFile(data[0], data[4]));
+                    builder.setNegativeButton(null);
+                    builder.create().show();
+                }
+            }
+        }).whenComplete(Schedulers.androidUIThread(), exception -> {
+            check.setEnabled(true);
+            if (exception != null && toast) {
+                Toast.makeText(getContext(), getContext().getString(R.string.update_check_failed), Toast.LENGTH_SHORT).show();
+            }
+        }).start();
+    }
+
+    private void downloadFile(String id, String url) {
+        FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
+        String destPath = FCLPath.CONTROLLER_DIR + "/" + id + ".json";
+        String cache = FCLPath.CACHE_DIR + "/control/" + id + ".json";
+        boolean exist = new File(destPath).exists();
+        Controller old = exist ? Controllers.findControllerById(id) : null;
+        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+        taskDialog.setTitle(getContext().getString(R.string.message_downloading));
+        TaskExecutor executor = Task.composeAsync(() -> {
+            if (exist && old != null) {
+                FileUtils.copyFile(new File(destPath), new File(cache));
+                Controllers.removeControllers(old);
+            }
+            FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(url), new File(destPath));
+            task.setName(id);
+            return task;
+        }).whenComplete(Schedulers.defaultScheduler(), exception -> {
+            if (exception != null) {
+                if (new File(cache).exists()) {
+                    FileUtils.copyFile(new File(cache), new File(destPath));
+                    Controllers.addController(old);
+                }
+                Schedulers.androidUIThread().execute(() -> {
+                    if (exception instanceof CancellationException) {
+                        Toast.makeText(getContext(), getContext().getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
+                    } else {
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder.setCancelable(false);
+                        builder.setTitle(getContext().getString(R.string.install_failed_downloading));
+                        builder.setMessage(DownloadProviders.localizeErrorMessage(getContext(), exception));
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.create().show();
+                    }
+                });
+            } else {
+                FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
+                Controller controller = JsonUtils.GSON.fromJson(FileUtils.readText(new File(destPath)), Controller.class);
+                Controllers.addController(controller);
+                Schedulers.androidUIThread().execute(() -> {
+                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).refreshList();
+                    Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).executor();
+        taskDialog.setExecutor(executor);
+        taskDialog.show();
+        executor.start();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         searchLayout = findViewById(R.id.search_layout);
         ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
 
+        check = findViewById(R.id.check);
         search = findViewById(R.id.search);
+        check.setOnClickListener(this);
         search.setOnClickListener(this);
 
         nameEditText = findViewById(R.id.name);
@@ -224,6 +344,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         retry.setOnClickListener(this);
 
         search();
+        checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false);
     }
 
     @Override
@@ -238,6 +359,9 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        if (view == check) {
+            checkUpdate(sourceSpinner == null ? (LocaleUtils.isChinese(getContext()) ? 1 : 0) : sourceSpinner.getSelectedItemPosition(), true);
+        }
         if (view == search || view == retry) {
             search();
         }
