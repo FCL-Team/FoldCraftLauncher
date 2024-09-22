@@ -114,6 +114,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/install_modpack"
+            android:singleLine="true"
             android:visibility="gone"
             app:ripple="true" />
 
@@ -123,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/view_incompatible"
+            android:singleLine="true"
             android:visibility="gone"
             app:ripple="true" />
 
@@ -132,6 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/search"
+            android:singleLine="true"
             app:ripple="true" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

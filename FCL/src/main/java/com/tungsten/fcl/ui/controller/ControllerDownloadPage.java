@@ -3,17 +3,30 @@ package com.tungsten.fcl.ui.controller;
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatDialog;
 
 import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
+import com.tungsten.fcl.setting.Controller;
+import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcl.setting.DownloadProviders;
+import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -23,13 +36,17 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.CancellationException;
 
 public class ControllerDownloadPage extends FCLTempPage implements View.OnClickListener {
 
     private final ArrayList<String> categories;
     private final ControllerIndex index;
     private final String url;
+
+    private ControllerVersion controllerVersion;
 
     private FCLLinearLayout layout;
     private FCLProgressBar progressBar;
@@ -82,6 +99,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             String versionStr = NetworkUtils.doGet(NetworkUtils.toURL(versionUrl));
             return JsonUtils.GSON.fromJson(versionStr, ControllerVersion.class);
         }).thenAcceptAsync((ExceptionalConsumer<ControllerVersion, Exception>) controllerVersion -> {
+            this.controllerVersion = controllerVersion;
             ArrayList<String> screenshotUrls = new ArrayList<>();
             for (int i = 1; i <= controllerVersion.getScreenshot(); i++) {
                 String num = i + "";
@@ -151,6 +169,71 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         refresh();
     }
 
+    private void download(int versionCode) {
+        if (Controllers.findControllerById(index.getId()).getId().equals(index.getId())) {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setCancelable(false);
+            builder.setMessage(getContext().getString(R.string.control_download_exist));
+            builder.setPositiveButton(() -> downloadFile(versionCode));
+            builder.setNegativeButton(null);
+            builder.create().show();
+        } else {
+            downloadFile(versionCode);
+        }
+    }
+
+    private void downloadFile(int versionCode) {
+        FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
+        String downloadUrl = url + "versions/" + versionCode + ".json";
+        String destPath = FCLPath.CONTROLLER_DIR + "/" + index.getId() + ".json";
+        String cache = FCLPath.CACHE_DIR + "/control/" + index.getId() + ".json";
+        boolean exist = new File(destPath).exists();
+        Controller old = exist ? Controllers.findControllerById(index.getId()) : null;
+        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+        taskDialog.setTitle(getContext().getString(R.string.message_downloading));
+        TaskExecutor executor = Task.composeAsync(() -> {
+            if (exist && old != null) {
+                FileUtils.copyFile(new File(destPath), new File(cache));
+                Controllers.removeControllers(old);
+            }
+            FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
+            task.setName(index.getName());
+            return task;
+        }).whenComplete(Schedulers.defaultScheduler(), exception -> {
+            if (exception != null) {
+                if (new File(cache).exists()) {
+                    FileUtils.copyFile(new File(cache), new File(destPath));
+                    Controllers.addController(old);
+                }
+                Schedulers.androidUIThread().execute(() -> {
+                    if (exception instanceof CancellationException) {
+                        Toast.makeText(getContext(), getContext().getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
+                    } else {
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder.setCancelable(false);
+                        builder.setTitle(getContext().getString(R.string.install_failed_downloading));
+                        builder.setMessage(DownloadProviders.localizeErrorMessage(getContext(), exception));
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.create().show();
+                    }
+                });
+            } else {
+                FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
+                Controller controller = JsonUtils.GSON.fromJson(FileUtils.readText(new File(destPath)), Controller.class);
+                Controllers.addController(controller);
+                Schedulers.androidUIThread().execute(() -> {
+                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).refreshList();
+                    Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).executor();
+        taskDialog.setExecutor(executor);
+        taskDialog.show();
+        executor.start();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -171,11 +254,16 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         if (view == retry) {
             refresh();
         }
-        if (view == history) {
-
+        if (view == history && controllerVersion != null) {
+            if (controllerVersion.getHistory().isEmpty()) {
+                Toast.makeText(getContext(), getContext().getString(R.string.control_download_history_empty), Toast.LENGTH_SHORT).show();
+            } else {
+                OldVersionDialog dialog = new OldVersionDialog(getContext(), controllerVersion.getHistory(), this::download);
+                dialog.show();
+            }
         }
-        if (view == latest) {
-
+        if (view == latest && controllerVersion != null) {
+            download(controllerVersion.getLatest().getVersionCode());
         }
     }
 }

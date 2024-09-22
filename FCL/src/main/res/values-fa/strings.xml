@@ -148,11 +148,13 @@
     <string name="control_download">دانلود کنترلر</string>
     <string name="control_download_latest">آخرین نسخه را دانلود کنید</string>
     <string name="control_download_history">دانلود نسخه های تاریخی</string>
+    <string name="control_download_history_empty">نسخه تاریخی وجود ندارد!</string>
     <string name="control_download_lang_current">زبان فعلی</string>
     <string name="control_download_source_cn">منبع دانلود سرزمین اصلی چین</string>
     <string name="control_download_device_phone">تلفن</string>
     <string name="control_download_device_pad">پد</string>
     <string name="control_download_device_other">دیگران</string>
+    <string name="control_download_exist">کنترل کننده فعلی از قبل وجود دارد. بارگیری کنترل کننده محلی را بازنویسی می کند. مطمئنی ادامه میدی؟</string>
     <string name="control_edit">ویرایش کنترل کننده</string>
     <string name="control_import">وارد کردن کنترلر</string>
     <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
@@ -845,6 +847,7 @@
 
     <string name="update">به روز رسانی</string>
     <string name="update_netdisk">نت دیسک</string>
+    <string name="update_check">به روز رسانی ها را بررسی کنید</string>
     <string name="update_checking">بررسی به‌روزرسانی‌ها</string>
     <string name="update_check_failed">به روز رسانی بررسی نشد</string>
     <string name="update_date">تاریخ</string>

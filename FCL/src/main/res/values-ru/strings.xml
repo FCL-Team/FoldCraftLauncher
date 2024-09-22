@@ -148,11 +148,13 @@
     <string name="control_download">Загрузить Контроллер</string>
     <string name="control_download_latest">Загрузите последнюю версию</string>
     <string name="control_download_history">Скачать исторические версии</string>
+    <string name="control_download_history_empty">Исторической версии нет!</string>
     <string name="control_download_lang_current">Текущий язык</string>
     <string name="control_download_source_cn">Источник загрузки для материкового Китая</string>
     <string name="control_download_device_phone">Телефон</string>
     <string name="control_download_device_pad">Прокладка</string>
     <string name="control_download_device_other">Другие</string>
+    <string name="control_download_exist">Текущий контроллер уже существует. Загрузка перезапишет локальный контроллер. Вы уверены, что хотите продолжить?</string>
     <string name="control_edit">Редактировать</string>
     <string name="control_import">Импортировать</string>
     <string name="control_import_failed">Ошибка импорта</string>
@@ -845,6 +847,7 @@
 
     <string name="update">Обновить</string>
     <string name="update_netdisk">Netdisk</string>
+    <string name="update_check">Проверить наличие обновлений</string>
     <string name="update_checking">Проверка обновлений</string>
     <string name="update_check_failed">Ошибка во время проверки обновления</string>
     <string name="update_date">Дата: %s</string>
