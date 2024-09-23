@@ -73,8 +73,6 @@ import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -377,23 +375,23 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(gyroSwitch, menuSetting.enableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.showLogProperty());
 
-        showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                showFpsThread = new Thread(() -> {
-                    while (showFps.isChecked()) {
-                        if (System.currentTimeMillis() - time >= 1000) {
-                            Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + CallbackBridge.getFps()));
-                            time = System.currentTimeMillis();
-                        }
-                    }
-                }, "FPS");
-                showFpsThread.start();
-            } else {
-                showFpsThread.interrupt();
-                showFpsThread = null;
-                fpsText.setText("");
-            }
-        });
+//        showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            if (isChecked) {
+//                showFpsThread = new Thread(() -> {
+//                    while (showFps.isChecked()) {
+//                        if (System.currentTimeMillis() - time >= 1000) {
+//                            Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + CallbackBridge.getFps()));
+//                            time = System.currentTimeMillis();
+//                        }
+//                    }
+//                }, "FPS");
+//                showFpsThread.start();
+//            } else {
+//                showFpsThread.interrupt();
+//                showFpsThread = null;
+//                fpsText.setText("");
+//            }
+//        });
 
         logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
         menuSetting.showLogProperty().addListener(observable -> {
