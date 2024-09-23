@@ -51,6 +51,8 @@ struct PotatoBridge potatoBridge;
 #define RENDERER_VK_ZINK 2
 #define RENDERER_VULKAN 4
 
+static int fps = 0;
+
 EXTERNAL_API void pojavTerminate() {
     printf("EGLBridge: Terminating\n");
 
@@ -249,6 +251,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 }
 
 EXTERNAL_API void pojavSwapBuffers() {
+    fps++;
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapBuffers();
     else br_swap_buffers();
@@ -293,4 +296,11 @@ EXTERNAL_API void pojavSetInjectorCallback(FCLinjectorfun callback) {
 
 EXTERNAL_API void pojavSetHitResultType(int type) {
     fclSetHitResultType(type);
+}
+
+JNIEXPORT jint JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_getFps(JNIEnv *env, jclass clazz) {
+    int f = fps;
+    fps = 0;
+    return f;
 }

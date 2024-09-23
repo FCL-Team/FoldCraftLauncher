@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +57,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -68,6 +72,8 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +104,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private TouchPad touchPad;
     private GameItemBar gameItemBar;
     private LogWindow logWindow;
+    private TextView fpsText;
     private TouchCharInput touchCharInput;
     private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
@@ -115,6 +122,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton sendKeycode;
     private FCLButton gamepadResetMapper;
     private FCLButton forceExit;
+
+    private Thread showFpsThread;
+    private long time = 0;
 
     public FCLActivity getActivity() {
         return activity;
@@ -323,8 +333,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(spinner, viewGroupProperty);
     }
 
+    @SuppressLint("SetTextI18n")
     private void initRightMenu() {
         FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
+        FCLSwitch showFps = findViewById(R.id.switch_show_fps);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
         FCLSwitch disableGestureSwitch = findViewById(R.id.switch_gesture);
         FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
@@ -364,6 +376,24 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.disableBEGestureProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.enableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.showLogProperty());
+
+        showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                showFpsThread = new Thread(() -> {
+                    while (showFps.isChecked()) {
+                        if (System.currentTimeMillis() - time >= 1000) {
+                            Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + CallbackBridge.getFps()));
+                            time = System.currentTimeMillis();
+                        }
+                    }
+                }, "FPS");
+                showFpsThread.start();
+            } else {
+                showFpsThread.interrupt();
+                showFpsThread = null;
+                fpsText.setText("");
+            }
+        });
 
         logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
         menuSetting.showLogProperty().addListener(observable -> {
@@ -549,6 +579,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         touchPad = findViewById(R.id.touch_pad);
         gameItemBar = findViewById(R.id.game_item_bar);
         logWindow = findViewById(R.id.log_window);
+        fpsText = findViewById(R.id.fps);
         touchCharInput = findViewById(R.id.input_scanner);
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);

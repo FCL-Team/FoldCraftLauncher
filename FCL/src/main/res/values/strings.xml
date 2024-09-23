@@ -540,6 +540,7 @@
     <string name="menu_settings_gyro">Gyroscope</string>
     <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
     <string name="menu_settings_lock_view">Lock Menu View</string>
+    <string name="menu_settings_show_fps">Show FPS</string>
     <string name="menu_settings_mouse">Mouse</string>
     <string name="menu_settings_mouse_mode">Mouse Mode</string>
     <string name="menu_settings_mouse_mode_click">Click</string>

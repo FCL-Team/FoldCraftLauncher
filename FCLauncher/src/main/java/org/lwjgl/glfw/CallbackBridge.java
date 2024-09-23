@@ -229,6 +229,9 @@ public class CallbackBridge {
 
     public static native void nativeSetWindowAttrib(int attrib, int value);
     public static native void setupBridgeWindow(Object surface);
+
+    public static native int getFps();
+
     static {
         System.loadLibrary("pojavexec");
     }
