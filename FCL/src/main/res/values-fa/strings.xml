@@ -100,6 +100,7 @@
 
     <string name="action_refresh">تازه کردن</string>
     <string name="action_retry">دوباره امتحان کنید</string>
+    <string name="action_share">به اشتراک بگذارید</string>
     <string name="action_skip">رد کردن</string>
 
     <string name="announcement">اطلاعیه ها</string>
@@ -160,8 +161,15 @@
     <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
     <string name="control_upgrade">کنترل کننده: %s یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
     <string name="control_incompatible">Controller: %s یک کنترل کننده ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
+    <string name="control_upload_requirement">لطفا ابتدا به گروه QQ بپیوندید، سپس روی "اشتراک گذاری" کلیک کنید تا کنترلر و اطلاعات آن را با مدیر به اشتراک بگذارید و منتظر بررسی باشید. لطفاً با مدیر تماس بگیرید تا دسته کنترلر خود را به او بگویید.</string>
     <string name="control_info_author">نویسنده:</string>
+    <string name="control_info_icon">نماد:</string>
+    <string name="control_info_lang">زبان:</string>
+    <string name="control_info_device">نوع دستگاه:</string>
+    <string name="control_info_screenshot">اسکرین شات ها:</string>
+    <string name="control_info_intro">مقدمه:</string>
     <string name="control_info_description">شرح:</string>
+    <string name="control_info_screenshot_max">حداکثر 16 اسکرین شات را می توان آپلود کرد!</string>
     <string name="control_info_edit">ویرایش اطلاعات کنترل کننده</string>
     <string name="control_info_more">اطلاعات بیشتر</string>
     <string name="control_info_name">نام:</string>

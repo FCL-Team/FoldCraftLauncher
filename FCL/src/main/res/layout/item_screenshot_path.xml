@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:id="@+id/text"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/delete"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_close_24"
+        android:layout_gravity="center"
+        app:auto_tint="true"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

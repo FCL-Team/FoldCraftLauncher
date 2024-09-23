@@ -37,4 +37,8 @@ public class RequestCodes {
     public static final int SELECT_LAUNCHER_BACKGROUND_CODE = 800;
 
     public static final int SELECT_CURSOR_CODE = 850;
+
+    public static final int SELECT_CONTROLLER_ICON_CODE = 900;
+
+    public static final int SELECT_CONTROLLER_SCREENSHOT_CODE = 950;
 }

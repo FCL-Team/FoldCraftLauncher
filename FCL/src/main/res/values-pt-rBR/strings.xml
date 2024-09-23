@@ -100,6 +100,7 @@
 
     <string name="action_refresh">Atualizar</string>
     <string name="action_retry">Tentar novamente</string>
+    <string name="action_share">Compartilhar</string>
     <string name="action_skip">Pular</string>
 
     <string name="announcement">Anúncio: %s</string>
@@ -160,8 +161,15 @@
     <string name="control_import_failed">Falha ao importar o controle!</string>
     <string name="control_upgrade">Controle: %s é uma versão antiga de controle, pode haver alguns bugs, mas ainda suportamos, você quer migrar para uma nova versão?</string>
     <string name="control_incompatible">Controle: %s é um controle incompatível, isto pode ser devido a versão do launcher ou controle ser antiga, por favor verifique.</string>
+    <string name="control_upload_requirement">Por favor, entre no grupo QQ primeiro, depois clique em "Compartilhar" para compartilhar o controlador e suas informações com o administrador e aguarde a revisão. Entre em contato com o administrador para informá-lo sobre a categoria do seu controlador.</string>
     <string name="control_info_author">Autor: </string>
+    <string name="control_info_icon">Ícone: </string>
+    <string name="control_info_lang">Linguagem: </string>
+    <string name="control_info_device">Tipo de dispositivo: </string>
+    <string name="control_info_screenshot">Capturas de tela: </string>
+    <string name="control_info_intro">Introdução: </string>
     <string name="control_info_description">Descrição: </string>
+    <string name="control_info_screenshot_max">É possível enviar até 16 capturas de tela!</string>
     <string name="control_info_edit">Editar Informações</string>
     <string name="control_info_more">Mais Informações</string>
     <string name="control_info_name">Nome: </string>

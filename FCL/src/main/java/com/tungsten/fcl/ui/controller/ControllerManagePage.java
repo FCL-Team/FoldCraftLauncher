@@ -19,6 +19,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.ControllerActivity;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -226,7 +227,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             UIManager.getInstance().getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO);
         }
         if (view == upload) {
-
+            ControllerUploadPage page = new ControllerUploadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.get());
+            ControllerPageManager.getInstance().showTempPage(page);
         }
         if (view == share) {
             Intent intent = new Intent(Intent.ACTION_SEND);

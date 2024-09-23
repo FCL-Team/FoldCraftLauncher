@@ -102,6 +102,7 @@
 
     <string name="action_refresh">Refresh</string>
     <string name="action_retry">Retry</string>
+    <string name="action_share">Share</string>
     <string name="action_skip">Skip</string>
 
     <string name="announcement">Announcement: %s</string>
@@ -163,8 +164,15 @@
     <string name="control_import_failed">Failed to import controller!</string>
     <string name="control_upgrade">Controller: %s is an outdated controller, it may produce some unknown bugs, but we still support it, do you want to migrate it to a new version?</string>
     <string name="control_incompatible">Controller: %s is an incompatible controller, it may be caused by the launcher version being too low or the controller version being too low, please check.</string>
+    <string name="control_upload_requirement">Please join the QQ group first, then click "Share" to share the controller and its information to the administrator and wait for review. Please contact the administrator to tell him the category of your controller.</string>
     <string name="control_info_author">Author: </string>
+    <string name="control_info_icon">Icon: </string>
+    <string name="control_info_lang">Language: </string>
+    <string name="control_info_device">Device Type: </string>
+    <string name="control_info_screenshot">Screenshots: </string>
+    <string name="control_info_intro">Introduction: </string>
     <string name="control_info_description">Description: </string>
+    <string name="control_info_screenshot_max">Up to 16 screenshots can be uploaded!</string>
     <string name="control_info_edit">Edit Controller Information</string>
     <string name="control_info_more">More Info</string>
     <string name="control_info_name">Name: </string>

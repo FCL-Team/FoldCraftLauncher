@@ -100,6 +100,7 @@
 
     <string name="action_refresh">Обновить </string>
     <string name="action_retry">Повторить попытку</string>
+    <string name="action_share">Делиться</string>
     <string name="action_skip">Пропустить</string>
 
     <string name="announcement">Объявление: %s</string>
@@ -160,8 +161,15 @@
     <string name="control_import_failed">Ошибка импорта</string>
     <string name="control_upgrade">Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. \nХотите перенести его на новую версию?</string>
     <string name="control_incompatible">Контроллер: %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией Лаунчера или слишком низкой версией контроллера.</string>
+    <string name="control_upload_requirement">Сначала присоединитесь к группе QQ, затем нажмите «Поделиться», чтобы поделиться контроллером и его информацией с администратором, и дождитесь проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
     <string name="control_info_author">Автор: </string>
+    <string name="control_info_icon">Икона: </string>
+    <string name="control_info_lang">Язык: </string>
+    <string name="control_info_device">Тип устройства: </string>
+    <string name="control_info_screenshot">Скриншоты: </string>
+    <string name="control_info_intro">Введение: </string>
     <string name="control_info_description">Описание: </string>
+    <string name="control_info_screenshot_max">Можно загрузить до 16 скриншотов!</string>
     <string name="control_info_edit">Редактировать информацию о контроллере</string>
     <string name="control_info_more">Читать дальше</string>
     <string name="control_info_name">Имя: </string>
