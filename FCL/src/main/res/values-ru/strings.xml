@@ -151,7 +151,7 @@
     <string name="control_download_history">Скачать исторические версии</string>
     <string name="control_download_history_empty">Исторической версии нет!</string>
     <string name="control_download_lang_current">Текущий язык</string>
-    <string name="control_download_source_cn">Источник загрузки для материкового Китая</string>
+    <string name="control_download_source_cn">Gitee</string>
     <string name="control_download_device_phone">Телефон</string>
     <string name="control_download_device_pad">Прокладка</string>
     <string name="control_download_device_other">Другие</string>

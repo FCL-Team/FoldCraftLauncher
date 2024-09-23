@@ -151,7 +151,7 @@
     <string name="control_download_history">دانلود نسخه های تاریخی</string>
     <string name="control_download_history_empty">نسخه تاریخی وجود ندارد!</string>
     <string name="control_download_lang_current">زبان فعلی</string>
-    <string name="control_download_source_cn">منبع دانلود سرزمین اصلی چین</string>
+    <string name="control_download_source_cn">Gitee</string>
     <string name="control_download_device_phone">تلفن</string>
     <string name="control_download_device_pad">پد</string>
     <string name="control_download_device_other">دیگران</string>

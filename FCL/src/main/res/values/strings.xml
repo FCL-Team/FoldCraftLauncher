@@ -154,7 +154,7 @@
     <string name="control_download_history_empty">No historical Version!</string>
     <string name="control_download_lang_current">Current Language</string>
     <string name="control_download_source_github" translatable="false">Github</string>
-    <string name="control_download_source_cn">Download Source of Mainland China</string>
+    <string name="control_download_source_cn">Gitee</string>
     <string name="control_download_device_phone">Phone</string>
     <string name="control_download_device_pad">Pad</string>
     <string name="control_download_device_other">Others</string>

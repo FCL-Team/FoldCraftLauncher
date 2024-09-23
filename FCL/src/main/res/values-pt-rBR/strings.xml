@@ -151,7 +151,7 @@
     <string name="control_download_history">Baixe versões históricas</string>
     <string name="control_download_history_empty">Não existe versão histórica!</string>
     <string name="control_download_lang_current">Idioma atual</string>
-    <string name="control_download_source_cn">Fonte de download da China continental</string>
+    <string name="control_download_source_cn">Gitee</string>
     <string name="control_download_device_phone">Telefone</string>
     <string name="control_download_device_pad">Almofada</string>
     <string name="control_download_device_other">Outros</string>
