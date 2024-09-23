@@ -126,6 +126,16 @@
 
     <string name="control_create">创建新布局</string>
     <string name="control_delete">你确定要删除该布局吗？</string>
+    <string name="control_download">下载布局</string>
+    <string name="control_download_latest">下载最新版</string>
+    <string name="control_download_history">下载历史版本</string>
+    <string name="control_download_history_empty">没有历史版本！</string>
+    <string name="control_download_lang_current">当前语言</string>
+    <string name="control_download_source_cn">国内源</string>
+    <string name="control_download_device_phone">手机</string>
+    <string name="control_download_device_pad">平板</string>
+    <string name="control_download_device_other">其他</string>
+    <string name="control_download_exist">当前控件已存在，下载将会覆盖本地控件，确定要继续吗？</string>
     <string name="control_edit">编辑布局方案</string>
     <string name="control_import">导入布局</string>
     <string name="control_import_failed">导入布局失败！</string>
@@ -143,6 +153,7 @@
     <string name="control_list">布局列表</string>
     <string name="control_select">选择布局</string>
     <string name="control_share">分享布局</string>
+    <string name="control_upload">上传布局</string>
 
     <string name="curse_category_0">全部</string>
 
@@ -498,6 +509,7 @@
     <string name="menu_settings_gyro">陀螺仪</string>
     <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
+    <string name="menu_settings_show_fps">显示FPS</string>
     <string name="menu_settings_mouse">鼠标</string>
     <string name="menu_settings_mouse_mode">鼠标控制模式</string>
     <string name="menu_settings_mouse_mode_click">点击</string>
@@ -701,6 +713,7 @@
     <string name="search">搜索</string>
     <string name="search_hint_chinese">支持中英文搜索</string>
     <string name="search_hint_english">仅支持英文搜索</string>
+    <string name="search_device">设备类型</string>
     <string name="search_sort">排序</string>
     <string name="search_first_page">第一页</string>
     <string name="search_last_page">最后一页</string>
@@ -800,6 +813,7 @@
 
     <string name="update">更新</string>
     <string name="update_netdisk">网盘</string>
+    <string name="update_check">检查更新</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
     <string name="update_date">日期：%s</string>

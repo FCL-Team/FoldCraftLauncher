@@ -145,6 +145,16 @@
 
     <string name="control_create">کنترلر ایجاد کنید</string>
     <string name="control_delete">آیا مطمئناً این کنترلر را حذف می کنید؟</string>
+    <string name="control_download">دانلود کنترلر</string>
+    <string name="control_download_latest">آخرین نسخه را دانلود کنید</string>
+    <string name="control_download_history">دانلود نسخه های تاریخی</string>
+    <string name="control_download_history_empty">نسخه تاریخی وجود ندارد!</string>
+    <string name="control_download_lang_current">زبان فعلی</string>
+    <string name="control_download_source_cn">منبع دانلود سرزمین اصلی چین</string>
+    <string name="control_download_device_phone">تلفن</string>
+    <string name="control_download_device_pad">پد</string>
+    <string name="control_download_device_other">دیگران</string>
+    <string name="control_download_exist">کنترل کننده فعلی از قبل وجود دارد. بارگیری کنترل کننده محلی را بازنویسی می کند. مطمئنی ادامه میدی؟</string>
     <string name="control_edit">ویرایش کنترل کننده</string>
     <string name="control_import">وارد کردن کنترلر</string>
     <string name="control_import_failed">وارد کردن کنترلر ناموفق!</string>
@@ -162,6 +172,7 @@
     <string name="control_list">لیست کنترل کننده</string>
     <string name="control_select">کنترلر را انتخاب کنید</string>
     <string name="control_share">کنترل کننده</string>
+    <string name="control_upload">کنترل کننده آپلود</string>
 
     <string name="curse_category_0">همه</string>
 
@@ -729,6 +740,7 @@
     <string name="search">جستجو کردن</string>
     <string name="search_hint_chinese">عبارت های جستجو از هر دو زبان چینی و انگلیسی پشتیبانی می کنند</string>
     <string name="search_hint_english">فقط انگلیسی پشتیبانی می شود</string>
+    <string name="search_device">نوع دستگاه</string>
     <string name="search_sort">مرتب سازی بر اساس</string>
     <string name="search_first_page">اولین</string>
     <string name="search_previous_page" translatable="false">◀</string>
@@ -835,6 +847,7 @@
 
     <string name="update">به روز رسانی</string>
     <string name="update_netdisk">نت دیسک</string>
+    <string name="update_check">به روز رسانی ها را بررسی کنید</string>
     <string name="update_checking">بررسی به‌روزرسانی‌ها</string>
     <string name="update_check_failed">به روز رسانی بررسی نشد</string>
     <string name="update_date">تاریخ</string>
