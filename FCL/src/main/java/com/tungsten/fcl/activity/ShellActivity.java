@@ -35,7 +35,7 @@ public class ShellActivity extends FCLActivity {
         editText = findViewById(R.id.shell_input);
         appendLog("Welcome to use Fold Craft Launcher!\n");
         appendLog("Here is the shell command line!\n");
-        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> appendLog("\t" + output + "\n"));
+        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> runOnUiThread(() -> appendLog("\t" + output + "\n")));
         shellUtil.start();
         editText.addTextChangedListener(new TextWatcher() {
             @Override
