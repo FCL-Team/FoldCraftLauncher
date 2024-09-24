@@ -74,7 +74,7 @@ public class Controllers {
         if (files != null) {
             ArrayList<String> fileNames = (ArrayList<String>) controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
             for (File file : files) {
-                if (((file.isDirectory() && !file.getName().equals("styles")) || !fileNames.contains(file.getName())) && !file.getName().endsWith(".bak")) {
+                if (((file.isDirectory() && !file.getName().equals("styles") && !file.getName().equals("input")) || !fileNames.contains(file.getName())) && !file.getName().endsWith(".bak")) {
                     file.delete();
                 }
             }
