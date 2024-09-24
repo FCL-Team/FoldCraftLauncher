@@ -16,6 +16,19 @@
 
 #include "fcl_bridge.h"
 #include "fcl_keycodes.h"
+////==============only for boat=============
+typedef struct _QueueElement {
+    struct _QueueElement* next;
+    FCLEvent event;
+} QueueElement;
+
+typedef struct {
+    int count;
+    int capacity;
+    QueueElement* head;
+    QueueElement* tail;
+} EventQueue;
+//==============only for boat=============
 
 struct FCLInternal {
     JavaVM* android_jvm;
@@ -24,6 +37,13 @@ struct FCLInternal {
     ANativeWindow* window;
     char* clipboard_string;
     FILE* logFile;
+    //only for boat
+    EventQueue event_queue;
+    pthread_mutex_t event_queue_mutex;
+    int has_event_pipe;
+    int event_pipe_fd[2];
+    int epoll_fd;
+    int fps;
 };
 
 extern struct FCLInternal *fcl;

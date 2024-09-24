@@ -173,21 +173,30 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
+        if (FCLBridge.BACKEND_IS_BOAT) {
+            envMap.put("LIBGL_STRING", renderer.toString());
+            envMap.put("LIBGL_NAME", renderer.getGlLibName());
+            envMap.put("LIBEGL_NAME", renderer.getEglLibName());
+        }
         if (renderer == FCLConfig.Renderer.RENDERER_GL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU) {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
-            if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
-                envMap.put("POJAV_RENDERER","opengles2");
-            } else {
-                envMap.put("POJAV_RENDERER","opengles2_vgpu");
+            if (!FCLBridge.BACKEND_IS_BOAT) {
+                if (renderer == FCLConfig.Renderer.RENDERER_GL4ES) {
+                    envMap.put("POJAV_RENDERER", "opengles2");
+                } else {
+                    envMap.put("POJAV_RENDERER", "opengles2_vgpu");
+                }
             }
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
-            envMap.put("POJAV_RENDERER","opengles3_desktopgl_angle_vulkan");
             envMap.put("LIBGL_ES","3");
-            envMap.put("POJAVEXEC_EGL","libEGL_angle.so");
+            if (!FCLBridge.BACKEND_IS_BOAT) {
+                envMap.put("POJAV_RENDERER","opengles3_desktopgl_angle_vulkan");
+                envMap.put("POJAVEXEC_EGL","libEGL_angle.so");
+            }
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
             envMap.put("MESA_GL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "4.3" : "4.6");

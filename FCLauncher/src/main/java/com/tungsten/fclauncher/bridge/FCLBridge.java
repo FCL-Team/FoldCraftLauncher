@@ -71,6 +71,8 @@ public class FCLBridge implements Serializable {
 
     public static final int CloseRequest = 0;
 
+    public static boolean BACKEND_IS_BOAT = false;
+
     private FCLBridgeCallback callback;
 
     private double scaleFactor = 1f;
@@ -115,6 +117,16 @@ public class FCLBridge implements Serializable {
 
     public native void setFCLBridge(FCLBridge fclBridge);
 
+    //boat backend
+    public native void setFCLNativeWindow(Surface surface);
+
+    public native void setEventPipe();
+
+    public native void pushEvent(long time, int type, int keycode, int keyChar);
+
+    public static native int nativeGetFps();
+
+
     public void setThread(Thread thread) {
         this.thread = thread;
     }
@@ -152,6 +164,9 @@ public class FCLBridge implements Serializable {
             handleWindow();
         }
         receiveLog("invoke setEventPipe" + "\n");
+        if (BACKEND_IS_BOAT) {
+            setEventPipe();
+        }
 
         // start
         if (thread != null) {
@@ -160,40 +175,68 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        switch (button) {
-            case Button4:
-                if (press) {
-                    CallbackBridge.sendScroll(0, 1d);
-                }
-                break;
-            case Button5:
-                if (press) {
-                    CallbackBridge.sendScroll(0, -1d);
-                }
-                break;
-            default:
-                CallbackBridge.sendMouseButton(button, press);
+        if (BACKEND_IS_BOAT) {
+            pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button + 1, 0);
+        } else {
+            switch (button) {
+                case Button4:
+                    if (press) {
+                        CallbackBridge.sendScroll(0, 1d);
+                    }
+                    break;
+                case Button5:
+                    if (press) {
+                        CallbackBridge.sendScroll(0, -1d);
+                    }
+                    break;
+                default:
+                    CallbackBridge.sendMouseButton(button, press);
+            }
         }
     }
 
     public void pushEventPointer(int x, int y) {
-        CallbackBridge.sendCursorPos(x, y);
+        if (BACKEND_IS_BOAT) {
+            pushEvent(System.nanoTime(), MotionNotify, x, y);
+        } else {
+            CallbackBridge.sendCursorPos(x, y);
+        }
     }
 
     public void pushEventPointer(float x, float y) {
-        CallbackBridge.sendCursorPos(x, y);
+        if (BACKEND_IS_BOAT) {
+            pushEventPointer((int) x, (int) y);
+        } else {
+            CallbackBridge.sendCursorPos(x, y);
+        }
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
-        CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
+        if (BACKEND_IS_BOAT) {
+            pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
+        } else {
+            CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
+        }
     }
 
     public void pushEventChar(char keyChar) {
-        CallbackBridge.sendChar(keyChar, 0);
+        if (BACKEND_IS_BOAT) {
+            pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar);
+        } else {
+            CallbackBridge.sendChar(keyChar, 0);
+        }
     }
 
     public void pushEventWindow(int width, int height) {
-        CallbackBridge.sendUpdateWindowSize(width, height);
+        if (BACKEND_IS_BOAT) {
+            pushEvent(System.nanoTime(), ConfigureNotify, width, height);
+        } else {
+            CallbackBridge.sendUpdateWindowSize(width, height);
+        }
+    }
+
+    public void pushEventMessage(int msg) {
+        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
     }
 
     // FCLBridge callbacks
@@ -324,7 +367,11 @@ public class FCLBridge implements Serializable {
     private void handleWindow() {
         if (gameDir != null) {
             receiveLog("invoke setFCLNativeWindow" + "\n");
-            CallbackBridge.setupBridgeWindow(surface);
+            if (BACKEND_IS_BOAT) {
+                setFCLNativeWindow(surface);
+            } else {
+                CallbackBridge.setupBridgeWindow(surface);
+            }
         } else {
             receiveLog("start Android AWT Renderer thread" + "\n");
             Thread canvasThread = new Thread(() -> {
@@ -351,6 +398,14 @@ public class FCLBridge implements Serializable {
                 surface.release();
             }, "AndroidAWTRenderer");
             canvasThread.start();
+        }
+    }
+
+    public static int getFps() {
+        if (BACKEND_IS_BOAT) {
+            return nativeGetFps();
+        } else {
+            return CallbackBridge.getFps();
         }
     }
 }

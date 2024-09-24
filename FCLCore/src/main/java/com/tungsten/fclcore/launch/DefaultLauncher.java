@@ -147,8 +147,13 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
-        res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
+        if (FCLBridge.BACKEND_IS_BOAT) {
+            res.addDefault("-Dwindow.width=", options.getWidth() + "");
+            res.addDefault("-Dwindow.height=", options.getHeight() + "");
+        } else {
+            res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
+            res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
+        }
         res.addDefault("-Dglfwstub.initEgl=", "false");
         res.addDefault("-Dloader.disable_forked_guis=", "true");
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());

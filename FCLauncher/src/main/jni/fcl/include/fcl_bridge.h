@@ -10,6 +10,12 @@
 
 typedef void (* FCLinjectorfun)();
 
+ANativeWindow* fclGetNativeWindow(void);
+int fclWaitForEvent(int timeout);
+int fclPollEvent(FCLEvent* event);
+int fclGetEventFd(void);
+void fclSetCursorMode(int mode);
+
 void fclSetInjectorCallback(FCLinjectorfun callback);
 void fclSetHitResultType(int type);
 void fclSetPrimaryClipString(const char* string);

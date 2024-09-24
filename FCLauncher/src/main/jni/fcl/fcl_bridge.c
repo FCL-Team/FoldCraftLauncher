@@ -54,7 +54,16 @@ const char* fclGetPrimaryClipString() {
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLBridge(JNIEnv *env, jobject thiz, jobject fcl_bridge) {
     fcl->object_FCLBridge = (jclass)(*env)->NewGlobalRef(env, thiz);
 }
+//==============only for boat=============
+ANativeWindow* fclGetNativeWindow() {
+    return fcl->window;
+}
 
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setFCLNativeWindow(JNIEnv* env, jclass clazz, jobject surface) {
+    fcl->window = ANativeWindow_fromSurface(env, surface);
+    FCL_INTERNAL_LOG("setFCLNativeWindow : %p, size : %dx%d", fcl->window, ANativeWindow_getWidth(fcl->window), ANativeWindow_getHeight(fcl->window));
+}
+//==============only for boat=============
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     if (fcl->android_jvm == NULL) {
         fcl->android_jvm = vm;
@@ -72,4 +81,11 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
         fcl->class_FCLBridge = (jclass)(*env)->NewGlobalRef(env, class_FCLBridge);
     }
     return JNI_VERSION_1_2;
+}
+
+JNIEXPORT jint JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetFps(JNIEnv *env, jclass clazz) {
+    int f = fcl->fps;
+    fcl->fps = 0;
+    return f;
 }
