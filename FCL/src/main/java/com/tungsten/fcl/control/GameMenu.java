@@ -382,7 +382,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 showFpsThread = new Thread(() -> {
                     while (showFps.isChecked()) {
                         if (System.currentTimeMillis() - time >= 1000) {
-                            Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + CallbackBridge.getFps()));
+                            Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + FCLBridge.getFps()));
                             time = System.currentTimeMillis();
                         }
                     }

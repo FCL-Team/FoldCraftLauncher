@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include "fcl_bridge.h"
+#include "fcl_internal.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -447,6 +448,7 @@ GLFWAPI GLFWwindow* glfwGetCurrentContext(void)
 
 GLFWAPI void glfwSwapBuffers(GLFWwindow* handle)
 {
+    fcl->fps++;
     _GLFWwindow* window = (_GLFWwindow*) handle;
     assert(window != NULL);
 

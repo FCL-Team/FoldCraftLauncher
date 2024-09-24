@@ -43,6 +43,7 @@ struct FCLInternal {
     int has_event_pipe;
     int event_pipe_fd[2];
     int epoll_fd;
+    int fps;
 };
 
 extern struct FCLInternal *fcl;

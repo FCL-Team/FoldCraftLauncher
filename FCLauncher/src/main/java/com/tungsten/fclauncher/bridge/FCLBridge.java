@@ -116,10 +116,15 @@ public class FCLBridge implements Serializable {
     public native void refreshHitResultType();
 
     public native void setFCLBridge(FCLBridge fclBridge);
+
     //boat backend
     public native void setFCLNativeWindow(Surface surface);
+
     public native void setEventPipe();
+
     public native void pushEvent(long time, int type, int keycode, int keyChar);
+
+    public static native int nativeGetFps();
 
 
     public void setThread(Thread thread) {
@@ -233,6 +238,7 @@ public class FCLBridge implements Serializable {
     public void pushEventMessage(int msg) {
         pushEvent(System.nanoTime(), FCLMessage, msg, 0);
     }
+
     // FCLBridge callbacks
     public void onExit(int code) {
         if (callback != null) {
@@ -392,6 +398,14 @@ public class FCLBridge implements Serializable {
                 surface.release();
             }, "AndroidAWTRenderer");
             canvasThread.start();
+        }
+    }
+
+    public static int getFps() {
+        if (BACKEND_IS_BOAT) {
+            return nativeGetFps();
+        } else {
+            return CallbackBridge.getFps();
         }
     }
 }

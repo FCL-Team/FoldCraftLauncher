@@ -82,3 +82,10 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     }
     return JNI_VERSION_1_2;
 }
+
+JNIEXPORT jint JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetFps(JNIEnv *env, jclass clazz) {
+    int f = fcl->fps;
+    fcl->fps = 0;
+    return f;
+}
