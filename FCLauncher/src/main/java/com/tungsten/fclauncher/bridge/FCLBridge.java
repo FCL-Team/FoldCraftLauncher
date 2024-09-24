@@ -176,6 +176,11 @@ public class FCLBridge implements Serializable {
 
     public void pushEventMouseButton(int button, boolean press) {
         if (BACKEND_IS_BOAT) {
+            if (button == Button2) {
+                button = Button3;
+            } else if (button == Button3) {
+                button = Button2;
+            }
             pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button + 1, 0);
         } else {
             switch (button) {
