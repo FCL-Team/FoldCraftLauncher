@@ -233,6 +233,7 @@
 
                     <com.tungsten.fcllibrary.component.view.FCLImageButton
                         android:id="@+id/icon"
+                        android:tint="@android:color/darker_gray"
                         android:layout_marginStart="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -271,6 +272,7 @@
 
                     <com.tungsten.fcllibrary.component.view.FCLImageButton
                         android:id="@+id/screenshot"
+                        android:tint="@android:color/darker_gray"
                         android:layout_marginStart="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
