@@ -135,6 +135,9 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         if (fileBrowser.getLibMode() != LibMode.FILE_CHOOSER) {
             selectExternal.setVisibility(View.GONE);
         }
+        if (fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
+            openExternal.setVisibility(View.GONE);
+        }
         switch (fileBrowser.getCode()) {
             case 100:
             case 150:
