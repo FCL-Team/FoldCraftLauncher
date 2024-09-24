@@ -487,7 +487,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             ).forEach {
                 it.interpolator(BounceInterpolator()).start()
             }
-            AnimUtil.playTranslationY(listOf(launch, executeJar), speed * 100L, -200f, 0f)
+            AnimUtil.playTranslationY(
+                listOf(executeJar, launch, launchBoat),
+                speed * 100L,
+                -200f,
+                0f
+            )
                 .forEachIndexed { index, objectAnimator ->
                     objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
                 }

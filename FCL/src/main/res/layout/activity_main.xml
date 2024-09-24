@@ -287,16 +287,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/view2" />
 
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/execute_jar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/jar_execute"
-                app:layout_constraintBottom_toTopOf="@id/launch_textview"
-                app:ripple="true" />
-
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/launch_textview"
                 android:layout_width="wrap_content"
@@ -329,10 +319,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="4dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/launch"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/launch_boat"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/execute_jar"
                 app:ripple="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLButton
@@ -341,9 +332,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="4dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/launch_boat"
                 app:layout_constraintStart_toEndOf="@id/launch"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/execute_jar"
+                app:ripple="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/execute_jar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/jar_execute"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:ripple="true" />
 
