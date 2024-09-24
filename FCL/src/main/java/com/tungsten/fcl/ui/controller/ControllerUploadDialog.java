@@ -143,7 +143,7 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
                         ArrayList<String> results = FileBrowser.getSelectedFiles(data);
                         if (!results.isEmpty()) {
                             results.forEach(r -> {
-                                if (!screenshots.contains(r)) {
+                                if (!screenshots.contains(r) && screenshots.size() < 16) {
                                     screenshots.add(r);
                                     Item item = new Item(getContext(), r, screenshots::remove);
                                     screenshotLayout.addView(item.createView(), new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

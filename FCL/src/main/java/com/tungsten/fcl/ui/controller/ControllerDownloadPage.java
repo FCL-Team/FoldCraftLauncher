@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatDialog;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
@@ -24,6 +25,7 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -195,7 +197,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         TaskExecutor executor = Task.composeAsync(() -> {
             if (exist && old != null) {
                 FileUtils.copyFile(new File(destPath), new File(cache));
-                Controllers.removeControllers(old);
+                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).removeController(old);
             }
             FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
             task.setName(index.getName());
@@ -204,7 +206,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             if (exception != null) {
                 if (new File(cache).exists()) {
                     FileUtils.copyFile(new File(cache), new File(destPath));
-                    Controllers.addController(old);
+                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(old);
                 }
                 Schedulers.androidUIThread().execute(() -> {
                     if (exception instanceof CancellationException) {
@@ -221,12 +223,12 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                 });
             } else {
                 FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
-                Controller controller = JsonUtils.GSON.fromJson(FileUtils.readText(new File(destPath)), Controller.class);
-                Controllers.addController(controller);
-                Schedulers.androidUIThread().execute(() -> {
-                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).refreshList();
-                    Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show();
-                });
+                Controller controller = new GsonBuilder()
+                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                        .setPrettyPrinting()
+                        .create().fromJson(FileUtils.readText(new File(destPath)), Controller.class);
+                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(controller);
+                Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show());
             }
         }).executor();
         taskDialog.setExecutor(executor);

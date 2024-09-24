@@ -29,6 +29,7 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -141,23 +142,27 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         refreshList();
     }
 
-    public void refreshList() {
+    private void refreshList() {
         EditableControllerListAdapter adapter = new EditableControllerListAdapter(getContext(), Controllers.controllersProperty());
         listView.setAdapter(adapter);
     }
 
     public void addController(Controller controller) {
-        Controllers.addController(controller);
-        refreshList();
-        selectedController.set(controller);
+        Schedulers.androidUIThread().execute(() -> {
+            Controllers.addController(controller);
+            refreshList();
+            selectedController.set(controller);
+        });
     }
 
     public void removeController(Controller controller) {
-        Controllers.removeControllers(controller);
-        refreshList();
-        if (controller == selectedController.get()) {
-            selectedController.set(null);
-        }
+        Schedulers.androidUIThread().execute(() -> {
+            Controllers.removeControllers(controller);
+            refreshList();
+            if (controller == selectedController.get()) {
+                selectedController.set(null);
+            }
+        });
     }
 
     public void changeControllerInfo(Controller old, Controller newValue) {
