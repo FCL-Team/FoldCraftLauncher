@@ -15,6 +15,7 @@
 
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
+    <string name="launch_mode">启动方式</string>
     <string name="manage">管理版本</string>
     <string name="download">下载资源</string>
     <string name="controller">控制布局</string>
@@ -451,7 +452,8 @@
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
-    <string name="launch">启动游戏</string>
+    <string name="launch">Pojav</string>
+    <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>

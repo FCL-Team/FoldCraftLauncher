@@ -54,7 +54,10 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
             lwjgl = RuntimeUtils.isLatest(
                 FCLPath.LWJGL_DIR,
                 "/assets/app_runtime/lwjgl"
-            ) && RuntimeUtils.isLatest(FCLPath.LWJGL_DIR, "/assets/app_runtime/lwjgl-boat")
+            ) && RuntimeUtils.isLatest(
+                FCLPath.LWJGL_DIR + "-boat",
+                "/assets/app_runtime/lwjgl-boat"
+            )
             cacio = RuntimeUtils.isLatest(
                 FCLPath.CACIOCAVALLO_8_DIR,
                 "/assets/app_runtime/caciocavallo"
@@ -123,7 +126,11 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 Thread {
                     try {
                         RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
-                        RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl-boat")
+                        RuntimeUtils.install(
+                            context,
+                            FCLPath.LWJGL_DIR + "-boat",
+                            "app_runtime/lwjgl-boat"
+                        )
                         lwjgl = true
                     } catch (e: IOException) {
                         e.printStackTrace()
