@@ -253,7 +253,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         bind.apply {
             when (view) {
                 home -> {
-                    title.setTextWithAnim(getString(R.string.app_name))
+                    title.setTextWithAnim(getString(R.string.app_name) + " " + getString(R.string.app_version))
                     uiManager.switchUI(uiManager.mainUI)
                 }
 
