@@ -125,7 +125,7 @@ public class FCLauncher {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
-        return  "/system/" +
+        return "/system/" +
                 libDirName +
                 split +
 
@@ -160,7 +160,7 @@ public class FCLauncher {
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext()));
-        envMap.put("FORCE_VSYNC","false");
+        envMap.put("FORCE_VSYNC", "false");
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
@@ -192,10 +192,10 @@ public class FCLauncher {
                 }
             }
         } else if (renderer == FCLConfig.Renderer.RENDERER_ANGLE) {
-            envMap.put("LIBGL_ES","3");
+            envMap.put("LIBGL_ES", "3");
             if (!FCLBridge.BACKEND_IS_BOAT) {
-                envMap.put("POJAV_RENDERER","opengles3_desktopgl_angle_vulkan");
-                envMap.put("POJAVEXEC_EGL","libEGL_angle.so");
+                envMap.put("POJAV_RENDERER", "opengles3_desktopgl_angle_vulkan");
+                envMap.put("POJAVEXEC_EGL", "libEGL_angle.so");
             }
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
@@ -210,21 +210,21 @@ public class FCLauncher {
                 if (FCLBridge.BACKEND_IS_BOAT) {
                     envMap.put("GALLIUM_DRIVER", "virpipe");
                 } else {
-                    envMap.put("POJAV_RENDERER","gallium_virgl");
+                    envMap.put("POJAV_RENDERER", "gallium_virgl");
                 }
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK) {
                 if (FCLBridge.BACKEND_IS_BOAT) {
                     envMap.put("GALLIUM_DRIVER", "zink");
                 } else {
-                    envMap.put("POJAV_RENDERER","vulkan_zink");
+                    envMap.put("POJAV_RENDERER", "vulkan_zink");
                 }
             } else if (renderer == FCLConfig.Renderer.RENDERER_FREEDRENO) {
                 if (FCLBridge.BACKEND_IS_BOAT) {
                     envMap.put("GALLIUM_DRIVER", "freedreno");
                     envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
                 } else {
-                    envMap.put("POJAV_RENDERER","gallium_freedreno");
+                    envMap.put("POJAV_RENDERER", "gallium_freedreno");
                 }
             }
         }
@@ -261,7 +261,7 @@ public class FCLauncher {
         bridge.dlopen(jreLibDir + "/libfontmanager.so");
         bridge.dlopen(jreLibDir + "/libtinyiconv.so");
         bridge.dlopen(jreLibDir + "/libinstrument.so");
-        for(File file : locateLibs(new File(config.getJavaPath()))) {
+        for (File file : locateLibs(new File(config.getJavaPath()))) {
             bridge.dlopen(file.getAbsolutePath());
         }
     }
@@ -273,7 +273,7 @@ public class FCLauncher {
             for (File f : list) {
                 if (f.isFile() && f.getName().endsWith(".so")) {
                     returnValue.add(f);
-                } else if(f.isDirectory()) {
+                } else if (f.isDirectory()) {
                     returnValue.addAll(locateLibs(f));
                 }
             }
