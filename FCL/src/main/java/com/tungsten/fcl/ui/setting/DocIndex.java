@@ -38,7 +38,7 @@ public class DocIndex {
 
     public String getDisplayName(Context context) {
         for (DisplayName name : displayName) {
-            if (name.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(name.getLang())) {
                 return name.getName();
             }
         }
