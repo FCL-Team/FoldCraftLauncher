@@ -346,7 +346,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         retry.setOnClickListener(this);
 
         search();
-        checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false);
+        Controllers.addCallback(() -> checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false));
     }
 
     @Override
