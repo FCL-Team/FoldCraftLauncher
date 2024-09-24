@@ -118,6 +118,7 @@ public class FCLBridge implements Serializable {
     public native void setFCLBridge(FCLBridge fclBridge);
     //boat backend
     public native void setFCLNativeWindow(Surface surface);
+    public native void setEventPipe();
     public native void pushEvent(long time, int type, int keycode, int keyChar);
 
 
@@ -158,6 +159,9 @@ public class FCLBridge implements Serializable {
             handleWindow();
         }
         receiveLog("invoke setEventPipe" + "\n");
+        if (BACKEND_IS_BOAT) {
+            setEventPipe();
+        }
 
         // start
         if (thread != null) {
@@ -357,7 +361,11 @@ public class FCLBridge implements Serializable {
     private void handleWindow() {
         if (gameDir != null) {
             receiveLog("invoke setFCLNativeWindow" + "\n");
-            CallbackBridge.setupBridgeWindow(surface);
+            if (BACKEND_IS_BOAT) {
+                setFCLNativeWindow(surface);
+            } else {
+                CallbackBridge.setupBridgeWindow(surface);
+            }
         } else {
             receiveLog("start Android AWT Renderer thread" + "\n");
             Thread canvasThread = new Thread(() -> {
