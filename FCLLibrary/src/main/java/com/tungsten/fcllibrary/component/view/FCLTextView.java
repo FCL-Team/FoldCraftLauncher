@@ -39,9 +39,6 @@ public class FCLTextView extends AppCompatTextView {
             if (autoBackgroundTint) {
                 setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
             }
-            if (useThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor());
-            }
         }
 
         @Override
@@ -55,11 +52,33 @@ public class FCLTextView extends AppCompatTextView {
         }
     };
 
+    private final IntegerProperty theme2 = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            if (useThemeColor) {
+                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme2";
+        }
+    };
+
     public FCLTextView(@NonNull Context context) {
         super(context);
         autoTint = false;
         autoBackgroundTint = false;
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -70,6 +89,7 @@ public class FCLTextView extends AppCompatTextView {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -80,6 +100,7 @@ public class FCLTextView extends AppCompatTextView {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public void alert() {

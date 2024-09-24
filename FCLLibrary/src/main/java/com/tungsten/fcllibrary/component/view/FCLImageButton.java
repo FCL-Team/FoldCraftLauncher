@@ -50,6 +50,25 @@ public class FCLImageButton extends AppCompatImageButton {
         }
     };
 
+    private final IntegerProperty theme2 = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            refreshStyle();
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme2";
+        }
+    };
+
     public void refreshStyle() {
         int[][] state = {
                 {
@@ -66,7 +85,7 @@ public class FCLImageButton extends AppCompatImageButton {
             setImageTintList(new ColorStateList(state, colorSrc));
         }
         if (useThemeColor && getDrawable() != null) {
-            getDrawable().setTint(ThemeEngine.getInstance().getTheme().getColor());
+            getDrawable().setTint(ThemeEngine.getInstance().getTheme().getColor2());
         }
         RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
         drawable.setRadius(ConvertUtils.dip2px(getContext(), noPadding ? 12 : 20));
@@ -91,6 +110,7 @@ public class FCLImageButton extends AppCompatImageButton {
         super(context);
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -102,6 +122,7 @@ public class FCLImageButton extends AppCompatImageButton {
         typedArray.recycle();
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -113,6 +134,7 @@ public class FCLImageButton extends AppCompatImageButton {
         typedArray.recycle();
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
     }
 
     public void setAutoTint(boolean autoTint) {

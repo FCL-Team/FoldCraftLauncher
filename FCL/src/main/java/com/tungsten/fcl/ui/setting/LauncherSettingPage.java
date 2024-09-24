@@ -65,10 +65,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton clearCache;
     private FCLButton exportLog;
     private FCLButton theme;
+    private FCLButton theme2;
     private FCLButton ltBackground;
     private FCLButton dkBackground;
     private FCLButton cursor;
     private FCLButton resetTheme;
+    private FCLButton resetTheme2;
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLButton resetCursor;
@@ -94,10 +96,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
         theme = findViewById(R.id.theme);
+        theme2 = findViewById(R.id.theme2);
         ltBackground = findViewById(R.id.background_lt);
         dkBackground = findViewById(R.id.background_dk);
         cursor = findViewById(R.id.cursor);
         resetTheme = findViewById(R.id.reset_theme);
+        resetTheme2 = findViewById(R.id.reset_theme2);
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         resetCursor = findViewById(R.id.reset_cursor);
@@ -115,10 +119,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache.setOnClickListener(this);
         exportLog.setOnClickListener(this);
         theme.setOnClickListener(this);
+        theme2.setOnClickListener(this);
         ltBackground.setOnClickListener(this);
         dkBackground.setOnClickListener(this);
         cursor.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
+        resetTheme2.setOnClickListener(this);
         resetLtBackground.setOnClickListener(this);
         resetDkBackground.setOnClickListener(this);
         resetCursor.setOnClickListener(this);
@@ -281,6 +287,25 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
+        if (v == theme2) {
+            FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor2(), new FCLColorPickerDialog.Listener() {
+                @Override
+                public void onColorChanged(int color) {
+                    ThemeEngine.getInstance().applyColor2(color);
+                }
+
+                @Override
+                public void onPositive(int destColor) {
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor, true);
+                }
+
+                @Override
+                public void onNegative(int initColor) {
+                    ThemeEngine.getInstance().applyColor2(initColor);
+                }
+            });
+            dialog.show();
+        }
         if (v == ltBackground) {
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
             builder.setLibMode(LibMode.FILE_CHOOSER);
@@ -341,6 +366,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         }
         if (v == resetTheme) {
             ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+        }
+        if (v == resetTheme2) {
+            ThemeEngine.getInstance().applyAndSave2(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
         }
         if (v == resetLtBackground) {
             new Thread(() -> {

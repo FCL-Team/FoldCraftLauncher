@@ -18,7 +18,7 @@ class FCLView @JvmOverloads constructor(
         override fun invalidated() {
             get()
             if (useThemeColor) {
-                setBackgroundColor(ThemeEngine.getInstance().getTheme().color)
+                setBackgroundColor(ThemeEngine.getInstance().getTheme().color2)
             }
         }
 
@@ -35,6 +35,6 @@ class FCLView @JvmOverloads constructor(
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLView)
         useThemeColor = typedArray.getBoolean(R.styleable.FCLView_use_theme_color, false)
         typedArray.recycle()
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty())
+        theme.bind(ThemeEngine.getInstance().getTheme().color2Property())
     }
 }

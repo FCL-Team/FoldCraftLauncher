@@ -772,6 +772,7 @@
     <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
     <string name="settings_launcher_theme">主题</string>
+    <string name="settings_launcher_theme2">主题2</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片</string>
     <string name="settings_launcher_cursor">鼠标图片</string>

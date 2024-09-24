@@ -84,6 +84,15 @@ public class ThemeEngine {
         }
     }
 
+    public void applyColor2(int color) {
+        theme.setColor2(color);
+        for (View view : runnables.keySet()) {
+            if (view != null && runnables.get(view) != null) {
+                handler.post(runnables.get(view));
+            }
+        }
+    }
+
     public void applyFullscreen(Window window, boolean fullscreen) {
         theme.setFullscreen(fullscreen);
         if (window != null) {
@@ -137,6 +146,11 @@ public class ThemeEngine {
 
     public void applyAndSave(Context context, int color, boolean modified) {
         applyColor(color);
+        Theme.saveTheme(context, theme, modified);
+    }
+
+    public void applyAndSave2(Context context, int color, boolean modified) {
+        applyColor2(color);
         Theme.saveTheme(context, theme, modified);
     }
 
