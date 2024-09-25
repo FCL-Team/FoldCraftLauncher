@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
@@ -35,9 +36,15 @@ public class FCLTextView extends AppCompatTextView {
             get();
             if (autoTint) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+                Drawable[] drawables = getCompoundDrawablesRelative();
+                for (Drawable drawable : drawables) {
+                    if (drawable != null) {
+                        drawable.setTint(ThemeEngine.getInstance().getTheme().getAutoTint());
+                    }
+                }
             }
             if (autoBackgroundTint) {
-                setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
+                setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
             }
         }
 
