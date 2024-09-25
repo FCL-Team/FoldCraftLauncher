@@ -180,7 +180,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             width = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
                     (int) (screenWidth * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
                     (int) (screenHeight * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f));
-            height = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
+            height = data.getBaseInfo().getPercentageHeight().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
                     (int) (screenWidth * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f)) :
                     (int) (screenHeight * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f));
         }
