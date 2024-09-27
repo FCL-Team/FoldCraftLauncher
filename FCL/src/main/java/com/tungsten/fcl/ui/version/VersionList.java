@@ -49,9 +49,10 @@ public class VersionList {
             progressBar.setVisibility(View.VISIBLE);
         });
         FCLGameRepository repository = profile.getRepository();
-        new Thread(() -> {
+        Schedulers.defaultScheduler().execute(()->{
             if (profile == Profiles.getSelectedProfile()) {
                 List<VersionListItem> children = repository.getDisplayVersions()
+                        .parallel()
                         .map(version -> {
                             String game = profile.getRepository().getGameVersion(version.getId()).orElse(context.getString(R.string.message_unknown));
                             StringBuilder libraries = new StringBuilder(game);
@@ -77,19 +78,16 @@ public class VersionList {
                             return new VersionListItem(profile, version.getId(), libraries.toString(), tag, repository.getVersionIconImage(version.getId()));
                         })
                         .collect(Collectors.toList());
-                if (profile == Profiles.getSelectedProfile()) {
-                    Schedulers.androidUIThread().execute(() -> {
-                        VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
-                        listView.setAdapter(adapter);
-                        refreshButton.setEnabled(true);
-                        listView.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                    });
-
-                    children.forEach(it -> it.selectedProperty().bind(Bindings.createBooleanBinding(() -> profile.selectedVersionProperty().get().equals(it.getVersion()), profile.selectedVersionProperty())));
-                }
+                Schedulers.androidUIThread().execute(() -> {
+                    VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
+                    listView.setAdapter(adapter);
+                    refreshButton.setEnabled(true);
+                    listView.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                });
+                children.forEach(it -> it.selectedProperty().bind(Bindings.createBooleanBinding(() -> profile.selectedVersionProperty().get().equals(it.getVersion()), profile.selectedVersionProperty())));
             }
-        }).start();
+        });
     }
 
     public void refreshList() {
