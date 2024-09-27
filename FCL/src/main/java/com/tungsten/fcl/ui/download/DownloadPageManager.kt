@@ -28,14 +28,14 @@ class DownloadPageManager(
 
     var profile: Profile? = null
     var version: String? = null
-    lateinit var installVersionPage: InstallVersionPage
-    val downloadModpackPage: ModpackDownloadPage by lazy {
+    private lateinit var installVersionPage: InstallVersionPage
+    private val downloadModpackPage: ModpackDownloadPage by lazy {
         ModpackDownloadPage(context, PAGE_ID_DOWNLOAD_MODPACK, parent, R.layout.page_download)
     }
-    val downloadModPage: ModDownloadPage by lazy {
+    private val downloadModPage: ModDownloadPage by lazy {
         ModDownloadPage(context, PAGE_ID_DOWNLOAD_MOD, parent, R.layout.page_download)
     }
-    val downloadResourcePackPage: ResourcePackDownloadPage by lazy {
+    private val downloadResourcePackPage: ResourcePackDownloadPage by lazy {
         ResourcePackDownloadPage(
             context,
             PAGE_ID_DOWNLOAD_RESOURCE_PACK,
@@ -43,7 +43,7 @@ class DownloadPageManager(
             R.layout.page_download
         )
     }
-    val downloadWorldPage: DownloadPage by lazy {
+    private val downloadWorldPage: DownloadPage by lazy {
         DownloadPage(
             context,
             PAGE_ID_DOWNLOAD_WORLD,
