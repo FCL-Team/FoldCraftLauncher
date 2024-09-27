@@ -11,14 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
-import androidx.core.view.marginStart
+import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
+import com.mio.util.GuideUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -226,6 +226,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
                 playAnim()
+                uiLayout.postDelayed(1500) {
+                    GuideUtil.show(
+                        this@MainActivity,
+                        setting,
+                        "如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“主题2”即可",
+                        GuideUtil.TAG_GUIDE_THEME_2
+                    )
+                }
             }
         }
     }
