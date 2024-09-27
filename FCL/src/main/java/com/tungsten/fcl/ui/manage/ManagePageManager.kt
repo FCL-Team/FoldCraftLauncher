@@ -28,8 +28,8 @@ class ManagePageManager(
     var profile: Profile? = null
     var version: String? = null
 
-    lateinit var managePage: ManagePage
-    val versionSettingPage: VersionSettingPage by lazy {
+    private lateinit var managePage: ManagePage
+    private val versionSettingPage: VersionSettingPage by lazy {
         VersionSettingPage(
             context,
             PAGE_ID_MANAGE_SETTING,
@@ -38,7 +38,7 @@ class ManagePageManager(
             false
         )
     }
-    val installerListPage: InstallerListPage by lazy {
+    private val installerListPage: InstallerListPage by lazy {
         InstallerListPage(
             context,
             PAGE_ID_MANAGE_INSTALL,
@@ -46,7 +46,7 @@ class ManagePageManager(
             R.layout.page_installer_list
         )
     }
-    val modListPage: ModListPage by lazy {
+    private val modListPage: ModListPage by lazy {
         ModListPage(
             context,
             PAGE_ID_MANAGE_MOD,
@@ -54,7 +54,7 @@ class ManagePageManager(
             R.layout.page_mod_list
         )
     }
-    val worldListPage: WorldListPage by lazy {
+    private val worldListPage: WorldListPage by lazy {
         WorldListPage(
             context,
             PAGE_ID_MANAGE_WORLD,
