@@ -285,7 +285,7 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
-        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
+//        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {

@@ -44,8 +44,8 @@ android {
         applicationId "com.tungsten.fcl"
         minSdk 26
         targetSdk 34
-        versionCode 1181
-        versionName "1.1.8.1"
+        versionCode 1182
+        versionName "1.1.8.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -179,6 +179,7 @@ dependencies {
     implementation project(path: ':FCLCore')
     implementation project(path: ':FCLLibrary')
     implementation project(path: ':FCLauncher')
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.14.0'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.apache.commons:commons-compress:1.25.0'
     implementation 'org.tukaani:xz:1.9'

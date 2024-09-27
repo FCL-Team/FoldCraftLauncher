@@ -11,14 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.forEach
-import androidx.core.view.marginStart
+import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
+import com.mio.util.GuideUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -226,6 +226,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
                 playAnim()
+                uiLayout.postDelayed(1500) {
+                    GuideUtil.show(
+                        this@MainActivity,
+                        setting,
+                        getString(R.string.guide_theme2),
+                        GuideUtil.TAG_GUIDE_THEME_2
+                    )
+                }
             }
         }
     }

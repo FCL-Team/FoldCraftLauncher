@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1181,
-    "versionName": "1.1.8.1",
-    "date": "2024.09.24",
+    "versionCode": 1182,
+    "versionName": "1.1.8.2",
+    "date": "2024.09.27",
     "description": [
       {
         "lang": "en",
-        "text": "1. Add controller download feature in the launcher\n2. Add more animation\n3. Add FPS display (can be opened in the menu on the right side of the game)\n4. Fix some bugs"
+        "text": "1. Add Boat backend (now you can choose to use Boat or Pojav to launch)\n2. Optimize layout\n3. Fix some bugs\n4.Disable sodium lwjgl version check"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加启动器内按键布局下载功能\n2.增加更多动画效果\n3.增加FPS显示（可在游戏内右侧菜单里打开）\n4.修复一些bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加Boat后端(现在你可以选择使用Boat或Pojav启动)\n2.优化布局\n3.修复一些Bug\n4.禁用钠的Lwjgl检查"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/140533796f05",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.1/FCL-release-1.1.8.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/195997b772a1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.2/FCL-release-1.1.8.2-all.apk"
   }
 ]

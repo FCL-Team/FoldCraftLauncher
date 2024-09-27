@@ -380,6 +380,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 showFpsThread = new Thread(() -> {
+                    FCLBridge.getFps();
                     while (showFps.isChecked()) {
                         if (System.currentTimeMillis() - time >= 1000) {
                             Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + FCLBridge.getFps()));
