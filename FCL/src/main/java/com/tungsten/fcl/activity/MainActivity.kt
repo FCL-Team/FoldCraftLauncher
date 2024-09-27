@@ -230,7 +230,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     GuideUtil.show(
                         this@MainActivity,
                         setting,
-                        "如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“主题2”即可",
+                        getString(R.string.guide_theme2),
                         GuideUtil.TAG_GUIDE_THEME_2
                     )
                 }
