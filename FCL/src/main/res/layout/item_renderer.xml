@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerVertical="true"
-    android:background="@color/white"
+    android:background="@drawable/bg_container_white_clickable"
     android:padding="8dp"
     android:stateListAnimator="@xml/anim_scale"
     android:textSize="14sp"
