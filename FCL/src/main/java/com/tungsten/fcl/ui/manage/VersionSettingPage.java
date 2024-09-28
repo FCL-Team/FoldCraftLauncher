@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 
 import com.tungsten.fcl.R;
@@ -206,6 +207,15 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
 
         memoryText.stringProperty().bind(Bindings.createStringBinding(() -> allocateSeekbar.progressProperty().intValue() + " MB", allocateSeekbar.progressProperty()));
+        memoryText.setOnClickListener(v->{
+            EditDialog dialog = new EditDialog(getContext(), s -> {
+                if (s.matches("\\d+(\\.\\d+)?$")) {
+                   allocateSeekbar.setProgress(Integer.parseInt(s));
+                }
+            });
+            dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
+            dialog.show();
+        });
 
         memoryBar.firstProgressProperty().bind(usedMemory);
         memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding(() -> {
