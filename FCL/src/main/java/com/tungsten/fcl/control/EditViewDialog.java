@@ -231,8 +231,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLTextView widthText = findInfoView(R.id.width_text);
                 FCLTextView heightText = findInfoView(R.id.height_text);
 
-                widthText.setOnClickListener(v -> openTextEditDialog(context, width.progressProperty(), false));
-                heightText.setOnClickListener(v -> openTextEditDialog(context, height.progressProperty(), false));
+                widthText.setOnClickListener(v -> openTextEditDialog(context, width.progressProperty(), data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE));
+                heightText.setOnClickListener(v -> openTextEditDialog(context, height.progressProperty(), data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE));
 
                 if (data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE) {
                     width.setMax(1000);
