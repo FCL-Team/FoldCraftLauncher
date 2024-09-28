@@ -70,6 +70,7 @@ import java.io.IOException
 import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.stream.Stream
+import kotlin.system.exitProcess
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -215,6 +216,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         i.addCategory(Intent.CATEGORY_HOME)
                         startActivity(i)
+                        exitProcess(0)
                     } else {
                         home.isSelected = true
                     }
