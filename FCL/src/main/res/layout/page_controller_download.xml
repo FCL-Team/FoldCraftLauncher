@@ -207,7 +207,7 @@
                                 android:layout_height="wrap_content"
                                 android:singleLine="true"
                                 app:auto_text_tint="true"
-                                android:text="@string/search_device"/>
+                                android:text="@string/control_info_device"/>
 
                             <View
                                 android:layout_width="0dp"
