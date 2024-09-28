@@ -6,12 +6,19 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.transition.Slide
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
+import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
+import android.widget.ArrayAdapter
 import android.widget.FrameLayout
+import android.widget.ListView
+import android.widget.PopupWindow
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
@@ -33,6 +40,7 @@ import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
+import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
@@ -193,11 +201,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     true
                 }
                 launch.setOnClickListener(this@MainActivity)
-                launch.setOnLongClickListener {
-                    startActivity(Intent(this@MainActivity, ShellActivity::class.java))
-                    true
-                }
                 launchBoat.setOnClickListener(this@MainActivity)
+                OnLongClickListener { openRendererMenu(launch);true }.apply {
+                    launch.setOnLongClickListener(this)
+                    launchBoat.setOnLongClickListener(this)
+                }
 
                 uiManager = UIManager(this@MainActivity, uiLayout)
                 _uiManager = uiManager
@@ -220,6 +228,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     setting.setOnSelectListener(this@MainActivity)
                     back.setOnClickListener(this@MainActivity)
                     home.setSelected(true)
+                    back.setOnLongClickListener {
+                        startActivity(Intent(this@MainActivity, ShellActivity::class.java))
+                        true
+                    }
 
                     setupAccountDisplay()
                     setupVersionDisplay()
@@ -394,7 +406,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     private fun loadVersion(version: String?) {
         bind.versionProgress.visibility = View.VISIBLE
         if (Profiles.getSelectedProfile() != profile) {
@@ -453,7 +464,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             bind.versionProgress.visibility = View.GONE
             bind.versionName.text = getString(R.string.version_no_version)
             bind.versionHint.text = getString(R.string.version_manage)
-            bind.icon.setBackgroundDrawable(getDrawable(R.drawable.img_grass))
+            bind.icon.setBackgroundDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.img_grass
+                )
+            )
         }
     }
 
@@ -473,6 +489,46 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     Accounts.getAccountFactory(account)
                 )
             })
+        }
+    }
+
+    private fun openRendererMenu(view: View) {
+        val listView = ListView(this)
+        var popupWindow: PopupWindow? = null
+        listView.adapter =
+            ArrayAdapter(this, R.layout.item_renderer, mutableListOf<String>().apply {
+                add(getString(R.string.settings_fcl_renderer_gl4es))
+                add(getString(R.string.settings_fcl_renderer_virgl))
+                add(getString(R.string.settings_fcl_renderer_angle))
+                add(getString(R.string.settings_fcl_renderer_vgpu))
+                add(getString(R.string.settings_fcl_renderer_zink))
+                add(getString(R.string.settings_fcl_renderer_freedreno))
+            })
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedProfile = Profiles.getSelectedProfile()
+            val versionSetting = selectedProfile.getVersionSetting(selectedProfile.selectedVersion)
+            val rendererList = mutableListOf<FCLConfig.Renderer>().apply {
+                add(FCLConfig.Renderer.RENDERER_GL4ES)
+                add(FCLConfig.Renderer.RENDERER_VIRGL)
+                add(FCLConfig.Renderer.RENDERER_ANGLE)
+                add(FCLConfig.Renderer.RENDERER_VGPU)
+                add(FCLConfig.Renderer.RENDERER_ZINK)
+                add(FCLConfig.Renderer.RENDERER_FREEDRENO)
+            }
+            versionSetting.renderer = rendererList[position]
+            popupWindow?.dismiss()
+            onClick(view)
+        }
+        popupWindow = PopupWindow(
+            listView,
+            bind.rightMenu.width,
+            bind.launch.y.toInt()
+        ).apply {
+            isClippingEnabled = false
+            isOutsideTouchable = true
+            enterTransition = Slide(Gravity.TOP)
+            exitTransition = Slide(Gravity.TOP)
+            showAsDropDown(view)
         }
     }
 
