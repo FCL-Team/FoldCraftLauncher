@@ -1,6 +1,5 @@
 package com.tungsten.fcl.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -67,6 +66,7 @@ import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.stream.Stream
@@ -74,9 +74,11 @@ import kotlin.system.exitProcess
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
-        @SuppressLint("StaticFieldLeak")
+        private lateinit var instance:WeakReference<MainActivity>
         @JvmStatic
-        lateinit var instance: MainActivity
+        fun getInstance():MainActivity {
+            return instance.get()!!
+        }
     }
 
     lateinit var bind: ActivityMainBinding
@@ -89,7 +91,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        instance = this
+        instance = WeakReference(this)
         bind = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         bind.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
