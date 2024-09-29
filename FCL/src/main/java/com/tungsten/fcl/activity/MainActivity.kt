@@ -96,48 +96,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
         bind.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
 
-        Skin.registerDefaultSkinLoader {
-            when (it) {
-                Skin.Type.ALEX -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/alex.png"
-                )
-
-                Skin.Type.ARI -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/ari.png"
-                )
-
-                Skin.Type.EFE -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/efe.png"
-                )
-
-                Skin.Type.KAI -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/kai.png"
-                )
-
-                Skin.Type.MAKENA -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/makena.png"
-                )
-
-                Skin.Type.NOOR -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/noor.png"
-                )
-
-                Skin.Type.STEVE -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/steve.png"
-                )
-
-                Skin.Type.SUNNY -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/sunny.png"
-                )
-
-                Skin.Type.ZURI -> return@registerDefaultSkinLoader Skin::class.java.getResourceAsStream(
-                    "/assets/img/zuri.png"
-                )
-
-                else -> return@registerDefaultSkinLoader null
-            }
-        }
-
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
                 "",
