@@ -3,9 +3,11 @@ package com.tungsten.fclauncher.keycodes;
 import android.view.KeyEvent;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class GamepadKeycodeMap {
-    private static final HashMap<Integer, Integer> KEY_MAP = new HashMap<>();
+    public static final HashMap<Integer, Integer> KEY_MAP = new HashMap<>();
     private static final int MOUSE_LEFT = 1000;
     private static final int MOUSE_MIDDLE = 1001;
     private static final int MOUSE_RIGHT = 1002;
@@ -18,15 +20,6 @@ public class GamepadKeycodeMap {
 
     private static void add(int key, int value) {
         KEY_MAP.put(key, value);
-    }
-
-    //todo: custom keycode
-    public static void modify(int key, int value) {
-        KEY_MAP.replace(key, value);
-    }
-
-    public static int convert(int key) {
-        return KEY_MAP.getOrDefault(key, -1);
     }
 
     static {
@@ -50,5 +43,9 @@ public class GamepadKeycodeMap {
         add(LEFT_JOYSTICK_DOWN, FCLKeycodes.KEY_S);
         add(LEFT_JOYSTICK_LEFT, FCLKeycodes.KEY_A);
         add(LEFT_JOYSTICK_RIGHT, FCLKeycodes.KEY_D);
+    }
+
+    public static int convert(Map<Integer, Integer> keyMap, int key) {
+        return Optional.ofNullable(keyMap.get(key)).orElse(-1);
     }
 }

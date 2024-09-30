@@ -1,5 +1,6 @@
 package com.tungsten.fcl.setting;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -11,17 +12,23 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
+import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.MapProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleMapProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.fakefx.collections.FXCollections;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Optional;
 
 @JsonAdapter(MenuSetting.Serializer.class)
@@ -279,6 +286,12 @@ public class MenuSetting {
         this.mouseSizeProperty.set(mouseSize);
     }
 
+    private final MapProperty<Integer,Integer> gamepadButtonBindingProperty = new SimpleMapProperty<>(this, "gamepadButtonBinding", FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP));
+
+    public MapProperty<Integer,Integer> getGamepadButtonBindingProperty(){
+        return gamepadButtonBindingProperty;
+    }
+
     private final DoubleProperty gamepadDeadzoneProperty = new SimpleDoubleProperty(this, "gamepadDeadzone", 1d);
 
     public DoubleProperty gamepadDeadzoneProperty() {
@@ -328,6 +341,7 @@ public class MenuSetting {
         cursorOffsetProperty.addListener(listener);
         gamepadDeadzoneProperty.addListener(listener);
         gamepadAimAssistZoneProperty.addListener(listener);
+        gamepadButtonBindingProperty.addListener(listener);
     }
 
     public static class Serializer implements JsonSerializer<MenuSetting>, JsonDeserializer<MenuSetting> {
@@ -356,6 +370,12 @@ public class MenuSetting {
             obj.addProperty("cursorOffset", src.getCursorOffset());
             obj.addProperty("gamepadDeadzone", src.getGamepadDeadzone());
             obj.addProperty("gamepadAimAssistZone", src.getGamepadAimAssistZone());
+            obj.add("gamepadButtonBinding", Optional.of(src.gamepadButtonBindingProperty)
+                    .map((bb) -> {
+                        JsonArray ja = new JsonArray();
+                        bb.forEach((k,v) -> { ja.add(k); ja.add(v); });
+                        return ja;
+                    }).get());
             return obj;
         }
 
@@ -387,6 +407,22 @@ public class MenuSetting {
             ms.setCursorOffset(Optional.ofNullable(obj.get("cursorOffset")).map(JsonElement::getAsInt).orElse(0));
             ms.setGamepadDeadzone(Optional.ofNullable(obj.get("gamepadDeadzone")).map(JsonElement::getAsDouble).orElse(0.2d));
             ms.setGamepadAimAssistZone(Optional.ofNullable(obj.get("gamepadAimAssistZone")).map(JsonElement::getAsDouble).orElse(0.98d));
+            ms.getGamepadButtonBindingProperty().set(Optional.ofNullable(obj.get("gamepadButtonBinding"))
+                    .map(JsonElement::getAsJsonArray)
+                    .map((ja) -> {
+                        if(ja.isEmpty() || (ja.size() % 2 != 0)){
+                            return null;
+                        } else {
+                            Iterator<JsonElement> it = ja.iterator();
+                            HashMap<Integer, Integer> map = new HashMap<>();
+                            while (it.hasNext()){
+                                map.put(it.next().getAsInt(),it.next().getAsInt());
+                            }
+                            return map;
+                        }
+                    }).map(FXCollections::observableMap)
+                    .orElse(FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP))
+            );
             return ms;
         }
     }

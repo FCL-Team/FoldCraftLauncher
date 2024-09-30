@@ -84,6 +84,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import fr.spse.gamepad_remapper.Remapper;
+import kotlin.Unit;
 
 public class GameMenu implements MenuCallback, View.OnClickListener {
 
@@ -121,6 +122,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton manageQuickInput;
     private FCLButton sendKeycode;
     private FCLButton gamepadResetMapper;
+    private FCLButton gamepadButtonBinding;
     private FCLButton forceExit;
 
     private Thread showFpsThread;
@@ -368,6 +370,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
         gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
+        gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -528,6 +531,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
         gamepadResetMapper.setOnClickListener(this);
+        gamepadButtonBinding.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -790,12 +794,30 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == sendKeycode) {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-            SelectKeycodeDialog dialog = new SelectKeycodeDialog(getActivity(), list, false, true, this);
+            SelectKeycodeDialog dialog = new SelectKeycodeDialog(getActivity(), list, false, true, (dlg) -> {
+                new Thread(() -> {
+                    list.forEach(key -> {
+                        getInput().sendKeyEvent(key, true);
+                    });
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignore) {
+                    }
+                    list.forEach(key -> {
+                        getInput().sendKeyEvent(key, false);
+                    });
+                }).start();
+                return Unit.INSTANCE;
+            });
             dialog.show();
         }
         if (v == gamepadResetMapper) {
             Remapper.wipePreferences(getActivity());
             getInput().resetMapper();
+        }
+        if(v == gamepadButtonBinding){
+            GamepadButtonBindingDialog dlg = new GamepadButtonBindingDialog(getActivity(), menuSetting.getGamepadButtonBindingProperty());
+            dlg.show();
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
