@@ -1135,5 +1135,5 @@ Fabric предоставил следующие детали:
     <string name="world_name_enter">Введите название мира</string>
     <string name="world_reveal">Показать в проводнике</string>
     <string name="world_show_all">Показать все</string>
-    <string name="world_time">EEE, MMM д, гггг ЧЧ:мм:сс</string>
+    <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
 </resources>
