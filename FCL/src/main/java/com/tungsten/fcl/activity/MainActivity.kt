@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ListView
@@ -74,9 +75,10 @@ import kotlin.system.exitProcess
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
-        private lateinit var instance:WeakReference<MainActivity>
+        private lateinit var instance: WeakReference<MainActivity>
+
         @JvmStatic
-        fun getInstance():MainActivity {
+        fun getInstance(): MainActivity {
             return instance.get()!!
         }
     }
@@ -232,6 +234,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onSelect(view: FCLMenuView) {
         refreshMenuView(view)
+        val speed = ThemeEngine.getInstance().getTheme().animationSpeed
+        AnimUtil.playRotation(view, speed * 100L, 0f, 360f)
+            .interpolator(OvershootInterpolator()).start()
+        AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f)
+            .start()
+        AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f)
+            .start()
         bind.apply {
             when (view) {
                 home -> {
@@ -518,14 +527,21 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 speed * 100L,
                 -200f,
                 0f
-            )
-                .forEachIndexed { index, objectAnimator ->
-                    objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
-                }
+            ).forEachIndexed { index, objectAnimator ->
+                objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
+            }
             AnimUtil.playTranslationY(
                 listOf(home, manage, download, controller, setting, back),
                 speed * 100L,
                 -300f,
+                0f
+            ).forEachIndexed { index, objectAnimator ->
+                objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
+            }
+            AnimUtil.playTranslationX(
+                listOf(home, manage, download, controller, setting, back),
+                speed * 100L,
+                -100f,
                 0f
             ).forEachIndexed { index, objectAnimator ->
                 objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
