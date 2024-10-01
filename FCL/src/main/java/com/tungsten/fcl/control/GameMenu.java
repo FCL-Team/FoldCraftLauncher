@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,12 +41,10 @@ import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -73,8 +70,6 @@ import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,6 +79,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import fr.spse.gamepad_remapper.Remapper;
+import kotlin.Unit;
 
 public class GameMenu implements MenuCallback, View.OnClickListener {
 
@@ -121,6 +117,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton manageQuickInput;
     private FCLButton sendKeycode;
     private FCLButton gamepadResetMapper;
+    private FCLButton gamepadButtonBinding;
     private FCLButton forceExit;
 
     private Thread showFpsThread;
@@ -368,6 +365,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
         gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
+        gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
@@ -528,6 +526,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
         gamepadResetMapper.setOnClickListener(this);
+        gamepadButtonBinding.setOnClickListener(this);
         forceExit.setOnClickListener(this);
     }
 
@@ -790,12 +789,28 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == sendKeycode) {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-            SelectKeycodeDialog dialog = new SelectKeycodeDialog(getActivity(), list, false, true, this);
-            dialog.show();
+            new SelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
+                new Thread(() -> {
+                    list.forEach(key -> {
+                        getInput().sendKeyEvent(key, true);
+                    });
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignore) {
+                    }
+                    list.forEach(key -> {
+                        getInput().sendKeyEvent(key, false);
+                    });
+                }).start();
+                return Unit.INSTANCE;
+            }).show();
         }
         if (v == gamepadResetMapper) {
             Remapper.wipePreferences(getActivity());
             getInput().resetMapper();
+        }
+        if (v == gamepadButtonBinding) {
+            new GamepadButtonBindingDialog(getActivity(), menuSetting.getGamepadButtonBindingProperty()).show();
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);

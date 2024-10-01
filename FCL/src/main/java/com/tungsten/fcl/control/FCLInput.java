@@ -6,6 +6,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
@@ -54,7 +56,8 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         }
     };
 
-    private final MenuCallback menu;
+    @NonNull
+    private final GameMenu menu;
 
     private String pointerId;
 
@@ -70,7 +73,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         return pointerId;
     }
 
-    public FCLInput(MenuCallback menu) {
+    public FCLInput(@NonNull GameMenu menu) {
         this.menu = menu;
 
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
@@ -84,14 +87,12 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
                 menu.getCursor().setX(x);
                 menu.getCursor().setY(y);
             }
-            if (menu instanceof GameMenu) {
-                if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                    ((GameMenu) menu).setCursorX(x);
-                    ((GameMenu) menu).setCursorY(y);
-                }
-                ((GameMenu) menu).setPointerX(x);
-                ((GameMenu) menu).setPointerY(y);
+            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+                menu.setCursorX(x);
+                menu.setCursorY(y);
             }
+            menu.setPointerX(x);
+            menu.setPointerY(y);
             if (menu.getBridge() != null) {
                 menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
             }
@@ -154,46 +155,44 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
     }
 
     private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
-        if (menu instanceof GameMenu) {
-            int deltaX;
-            int deltaY;
-            if (event != null) {
-                deltaX = (int) (event.getX() * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
-                deltaY = (int) (event.getY() * ((GameMenu) menu).getMenuSetting().getMouseSensitivity());
-            } else {
-                GameMenu gameMenu = (GameMenu) menu;
-                gameMenu.getBridge().refreshHitResultType();
-                deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-                deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-                double hypot = Math.hypot(Math.abs(lastXAxis), Math.abs(lastYAxis));
-                if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_ENTITY) {
-                    if (hypot <= ((GameMenu) menu).getMenuSetting().getGamepadAimAssistZone()) {
-                        deltaX /= 10;
-                        deltaY /= 10;
-                    }
+        int deltaX;
+        int deltaY;
+        if (event != null) {
+            deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
+            deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
+        } else {
+            GameMenu gameMenu = menu;
+            gameMenu.getBridge().refreshHitResultType();
+            deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+            deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+            double hypot = Math.hypot(Math.abs(lastXAxis), Math.abs(lastYAxis));
+            if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_ENTITY) {
+                if (hypot <= menu.getMenuSetting().getGamepadAimAssistZone()) {
+                    deltaX /= 10;
+                    deltaY /= 10;
                 }
             }
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                int targetX = Math.max(0, Math.min(screenWidth, ((GameMenu) menu).getCursorX() + deltaX));
-                int targetY = Math.max(0, Math.min(screenHeight, ((GameMenu) menu).getCursorY() + deltaY));
+        }
+        if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX));
+            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY));
+            setPointerId(EXTERNAL_MOUSE_ID);
+            setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
+            setPointerId(null);
+        } else {
+            int targetX = menu.getPointerX() + deltaX;
+            int targetY = menu.getPointerY() + deltaY;
+            if (menu.getMenuSetting().isEnableGyroscope()) {
+                menu.setPointerX(targetX);
+                menu.setPointerY(targetY);
+            } else {
                 setPointerId(EXTERNAL_MOUSE_ID);
                 setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
                 setPointerId(null);
-            } else {
-                int targetX = ((GameMenu) menu).getPointerX() + deltaX;
-                int targetY = ((GameMenu) menu).getPointerY() + deltaY;
-                if (((GameMenu) menu).getMenuSetting().isEnableGyroscope()) {
-                    ((GameMenu) menu).setPointerX(targetX);
-                    ((GameMenu) menu).setPointerY(targetY);
-                } else {
-                    setPointerId(EXTERNAL_MOUSE_ID);
-                    setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                    setPointerId(null);
-                }
             }
-            if (event != null){
-                return handleExternalMouseEvent(event);
-            }
+        }
+        if (event != null){
+            return handleExternalMouseEvent(event);
         }
         return false;
     }
@@ -218,19 +217,19 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
             }
         }
         if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)) {
-            return remapperManager.handleKeyEventInput(((GameMenu) menu).getActivity(),event,this);
+            return remapperManager.handleKeyEventInput(menu.getActivity(),event,this);
         }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 return true;
-            ((GameMenu) menu).getTouchCharInput().dispatchKeyEvent(event);
+            menu.getTouchCharInput().dispatchKeyEvent(event);
             return true;
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
-            if (!((GameMenu) menu).getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !((GameMenu) menu).getTouchCharInput().isEnabled()) {
-                ((GameMenu) menu).getTouchCharInput().switchKeyboardState();
-            } else if (((GameMenu) menu).getTouchCharInput().isLock()) {
-                ((GameMenu) menu).getTouchCharInput().setLock(false);
+            if (!menu.getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !menu.getTouchCharInput().isEnabled()) {
+                menu.getTouchCharInput().switchKeyboardState();
+            } else if (menu.getTouchCharInput().isLock()) {
+                menu.getTouchCharInput().setLock(false);
             }
             return true;
         }
@@ -244,7 +243,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
     }
 
     public boolean handleGenericMotionEvent(MotionEvent event) {
-        if (!((GameMenu) menu).getTouchCharInput().isEnabled()) {
+        if (!menu.getTouchCharInput().isEnabled()) {
             focusableView.requestFocus();
             focusableView.requestPointerCapture();
         }
@@ -260,7 +259,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
                 };
                 choreographer.postFrameCallback(frameCallback);
             }
-            remapperManager.handleMotionEventInput(((GameMenu) menu).getActivity(),event,this);
+            remapperManager.handleMotionEventInput(menu.getActivity(),event,this);
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 handleDPad(event);
                 handleLeftJoyStick(event);
@@ -283,14 +282,18 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         } else if (Float.compare(yAxis, 1.0f) == 0) {
             dpadLastKey = KeyEvent.KEYCODE_DPAD_DOWN;
         }
-        sendKeyEvent(GamepadKeycodeMap.convert(dpadLastKey), (xAxis != 0 || yAxis != 0));
+        sendKeyEvent(convertGamepadInput(dpadLastKey), (xAxis != 0 || yAxis != 0));
+    }
+    
+    private int convertGamepadInput(int gamepadKey){
+        return GamepadKeycodeMap.convert(menu.getMenuSetting().getGamepadButtonBindingProperty(),gamepadKey);
     }
 
     private void handleLeftJoyStick(MotionEvent event) {
         float xAxis = event.getAxisValue(MotionEvent.AXIS_X);
         float yAxis = event.getAxisValue(MotionEvent.AXIS_Y);
         double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        if (dist >= ((GameMenu) menu).getMenuSetting().getGamepadDeadzone()) {
+        if (dist >= menu.getMenuSetting().getGamepadDeadzone()) {
             double degrees = Math.toDegrees(-Math.atan2(yAxis, xAxis));
             if (degrees < 0) {
                 degrees += 360;
@@ -309,14 +312,14 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
 
     private void sendDirection(int direction, boolean press) {
         if ((direction & 1) == 0) {
-            sendKeyEvent(GamepadKeycodeMap.convert(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction), press);
+            sendKeyEvent(convertGamepadInput(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction), press);
         } else {
-            sendKeyEvent(GamepadKeycodeMap.convert(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction - 1), press);
+            sendKeyEvent(convertGamepadInput(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction - 1), press);
             int keyCode = GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction + 1;
             if (keyCode == 2008) {
                 keyCode = 0;
             }
-            sendKeyEvent(GamepadKeycodeMap.convert(keyCode), press);
+            sendKeyEvent(convertGamepadInput(keyCode), press);
         }
     }
 
@@ -334,7 +337,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         float xAxis = event.getAxisValue(MotionEvent.AXIS_Z);
         float yAxis = event.getAxisValue(MotionEvent.AXIS_RZ);
         double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        if (dist < ((GameMenu) menu).getMenuSetting().getGamepadDeadzone()) {
+        if (dist < menu.getMenuSetting().getGamepadDeadzone()) {
             lastXAxis = 0;
             lastYAxis = 0;
             return;
@@ -346,7 +349,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         }
     }
 public void resetMapper() {
-    remapperManager = new RemapperManager(((GameMenu) menu).getActivity(), new RemapperView.Builder(null)
+    remapperManager = new RemapperManager(menu.getActivity(), new RemapperView.Builder(null)
             .remapA(true)
             .remapB(true)
             .remapX(true)
@@ -393,25 +396,25 @@ public void resetMapper() {
                 //Start/select
             case KeyEvent.KEYCODE_BUTTON_START:
             case KeyEvent.KEYCODE_BUTTON_SELECT:
-                sendKeyEvent(GamepadKeycodeMap.convert(code), isKeyDown);
+                sendKeyEvent(convertGamepadInput(code), isKeyDown);
                 break;
             // Triggers
             case MotionEvent.AXIS_LTRIGGER:
                 if (!leftTriggerDown && value > 0.5) {
                     leftTriggerDown = true;
-                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
+                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
                 } else if (leftTriggerDown && value < 0.5) {
                     leftTriggerDown = false;
-                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
+                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
                 }
                 break;
             case MotionEvent.AXIS_RTRIGGER:
                 if (!rightTriggerDown && value > 0.5) {
                     rightTriggerDown = true;
-                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
+                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
                 } else if (rightTriggerDown && value < 0.5) {
                     rightTriggerDown = false;
-                    sendKeyEvent(GamepadKeycodeMap.convert(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
+                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
                 }
                 break;
             default:
