@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1182,
-    "versionName": "1.1.8.2",
-    "date": "2024.09.27",
+    "versionCode": 1183,
+    "versionName": "1.1.8.3",
+    "date": "2024.10.02",
     "description": [
       {
         "lang": "en",
-        "text": "1. Add Boat backend (now you can choose to use Boat or Pojav to launch)\n2. Optimize layout\n3. Fix some bugs\n4.Disable sodium lwjgl version check"
+        "text": "1. Fix FPS display bug\n2. Optimize loading speed of launcher content\n3. Add more animations\n4. Optimize loading logic of the launcher pages\n5. Fix default controller errors\n6. Fix controller editing input errors\n7.Directly edit jvm memory\n8. Long press Pojav or Boat to directly select the renderer to launch\n9. Long press the return button in the bottom left corner to open the terminal\n10. Customize controller buttons"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加Boat后端(现在你可以选择使用Boat或Pojav启动)\n2.优化布局\n3.修复一些Bug\n4.禁用钠的Lwjgl检查"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复FPS显示bug\n2.优化启动器内容加载速度\n3.增加更多动画效果\n4.优化启动器页面加载逻辑\n5.修复默认键位错误\n6.修复按键编辑输入错误\n7.使内存编辑可直接输入数值\n8.长按Pojav或者Boat可直接选择渲染器启动\n9.长按左下角的返回打开终端\n10.自定义手柄按键"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/195997b772a1",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.2/FCL-release-1.1.8.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/78edae89a56e",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.3/FCL-release-1.1.8.3-all.apk"
   }
 ]
