@@ -21,6 +21,7 @@ public class ModCheckUpdatesTask extends Task<List<LocalModFile.ModUpdate>> {
         this.mods = mods;
 
         dependents = mods.stream()
+                .parallel()
                 .map(mod ->
                         Arrays.stream(RemoteMod.Type.values())
                                 .map(type ->
