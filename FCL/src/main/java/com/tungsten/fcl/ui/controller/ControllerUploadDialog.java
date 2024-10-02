@@ -118,6 +118,7 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add("png");
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setExternalSelection(false);
             builder.setLibMode(LibMode.FILE_CHOOSER);
             builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
             builder.setSuffix(suffix);
@@ -135,6 +136,7 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
                 ArrayList<String> suffix = new ArrayList<>();
                 suffix.add("png");
                 FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+                builder.setExternalSelection(false);
                 builder.setLibMode(LibMode.FILE_CHOOSER);
                 builder.setSelectionMode(SelectionMode.MULTIPLE_SELECTION);
                 builder.setSuffix(suffix);
