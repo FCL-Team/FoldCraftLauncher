@@ -2,13 +2,13 @@ package com.tungsten.fcl.ui.controller;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerVersion;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -56,8 +56,7 @@ public class HistoricalListAdapter extends FCLAdapter {
             viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
             viewHolder.parent.addView(viewHolder.version, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             viewHolder.version.setSingleLine(true);
-            viewHolder.version.setAutoTint(true);
-            viewHolder.version.setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            viewHolder.version.setTextColor(Color.GRAY);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
