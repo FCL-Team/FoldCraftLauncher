@@ -28,6 +28,7 @@ public class FileBrowser implements Serializable {
         return (ArrayList<String>) selectedFiles.stream().map(Uri::toString).collect(Collectors.toList());
     }
 
+    private boolean externalSelection = true;
     private LibMode libMode = LibMode.FILE_BROWSER;
     private SelectionMode selectionMode = SelectionMode.SINGLE_SELECTION;
     private String initDir = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -37,6 +38,10 @@ public class FileBrowser implements Serializable {
 
     public FileBrowser(String title) {
         this.title = title;
+    }
+
+    public boolean isExternalSelection() {
+        return externalSelection;
     }
 
     public LibMode getLibMode() {
@@ -74,7 +79,7 @@ public class FileBrowser implements Serializable {
 
     public static class Builder {
 
-        private FileBrowser fileBrowser;
+        private final FileBrowser fileBrowser;
 
         public Builder(Context context) {
             fileBrowser = new FileBrowser(context.getString(R.string.file_browser_title));
@@ -82,6 +87,11 @@ public class FileBrowser implements Serializable {
 
         public FileBrowser create() {
             return fileBrowser;
+        }
+
+        public Builder setExternalSelection(boolean externalSelection) {
+            fileBrowser.externalSelection = externalSelection;
+            return this;
         }
 
         public Builder setLibMode(LibMode libMode) {
@@ -107,6 +117,10 @@ public class FileBrowser implements Serializable {
         public Builder setTitle(String title) {
             fileBrowser.title = title;
             return this;
+        }
+
+        public boolean isExternalSelection() {
+            return fileBrowser.externalSelection;
         }
 
         public LibMode getLibMode() {
