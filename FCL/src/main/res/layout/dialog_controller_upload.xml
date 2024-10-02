@@ -238,8 +238,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_baseline_edit_24"
-                        android:layout_gravity="center"
-                        app:auto_tint="true"/>
+                        android:layout_gravity="center"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -277,8 +276,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_baseline_edit_24"
-                        android:layout_gravity="center"
-                        app:auto_tint="true"/>
+                        android:layout_gravity="center"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
