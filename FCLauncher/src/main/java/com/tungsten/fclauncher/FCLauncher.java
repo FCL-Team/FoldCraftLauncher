@@ -161,6 +161,10 @@ public class FCLauncher {
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext()));
         envMap.put("FORCE_VSYNC", "false");
+        if (!config.getJavaPath().contains("jre8")) {
+            String libName = config.getJavaPath().contains("jre17") ? "/libjsph17.so" : "/libjsph21.so";
+            envMap.put("JSP", config.getContext().getApplicationInfo().nativeLibraryDir + libName);
+        }
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
