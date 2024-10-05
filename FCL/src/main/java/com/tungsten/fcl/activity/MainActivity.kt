@@ -164,7 +164,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
                 launch.setOnClickListener(this@MainActivity)
                 launchBoat.setOnClickListener(this@MainActivity)
-                OnLongClickListener { openRendererMenu(launch);true }.apply {
+                OnLongClickListener { openRendererMenu(it);true }.apply {
                     launch.setOnLongClickListener(this)
                     launchBoat.setOnLongClickListener(this)
                 }
