@@ -45,7 +45,6 @@ import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
-import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
@@ -470,7 +469,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             ArrayAdapter(this, R.layout.item_renderer, mutableListOf<String>().apply {
                 add(getString(R.string.settings_fcl_renderer_gl4es))
                 add(getString(R.string.settings_fcl_renderer_virgl))
-                add(getString(R.string.settings_fcl_renderer_angle))
+                add(getString(R.string.settings_fcl_renderer_ltw))
                 add(getString(R.string.settings_fcl_renderer_vgpu))
                 add(getString(R.string.settings_fcl_renderer_zink))
                 add(getString(R.string.settings_fcl_renderer_freedreno))
@@ -481,7 +480,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             val rendererList = mutableListOf<FCLConfig.Renderer>().apply {
                 add(FCLConfig.Renderer.RENDERER_GL4ES)
                 add(FCLConfig.Renderer.RENDERER_VIRGL)
-                add(FCLConfig.Renderer.RENDERER_ANGLE)
+                add(FCLConfig.Renderer.RENDERER_LTW)
                 add(FCLConfig.Renderer.RENDERER_VGPU)
                 add(FCLConfig.Renderer.RENDERER_ZINK)
                 add(FCLConfig.Renderer.RENDERER_FREEDRENO)

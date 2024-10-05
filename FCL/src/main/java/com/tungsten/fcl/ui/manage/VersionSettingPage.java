@@ -149,7 +149,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
         rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VIRGL);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_ANGLE);
+        rendererDataList.add(FCLConfig.Renderer.RENDERER_LTW);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_FREEDRENO);
@@ -169,7 +169,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         ArrayList<String> rendererList = new ArrayList<>();
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_gl4es));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_virgl));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_angle));
+        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_ltw));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_vgpu));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_zink));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_freedreno));
