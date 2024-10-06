@@ -8,20 +8,31 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.target.CustomViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import java.io.File;
 
 public class MenuView extends View {
 
@@ -33,6 +44,7 @@ public class MenuView extends View {
 
     private GameMenu gameMenu;
 
+    private boolean isGif = false;
     public MenuView(Context context) {
         super(context);
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
@@ -66,13 +78,14 @@ public class MenuView extends View {
         iconPaint = new Paint();
         iconPaint.setAntiAlias(true);
 
-        icon = BitmapFactory.decodeResource(FCLApplication.getCurrentActivity().getResources(), R.drawable.img_app);
-
-        srcRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
-        destRect = new Rect(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
-                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
-                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34),
-                ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34));
+        initIcon();
+        if (!isGif) {
+            srcRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
+            destRect = new Rect(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
+                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
+                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34),
+                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34));
+        }
     }
 
     public void initPosition() {
@@ -84,6 +97,31 @@ public class MenuView extends View {
             setX((float) ((screenWidth - DEFAULT_WIDTH) * gameMenu.getMenuSetting().getMenuPositionX()));
             setY((float) ((screenHeight - DEFAULT_HEIGHT) * gameMenu.getMenuSetting().getMenuPositionY()));
         });
+    }
+
+    private void initIcon() {
+        if (new File(FCLPath.FILES_DIR, "menu_icon.png").exists()) {
+            icon = BitmapFactory.decodeFile(new File(FCLPath.FILES_DIR, "menu_icon.png").getAbsolutePath());
+        } else if (new File(FCLPath.FILES_DIR, "menu_icon.gif").exists()) {
+            isGif = true;
+            Glide.with(this).asGif().skipMemoryCache(true).load(new File(FCLPath.FILES_DIR, "menu_icon.gif")).into(new CustomViewTarget<MenuView, GifDrawable>(this) {
+                @Override
+                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
+                    setBackground(resource);
+                    resource.start();
+                }
+
+                @Override
+                protected void onResourceCleared(@Nullable Drawable placeholder) {
+                }
+            });
+        } else {
+            icon = BitmapFactory.decodeResource(FCLApplication.getCurrentActivity().getResources(), R.drawable.img_app);
+        }
     }
 
     private boolean pressed = false;
@@ -99,6 +137,9 @@ public class MenuView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (isGif) {
+            return;
+        }
         if (pressed) {
             areaPaint.setColor(FCLApplication.getCurrentActivity().getColor(R.color.ui_bg_color));
         } else {
@@ -116,7 +157,7 @@ public class MenuView extends View {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 downX = event.getX();
                 downY = event.getY();
