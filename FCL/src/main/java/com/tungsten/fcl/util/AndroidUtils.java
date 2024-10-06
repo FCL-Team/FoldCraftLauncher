@@ -16,6 +16,11 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.opengl.EGL14;
+import android.opengl.EGLConfig;
+import android.opengl.EGLContext;
+import android.opengl.EGLDisplay;
+import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.WebActivity;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
@@ -32,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.logging.Level;
 
 @SuppressLint("DiscouragedApi")
 public class AndroidUtils {
@@ -163,7 +170,65 @@ public class AndroidUtils {
     }
 
     public static boolean isDocUri(Uri uri) {
-        return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE) || Objects.equals(uri.getScheme(),ContentResolver.SCHEME_CONTENT);
+        return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE) || Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT);
+    }
+
+    public static boolean isAdrenoGPU() {
+        EGLDisplay eglDisplay = EGL14.eglGetDisplay(EGL14.EGL_DEFAULT_DISPLAY);
+        if (eglDisplay == EGL14.EGL_NO_DISPLAY) {
+            Logging.LOG.log(Level.SEVERE, "CheckVendor: Failed to get EGL display");
+            return false;
+        }
+
+        if (!EGL14.eglInitialize(eglDisplay, null, 0, null, 0)) {
+            Logging.LOG.log(Level.SEVERE, "CheckVendor: Failed to initialize EGL");
+            return false;
+        }
+
+        int[] eglAttributes = new int[]{
+                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
+                EGL14.EGL_NONE
+        };
+
+        EGLConfig[] configs = new EGLConfig[1];
+        int[] numConfigs = new int[1];
+        if (!EGL14.eglChooseConfig(eglDisplay, eglAttributes, 0, configs, 0, 1, numConfigs, 0) || numConfigs[0] == 0) {
+            EGL14.eglTerminate(eglDisplay);
+            Logging.LOG.log(Level.SEVERE, "CheckVendor: Failed to choose an EGL config");
+            return false;
+        }
+
+        int[] contextAttributes = new int[]{
+                EGL14.EGL_CONTEXT_CLIENT_VERSION, 2,
+                EGL14.EGL_NONE
+        };
+
+        EGLContext context = EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT, contextAttributes, 0);
+        if (context == EGL14.EGL_NO_CONTEXT) {
+            EGL14.eglTerminate(eglDisplay);
+            Logging.LOG.log(Level.SEVERE, "CheckVendor: Failed to create EGL context");
+            return false;
+        }
+
+        if (!EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, context)) {
+            EGL14.eglDestroyContext(eglDisplay, context);
+            EGL14.eglTerminate(eglDisplay);
+            Logging.LOG.log(Level.SEVERE, "CheckVendor: Failed to make EGL context current");
+            return false;
+        }
+
+        String vendor = GLES20.glGetString(GLES20.GL_VENDOR);
+        String renderer = GLES20.glGetString(GLES20.GL_RENDERER);
+        boolean isAdreno = (vendor != null && renderer != null &&
+                vendor.equalsIgnoreCase("Qualcomm") &&
+                renderer.toLowerCase().contains("adreno"));
+
+        // Cleanup
+        EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT);
+        EGL14.eglDestroyContext(eglDisplay, context);
+        EGL14.eglTerminate(eglDisplay);
+        Logging.LOG.log(Level.SEVERE, "CheckVendor: Running on Adreno GPU:" + isAdreno);
+        return isAdreno;
     }
 
 }

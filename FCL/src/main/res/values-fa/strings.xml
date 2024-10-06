@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
     <string name="splash_permission_msg">بدون مجوز ذخیره سازی، لطفاً به Fold Craft Launcher اجازه دهید.</string>
     <string name="splash_permission_grant">اعطا کردن</string>
@@ -12,14 +11,6 @@
     <string name="splash_eula_error">نمی توان EULA دریافت کرد، لطفاً شبکه را بررسی کنید.</string>
     <string name="splash_eula_next">پذیرش و ادامه</string>
     <string name="splash_runtime_title">زمان اجرا برنامه را نصب یا به روز کنید</string>
-    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
-    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
-    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
-    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
-    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
-    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
-    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
-    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
     <string name="splash_runtime_install">نصب/به روز رسانی</string>
 
     <string name="account">حساب</string>
@@ -31,8 +22,6 @@
     <string name="setting">تنظیمات</string>
 
     <string name="about">در باره</string>
-    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
-    <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">حامی مالی</string>
     <string name="about_source">متن باز</string>
     <string name="about_desc">Fold Craft Launcher یک راه‌انداز Minecraft Android است که به کاربر امکان می‌دهد Minecraft: Java Edition را در دستگاه Android راه‌اندازی کند.\n\nFold Craft Launcher توسط FCL-Team توسعه داده شده است.\n\nبیشترین ویژگی‌های Fold Craft Launcher بر اساس HMCLCore اصلاح شده‌اند.\n\nبرنامه برخی از کدهای PojavLauncher و Boat را قرض می گیرد و نقل قول می کند، بنابراین اگر می خواهید این برنامه را توزیع کنید، لطفاً مجوز GPL-v3 را دنبال کنید.</string>
@@ -88,9 +77,6 @@
     <string name="account_select_character">شخصیت را انتخاب کنید</string>
     <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>
-    <string name="account_skin_type_steve" translatable="false">Steve</string>
-    <string name="account_skin_type_alex" translatable="false">Alex</string>
-    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
     <string name="account_skin_type_csl_api_location_hint">URL CustomSkinAPI</string>
     <string name="account_skin_type_csl_api_hint">شما باید یک کاراکتر با نام حساب آفلاین خود در وب سایت ارائه دهنده اسکین خود ایجاد کنید. سپس اسکین شما اسکین آپلود شده شما در آن سایت خواهد بود.</string>
     <string name="account_skin_type_local_file">فایل محلی اسکین</string>
@@ -134,14 +120,9 @@
     <string name="button_select_all">انتخاب همه</string>
     <string name="button_set">تنظیم</string>
     <string name="button_reset">بازتنظیم</string>
-    <string name="button_up" translatable="false">▲</string>
-    <string name="button_down" translatable="false">▼</string>
-    <string name="button_left" translatable="false">◀</string>
-    <string name="button_right" translatable="false">▶</string>
 
     <string name="community">کامیونیتی</string>
     <string name="community_hint">برای دریافت آخرین نسخه ، گزارش اشکالات و غیره به جامعه ما بپیوندید. لطفاً در صورت پیوستن ، قوانین جامعه را دنبال کنید.</string>
-    <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">گروه qq</string>
 
     <string name="control_create">کنترلر ایجاد کنید</string>
@@ -452,21 +433,12 @@
     <string name="install_installer_change_version">نسخه %s با نسخه فعلی بازی سازگار نیست. اینجا را کلیک کنید تا آن را با نسخه دیگری جایگزین کنید یا آن را حذف کنید.</string>
     <string name="install_installer_choose">نسخه %s خود را انتخاب کنید</string>
     <string name="install_installer_depend">%s نیاز دارد</string>
-    <string name="install_installer_fabric" translatable="false">Fabric</string>
-    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">هشدار: Fabric API یک مد است و در فهرست مدهای نمونه بازی نصب خواهد شد. لطفاً دایرکتوری کاری بازی را تغییر ندهید، در غیر این صورت Fabric API کار نخواهد کرد. اگر می خواهید این تنظیمات را تغییر دهید، باید آن را دوباره نصب کنید.</string>
-    <string name="install_installer_forge" translatable="false">Forge</string>
-    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
-    <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">با %s ناسازگار است</string>
     <string name="install_installer_install">%s را نصب کنید</string>
     <string name="install_installer_install_offline">نصب/به روز رسانی از فایل محلی</string>
     <string name="install_installer_install_offline_extension">نصب کننده Forge/OptiFine</string>
-    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
     <string name="install_installer_not_installed">انتخاب نشده</string>
-    <string name="install_installer_optifine" translatable="false">OptiFine</string>
-    <string name="install_installer_quilt" translatable="false">Quilt</string>
-    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
     <string name="install_modpack">یک Modpack نصب کنید</string>
     <string name="install_new_game">یک نمونه جدید اضافه کنید</string>
     <string name="install_new_game_already_exists">این نمونه از قبل وجود دارد. لطفا از نام دیگری استفاده کنید.</string>
@@ -751,10 +723,7 @@
     <string name="search_device">نوع دستگاه</string>
     <string name="search_sort">مرتب سازی بر اساس</string>
     <string name="search_first_page">اولین</string>
-    <string name="search_previous_page" translatable="false">◀</string>
-    <string name="search_next_page" translatable="false">▶</string>
     <string name="search_last_page">آخر</string>
-    <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">یکپارچگی بازی را بررسی نکنید</string>
     <string name="settings_advanced_dont_check_jvm_validity">سازگاری JVM را بررسی نکنید</string>
@@ -771,19 +740,14 @@
     <string name="settings_fcl_controller">کنترل کننده</string>
     <string name="settings_fcl_controller_injector">ژست باشید</string>
     <string name="settings_fcl_renderer">رندر</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
-    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6، فقط از 1.17+ پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از 1.17- پشتیبانی می کند)</string>
-    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از GPU a616-a660 پشتیبانی می کند)</string>
 
     <string name="settings_game">تنظیمات بازی</string>
     <string name="settings_game_dimension">وضوح</string>
     <string name="settings_game_java_version">نسخه جاوا</string>
     <string name="settings_game_java_version_auto">خودکار</string>
-    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
-    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">جداسازی دایرکتوری کاری</string>
 
     <string name="settings_icon">آیکون</string>
@@ -801,8 +765,6 @@
     <string name="settings_launcher_download_source_auto">انتخاب خودکار دانلود Mirror</string>
     <string name="settings_launcher_language">زبان</string>
     <string name="settings_launcher_language_system">از زبان سیستم استفاده کنید</string>
-    <string name="settings_launcher_language_english" translatable="false">English</string>
-    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
     <string name="settings_launcher_launcher_log_export">گزارش های راه اندازی را صادر کنید</string>
     <string name="settings_launcher_launcher_log_export_failed">گزارش‌ها صادر نمی‌شوند</string>
     <string name="settings_launcher_launcher_log_export_success">گزارش‌ها به %s صادر شده‌اند</string>

@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
     <string name="splash_permission_msg">Нет доступа к хранилищу, предоствьте разрешение приложению Fold Craft Launcher в настройках.</string>
     <string name="splash_permission_grant">Grant</string>
@@ -12,14 +11,6 @@
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии, из за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить / обновить среду выполнения приложения</string>
-    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
-    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
-    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
-    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
-    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
-    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
-    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
-    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
     <string name="splash_runtime_install">Установить / Обновить</string>
 
     <string name="account">Аккаунт </string>
@@ -31,8 +22,6 @@
     <string name="setting">Настройки</string>
     
     <string name="about">О лаунчере</string>
-    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
-    <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Спонсоры</string>
     <string name="about_source">Исходный код</string>
     <string name="about_desc">Fold Craft Launcher - это лаунчер Minecraft для Android, который позволяет пользователю запускать Minecraft: Java Edition на устройстве Android. Fold Craft Launcher разработан командой FCL-Team. Большинство функций Fold Craft Launcher изменены на основе HMCLCore. Приложение заимствует и цитирует некоторые коды из PojavLauncher и Boat, поэтому, если вы собираетесь распространять это приложение, пожалуйста, следуйте лицензии GPL-v3.</string>
@@ -88,7 +77,6 @@
     <string name="account_select_character">Выберите персонажа</string>
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>
-    <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
     <string name="account_skin_type_csl_api_location_hint">URL-адрес CustomSkinAPI</string>
@@ -134,14 +122,9 @@
     <string name="button_select_all">Выбрать всё</string>
     <string name="button_set">Выбрать</string>
     <string name="button_reset">Сброс</string>
-    <string name="button_up" translatable="false">▲</string>
-    <string name="button_down" translatable="false">▼</string>
-    <string name="button_left" translatable="false">◀</string>
-    <string name="button_right" translatable="false">▶</string>
 
     <string name="community">Сообщество</string>
     <string name="community_hint">Присоединяйтесь к нашему сообществу, чтобы получать последние версии, сообщать об ошибках и т. д. Если вы присоединитесь, пожалуйста, следуйте правилам сообщества.</string>
-    <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">QQ-Group</string>
 
     <string name="control_create">Создать контроллер</string>
@@ -452,21 +435,12 @@
     <string name="install_installer_change_version">Версия %s несовместима с текущей версией игры. Нажмите здесь, чтобы заменить ее другой версией или удалить.</string>
     <string name="install_installer_choose">Выберите %s версию</string>
     <string name="install_installer_depend">Требуется %s</string>
-    <string name="install_installer_fabric" translatable="false">Fabric</string>
-    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">Предупреждение: Fabric API является модом и будет установлен в каталог мода экземпляра игры. Пожалуйста, не меняйте рабочий каталог игры, иначе Fabric API не будет работать.</string>
-    <string name="install_installer_forge" translatable="false">Forge</string>
-    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
-    <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">Несовместимо с %s</string>
     <string name="install_installer_install">Установить %s</string>
     <string name="install_installer_install_offline">Установить/Обновить файл с устройства </string>
     <string name="install_installer_install_offline_extension">Установщик Forge/OptiFine</string>
-    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
     <string name="install_installer_not_installed">Не выбрано</string>
-    <string name="install_installer_optifine" translatable="false">OptiFine</string>
-    <string name="install_installer_quilt" translatable="false">Quilt</string>
-    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
     <string name="install_modpack">Установить пакет модов</string>
     <string name="install_new_game">Добавить новый экземпляр</string>
     <string name="install_new_game_already_exists">Этот экземпляр уже существует. Пожалуйста, используйте другое название.</string>
@@ -751,10 +725,7 @@
     <string name="search_device">Тип устройства</string>
     <string name="search_sort">Sort By</string>
     <string name="search_first_page">Первый</string>
-    <string name="search_previous_page" translatable="false">◀</string>
-    <string name="search_next_page" translatable="false">▶</string>
     <string name="search_last_page">Последний</string>
-    <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
@@ -771,19 +742,14 @@
     <string name="settings_fcl_controller">Контроллер</string>
     <string name="settings_fcl_controller_injector">Жесты на стороне сервера (BE Gesture)</string>
     <string name="settings_fcl_renderer">Графический движок</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
-    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6, только 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, только 1.17-)</string>
-    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
 
     <string name="settings_game">Настройки игры</string>
     <string name="settings_game_dimension">Разрешение</string>
     <string name="settings_game_java_version">Версия Java</string>
     <string name="settings_game_java_version_auto">Авто</string>
-    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
-    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">Изолировать рабочий каталог игры</string>
 
     <string name="settings_icon">Иконки</string>
@@ -801,8 +767,6 @@
     <string name="settings_launcher_download_source_auto">Автоматический выбор зеркала загрузки</string>
     <string name="settings_launcher_language">Язык</string>
     <string name="settings_launcher_language_system">Использовать системный язык</string>
-    <string name="settings_launcher_language_english" translatable="false">English</string>
-    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
     <string name="settings_launcher_launcher_log_export">Экспортировать логи лаунчера</string>
     <string name="settings_launcher_launcher_log_export_failed">Невозможно экспортировать журналы</string>
     <string name="settings_launcher_launcher_log_export_success">Журналы экспортированы в %s</string>

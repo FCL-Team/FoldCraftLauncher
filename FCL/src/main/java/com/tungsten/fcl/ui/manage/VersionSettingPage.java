@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.SelectControllerDialog;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -37,6 +38,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -255,6 +257,15 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                 profile.getRepository().globalizeVersionSetting(versionId);
 
             Schedulers.androidUIThread().execute(() -> loadVersion(profile, versionId));
+        });
+        vulkanDriverSystemSwitch.setOnClickListener(v -> {
+            if (vulkanDriverSystemSwitch.checkProperty().get() && AndroidUtils.isAdrenoGPU()) {
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                builder.setMessage(getContext().getString(R.string.message_vulkan_driver_system));
+                builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.create().show();
+            }
         });
     }
 

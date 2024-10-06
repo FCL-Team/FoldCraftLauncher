@@ -947,4 +947,5 @@
     <string name="gamepad_dpad">方向键</string>
     <string name="gamepad_button_binding">手柄按键绑定</string>
     <string name="joystick_r">右摇杆</string>
+    <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
 </resources>

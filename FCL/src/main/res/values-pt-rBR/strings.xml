@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
     <string name="splash_permission_msg">Sem permissão de armazenamento, por favor conceda a permissão ao Fold Craft Launcher.</string>
     <string name="splash_permission_grant">Grant</string>
@@ -12,14 +11,6 @@
     <string name="splash_eula_error">Não foi possível acessar o EULA, por favor verifique a sua conexão.</string>
     <string name="splash_eula_next">Concordar e continuar</string>
     <string name="splash_runtime_title">Instalar ou atualizar a runtime do aplicativo</string>
-    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
-    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
-    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
-    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
-    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
-    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
-    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
-    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
     <string name="splash_runtime_install">Instalar / Atualizar</string>
 
     <string name="account">Conta</string>
@@ -31,8 +22,6 @@
     <string name="setting">Configurações</string>
     
     <string name="about">Sobre</string>
-    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
-    <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Patrocinadores</string>
     <string name="about_source">Código fonte</string>
     <string name="about_desc">Fold Craft é um Launcher de Minecraft no Android, que lhe permite jogar Minecraft: Java Edition no seu aparelho Android.\n\nO Fold Craft Launcher é desenvolvido pela FCL-Team.\n\nA maioria das funcionalidades do Fold Craft Launcher são baseadas no HMCLCore.\n\nO aplicativo usa partes do código de PojavLauncher e Boat, então se deseja distribuir este aplicativo, por favor siga as regras da Licença GPL-v3.</string>
@@ -88,9 +77,6 @@
     <string name="account_select_character">Selecionar personagem</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Padrão</string>
-    <string name="account_skin_type_steve" translatable="false">Steve</string>
-    <string name="account_skin_type_alex" translatable="false">Alex</string>
-    <string name="account_skin_type_csl_api" translatable="false">Sistema de skins personalizado</string>
     <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
     <string name="account_skin_type_csl_api_hint">Você deve criar um personagem com o mesmo nome que a sua conta offline na página do seu fornecedor de skin. Sua skin será então enviada para esse site.</string>
     <string name="account_skin_type_local_file">Arquivo de skin local</string>
@@ -134,14 +120,9 @@
     <string name="button_select_all">Selecionar tudo</string>
     <string name="button_set">Definir</string>
     <string name="button_reset">Redefinir</string>
-    <string name="button_up" translatable="false">▲</string>
-    <string name="button_down" translatable="false">▼</string>
-    <string name="button_left" translatable="false">◀</string>
-    <string name="button_right" translatable="false">▶</string>
 
     <string name="community">Comunidade</string>
     <string name="community_hint">Entre na nossa comunidade para ter as últimas versões, reportar bugs, etc. Por favor seguir as regras da comunidade se entrar!</string>
-    <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">QQ-Group</string>
 
     <string name="control_create">Criar</string>
@@ -452,21 +433,12 @@
     <string name="install_installer_change_version">A versão %s não é compatível com a versão atual.do jogo. Clique aqui para mudar para outra versão ou excluir.</string>
     <string name="install_installer_choose">Escolha sua versão de %s</string>
     <string name="install_installer_depend">Requer %s</string>
-    <string name="install_installer_fabric" translatable="false">Fabric</string>
-    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">Aviso: Fabric API é um mod, e será instalado no diretório de mods da instância. Por favor, não mude o diretório responsável pelo jogo, caso contrário o Fabric API não irá funcionar. Se você deseja mudar essas configurações, você deve reinstalar-lo.</string>
-    <string name="install_installer_forge" translatable="false">Forge</string>
-    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
-    <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">Incompatível com %s</string>
     <string name="install_installer_install">Instalar %s</string>
     <string name="install_installer_install_offline">Instalar/atualizar de arquivo local</string>
     <string name="install_installer_install_offline_extension">Instalador Forge/OptiFine</string>
-    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
     <string name="install_installer_not_installed">Não selecionado</string>
-    <string name="install_installer_optifine" translatable="false">OptiFine</string>
-    <string name="install_installer_quilt" translatable="false">Quilt</string>
-    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
     <string name="install_modpack">Instalar modpack</string>
     <string name="install_new_game">Adicionar uma nova instância</string>
     <string name="install_new_game_already_exists">Esta instância já existe. Por favor use outro nome.</string>
@@ -751,10 +723,7 @@
     <string name="search_device">Tipo de dispositivo</string>
     <string name="search_sort">Ordenar por</string>
     <string name="search_first_page">Primeiro</string>
-    <string name="search_previous_page" translatable="false">◀</string>
-    <string name="search_next_page" translatable="false">▶</string>
     <string name="search_last_page">Último</string>
-    <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Não verificar integridade do jogo</string>
     <string name="settings_advanced_dont_check_jvm_validity">Não verificar compatibilidade do Java</string>
@@ -771,19 +740,14 @@
     <string name="settings_fcl_controller">Controle</string>
     <string name="settings_fcl_controller_injector">Gestos do Bedrock</string>
     <string name="settings_fcl_renderer">Renderizador</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
-    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6, suporta 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, suporta 1.17-)</string>
-    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
 
     <string name="settings_game">Config. do Jogo</string>
     <string name="settings_game_dimension">Resolução</string>
     <string name="settings_game_java_version">Versão do Java</string>
     <string name="settings_game_java_version_auto">Automático</string>
-    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
-    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">Diretório isolado</string>
 
     <string name="settings_icon">Ícone</string>
@@ -801,8 +765,6 @@
     <string name="settings_launcher_download_source_auto">Seleção automática</string>
     <string name="settings_launcher_language">Linguagem</string>
     <string name="settings_launcher_language_system">Usar linguagem do sistema</string>
-    <string name="settings_launcher_language_english" translatable="false">Inglês</string>
-    <string name="settings_launcher_language_simplified_chinese" translatable="false">Chinês Simplificado</string>
     <string name="settings_launcher_launcher_log_export">Exportar logs do launcher</string>
     <string name="settings_launcher_launcher_log_export_failed">Não foi possível exportar as logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs foram exportadas para %s</string>
