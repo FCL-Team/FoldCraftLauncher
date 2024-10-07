@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/ui_bg_color"
     android:paddingTop="10dp"
     android:paddingStart="10dp"
@@ -97,6 +98,16 @@
                     app:auto_text_tint="true"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/mcmod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:text="@string/mcmod"
+                app:auto_text_tint="true"
+                tools:ignore="HardcodedText" />
 
             <com.tungsten.fcllibrary.component.view.FCLImageButton
                 android:layout_width="wrap_content"
