@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -193,7 +192,6 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
             if (mod != null) {
                 String url = translations.getMcmodUrl(mod);
-                Log.e("测试", url);
                 AndroidUtils.openLink(getContext(), url);
             }
         }
