@@ -47,7 +47,6 @@ import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import java.lang.reflect.Type
-import java.util.Optional
 
 @JsonAdapter(VersionSetting.Serializer::class)
 class VersionSetting : Cloneable {
@@ -339,46 +338,29 @@ class VersionSetting : Cloneable {
             if (json === JsonNull.INSTANCE || json !is JsonObject) return null
 
             var maxMemoryN = parseJsonPrimitive(
-                Optional.ofNullable(json["maxMemory"])
-                    .map { it.asJsonPrimitive }
-                    .orElse(null), MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT))
+                json["maxMemory"]?.asJsonPrimitive,
+                MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
+            )
             if (maxMemoryN <= 0) maxMemoryN = MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
             return VersionSetting().also { vs ->
-                vs.isUsesGlobal =
-                    Optional.ofNullable(json["usesGlobal"]).map { it.asBoolean }.orElse(false)
-                vs.javaArgs =
-                    Optional.ofNullable(json["javaArgs"]).map { it.asString }.orElse("")
-                vs.minecraftArgs =
-                    Optional.ofNullable(json["minecraftArgs"]).map { it.asString }.orElse("")
+                vs.isUsesGlobal = json["usesGlobal"]?.asBoolean ?: false
+                vs.javaArgs = json["javaArgs"]?.asString ?: ""
+                vs.minecraftArgs = json["minecraftArgs"]?.asString ?: ""
                 vs.maxMemory = maxMemoryN
-                vs.minMemory =
-                    Optional.ofNullable(json["minMemory"]).map { it.asInt }.orElse(null)
-                vs.isAutoMemory =
-                    Optional.ofNullable(json["autoMemory"]).map { it.asBoolean }.orElse(true)
-                vs.permSize =
-                    Optional.ofNullable(json["permSize"]).map { it.asString }.orElse("")
-                vs.serverIp =
-                    Optional.ofNullable(json["serverIp"]).map { it.asString }.orElse("")
-                vs.java = Optional.ofNullable(json["java"]).map { it.asString }
-                    .orElse(JavaVersion.JAVA_AUTO.versionName)
-                vs.scaleFactor =
-                    Optional.ofNullable(json["scaleFactor"]).map { it.asDouble }.orElse(1.0)
-                vs.isNotCheckGame =
-                    Optional.ofNullable(json["notCheckGame"]).map { it.asBoolean }.orElse(false)
-                vs.isNotCheckJVM =
-                    Optional.ofNullable(json["notCheckJVM"]).map { it.asBoolean }.orElse(false)
-                vs.isBeGesture =
-                    Optional.ofNullable(json["beGesture"]).map { it.asBoolean }.orElse(false)
-                vs.isVKDriverSystem =
-                    Optional.ofNullable(json["vulkanDriverSystem"]).map { it.asBoolean }
-                        .orElse(false)
-                vs.controller =
-                    Optional.ofNullable(json["controller"]).map { it.asString }.orElse("00000000")
-                vs.renderer = FCLConfig.Renderer.values()[Optional.ofNullable<JsonElement>(
-                    json["renderer"]
-                ).map { it.asInt }.orElse(FCLConfig.Renderer.RENDERER_GL4ES.ordinal)]
-                vs.isIsolateGameDir =
-                    Optional.ofNullable(json["isolateGameDir"]).map { it.asBoolean }.orElse(false)
+                vs.minMemory = json["minMemory"]?.asInt
+                vs.isAutoMemory = json["autoMemory"]?.asBoolean ?: true
+                vs.permSize = json["permSize"]?.asString ?: ""
+                vs.serverIp = json["serverIp"]?.asString ?: ""
+                vs.java = json["java"]?.asString ?: JavaVersion.JAVA_AUTO.versionName
+                vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
+                vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: (false)
+                vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: (false)
+                vs.isBeGesture = json["beGesture"]?.asBoolean ?: (false)
+                vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
+                vs.controller = json["controller"]?.asString ?: ("00000000")
+                vs.renderer = FCLConfig.Renderer.values()[json["renderer"]?.asInt
+                    ?: FCLConfig.Renderer.RENDERER_GL4ES.ordinal]
+                vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
             }
         }
 
