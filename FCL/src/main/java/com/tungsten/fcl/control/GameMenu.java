@@ -280,7 +280,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
         FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
-        autoFitText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.autoFitDistProperty().get() + " dp", menuSetting.autoFitDistProperty()));
+        autoFitText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getAutoFitDistProperty().get() + " dp", menuSetting.getAutoFitDistProperty()));
 
         FCLLinearLayout editLayout = findViewById(R.id.edit_layout);
 
@@ -293,10 +293,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
-        FXUtils.bindBoolean(autoFit, menuSetting.autoFitProperty());
+        FXUtils.bindBoolean(autoFit, menuSetting.getAutoFitProperty());
 
         autoFitDist.addProgressListener();
-        autoFitDist.progressProperty().bindBidirectional(menuSetting.autoFitDistProperty());
+        autoFitDist.progressProperty().bindBidirectional(menuSetting.getAutoFitDistProperty());
 
         ArrayList<String> controllerNameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toCollection(ArrayList::new));
         currentControllerSpinner.setDataList(new ArrayList<>(Controllers.getControllers()));
@@ -368,12 +368,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
 
-        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.lockMenuViewProperty());
-        FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.disableSoftKeyAdjustProperty());
-        FXUtils.bindBoolean(disableGestureSwitch, menuSetting.disableGestureProperty());
-        FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.disableBEGestureProperty());
-        FXUtils.bindBoolean(gyroSwitch, menuSetting.enableGyroscopeProperty());
-        FXUtils.bindBoolean(showLogSwitch, menuSetting.showLogProperty());
+        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
+        FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
+        FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
+        FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
+        FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
+        FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
@@ -394,9 +394,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
         });
 
-        logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
-        menuSetting.showLogProperty().addListener(observable -> {
-            logWindow.visibilityProperty().setValue(menuSetting.isshowLog());
+        logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
+        menuSetting.getShowLogProperty().addListener(observable -> {
+            logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
         });
 
         ArrayList<GestureMode> gestureModeDataList = new ArrayList<>();
@@ -419,8 +419,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         ArrayAdapter<String> mouseMoveModeAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, mouseMoveModeList);
         mouseMoveModeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small);
         mouseMoveModeSpinner.setAdapter(mouseMoveModeAdapter);
-        FXUtils.bindSelection(gestureModeSpinner, menuSetting.gestureModeProperty());
-        FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.mouseMoveModeProperty());
+        FXUtils.bindSelection(gestureModeSpinner, menuSetting.getGestureModeProperty());
+        FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeProperty());
 
         itemBarScaleSeekbar.addProgressListener();
         IntegerProperty itemBarScaleProperty = new SimpleIntegerProperty(menuSetting.getItemBarScale()) {
@@ -486,7 +486,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         };
         mouseSensitivitySeekbar.progressProperty().bindBidirectional(mouseSensitivityProperty);
         mouseSizeSeekbar.addProgressListener();
-        mouseSizeSeekbar.progressProperty().bindBidirectional(menuSetting.mouseSizeProperty());
+        mouseSizeSeekbar.progressProperty().bindBidirectional(menuSetting.getMouseSizeProperty());
 
         gamepadDeadzoneSeekbar.addProgressListener();
         IntegerProperty gamepadDeadzoneProperty = new SimpleIntegerProperty((int) (menuSetting.getGamepadDeadzone() * 100)) {
@@ -511,16 +511,16 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadAimZoneSeekbar.progressProperty().bindBidirectional(gamepadAimZoneProperty);
 
         gyroSensitivitySeekbar.addProgressListener();
-        gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.gyroscopeSensitivityProperty());
+        gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.getGyroscopeSensitivityProperty());
 
         itemBarScaleText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(itemBarScaleProperty.get()), itemBarScaleProperty));
         windowScaleText.stringProperty().bind(Bindings.createStringBinding(() -> windowScaleProperty.get() + " %", windowScaleProperty));
         cursorOffsetText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(cursorOffsetProperty.get()), cursorOffsetProperty));
         mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
-        mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.mouseSizeProperty().get() + " dp", menuSetting.mouseSizeProperty()));
+        mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getMouseSizeProperty().get() + " dp", menuSetting.getMouseSizeProperty()));
         gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));
         gamepadAimZoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadAimZoneProperty.get() + " %", gamepadAimZoneProperty));
-        gyroSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.gyroscopeSensitivityProperty().get() + "", menuSetting.gyroscopeSensitivityProperty()));
+        gyroSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getGyroscopeSensitivityProperty().get() + "", menuSetting.getGyroscopeSensitivityProperty()));
 
         openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
@@ -592,18 +592,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         touchPad.init(this);
         touchCharInput.setCharacterSender(this, new LwjglCharSender(this));
         ViewGroup.LayoutParams layoutParams = cursorView.getLayoutParams();
-        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
-        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
+        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
+        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
         cursorView.setLayoutParams(layoutParams);
-        menuSetting.mouseSizeProperty().addListener(observable -> {
+        menuSetting.getMouseSizeProperty().addListener(observable -> {
             ViewGroup.LayoutParams params = cursorView.getLayoutParams();
-            params.width = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
-            params.height = ConvertUtils.dip2px(activity, menuSetting.mouseSizeProperty().get());
+            params.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
+            params.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
             cursorView.setLayoutParams(params);
         });
 
         gyroscope = new Gyroscope(this);
-        gyroscope.enableProperty().bind(menuSetting.enableGyroscopeProperty());
+        gyroscope.enableProperty().bind(menuSetting.getEnableGyroscopeProperty());
 
         viewManager = new ViewManager(this);
 

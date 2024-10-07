@@ -353,9 +353,9 @@ class VersionSetting : Cloneable {
                 vs.serverIp = json["serverIp"]?.asString ?: ""
                 vs.java = json["java"]?.asString ?: JavaVersion.JAVA_AUTO.versionName
                 vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
-                vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: (false)
-                vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: (false)
-                vs.isBeGesture = json["beGesture"]?.asBoolean ?: (false)
+                vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
+                vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
+                vs.isBeGesture = json["beGesture"]?.asBoolean ?: false
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
                 vs.renderer = FCLConfig.Renderer.values()[json["renderer"]?.asInt
