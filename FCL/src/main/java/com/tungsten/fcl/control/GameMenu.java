@@ -376,6 +376,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isSimulated()) {
+                return;
+            }
             if (isChecked) {
                 showFpsThread = new Thread(() -> {
                     FCLBridge.getFps();
@@ -388,8 +391,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 }, "FPS");
                 showFpsThread.start();
             } else {
-                showFpsThread.interrupt();
-                showFpsThread = null;
+                if (showFpsThread != null) {
+                    showFpsThread.interrupt();
+                    showFpsThread = null;
+                }
                 fpsText.setText("");
             }
         });
