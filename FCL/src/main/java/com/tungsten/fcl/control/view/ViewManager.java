@@ -9,11 +9,8 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
-import com.tungsten.fclcore.util.Logging;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class ViewManager {
 
@@ -94,11 +91,7 @@ public class ViewManager {
     }
 
     public void saveController() {
-        try {
-            gameMenu.getController().saveToDisk();
-        } catch (IOException e) {
-            Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
-        }
+        gameMenu.getController().saveToDisk();
     }
 
     public void initializeController() {

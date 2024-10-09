@@ -37,6 +37,7 @@ import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -298,12 +300,18 @@ public class Controller implements Cloneable, Observable {
         return getId() + ".json";
     }
 
-    public void saveToDisk() throws IOException {
-        String str = new GsonBuilder()
-                .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                .setPrettyPrinting()
-                .create().toJson(this);
-        FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
+    public synchronized void saveToDisk(){
+        Schedulers.io().execute(()->{
+            String str = new GsonBuilder()
+                    .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                    .setPrettyPrinting()
+                    .create().toJson(this);
+            try {
+                FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
+            } catch (IOException e) {
+                Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
+            }
+        });
     }
 
     public void changeId(String newId) throws IOException {
@@ -374,32 +382,35 @@ public class Controller implements Cloneable, Observable {
             JsonObject obj = (JsonObject) json;
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            String id = Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(generateRandomId());
-            String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
-            String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
-            int versionCode = Optional.ofNullable(obj.get("versionCode")).map(JsonElement::getAsInt).orElse(1);
-            String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
-            String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
+            try {
+                String id = Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(generateRandomId());
+                String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
+                String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
+                int versionCode = Optional.ofNullable(obj.get("versionCode")).map(JsonElement::getAsInt).orElse(1);
+                String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
+                String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
 
-            int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
-            if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
-                showIncompatibleDialog(FCLPath.CONTEXT, name);
-                return new Controller("Incompatible Controller - " + name);
+                int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
+                if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
+                    showIncompatibleDialog(FCLPath.CONTEXT, name);
+                    return new Controller("Incompatible Controller - " + name);
+                }
+
+                List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
+                List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
+                ButtonStyles.init();
+                DirectionStyles.init();
+                buttonStyles.forEach(ButtonStyles::addStyle);
+                directionStyles.forEach(DirectionStyles::addStyle);
+                ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
+
+                if (controllerVersion < Constants.CONTROLLER_VERSION) {
+                    showUpgradeDialog(FCLPath.CONTEXT, name, id);
+                }
+                return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
+            } catch (Exception e) {
+                throw new JsonParseException("Controller file may broken!");
             }
-
-            List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
-            List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
-            ButtonStyles.init();
-            DirectionStyles.init();
-            buttonStyles.forEach(ButtonStyles::addStyle);
-            directionStyles.forEach(DirectionStyles::addStyle);
-            ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
-
-            if (controllerVersion < Constants.CONTROLLER_VERSION) {
-                showUpgradeDialog(FCLPath.CONTEXT, name, id);
-            }
-
-            return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
         }
 
     }

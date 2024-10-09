@@ -948,4 +948,5 @@
     <string name="gamepad_button_binding">手柄按键绑定</string>
     <string name="joystick_r">右摇杆</string>
     <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
+    <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
 </resources>

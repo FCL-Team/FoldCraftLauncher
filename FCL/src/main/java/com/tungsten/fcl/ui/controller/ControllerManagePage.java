@@ -39,6 +39,7 @@ import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
+import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -140,6 +141,9 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         editController.setOnClickListener(this);
 
         refreshList();
+
+        FCLProgressBar progress = findViewById(R.id.progress);
+        progress.setVisibility(View.GONE);
     }
 
     private void refreshList() {
@@ -181,11 +185,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         }
 
         refreshProperty.set(!refreshProperty.get());
-        try {
-            old.saveToDisk();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        old.saveToDisk();
     }
 
     @Override

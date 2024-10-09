@@ -32,6 +32,7 @@ import com.tungsten.fcl.game.JarExecutorHelper
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
+import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.UIManager
@@ -310,11 +311,15 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 JarExecutorHelper.start(this@MainActivity, this@MainActivity)
             }
             if (view === launch) {
+                if (!Controllers.isInitialized()) {
+                    title.setTextWithAnim(getString(R.string.message_loading_controllers))
+                    return
+                }
                 Versions.launch(this@MainActivity, Profiles.getSelectedProfile())
             }
             if (view === launchBoat) {
                 FCLBridge.BACKEND_IS_BOAT = true;
-                Versions.launch(this@MainActivity, Profiles.getSelectedProfile())
+                onClick(launch)
             }
         }
     }

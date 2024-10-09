@@ -992,6 +992,7 @@
     <string name="gamepad_button_binding">Gamepad button binding</string>
     <string name="joystick_r">Right joystick</string>
     <string name="message_vulkan_driver_system">The current GPU is Adreno, it is not recommended to enable this option.</string>
+    <string name="message_loading_controllers">Loading controllers, please wait...</string>
 
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
