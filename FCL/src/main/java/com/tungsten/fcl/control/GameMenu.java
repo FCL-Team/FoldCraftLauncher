@@ -380,7 +380,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 return;
             }
             if (isChecked) {
-                showFpsThread = new Thread(() -> {
+                Schedulers.io().execute(() -> {
                     FCLBridge.getFps();
                     while (showFps.isChecked()) {
                         if (System.currentTimeMillis() - time >= 1000) {
@@ -388,13 +388,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                             time = System.currentTimeMillis();
                         }
                     }
-                }, "FPS");
-                showFpsThread.start();
+                });
             } else {
-                if (showFpsThread != null) {
-                    showFpsThread.interrupt();
-                    showFpsThread = null;
-                }
                 fpsText.setText("");
             }
         });
