@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1184,
-    "versionName": "1.1.8.4",
-    "date": "2024.10.05",
+    "versionCode": 1185,
+    "versionName": "1.1.8.5",
+    "date": "2024.10.09",
     "description": [
       {
         "lang": "en",
-        "text": "1. Add new renderer LTW (Pojav&Boat)\n2. Fix ReplayMod (1.17+) (Pojav backend only) (PojavFFmpegPlugin must be installed)\n3. Fix 1.7.2 Forge (Boat backend only)\n4. Fix some bugs"
+        "text": "1. Fix the bug that long-pressing the Boat option to start the renderer as Pojav.\n2. Added a prompt for the zink system driver.\n3. Allowed customizing the floating ball icon (gif/png) (hidden feature).\n4. Updated mod translation information.\n5. Added quick navigation to \"MC百科.\"\n6. Fix Pojav backend-related bugs (voxel map, low version shaders crash).\n7. Optimized controllers loading.\n8. Fix some bugs.\n"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加新渲染器LTW（Pojav&Boat）\n2.修复ReplayMod（1.17+）（仅Pojav后端）（必须安装PojavFFmpegPlugin）\n3.修复1.7.2Forge（仅Boat后端）\n4修复一些bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复长按Boat选择渲染器启动为Pojav的bug\n2.添加zink系统驱动提示\n3.允许自定义悬浮球图标(gif/png)(隐藏功能)\n4.更新模组翻译信息\n5.添加”MC百科“快速跳转\n6.修复Pojav后端相关bug（体素地图、低版本光影闪退）\n7.优化按键加载\n8.修复一些bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/e7a6a4772fa4",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.4/FCL-release-1.1.8.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c698b633f071",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.5/FCL-release-1.1.8.5-all.apk"
   }
 ]
