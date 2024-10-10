@@ -113,7 +113,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton manageButtonStyle;
     private FCLButton manageDirectionStyle;
 
-    private FCLButton openMultiplayerMenu;
     private FCLButton manageQuickInput;
     private FCLButton sendKeycode;
     private FCLButton gamepadResetMapper;
@@ -361,7 +360,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLTextView gamepadAimZoneText = findViewById(R.id.gamepad_aimzone_text);
         FCLTextView gyroSensitivityText = findViewById(R.id.gyro_sensitivity_text);
 
-        openMultiplayerMenu = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
         gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
@@ -522,7 +520,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadAimZoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadAimZoneProperty.get() + " %", gamepadAimZoneProperty));
         gyroSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getGyroscopeSensitivityProperty().get() + "", menuSetting.getGyroscopeSensitivityProperty()));
 
-        openMultiplayerMenu.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
         gamepadResetMapper.setOnClickListener(this);
@@ -784,10 +781,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (v == manageDirectionStyle) {
             DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
             dialog.show();
-        }
-
-        if (v == openMultiplayerMenu) {
-
         }
         if (v == manageQuickInput) {
             openQuickInput();

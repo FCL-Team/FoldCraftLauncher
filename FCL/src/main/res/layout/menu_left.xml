@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.tungsten.fcllibrary.component.view.FCLLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,7 +23,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp">
 
-        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -41,7 +41,7 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:padding="5dp"
@@ -65,9 +65,9 @@
                     android:layout_gravity="center"
                     android:id="@+id/current_controller"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_width="match_parent"
@@ -90,9 +90,9 @@
                     android:layout_gravity="center"
                     android:id="@+id/edit_mode"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_width="match_parent"
@@ -115,9 +115,9 @@
                     android:layout_gravity="center"
                     android:id="@+id/show_boundary"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_width="match_parent"
@@ -140,9 +140,9 @@
                     android:layout_gravity="center"
                     android:id="@+id/hide_all"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
                 android:layout_width="match_parent"
@@ -165,9 +165,9 @@
                     android:layout_gravity="center"
                     android:id="@+id/auto_fit"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            <LinearLayout
                 android:layout_marginTop="5dp"
                 android:padding="5dp"
                 android:layout_width="match_parent"
@@ -193,7 +193,7 @@
                     android:layout_gravity="center"
                     android:textSize="12sp"/>
 
-            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+            </LinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLSeekBar
                 android:layout_marginTop="10dp"
@@ -224,7 +224,7 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="5dp"
                     android:padding="5dp"
@@ -248,9 +248,9 @@
                         android:layout_gravity="center"
                         android:id="@+id/current_view_group"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:padding="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -276,9 +276,9 @@
                         android:textSize="12sp"
                         android:id="@+id/manage_view_groups"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:padding="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -304,9 +304,9 @@
                         android:textSize="12sp"
                         android:id="@+id/add_button"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:padding="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -332,7 +332,7 @@
                         android:textSize="12sp"
                         android:id="@+id/add_direction"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     app:auto_text_tint="true"
@@ -348,7 +348,7 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:padding="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -374,9 +374,9 @@
                         android:textSize="12sp"
                         android:id="@+id/manage_button_style"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <LinearLayout
                     android:padding="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
@@ -402,12 +402,12 @@
                         android:textSize="12sp"
                         android:id="@+id/manage_direction_style"/>
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                </LinearLayout>
 
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+        </LinearLayout>
 
     </ScrollView>
 
-</com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+</LinearLayout>
