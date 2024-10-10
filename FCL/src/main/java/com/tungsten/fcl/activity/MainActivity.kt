@@ -397,9 +397,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             )
         ) {
             Schedulers.defaultScheduler().execute {
-                val game = Profiles.getSelectedProfile().repository.getGameVersion(version)
-                    .orElse(getString(R.string.message_unknown))
-                val libraries = StringBuilder(game)
+                var game: String? = null
+                kotlin.runCatching {
+                    game = Profiles.getSelectedProfile().repository.getGameVersion(version)
+                        .orElse(getString(R.string.message_unknown))
+                }
+                if (game == null) return@execute
+                val libraries = StringBuilder(game!!)
                 val analyzer = LibraryAnalyzer.analyze(
                     Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
