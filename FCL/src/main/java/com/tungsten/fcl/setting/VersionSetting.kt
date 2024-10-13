@@ -28,6 +28,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fclauncher.FCLConfig
+import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
@@ -225,6 +226,14 @@ class VersionSetting : Cloneable {
             rendererProperty.set(renderer)
         }
 
+    val customRendererProperty: ObjectProperty<String> =
+        SimpleObjectProperty(this, "customRenderer", "")
+    var customRenderer: String
+        get() = customRendererProperty.get()
+        set(renderer) {
+            customRendererProperty.set(renderer)
+        }
+
     // launcher settings
     fun getJavaVersion(version: Version?): Task<JavaVersion> {
         return Task.runAsync(Schedulers.androidUIThread()) {
@@ -274,6 +283,7 @@ class VersionSetting : Cloneable {
         vkDriverSystemProperty.addListener(listener)
         controllerProperty.addListener(listener)
         rendererProperty.addListener(listener)
+        customRendererProperty.addListener(listener)
     }
 
     public override fun clone(): VersionSetting {
@@ -295,6 +305,7 @@ class VersionSetting : Cloneable {
             it.isVKDriverSystem = isVKDriverSystem
             it.controller = controller
             it.renderer = renderer
+            it.customRenderer = customRenderer
         }
     }
 
@@ -326,6 +337,7 @@ class VersionSetting : Cloneable {
                 addProperty("controller", src.controller)
                 addProperty("renderer", src.renderer.ordinal)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
+                addProperty("customRenderer", src.customRenderer)
             }
         }
 
@@ -358,9 +370,21 @@ class VersionSetting : Cloneable {
                 vs.isBeGesture = json["beGesture"]?.asBoolean ?: false
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
-                vs.renderer = FCLConfig.Renderer.values()[json["renderer"]?.asInt
+                vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[json["renderer"]?.asInt
                     ?: FCLConfig.Renderer.RENDERER_GL4ES.ordinal]
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
+                vs.customRenderer = json["customRenderer"]?.asString ?: ""
+                if (vs.customRenderer != "") {
+                    RendererPlugin.rendererList.forEach {
+                        if (it.des == vs.customRenderer) {
+                            RendererPlugin.selected = it
+                        }
+                    }
+                }
+                if (RendererPlugin.rendererList.size == 0 && vs.customRenderer != "") {
+                    vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[0]
+                    vs.customRenderer = ""
+                }
             }
         }
 

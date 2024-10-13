@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
@@ -124,6 +125,7 @@ public class SplashActivity extends FCLActivity {
     }
 
     public void enterLauncher() {
+        RendererPlugin.init(this);
         finish();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

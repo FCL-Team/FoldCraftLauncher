@@ -17,6 +17,7 @@ import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
+import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -154,6 +155,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_FREEDRENO);
+        if (!RendererPlugin.getRendererList().isEmpty()) {
+            rendererDataList.add(FCLConfig.Renderer.RENDERER_CUSTOM);
+        }
         rendererSpinner.setDataList(rendererDataList);
 
         // add spinner text
@@ -174,9 +178,19 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_vgpu));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_zink));
         rendererList.add(getContext().getString(R.string.settings_fcl_renderer_freedreno));
+        RendererPlugin.getRendererList().forEach(renderer -> {
+            rendererList.add(renderer.getDes());
+        });
         ArrayAdapter<String> rendererAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, rendererList);
         rendererAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         rendererSpinner.setAdapter(rendererAdapter);
+        rendererSpinner.setListener(pos -> {
+            if (pos > 5) {
+                lastVersionSetting.setRenderer(FCLConfig.Renderer.RENDERER_CUSTOM);
+                lastVersionSetting.setCustomRenderer(RendererPlugin.getRendererList().get(pos - 6).getDes());
+                RendererPlugin.setSelected(RendererPlugin.getRendererList().get(pos - 6));
+            }
+        });
 
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
@@ -208,10 +222,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
 
         memoryText.stringProperty().bind(Bindings.createStringBinding(() -> allocateSeekbar.progressProperty().intValue() + " MB", allocateSeekbar.progressProperty()));
-        memoryText.setOnClickListener(v->{
+        memoryText.setOnClickListener(v -> {
             EditDialog dialog = new EditDialog(getContext(), s -> {
                 if (s.matches("\\d+(\\.\\d+)?$")) {
-                   allocateSeekbar.setProgress(Integer.parseInt(s));
+                    allocateSeekbar.setProgress(Integer.parseInt(s));
                 }
             });
             dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);

@@ -12,6 +12,7 @@ import com.jaredrummler.android.device.DeviceName;
 import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
+import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 
@@ -81,7 +82,7 @@ public class FCLauncher {
         return jvmLibDir;
     }
 
-    private static String getLibraryPath(Context context, String javaPath) throws IOException {
+    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String jreLibDir = getJreLibDir(javaPath);
@@ -118,10 +119,12 @@ public class FCLauncher {
                 FCLPath.RUNTIME_DIR + "/jna" +
                 split +
 
+                ((pluginLibPath != null) ? pluginLibPath + split : "") +
+
                 nativeDir;
     }
 
-    private static String getLibraryPath(Context context) {
+    private static String getLibraryPath(Context context, String pluginLibPath) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
@@ -138,6 +141,8 @@ public class FCLauncher {
                 "/hw" +
                 split +
 
+                ((pluginLibPath != null) ? pluginLibPath + split : "") +
+
                 nativeDir;
     }
 
@@ -146,8 +151,8 @@ public class FCLauncher {
         argList.add(0, config.getJavaPath() + "/bin/java");
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
-            String a = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath()));
-            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer().getGlLibName());
+            String a = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));
+            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getGlName() : config.getRenderer().getGlLibName());
         }
         return args;
     }
@@ -159,7 +164,7 @@ public class FCLauncher {
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext()));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));
         envMap.put("FORCE_VSYNC", "false");
         if (!config.getJavaPath().contains("jre8")) {
             String libName = config.getJavaPath().contains("jre17") ? "/libjsph17.so" : "/libjsph21.so";
@@ -177,6 +182,24 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
+        if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
+            if (FCLBridge.BACKEND_IS_BOAT) {
+                envMap.put("LIBGL_STRING", RendererPlugin.getSelected().getName());
+                envMap.put("LIBGL_NAME", RendererPlugin.getSelected().getGlName());
+                envMap.put("LIBEGL_NAME", RendererPlugin.getSelected().getEglName());
+                RendererPlugin.getSelected().getBoatEnv().forEach(env -> {
+                    String[] split = env.split("=");
+                    envMap.put(split[0], split[1]);
+                });
+            } else {
+                envMap.put("POJAVEXEC_EGL", RendererPlugin.getSelected().getEglName());
+                RendererPlugin.getSelected().getPojavEnv().forEach(env -> {
+                    String[] split = env.split("=");
+                    envMap.put(split[0], split[1]);
+                });
+            }
+            return;
+        }
         if (FCLBridge.BACKEND_IS_BOAT) {
             envMap.put("LIBGL_STRING", renderer.toString());
             envMap.put("LIBGL_NAME", renderer.getGlLibName());
@@ -316,7 +339,7 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath()));
+        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));
         bridge.setupExitTrap(bridge);
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);

@@ -152,5 +152,8 @@
     </application>
     <queries>
         <package android:name="net.kdt.pojavlaunch.ffmpeg"/>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
     </queries>
 </manifest>

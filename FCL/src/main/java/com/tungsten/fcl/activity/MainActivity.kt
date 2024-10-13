@@ -43,6 +43,7 @@ import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
+import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
@@ -482,6 +483,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 add(getString(R.string.settings_fcl_renderer_vgpu))
                 add(getString(R.string.settings_fcl_renderer_zink))
                 add(getString(R.string.settings_fcl_renderer_freedreno))
+                RendererPlugin.rendererList.forEach {
+                    add(it.des)
+                }
             })
         listView.setOnItemClickListener { _, _, position, _ ->
             val selectedProfile = Profiles.getSelectedProfile()
@@ -494,7 +498,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 add(FCLConfig.Renderer.RENDERER_ZINK)
                 add(FCLConfig.Renderer.RENDERER_FREEDRENO)
             }
-            versionSetting.renderer = rendererList[position]
+            if (position > rendererList.size - 1) {
+                versionSetting.renderer = FCLConfig.Renderer.RENDERER_CUSTOM
+                RendererPlugin.selected = RendererPlugin.rendererList[position - rendererList.size]
+            } else {
+                versionSetting.renderer = rendererList[position]
+            }
             popupWindow?.dismiss()
             onClick(view)
         }
