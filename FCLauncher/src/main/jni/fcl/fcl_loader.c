@@ -194,7 +194,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibrar
 
 typedef void (*exit_func)(int);
 
-_Noreturn static void nominal_exit(int code) {
+_Noreturn void nominal_exit(int code) {
     JNIEnv *env;
     jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void**)&env, JNI_VERSION_1_6);
     if(errorCode == JNI_EDETACHED) {

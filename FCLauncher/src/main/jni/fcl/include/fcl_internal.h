@@ -48,6 +48,8 @@ struct FCLInternal {
 
 extern struct FCLInternal *fcl;
 
+_Noreturn void nominal_exit(int code);
+
 #define FCL_INTERNAL_LOG(x...) do { \
     fprintf(fcl->logFile, "[FCL Internal] %s:%d\n", __FILE__, __LINE__); \
     fprintf(fcl->logFile, x); \
