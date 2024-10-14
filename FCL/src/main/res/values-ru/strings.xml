@@ -152,21 +152,21 @@
     Хотите перенести его на новую версию?"</string>
     <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией Лаунчера или слишком низкой версией контроллера.</string>
     <string name="control_upload_requirement">Сначала присоединитесь к QQ группе, затем нажмите "Поделиться", чтобы поделиться контроллером и его информацией с администратором и дождаться проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
-    <string name="control_info_author">Автор</string>
+    <string name="control_info_author">Автор:</string>
     <string name="control_info_icon">Иконка:</string>
     <string name="control_info_lang">Язык:</string>
     <string name="control_info_device">Тип устройства:</string>
     <string name="control_info_screenshot">Скриншоты:</string>
     <string name="control_info_intro">Описание:</string>
-    <string name="control_info_description">Описание</string>
+    <string name="control_info_description">Описание:</string>
     <string name="control_info_screenshot_max">Можно загрузить до 16 скриншотов!</string>
     <string name="control_info_edit">Редактировать информацию о контроллере</string>
     <string name="control_info_more">Подробнее</string>
-    <string name="control_info_name">Название</string>
+    <string name="control_info_name">Название:</string>
     <string name="control_info_name_exist">Контроллер уже существует, измените название!</string>
     <string name="control_info_name_invalid">Неверное название</string>
-    <string name="control_info_version">Версия</string>
-    <string name="control_info_version_code">Версия</string>
+    <string name="control_info_version">Версия:</string>
+    <string name="control_info_version_code">Версия:</string>
     <string name="control_list">Список контроллеров</string>
     <string name="control_select">Выберите контроллер</string>
     <string name="control_share">Поделиться контроллером</string>
@@ -1067,5 +1067,5 @@
     <string name="file_browser_share_message">Вы уверены, что хотите поделиться этим файлом?</string>
     <string name="file_browser_share_title">Поделиться файлом</string>
     <string name="file_browser_shared">Общая папка</string>
-    <string name="file_browser_title">Файловый менеджер</string>
+    <string name="file_browser_title">Файловый менеджер</string> 
 </resources>
