@@ -12,6 +12,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="10dp"
+        android:stateListAnimator="@xml/anim_scale"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
