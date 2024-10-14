@@ -183,7 +183,6 @@
     <string name="curse_category_4476">Исследования</string>
     <string name="curse_category_4736">Скайблок</string>
     <string name="curse_category_4475">Приключения и RPG</string>
-    <string name="curse_category_4487">FTB</string>
     <string name="curse_category_4480">На основе карты</string>
     <string name="curse_category_4479">Хардкор</string>
     <string name="curse_category_4482">Очень большой</string>
@@ -248,15 +247,11 @@
     <string name="curse_category_5244">Шрифты</string>
     <string name="curse_category_5193">Датапаки</string>
     <string name="curse_category_399">Стимпанк</string>
-    <string name="curse_category_396">128x</string>
     <string name="curse_category_398">512x и больше</string>
     <string name="curse_category_397">256x</string>
     <string name="curse_category_405">Разное</string>
-    <string name="curse_category_395">64x</string>
     <string name="curse_category_400">Реалистичные</string>
-    <string name="curse_category_393">16x</string>
     <string name="curse_category_403">Традиционные</string>
-    <string name="curse_category_394">32x</string>
     <string name="curse_category_404">Анимированные</string>
     <string name="curse_category_4465">Поддерживаемые моды</string>
     <string name="curse_category_402">Средневековые</string>
@@ -297,8 +292,6 @@
     <string name="download_failed_empty">Нет доступных версий</string>
     <string name="download_failed_refresh">Не удалось получить список версий. Пожалуйста, повторите попытку.</string>
 
-    <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
-    <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
     <string name="download_provider_mojang">Mojang (OptiFine предоставляется BMCLAPI)</string>
     <string name="download_provider_official">Из официальных источников</string>
     <string name="download_provider_balanced">Из самых быстрых доступных</string>
@@ -637,7 +630,7 @@
     <string name="menu_settings_gamepad">Геймпад</string>
     <string name="menu_settings_gamepad_reset_mapper">Сбросить настройки управления</string>
     <string name="menu_settings_gamepad_button_binding">Привязка кнопок</string>
-    <string name="menu_settings_gamepad_open_button">Open</string>
+    <string name="menu_settings_gamepad_open_button">Выбрать</string>
     <string name="menu_settings_gamepad_reset">Сбросить</string>
     <string name="menu_settings_gamepad_deadzone">Мертвая зона</string>
     <string name="menu_settings_gamepad_aimzone">Зона прицеливания аима</string>
@@ -710,8 +703,6 @@
     <string name="modpack_type_manual_warning">Этот модпак собран вручную автором и может содержать собственный лаунчер. Рекомендуется распаковать архив и попробовать запустить игру с помощью него. FCL может импортировать этот модпак, но корректная работа не гарантируется. Продолжить?</string>
     <string name="modpack_type_mcbbs">Тип MCBBS</string>
     <string name="modpack_type_mcbbs_export">Может быть импортирован FCL, HMCL и MultiMC</string>
-    <string name="modpack_type_modrinth">Modrinth</string>
-    <string name="modpack_type_multimc">MultiMC</string>
     <string name="modpack_type_multimc_export">Может быть импортирован FCL, HMCL и MultiMC</string>
     <string name="modpack_type_server">Автоматическое обновление модпака с сервера</string>
     <string name="modpack_type_server_export">Позволяет владельцу сервера удаленно обновлять профиль игры</string>
@@ -791,7 +782,6 @@
     <string name="mods_check_updates_target_version">Целевая версия</string>
     <string name="mods_check_updates_update">Обновить список</string>
     <string name="mods_choose_mod">Выберите мод</string>
-    <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Зависимость</string>
     <string name="mods_dependency_embedded">Встроен в мод (не требует загрузки)</string>
     <string name="mods_dependency_optional">Дополнительный мод</string>
@@ -806,11 +796,8 @@
     <string name="mods_download_recommend">Рекомендуемая версия мода - Minecraft %1s</string>
     <string name="mods_enable">Включить</string>
     <string name="mods_manage">Моды</string>
-    <string name="mods_mcbbs">MCBBS</string>
-    <string name="mods_mcmod">MCMOD</string>
     <string name="mods_mcmod_page">MCMOD страница</string>
     <string name="mods_mcmod_search">Найти в MCMOD</string>
-    <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">Название</string>
     <string name="mods_not_modded">Вы должны сначала установить загрузчик модов (Fabric, Forge или LiteLoader), чтобы управлять своими модами!</string>
     <string name="mods_restore">Восстановить</string>
@@ -1080,5 +1067,5 @@
     <string name="file_browser_share_message">Вы уверены, что хотите поделиться этим файлом?</string>
     <string name="file_browser_share_title">Поделиться файлом</string>
     <string name="file_browser_shared">Общая папка</string>
-    <string name="file_browser_title">Файловый менеджер</string> 
+    <string name="file_browser_title">Файловый менеджер</string>
 </resources>
