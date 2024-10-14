@@ -610,7 +610,7 @@
     <string name="menu_settings_disable_gesture">Отключить жесты</string>
     <string name="menu_settings_force_exit">Принудительный выход</string>
     <string name="menu_settings_force_exit_button">Выход</string>
-    <string name="menu_settings_force_exit_msg">Вы уверены, что хотите принудительно выйти?</string>
+    <string name="menu_settings_force_exit_msg">Вы уверены, что хотите выйти?</string>
     <string name="menu_settings_function">Функция</string>
     <string name="menu_settings_gesture">Жест</string>
     <string name="menu_settings_gesture_mode">Режим жестов</string>
