@@ -87,8 +87,7 @@
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>
     <string name="account_skin_type_csl_api_location_hint">URL-адрес</string>
-    <string name="account_skin_type_csl_api_hint">"Имя персонажа на сайте должно совпадать с именем аккаунта 
-    Скин загрузится автоматически."</string>
+    <string name="account_skin_type_csl_api_hint">"Имя персонажа на сайте должно совпадать с именем аккаунта. Скин загрузится автоматически."</string>
     <string name="account_skin_type_local_file">Локальный скин</string>
     <string name="account_skin_upload">Выбрать скин на устройстве</string>
     <string name="account_state_no_account">Нет аккаунта</string>
