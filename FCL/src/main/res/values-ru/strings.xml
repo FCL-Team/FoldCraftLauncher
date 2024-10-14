@@ -166,7 +166,7 @@
     <string name="control_info_name_exist">Контроллер уже существует, измените название!</string>
     <string name="control_info_name_invalid">Неверное название</string>
     <string name="control_info_version">Версия</string>
-    <string name="control_info_version_code">Версия:</string>
+    <string name="control_info_version_code">Версия</string>
     <string name="control_list">Список контроллеров</string>
     <string name="control_select">Выберите контроллер</string>
     <string name="control_share">Поделиться контроллером</string>
