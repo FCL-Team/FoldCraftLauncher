@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dialog_alert">Предупреждение</string>
-    <string name="dialog_negative">Отменить</string>
+    <string name="file_browser_title">Файловый менеджер</string>
     <string name="file_browser_back">Назад</string>
     <string name="file_browser_close">Выйти</string>
+    <string name="file_browser_shared">Общая папка</string>
+    <string name="file_browser_private">Приватная папка</string>
+    <string name="file_browser_open_external">Открыть во внешнем приложении</string>
+    <string name="file_browser_select_external">Выбрать с помощью внешнего приложения</string>
+    <string name="file_browser_private_alert">Нет доступа к приватной папке. Проверьте разрешения.</string>
     <string name="file_browser_mode">Режим:</string>
     <string name="file_browser_mode_browse">Просмотр файлов</string>
     <string name="file_browser_mode_file">Выбор файла</string>
     <string name="file_browser_mode_folder">Выбор папки</string>
-    <string name="file_browser_open_external">Открыть во внешнем приложении</string>
+    <string name="file_browser_selection">Тип:</string>
+    <string name="file_browser_selection_simple">Одиночный выбор</string>
+    <string name="file_browser_selection_multiple">Множественный выбор</string>
     <string name="file_browser_positive">Подтвердить</string>
     <string name="file_browser_positive_alert">Не выбран файл или папка!</string>
-    <string name="file_browser_private">Приватная папка</string>
-    <string name="file_browser_private_alert">Нет доступа к приватной папке. Проверьте разрешения.</string>
-    <string name="file_browser_select_external">Выбрать с помощью внешнего приложения</string>
-    <string name="file_browser_selection">Тип:</string>
-    <string name="file_browser_selection_multiple">Множественный выбор</string>
-    <string name="file_browser_selection_simple">Одиночный выбор</string>
-    <string name="file_browser_share_message">Вы уверены, что хотите поделиться этим файлом?</string>
     <string name="file_browser_share_title">Поделиться файлом</string>
-    <string name="file_browser_shared">Общая папка</string>
-    <string name="file_browser_title">Файловый менеджер</string>
+    <string name="file_browser_share_message">Вы уверены, что хотите поделиться этим файлом?</string>
+
+    <string name="crash_reporter_title">Отчет об ошибке</string>
+    <string name="crash_reporter_hint">В Fold Craft Launcher произошла критическая ошибка. Обратитесь к разработчику или в сообщество за помощью.</string>
+    <string name="crash_reporter_restart">Перезапустить</string>
+    <string name="crash_reporter_close">Выйти</string>
+    <string name="crash_reporter_copy">Копировать</string>
+    <string name="crash_reporter_share">Поделиться</string>
+    <string name="crash_reporter_toast">Скопировано!</string>
+
+    <string name="color_picker_title">Палитра цветов</string>
+    <string name="color_picker_toast">Неизвестный цвет!</string>
+
+    <string name="dialog_alert">Предупреждение</string>
+    <string name="dialog_info">Информация</string>
+    <string name="dialog_positive">ОК</string>
+    <string name="dialog_negative">Отменить</string>
 </resources>
