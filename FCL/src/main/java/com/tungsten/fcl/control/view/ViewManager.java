@@ -25,6 +25,7 @@ public class ViewManager {
         MenuView menuView = new MenuView(gameMenu.getActivity());
         menuView.setElevation(114.0f);
         menuView.setup(gameMenu);
+        gameMenu.setMenuView(menuView);
         gameMenu.getBaseLayout().addView(menuView);
         menuView.initPosition();
         gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));

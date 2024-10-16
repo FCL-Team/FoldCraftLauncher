@@ -550,6 +550,7 @@
     <string name="menu_settings_gyro">Gyroscope</string>
     <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
     <string name="menu_settings_lock_view">Lock Menu View</string>
+    <string name="menu_settings_hide_view">Hide Menu View</string>
     <string name="menu_settings_show_fps">Show FPS</string>
     <string name="menu_settings_mouse">Mouse</string>
     <string name="menu_settings_mouse_mode">Mouse Mode</string>
@@ -825,6 +826,7 @@
     <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
+    <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
 
