@@ -69,11 +69,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton ltBackground;
     private FCLButton dkBackground;
     private FCLButton cursor;
+    private FCLButton menuIcon;
     private FCLButton resetTheme;
     private FCLButton resetTheme2;
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLButton resetCursor;
+    private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
     private FCLSeekBar animationSpeed;
     private FCLTextView animationSpeedText;
@@ -100,11 +102,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         ltBackground = findViewById(R.id.background_lt);
         dkBackground = findViewById(R.id.background_dk);
         cursor = findViewById(R.id.cursor);
+        menuIcon = findViewById(R.id.menu_icon);
         resetTheme = findViewById(R.id.reset_theme);
         resetTheme2 = findViewById(R.id.reset_theme2);
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         resetCursor = findViewById(R.id.reset_cursor);
+        resetMenuIcon = findViewById(R.id.reset_menu_icon);
         ignoreNotch = findViewById(R.id.ignore_notch);
         animationSpeed = findViewById(R.id.animation_speed);
         animationSpeedText = findViewById(R.id.animation_speed_text);
@@ -123,11 +127,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         ltBackground.setOnClickListener(this);
         dkBackground.setOnClickListener(this);
         cursor.setOnClickListener(this);
+        menuIcon.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
         resetTheme2.setOnClickListener(this);
         resetLtBackground.setOnClickListener(this);
         resetDkBackground.setOnClickListener(this);
         resetCursor.setOnClickListener(this);
+        resetMenuIcon.setOnClickListener(this);
 
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add(getContext().getString(R.string.settings_launcher_language_system));
@@ -342,7 +348,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 }
             }));
         }
-        if(v == cursor) {
+        if (v == cursor) {
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
             builder.setLibMode(LibMode.FILE_CHOOSER);
             builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
@@ -358,6 +364,39 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     } else {
                         try {
                             FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "cursor.png"));
+                        } catch (IOException ignore) {
+                        }
+                    }
+                }
+            }));
+        }
+        if (v == menuIcon) {
+            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setLibMode(LibMode.FILE_CHOOSER);
+            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+            ArrayList<String> suffix = new ArrayList<>();
+            suffix.add(".png");
+            suffix.add(".gif");
+            builder.setSuffix(suffix);
+            builder.create().browse(getActivity(), RequestCodes.SELECT_CURSOR_CODE, ((requestCode, resultCode, data) -> {
+                if (requestCode == RequestCodes.SELECT_CURSOR_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    String type = getContext().getContentResolver().getType(uri);
+                    if (type != null) {
+                        if (type.contains("png")) {
+                            type = "png";
+                        } else if (type.contains("gif")) {
+                            type = "gif";
+                        }
+                    } else {
+                        type = "png";
+                    }
+                    if (AndroidUtils.isDocUri(uri)) {
+                        AndroidUtils.copyFile(getActivity(), uri, new File(FCLPath.FILES_DIR, "menu_icon." + type));
+                    } else {
+                        try {
+                            FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "menu_icon." + type));
                         } catch (IOException ignore) {
                         }
                     }
@@ -388,6 +427,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         }
         if (v == resetCursor) {
             new File(FCLPath.FILES_DIR, "cursor.png").delete();
+        }
+        if (v == resetMenuIcon) {
+            new File(FCLPath.FILES_DIR, "menu_icon.png").delete();
+            new File(FCLPath.FILES_DIR, "menu_icon.gif").delete();
         }
     }
 
