@@ -519,6 +519,7 @@
     <string name="menu_settings_gyro">陀螺仪</string>
     <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
+    <string name="menu_settings_hide_view">隐藏菜单键</string>
     <string name="menu_settings_show_fps">显示FPS</string>
     <string name="menu_settings_mouse">鼠标</string>
     <string name="menu_settings_mouse_mode">鼠标控制模式</string>

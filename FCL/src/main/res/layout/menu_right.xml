@@ -76,6 +76,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:singleLine="true"
+                android:text="@string/menu_settings_hide_view"
+                android:textSize="12sp"
+                app:auto_text_tint="true"
+                app:layout_constraintBottom_toBottomOf="@id/switch_hide_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/switch_hide_view" />
+
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/switch_hide_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_lock_view" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
                 android:text="@string/menu_settings_show_fps"
                 android:textSize="12sp"
                 app:auto_text_tint="true"
@@ -89,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_lock_view" />
+                app:layout_constraintTop_toBottomOf="@id/switch_hide_view" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"

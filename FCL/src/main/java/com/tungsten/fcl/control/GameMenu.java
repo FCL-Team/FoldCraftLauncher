@@ -33,6 +33,7 @@ import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
 import com.tungsten.fcl.control.view.LogWindow;
+import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
 import com.tungsten.fcl.setting.Controller;
@@ -119,8 +120,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton gamepadButtonBinding;
     private FCLButton forceExit;
 
-    private Thread showFpsThread;
     private long time = 0;
+
+    private MenuView menuView;
+
+    public void setMenuView(MenuView menuView) {
+        this.menuView = menuView;
+    }
 
     public FCLActivity getActivity() {
         return activity;
@@ -332,6 +338,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private void initRightMenu() {
         FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
+        FCLSwitch hideMenuSwitch = findViewById(R.id.switch_hide_view);
         FCLSwitch showFps = findViewById(R.id.switch_show_fps);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
         FCLSwitch disableGestureSwitch = findViewById(R.id.switch_gesture);
@@ -372,6 +379,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
+
+        hideMenuSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            menuView.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
+            ((DrawerLayout) getLayout()).setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        });
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isSimulated()) {
