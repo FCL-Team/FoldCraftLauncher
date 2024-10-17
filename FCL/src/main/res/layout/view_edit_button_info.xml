@@ -41,7 +41,7 @@
             android:textSize="12sp"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:id="@+id/text"/>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>

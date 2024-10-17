@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -13,6 +14,7 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -143,6 +145,7 @@ public class ViewGroupAdapter extends FCLAdapter {
             builder.setNegativeButton(null);
             builder.create().show();
         });
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 }
