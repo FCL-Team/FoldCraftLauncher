@@ -42,6 +42,8 @@
 EGLConfig config;
 struct PotatoBridge potatoBridge;
 
+void bigcore_set_affinity();
+
 #include "ctxbridges/egl_loader.h"
 #include "ctxbridges/osmesa_loader.h"
 #include "pojav/virgl/virgl.h"
@@ -259,6 +261,7 @@ EXTERNAL_API void pojavSwapBuffers() {
 
 
 EXTERNAL_API void pojavMakeCurrent(void* window) {
+    if (getenv("POJAV_BIG_CORE_AFFINITY") != NULL) bigcore_set_affinity();
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglMakeCurrent(window);
     else br_make_current((basic_render_window_t*)window);

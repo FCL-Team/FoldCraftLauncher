@@ -234,6 +234,14 @@ class VersionSetting : Cloneable {
             customRendererProperty.set(renderer)
         }
 
+    val pojavBigCoreProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "pojavBigCore", false)
+    var isPojavBigCore: Boolean
+        get() = pojavBigCoreProperty.get()
+        set(pojavBigCore) {
+            pojavBigCoreProperty.set(pojavBigCore)
+        }
+
     // launcher settings
     fun getJavaVersion(version: Version?): Task<JavaVersion> {
         return Task.runAsync(Schedulers.androidUIThread()) {
@@ -284,6 +292,7 @@ class VersionSetting : Cloneable {
         controllerProperty.addListener(listener)
         rendererProperty.addListener(listener)
         customRendererProperty.addListener(listener)
+        pojavBigCoreProperty.addListener(listener)
     }
 
     public override fun clone(): VersionSetting {
@@ -306,6 +315,7 @@ class VersionSetting : Cloneable {
             it.controller = controller
             it.renderer = renderer
             it.customRenderer = customRenderer
+            it.isPojavBigCore = isPojavBigCore
         }
     }
 
@@ -338,6 +348,7 @@ class VersionSetting : Cloneable {
                 addProperty("renderer", src.renderer.ordinal)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
                 addProperty("customRenderer", src.customRenderer)
+                addProperty("pojavBigCore", src.isPojavBigCore)
             }
         }
 
@@ -374,6 +385,7 @@ class VersionSetting : Cloneable {
                     ?: FCLConfig.Renderer.RENDERER_GL4ES.ordinal]
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.customRenderer = json["customRenderer"]?.asString ?: ""
+                vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
                 if (vs.customRenderer != "") {
                     RendererPlugin.rendererList.forEach {
                         if (it.des == vs.customRenderer) {
