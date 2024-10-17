@@ -47,6 +47,7 @@ public class LaunchOptions implements Serializable {
     private String serverIp;
     private boolean beGesture;
     private boolean vulkanDriverSystem;
+    private boolean pojavBigCore;
     private FCLConfig.Renderer renderer;
 
     /**
@@ -171,6 +172,10 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isVKDriverSystem() {
         return vulkanDriverSystem;
+    }
+
+    public boolean isPojavBigCore() {
+        return pojavBigCore;
     }
 
     /**
@@ -406,6 +411,11 @@ public class LaunchOptions implements Serializable {
 
         public Builder setRenderer(FCLConfig.Renderer renderer) {
             options.renderer = renderer;
+            return this;
+        }
+
+        public Builder setPojavBigCore(boolean pojavBigCore) {
+            options.pojavBigCore = pojavBigCore;
             return this;
         }
 

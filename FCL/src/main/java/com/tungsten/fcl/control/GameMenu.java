@@ -374,15 +374,16 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         forceExit = findViewById(R.id.force_exit);
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
+        FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());
         FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
 
-        hideMenuSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            menuView.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
-            ((DrawerLayout) getLayout()).setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        menuSetting.getHideMenuViewViewProperty().addListener(observable -> {
+            menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);
+            ((DrawerLayout) getLayout()).setDrawerLockMode(menuSetting.isHideMenuView() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         });
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -3,6 +3,8 @@ package com.tungsten.fcl.control.view;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.ControlButtonData;
@@ -30,6 +32,10 @@ public class ViewManager {
         menuView.initPosition();
         gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));
 
+        if (gameMenu.getMenuSetting().isHideMenuView()) {
+            menuView.setVisibility(View.INVISIBLE);
+            ((DrawerLayout) gameMenu.getLayout()).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
         // Initialize controller
         initializeController();
         gameMenu.controllerProperty().addListener(i -> initializeController());

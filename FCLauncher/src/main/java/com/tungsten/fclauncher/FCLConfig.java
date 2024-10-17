@@ -58,6 +58,7 @@ public class FCLConfig implements Serializable {
     private final Renderer renderer;
     private final String[] args;
     private boolean useVKDriverSystem = false;
+    private boolean pojavBigCore = false;
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -98,6 +99,14 @@ public class FCLConfig implements Serializable {
 
     public boolean isUseVKDriverSystem() {
         return useVKDriverSystem;
+    }
+
+    public void setPojavBigCore(boolean pojavBigCore) {
+        this.pojavBigCore = pojavBigCore;
+    }
+
+    public boolean isPojavBigCore() {
+        return pojavBigCore;
     }
 
 }

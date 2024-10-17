@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 
@@ -69,6 +70,10 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         this.customControl = cloneView;
         this.callback = callback;
         setCancelable(false);
+        Window dialogWindow = getWindow();
+        if (dialogWindow != null) {
+            dialogWindow.setLayout(ConvertUtils.dip2px(context,500), ViewGroup.LayoutParams.MATCH_PARENT);
+        }
         setContentView(R.layout.dialog_edit_view);
 
         title = findViewById(R.id.title);
