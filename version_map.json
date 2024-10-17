@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1185,
-    "versionName": "1.1.8.5",
-    "date": "2024.10.09",
+    "versionCode": 1186,
+    "versionName": "1.1.8.6",
+    "date": "2024.10.17",
     "description": [
       {
         "lang": "en",
-        "text": "1. Fix the bug that long-pressing the Boat option to start the renderer as Pojav.\n2. Added a prompt for the zink system driver.\n3. Allowed customizing the floating ball icon (gif/png) (hidden feature).\n4. Updated mod translation information.\n5. Added quick navigation to \"MC百科.\"\n6. Fix Pojav backend-related bugs (voxel map, low version shaders crash).\n7. Optimized controllers loading.\n8. Fix some bugs.\n"
+        "text": "1. Optimize menu layout\n2. Fix the bug of crashing when quickly switching game directories\n3. Update Russian translation\n4. Optimize the loading logic of the controller page\n5. Add the feature of custom menu view icon (gif/png)\n6. Allow hiding the menu view\n7. Add the feature to force the renderer to run on the big core (Pojav backend)\n8. Fix some bugs\n"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复长按Boat选择渲染器启动为Pojav的bug\n2.添加zink系统驱动提示\n3.允许自定义悬浮球图标(gif/png)(隐藏功能)\n4.更新模组翻译信息\n5.添加”MC百科“快速跳转\n6.修复Pojav后端相关bug（体素地图、低版本光影闪退）\n7.优化按键加载\n8.修复一些bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.优化菜单布局\n2.修复快速切换游戏目录闪退的bug\n3.更新俄语翻译\n4.优化自定义按键页面加载逻辑\n5.增加自定义菜单键图标的功能(gif/png)\n6.允许隐藏菜单键\n7.增加强制渲染器运行在大核上的功能(Pojav后端)\n8.修复一些bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c698b633f071",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.5/FCL-release-1.1.8.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a0c061790d4e",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.6/FCL-release-1.1.8.6-all.apk"
   }
 ]
