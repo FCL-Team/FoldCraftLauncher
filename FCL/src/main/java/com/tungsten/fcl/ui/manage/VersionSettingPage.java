@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 
+import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.SelectControllerDialog;
 import com.tungsten.fcl.game.FCLGameRepository;
@@ -51,6 +52,7 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,11 +88,13 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch noJVMCheckSwitch;
 
     private FCLSpinner<String> javaSpinner;
-    private FCLSpinner<FCLConfig.Renderer> rendererSpinner;
 
     private FCLImageButton editIconButton;
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
+    private FCLImageButton rendererButton;
+
+    private FCLTextView rendererText;
 
     private final InvalidationListener specificSettingsListener;
     private final StringProperty selectedVersion = new SimpleStringProperty();
@@ -134,7 +138,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         isolateWorkingDirSwitch.disableProperty().bind(modpack);
 
         javaSpinner = findViewById(R.id.edit_java);
-        rendererSpinner = findViewById(R.id.edit_renderer);
 
         FCLTextView scaleFactorText = findViewById(R.id.scale_factor_text);
 
@@ -150,15 +153,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaVersionDataList.add(JavaVersion.JAVA_21.getVersionName());
         javaSpinner.setDataList(javaVersionDataList);
 
-        ArrayList<FCLConfig.Renderer> rendererDataList = new ArrayList<>();
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_GL4ES);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_VIRGL);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_LTW);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
-        rendererDataList.add(FCLConfig.Renderer.RENDERER_FREEDRENO);
-        rendererSpinner.setDataList(rendererDataList);
-
         // add spinner text
         ArrayList<String> javaVersionList = new ArrayList<>();
         javaVersionList.add(getContext().getString(R.string.settings_game_java_version_auto));
@@ -170,35 +164,17 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         javaAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         javaSpinner.setAdapter(javaAdapter);
 
-        ArrayList<String> rendererList = new ArrayList<>();
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_gl4es));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_virgl));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_ltw));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_vgpu));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_zink));
-        rendererList.add(getContext().getString(R.string.settings_fcl_renderer_freedreno));
-        RendererPlugin.getRendererList().forEach(renderer -> {
-            rendererList.add(renderer.getDes());
-        });
-        ArrayAdapter<String> rendererAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, rendererList);
-        rendererAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        rendererSpinner.setAdapter(rendererAdapter);
-        rendererSpinner.setListener(pos -> {
-            int targetIndex = FCLConfig.Renderer.values().length - 1;
-            if (pos >= targetIndex) {
-                lastVersionSetting.setRenderer(FCLConfig.Renderer.RENDERER_CUSTOM);
-                lastVersionSetting.setCustomRenderer(RendererPlugin.getRendererList().get(pos - targetIndex).getDes());
-                RendererPlugin.setSelected(RendererPlugin.getRendererList().get(pos - targetIndex));
-            }
-        });
-
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
+        rendererButton = findViewById(R.id.edit_renderer);
 
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
+        rendererButton.setOnClickListener(this);
+
+        rendererText = findViewById(R.id.renderer);
 
         FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
 
@@ -327,7 +303,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
             FXUtils.unbindSelection(javaSpinner, lastVersionSetting.getJavaProperty());
-            FXUtils.unbindSelection(rendererSpinner, lastVersionSetting.getRendererProperty());
             scaleFactorSeekbar.percentProgressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
 
@@ -350,9 +325,14 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
         FXUtils.bindSelection(javaSpinner, versionSetting.getJavaProperty());
-        FXUtils.bindSelection(rendererSpinner, versionSetting.getRendererProperty());
         scaleFactorSeekbar.percentProgressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
+        FCLConfig.Renderer renderer = versionSetting.getRenderer();
+        if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
+            rendererText.setText(versionSetting.getCustomRenderer());
+        } else {
+            rendererText.setText(renderer.toString());
+        }
 
         versionSetting.getUsesGlobalProperty().addListener(specificSettingsListener);
         if (versionId != null)
@@ -432,6 +412,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == controllerButton) {
             SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> lastVersionSetting.setController(controller.getId()));
             dialog.show();
+        }
+        if (view == rendererButton) {
+            RendererUtil.openRendererMenu(getContext(), view, ConvertUtils.dip2px(getContext(), 400), ConvertUtils.dip2px(getContext(), 300), name -> {
+                rendererText.setText(name);
+            });
         }
     }
 }

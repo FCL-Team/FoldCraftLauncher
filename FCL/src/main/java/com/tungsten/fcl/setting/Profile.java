@@ -157,6 +157,10 @@ public final class Profile implements Observable {
         return repository.getVersionSetting(id);
     }
 
+    public VersionSetting getVersionSetting() {
+        return repository.getVersionSetting(getSelectedVersion());
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

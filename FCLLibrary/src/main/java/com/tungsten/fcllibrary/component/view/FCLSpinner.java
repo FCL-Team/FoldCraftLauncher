@@ -5,13 +5,11 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 
-import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -19,7 +17,6 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class FCLSpinner<T> extends AppCompatSpinner {
 
@@ -27,16 +24,11 @@ public class FCLSpinner<T> extends AppCompatSpinner {
     private ArrayList<T> dataList;
     private ObjectProperty<T> selectedItemProperty;
     private BooleanProperty visibilityProperty;
-    private Consumer<Integer> listener;
 
     public void addSelectListener() {
         setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (listener != null && dataList != null && i > dataList.size() - 1) {
-                    listener.accept(i);
-                    return;
-                }
                 if (dataList != null && dataList.size() > i) {
                     fromUserOrSystem = true;
                     selectedItemProperty().set(dataList.get(i));
@@ -49,10 +41,6 @@ public class FCLSpinner<T> extends AppCompatSpinner {
 
             }
         });
-    }
-
-    public void setListener(Consumer<Integer> listener) {
-        this.listener = listener;
     }
 
     public FCLSpinner(@NonNull Context context) {
@@ -99,17 +87,6 @@ public class FCLSpinner<T> extends AppCompatSpinner {
                     Schedulers.androidUIThread().execute(() -> {
                         if (!fromUserOrSystem) {
                             T data = get();
-                            //fix renderer plugin
-                            if (!dataList.contains(data) && listener != null) {
-                                ArrayAdapter<String> adapter = (ArrayAdapter<String>) getAdapter();
-                                RendererPlugin.getRendererList().forEach(renderer -> {
-                                    int position = adapter.getPosition(renderer.getDes());
-                                    if (position != -1) {
-                                        setSelection(position);
-                                    }
-                                });
-                                return;
-                            }
                             setSelection(dataList.indexOf(data));
                         }
                     });
