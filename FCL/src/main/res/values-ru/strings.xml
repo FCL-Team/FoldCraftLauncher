@@ -619,7 +619,8 @@
     <string name="menu_settings_gesture_current">Текущий режим: %s</string>
     <string name="menu_settings_gyro">Гироскоп</string>
     <string name="menu_settings_gyro_sensitivity">Чувствительность гироскопа</string>
-    <string name="menu_settings_lock_view">Заблокировать плавающие меню</string>
+    <string name="menu_settings_lock_view">Заблокировать меню</string>
+    <string name="menu_settings_hide_view">Скрыть меню</string>
     <string name="menu_settings_show_fps">Отобразить FPS</string>
     <string name="menu_settings_mouse">Мышь</string>
     <string name="menu_settings_mouse_mode">Режим мыши</string>
@@ -879,6 +880,7 @@
     <string name="settings_launcher_background_lt">Фон лаунчера в светлом режиме</string>
     <string name="settings_launcher_background_dk">Фон лаунчера в темном режиме</string>
     <string name="settings_launcher_cursor">Курсор</string>
+    <string name="settings_launcher_menu_icon">Иконка меню</string>
     <string name="settings_launcher_ignore_notch">Игнорировать вырез фронтальной камеры</string>
     <string name="settings_launcher_animation_speed">Скорость анимации переходов</string>
 
