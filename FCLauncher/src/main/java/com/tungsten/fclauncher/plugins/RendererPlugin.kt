@@ -53,7 +53,12 @@ object RendererPlugin {
         }
     }
 
-    fun parse(info: ApplicationInfo) {
+    @JvmStatic
+    fun isAvailable(): Boolean {
+        return rendererList.isNotEmpty()
+    }
+
+    private fun parse(info: ApplicationInfo) {
         if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
             val metaData = info.metaData ?: return
             if (metaData.getBoolean("fclPlugin", false)) {

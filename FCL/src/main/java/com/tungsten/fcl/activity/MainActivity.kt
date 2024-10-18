@@ -316,7 +316,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     title.setTextWithAnim(getString(R.string.message_loading_controllers))
                     return
                 }
-                Versions.launch(this@MainActivity, Profiles.getSelectedProfile())
+                val selectedProfile = Profiles.getSelectedProfile()
+                RendererPlugin.rendererList.forEach {
+                    if (it.des == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).customRenderer) {
+                        RendererPlugin.selected = it
+                    }
+                }
+                Versions.launch(this@MainActivity, selectedProfile)
             }
             if (view === launchBoat) {
                 FCLBridge.BACKEND_IS_BOAT = true;

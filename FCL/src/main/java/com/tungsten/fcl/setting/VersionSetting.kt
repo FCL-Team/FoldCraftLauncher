@@ -386,14 +386,7 @@ class VersionSetting : Cloneable {
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.customRenderer = json["customRenderer"]?.asString ?: ""
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
-                if (vs.customRenderer != "") {
-                    RendererPlugin.rendererList.forEach {
-                        if (it.des == vs.customRenderer) {
-                            RendererPlugin.selected = it
-                        }
-                    }
-                }
-                if (RendererPlugin.rendererList.size == 0 && vs.customRenderer != "") {
+                if (!RendererPlugin.isAvailable() && vs.customRenderer != "") {
                     vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[0]
                     vs.customRenderer = ""
                 }

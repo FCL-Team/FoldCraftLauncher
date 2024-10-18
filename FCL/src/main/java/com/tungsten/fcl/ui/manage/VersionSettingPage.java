@@ -157,9 +157,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererDataList.add(FCLConfig.Renderer.RENDERER_VGPU);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_ZINK);
         rendererDataList.add(FCLConfig.Renderer.RENDERER_FREEDRENO);
-        if (!RendererPlugin.getRendererList().isEmpty()) {
-            rendererDataList.add(FCLConfig.Renderer.RENDERER_CUSTOM);
-        }
         rendererSpinner.setDataList(rendererDataList);
 
         // add spinner text
@@ -187,10 +184,11 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         rendererSpinner.setAdapter(rendererAdapter);
         rendererSpinner.setListener(pos -> {
-            if (pos > 5) {
+            int targetIndex = FCLConfig.Renderer.values().length - 1;
+            if (pos >= targetIndex) {
                 lastVersionSetting.setRenderer(FCLConfig.Renderer.RENDERER_CUSTOM);
-                lastVersionSetting.setCustomRenderer(RendererPlugin.getRendererList().get(pos - 6).getDes());
-                RendererPlugin.setSelected(RendererPlugin.getRendererList().get(pos - 6));
+                lastVersionSetting.setCustomRenderer(RendererPlugin.getRendererList().get(pos - targetIndex).getDes());
+                RendererPlugin.setSelected(RendererPlugin.getRendererList().get(pos - targetIndex));
             }
         });
 
