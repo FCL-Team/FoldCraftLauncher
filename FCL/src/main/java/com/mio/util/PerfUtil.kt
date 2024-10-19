@@ -12,6 +12,16 @@ class PerfUtil : Printer {
         fun install() {
             Looper.getMainLooper().setMessageLogging(PerfUtil())
         }
+
+        @JvmStatic
+        fun printStackTrace() {
+            val stackTrace = Thread.currentThread().stackTrace
+            var str = ""
+            for (element in stackTrace) {
+                str += element.toString()
+            }
+            Log.e("PerfUtil-printStackTrace", str)
+        }
     }
 
     private val sampler = StackSampler(300)

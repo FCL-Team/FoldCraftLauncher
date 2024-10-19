@@ -17,7 +17,6 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class FCLSpinner<T> extends AppCompatSpinner {
 
@@ -25,16 +24,11 @@ public class FCLSpinner<T> extends AppCompatSpinner {
     private ArrayList<T> dataList;
     private ObjectProperty<T> selectedItemProperty;
     private BooleanProperty visibilityProperty;
-    private Consumer<Integer> listener;
 
     public void addSelectListener() {
         setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (listener != null && dataList != null && i > dataList.size() - 1) {
-                    listener.accept(i);
-                    return;
-                }
                 if (dataList != null && dataList.size() > i) {
                     fromUserOrSystem = true;
                     selectedItemProperty().set(dataList.get(i));
@@ -47,10 +41,6 @@ public class FCLSpinner<T> extends AppCompatSpinner {
 
             }
         });
-    }
-
-    public void setListener(Consumer<Integer> listener) {
-        this.listener = listener;
     }
 
     public FCLSpinner(@NonNull Context context) {
