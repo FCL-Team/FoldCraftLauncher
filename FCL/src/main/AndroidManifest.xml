@@ -65,6 +65,7 @@
         tools:targetApi="33">
         <activity
             android:name=".activity.SplashActivity"
+            android:theme="@style/Theme.Splash"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape"
             android:exported="true">

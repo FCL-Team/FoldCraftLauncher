@@ -18,13 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
-import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -126,9 +127,9 @@ public class SplashActivity extends FCLActivity {
 
     public void enterLauncher() {
         RendererPlugin.init(this);
-        finish();
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this, background, "background").toBundle());
+        finish();
     }
 
     @Override
