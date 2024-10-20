@@ -732,7 +732,7 @@
     <string name="modrinth_category_minigame">Мини-игры</string>
     <string name="modrinth_category_misc">Разное</string>
     <string name="modrinth_category_mobs">Мобы</string>
-    <string name="modrinth_category_modloader">Загрузчики модов</string>
+    <string name="modrinth_category_modloader">Загрузчик модов</string>
     <string name="modrinth_category_multiplayer">Многопользовательская игра</string>
     <string name="modrinth_category_optimization">Оптимизация</string>
     <string name="modrinth_category_quests">Квесты</string>
