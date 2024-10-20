@@ -4,7 +4,7 @@
     <string name="splash_permission_title">Необходимо разрешение на доступ к хранилищу</string>
     <string name="splash_permission_close">Закрыть лаунчер</string>
     <string name="splash_permission_settings">Настройки</string>
-    <string name="splash_permission_settings_msg">Вы выбрали "Запретить".  Разрешите доступ к хранилищу в настройках вручную.</string>
+    <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
 
     <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии, из за проблем с соединением.</string>
@@ -191,7 +191,6 @@
     <string name="curse_category_5128">Ваниль+</string>
 
     <string name="curse_category_5299">Изучения</string>
-    <string name="curse_category_5232">Galacticraft</string>
     <string name="curse_category_5129">Ваниль+</string>
     <string name="curse_category_5189">Утилиты и улучшения качества жизни</string>
     <string name="curse_category_6814">Производительность</string>
@@ -218,7 +217,6 @@
     <string name="curse_category_432">Строительство крафт</string>
     <string name="curse_category_418">Генетика</string>
     <string name="curse_category_4671">Интеграция с Twitch</string>
-    <string name="curse_category_5314">KubeJS</string>
     <string name="curse_category_408">Руды и ресурсы</string>
     <string name="curse_category_4773">Редактор крафта</string>
     <string name="curse_category_430">Таумотургия</string>
@@ -226,12 +224,10 @@
     <string name="curse_category_413">Обработка</string>
     <string name="curse_category_417">Энергия</string>
     <string name="curse_category_415">Транспортировка энергии, жидкостей и предметов</string>
-    <string name="curse_category_433">Forestry</string>
     <string name="curse_category_425">Разное</string>
     <string name="curse_category_4545">Прикладная энергетика 2</string>
     <string name="curse_category_416">Фарм</string>
     <string name="curse_category_421">API и библиотеки</string>
-    <string name="curse_category_4780">Fabric</string>
     <string name="curse_category_424">Косметические</string>
     <string name="curse_category_406">Генерация мира</string>
     <string name="curse_category_435">Утилиты для серверов</string>
@@ -242,7 +238,6 @@
     <string name="curse_category_436">Еда</string>
     <string name="curse_category_4558">Красная пыль</string>
     <string name="curse_category_4843">Автоматизация</string>
-    <string name="curse_category_4906">MCreator</string>
 
     <string name="curse_category_5244">Шрифты</string>
     <string name="curse_category_5193">Датапаки</string>
@@ -265,7 +260,7 @@
     <string name="curse_category_248">Переключение</string>
     <string name="curse_category_252">Пазлы</string>
 
-    <string name="curse_category_4551">Экстремальный режим квестов</string>
+    <string name="curse_category_4551">Экстремальные квесты</string>
     <string name="curse_category_4548">Лаки блоки</string>
     <string name="curse_category_4556">Прогресс</string>
     <string name="curse_category_4752">Модули строительства</string>
@@ -548,13 +543,11 @@
     <string name="install_new_game_malformed">Некорректное название</string>
     <string name="install_success">Установка завершена!</string>
 
-    <string name="jar_execute">Выбрать .jar файл</string>
+    <string name="jar_execute">Выбрать Jar</string>
     <string name="jar_execute_custom_args">Выполнить с пользовательскими аргументами</string>
     <string name="jar_executor_crash_title">Ошибка выполнения JAR-файла</string>
     <string name="jar_executor_crash_reason">Анализ причин сбоя исполнителя Jar в настоящее время не поддерживается.</string>
 
-    <string name="launch">Pojav</string>
-    <string name="launch_boat">Boat</string>
     <string name="launch_error_java">Вы используете устаревшую версию Java. Вы уверены, что хотите продолжить?</string>
     <string name="launch_error_java_auto">Выбрать автоматически (рекомендуется)</string>
     <string name="launch_error_java_continue">Продолжить</string>
@@ -691,7 +684,6 @@
     <string name="modpack_not_a_valid_name">Недопустимое название модпака</string>
     <string name="modpack_origin">Источник</string>
     <string name="modpack_origin_url">Официальный веб-сайт</string>
-    <string name="modpack_origin_mcbbs">МКББС</string>
     <string name="modpack_origin_mcbbs_prompt">Идентификатор сообщения</string>
     <string name="modpack_scan">Разбор индекса модпака</string>
     <string name="modpack_task_install">Установка модпака</string>
@@ -720,24 +712,19 @@
     <string name="modpack_wizard_step_initialization_exported_version">Версия игры для экспорта</string>
     <string name="modpack_wizard_step_initialization_force_update">Принудительно обновите модпак до последней версии (вам понадобится файлообменник)</string>
     <string name="modpack_wizard_step_initialization_include_launcher">Включить лаунчер</string>
-    <string name="modpack_wizard_step_initialization_save">Экспортировать в…</string>
+    <string name="modpack_wizard_step_initialization_save">Экспортировать в</string>
     <string name="modpack_wizard_step_initialization_warning">"Перед созданием модпака, убедитесь, что игра запускается, и это релизная версия, а не снапшот.
     Имейте в виду, что вам не разрешено добавлять моды и ресурсные пакеты, которые явно указаны как недоступные для распространения или включения в модпак."</string>
 
     <string name="modrinth_category_adventure">Приключения</string>
-    <string name="modrinth_category_bukkit">Bukkit</string>
-    <string name="modrinth_category_bungeecord">BungeeCord</string>
     <string name="modrinth_category_challenging">Сложное</string>
     <string name="modrinth_category_combat">Бой</string>
     <string name="modrinth_category_cursed">Проклятое</string>
     <string name="modrinth_category_decoration">Декор</string>
     <string name="modrinth_category_economy">Экономика</string>
     <string name="modrinth_category_equipment">Снаряжение</string>
-    <string name="modrinth_category_fabric">Fabric</string>
     <string name="modrinth_category_food">Еда</string>
-    <string name="modrinth_category_forge">Forge</string>
     <string name="modrinth_category_game_mechanics">Игровые механики</string>
-    <string name="modrinth_category_kitchen_sink">Kitchen-Sink</string>
     <string name="modrinth_category_library">Библиотека</string>
     <string name="modrinth_category_lightweight">Легковесное</string>
     <string name="modrinth_category_magic">Магия</string>
@@ -745,27 +732,17 @@
     <string name="modrinth_category_minigame">Мини-игры</string>
     <string name="modrinth_category_misc">Разное</string>
     <string name="modrinth_category_mobs">Мобы</string>
-    <string name="modrinth_category_modloader">Modloader</string>
+    <string name="modrinth_category_modloader">Загрузчики модов</string>
     <string name="modrinth_category_multiplayer">Многопользовательская игра</string>
-    <string name="modrinth_category_neoforge">NeoForge</string>
     <string name="modrinth_category_optimization">Оптимизация</string>
-    <string name="modrinth_category_paper">Paper</string>
-    <string name="modrinth_category_purpur">Purpur</string>
     <string name="modrinth_category_quests">Квесты</string>
-    <string name="modrinth_category_quilt">Quilt</string>
-    <string name="modrinth_category_rift">Rift</string>
     <string name="modrinth_category_social">Социальное</string>
-    <string name="modrinth_category_spigot">Spigot</string>
-    <string name="modrinth_category_sponge">Sponge</string>
     <string name="modrinth_category_storage">Хранение</string>
     <string name="modrinth_category_technology">Технология</string>
     <string name="modrinth_category_transportation">Транспортировка</string>
     <string name="modrinth_category_utility">Утилиты</string>
-    <string name="modrinth_category_velocity">Velocity</string>
-    <string name="modrinth_category_waterfall">Waterfall</string>
     <string name="modrinth_category_worldgen">Генерация мира</string>
     <string name="modrinth_category_datapack">Датапак</string>
-    <string name="modrinth_category_folia">Folia</string>
 
     <string name="mods">Моды</string>
     <string name="mods_add">Добавить моды</string>
