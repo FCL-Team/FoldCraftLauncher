@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/background"
+    android:transitionName="background"
     tools:context=".activity.SplashActivity">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
