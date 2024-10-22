@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1186,
-    "versionName": "1.1.8.6",
-    "date": "2024.10.17",
+    "versionCode": 1187,
+    "versionName": "1.1.8.7",
+    "date": "2024.10.22",
     "description": [
       {
         "lang": "en",
-        "text": "1. Optimize menu layout\n2. Fix the bug of crashing when quickly switching game directories\n3. Update Russian translation\n4. Optimize the loading logic of the controller page\n5. Add the feature of custom menu view icon (gif/png)\n6. Allow hiding the menu view\n7. Add the feature to force the renderer to run on the big core (Pojav backend)\n8. Fix some bugs\n"
+        "text": "1. Add renderer plugin loader\n2. Optimize edit view layout\n3. Optimize splash screen\n4. Fix some bugs"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.优化菜单布局\n2.修复快速切换游戏目录闪退的bug\n3.更新俄语翻译\n4.优化自定义按键页面加载逻辑\n5.增加自定义菜单键图标的功能(gif/png)\n6.允许隐藏菜单键\n7.增加强制渲染器运行在大核上的功能(Pojav后端)\n8.修复一些bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加渲染器插件化加载功能\n2.优化编辑按键页面\n3.优化启动页面显示效果\n4.修复一些bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a0c061790d4e",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.6/FCL-release-1.1.8.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/4eb8884d9353",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.7/FCL-release-1.1.8.7-all.apk"
   }
 ]

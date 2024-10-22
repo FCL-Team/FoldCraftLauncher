@@ -315,6 +315,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             if (view === launch) {
                 if (!Controllers.isInitialized()) {
                     title.setTextWithAnim(getString(R.string.message_loading_controllers))
+                    AnimUtil.playTranslationX(launch, 700, 0f, 50f, -50f, 50f, -50f, 0f)
+                        .interpolator(OvershootInterpolator()).start()
+                    AnimUtil.playTranslationX(launchBoat, 700, 0f, 50f, -50f, 50f, -50f, 0f)
+                        .interpolator(OvershootInterpolator()).start()
                     return
                 }
                 val selectedProfile = Profiles.getSelectedProfile()
