@@ -823,6 +823,7 @@
     <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="settings_fcl_vulkan_driver_system">Разрешить Zink использовать системные драйвера Vulkan</string>
     <string name="settings_fcl_renderer">Рендер</string>
+    <string name="settings_fcl_pojav_bigcore">Принудительно использовать мощные ядра для рендеринга (Ядро Pojav)</string>
     <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6, только 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
@@ -1023,6 +1024,6 @@
     <string name="gamepad_dpad">Крестовина</string>
     <string name="gamepad_button_binding">Привязка кнопок геймпада</string>
     <string name="joystick_r">Правый стик</string>
-    <string name="message_vulkan_driver_system">Текущий GPU — Adreno, не рекомендуется включать эту опцию.</string>
+    <string name="message_vulkan_driver_system">Текущий GPU Adreno, не рекомендуется включать эту опцию.</string>
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
 </resources>
