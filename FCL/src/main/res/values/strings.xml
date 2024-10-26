@@ -739,6 +739,7 @@
     <string name="mods_restore">Rollback</string>
     <string name="mods_url">Official Page</string>
     <string name="mods_update_modpack_mod_warning">Updating mods in a modpack can lead to irreparable results, possibly corrupting the modpack so that it cannot start. Are you sure you want to update?</string>
+    <string name="mods_screenshot_no_result">No screenshots available to display</string>
 
     <string name="profile_shared">Shared Directory</string>
     <string name="profile_private">Private Directory</string>
