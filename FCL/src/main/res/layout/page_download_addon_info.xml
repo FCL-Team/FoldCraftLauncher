@@ -121,14 +121,76 @@
 
         </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-        <ListView
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="1dp"
-            android:background="@drawable/bg_container_white"
-            android:id="@+id/version_list"
+        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:baselineAligned="false">
+
+            <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp"
+                android:background="@drawable/bg_container_white">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/screenshot_recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLProgressBar
+                    android:id="@+id/screenshot_loading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLImageView
+                    android:id="@+id/screenshot_retry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_baseline_refresh_24"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/screenshot_no_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_gravity="center_horizontal"
+                    android:visibility="gone"
+                    android:text="@string/mods_screenshot_no_result"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
+
+            <ListView
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="1dp"
+                android:background="@drawable/bg_container_white"
+                android:id="@+id/version_list"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"/>
+
+        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
