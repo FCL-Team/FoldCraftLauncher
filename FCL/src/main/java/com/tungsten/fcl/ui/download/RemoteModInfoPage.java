@@ -2,19 +2,13 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
@@ -68,10 +62,10 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private FCLTextView description;
     private FCLTextView mcmod;
     private FCLImageButton website;
-    private FCLLinearLayout screenshotLayout;
     private FCLProgressBar screenshotLoading;
     private FCLImageView screenshotRetry;
     private FCLTextView screenshotNoResult;
+    private RecyclerView screenshotView;
 
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
@@ -98,7 +92,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         description = findViewById(R.id.description);
         mcmod = findViewById(R.id.mcmod);
         website = findViewById(R.id.website);
-        screenshotLayout = findViewById(R.id.screenshot_layout);
+        screenshotView = findViewById(R.id.screenshot_recyclerView);
         screenshotLoading = findViewById(R.id.screenshot_loading);
         screenshotRetry = findViewById(R.id.screenshot_retry);
         screenshotNoResult = findViewById(R.id.screenshot_no_result);
@@ -165,58 +159,15 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
                 if (result.isEmpty()) {
                     screenshotNoResult.setVisibility(View.VISIBLE);
                 } else {
-                    LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-                    for (RemoteMod.Screenshot screenshot : result) {
-                        FCLLinearLayout screenshotView = (FCLLinearLayout) layoutInflater.inflate(R.layout.view_mod_screenshot, null, false);
-
-                        loadScreenshotImage(
-                                screenshot.getImageUrl(),
-                                screenshotView.findViewById(R.id.loading),
-                                screenshotView.findViewById(R.id.screenshot),
-                                screenshotView.findViewById(R.id.retry)
-                        );
-
-                        showScreenshotText(screenshot.getTitle(), screenshotView.findViewById(R.id.title));
-                        showScreenshotText(screenshot.getDescription(), screenshotView.findViewById(R.id.description));
-
-                        screenshotLayout.addView(screenshotView);
-                    }
+                    RemoteModScreenshotAdapter adapter = new RemoteModScreenshotAdapter(getContext(), result);
+                    screenshotView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    screenshotView.setAdapter(adapter);
                 }
             } else {
                 setScreenshotFailed();
             }
             setScreenshotLoading(false);
         })).start();
-    }
-
-    private void loadScreenshotImage(String imageUrl, FCLProgressBar loadingView, FCLImageView imageView, FCLImageView reloadView) {
-        loadingView.setVisibility(View.VISIBLE);
-        reloadView.setVisibility(View.GONE);
-        Glide.with(imageView)
-                .load(imageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .addListener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, @androidx.annotation.Nullable Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
-                        loadingView.setVisibility(View.GONE);
-                        reloadView.setVisibility(View.VISIBLE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
-                        loadingView.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .into(imageView);
-
-        reloadView.setOnClickListener(v -> loadScreenshotImage(imageUrl, loadingView, imageView, reloadView));
-    }
-
-    private void showScreenshotText(String text, FCLTextView textView) {
-        if (StringUtils.isNotBlank(text)) textView.setText(text);
-        else textView.setVisibility(View.GONE);
     }
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {
