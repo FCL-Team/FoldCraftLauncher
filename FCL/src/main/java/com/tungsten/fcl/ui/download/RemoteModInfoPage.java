@@ -5,6 +5,9 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ListView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -59,6 +62,10 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private FCLTextView description;
     private FCLTextView mcmod;
     private FCLImageButton website;
+    private FCLProgressBar screenshotLoading;
+    private FCLImageView screenshotRetry;
+    private FCLTextView screenshotNoResult;
+    private RecyclerView screenshotView;
 
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
@@ -85,6 +92,10 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         description = findViewById(R.id.description);
         mcmod = findViewById(R.id.mcmod);
         website = findViewById(R.id.website);
+        screenshotView = findViewById(R.id.screenshot_recyclerView);
+        screenshotLoading = findViewById(R.id.screenshot_loading);
+        screenshotRetry = findViewById(R.id.screenshot_retry);
+        screenshotNoResult = findViewById(R.id.screenshot_no_result);
 
         retry.setOnClickListener(this);
         mcmod.setOnClickListener(this);
@@ -110,6 +121,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         this.tag.setText(tag);
 
         loadModVersions();
+        loadScreenshots();
     }
 
     private void loadGameVersions() {
@@ -137,6 +149,25 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             }
             setLoading(false);
         }).start();
+    }
+
+    private void loadScreenshots() {
+        setScreenshotLoading(true);
+
+        Task.supplyAsync(() -> addon.getData().loadScreenshots(repository)).whenComplete(Schedulers.androidUIThread(), ((result, exception) -> {
+            if (exception == null) {
+                if (result.isEmpty()) {
+                    screenshotNoResult.setVisibility(View.VISIBLE);
+                } else {
+                    RemoteModScreenshotAdapter adapter = new RemoteModScreenshotAdapter(getContext(), result);
+                    screenshotView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    screenshotView.setAdapter(adapter);
+                }
+            } else {
+                setScreenshotFailed();
+            }
+            setScreenshotLoading(false);
+        })).start();
     }
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {
@@ -173,6 +204,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         });
     }
 
+    private void setScreenshotLoading(boolean loading) {
+        Schedulers.androidUIThread().execute(() -> {
+            screenshotLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+            if (loading) {
+                screenshotRetry.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void setScreenshotFailed() {
+        Schedulers.androidUIThread().execute(() -> {
+            screenshotRetry.setVisibility(View.VISIBLE);
+            screenshotLoading.setVisibility(View.GONE);
+        });
+    }
+
     @Override
     public Task<?> refresh(Object... param) {
         return null;
@@ -197,6 +244,9 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         }
         if (v == website && StringUtils.isNotBlank(addon.getPageUrl())) {
             AndroidUtils.openLink(getContext(), addon.getPageUrl());
+        }
+        if (v == screenshotRetry) {
+            loadScreenshots();
         }
     }
 }

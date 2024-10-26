@@ -119,6 +119,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     override fun loadVersions(modRepository: RemoteModRepository): Stream<RemoteMod.Version> {
                         throw IOException()
                     }
+
+                    override fun loadScreenshots(modRepository: RemoteModRepository): MutableList<RemoteMod.Screenshot> {
+                        throw IOException()
+                    }
                 })
         )
 

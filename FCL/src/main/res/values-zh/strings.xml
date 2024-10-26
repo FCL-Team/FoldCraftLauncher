@@ -705,6 +705,7 @@
     <string name="mods_restore">回滚</string>
     <string name="mods_url">官方页面</string>
     <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>
+    <string name="mods_screenshot_no_result">没有截图可以展示</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
