@@ -51,8 +51,8 @@ class RemoteModScreenshotAdapter(
             binding.screenshot.setImageDrawable(null)
             loadScreenshotImage(screenshot.imageUrl)
 
-            showScreenshotText(screenshot.title, binding.title)
-            showScreenshotText(screenshot.description, binding.description)
+            binding.title.setVisibleIfNotBlank(screenshot.title)
+            binding.description.setVisibleIfNotBlank(screenshot.description)
         }
 
         private fun loadScreenshotImage(imageUrl: String) {
@@ -89,16 +89,6 @@ class RemoteModScreenshotAdapter(
             }
         }
 
-        private fun showScreenshotText(text: String?, textView: FCLTextView) {
-            if (StringUtils.isNotBlank(text)) {
-                textView.visibility = View.VISIBLE
-                textView.text = text
-            }
-            else {
-                textView.visibility = View.GONE
-            }
-        }
-
         private fun setLoading(loading: Boolean) {
             binding.loading.visibility = if (loading) View.VISIBLE else View.GONE
             if (loading) binding.retry.visibility = View.GONE
@@ -106,6 +96,11 @@ class RemoteModScreenshotAdapter(
 
         private fun setFailed() {
             binding.retry.visibility = View.VISIBLE
+        }
+
+        private fun FCLTextView.setVisibleIfNotBlank(text: String?) {
+            visibility = if (StringUtils.isNotBlank(text)) View.VISIBLE else View.GONE
+            this.text = text
         }
     }
 }

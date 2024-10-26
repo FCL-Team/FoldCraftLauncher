@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:scaleType="fitCenter"/>
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"/>
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/retry"
