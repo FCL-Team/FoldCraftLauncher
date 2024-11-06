@@ -37,4 +37,5 @@ java {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly fileTree(dir: 'compileOnly', include: ['*.jar'])
 }
