@@ -104,6 +104,12 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
             // Conventional libraries: game, fabric, quilt, forge, neoforge, liteloader, optifine
             for (InstallerItem installerItem : group.getLibraries()) {
                 String libraryId = installerItem.getLibraryId();
+
+                // Skip fabric-api and quilt-api
+                if (libraryId.contains("fabric-api") || libraryId.contains("quilt-api")) {
+                    continue;
+                }
+
                 String libraryVersion = analyzer.getVersion(libraryId).orElse(null);
                 installerItem.libraryVersion.set(libraryVersion);
                 installerItem.upgradable.set(libraryVersion != null);
