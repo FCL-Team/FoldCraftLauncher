@@ -566,8 +566,8 @@
     <string name="menu_controls_edit_mode">Режим редактирования</string>
     <string name="menu_controls_show_boundary">Показать границы кнопок</string>
     <string name="menu_controls_hide_all">Скрыть все представления</string>
-    <string name="menu_controls_auto_fit">Авто настройки позиции</string>
-    <string name="menu_controls_auto_fit_dist">Авто настройка расстояния до позиции</string>
+    <string name="menu_controls_auto_fit">Автонастройки позиции</string>
+    <string name="menu_controls_auto_fit_dist">Автонастройка расстояния до позиции</string>
     <string name="menu_controls_groups">Просмотр групп</string>
     <string name="menu_controls_manage">Редактировать</string>
     <string name="menu_controls_current_view_group">Текущая группа просмотра</string>
@@ -818,7 +818,7 @@
     <string name="settings_advanced_minecraft_arguments">Аргументы лаунчера</string>
     <string name="settings_advanced_minecraft_arguments_prompt">По умолчанию</string>
     <string name="settings_advanced_server_ip">Адрес сервера</string>
-    <string name="settings_advanced_server_ip_prompt">Авто присоединение после запуска</string>
+    <string name="settings_advanced_server_ip_prompt">Автоприсоединение после запуска</string>
 
     <string name="settings_fcl_controller">Контроллер</string>
     <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
@@ -868,7 +868,7 @@
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ минимум / %2$.1f ГБ выделенно (%3$.1f ГБ свободно)</string>
     <string name="settings_memory_allocate_manual">%1$.1f ГБ используется</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f ГБ используется (%3$.1f ГБ свободно)</string>
-    <string name="settings_memory_auto_allocate">Авто выделение ОЗУ</string>
+    <string name="settings_memory_auto_allocate">Автовыделение ОЗУ</string>
     <string name="settings_memory_lower_bound">Минимум ОЗУ</string>
     <string name="settings_memory_used_per_total">%1$.1f ГБ использованно / %2$.1f ГБ всего</string>
     <string name="settings_physical_memory">Размер физической памяти</string>
