@@ -830,6 +830,7 @@
     <string name="settings_launcher_cursor">Cursor Picture</string>
     <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
+    <string name="settings_launcher_ignore_skin_container">Hide the character model in the MainUI view</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
 
     <string name="settings_memory">Memory</string>

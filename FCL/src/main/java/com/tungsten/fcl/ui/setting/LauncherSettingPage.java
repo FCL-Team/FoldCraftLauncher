@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.DownloadProviders;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -38,6 +39,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.theme.Theme;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
@@ -77,6 +79,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton resetCursor;
     private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
+    private FCLSwitch ignoreSkinContainer;
     private FCLSeekBar animationSpeed;
     private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
@@ -110,6 +113,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         resetCursor = findViewById(R.id.reset_cursor);
         resetMenuIcon = findViewById(R.id.reset_menu_icon);
         ignoreNotch = findViewById(R.id.ignore_notch);
+        ignoreSkinContainer = findViewById(R.id.ignore_skin_container);
         animationSpeed = findViewById(R.id.animation_speed);
         animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
@@ -150,6 +154,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         ignoreNotch.setOnCheckedChangeListener(this);
+
+        ignoreSkinContainer.setChecked(ThemeEngine.getInstance().getTheme().getIgnoreSkinContainer());
+        ignoreSkinContainer.setOnCheckedChangeListener(this);
 
         animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
         animationSpeed.addProgressListener();
@@ -452,6 +459,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (buttonView == ignoreNotch) {
             ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), isChecked);
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        }else if (buttonView == ignoreSkinContainer) {
+            ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
+            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme(), true);
         }
     }
 }
