@@ -128,7 +128,7 @@ public class SplashActivity extends FCLActivity {
     public void enterLauncher() {
         RendererPlugin.init(this);
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this, background, "background").toBundle());
+        startActivity(intent);
         finish();
     }
 
