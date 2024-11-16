@@ -1,14 +1,9 @@
 package com.tungsten.fcl.ui.main;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -85,7 +80,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        if(!getContext().getSharedPreferences("theme", MODE_PRIVATE).getBoolean("ignore_skin_container", false)) {
+        if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
             if (skinCanvas == null) {
                 skinCanvas = new SkinCanvas(getContext());
                 skinCanvas.setRenderer(renderer, 5f);
@@ -96,8 +91,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
             skinContainer.addView(skinCanvas);
             skinContainer.setVisibility(View.VISIBLE);
-        }else {
-            if(skinCanvas != null) skinCanvas.onPause();
+        } else {
+            if (skinCanvas != null) skinCanvas.onPause();
         }
     }
 
