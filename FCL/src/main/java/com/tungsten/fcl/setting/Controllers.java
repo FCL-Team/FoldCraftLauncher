@@ -112,6 +112,9 @@ public class Controllers {
                             .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
+                    if (controller == null) {
+                        throw new JsonParseException("Controller is null!");
+                    }
                     if (!json.getName().equals(controller.getFileName())) {
                         controller.renameFile(json.getName(), controller.getFileName());
                     }
