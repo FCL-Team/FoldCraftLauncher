@@ -769,9 +769,13 @@
     <string name="settings_launcher_launcher_log_export_failed">Não foi possível exportar as logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs foram exportadas para %s</string>
     <string name="settings_launcher_theme">Tema</string>
+    <string name="settings_launcher_theme2">Theme2</string>
     <string name="settings_launcher_background_lt">Plano de fundo, modo claro</string>
     <string name="settings_launcher_background_dk">Plano de fundo, modo escuro</string>
+    <string name="settings_launcher_cursor">Cursor Picture</string>
+    <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignorar entalhe</string>
+    <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Velocidade de animação</string>
 
     <string name="settings_memory">Memória</string>

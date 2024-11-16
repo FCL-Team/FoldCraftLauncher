@@ -511,6 +511,42 @@
                         app:auto_text_tint="true"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:text="@string/settings_launcher_close_skin_view"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLSwitch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/close_skin_model"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:minHeight="48dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:auto_text_tint="true"
+                        android:layout_gravity="center"
+                        android:singleLine="true"
                         android:text="@string/settings_launcher_animation_speed"/>
 
                     <com.tungsten.fcllibrary.component.view.FCLSeekBar

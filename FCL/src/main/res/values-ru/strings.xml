@@ -861,6 +861,7 @@
     <string name="settings_launcher_cursor">Курсор</string>
     <string name="settings_launcher_menu_icon">Иконка меню</string>
     <string name="settings_launcher_ignore_notch">Игнорировать вырез фронтальной камеры</string>
+    <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Скорость анимации переходов</string>
 
     <string name="settings_memory">Память</string>

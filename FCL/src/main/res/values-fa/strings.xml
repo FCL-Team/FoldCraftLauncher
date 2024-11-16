@@ -769,9 +769,13 @@
     <string name="settings_launcher_launcher_log_export_failed">گزارش‌ها صادر نمی‌شوند</string>
     <string name="settings_launcher_launcher_log_export_success">گزارش‌ها به %s صادر شده‌اند</string>
     <string name="settings_launcher_theme">موضوع</string>
+    <string name="settings_launcher_theme2">Theme2</string>
     <string name="settings_launcher_background_lt">پس زمینه لانچر حالت نور</string>
     <string name="settings_launcher_background_dk">پس‌زمینه راه‌انداز حالت تاریک</string>
+    <string name="settings_launcher_cursor">Cursor Picture</string>
+    <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">ناچ را نادیده بگیرید</string>
+    <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">سرعت انیمیشن</string>
 
     <string name="settings_memory">حافظه</string>
