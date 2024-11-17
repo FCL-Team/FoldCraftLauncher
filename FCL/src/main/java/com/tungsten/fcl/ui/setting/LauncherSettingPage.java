@@ -77,6 +77,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton resetCursor;
     private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
+    private FCLSwitch closeSkinModel;
     private FCLSeekBar animationSpeed;
     private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
@@ -110,6 +111,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         resetCursor = findViewById(R.id.reset_cursor);
         resetMenuIcon = findViewById(R.id.reset_menu_icon);
         ignoreNotch = findViewById(R.id.ignore_notch);
+        closeSkinModel = findViewById(R.id.close_skin_model);
         animationSpeed = findViewById(R.id.animation_speed);
         animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
@@ -150,6 +152,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         ignoreNotch.setOnCheckedChangeListener(this);
+
+        closeSkinModel.setChecked(ThemeEngine.getInstance().getTheme().isCloseSkinModel());
+        closeSkinModel.setOnCheckedChangeListener(this);
 
         animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
         animationSpeed.addProgressListener();
@@ -452,6 +457,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (buttonView == ignoreNotch) {
             ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), isChecked);
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        } else if (buttonView == closeSkinModel) {
+            ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
+            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme(), true);
         }
     }
 }

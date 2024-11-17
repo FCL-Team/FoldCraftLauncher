@@ -77,6 +77,7 @@ LOCAL_SHARED_LIBRARIES  := fcl
 LOCAL_SRC_FILES := \
     pojav/bigcoreaffinity.c \
     pojav/egl_bridge.c \
+    pojav/ctxbridges/loader_dlopen.c \
     pojav/ctxbridges/gl_bridge.c \
     pojav/ctxbridges/osm_bridge.c \
     pojav/ctxbridges/egl_loader.c \

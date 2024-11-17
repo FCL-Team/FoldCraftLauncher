@@ -80,14 +80,20 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        if (skinCanvas == null) {
-            skinCanvas = new SkinCanvas(getContext());
-            skinCanvas.setRenderer(renderer, 5f);
+        if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+            if (skinCanvas == null) {
+                skinCanvas = new SkinCanvas(getContext());
+                skinCanvas.setRenderer(renderer, 5f);
+            } else {
+                skinCanvas.onResume();
+                renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
+            }
+
+            skinContainer.addView(skinCanvas);
+            skinContainer.setVisibility(View.VISIBLE);
         } else {
-            skinCanvas.onResume();
-            renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
+            if (skinCanvas != null) skinCanvas.onPause();
         }
-        skinContainer.addView(skinCanvas);
     }
 
     @Override
