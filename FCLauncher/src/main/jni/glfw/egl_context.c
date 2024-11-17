@@ -51,8 +51,33 @@ static const char* getEGLErrorString(EGLint error)
     }
 }
 
+static void gl4esi_get_display_dimensions(int* width, int* height) {
+    *width = ANativeWindow_getWidth(fclGetNativeWindow());
+    *height = ANativeWindow_getHeight(fclGetNativeWindow());
+}
+
+static bool already_initialized = false;
+static void gl_init_gl4es_internals() {
+    if(already_initialized) return;
+    already_initialized = true;
+    void* gl4es = dlopen("libgl4es_114.so", RTLD_NOLOAD);
+    if(gl4es == NULL) return;
+    void (*set_getmainfbsize)(void (*new_getMainFBSize)(int* width, int* height));
+    set_getmainfbsize = dlsym(gl4es, "set_getmainfbsize");
+    if(set_getmainfbsize == NULL) goto warn;
+    set_getmainfbsize(gl4esi_get_display_dimensions);
+    goto cleanup;
+
+    warn:
+    printf("gl4esinternals warning: gl4es was found but internals not initialized. expect rendering issues.\n");
+    cleanup:
+    // dlclose just decreases a ref counter, so this is fine
+    dlclose(gl4es);
+}
+
 static void makeContextCurrentEGL(_GLFWwindow* window)
 {
+    gl_init_gl4es_internals();
     if (window)
     {
         if (!eglMakeCurrent(_glfw.egl.display,
