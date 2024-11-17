@@ -2,6 +2,7 @@
 // Created by maks on 21.09.2022.
 //
 #include <EGL/egl.h>
+#include <stdbool.h>
 #ifndef POJAVLAUNCHER_EGL_LOADER_H
 #define POJAVLAUNCHER_EGL_LOADER_H
 
@@ -24,6 +25,6 @@ extern EGLContext (*eglCreateContext_p) (EGLDisplay dpy, EGLConfig config, EGLCo
 extern EGLBoolean (*eglSwapInterval_p) (EGLDisplay dpy, EGLint interval);
 extern EGLSurface (*eglGetCurrentSurface_p) (EGLint readdraw);
 
-void dlsym_EGL();
+bool dlsym_EGL();
 
 #endif //POJAVLAUNCHER_EGL_LOADER_H
