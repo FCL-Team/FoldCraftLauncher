@@ -812,8 +812,8 @@
     <string name="settings_advanced_dont_check_jvm_validity">Не проверять совместимость с JVM</string>
     <string name="settings_advanced_game_dir_default">По умолчанию (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Изолированно в (.minecraft/versions/&lt;instance name&gt;/, кроме ресурсов и библиотек)</string>
-    <string name="settings_advanced_java_permanent_generation_space">Размер PermGen</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">желательно от 256 МБ до 512 МБ (можно оставить пустым)</string>
+    <string name="settings_advanced_java_permanent_generation_space">Объем постоянной памяти</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">рекомендуется от 256 до 512 МБ (можно не указывать)</string>
     <string name="settings_advanced_jvm_args">JVM аргументы</string>
     <string name="settings_advanced_minecraft_arguments">Аргументы лаунчера</string>
     <string name="settings_advanced_minecraft_arguments_prompt">По умолчанию</string>
