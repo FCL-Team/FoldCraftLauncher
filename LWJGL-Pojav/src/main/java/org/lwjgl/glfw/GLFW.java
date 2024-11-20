@@ -508,6 +508,7 @@ public class GLFW
     private static ArrayMap<Long, GLFWWindowProperties> mGLFWWindowMap;
     public static boolean mGLFWIsInputReady;
     private static boolean mGLFWInputPumping;
+    private static boolean mGLFWWindowVisibleOnCreation = true;
     public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(317);
     public static final ByteBuffer mouseDownBuffer = ByteBuffer.allocateDirect(8);
 
@@ -1009,6 +1010,13 @@ public class GLFW
 
         mGLFWWindowMap.put(ptr, win);
         mainContext = ptr;
+
+        if(mGLFWWindowVisibleOnCreation || monitor != 0) {
+            // Show window by default if GLFW_VISIBLE hint is specified on creation or
+            // if the monitor is nonnull (fullscreen requested)
+            glfwShowWindow(ptr);
+        }
+
         return ptr;
         //Return our context
     }
@@ -1025,7 +1033,9 @@ public class GLFW
         nglfwSetShowingWindow(mGLFWWindowMap.size() == 0 ? 0 : mGLFWWindowMap.keyAt(mGLFWWindowMap.size() - 1));
     }
 
-    public static void glfwDefaultWindowHints() {}
+    public static void glfwDefaultWindowHints() {
+        mGLFWWindowVisibleOnCreation = true;
+    }
 
     public static void glfwGetWindowSize(long window, IntBuffer width, IntBuffer height) {
         if (width != null) width.put(internalGetWindow(window).width);
@@ -1048,10 +1058,17 @@ public class GLFW
     }
 
     public static void glfwShowWindow(long window) {
+        GLFWWindowProperties win = internalGetWindow(window);
+        win.windowAttribs.put(GLFW_HOVERED, 1);
+        win.windowAttribs.put(GLFW_VISIBLE, 1);
         nglfwSetShowingWindow(window);
     }
 
     public static void glfwWindowHint(int hint, int value) {
+        if (hint == GLFW_VISIBLE) {
+            mGLFWWindowVisibleOnCreation = value == GLFW_TRUE;
+            return;
+        }
         long __functionAddress = Functions.SetWindowHint;
         invokeV(hint, value, __functionAddress);
     }
