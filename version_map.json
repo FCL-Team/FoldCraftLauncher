@@ -14,7 +14,7 @@
         "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.调整库加载逻辑\n2.修复GL4ES无法运行1.21.3+的bug\n3.修复Pojav后端在使用forge时后台崩溃的bug\n4.修复渲染器插件无法正确读取Mesa库的bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a5c13be4bceb",
+    "netdiskUrl": "https://pan.quark.cn/s/23162b77f419",
     "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9/FCL-release-1.1.9-all.apk"
   }
 ]
