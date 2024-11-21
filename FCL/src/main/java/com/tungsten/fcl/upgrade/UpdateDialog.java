@@ -1,7 +1,5 @@
 package com.tungsten.fcl.upgrade;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
@@ -148,9 +146,6 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
         }
         if (v == netdisk) {
             FCLBridge.openLink(version.getNetdiskUrl());
-            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("FCL Clipboard", "1145");
-            clipboard.setPrimaryClip(clip);
             dismiss();
         }
     }
