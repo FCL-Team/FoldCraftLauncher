@@ -192,13 +192,21 @@ public class FCLauncher {
                 envMap.put("LIBEGL_NAME", RendererPlugin.getSelected().getEglName());
                 RendererPlugin.getSelected().getBoatEnv().forEach(env -> {
                     String[] split = env.split("=");
-                    envMap.put(split[0], split[1]);
+                    if (split[0].equals("LIB_MESA_NAME")) {
+                        envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                    } else {
+                        envMap.put(split[0], split[1]);
+                    }
                 });
             } else {
                 envMap.put("POJAVEXEC_EGL", RendererPlugin.getSelected().getEglName());
                 RendererPlugin.getSelected().getPojavEnv().forEach(env -> {
                     String[] split = env.split("=");
-                    envMap.put(split[0], split[1]);
+                    if (split[0].equals("LIB_MESA_NAME")) {
+                        envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                    } else {
+                        envMap.put(split[0], split[1]);
+                    }
                 });
             }
             return;
@@ -315,7 +323,11 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
-        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
+        if (config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM) {
+            bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
+        } else {
+            bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
+        }
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
