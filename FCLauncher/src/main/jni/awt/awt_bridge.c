@@ -22,6 +22,11 @@ jmethodID method_GetFrames;
 jmethodID method_GetBounds;
 jmethodID method_SetBounds;
 
+jmethodID method_QuerySystemClipboard;
+jmethodID method_PutClipboardData;
+jclass class_CTCClipboard = NULL;
+jmethodID method_SystemClipboardDataReceived = NULL;
+
 jfieldID field_x;
 jfieldID field_y;
 
@@ -33,6 +38,11 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         class_FCLBridge = fcl->class_FCLBridge;
         method_OpenLink = (*env)->GetStaticMethodID(env, class_FCLBridge, "openLink",
                                                     "(Ljava/lang/String;)V");
+        method_QuerySystemClipboard = (*env)->GetStaticMethodID(env, class_FCLBridge,
+                                                                "querySystemClipboard", "()V");
+        method_PutClipboardData = (*env)->GetStaticMethodID(env, class_FCLBridge,
+                                                            "putClipboardData",
+                                                            "(Ljava/lang/String;Ljava/lang/String;)V");
     } else if (dalvikJavaVMPtr != vm) {
         runtimeJavaVMPtr = vm;
     }
@@ -80,11 +90,34 @@ Java_sun_awt_peer_cacio_FCLClipboard_clipboardCopy(JNIEnv *env, jclass clazz, js
 }
 
 JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_ctc_CTCClipboard_nQuerySystemClipboard(JNIEnv *env, jclass clazz) {
-//TODO: implement
+    JNIEnv *dalvikEnv;char detachable = 0;
+    if((*dalvikJavaVMPtr)->GetEnv(dalvikJavaVMPtr, (void **) &dalvikEnv, JNI_VERSION_1_6) == JNI_EDETACHED) {
+        (*dalvikJavaVMPtr)->AttachCurrentThread(dalvikJavaVMPtr, &dalvikEnv, NULL);
+        detachable = 1;
+    }
+    if(method_SystemClipboardDataReceived == NULL) {
+        class_CTCClipboard = (*env)->NewGlobalRef(env, clazz);
+        method_SystemClipboardDataReceived = (*env)->GetStaticMethodID(env, clazz, "systemClipboardDataReceived", "(Ljava/lang/String;Ljava/lang/String;)V");
+    }
+    (*dalvikEnv)->CallStaticVoidMethod(dalvikEnv, class_FCLBridge, method_QuerySystemClipboard);
+    if(detachable) (*dalvikJavaVMPtr)->DetachCurrentThread(dalvikJavaVMPtr);
 }
 
 JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_ctc_CTCClipboard_nPutClipboardData(JNIEnv* env, jclass clazz, jstring clipboardData, jstring clipboardDataMime) {
-//TODO: implement
+    JNIEnv *dalvikEnv;char detachable = 0;
+    if((*dalvikJavaVMPtr)->GetEnv(dalvikJavaVMPtr, (void **) &dalvikEnv, JNI_VERSION_1_6) == JNI_EDETACHED) {
+        (*dalvikJavaVMPtr)->AttachCurrentThread(dalvikJavaVMPtr, &dalvikEnv, NULL);
+        detachable = 1;
+    }
+
+    const char* dataChars = (*env)->GetStringUTFChars(env, clipboardData, NULL);
+    const char* mimeChars = (*env)->GetStringUTFChars(env, clipboardDataMime, NULL);
+    (*dalvikEnv)->CallStaticVoidMethod(dalvikEnv, class_FCLBridge, method_PutClipboardData,
+                                       (*dalvikEnv)->NewStringUTF(dalvikEnv, dataChars),
+                                       (*dalvikEnv)->NewStringUTF(dalvikEnv, mimeChars));
+    (*env)->ReleaseStringUTFChars(env, clipboardData, dataChars);
+    (*env)->ReleaseStringUTFChars(env, clipboardDataMime, mimeChars);
+    if(detachable) (*dalvikJavaVMPtr)->DetachCurrentThread(dalvikJavaVMPtr);
 }
 
 JNIEXPORT void JNICALL Java_com_github_caciocavallosilano_cacio_ctc_CTCClipboard_nQuerySystemClipboard(JNIEnv *env, jclass clazz) {
@@ -164,6 +197,24 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeSendD
             method_ReceiveInput,
             type, i1, i2, i3, i4
     );
+}
+
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeClipboardReceived(JNIEnv *env, jclass clazz, jstring clipboardData, jstring clipboardDataMime) {
+    if(method_SystemClipboardDataReceived == NULL || class_CTCClipboard == NULL) return;
+    if (runtimeJNIEnvPtr_INPUT == NULL) {
+        if (runtimeJavaVMPtr == NULL) {
+            return;
+        } else {
+            (*runtimeJavaVMPtr)->AttachCurrentThread(runtimeJavaVMPtr, &runtimeJNIEnvPtr_INPUT, NULL);
+        }
+    }
+    const char* dataChars = clipboardData != NULL ? (*env)->GetStringUTFChars(env, clipboardData, NULL) : NULL;
+    const char* mimeChars = clipboardDataMime != NULL ? (*env)->GetStringUTFChars(env, clipboardDataMime, NULL) : NULL;
+    (*runtimeJNIEnvPtr_INPUT)->CallStaticVoidMethod(runtimeJNIEnvPtr_INPUT, class_CTCClipboard, method_SystemClipboardDataReceived,
+                                                    clipboardData != NULL ? (*runtimeJNIEnvPtr_INPUT)->NewStringUTF(runtimeJNIEnvPtr_INPUT, dataChars) : NULL,
+                                                    clipboardDataMime != NULL ? (*runtimeJNIEnvPtr_INPUT)->NewStringUTF(runtimeJNIEnvPtr_INPUT, mimeChars) : NULL);
+    if(dataChars != NULL) (*env)->ReleaseStringUTFChars(env, clipboardData, dataChars);
+    if(mimeChars != NULL) (*env)->ReleaseStringUTFChars(env, clipboardDataMime, mimeChars);
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeMoveWindow(JNIEnv *env, jclass clazz, jint x, jint y) {
