@@ -18,14 +18,27 @@
 package com.tungsten.fclcore.game;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclcore.util.*;
+import com.tungsten.fclcore.util.Constants;
+import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.JsonMap;
 import com.tungsten.fclcore.util.gson.Validation;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Version implements Comparable<Version>, Validation {
