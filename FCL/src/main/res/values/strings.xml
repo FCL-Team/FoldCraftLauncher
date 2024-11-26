@@ -1002,4 +1002,6 @@
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
     </string>
+    <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
+    <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
 </resources>
