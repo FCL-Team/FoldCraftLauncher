@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1190,
-    "versionName": "1.1.9",
-    "date": "2024.11.21",
+    "versionCode": 1191,
+    "versionName": "1.1.9.1",
+    "date": "2024.11.28",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.调整库加载逻辑\n2.修复GL4ES无法运行1.21.3+的bug\n3.修复Pojav后端在使用forge时后台崩溃的bug\n4.修复渲染器插件无法正确读取Mesa库的bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复聊天界面使用Ctrl+V会导致游戏卡住的bug\n2.更新Turnip驱动至24.3.0\n3.修复Forge mod信息识别错误的bug\n4.新增功能：启动时打印mods文件夹内的jar文件\n5.新增功能：下载版本页面可以直接跳转至对于版本的MC百科\n6.修复部分bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/23162b77f419",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9/FCL-release-1.1.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/fa18443a70eb",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.1/FCL-release-1.1.9.1-all.apk"
   }
 ]
