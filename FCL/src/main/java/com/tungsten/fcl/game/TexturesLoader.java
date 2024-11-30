@@ -316,20 +316,22 @@ public final class TexturesLoader {
 
     // ==== Avatar ====
     public static Bitmap toAvatar(Bitmap skin, int size) {
-        int faceOffset = (int) Math.round(size / 18.0);
-        Bitmap faceBitmap = Bitmap.createBitmap(skin, 8, 8, 8, 8, (Matrix) null, false);
-        Bitmap hatBitmap = Bitmap.createBitmap(skin, 40, 8, 8, 8, (Matrix) null, false);
+        float faceOffset = Math.round(size / 18.0);
+        float scaleFactor = skin.getWidth() / 64.0f;
+        int faceSize = Math.round(8 * scaleFactor);
+        Bitmap faceBitmap = Bitmap.createBitmap(skin, faceSize, faceSize, faceSize, faceSize, (Matrix) null, false);
+        Bitmap hatBitmap = Bitmap.createBitmap(skin, Math.round(40 * scaleFactor), faceSize, faceSize, faceSize, (Matrix) null, false);
         Bitmap avatar = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(avatar);
         Matrix matrix;
-        float faceScale = ((size - 2 * faceOffset) / 8f);
-        float hatScale = (size / 8f);
+        float faceScale = ((size - 2 * faceOffset) / faceSize);
+        float hatScale = ((float) size / faceSize);
         matrix = new Matrix();
         matrix.postScale(faceScale, faceScale);
-        Bitmap newFaceBitmap = Bitmap.createBitmap(faceBitmap, 0, 0 , 8, 8, matrix, false);
+        Bitmap newFaceBitmap = Bitmap.createBitmap(faceBitmap, 0, 0 , faceSize, faceSize, matrix, false);
         matrix = new Matrix();
         matrix.postScale(hatScale, hatScale);
-        Bitmap newHatBitmap = Bitmap.createBitmap(hatBitmap, 0, 0, 8, 8, matrix, false);
+        Bitmap newHatBitmap = Bitmap.createBitmap(hatBitmap, 0, 0, faceSize, faceSize, matrix, false);
         canvas.drawBitmap(newFaceBitmap, faceOffset, faceOffset, new Paint(Paint.ANTI_ALIAS_FLAG));
         canvas.drawBitmap(newHatBitmap, 0, 0, new Paint(Paint.ANTI_ALIAS_FLAG));
         return avatar;
