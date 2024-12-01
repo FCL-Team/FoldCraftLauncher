@@ -145,7 +145,7 @@ public final class LauncherHelper {
                     try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibFixer.jar")) {
                         Files.copy(input, new File(FCLPath.LIB_FIXER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        Logging.LOG.log(Level.WARNING, "Unable to unpack MultiplayerFix.jar", e);
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
                     }
                     return null;
                 })
