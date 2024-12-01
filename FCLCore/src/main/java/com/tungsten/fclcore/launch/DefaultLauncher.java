@@ -177,9 +177,10 @@ public class DefaultLauncher extends Launcher {
         }
 
         // Fix 1.16.x multiplayer
-        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
-            res.add("-javaagent:" + FCLPath.MULTIPLAYER_FIX_PATH);
-        }
+//        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
+//
+//        }
+        res.add("-javaagent:" + FCLPath.LIB_FIXER_PATH);
 
         Set<String> classpath = repository.getClasspath(version);
         classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);

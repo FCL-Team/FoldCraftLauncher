@@ -142,9 +142,9 @@ public final class LauncherHelper {
                     );
                 }).withStage("launch.state.dependencies")
                 .thenComposeAsync(() -> {
-                    if (!new File(FCLPath.MULTIPLAYER_FIX_PATH).exists()) {
-                        try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MultiplayerFix.jar")) {
-                            Files.copy(input, new File(FCLPath.MULTIPLAYER_FIX_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    if (!new File(FCLPath.LIB_FIXER_PATH).exists()) {
+                        try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibFixer.jar")) {
+                            Files.copy(input, new File(FCLPath.LIB_FIXER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
                             Logging.LOG.log(Level.WARNING, "Unable to unpack MultiplayerFix.jar", e);
                         }
