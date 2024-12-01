@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -44,6 +45,7 @@ public class FCLauncher {
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU:" + Build.HARDWARE);
         log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
+        log(bridge, "Language: " + Locale.getDefault());
     }
 
     private static void logModList(FCLBridge bridge) {
