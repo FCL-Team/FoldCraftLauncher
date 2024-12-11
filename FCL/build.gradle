@@ -100,8 +100,8 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
+            pickFirsts += ['**/libbytehook.so']
         }
-        pickFirst '**/libbytehook.so'
     }
     kotlinOptions {
         jvmTarget = "1.8"
