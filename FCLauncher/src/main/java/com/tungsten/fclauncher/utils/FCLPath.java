@@ -34,7 +34,7 @@ public class FCLPath {
     public static String SHARED_COMMON_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/.minecraft";
 
     public static String AUTHLIB_INJECTOR_PATH;
-    public static String MULTIPLAYER_FIX_PATH;
+    public static String LIB_FIXER_PATH;
     public static String MIO_LAUNCH_WRAPPER;
     public static String LT_BACKGROUND_PATH;
     public static String DK_BACKGROUND_PATH;
@@ -66,7 +66,7 @@ public class FCLPath {
         PRIVATE_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
 
         AUTHLIB_INJECTOR_PATH = PLUGIN_DIR + "/authlib-injector.jar";
-        MULTIPLAYER_FIX_PATH = PLUGIN_DIR + "/MultiplayerFix.jar";
+        LIB_FIXER_PATH = PLUGIN_DIR + "/MioLibFixer.jar";
         MIO_LAUNCH_WRAPPER = PLUGIN_DIR + "/MioLaunchWrapper.jar";
         LT_BACKGROUND_PATH = BACKGROUND_DIR + "/lt.png";
         DK_BACKGROUND_PATH = BACKGROUND_DIR + "/dk.png";

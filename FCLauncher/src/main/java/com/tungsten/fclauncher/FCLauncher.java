@@ -20,10 +20,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class FCLauncher {
 
@@ -41,6 +45,22 @@ public class FCLauncher {
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU:" + Build.HARDWARE);
         log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
+        log(bridge, "Language: " + Locale.getDefault());
+    }
+
+    private static void logModList(FCLBridge bridge) {
+        File modsDir = new File(bridge.getGameDir(), "mods");
+        if (!modsDir.exists()) return;
+        printTaskTitle(bridge, "Mods");
+        try (Stream<Path> walk = Files.walk(modsDir.toPath(), Integer.MAX_VALUE)) {
+            walk.forEach(path -> {
+                File file = path.toFile();
+                if (file.isFile() && file.getName().endsWith(".jar")) {
+                    log(bridge, "Mod File: " + file.getName());
+                }
+            });
+        } catch (IOException ignore) {
+        }
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
@@ -192,13 +212,21 @@ public class FCLauncher {
                 envMap.put("LIBEGL_NAME", RendererPlugin.getSelected().getEglName());
                 RendererPlugin.getSelected().getBoatEnv().forEach(env -> {
                     String[] split = env.split("=");
-                    envMap.put(split[0], split[1]);
+                    if (split[0].equals("LIB_MESA_NAME")) {
+                        envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                    } else {
+                        envMap.put(split[0], split[1]);
+                    }
                 });
             } else {
                 envMap.put("POJAVEXEC_EGL", RendererPlugin.getSelected().getEglName());
                 RendererPlugin.getSelected().getPojavEnv().forEach(env -> {
                     String[] split = env.split("=");
-                    envMap.put(split[0], split[1]);
+                    if (split[0].equals("LIB_MESA_NAME")) {
+                        envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                    } else {
+                        envMap.put(split[0], split[1]);
+                    }
                 });
             }
             return;
@@ -315,7 +343,11 @@ public class FCLauncher {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
-        bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
+        if (config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM) {
+            bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
+        } else {
+            bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
+        }
     }
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
@@ -357,6 +389,7 @@ public class FCLauncher {
         Thread gameThread = new Thread(() -> {
             try {
                 logStartInfo(bridge, "Minecraft");
+                logModList(bridge);
 
                 // env
                 setEnv(config, bridge, true);

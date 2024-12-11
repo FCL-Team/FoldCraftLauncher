@@ -570,17 +570,38 @@ JNIEXPORT void JNICALL Java_org_lwjgl_glfw_GLFW_nglfwSetShowingWindow(__attribut
 }
 
 JNIEXPORT void JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeSetWindowAttrib(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz, jint attrib, jint value) {
-    if (!pojav_environ->showingWindow || !pojav_environ->isUseStackQueueCall) {
+    // Check for stack queue no longer necessary here as the JVM crash's origin is resolved
+    if (!pojav_environ->showingWindow) {
         // If the window is not shown, there is nothing to do yet.
-        // For Minecraft < 1.13, calling to JNI functions here crashes the JVM for some reason, therefore it is skipped for now.
         return;
     }
 
-    (*pojav_environ->runtimeJNIEnvPtr_JRE)->CallStaticVoidMethod(
-        pojav_environ->runtimeJNIEnvPtr_JRE,
-        pojav_environ->vmGlfwClass, pojav_environ->method_glftSetWindowAttrib,
-        (jlong) pojav_environ->showingWindow, attrib, value
+    // We cannot use pojav_environ->runtimeJNIEnvPtr_JRE here because that environment is attached
+    // on the thread that loaded pojavexec (which is the thread that first references the GLFW class)
+    // But this method is only called from the Android UI thread
+
+    // Technically the better solution would be to have a permanently attached env pointer stored
+    // in environ for the Android UI thread but this is the only place that uses it
+    // (very rarely, only in lifecycle callbacks) so i dont care
+
+    JavaVM* jvm = pojav_environ->runtimeJavaVMPtr;
+    JNIEnv *jvm_env = NULL;
+    jint env_result = (*jvm)->GetEnv(jvm, (void**)&jvm_env, JNI_VERSION_1_4);
+    if(env_result == JNI_EDETACHED) {
+        env_result = (*jvm)->AttachCurrentThread(jvm, &jvm_env, NULL);
+    }
+    if(env_result != JNI_OK) {
+        printf("input_bridge nativeSetWindowAttrib() JNI call failed: %i\n", env_result);
+        return;
+    }
+
+    (*jvm_env)->CallStaticVoidMethod(
+            jvm_env, pojav_environ->vmGlfwClass,
+            pojav_environ->method_glftSetWindowAttrib,
+            (jlong) pojav_environ->showingWindow, attrib, value
     );
+
+    // Attaching every time is annoying, so stick the attachment to the Android GUI thread around
 }
 const static JNINativeMethod critical_fcns[] = {
         {"nativeSetUseInputStackQueue", "(Z)V", critical_set_stackqueue},

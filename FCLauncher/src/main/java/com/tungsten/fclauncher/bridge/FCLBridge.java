@@ -95,6 +95,8 @@ public class FCLBridge implements Serializable {
     public FCLBridge() {
     }
 
+    public static native void nativeClipboardReceived(String data, String mimeTypeSub);
+
     public native int[] renderAWTScreenFrame();
 
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
@@ -302,6 +304,42 @@ public class FCLBridge implements Serializable {
             } catch (Exception e) {
                 Log.e("openLink error", "link:" + link + " err:" + e.toString());
             }
+        });
+    }
+
+    public static void querySystemClipboard() {
+        Context context = FCLPath.CONTEXT;
+        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+        ((Activity) context).runOnUiThread(() -> {
+            ClipData clipData = clipboard.getPrimaryClip();
+            if (clipData == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            ClipData.Item firstClipItem = clipData.getItemAt(0);
+            //TODO: coerce to HTML if the clip item is styled
+            CharSequence clipItemText = firstClipItem.getText();
+            if (clipItemText == null) {
+                nativeClipboardReceived(null, null);
+                return;
+            }
+            nativeClipboardReceived(clipItemText.toString(), "plain");
+        });
+    }
+
+    public static void putClipboardData(String data, String mimeType) {
+        Context context = FCLPath.CONTEXT;
+        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+        ((Activity) context).runOnUiThread(() -> {
+            ClipData clipData = null;
+            switch (mimeType) {
+                case "text/plain":
+                    clipData = ClipData.newPlainText("AWT Paste", data);
+                    break;
+                case "text/html":
+                    clipData = ClipData.newHtmlText("AWT Paste", data, data);
+            }
+            if (clipData != null) clipboard.setPrimaryClip(clipData);
         });
     }
 

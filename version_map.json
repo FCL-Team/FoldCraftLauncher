@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1189,
-    "versionName": "1.1.8.9",
-    "date": "2024.11.16",
+    "versionCode": 1192,
+    "versionName": "1.1.9.2",
+    "date": "2024.12.05",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.移除Activity跳转动画\n2.更新高清修复和Forge下载链接\n3.隐藏自动安装页面的FabricAPI和QuiltAPI\n4.增加隐藏主界面皮肤模型的功能\n5.修复Modrinth整合包补全Bug\n6.调整窗口分辨率最大上限调整为300%\n7.修复自定义按键解析错误导致可能崩溃的一个Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载界面wiki图标错误显示的bug\n2.添加对高清皮肤头像的支持\n3.清除日志内输出无用的flite报错信息\n4.新增功能：启动时打印使用的语言\n5.清除日志内输出的LWJGL兼容性检查信息\n6.修复部分机型使用VulkanMod时打开F3闪退的Bug\n7.修复使用RandomPatches(1.12.2-1.16-)闪退的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c264df879646",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.8.9/FCL-release-1.1.8.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7a3d75e6dcf8",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.2/FCL-release-1.1.9.2-all.apk"
   }
 ]

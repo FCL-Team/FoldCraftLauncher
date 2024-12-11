@@ -44,8 +44,8 @@ android {
         applicationId "com.tungsten.fcl"
         minSdk 26
         targetSdk 34
-        versionCode 1189
-        versionName "1.1.8.9"
+        versionCode 1192
+        versionName "1.1.9.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -100,8 +100,8 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
+            pickFirsts += ['**/libbytehook.so']
         }
-        pickFirst '**/libbytehook.so'
     }
     kotlinOptions {
         jvmTarget = "1.8"

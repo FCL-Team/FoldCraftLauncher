@@ -186,7 +186,11 @@ GLFWbool _glfwInitOSMesa(void)
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
 
-    _glfw.osmesa.handle = _glfw_dlopen(getenv("LIBGL_NAME"));
+    char *lib_name = getenv("LIB_MESA_NAME");
+    if (!lib_name) {
+        lib_name = getenv("LIBGL_NAME");
+    }
+    _glfw.osmesa.handle = _glfw_dlopen(lib_name);
 
     const char *renderer = getenv("LIBGL_STRING");
     
