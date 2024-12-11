@@ -413,7 +413,7 @@ GLFWAPI void* glfwGetOSMesaCurrentContext() {
 
 GLFWAPI long glfwGetGraphicBuffersAddr(GLFWwindow* handle) {
     _GLFWwindow* window = (_GLFWwindow*) handle;
-    return &window->context.osmesa.buffer;
+    return (long) &window->context.osmesa.buffer;
 }
 
 GLFWAPI void glfwMakeContextCurrent(GLFWwindow* handle)
