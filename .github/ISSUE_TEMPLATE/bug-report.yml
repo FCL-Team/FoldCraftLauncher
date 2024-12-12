@@ -55,6 +55,18 @@ body:
         请尽可能详细地描述问题，特别是你是如何遇到这个bug的。
     validations:
       required: true
+  - type: dropdown
+      id: launcher-backend
+      attributes:
+        label: Launcher Backend / 启动器后端
+        description: |
+            Please choose the launcher backend you are using.
+            请选择你正在使用的启动器后端。
+        multiple: true
+        options:
+          - 无
+          - Pojav
+          - Boat
   - type: input
     id: java-version
     attributes:
