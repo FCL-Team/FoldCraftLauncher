@@ -26,6 +26,7 @@ body:
       - label: I have searched for existing issues.我已经搜索了现有的 issues。
         required: true
       - label: I have tried switching renderer.我已经尝试过切换渲染器。
+      - label: I have tried switching launcher backend.我已经尝试过切换启动器后端。
   - type: input
     id: fcl-version
     attributes:
@@ -60,11 +61,11 @@ body:
     attributes:
       label: Launcher Backend / 启动器后端
       description: |
-          Please choose the launcher backend you are using.
-          请选择你正在使用的启动器后端。
+        Please choose the launcher backend you are using.
+        请选择你正在使用的启动器后端。
+      placeholder: e.g. Boat
       multiple: true
       options:
-        - No response
         - Pojav
         - Boat
   - type: input
