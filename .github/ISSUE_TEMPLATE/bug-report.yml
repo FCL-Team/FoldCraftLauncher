@@ -63,7 +63,6 @@ body:
       description: |
         Please choose the launcher backend you are using.
         请选择你正在使用的启动器后端。
-      placeholder: e.g. Boat
       multiple: true
       options:
         - Pojav
