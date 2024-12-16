@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.content.Context;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
@@ -16,6 +17,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -34,6 +36,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
     private FCLImageButton failedRefresh;
     private FCLProgressBar progressBar;
     private ListView listView;
+    private FCLEditText search;
 
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
 
@@ -51,6 +54,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
         failedRefresh = findViewById(R.id.failed_refresh);
         progressBar = findViewById(R.id.progress);
         listView = findViewById(R.id.list);
+        search = findViewById(R.id.search);
 
         checkRelease.setChecked(true);
 
@@ -64,6 +68,8 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
             InstallersPage page = new InstallersPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_installer, remoteVersion.getGameVersion());
             DownloadPageManager.getInstance().showTempPage(page);
         };
+
+        search.stringProperty().addListener(observable -> refreshDisplayVersions());
 
         refreshList();
     }
@@ -82,6 +88,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
                             return true;
                     }
                 })
+                .filter(it -> it.getGameVersion().contains(search.getStringValue()))
                 .sorted().collect(Collectors.toList());
     }
 
@@ -96,6 +103,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
         failedRefresh.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         refresh.setEnabled(false);
+        search.setText("");
         VersionList<?> currentVersionList = DownloadProviders.getDownloadProvider().getVersionListById("game");
         currentVersionList.refreshAsync("").whenComplete((result, exception) -> {
             if (exception == null) {

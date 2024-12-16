@@ -31,6 +31,7 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RemoteVersionListAdapter extends FCLAdapter {
 
@@ -140,6 +141,10 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         } else {
             return remoteVersion.getGameVersion();
         }
+    }
+
+    public List<RemoteVersion> getList() {
+        return list;
     }
 
     public interface OnRemoteVersionSelectListener {
