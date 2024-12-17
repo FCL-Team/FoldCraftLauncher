@@ -1004,4 +1004,5 @@
     </string>
     <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
+    <string name="installed">Installed</string>
 </resources>

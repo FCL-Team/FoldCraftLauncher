@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.Schedulers;
@@ -33,6 +35,7 @@ import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -144,6 +147,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             if (exception == null) {
                 this.versions = result;
                 loadGameVersions();
+                checkInstalled();
             } else {
                 setFailed();
             }
@@ -168,6 +172,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             }
             setScreenshotLoading(false);
         })).start();
+    }
+
+    private void checkInstalled() {
+        try {
+            String remoteName = addon.getTitle().replace(" ", "").toLowerCase();
+            String remoteAuthor = addon.getAuthor().replace(" ", "").toLowerCase();
+            for (LocalModFile localModFile : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+                String localName = localModFile.getName().replace(" ", "").toLowerCase();
+                String localAuthor = localModFile.getAuthors().replace(" ", "").toLowerCase();
+                if (remoteName.contains(localName) && localAuthor.contains(remoteAuthor)) {
+                    name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), name.getText()));
+                    break;
+                }
+            }
+        } catch (IOException ignore) {
+        }
     }
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {
