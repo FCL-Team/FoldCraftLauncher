@@ -57,6 +57,7 @@
             android:layout_weight="1"
             android:hint="@string/search"
             android:imeOptions="flagNoFullscreen"
+            android:singleLine="true"
             app:auto_edit_tint="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
