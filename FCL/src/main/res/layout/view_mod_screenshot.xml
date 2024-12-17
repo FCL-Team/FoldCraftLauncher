@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -9,7 +11,7 @@
             android:id="@+id/loading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/screenshot"
@@ -17,8 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/retry"
@@ -27,22 +29,24 @@
             android:layout_gravity="center_horizontal"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_baseline_refresh_24"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_horizontal"
+            app:auto_text_tint="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:textSize="11sp"
-            android:gravity="center_horizontal"/>
+            app:auto_text_tint="true" />
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 </layout>
