@@ -207,9 +207,9 @@ public class Theme {
         boolean closeSkinModel = sharedPreferences.getBoolean("close_skin_model", false);
         boolean modified = sharedPreferences.getBoolean("modified", false);
         int animationSpeed = sharedPreferences.getInt("animation_speed", 8);
-        Bitmap lt = ImageUtil.load(FCLPath.LT_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
+        Bitmap lt = ImageUtil.load(context.getFilesDir().getAbsolutePath() + "/background/lt.png").orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
         BitmapDrawable backgroundLt = new BitmapDrawable(context.getResources(), lt);
-        Bitmap dk = ImageUtil.load(FCLPath.DK_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
+        Bitmap dk = ImageUtil.load(context.getFilesDir().getAbsolutePath() + "/background/dk.png").orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
         BitmapDrawable backgroundDk = new BitmapDrawable(context.getResources(), dk);
         return new Theme(color, color2, fullscreen, closeSkinModel, animationSpeed, backgroundLt, backgroundDk, modified);
     }
