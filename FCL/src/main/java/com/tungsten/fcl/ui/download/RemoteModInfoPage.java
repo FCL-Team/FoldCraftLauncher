@@ -11,9 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.Schedulers;
@@ -23,6 +25,7 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -33,11 +36,13 @@ import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,6 +71,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private FCLImageView screenshotRetry;
     private FCLTextView screenshotNoResult;
     private RecyclerView screenshotView;
+    private FCLEditText search;
 
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
@@ -96,12 +102,17 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         screenshotLoading = findViewById(R.id.screenshot_loading);
         screenshotRetry = findViewById(R.id.screenshot_retry);
         screenshotNoResult = findViewById(R.id.screenshot_no_result);
+        search = findViewById(R.id.search);
 
         retry.setOnClickListener(this);
         mcmod.setOnClickListener(this);
         website.setOnClickListener(this);
 
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
+
+        search.stringProperty().addListener(observable -> {
+            loadGameVersions();
+        });
     }
 
     @Override
@@ -127,6 +138,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private void loadGameVersions() {
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), versions.keys().stream()
                 .sorted(Collections.reverseOrder(VersionNumber::compare))
+                .filter(it -> it.contains(Optional.ofNullable(search.getStringValue()).orElse("")))
                 .collect(Collectors.toList()), v -> {
             RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
             DownloadPageManager.getInstance().showTempPage(page);
@@ -144,6 +156,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             if (exception == null) {
                 this.versions = result;
                 loadGameVersions();
+                checkInstalled();
             } else {
                 setFailed();
             }
@@ -168,6 +181,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             }
             setScreenshotLoading(false);
         })).start();
+    }
+
+    private void checkInstalled() {
+        try {
+            String remoteName = addon.getTitle().replace(" ", "").toLowerCase();
+            String remoteAuthor = addon.getAuthor().replace(" ", "").toLowerCase();
+            for (LocalModFile localModFile : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+                String localName = localModFile.getName().replace(" ", "").toLowerCase();
+                String localAuthor = localModFile.getAuthors().replace(" ", "").toLowerCase();
+                if (remoteName.contains(localName) && localAuthor.contains(remoteAuthor)) {
+                    name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), name.getText()));
+                    break;
+                }
+            }
+        } catch (IOException ignore) {
+        }
     }
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {

@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
@@ -201,5 +202,10 @@ public final class Profiles {
         if (profile != null && profile.getRepository().isLoaded())
             listener.accept(profile);
         versionsListeners.add(listener);
+    }
+
+    public static String getSelectedGameVersion() {
+        Optional<String> gameVersion = getSelectedProfile().getRepository().getGameVersion(getSelectedVersion());
+        return gameVersion.orElse("");
     }
 }

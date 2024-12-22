@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1192,
-    "versionName": "1.1.9.2",
-    "date": "2024.12.05",
+    "versionCode": 1195,
+    "versionName": "1.1.9.5",
+    "date": "2024.12.20",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载界面wiki图标错误显示的bug\n2.添加对高清皮肤头像的支持\n3.清除日志内输出无用的flite报错信息\n4.新增功能：启动时打印使用的语言\n5.清除日志内输出的LWJGL兼容性检查信息\n6.修复部分机型使用VulkanMod时打开F3闪退的Bug\n7.修复使用RandomPatches(1.12.2-1.16-)闪退的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复更新1.1.9.4后启动直接闪退的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7a3d75e6dcf8",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.2/FCL-release-1.1.9.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c7a903274ef6",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.5/FCL-release-1.1.9.5-all.apk"
   }
 ]
