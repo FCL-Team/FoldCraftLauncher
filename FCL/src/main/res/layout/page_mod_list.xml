@@ -67,7 +67,7 @@
 
             <com.tungsten.fcllibrary.component.view.FCLButton
                 app:ripple="true"
-                android:id="@+id/check_update"
+                android:id="@+id/check_update_all"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,7 +92,16 @@
 
             <com.tungsten.fcllibrary.component.view.FCLButton
                 app:ripple="true"
+                android:id="@+id/check_update"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/mods_check_updates"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                app:ripple="true"
                 android:id="@+id/delete"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/button_remove"/>
