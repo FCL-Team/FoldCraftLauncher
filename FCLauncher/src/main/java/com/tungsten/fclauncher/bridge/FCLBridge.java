@@ -87,6 +87,7 @@ public class FCLBridge implements Serializable {
     private Thread thread;
     private SurfaceTexture surfaceTexture;
     private String modSummary;
+    private boolean hasTouchController = false;
 
     static {
         System.loadLibrary("fcl");
@@ -459,5 +460,13 @@ public class FCLBridge implements Serializable {
 
     public void setModSummary(String modSummary) {
         this.modSummary = modSummary;
+    }
+
+    public boolean hasTouchController() {
+        return hasTouchController;
+    }
+
+    public void setHasTouchController(boolean hasTouchController) {
+        this.hasTouchController = hasTouchController;
     }
 }

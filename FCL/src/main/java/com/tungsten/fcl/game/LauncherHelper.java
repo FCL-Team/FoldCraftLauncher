@@ -296,6 +296,9 @@ public final class LauncherHelper {
                 sb.append(" | ");
                 sb.append(mod.getModLoaderType());
                 sb.append("\n");
+                if (mod.getId().equals("touchcontroller")) {
+                    bridge.setHasTouchController(true);
+                }
             });
             bridge.setModSummary(sb.toString());
         } catch (Throwable ignore) {
