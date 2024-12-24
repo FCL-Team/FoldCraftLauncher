@@ -3,9 +3,11 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.PopupWindow;
 
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
@@ -433,7 +435,16 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             dialog.show();
         }
         if (view == rendererButton) {
-            RendererUtil.openRendererMenu(getContext(), view, ConvertUtils.dip2px(getContext(), 400), ConvertUtils.dip2px(getContext(), 300), name -> {
+            int[] pos = new int[2];
+            view.getLocationInWindow(pos);
+            int windowHeight = getActivity().getWindow().getDecorView().getHeight();
+            int y;
+            if (pos[1] < windowHeight / 2) {
+                y = pos[1];
+            } else {
+                y = 0;
+            }
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, name -> {
                 rendererText.setText(name);
             });
         }

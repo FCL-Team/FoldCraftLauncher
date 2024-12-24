@@ -495,7 +495,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun openRendererMenu(view: View) {
         RendererUtil.openRendererMenu(
-            this, view, bind.rightMenu.width, bind.launch.y.toInt()
+            this, bind.rightMenu, bind.rightMenu.x.toInt(), 0, bind.rightMenu.width, view.y.toInt()
         ) {
             onClick(view)
         }

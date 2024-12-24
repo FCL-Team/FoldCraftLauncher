@@ -21,6 +21,8 @@ class RendererUtil {
         fun openRendererMenu(
             context: Context,
             view: View,
+            x: Int,
+            y: Int,
             width: Int,
             height: Int,
             callback: Consumer<String>
@@ -68,9 +70,9 @@ class RendererUtil {
             ).apply {
                 isClippingEnabled = false
                 isOutsideTouchable = true
-                enterTransition = Slide(Gravity.TOP)
-                exitTransition = Slide(Gravity.TOP)
-                showAsDropDown(view)
+                enterTransition = Slide(Gravity.BOTTOM)
+                exitTransition = Slide(Gravity.BOTTOM)
+                showAtLocation(view, Gravity.START or Gravity.TOP, x, y)
             }
         }
 
