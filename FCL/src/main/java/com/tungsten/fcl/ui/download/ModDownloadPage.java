@@ -8,8 +8,11 @@ import androidx.core.text.HtmlCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.LocalizedRemoteModRepository;
+import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RuntimeUtils;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
@@ -20,6 +23,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.IOException;
 
 public class ModDownloadPage extends DownloadPage {
+    private ModManager modManager;
 
     public ModDownloadPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId, null);
@@ -46,6 +50,16 @@ public class ModDownloadPage extends DownloadPage {
                 ignore.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void loadVersion(Profile profile, String version) {
+        super.loadVersion(profile, version);
+        modManager = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion());
+    }
+
+    public ModManager getModManager() {
+        return modManager;
     }
 
     private class Repository extends LocalizedRemoteModRepository {

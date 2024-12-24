@@ -13,6 +13,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.mod.LocalModFile;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -96,16 +97,21 @@ public class RemoteModListAdapter extends FCLAdapter {
         if (downloadPage instanceof ModDownloadPage) {
             Task.supplyAsync(() -> {
                 String remoteName = remoteMod.getTitle().replace(" ", "").toLowerCase();
-                List<LocalModFile> modFiles = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().parallelStream().filter(localModFile -> {
+                ModManager modManager = ((ModDownloadPage) downloadPage).getModManager();
+                List<LocalModFile> modFiles = modManager.getMods().parallelStream().filter(localModFile -> {
                     String localName = localModFile.getName().replace(" ", "").toLowerCase();
                     return remoteName.contains(localName);
                 }).collect(Collectors.toList());
                 for (LocalModFile localModFile : modFiles) {
-                    Optional<RemoteMod.Version> remoteVersion = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
-                    if (remoteVersion.isPresent()) {
-                        String modId = remoteVersion.get().getModid();
+                    if (localModFile.getRemoteVersion() == null) {
+                        Optional<RemoteMod.Version> remoteVersionOptional = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                        remoteVersionOptional.ifPresent(localModFile::setRemoteVersion);
+                    }
+                    RemoteMod.Version remoteVersion = localModFile.getRemoteVersion();
+                    if (remoteVersion != null) {
+                        String modId = remoteVersion.getModid();
                         if (remoteMod.getModID().equals(modId)) {
-                            return remoteVersion.get();
+                            return remoteVersion;
                         }
                     }
                 }
