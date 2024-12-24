@@ -332,7 +332,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, id),
                     iconUrl,
-                    this
+                    this,
+                    id
             );
         }
     }
@@ -716,7 +717,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, projectId),
                     iconUrl,
-                    this
+                    this,
+                    projectId
             );
         }
     }

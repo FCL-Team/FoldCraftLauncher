@@ -380,6 +380,10 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         }
     }
 
+    public RemoteModRepository getRepository() {
+        return repository;
+    }
+
     private static class CategoryIndented {
         private final int indent;
         private final RemoteModRepository.Category category;
