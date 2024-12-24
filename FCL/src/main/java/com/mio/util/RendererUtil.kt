@@ -10,7 +10,9 @@ import android.widget.PopupWindow
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fclauncher.FCLConfig
+import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
+import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
 
 class RendererUtil {
@@ -69,6 +71,43 @@ class RendererUtil {
                 enterTransition = Slide(Gravity.TOP)
                 exitTransition = Slide(Gravity.TOP)
                 showAsDropDown(view)
+            }
+        }
+
+        @JvmStatic
+        fun openDriverMenu(
+            context: Context,
+            view: View,
+            callback: Consumer<String>
+        ) {
+            val listView = ListView(context)
+            var popupWindow: PopupWindow? = null
+            listView.adapter =
+                ArrayAdapter(context, R.layout.item_renderer, mutableListOf<String>().apply {
+                    DriverPlugin.driverList.forEach {
+                        add(it.driver)
+                    }
+                })
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val versionSetting =
+                    Profiles.getSelectedProfile().versionSetting
+                versionSetting.driver = DriverPlugin.driverList[position].driver
+                DriverPlugin.selected = DriverPlugin.driverList[position]
+                popupWindow?.dismiss()
+                callback.accept(listView.adapter.getItem(position).toString())
+            }
+            popupWindow = PopupWindow(
+                listView,
+                ConvertUtils.dip2px(context, 200F),
+                ConvertUtils.dip2px(context, 300F)
+            ).apply {
+                isClippingEnabled = false
+                isOutsideTouchable = true
+                enterTransition = Slide(Gravity.TOP)
+                exitTransition = Slide(Gravity.TOP)
+                val pos = intArrayOf(-1, -1)
+                view.getLocationInWindow(pos)
+                showAtLocation(view, Gravity.START, pos[0], pos[1] - 50)
             }
         }
     }

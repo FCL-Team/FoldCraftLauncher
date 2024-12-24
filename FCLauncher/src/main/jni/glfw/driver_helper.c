@@ -48,7 +48,7 @@ bool checkAdrenoGraphics() {
 }
 void* load_turnip_vulkan() {
     if(!checkAdrenoGraphics()) return NULL;
-    const char* native_dir = getenv("FCL_NATIVEDIR");
+    const char* native_dir = getenv("DRIVER_PATH");
     const char* cache_dir = getenv("TMPDIR");
     if(!linker_ns_load(native_dir)) return NULL;
     void* linkerhook = linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW);

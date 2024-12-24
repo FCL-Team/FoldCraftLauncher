@@ -234,6 +234,14 @@ class VersionSetting : Cloneable {
             customRendererProperty.set(renderer)
         }
 
+    val driverProperty: StringProperty =
+        SimpleStringProperty(this, "driver", "Turnip")
+    var driver: String
+        get() = driverProperty.get()
+        set(driver) {
+            driverProperty.set(driver)
+        }
+
     val pojavBigCoreProperty: BooleanProperty =
         SimpleBooleanProperty(this, "pojavBigCore", false)
     var isPojavBigCore: Boolean
@@ -292,6 +300,7 @@ class VersionSetting : Cloneable {
         controllerProperty.addListener(listener)
         rendererProperty.addListener(listener)
         customRendererProperty.addListener(listener)
+        driverProperty.addListener(listener)
         pojavBigCoreProperty.addListener(listener)
     }
 
@@ -315,6 +324,7 @@ class VersionSetting : Cloneable {
             it.controller = controller
             it.renderer = renderer
             it.customRenderer = customRenderer
+            it.driver = driver
             it.isPojavBigCore = isPojavBigCore
         }
     }
@@ -346,6 +356,7 @@ class VersionSetting : Cloneable {
                 addProperty("vulkanDriverSystem", src.isVKDriverSystem)
                 addProperty("controller", src.controller)
                 addProperty("renderer", src.renderer.ordinal)
+                addProperty("driver", src.driver)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
                 addProperty("customRenderer", src.customRenderer)
                 addProperty("pojavBigCore", src.isPojavBigCore)
@@ -383,6 +394,7 @@ class VersionSetting : Cloneable {
                 vs.controller = json["controller"]?.asString ?: ("00000000")
                 vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[json["renderer"]?.asInt
                     ?: FCLConfig.Renderer.RENDERER_GL4ES.ordinal]
+                vs.driver = json["driver"]?.asString ?: "Turnip"
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.customRenderer = json["customRenderer"]?.asString ?: ""
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false

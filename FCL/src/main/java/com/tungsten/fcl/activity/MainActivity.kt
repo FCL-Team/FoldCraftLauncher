@@ -44,6 +44,7 @@ import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
+import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
@@ -329,6 +330,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 RendererPlugin.rendererList.forEach {
                     if (it.des == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).customRenderer) {
                         RendererPlugin.selected = it
+                    }
+                }
+                DriverPlugin.driverList.forEach {
+                    if (it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver) {
+                        DriverPlugin.selected = it;
                     }
                 }
                 Versions.launch(this@MainActivity, selectedProfile)

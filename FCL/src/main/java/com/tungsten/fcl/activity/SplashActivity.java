@@ -25,6 +25,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
@@ -127,6 +128,7 @@ public class SplashActivity extends FCLActivity {
 
     public void enterLauncher() {
         RendererPlugin.init(this);
+        DriverPlugin.init(this);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
