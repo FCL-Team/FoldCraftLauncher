@@ -9,9 +9,9 @@
 #include <dlfcn.h>
 #include <android/dlext.h>
 #include "driver_helper/nsbypass.h"
-#include "glfw/include/gl.h"
+#include "include//gl.h"
 
-#define ADRENO_POSSIBLE
+//#define ADRENO_POSSIBLE
 #ifdef ADRENO_POSSIBLE
 //Checks if your graphics are Adreno. Returns true if your graphics are Adreno, false otherwise or if there was an error
 bool checkAdrenoGraphics() {
@@ -48,7 +48,7 @@ bool checkAdrenoGraphics() {
 }
 void* load_turnip_vulkan() {
     if(!checkAdrenoGraphics()) return NULL;
-    const char* native_dir = getenv("POJAV_NATIVEDIR");
+    const char* native_dir = getenv("FCL_NATIVEDIR");
     const char* cache_dir = getenv("TMPDIR");
     if(!linker_ns_load(native_dir)) return NULL;
     void* linkerhook = linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW);

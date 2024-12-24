@@ -29,7 +29,7 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/platform.c \
                            glfw/posix_thread.c \
                            glfw/posix_time.c \
-                           driver_helper/driver_helper.c \
+                           glfw/driver_helper.c \
                            driver_helper/nsbypass.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
@@ -86,7 +86,6 @@ LOCAL_SRC_FILES := \
     pojav/environ/environ.c \
     pojav/input_bridge_v3.c \
     pojav/virgl/virgl.c \
-    driver_helper/driver_helper.c \
     driver_helper/nsbypass.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
