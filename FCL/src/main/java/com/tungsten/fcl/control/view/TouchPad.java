@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.SparseIntArray;
 import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,14 +23,6 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
-
-import top.fifthlight.touchcontroller.proxy.client.LauncherSocketProxyClient;
-import top.fifthlight.touchcontroller.proxy.client.LauncherSocketProxyClientKt;
-import top.fifthlight.touchcontroller.proxy.data.Offset;
-import top.fifthlight.touchcontroller.proxy.message.AddPointerMessage;
-import top.fifthlight.touchcontroller.proxy.message.ClearPointerMessage;
-import top.fifthlight.touchcontroller.proxy.message.RemovePointerMessage;
 
 public class TouchPad extends View {
 
