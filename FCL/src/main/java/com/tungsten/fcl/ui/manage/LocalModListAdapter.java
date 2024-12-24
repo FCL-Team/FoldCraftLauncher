@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -14,6 +15,7 @@ import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
@@ -33,6 +35,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class LocalModListAdapter extends FCLAdapter {
 
@@ -171,6 +174,23 @@ public class LocalModListAdapter extends FCLAdapter {
             ModInfoDialog dialog = new ModInfoDialog(getContext(), modInfoObject);
             dialog.show();
         });
+        Task.runAsync(() -> {
+            for (RemoteMod.Type type : RemoteMod.Type.values()) {
+                try {
+                    Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
+                    if (remoteVersion.isPresent()) {
+                        RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
+                        Schedulers.androidUIThread().execute(() -> {
+                            viewHolder.icon.setVisibility(View.VISIBLE);
+                            Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
+                            viewHolder.name.setText(remoteMod.getTitle());
+                        });
+                        break;
+                    }
+                } catch (Throwable ignore) {
+                }
+            }
+        }).start();
         return view;
     }
 
