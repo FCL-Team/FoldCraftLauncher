@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -184,19 +186,27 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     }
 
     private void checkInstalled() {
-        try {
+        Task.supplyAsync(() -> {
             String remoteName = addon.getTitle().replace(" ", "").toLowerCase();
-            String remoteAuthor = addon.getAuthor().replace(" ", "").toLowerCase();
-            for (LocalModFile localModFile : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+            List<LocalModFile> modFiles = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().parallelStream().filter(localModFile -> {
                 String localName = localModFile.getName().replace(" ", "").toLowerCase();
-                String localAuthor = localModFile.getAuthors().replace(" ", "").toLowerCase();
-                if (remoteName.contains(localName) && localAuthor.contains(remoteAuthor)) {
-                    name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), name.getText()));
-                    break;
+                return remoteName.contains(localName);
+            }).collect(Collectors.toList());
+            for (LocalModFile localModFile : modFiles) {
+                Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                if (remoteVersion.isPresent()) {
+                    String modId = remoteVersion.get().getModid();
+                    if (addon.getModID().equals(modId)) {
+                        return remoteVersion.get();
+                    }
                 }
             }
-        } catch (IOException ignore) {
-        }
+            return null;
+        }).whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+            if (exception == null && result != null) {
+                name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), name.getText()));
+            }
+        }).start();
     }
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> sortVersions(Stream<RemoteMod.Version> versions) {

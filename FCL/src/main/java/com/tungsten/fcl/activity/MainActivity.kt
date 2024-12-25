@@ -44,6 +44,7 @@ import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
+import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
@@ -331,6 +332,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         RendererPlugin.selected = it
                     }
                 }
+                DriverPlugin.driverList.forEach {
+                    if (it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver) {
+                        DriverPlugin.selected = it;
+                    }
+                }
                 Versions.launch(this@MainActivity, selectedProfile)
             }
             if (view === launchBoat) {
@@ -489,7 +495,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun openRendererMenu(view: View) {
         RendererUtil.openRendererMenu(
-            this, view, bind.rightMenu.width, bind.launch.y.toInt()
+            this, bind.rightMenu, bind.rightMenu.x.toInt(), 0, bind.rightMenu.width, view.y.toInt()
         ) {
             onClick(view)
         }

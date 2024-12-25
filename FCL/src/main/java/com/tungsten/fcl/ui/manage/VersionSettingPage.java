@@ -3,9 +3,11 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.PopupWindow;
 
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
@@ -18,7 +20,7 @@ import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.fclauncher.plugins.RendererPlugin;
+import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -93,8 +95,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
     private FCLImageButton rendererButton;
+    private FCLImageButton driverButton;
 
     private FCLTextView rendererText;
+    private FCLTextView driverText;
 
     private final InvalidationListener specificSettingsListener;
     private final StringProperty selectedVersion = new SimpleStringProperty();
@@ -168,13 +172,16 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
         rendererButton = findViewById(R.id.edit_renderer);
+        driverButton = findViewById(R.id.edit_driver);
 
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
+        driverButton.setOnClickListener(this);
 
         rendererText = findViewById(R.id.renderer);
+        driverText = findViewById(R.id.driver);
 
         FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
 
@@ -333,6 +340,20 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         } else {
             rendererText.setText(renderer.toString());
         }
+        if (!versionSetting.getDriver().equals("Turnip")) {
+            boolean isSelected = false;
+            for (DriverPlugin.Driver driver : DriverPlugin.getDriverList()) {
+                if (driver.getDriver().equals(versionSetting.getDriver())) {
+                    DriverPlugin.setSelected(driver);
+                    versionSetting.setDriver(driver.getDriver());
+                    isSelected = true;
+                }
+            }
+            if (!isSelected) {
+                versionSetting.setDriver("Turnip");
+            }
+        }
+        driverText.setText(versionSetting.getDriver());
 
         versionSetting.getUsesGlobalProperty().addListener(specificSettingsListener);
         if (versionId != null)
@@ -414,8 +435,22 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             dialog.show();
         }
         if (view == rendererButton) {
-            RendererUtil.openRendererMenu(getContext(), view, ConvertUtils.dip2px(getContext(), 400), ConvertUtils.dip2px(getContext(), 300), name -> {
+            int[] pos = new int[2];
+            view.getLocationInWindow(pos);
+            int windowHeight = getActivity().getWindow().getDecorView().getHeight();
+            int y;
+            if (pos[1] < windowHeight / 2) {
+                y = pos[1];
+            } else {
+                y = 0;
+            }
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, name -> {
                 rendererText.setText(name);
+            });
+        }
+        if (view == driverButton) {
+            RendererUtil.openDriverMenu(getContext(), view, name -> {
+                driverText.setText(name);
             });
         }
     }

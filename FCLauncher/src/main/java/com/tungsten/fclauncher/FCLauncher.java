@@ -11,6 +11,7 @@ import android.util.ArrayMap;
 import com.jaredrummler.android.device.DeviceName;
 import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -20,14 +21,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class FCLauncher {
 
@@ -49,18 +47,9 @@ public class FCLauncher {
     }
 
     private static void logModList(FCLBridge bridge) {
-        File modsDir = new File(bridge.getGameDir(), "mods");
-        if (!modsDir.exists()) return;
         printTaskTitle(bridge, "Mods");
-        try (Stream<Path> walk = Files.walk(modsDir.toPath(), Integer.MAX_VALUE)) {
-            walk.forEach(path -> {
-                File file = path.toFile();
-                if (file.isFile() && file.getName().endsWith(".jar")) {
-                    log(bridge, "Mod File: " + file.getName());
-                }
-            });
-        } catch (IOException ignore) {
-        }
+        log(bridge,bridge.getModSummary());
+        bridge.setModSummary(null);
     }
 
     private static Map<String, String> readJREReleaseProperties(String javaPath) throws IOException {
@@ -182,6 +171,7 @@ public class FCLauncher {
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
+        envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));

@@ -58,6 +58,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -89,6 +90,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     private FCLLinearLayout normalGroup;
     private FCLLinearLayout selectedGroup;
     private FCLButton addButton;
+    private FCLButton checkUpdateAllButton;
     private FCLButton checkUpdateButton;
     private FCLButton refreshButton;
     private FCLButton deleteButton;
@@ -121,6 +123,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         normalGroup = findViewById(R.id.normal_layout);
         selectedGroup = findViewById(R.id.selected_layout);
         addButton = findViewById(R.id.add);
+        checkUpdateAllButton = findViewById(R.id.check_update_all);
         checkUpdateButton = findViewById(R.id.check_update);
         refreshButton = findViewById(R.id.refresh);
         deleteButton = findViewById(R.id.delete);
@@ -131,6 +134,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
         searchButton.setOnClickListener(this);
         addButton.setOnClickListener(this);
+        checkUpdateAllButton.setOnClickListener(this);
         checkUpdateButton.setOnClickListener(this);
         refreshButton.setOnClickListener(this);
         deleteButton.setOnClickListener(this);
@@ -146,9 +150,13 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         if (v == addButton) {
             add();
         }
+        if (v == checkUpdateAllButton) {
+            checkUpdateAllButton.setFocusable(false);
+            checkUpdates(false);
+        }
         if (v == checkUpdateButton) {
             checkUpdateButton.setFocusable(false);
-            checkUpdates();
+            checkUpdates(true);
         }
         if (v == refreshButton) {
             refresh();
@@ -208,6 +216,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 searchBar.setEnabled(false);
                 searchButton.setEnabled(false);
                 addButton.setEnabled(false);
+                checkUpdateAllButton.setEnabled(false);
                 checkUpdateButton.setEnabled(false);
                 refreshButton.setEnabled(false);
                 deleteButton.setEnabled(false);
@@ -219,6 +228,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 searchBar.setEnabled(true);
                 searchButton.setEnabled(true);
                 addButton.setEnabled(true);
+                checkUpdateAllButton.setEnabled(true);
                 checkUpdateButton.setEnabled(true);
                 refreshButton.setEnabled(true);
                 deleteButton.setEnabled(true);
@@ -349,7 +359,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }
     }
 
-    public void checkUpdates() {
+    public void checkUpdates(boolean isSelected) {
         Runnable action = () -> {
             TaskDialog dialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
             dialog.setTitle(getContext().getString(R.string.update_checking));
@@ -358,11 +368,19 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                     .composeAsync(() -> {
                         Optional<String> gameVersion = profile.getRepository().getGameVersion(versionId);
                         if (gameVersion.isPresent()) {
-                            return new ModCheckUpdatesTask(gameVersion.get(), modManager.getMods());
+                            if (isSelected) {
+                                return new ModCheckUpdatesTask(gameVersion.get(), adapter.selectedItemsProperty().stream()
+                                        .filter(Objects::nonNull)
+                                        .map(ModInfoObject::getModInfo)
+                                        .collect(Collectors.toList()));
+                            } else {
+                                return new ModCheckUpdatesTask(gameVersion.get(), modManager.getMods());
+                            }
                         }
                         return null;
                     })
                     .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                        checkUpdateAllButton.setFocusable(true);
                         checkUpdateButton.setFocusable(true);
                         if (exception != null || result == null) {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
