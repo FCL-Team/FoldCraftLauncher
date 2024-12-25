@@ -10,11 +10,18 @@ import com.tungsten.fclauncher.utils.FCLPath
 object DriverPlugin {
     data class Driver(val driver: String, val path: String)
 
+    private var isInit = false;
     private const val PACKAGE_FLAGS =
         PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
 
     @JvmStatic
     val driverList: MutableList<Driver> = mutableListOf()
+        get() {
+            if (!isInit) {
+                init(FCLPath.CONTEXT)
+            }
+            return field
+        }
 
     @JvmStatic
     lateinit var selected: Driver
@@ -22,6 +29,7 @@ object DriverPlugin {
     @JvmStatic
     @SuppressLint("QueryPermissionsNeeded")
     fun init(context: Context) {
+        isInit = true
         val installedPackages =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 context.packageManager.getInstalledPackages(
