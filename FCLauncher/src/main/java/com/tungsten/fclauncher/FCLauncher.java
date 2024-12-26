@@ -16,6 +16,7 @@ import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclauncher.utils.SOCInformation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +43,7 @@ public class FCLauncher {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Device: " + DeviceName.getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
-        log(bridge, "CPU:" + Build.HARDWARE);
+        log(bridge, "CPU: " + SOCInformation.getSocName());
         log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
         log(bridge, "Language: " + Locale.getDefault());
     }
