@@ -36,6 +36,7 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;
+import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -486,6 +487,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         private final String title;
         private final String message;
         private final ModTranslations.Mod mod;
+        private RemoteMod remoteMod;
 
         ModInfoObject(Context context, LocalModFile localModFile) {
             this.localModFile = localModFile;
@@ -529,6 +531,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         @Override
         public int compareTo(@NotNull ModInfoObject o) {
             return localModFile.getFileName().toLowerCase().compareTo(o.localModFile.getFileName().toLowerCase());
+        }
+
+        public RemoteMod getRemoteMod() {
+            return remoteMod;
+        }
+
+        public void setRemoteMod(RemoteMod remoteMod) {
+            this.remoteMod = remoteMod;
         }
     }
 
