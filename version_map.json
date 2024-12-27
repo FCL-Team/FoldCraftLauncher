@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1195,
-    "versionName": "1.1.9.5",
-    "date": "2024.12.20",
+    "versionCode": 1197,
+    "versionName": "1.1.9.7",
+    "date": "2024.12.27",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复更新1.1.9.4后启动直接闪退的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复安装进度卡住的Bug\n2.修复TouchController物品栏长按丢弃无效Bug\n1.1.9.6更新内容：\n1.管理模组页面显示的图标可自动从网络获取\n2.优化检测模组安装的逻辑\n3.新增功能:可直接在模组下载界面自动检查模组是否已安装\n4.新增功能:可主动选择需要检查更新的模组\n5.日志可打印更加详细的模组信息\n6.新增功能:增加对TouchController模组的支持(检测到该模组则自动开启,无需手动开关)"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c7a903274ef6",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.5/FCL-release-1.1.9.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/837162316d0a",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.7/FCL-release-1.1.9.7-all.apk"
   }
 ]

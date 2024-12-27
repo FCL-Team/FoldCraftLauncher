@@ -177,16 +177,23 @@ public class LocalModListAdapter extends FCLAdapter {
         Task.runAsync(() -> {
             for (RemoteMod.Type type : RemoteMod.Type.values()) {
                 try {
-                    Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
-                    if (remoteVersion.isPresent()) {
-                        RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
-                        Schedulers.androidUIThread().execute(() -> {
-                            viewHolder.icon.setVisibility(View.VISIBLE);
-                            Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
-                            viewHolder.name.setText(remoteMod.getTitle());
-                        });
-                        break;
+                    if (modInfoObject.getRemoteMod() == null) {
+                        Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
+                        if (remoteVersion.isPresent()) {
+                            RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
+                            modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
+                            modInfoObject.setRemoteMod(remoteMod);
+                        } else {
+                            continue;
+                        }
                     }
+                    RemoteMod remoteMod = modInfoObject.getRemoteMod();
+                    Schedulers.androidUIThread().execute(() -> {
+                        viewHolder.icon.setVisibility(View.VISIBLE);
+                        Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
+                        viewHolder.name.setText(remoteMod.getTitle());
+                    });
+                    break;
                 } catch (Throwable ignore) {
                 }
             }
