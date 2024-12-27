@@ -24,7 +24,7 @@ object DriverPlugin {
         }
 
     @JvmStatic
-    lateinit var selected: Driver
+    var selected: Driver = Driver("Turnip", "")
 
     @JvmStatic
     @SuppressLint("QueryPermissionsNeeded")
@@ -41,7 +41,7 @@ object DriverPlugin {
                 context.packageManager.getInstalledPackages(PACKAGE_FLAGS)
             }
         driverList.add(Driver("Turnip", context.applicationInfo.nativeLibraryDir))
-        selected = driverList.get(0)
+        selected = driverList[0]
         installedPackages.forEach {
             parse(it.applicationInfo)
         }
