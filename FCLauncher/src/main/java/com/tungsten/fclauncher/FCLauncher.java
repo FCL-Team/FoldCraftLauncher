@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class FCLauncher {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Device: " + DeviceName.getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
-        log(bridge, "CPU:" + Build.HARDWARE);
+        log(bridge, "CPU: " + getSocName());
         log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
         log(bridge, "Language: " + Locale.getDefault());
     }
@@ -473,6 +474,18 @@ public class FCLauncher {
         bridge.setThread(apiInstallerThread);
 
         return bridge;
+    }
+
+    private static String getSocName() {
+        try {
+            Process process = Runtime.getRuntime().exec("getprop ro.soc.model");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String name = reader.readLine();
+            reader.close();
+            return name;
+        } catch (Exception e) {
+            return Build.HARDWARE;
+        }
     }
 
 }
