@@ -68,6 +68,26 @@ public class LocalModListAdapter extends FCLAdapter {
             selectedItemsProperty.clear();
             fromSelf = false;
             notifyDataSetChanged();
+            Task.runAsync(() -> {
+                listProperty().get().forEach(modInfoObject -> {
+                    for (RemoteMod.Type type : RemoteMod.Type.values()) {
+                        try {
+                            if (modInfoObject.getRemoteMod() == null) {
+                                Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
+                                if (remoteVersion.isPresent()) {
+                                    RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
+                                    modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
+                                    modInfoObject.setRemoteMod(remoteMod);
+                                    Schedulers.androidUIThread().execute(LocalModListAdapter.this::notifyDataSetChanged);
+                                    break;
+                                }
+                            }
+                        } catch (Throwable ignore) {
+                        }
+                    }
+                });
+                notifyDataSetChanged();
+            }).start();
         });
         selectedItemsProperty.addListener((InvalidationListener) observable -> {
             if (!fromSelf) {
@@ -174,30 +194,12 @@ public class LocalModListAdapter extends FCLAdapter {
             ModInfoDialog dialog = new ModInfoDialog(getContext(), modInfoObject);
             dialog.show();
         });
-        Task.runAsync(() -> {
-            for (RemoteMod.Type type : RemoteMod.Type.values()) {
-                try {
-                    if (modInfoObject.getRemoteMod() == null) {
-                        Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
-                        if (remoteVersion.isPresent()) {
-                            RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
-                            modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
-                            modInfoObject.setRemoteMod(remoteMod);
-                        } else {
-                            continue;
-                        }
-                    }
-                    RemoteMod remoteMod = modInfoObject.getRemoteMod();
-                    Schedulers.androidUIThread().execute(() -> {
-                        viewHolder.icon.setVisibility(View.VISIBLE);
-                        Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
-                        viewHolder.name.setText(remoteMod.getTitle());
-                    });
-                    break;
-                } catch (Throwable ignore) {
-                }
-            }
-        }).start();
+        RemoteMod remoteMod = modInfoObject.getRemoteMod();
+        if (remoteMod != null) {
+            viewHolder.icon.setVisibility(View.VISIBLE);
+            Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
+            viewHolder.name.setText(remoteMod.getTitle());
+        }
         return view;
     }
 
