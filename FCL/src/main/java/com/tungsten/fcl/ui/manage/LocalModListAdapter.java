@@ -68,26 +68,6 @@ public class LocalModListAdapter extends FCLAdapter {
             selectedItemsProperty.clear();
             fromSelf = false;
             notifyDataSetChanged();
-            Task.runAsync(() -> {
-                listProperty().get().forEach(modInfoObject -> {
-                    for (RemoteMod.Type type : RemoteMod.Type.values()) {
-                        try {
-                            if (modInfoObject.getRemoteMod() == null) {
-                                Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
-                                if (remoteVersion.isPresent()) {
-                                    RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
-                                    modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
-                                    modInfoObject.setRemoteMod(remoteMod);
-                                    Schedulers.androidUIThread().execute(LocalModListAdapter.this::notifyDataSetChanged);
-                                    break;
-                                }
-                            }
-                        } catch (Throwable ignore) {
-                        }
-                    }
-                });
-                notifyDataSetChanged();
-            }).start();
         });
         selectedItemsProperty.addListener((InvalidationListener) observable -> {
             if (!fromSelf) {
@@ -157,26 +137,9 @@ public class LocalModListAdapter extends FCLAdapter {
             viewHolder.checkBox.checkProperty().unbindBidirectional(viewHolder.booleanProperty);
         }
         viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modInfoObject.getActive());
-        if (StringUtils.isNotBlank(modInfoObject.getModInfo().getLogoPath())) {
-            Task.supplyAsync(() -> {
-                try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(modInfoObject.getModInfo().getFile())) {
-                    Path iconPath = fs.getPath(modInfoObject.getModInfo().getLogoPath());
-                    if (Files.exists(iconPath)) {
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        Files.copy(iconPath, stream);
-                        return new ByteArrayInputStream(stream.toByteArray());
-                    }
-                }
-                return null;
-            }).whenComplete(Schedulers.androidUIThread(), (stream, exception) -> {
-                if (stream != null) {
-                    viewHolder.icon.setVisibility(View.VISIBLE);
-                    viewHolder.icon.setImageBitmap(BitmapFactory.decodeStream(stream));
-                }
-            }).start();
-        } else {
-            viewHolder.icon.setVisibility(View.GONE);
-        }
+        viewHolder.icon.setTag(i);
+        viewHolder.icon.setImageBitmap(null);
+        viewHolder.icon.setVisibility(View.GONE);
         viewHolder.name.setText(modInfoObject.getTitle());
         String tag = getTag(modInfoObject);
         viewHolder.tag.setText(tag);
@@ -194,12 +157,31 @@ public class LocalModListAdapter extends FCLAdapter {
             ModInfoDialog dialog = new ModInfoDialog(getContext(), modInfoObject);
             dialog.show();
         });
-        RemoteMod remoteMod = modInfoObject.getRemoteMod();
-        if (remoteMod != null) {
-            viewHolder.icon.setVisibility(View.VISIBLE);
-            Glide.with(getContext()).load(remoteMod.getIconUrl()).into(viewHolder.icon);
-            viewHolder.name.setText(remoteMod.getTitle());
-        }
+        Task.supplyAsync(() -> {
+            for (RemoteMod.Type type : RemoteMod.Type.values()) {
+                try {
+                    if (modInfoObject.getRemoteMod() == null) {
+                        Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
+                        if (remoteVersion.isPresent()) {
+                            RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
+                            modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
+                            modInfoObject.setRemoteMod(remoteMod);
+                        } else {
+                            continue;
+                        }
+                    }
+                    return modInfoObject.getRemoteMod();
+                } catch (Throwable ignore) {
+                }
+            }
+            return null;
+        }).whenComplete(Schedulers.androidUIThread(), (remoteMod, exception) -> {
+            if ((int) viewHolder.icon.getTag() == i && remoteMod != null) {
+                viewHolder.icon.setVisibility(View.VISIBLE);
+                Glide.with(viewHolder.icon).load(remoteMod.getIconUrl()).into(viewHolder.icon);
+                viewHolder.name.setText(remoteMod.getTitle());
+            }
+        }).start();
         return view;
     }
 
