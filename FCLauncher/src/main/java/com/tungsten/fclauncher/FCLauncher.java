@@ -246,6 +246,19 @@ public class FCLauncher {
                 envMap.put("POJAV_RENDERER", "opengles3_ltw");
                 envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
             }
+        } else if (renderer == FCLConfig.Renderer.RENDERER_GL4ESPLUS) {
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_MIPMAP", "3");
+            envMap.put("LIBGL_NORMALIZE", "1");
+            envMap.put("LIBGL_NOINTOVLHACK", "1");
+            envMap.put("LIBGL_SHADERCONVERTER", "1");
+            envMap.put("LIBGL_GL", "21");
+            envMap.put("LIBGL_USEVBO", "1");
+            envMap.put("LIBGL_BACKEND_ANGLE", "1");
+            if (!FCLBridge.BACKEND_IS_BOAT) {
+                envMap.put("POJAV_RENDERER", "opengles3");
+                envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
+            }
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
             envMap.put("MESA_GL_VERSION_OVERRIDE", renderer == FCLConfig.Renderer.RENDERER_VIRGL ? "4.3" : "4.6");
