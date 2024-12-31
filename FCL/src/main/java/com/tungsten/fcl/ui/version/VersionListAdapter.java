@@ -19,9 +19,7 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
 
 public class VersionListAdapter extends FCLAdapter {
 
