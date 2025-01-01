@@ -222,10 +222,17 @@ public class FCLauncher {
             });
             return;
         }
+        boolean useAngle = false;
         if (FCLBridge.BACKEND_IS_BOAT) {
             envMap.put("LIBGL_STRING", renderer.toString());
             envMap.put("LIBGL_NAME", renderer.getGlLibName());
-            envMap.put("LIBEGL_NAME", renderer.getEglLibName());
+            if (useAngle && renderer == FCLConfig.Renderer.RENDERER_GL4ESPLUS) {
+                envMap.put("LIBEGL_NAME", "libEGL_angle.so");
+                envMap.put("LIBGL_BACKEND_ANGLE", "1");
+            } else {
+                envMap.put("LIBEGL_NAME", renderer.getEglLibName());
+                envMap.put("LIBGL_BACKEND_ANGLE", "0");
+            }
         }
         if (renderer == FCLConfig.Renderer.RENDERER_GL4ES || renderer == FCLConfig.Renderer.RENDERER_VGPU) {
             envMap.put("LIBGL_ES", "2");
@@ -254,10 +261,9 @@ public class FCLauncher {
             envMap.put("LIBGL_SHADERCONVERTER", "1");
             envMap.put("LIBGL_GL", "21");
             envMap.put("LIBGL_USEVBO", "1");
-            envMap.put("LIBGL_BACKEND_ANGLE", "1");
             if (!FCLBridge.BACKEND_IS_BOAT) {
                 envMap.put("POJAV_RENDERER", "opengles3");
-                envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
+                envMap.put("POJAVEXEC_EGL", useAngle ? "libEGL_angle.so" : renderer.getEglLibName());
             }
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
