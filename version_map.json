@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1197,
-    "versionName": "1.1.9.7",
-    "date": "2024.12.27",
+    "versionCode": 1198,
+    "versionName": "1.1.9.8",
+    "date": "2025.01.01",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复安装进度卡住的Bug\n2.修复TouchController物品栏长按丢弃无效Bug\n1.1.9.6更新内容：\n1.管理模组页面显示的图标可自动从网络获取\n2.优化检测模组安装的逻辑\n3.新增功能:可直接在模组下载界面自动检查模组是否已安装\n4.新增功能:可主动选择需要检查更新的模组\n5.日志可打印更加详细的模组信息\n6.新增功能:增加对TouchController模组的支持(检测到该模组则自动开启,无需手动开关)"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加新渲染器GL4ES Plus(类似于LTW,可运行部分光影和sodium)\n2.修复模组管理页面图标和标题在滑动时闪烁的Bug\n3.修复日志内打印的Cpu信息错误的Bug\n4.新增功能:在版本列表内显示对应版本已安装模组数量\n5.更新Java8至1.8.0_442\n6.修复少量Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/837162316d0a",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.7/FCL-release-1.1.9.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a2333a798d4c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.8/FCL-release-1.1.9.8-all.apk"
   }
 ]
