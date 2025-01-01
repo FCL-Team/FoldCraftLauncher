@@ -288,6 +288,9 @@ public final class LauncherHelper {
         try {
             StringBuilder sb = new StringBuilder();
             Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().forEach(mod -> {
+                if (!mod.isActive()) {
+                    return;
+                }
                 sb.append(mod.getFileName());
                 sb.append(" | ");
                 sb.append(mod.getId());
