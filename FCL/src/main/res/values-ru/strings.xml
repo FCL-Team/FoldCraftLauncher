@@ -294,7 +294,7 @@
 
     <string name="edit_view_clone">Копировать</string>
     <string name="edit_view_delete">Удалить</string>
-    <string name="edit_view_event">Расширение настройки</string>
+    <string name="edit_view_event">Расширенные настройки</string>
     <string name="edit_view_info">Стандартные настройки</string>
     <string name="edit_view_no_group">Сначала добавьте или выберите группу просмотра!</string>
     <string name="edit_view_style">Стиль</string>
