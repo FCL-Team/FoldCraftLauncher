@@ -75,6 +75,8 @@ along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
 
+- [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
+
 <h1 align="center">Sponsor</h1>
 
 <div align="center">
