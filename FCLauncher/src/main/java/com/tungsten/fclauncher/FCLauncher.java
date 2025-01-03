@@ -214,6 +214,9 @@ public class FCLauncher {
             }
             envList.forEach(env -> {
                 String[] split = env.split("=");
+                if (split[0].equals("DLOPEN")){
+                    return;
+                }
                 if (split[0].equals("LIB_MESA_NAME")) {
                     envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
                 } else {
@@ -363,7 +366,10 @@ public class FCLauncher {
             envList.forEach(env -> {
                 String[] split = env.split("=");
                 if (split[0].equals("DLOPEN")) {
-                    bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                    String[] libs = split[1].split(",");
+                    for (String lib : libs) {
+                        bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + lib);
+                    }
                 }
             });
             bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
