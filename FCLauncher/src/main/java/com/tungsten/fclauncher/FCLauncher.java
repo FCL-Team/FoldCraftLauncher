@@ -354,6 +354,18 @@ public class FCLauncher {
 
         bridge.dlopen(nativeDir + "/libopenal.so");
         if (config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM) {
+            List<String> envList;
+            if (FCLBridge.BACKEND_IS_BOAT) {
+                envList = RendererPlugin.getSelected().getBoatEnv();
+            } else {
+                envList = RendererPlugin.getSelected().getPojavEnv();
+            }
+            envList.forEach(env -> {
+                String[] split = env.split("=");
+                if (split[0].equals("DLOPEN")) {
+                    bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                }
+            });
             bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
 //            bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getEglName());
         } else {
