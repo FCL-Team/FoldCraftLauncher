@@ -42,6 +42,8 @@
         android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission
         android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:name=".FCLApplication"
