@@ -510,15 +510,15 @@ public class FCLauncher {
     }
 
     private static String getSocName() {
+        String name = null;
         try {
             Process process = Runtime.getRuntime().exec("getprop ro.soc.model");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String name = reader.readLine();
+            name = reader.readLine();
             reader.close();
-            return name;
-        } catch (Exception e) {
-            return Build.HARDWARE;
+        } catch (Exception ignore) {
         }
+        return  (name == null || name.trim().isEmpty()) ? Build.HARDWARE : name;
     }
 
 }
