@@ -167,7 +167,7 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIE
     handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
 
     char * error = dlerror();
-    __android_log_print(error == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", lib_name, error);
+    FCL_LOG("DLOPEN: loading %s (error = %s)", lib_name, error);
 
     if (handle == NULL) {
         ret = -1;
