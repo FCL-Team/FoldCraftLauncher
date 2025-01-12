@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Build;
 import android.system.Os;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.jaredrummler.android.device.DeviceName;
 import com.oracle.dalvik.VMLauncher;
@@ -519,7 +520,7 @@ public class FCLauncher {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String name = reader.readLine();
             reader.close();
-            return name;
+            return name.isBlank() ? Build.HARDWARE : name;
         } catch (Exception e) {
             return Build.HARDWARE;
         }
