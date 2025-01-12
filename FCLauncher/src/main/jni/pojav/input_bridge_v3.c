@@ -225,12 +225,6 @@ void sendData(int type, int i1, int i2, int i3, int i4) {
     atomic_fetch_add_explicit(&pojav_environ->eventCounter, 1, memory_order_acquire);
 }
 
-jbyteArray convertStr(JNIEnv *env, char *str) {
-    jsize len = (jsize) strlen(str);
-    jbyteArray arr = (*env)->NewByteArray(env, len);
-    (*env)->SetByteArrayRegion(env, arr, 0, len, (jbyte *) str);
-    return arr;
-}
 /**
  * Hooked version of java.lang.UNIXProcess.forkAndExec()
  * which is used to handle the "open" command.
@@ -241,11 +235,7 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
 
     // Here we only handle the "xdg-open" command
     if (strcmp(basename(pProg), "xdg-open") != 0) {
-        (*env)->ReleaseByteArrayElements(env, prog, (jbyte *) pProg, 0);
-        if (getenv("JSP")) {
-            jbyteArray new_hp = convertStr(env, getenv("JSP"));
-            return orig_ProcessImpl_forkAndExec(env, process, mode, new_hp, prog, argBlock, argc, envBlock, envc, dir, std_fds, redirectErrorStream);
-        }
+        (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
         return orig_ProcessImpl_forkAndExec(env, process, mode, helperpath, prog, argBlock, argc, envBlock, envc, dir, std_fds, redirectErrorStream);
     }
     (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
