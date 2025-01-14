@@ -42,14 +42,14 @@ void bigcore_set_affinity() {
         }
         corecnt++;
     }
-    printf("bigcore: big CPU number is %u, frequency %lu Hz\n", big_core_id, max_freq);
+//    printf("bigcore: big CPU number is %u, frequency %lu Hz\n", big_core_id, max_freq);
     cpu_set_t bigcore_affinity_set;
     CPU_ZERO(&bigcore_affinity_set);
     CPU_SET_S(big_core_id, CPU_SETSIZE, &bigcore_affinity_set);
     int result = sched_setaffinity(0, CPU_SETSIZE, &bigcore_affinity_set);
     if(result != 0) {
         printf("bigcore: setting affinity failed: %s\n", strerror(result));
-    }else{
+    }/*else{
         printf("bigcore: forced current thread onto big core\n");
-    }
+    }*/
 }
