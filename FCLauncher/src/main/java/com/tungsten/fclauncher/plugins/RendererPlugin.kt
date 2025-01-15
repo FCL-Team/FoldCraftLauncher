@@ -1,10 +1,9 @@
 package com.tungsten.fclauncher.plugins
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Build
 import com.tungsten.fclauncher.utils.FCLPath
 
 object RendererPlugin {
@@ -35,21 +34,12 @@ object RendererPlugin {
     var selected: Renderer? = null
 
     @JvmStatic
-    @SuppressLint("QueryPermissionsNeeded")
     fun init(context: Context) {
         isInit = true
-        val installedPackages =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getInstalledPackages(
-                    PackageManager.PackageInfoFlags.of(
-                        PACKAGE_FLAGS.toLong()
-                    )
-                )
-            } else {
-                context.packageManager.getInstalledPackages(PACKAGE_FLAGS)
-            }
-        installedPackages.forEach {
-            parse(it.applicationInfo)
+        val queryIntentActivities =
+            context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
+        queryIntentActivities.forEach {
+            parse(it.activityInfo.applicationInfo)
         }
     }
 
