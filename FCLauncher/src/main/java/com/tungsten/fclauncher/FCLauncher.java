@@ -246,12 +246,6 @@ public class FCLauncher {
                     envMap.put("POJAV_RENDERER", "opengles2_vgpu");
                 }
             }
-        } else if (renderer == FCLConfig.Renderer.RENDERER_LTW) {
-            envMap.put("LIBGL_ES", "3");
-            if (!FCLBridge.BACKEND_IS_BOAT) {
-                envMap.put("POJAV_RENDERER", "opengles3_ltw");
-                envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
-            }
         } else if (renderer == FCLConfig.Renderer.RENDERER_GL4ESPLUS) {
             envMap.put("LIBGL_ES", "3");
             envMap.put("LIBGL_MIPMAP", "3");

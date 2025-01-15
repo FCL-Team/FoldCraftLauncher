@@ -33,7 +33,6 @@ class RendererUtil {
                 ArrayAdapter(context, R.layout.item_renderer, mutableListOf<String>().apply {
                     add(context.getString(R.string.settings_fcl_renderer_gl4es))
                     add(context.getString(R.string.settings_fcl_renderer_virgl))
-                    add(context.getString(R.string.settings_fcl_renderer_ltw))
                     add(context.getString(R.string.settings_fcl_renderer_vgpu))
                     add(context.getString(R.string.settings_fcl_renderer_zink))
                     add(context.getString(R.string.settings_fcl_renderer_freedreno))
@@ -48,7 +47,6 @@ class RendererUtil {
                 val rendererList = mutableListOf<FCLConfig.Renderer>().apply {
                     add(FCLConfig.Renderer.RENDERER_GL4ES)
                     add(FCLConfig.Renderer.RENDERER_VIRGL)
-                    add(FCLConfig.Renderer.RENDERER_LTW)
                     add(FCLConfig.Renderer.RENDERER_VGPU)
                     add(FCLConfig.Renderer.RENDERER_ZINK)
                     add(FCLConfig.Renderer.RENDERER_FREEDRENO)

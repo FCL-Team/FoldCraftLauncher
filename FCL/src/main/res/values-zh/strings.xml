@@ -747,7 +747,6 @@
     <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (不稳定)(OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
     <string name="settings_fcl_driver">Vulkan驱动</string>
@@ -960,4 +959,5 @@
     <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
     <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
     <string name="installed">已安装</string>
+    <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
 </resources>
