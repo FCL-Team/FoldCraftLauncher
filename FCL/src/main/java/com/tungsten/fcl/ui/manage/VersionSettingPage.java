@@ -481,7 +481,25 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                     .show();
         }
         if (view == driverInstallButton) {
-
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/d87c59695250";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
         }
     }
 }

@@ -588,7 +588,6 @@
                             android:id="@+id/edit_driver"/>
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton
-                            android:visibility="gone"
                             app:no_padding="true"
                             app:auto_tint="true"
                             android:layout_marginStart="5dp"
