@@ -178,10 +178,6 @@ public class FCLauncher {
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));
         envMap.put("FORCE_VSYNC", "false");
-        if (!config.getJavaPath().contains("jre8")) {
-            String libName = config.getJavaPath().contains("jre17") ? "/libjsph17.so" : "/libjsph21.so";
-            envMap.put("JSP", config.getContext().getApplicationInfo().nativeLibraryDir + libName);
-        }
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
@@ -249,12 +245,6 @@ public class FCLauncher {
                 } else {
                     envMap.put("POJAV_RENDERER", "opengles2_vgpu");
                 }
-            }
-        } else if (renderer == FCLConfig.Renderer.RENDERER_LTW) {
-            envMap.put("LIBGL_ES", "3");
-            if (!FCLBridge.BACKEND_IS_BOAT) {
-                envMap.put("POJAV_RENDERER", "opengles3_ltw");
-                envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
             }
         } else if (renderer == FCLConfig.Renderer.RENDERER_GL4ESPLUS) {
             envMap.put("LIBGL_ES", "3");
@@ -514,15 +504,15 @@ public class FCLauncher {
     }
 
     private static String getSocName() {
+        String name = null;
         try {
             Process process = Runtime.getRuntime().exec("getprop ro.soc.model");
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String name = reader.readLine();
+            name = reader.readLine();
             reader.close();
-            return name;
-        } catch (Exception e) {
-            return Build.HARDWARE;
+        } catch (Exception ignore) {
         }
+        return  (name == null || name.trim().isEmpty()) ? Build.HARDWARE : name;
     }
 
 }

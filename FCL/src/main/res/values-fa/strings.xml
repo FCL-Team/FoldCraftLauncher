@@ -740,7 +740,6 @@
     <string name="settings_fcl_controller">کنترل کننده</string>
     <string name="settings_fcl_controller_injector">ژست باشید</string>
     <string name="settings_fcl_renderer">رندر</string>
-    <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6، فقط از 1.17+ پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از 1.17- پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از GPU a616-a660 پشتیبانی می کند)</string>
 

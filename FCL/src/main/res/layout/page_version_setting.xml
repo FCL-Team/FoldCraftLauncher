@@ -530,6 +530,16 @@
                             android:layout_gravity="center"
                             android:id="@+id/edit_renderer"/>
 
+                        <com.tungsten.fcllibrary.component.view.FCLImageButton
+                            app:no_padding="true"
+                            app:auto_tint="true"
+                            android:layout_marginStart="5dp"
+                            android:src="@drawable/ic_baseline_download_24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:id="@+id/install_renderer"/>
+
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <View
@@ -576,6 +586,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:id="@+id/edit_driver"/>
+
+                        <com.tungsten.fcllibrary.component.view.FCLImageButton
+                            app:no_padding="true"
+                            app:auto_tint="true"
+                            android:layout_marginStart="5dp"
+                            android:src="@drawable/ic_baseline_download_24"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:id="@+id/install_driver"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 

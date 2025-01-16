@@ -161,6 +161,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
         res.addDefault("-Dorg.lwjgl.vulkan.libname=", "libvulkan.so");
         res.addDefault("-Dsodium.checks.issue2561=", "false");
+        res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
         File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
         if (jnaVersion != null && !jnaVersion.isEmpty()) {
             libJna = new File(libJna, jnaVersion);

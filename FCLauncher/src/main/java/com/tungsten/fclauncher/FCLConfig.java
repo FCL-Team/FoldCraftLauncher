@@ -11,7 +11,6 @@ public class FCLConfig implements Serializable {
     public enum Renderer implements Serializable {
         RENDERER_GL4ES("Holy-GL4ES:libgl4es_114.so:libEGL.so"),
         RENDERER_VIRGL("VirGLRenderer:libOSMesa_81.so:libEGL.so"),
-        RENDERER_LTW("LTW:libltw.so:libltw.so"),
         RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so"),
         RENDERER_ZINK("Zink:libOSMesa_8.so:libEGL.so"),
         RENDERER_FREEDRENO("Freedreno:libOSMesa_8.so:libEGL.so"),

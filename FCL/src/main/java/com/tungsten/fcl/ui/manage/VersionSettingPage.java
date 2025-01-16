@@ -3,11 +3,11 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.PopupWindow;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
@@ -95,7 +95,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
     private FCLImageButton rendererButton;
+    private FCLImageButton rendererInstallButton;
     private FCLImageButton driverButton;
+    private FCLImageButton driverInstallButton;
 
     private FCLTextView rendererText;
     private FCLTextView driverText;
@@ -172,13 +174,17 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
         rendererButton = findViewById(R.id.edit_renderer);
+        rendererInstallButton = findViewById(R.id.install_renderer);
         driverButton = findViewById(R.id.edit_driver);
+        driverInstallButton = findViewById(R.id.install_driver);
 
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
+        rendererInstallButton.setOnClickListener(this);
         driverButton.setOnClickListener(this);
+        driverInstallButton.setOnClickListener(this);
 
         rendererText = findViewById(R.id.renderer);
         driverText = findViewById(R.id.driver);
@@ -452,6 +458,48 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             RendererUtil.openDriverMenu(getContext(), view, name -> {
                 driverText.setText(name);
             });
+        }
+        if (view == rendererInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FCLRendererPlugin/releases/tag/Renderer";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/a9f6e9d860d9";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
+        }
+        if (view == driverInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/d87c59695250";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
         }
     }
 }
