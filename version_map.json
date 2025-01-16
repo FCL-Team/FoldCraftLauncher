@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1199,
-    "versionName": "1.1.9.9",
-    "date": "2025.01.09",
+    "versionCode": 1200,
+    "versionName": "1.2.0",
+    "date": "2025.01.16",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复禁用模组后仍然被打印在日志内的Bug\n2.禁用GL4ES+的ANGLE后端\n3.修复GL4ES+与最新的Optifine相关Bug\n4.允许渲染器插件使用DLOPEN调用额外库\n5.更新Turnip至24.3.3\n6.增加获取已安装应用权限（用于获取已安装的插件）\n7.同步部分Pojav后端代码"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复客户端(比如FPSBoost)菜单页面内鼠标滚轮无效的Bug\n2.修复模组文件过大导致启动器读取时内存不足崩溃的Bug\n3.修改公告链接\n4.修复Java执行命令相关Bug\n5.修复CPU信息获取为空的Bug\n6.在日志内输出DLOPEN信息\n7.增加插件下载链接快捷跳转\n8.修复插件读取Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/1ea5f919af80",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.9/FCL-release-1.1.9.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/226e654f8382",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0/FCL-release-1.2.0-all.apk"
   }
 ]
