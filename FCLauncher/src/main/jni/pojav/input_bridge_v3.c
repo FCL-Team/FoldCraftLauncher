@@ -284,11 +284,11 @@ jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
  */
 void installLinkerBugMitigation() {
     if(android_get_device_api_level() >= 30) return;
-    __android_log_print(ANDROID_LOG_INFO, "Api29LinkerFix", "API < 30 detected, installing linker bug mitigation");
+    FCL_LOG("Api29LinkerFix: API < 30 detected, installing linker bug mitigation");
     JNIEnv* env = pojav_environ->runtimeJNIEnvPtr_JRE;
     jclass dynamicLinkLoader = (*env)->FindClass(env, "org/lwjgl/system/linux/DynamicLinkLoader");
     if(dynamicLinkLoader == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Api29LinkerFix", "Failed to find the target class");
+        FCL_LOG("Api29LinkerFix: Failed to find the target class");
         (*env)->ExceptionClear(env);
         return;
     }
@@ -296,7 +296,7 @@ void installLinkerBugMitigation() {
             {"ndlopen", "(JI)J", &ndlopen_bugfix}
     };
     if((*env)->RegisterNatives(env, dynamicLinkLoader, ndlopenMethod, 1) != 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "Api29LinkerFix", "Failed to register the bugfix method");
+        FCL_LOG("Api29LinkerFix: Failed to register the bugfix method");
         (*env)->ExceptionClear(env);
     }
 }
