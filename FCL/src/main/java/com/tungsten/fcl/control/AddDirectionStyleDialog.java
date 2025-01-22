@@ -108,7 +108,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             FCLTextView buttonStyleText = buttonStyleLayout.findViewById(R.id.button_style_text);
             FCLButton buttonStyleSet = buttonStyleLayout.findViewById(R.id.set_button_style);
 
-            buttonStyle = ButtonStyles.getStyles().get(0);
+            buttonStyle = new ControlButtonStyle("");
             buttonStyleText.setText(buttonStyle.getName());
             buttonStyleText.stringProperty().bind(buttonStyle.nameProperty());
             style.getButtonStyle().textSizeProperty().bind(buttonStyle.textSizeProperty());
