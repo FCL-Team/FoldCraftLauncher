@@ -462,7 +462,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                         String url = null;
                         switch (w) {
                             case 0:
-                                url = "https://github.com/FCL-Team/FCLRendererPlugin/releases/tag/Renderer";
+                                url = "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
                                 break;
                             case 1:
                                 url = "https://pan.quark.cn/s/a9f6e9d860d9";
