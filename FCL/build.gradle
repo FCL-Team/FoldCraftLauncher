@@ -48,6 +48,9 @@ android {
         versionName "1.2.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions{
+            ignoreAssets "!.svn:!.git:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*.scc:*~"
+        }
     }
 
     buildTypes {
