@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1201,
-    "versionName": "1.2.0.1",
-    "date": "2025.01.19",
+    "versionCode": 1202,
+    "versionName": "1.2.0.2",
+    "date": "2025.01.23",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复因启动器更新至1.2.0后启动后立刻闪退或启动游戏后立刻闪退(由于LTW移除后渲染器数组下标越界)的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复当前选择的版本启用特定游戏设置后无法更改全局设置内的渲染器和驱动的Bug\n2.修改渲染器插件Github链接\n3.修复编辑方向键样式时保存闪退的Bug\n4.修复编辑按键样式时取消也会错误保存的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c36a3246c5d5",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.1/FCL-release-1.2.0.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/63f710f4b030",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.2/FCL-release-1.2.0.2-all.apk"
   }
 ]
