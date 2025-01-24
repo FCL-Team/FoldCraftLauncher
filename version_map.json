@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1200,
-    "versionName": "1.2.0",
-    "date": "2025.01.16",
+    "versionCode": 1202,
+    "versionName": "1.2.0.2",
+    "date": "2025.01.23",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复客户端(比如FPSBoost)菜单页面内鼠标滚轮无效的Bug\n2.修复模组文件过大导致启动器读取时内存不足崩溃的Bug\n3.修改公告链接\n4.修复Java执行命令相关Bug\n5.修复CPU信息获取为空的Bug\n6.在日志内输出DLOPEN信息\n7.增加插件下载链接快捷跳转\n8.修复插件读取Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复当前选择的版本启用特定游戏设置后无法更改全局设置内的渲染器和驱动的Bug\n2.修改渲染器插件Github链接\n3.修复编辑方向键样式时保存闪退的Bug\n4.修复编辑按键样式时取消也会错误保存的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/226e654f8382",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0/FCL-release-1.2.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/63f710f4b030",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.2/FCL-release-1.2.0.2-all.apk"
   }
 ]

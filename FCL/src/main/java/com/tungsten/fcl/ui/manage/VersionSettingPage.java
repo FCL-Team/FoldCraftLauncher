@@ -450,14 +450,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             } else {
                 y = 0;
             }
-            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, name -> {
-                rendererText.setText(name);
-            });
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> rendererText.setText(name));
         }
         if (view == driverButton) {
-            RendererUtil.openDriverMenu(getContext(), view, name -> {
-                driverText.setText(name);
-            });
+            RendererUtil.openDriverMenu(getContext(), view, globalSetting, name -> driverText.setText(name));
         }
         if (view == rendererInstallButton) {
             new AlertDialog.Builder(getContext())
@@ -466,7 +462,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                         String url = null;
                         switch (w) {
                             case 0:
-                                url = "https://github.com/FCL-Team/FCLRendererPlugin/releases/tag/Renderer";
+                                url = "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
                                 break;
                             case 1:
                                 url = "https://pan.quark.cn/s/a9f6e9d860d9";
