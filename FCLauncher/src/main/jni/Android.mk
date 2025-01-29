@@ -14,7 +14,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE            := glfw
-LOCAL_SHARED_LIBRARIES  := fcl
+LOCAL_SHARED_LIBRARIES  := fcl driver_helper
 LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/init.c \
                            glfw/input.c \
@@ -28,9 +28,7 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/osmesa_context.c \
                            glfw/platform.c \
                            glfw/posix_thread.c \
-                           glfw/posix_time.c \
-                           glfw/driver_helper.c \
-                           driver_helper/nsbypass.c
+                           glfw/posix_time.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
 LOCAL_CFLAGS            := -Wall
@@ -41,13 +39,26 @@ LOCAL_LDLIBS            += -lEGL -lGLESv2
 endif
 include $(BUILD_SHARED_LIBRARY)
 
-#ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
 include $(CLEAR_VARS)
-LOCAL_MODULE            := linkerhook
-LOCAL_SRC_FILES         := driver_helper/hook.c
-LOCAL_LDFLAGS           := -z global
+LOCAL_LDLIBS := -ldl -llog -landroid
+LOCAL_MODULE := driver_helper
+LOCAL_SRC_FILES := \
+    driver_helper/driver_helper.c \
+    driver_helper/nsbypass.c
+LOCAL_CFLAGS += -rdynamic
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+LOCAL_CFLAGS += -DADRENO_POSSIBLE
+LOCAL_LDLIBS += -lEGL -lGLESv2
+endif
 include $(BUILD_SHARED_LIBRARY)
-#endif
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := linkerhook
+LOCAL_SRC_FILES := \
+    linkerhook/linkerhook.cpp \
+    linkerhook/linkerns.c
+LOCAL_LDFLAGS := -z global
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE            := awt_headless
@@ -71,7 +82,7 @@ include $(CLEAR_VARS)
 LOCAL_LDLIBS := -ldl -llog -landroid
 # -lGLESv2
 LOCAL_MODULE := pojavexec
-LOCAL_SHARED_LIBRARIES  := fcl
+LOCAL_SHARED_LIBRARIES  := fcl driver_helper
 # LOCAL_CFLAGS += -DDEBUG
 # -DGLES_TEST
 LOCAL_SRC_FILES := \
@@ -85,8 +96,7 @@ LOCAL_SRC_FILES := \
     pojav/ctxbridges/swap_interval_no_egl.c \
     pojav/environ/environ.c \
     pojav/input_bridge_v3.c \
-    pojav/virgl/virgl.c \
-    driver_helper/nsbypass.c
+    pojav/virgl/virgl.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_CFLAGS += -DADRENO_POSSIBLE
