@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1202,
-    "versionName": "1.2.0.2",
-    "date": "2025.01.23",
+    "versionCode": 1203,
+    "versionName": "1.2.0.3",
+    "date": "2025.01.30",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复当前选择的版本启用特定游戏设置后无法更改全局设置内的渲染器和驱动的Bug\n2.修改渲染器插件Github链接\n3.修复编辑方向键样式时保存闪退的Bug\n4.修复编辑按键样式时取消也会错误保存的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新Turnip驱动至24.3.4\n2.优化Turnip驱动加载方法\n3.修复多指触摸主页皮肤阅览模型时闪退的Bug\n4.修复编辑按键时切换布局方案无效的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/63f710f4b030",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.2/FCL-release-1.2.0.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/fd123d18dfb2",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.3/FCL-release-1.2.0.3-all.apk"
   }
 ]
