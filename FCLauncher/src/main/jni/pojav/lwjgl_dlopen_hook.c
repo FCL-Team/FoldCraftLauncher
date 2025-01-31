@@ -32,6 +32,10 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
         return (jlong) maybe_load_vulkan();
     }
 
+    if (getenv("RENDERER_HANDLE") != NULL && strstr(filename,"com.mio.plugin")) {
+        return (jlong) strtol(getenv("RENDERER_HANDLE"), NULL, 10);
+    }
+
     // This hook also serves the task of mitigating a bug: the idea is that since, on Android 10 and
     // earlier, the linker doesn't really do namespace nesting.
     // It is not a problem as most of the libraries are in the launcher path, but when you try to run
@@ -40,7 +44,8 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
     // This method fixes the issue by being in libpojavexec, and thus being in the classloader namespace
 
     int mode = (int)jmode;
-    return (jlong) dlopen(filename, mode);
+    jlong handle = (jlong) dlopen(filename, mode);
+    return handle;
 }
 
 /**

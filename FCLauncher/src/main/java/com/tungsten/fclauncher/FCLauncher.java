@@ -5,6 +5,7 @@ import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
 import android.os.Build;
+import android.system.ErrnoException;
 import android.system.Os;
 import android.util.ArrayMap;
 
@@ -362,7 +363,13 @@ public class FCLauncher {
                     }
                 }
             });
-            bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
+            long handle = bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                try {
+                    Os.setenv("RENDERER_HANDLE",handle+"",true);
+                } catch (ErrnoException ignore) {
+                }
+            }
 //            bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getEglName());
         } else {
             bridge.dlopen(nativeDir + "/" + config.getRenderer().getGlLibName());
