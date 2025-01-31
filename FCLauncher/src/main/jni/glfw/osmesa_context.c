@@ -20,7 +20,7 @@ int32_t stride;
 #ifndef FCL_NSBYPASS_H
 #define FCL_NSBYPASS_H
 
-void* load_turnip_vulkan();
+void* loadTurnipVulkan();
 
 #endif
 
@@ -167,7 +167,7 @@ static void set_vulkan_ptr(void* ptr) {
 void load_vulkan() {
     if(getenv("VULKAN_DRIVER_SYSTEM") == NULL && android_get_device_api_level() >= 28) {
 #ifdef ADRENO_POSSIBLE
-        void* result = load_turnip_vulkan();
+        void* result = loadTurnipVulkan();
         if(result != NULL) {
             printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
             set_vulkan_ptr(result);
