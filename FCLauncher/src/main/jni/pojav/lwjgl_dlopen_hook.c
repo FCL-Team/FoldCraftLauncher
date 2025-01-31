@@ -32,7 +32,7 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
         return (jlong) maybe_load_vulkan();
     }
 
-    if (getenv("RENDERER_HANDLE") != NULL && strstr(filename,"com.mio.plugin")) {
+    if (getenv("RENDERER_HANDLE") != NULL && strstr(filename,"plugin")) {
         return (jlong) strtol(getenv("RENDERER_HANDLE"), NULL, 10);
     }
 
