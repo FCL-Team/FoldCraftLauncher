@@ -275,6 +275,7 @@ jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
                      jint jmode) {
     const char* filename = (const char*) filename_ptr;
     int mode = (int)jmode;
+    FCL_LOG("ndlopen_bugfix：%s",filename);
     return (jlong) dlopen(filename, mode);
 }
 

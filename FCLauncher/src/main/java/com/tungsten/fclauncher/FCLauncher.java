@@ -163,7 +163,7 @@ public class FCLauncher {
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i).replace("${natives_directory}", getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() : null));
-            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getGlName() : config.getRenderer().getGlLibName());
+            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer() == FCLConfig.Renderer.RENDERER_CUSTOM ? RendererPlugin.getSelected().getPath() + "/" +RendererPlugin.getSelected().getGlName() : config.getRenderer().getGlLibName());
         }
         return args;
     }
