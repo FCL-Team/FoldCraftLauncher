@@ -96,7 +96,8 @@ LOCAL_SRC_FILES := \
     pojav/ctxbridges/swap_interval_no_egl.c \
     pojav/environ/environ.c \
     pojav/input_bridge_v3.c \
-    pojav/virgl/virgl.c
+    pojav/virgl/virgl.c \
+    pojav/lwjgl_dlopen_hook.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_CFLAGS += -DADRENO_POSSIBLE
