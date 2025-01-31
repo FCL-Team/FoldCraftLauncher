@@ -23,7 +23,6 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -38,7 +37,6 @@ import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -66,7 +64,6 @@ import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -82,12 +79,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -155,7 +148,7 @@ public final class LauncherHelper {
                     try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibFixer.jar")) {
                         Files.copy(input, new File(FCLPath.LIB_FIXER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
                     }
                     return null;
                 })
@@ -163,22 +156,7 @@ public final class LauncherHelper {
                     try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLaunchWrapper.jar")) {
                         Files.copy(input, new File(FCLPath.MIO_LAUNCH_WRAPPER).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
-                    }
-                    return null;
-                })
-                .thenComposeAsync(() -> {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                        File[] files = new File(FCLPath.CACHE_DIR).listFiles();
-                        if (files != null) {
-                            for (File file : files) {
-                                if (file.getName().endsWith(".so")) {
-                                    file.delete();
-                                }
-                            }
-                        }
-                        FileUtils.copyDirectory(Paths.get(RendererPlugin.getSelected().getPath()),Paths.get(FCLPath.CACHE_DIR));
-                        RendererPlugin.getSelected().setPath(FCLPath.CACHE_DIR);
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
                     }
                     return null;
                 })

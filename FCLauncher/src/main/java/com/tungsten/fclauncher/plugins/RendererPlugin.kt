@@ -12,7 +12,7 @@ object RendererPlugin {
         val des: String,
         val glName: String,
         val eglName: String,
-        var path: String,
+        val path: String,
         val boatEnv: List<String>,
         val pojavEnv: List<String>
     )
