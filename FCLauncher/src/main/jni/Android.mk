@@ -6,7 +6,6 @@ LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
                            fcl/fcl_loader.c \
-                           fcl/jre_launcher.c \
                            fcl/utils.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
@@ -97,6 +96,7 @@ LOCAL_SRC_FILES := \
     pojav/environ/environ.c \
     pojav/input_bridge_v3.c \
     pojav/virgl/virgl.c \
+    pojav/jre_launcher.c \
     pojav/lwjgl_dlopen_hook.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
