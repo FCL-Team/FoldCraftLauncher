@@ -27,7 +27,8 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/osmesa_context.c \
                            glfw/platform.c \
                            glfw/posix_thread.c \
-                           glfw/posix_time.c
+                           glfw/posix_time.c \
+                           glfw/lwjgl_dlopen_hook.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
 LOCAL_CFLAGS            := -Wall
