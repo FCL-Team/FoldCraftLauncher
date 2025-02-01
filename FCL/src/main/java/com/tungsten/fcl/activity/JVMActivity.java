@@ -54,15 +54,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             Logging.LOG.log(Level.WARNING, "Failed to get ControllerType or FCLBridge, task canceled.");
             return;
         }
-
-        menu = menuType == MenuType.GAME ? new GameMenu() : new JarExecutorMenu();
-        menu.setup(this, fclBridge);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
+    }
+
+    private void init() {
+        menu = menuType == MenuType.GAME ? new GameMenu() : new JarExecutorMenu();
+        menu.setup(this, fclBridge);
         if (menuType == MenuType.GAME) {
             menu.getInput().initExternalController(textureView);
         }
-
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
@@ -84,6 +85,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+        init();
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
             if (FCLBridge.BACKEND_IS_BOAT) {
