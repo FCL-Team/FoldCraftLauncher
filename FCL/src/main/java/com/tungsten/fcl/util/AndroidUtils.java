@@ -115,7 +115,7 @@ public class AndroidUtils {
             if (SDK_INT >= Build.VERSION_CODES.P) {
                 WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                 DisplayCutout cutout;
-                if (SDK_INT >= Build.VERSION_CODES.S) {
+                if (SDK_INT >= Build.VERSION_CODES.R) {
                     cutout = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout();
                 } else {
                     cutout = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
