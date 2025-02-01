@@ -13,7 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.opengl.EGL14;
@@ -23,6 +22,7 @@ import android.opengl.EGLDisplay;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.DisplayCutout;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.widget.Toast;
@@ -106,18 +106,27 @@ public class AndroidUtils {
         if (fullscreen || SDK_INT < Build.VERSION_CODES.P) {
             return point.x;
         } else {
-            try {
-                Rect notchRect;
-                if (SDK_INT >= Build.VERSION_CODES.S) {
-                    notchRect = Objects.requireNonNull(wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout()).getBoundingRects().get(0);
-                } else {
-                    notchRect = Objects.requireNonNull(context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout()).getBoundingRects().get(0);
-                }
-                return point.x - Math.min(notchRect.width(), notchRect.height());
-            } catch (Exception e) {
-                return point.x;
-            }
+            return point.x - getSafeInset(context);
         }
+    }
+
+    public static int getSafeInset(Activity context) {
+        try {
+            if (SDK_INT >= Build.VERSION_CODES.P) {
+                WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                DisplayCutout cutout;
+                if (SDK_INT >= Build.VERSION_CODES.S) {
+                    cutout = wm.getCurrentWindowMetrics().getWindowInsets().getDisplayCutout();
+                } else {
+                    cutout = context.getWindow().getDecorView().getRootWindowInsets().getDisplayCutout();
+                }
+                int safeInsetLeft = cutout != null ? cutout.getSafeInsetLeft() : 0;
+                int safeInsetRight = cutout != null ? cutout.getSafeInsetRight() : 0;
+                return Math.max(safeInsetLeft, safeInsetRight);
+            }
+        } catch (Throwable ignored) {
+        }
+        return 0;
     }
 
     @SuppressWarnings("resource")
