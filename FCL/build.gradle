@@ -83,7 +83,7 @@ android {
                     println(runtimeDir)
                     def files = fileTree(dir: runtimeDir, include: ['*.tar.xz'])
                     files.forEach { File file ->
-                        if (arch != 'all' && !file.getName().contains(arch) && !file.getName().contains("universal")) {
+                        if (arch != 'all' && !file.getName().contains("universal") && file.getName() != "bin-${arch}.tar.xz" ) {
                             print("delete:${file} :")
                             println(delete(file))
                         }
