@@ -47,6 +47,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -121,7 +122,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 if (library.incompatibleLibraryName.get() == null) {
                     InstallerVersionPage page = new InstallerVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
-                        setVersionName(); // 在选择版本后更新名称
+                        refreshVersionName();
                         DownloadPageManager.getInstance().dismissCurrentTempPage();
                     });
                     DownloadPageManager.getInstance().showTempPage(page);
@@ -129,7 +130,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
             });
             library.removeAction.set(() -> {
                 map.remove(libraryId);
-                setVersionName(); // 在移除版本后更新名称
+                refreshVersionName();
                 reload();
             });
         }
@@ -137,37 +138,22 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
 
     private String generateVersionName() {
         StringBuilder nameBuilder = new StringBuilder(gameVersion);
-        String[] loaderOrder = {
-            LibraryAnalyzer.LibraryType.FORGE.getPatchId(),
-            LibraryAnalyzer.LibraryType.NEO_FORGE.getPatchId(),
-            LibraryAnalyzer.LibraryType.FABRIC.getPatchId(),
-            LibraryAnalyzer.LibraryType.QUILT.getPatchId(),
-            LibraryAnalyzer.LibraryType.OPTIFINE.getPatchId(),
-            LibraryAnalyzer.LibraryType.LITELOADER.getPatchId()
-        };
-
-        for (String loaderId : loaderOrder) {
-            if (map.containsKey(loaderId)) {
-                String loaderName = getLoaderName(loaderId);
-                if (loaderName != null) {
-                    nameBuilder.append("-").append(loaderName);
-                }
-            }
-        }
+        Arrays.stream(LibraryAnalyzer.LibraryType.values())
+                .filter(libraryType -> map.containsKey(libraryType.getPatchId()))
+                .map(this::getLoaderName)
+                .filter(name -> !Objects.isNull(name))
+                .forEach(name -> nameBuilder.append("-").append(name));
         return nameBuilder.toString();
     }
 
-    private void setVersionName() {
+    private void refreshVersionName() {
         if (nameManuallyModified) {
             return;
         }
         editText.setText(generateVersionName());
     }
 
-    private String getLoaderName(String libraryId) {
-        LibraryAnalyzer.LibraryType libraryType = LibraryAnalyzer.LibraryType.fromPatchId(libraryId);
-        if (libraryType == null) return null;
-
+    private String getLoaderName(LibraryAnalyzer.LibraryType libraryType) {
         switch (libraryType) {
             case FORGE:
                 return getContext().getString(R.string.install_installer_forge);
