@@ -12,6 +12,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
+import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
@@ -41,6 +42,7 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
@@ -70,7 +72,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
         group = new InstallerItem.InstallerItemGroup(getContext(), gameVersion);
         nameBar = findViewById(R.id.name_bar);
 
-        ColorStateList colorStateList = new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() });
+        ColorStateList colorStateList = new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()});
         ThemeEngine.getInstance().registerEvent(nameBar, () -> nameBar.setBackgroundTintList(colorStateList));
 
         editText = findViewById(R.id.edit);
@@ -148,7 +150,16 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 }
 
                 Task<Void> task = builder.buildAsync().whenComplete(any -> Profiles.getSelectedProfile().getRepository().refreshVersions())
-                        .thenRunAsync(Schedulers.androidUIThread(), () -> Profiles.getSelectedProfile().setSelectedVersion(name));
+                        .thenRunAsync(Schedulers.androidUIThread(), () -> {
+                            Profile profile = Profiles.getSelectedProfile();
+                            profile.setSelectedVersion(name);
+                            if (!map.isEmpty()) {
+                                if (map.containsKey(LibraryAnalyzer.LibraryType.OPTIFINE.getPatchId()) && map.size() == 1) {
+                                    return;
+                                }
+                                new File(profile.getRepository().getRunDirectory(profile.getSelectedVersion()), "mods").mkdirs();
+                            }
+                        });
 
                 TaskDialog pane = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
                 pane.setTitle(getContext().getString(R.string.install_new_game));
@@ -167,7 +178,8 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                                 } else {
                                     if (executor.getException() == null)
                                         return;
-                                    alertFailureMessage(getContext(), executor.getException(), () -> {});
+                                    alertFailureMessage(getContext(), executor.getException(), () -> {
+                                    });
                                 }
 
                             });
