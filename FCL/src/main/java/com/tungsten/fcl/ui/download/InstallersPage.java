@@ -115,6 +115,48 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
         }
     }
 
+    private void setVersionName() {
+        StringBuilder nameBuilder = new StringBuilder(gameVersion);
+
+        for (InstallerItem library : group.getLibraries()) {
+            String libraryId = library.getLibraryId().replace("game", "");
+            if (!map.containsKey(libraryId)) {
+                continue;
+            }
+
+            LibraryAnalyzer.LibraryType libraryType = LibraryAnalyzer.LibraryType.fromPatchId(libraryId);
+            if (libraryType != null) {
+                String loaderName;
+                switch (libraryType) {
+                    case FORGE:
+                        loaderName = getContext().getString(R.string.install_installer_forge);
+                        break;
+                    case NEO_FORGE:
+                        loaderName = getContext().getString(R.string.install_installer_neoforge);
+                        break;
+                    case FABRIC:
+                        loaderName = getContext().getString(R.string.install_installer_fabric);
+                        break;
+                    case LITELOADER:
+                        loaderName = getContext().getString(R.string.install_installer_liteloader);
+                        break;
+                    case QUILT:
+                        loaderName = getContext().getString(R.string.install_installer_quilt);
+                        break;
+                    case OPTIFINE:
+                        loaderName = getContext().getString(R.string.install_installer_optifine);
+                        break;
+                    default:
+                        continue;
+                }
+
+                nameBuilder.append("-").append(loaderName);
+            }
+        }
+
+        editText.setText(nameBuilder.toString());
+    }
+
     @Override
     public Task<?> refresh(Object... param) {
         return Task.runAsync(() -> {
@@ -130,6 +172,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view == install) {
+            setVersionName();
             if (StringUtils.isBlank(Objects.requireNonNull(editText.getText()).toString())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.input_not_empty), Toast.LENGTH_SHORT).show();
             } else if (Profiles.getSelectedProfile().getRepository().versionIdConflicts(editText.getText().toString())) {
