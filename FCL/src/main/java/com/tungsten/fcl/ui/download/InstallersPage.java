@@ -117,44 +117,49 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
 
     private void setVersionName() {
         StringBuilder nameBuilder = new StringBuilder(gameVersion);
+        
+        // 按照固定顺序添加 loader 名称
+        String[] loaderOrder = {
+            LibraryAnalyzer.LibraryType.FORGE.getPatchId(),
+            LibraryAnalyzer.LibraryType.NEO_FORGE.getPatchId(),
+            LibraryAnalyzer.LibraryType.FABRIC.getPatchId(),
+            LibraryAnalyzer.LibraryType.QUILT.getPatchId(),
+            LibraryAnalyzer.LibraryType.OPTIFINE.getPatchId(),
+            LibraryAnalyzer.LibraryType.LITELOADER.getPatchId()
+        };
 
-        for (InstallerItem library : group.getLibraries()) {
-            String libraryId = library.getLibraryId().replace("game", "");
-            if (!map.containsKey(libraryId)) {
-                continue;
-            }
-
-            LibraryAnalyzer.LibraryType libraryType = LibraryAnalyzer.LibraryType.fromPatchId(libraryId);
-            if (libraryType != null) {
-                String loaderName;
-                switch (libraryType) {
-                    case FORGE:
-                        loaderName = getContext().getString(R.string.install_installer_forge);
-                        break;
-                    case NEO_FORGE:
-                        loaderName = getContext().getString(R.string.install_installer_neoforge);
-                        break;
-                    case FABRIC:
-                        loaderName = getContext().getString(R.string.install_installer_fabric);
-                        break;
-                    case LITELOADER:
-                        loaderName = getContext().getString(R.string.install_installer_liteloader);
-                        break;
-                    case QUILT:
-                        loaderName = getContext().getString(R.string.install_installer_quilt);
-                        break;
-                    case OPTIFINE:
-                        loaderName = getContext().getString(R.string.install_installer_optifine);
-                        break;
-                    default:
-                        continue;
+        for (String loaderId : loaderOrder) {
+            if (map.containsKey(loaderId)) {
+                String loaderName = getLoaderName(loaderId);
+                if (loaderName != null) {
+                    nameBuilder.append("-").append(loaderName);
                 }
-
-                nameBuilder.append("-").append(loaderName);
             }
         }
 
         editText.setText(nameBuilder.toString());
+    }
+
+    private String getLoaderName(String libraryId) {
+        LibraryAnalyzer.LibraryType libraryType = LibraryAnalyzer.LibraryType.fromPatchId(libraryId);
+        if (libraryType == null) return null;
+
+        switch (libraryType) {
+            case FORGE:
+                return getContext().getString(R.string.install_installer_forge);
+            case NEO_FORGE:
+                return getContext().getString(R.string.install_installer_neoforge);
+            case FABRIC:
+                return getContext().getString(R.string.install_installer_fabric);
+            case LITELOADER:
+                return getContext().getString(R.string.install_installer_liteloader);
+            case QUILT:
+                return getContext().getString(R.string.install_installer_quilt);
+            case OPTIFINE:
+                return getContext().getString(R.string.install_installer_optifine);
+            default:
+                return null;
+        }
     }
 
     @Override
