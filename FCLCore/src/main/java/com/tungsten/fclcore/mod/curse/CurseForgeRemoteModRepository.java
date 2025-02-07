@@ -248,12 +248,14 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     public static final int SECTION_UNKNOWN1 = 4944;
     public static final int SECTION_UNKNOWN2 = 4979;
     public static final int SECTION_UNKNOWN3 = 4984;
+    public static final int SECTION_SHADER_PACK = 6552;
 
     public static final CurseForgeRemoteModRepository MODS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.MOD, SECTION_MOD);
     public static final CurseForgeRemoteModRepository MODPACKS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.MODPACK, SECTION_MODPACK);
     public static final CurseForgeRemoteModRepository RESOURCE_PACKS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.RESOURCE_PACK, SECTION_RESOURCE_PACK);
     public static final CurseForgeRemoteModRepository WORLDS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.WORLD, SECTION_WORLD);
     public static final CurseForgeRemoteModRepository CUSTOMIZATIONS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.CUSTOMIZATION, SECTION_CUSTOMIZATION);
+    public static final CurseForgeRemoteModRepository SHADER_PACKS = new CurseForgeRemoteModRepository(Type.SHADER_PACK, SECTION_SHADER_PACK);
 
     public static class Pagination {
         private final int index;
