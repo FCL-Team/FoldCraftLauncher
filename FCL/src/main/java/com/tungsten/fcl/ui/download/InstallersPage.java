@@ -2,6 +2,8 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -61,6 +63,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
 
     private FCLEditText editText;
     private FCLImageButton install;
+    private boolean nameManuallyModified = false;
 
     public InstallersPage(Context context, int id, FCLUILayout parent, int resId, final String gameVersion) {
         super(context, id, parent, resId);
@@ -76,6 +79,21 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
         ThemeEngine.getInstance().registerEvent(nameBar, () -> nameBar.setBackgroundTintList(colorStateList));
 
         editText = findViewById(R.id.edit);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String autoGenName = generateVersionName();
+                if (!s.toString().equals(autoGenName)) {
+                    nameManuallyModified = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
         install = findViewById(R.id.install);
         editText.setText(gameVersion);
         install.setOnClickListener(this);
@@ -103,6 +121,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 if (library.incompatibleLibraryName.get() == null) {
                     InstallerVersionPage page = new InstallerVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
+                        setVersionName(); // 在选择版本后更新名称
                         DownloadPageManager.getInstance().dismissCurrentTempPage();
                     });
                     DownloadPageManager.getInstance().showTempPage(page);
@@ -110,15 +129,14 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
             });
             library.removeAction.set(() -> {
                 map.remove(libraryId);
+                setVersionName(); // 在移除版本后更新名称
                 reload();
             });
         }
     }
 
-    private void setVersionName() {
+    private String generateVersionName() {
         StringBuilder nameBuilder = new StringBuilder(gameVersion);
-        
-        // 按照固定顺序添加 loader 名称
         String[] loaderOrder = {
             LibraryAnalyzer.LibraryType.FORGE.getPatchId(),
             LibraryAnalyzer.LibraryType.NEO_FORGE.getPatchId(),
@@ -136,8 +154,14 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 }
             }
         }
+        return nameBuilder.toString();
+    }
 
-        editText.setText(nameBuilder.toString());
+    private void setVersionName() {
+        if (nameManuallyModified) {
+            return;
+        }
+        editText.setText(generateVersionName());
     }
 
     private String getLoaderName(String libraryId) {
@@ -177,7 +201,6 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         if (view == install) {
-            setVersionName();
             if (StringUtils.isBlank(Objects.requireNonNull(editText.getText()).toString())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.input_not_empty), Toast.LENGTH_SHORT).show();
             } else if (Profiles.getSelectedProfile().getRepository().versionIdConflicts(editText.getText().toString())) {
