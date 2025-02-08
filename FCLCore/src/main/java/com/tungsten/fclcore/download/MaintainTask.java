@@ -109,7 +109,7 @@ public class MaintainTask extends Task<Version> {
     }
 
     private static Version maintainGameWithLaunchWrapper(GameRepository repository, Version version, boolean reorderTweakClass) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, null);
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
         String mainClass = null;
 
@@ -158,7 +158,7 @@ public class MaintainTask extends Task<Version> {
     }
 
     private static Version maintainGameWithCpwModLauncher(GameRepository repository, Version version) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, null);
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
 
         if (!libraryAnalyzer.has(FORGE)) return version;
@@ -216,7 +216,7 @@ public class MaintainTask extends Task<Version> {
 
     // Fix wrong configurations when launching 1.17+ with Forge.
     private static Version maintainGameWithCpwBoostrapLauncher(GameRepository repository, Version version) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, null);
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
 
         if (!libraryAnalyzer.has(FORGE) && !libraryAnalyzer.has(NEO_FORGE)) return version;
@@ -258,7 +258,7 @@ public class MaintainTask extends Task<Version> {
     }
 
     private static Version maintainOptiFineLibrary(GameRepository repository, Version version, boolean remove) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, null);
         List<Library> libraries = new ArrayList<>(version.getLibraries());
 
         if (libraryAnalyzer.has(OPTIFINE)) {

@@ -24,6 +24,7 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -55,10 +56,9 @@ public class VersionList {
                 List<VersionListItem> children = repository.getDisplayVersions()
                         .parallel()
                         .map(version -> {
-                            String game = profile.getRepository().getGameVersion(version.getId()).orElse(context.getString(R.string.message_unknown));
-                            StringBuilder libraries = new StringBuilder(game);
-                            Version resolved = repository.getResolvedPreservingPatchesVersion(version.getId());
-                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(resolved, repository.getGameVersion(resolved).orElse(null));
+                            Optional<String> game = profile.getRepository().getGameVersion(version.getId());
+                            StringBuilder libraries = new StringBuilder(game.orElse(context.getString(R.string.message_unknown)));
+                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(version.getId()), game.orElse(null));
                             for (LibraryAnalyzer.LibraryMark mark : analyzer) {
                                 String libraryId = mark.getLibraryId();
                                 String libraryVersion = mark.getLibraryVersion();
