@@ -202,13 +202,13 @@ public class FCLauncher {
         if (config.getInstalledModLoaders().isInstallNeoForge()) {
             envMap.put("INST_NEOFORGE", "1");
         }
-        if (config.getInstalledModLoaders().isInstallOptiFine()) {
+        if (config.getInstalledModLoaders().isInstallLiteLoader()) {
             envMap.put("INST_LITELOADER", "1");
         }
-        if (config.getInstalledModLoaders().isInstallLiteLoader()) {
+        if (config.getInstalledModLoaders().isInstallFabric()) {
             envMap.put("INST_FABRIC", "1");
         }
-        if (config.getInstalledModLoaders().isInstallFabric()) {
+        if (config.getInstalledModLoaders().isInstallOptiFine()) {
             envMap.put("INST_OPTIFINE", "1");
         }
         if (config.getInstalledModLoaders().isInstallQuilt()) {
@@ -391,7 +391,7 @@ public class FCLauncher {
             long handle = bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 try {
-                    Os.setenv("RENDERER_HANDLE",handle + "",true);
+                    Os.setenv("RENDERER_HANDLE",handle + "", true);
                 } catch (ErrnoException ignore) {
                 }
             }
