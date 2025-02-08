@@ -185,9 +185,10 @@ static void destroyContextEGL(_GLFWwindow* window)
 GLFWbool _glfwInitEGL(void)
 {
     int i;
+    char* gles = getenv("LIBGL_GLES");
     const char* sonames[] =
     {
-            getenv("LIBEGL_NAME")
+            (strncmp(gles ? gles : "", "libGLESv2_angle.so", 18) == 0) ? "libEGL_angle.so" : getenv("LIBEGL_NAME")
     };
 
     if (_glfw.egl.handle)
