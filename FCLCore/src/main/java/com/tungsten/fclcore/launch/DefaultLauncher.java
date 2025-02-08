@@ -339,7 +339,7 @@ public class DefaultLauncher extends Launcher {
                         return it.getId().equals(versionTypeId);
                     })
                     .findFirst();
-            return mapInfo.map(it -> it.getArgument().getArgument(version)).orElse(null);
+            return mapInfo.map(it -> it.getArgument().getArgument(version, repository.getGameVersion(version).orElse(null))).orElse(null);
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Failed to get game map", e);
             return null;

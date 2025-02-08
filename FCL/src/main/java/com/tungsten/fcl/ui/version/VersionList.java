@@ -15,6 +15,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -56,7 +57,8 @@ public class VersionList {
                         .map(version -> {
                             String game = profile.getRepository().getGameVersion(version.getId()).orElse(context.getString(R.string.message_unknown));
                             StringBuilder libraries = new StringBuilder(game);
-                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(repository.getResolvedPreservingPatchesVersion(version.getId()));
+                            Version resolved = repository.getResolvedPreservingPatchesVersion(version.getId());
+                            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(resolved, repository.getGameVersion(resolved).orElse(null));
                             for (LibraryAnalyzer.LibraryMark mark : analyzer) {
                                 String libraryId = mark.getLibraryId();
                                 String libraryVersion = mark.getLibraryVersion();

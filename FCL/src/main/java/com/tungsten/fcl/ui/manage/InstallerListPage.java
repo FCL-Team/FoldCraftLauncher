@@ -86,7 +86,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
         CompletableFuture.supplyAsync(() -> {
             gameVersion = profile.getRepository().getGameVersion(version).orElse(null);
 
-            return LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(versionId));
+            return LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(versionId), gameVersion);
         }).thenAcceptAsync(analyzer -> {
             Function<String, Runnable> removeAction = libraryId -> () -> profile.getDependency().removeLibraryAsync(version, libraryId)
                     .thenComposeAsync(profile.getRepository()::saveAsync)

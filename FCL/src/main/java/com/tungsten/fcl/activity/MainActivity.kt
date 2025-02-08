@@ -429,7 +429,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val analyzer = LibraryAnalyzer.analyze(
                     Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
-                    )
+                    ),
+                    Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)
                 )
                 for (mark in analyzer) {
                     val libraryId = mark.libraryId

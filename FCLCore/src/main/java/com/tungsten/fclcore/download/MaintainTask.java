@@ -74,7 +74,7 @@ public class MaintainTask extends Task<Version> {
         String mainClass = version.resolve(null).getMainClass();
 
         if (mainClass != null && mainClass.equals(LibraryAnalyzer.LAUNCH_WRAPPER_MAIN)) {
-            version = maintainOptiFineLibrary(repository, maintainGameWithLaunchWrapper(unique(version), true), false);
+            version = maintainOptiFineLibrary(repository, maintainGameWithLaunchWrapper(repository, unique(version), true), false);
         } else if (mainClass != null && mainClass.equals(LibraryAnalyzer.MOD_LAUNCHER_MAIN)) {
             // Forge 1.13 and OptiFine
             version = maintainOptiFineLibrary(repository, maintainGameWithCpwModLauncher(repository, unique(version)), true);
@@ -108,8 +108,8 @@ public class MaintainTask extends Task<Version> {
         return newVersion.setPatches(version.getPatches()).markAsUnresolved();
     }
 
-    private static Version maintainGameWithLaunchWrapper(Version version, boolean reorderTweakClass) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version);
+    private static Version maintainGameWithLaunchWrapper(GameRepository repository, Version version, boolean reorderTweakClass) {
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
         String mainClass = null;
 
@@ -158,7 +158,7 @@ public class MaintainTask extends Task<Version> {
     }
 
     private static Version maintainGameWithCpwModLauncher(GameRepository repository, Version version) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version);
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
 
         if (!libraryAnalyzer.has(FORGE)) return version;
@@ -216,7 +216,7 @@ public class MaintainTask extends Task<Version> {
 
     // Fix wrong configurations when launching 1.17+ with Forge.
     private static Version maintainGameWithCpwBoostrapLauncher(GameRepository repository, Version version) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version);
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
         VersionLibraryBuilder builder = new VersionLibraryBuilder(version);
 
         if (!libraryAnalyzer.has(FORGE) && !libraryAnalyzer.has(NEO_FORGE)) return version;
@@ -258,7 +258,7 @@ public class MaintainTask extends Task<Version> {
     }
 
     private static Version maintainOptiFineLibrary(GameRepository repository, Version version, boolean remove) {
-        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version);
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
         List<Library> libraries = new ArrayList<>(version.getLibraries());
 
         if (libraryAnalyzer.has(OPTIFINE)) {
