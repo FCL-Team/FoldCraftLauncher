@@ -31,6 +31,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Argument;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.GameRepository;
@@ -445,6 +446,8 @@ public class DefaultLauncher extends Launcher {
 
         String[] finalArgs = rawCommandLine.toArray(new String[0]);
 
+        LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+
         FCLConfig.Renderer renderer = options.getRenderer();
         FCLConfig config = new FCLConfig(
                 context,
@@ -456,6 +459,14 @@ public class DefaultLauncher extends Launcher {
         );
         config.setUseVKDriverSystem(options.isVKDriverSystem());
         config.setPojavBigCore(options.isPojavBigCore());
+        config.setInstalledModLoaders(new FCLConfig.InstalledModLoaders(
+                analyzer.has(LibraryAnalyzer.LibraryType.FORGE),
+                analyzer.has(LibraryAnalyzer.LibraryType.NEO_FORGE),
+                analyzer.has(LibraryAnalyzer.LibraryType.OPTIFINE),
+                analyzer.has(LibraryAnalyzer.LibraryType.LITELOADER),
+                analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
+                analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
+        ));
         return FCLauncher.launchMinecraft(config);
     }
 

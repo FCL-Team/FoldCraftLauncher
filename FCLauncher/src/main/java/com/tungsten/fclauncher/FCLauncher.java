@@ -192,6 +192,30 @@ public class FCLauncher {
         }
     }
 
+    private static void addModLoaderEnv(FCLConfig config, HashMap<String, String> envMap) {
+        if (config.getInstalledModLoaders() == null)
+            return;
+
+        if (config.getInstalledModLoaders().isInstallForge()) {
+            envMap.put("INST_FORGE", "1");
+        }
+        if (config.getInstalledModLoaders().isInstallNeoForge()) {
+            envMap.put("INST_NEOFORGE", "1");
+        }
+        if (config.getInstalledModLoaders().isInstallOptiFine()) {
+            envMap.put("INST_LITELOADER", "1");
+        }
+        if (config.getInstalledModLoaders().isInstallLiteLoader()) {
+            envMap.put("INST_FABRIC", "1");
+        }
+        if (config.getInstalledModLoaders().isInstallFabric()) {
+            envMap.put("INST_OPTIFINE", "1");
+        }
+        if (config.getInstalledModLoaders().isInstallQuilt()) {
+            envMap.put("INST_QUILT", "1");
+        }
+    }
+
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         FCLConfig.Renderer renderer = config.getRenderer() == null ? FCLConfig.Renderer.RENDERER_GL4ES : config.getRenderer();
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
@@ -295,6 +319,7 @@ public class FCLauncher {
     private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) {
         HashMap<String, String> envMap = new HashMap<>();
         addCommonEnv(config, envMap);
+        addModLoaderEnv(config, envMap);
         if (render) {
             addRendererEnv(config, envMap);
         }
@@ -366,7 +391,7 @@ public class FCLauncher {
             long handle = bridge.dlopen(RendererPlugin.getSelected().getPath() + "/" + RendererPlugin.getSelected().getGlName());
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                 try {
-                    Os.setenv("RENDERER_HANDLE",handle+"",true);
+                    Os.setenv("RENDERER_HANDLE",handle + "",true);
                 } catch (ErrnoException ignore) {
                 }
             }
