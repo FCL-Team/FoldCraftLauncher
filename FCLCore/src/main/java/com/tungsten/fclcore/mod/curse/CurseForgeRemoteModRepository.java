@@ -117,9 +117,8 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 .header("X-API-KEY", apiKey)
                 .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                 }.getType());
-        Stream<RemoteMod> res = response.getData().stream().map(CurseAddon::toMod);
         if (searchFilter.isEmpty()) {
-            return new SearchResult(res, calculateTotalPages(response, pageSize));
+            return new SearchResult(response.getData().stream().map(CurseAddon::toMod), (int)Math.ceil((double)response.pagination.totalCount / pageSize));
         }
 
         String lowerCaseSearchFilter = searchFilter.toLowerCase();
@@ -130,7 +129,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
 
-        return new SearchResult(res.map(remoteMod -> {
+        return new SearchResult(response.getData().stream().map(CurseAddon::toMod).map(remoteMod -> {
             String lowerCaseResult = remoteMod.getTitle().toLowerCase();
             int diff = levCalculator.calc(lowerCaseSearchFilter, lowerCaseResult);
 
@@ -141,7 +140,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
             }
 
             return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), res, calculateTotalPages(response, pageSize));
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.getData().stream().map(CurseAddon::toMod), response.pagination.totalCount);
     }
 
     @Override
