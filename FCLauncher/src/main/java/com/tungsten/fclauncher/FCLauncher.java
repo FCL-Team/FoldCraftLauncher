@@ -4,6 +4,8 @@ import static com.tungsten.fclauncher.utils.Architecture.ARCH_X86;
 import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.system.ErrnoException;
 import android.system.Os;
@@ -32,6 +34,8 @@ import java.util.Map;
 
 public class FCLauncher {
 
+    private static int FCL_VERSION_CODE = -1;
+
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
     }
@@ -40,13 +44,22 @@ public class FCLauncher {
         log(bridge, "==================== " + task + " ====================");
     }
 
-    private static void logStartInfo(FCLBridge bridge, String task) {
+    private static void logStartInfo(FCLConfig config, FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Device: " + DeviceName.getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU: " + getSocName());
         log(bridge, "Android SDK: " + Build.VERSION.SDK_INT);
         log(bridge, "Language: " + Locale.getDefault());
+
+        PackageManager pm = config.getContext().getPackageManager();
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo(config.getContext().getPackageName(), 0);
+            FCL_VERSION_CODE = packageInfo.versionCode;
+            log(bridge, "FCL Version Code: " + FCL_VERSION_CODE);
+        } catch (PackageManager.NameNotFoundException e) {
+            log(bridge, "FCL Version Code: Can't get current version code, exception = " + e.getMessage());
+        }
     }
 
     private static void logModList(FCLBridge bridge) {
@@ -170,6 +183,9 @@ public class FCLauncher {
     }
 
     private static void addCommonEnv(FCLConfig config, HashMap<String, String> envMap) {
+        if (FCL_VERSION_CODE != -1) {
+            envMap.put("FCL_VERSION_CODE", FCL_VERSION_CODE + "");
+        }
         envMap.put("HOME", config.getLogDir());
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
@@ -439,7 +455,7 @@ public class FCLauncher {
         bridge.setLogPath(config.getLogDir() + "/latest_game.log");
         Thread gameThread = new Thread(() -> {
             try {
-                logStartInfo(bridge, "Minecraft");
+                logStartInfo(config, bridge, "Minecraft");
                 logModList(bridge);
 
                 // env
@@ -476,7 +492,7 @@ public class FCLauncher {
         Thread javaGUIThread = new Thread(() -> {
             try {
 
-                logStartInfo(bridge, "Jar Executor");
+                logStartInfo(config, bridge, "Jar Executor");
 
                 // env
                 setEnv(config, bridge, true);
@@ -511,7 +527,7 @@ public class FCLauncher {
         Thread apiInstallerThread = new Thread(() -> {
             try {
 
-                logStartInfo(bridge, "API Installer");
+                logStartInfo(config, bridge, "API Installer");
 
                 // env
                 setEnv(config, bridge, false);
