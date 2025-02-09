@@ -256,6 +256,8 @@ public class FCLauncher {
                 }
                 if (split[0].equals("LIB_MESA_NAME")) {
                     envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
+                } else if (split[0].equals("MESA_LIBRARY")) {
+                    envMap.put(split[0], RendererPlugin.getSelected().getPath() + "/" + split[1]);
                 } else {
                     envMap.put(split[0], split[1]);
                 }

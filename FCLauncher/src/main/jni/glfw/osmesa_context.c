@@ -197,7 +197,7 @@ GLFWbool _glfwInitOSMesa(void)
 
     const char *renderer = getenv("LIBGL_STRING");
     
-    if (strcmp(renderer, "Zink") == 0)
+    if (!strcmp(renderer, "Zink") || !strcmp(renderer, "custom_gallium"))
         load_vulkan();
 
     if (!_glfw.osmesa.handle)
