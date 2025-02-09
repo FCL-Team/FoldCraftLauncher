@@ -149,6 +149,10 @@ int pojavInitOpenGL() {
         setenv("GALLIUM_DRIVER", "freedreno", 1);
         setenv("MESA_LOADER_DRIVER_OVERRIDE", "kgsl", 1);
         set_osm_bridge_tbl();
+    } else if (!strcmp(renderer, "custom_gallium")) {
+        pojav_environ->config_renderer = RENDERER_VK_ZINK;
+        load_vulkan();
+        set_osm_bridge_tbl();
     }
 
     if(br_init()) br_setup_window();
