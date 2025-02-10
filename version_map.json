@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1204,
-    "versionName": "1.2.0.4",
-    "date": "2025.02.03",
+    "versionCode": 1205,
+    "versionName": "1.2.0.5",
+    "date": "2025.02.10",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复样式名过长导致设置按钮无法点击的Bug\n2.修复切换深色模式闪退的Bug\n3.修复F3页面CPU只能读取到核心数的Bug\n4.修复部分机型不启用全屏时可能会造成点击位置与实际位置不符的Bug\n5.修复Pojav后端缺少glfwGetMonitorPhysicalSize导致部分模组崩溃的Bug\n6.修复部分安卓11以下的设备在使用渲染器插件时无法正确加载so的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:在安装后自动创建mods文件夹\n2.新增功能:下载光影\n3.新增功能:添加版本名称设置功能以显示安装器类型\n4.修复高清修复安装Bug\n5.更新部分依赖\n6.同步部分HMCL代码\n7.修复少量Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/9a81ddf448ea",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.4/FCL-release-1.2.0.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c877311dbae1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.5/FCL-release-1.2.0.5-all.apk"
   }
 ]
