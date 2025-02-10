@@ -33,7 +33,7 @@
 // Boardwalk: missing include
 #include <string.h>
 
-#include "include/fcl_internal.h"
+#include "fcl/include/fcl_internal.h"
 
 
 // Uncomment to try redirect signal handling to JVM

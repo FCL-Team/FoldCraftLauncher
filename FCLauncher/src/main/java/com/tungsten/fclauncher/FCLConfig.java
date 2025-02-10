@@ -51,14 +51,58 @@ public class FCLConfig implements Serializable {
         }
     }
 
+    public static class InstalledModLoaders {
+        private final boolean installForge;
+        private final boolean installNeoForge;
+        private final boolean installOptiFine;
+        private final boolean installLiteLoader;
+        private final boolean installFabric;
+        private final boolean installQuilt;
+
+        public InstalledModLoaders(boolean installForge, boolean installNeoForge, boolean installOptiFine, boolean installLiteLoader, boolean installFabric, boolean installQuilt) {
+            this.installForge = installForge;
+            this.installNeoForge = installNeoForge;
+            this.installOptiFine = installOptiFine;
+            this.installLiteLoader = installLiteLoader;
+            this.installFabric = installFabric;
+            this.installQuilt = installQuilt;
+        }
+
+        public boolean isInstallForge() {
+            return installForge;
+        }
+
+        public boolean isInstallNeoForge() {
+            return installNeoForge;
+        }
+
+        public boolean isInstallOptiFine() {
+            return installOptiFine;
+        }
+
+        public boolean isInstallLiteLoader() {
+            return installLiteLoader;
+        }
+
+        public boolean isInstallFabric() {
+            return installFabric;
+        }
+
+        public boolean isInstallQuilt() {
+            return installQuilt;
+        }
+    }
+
     private final Context context;
     private final String logDir;
     private final String javaPath;
     private final String workingDir;
     private final Renderer renderer;
     private final String[] args;
+
     private boolean useVKDriverSystem = false;
     private boolean pojavBigCore = false;
+    private InstalledModLoaders installedModLoaders = null;
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -109,4 +153,11 @@ public class FCLConfig implements Serializable {
         return pojavBigCore;
     }
 
+    public void setInstalledModLoaders(InstalledModLoaders installedModLoaders) {
+        this.installedModLoaders = installedModLoaders;
+    }
+
+    public InstalledModLoaders getInstalledModLoaders() {
+        return installedModLoaders;
+    }
 }

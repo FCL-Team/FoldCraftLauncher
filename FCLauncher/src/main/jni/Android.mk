@@ -6,7 +6,6 @@ LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
                            fcl/fcl_loader.c \
-                           fcl/jre_launcher.c \
                            fcl/utils.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
@@ -28,7 +27,8 @@ LOCAL_SRC_FILES         := glfw/context.c \
                            glfw/osmesa_context.c \
                            glfw/platform.c \
                            glfw/posix_thread.c \
-                           glfw/posix_time.c
+                           glfw/posix_time.c \
+                           glfw/lwjgl_dlopen_hook.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
                            $(LOCAL_PATH)/glfw/include
 LOCAL_CFLAGS            := -Wall
@@ -96,7 +96,9 @@ LOCAL_SRC_FILES := \
     pojav/ctxbridges/swap_interval_no_egl.c \
     pojav/environ/environ.c \
     pojav/input_bridge_v3.c \
-    pojav/virgl/virgl.c
+    pojav/virgl/virgl.c \
+    pojav/jre_launcher.c \
+    pojav/lwjgl_dlopen_hook.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_CFLAGS += -DADRENO_POSSIBLE

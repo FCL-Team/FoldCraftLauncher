@@ -149,6 +149,10 @@ int pojavInitOpenGL() {
         setenv("GALLIUM_DRIVER", "freedreno", 1);
         setenv("MESA_LOADER_DRIVER_OVERRIDE", "kgsl", 1);
         set_osm_bridge_tbl();
+    } else if (!strcmp(renderer, "custom_gallium")) {
+        pojav_environ->config_renderer = RENDERER_VK_ZINK;
+        load_vulkan();
+        set_osm_bridge_tbl();
     }
 
     if(br_init()) br_setup_window();
@@ -208,14 +212,17 @@ EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
     return br_init_context((basic_render_window_t*)contextSrc);
 }
 
-EXTERNAL_API JNIEXPORT jlong JNICALL
-Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
-    printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");
-    // The code below still uses the env var because
+void* maybe_load_vulkan() {
+    // We use the env var because
     // 1. it's easier to do that
     // 2. it won't break if something will try to load vulkan and osmesa simultaneously
     if(getenv("VULKAN_PTR") == NULL) load_vulkan();
-    return strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
+    return (void*) strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
+}
+EXTERNAL_API JNIEXPORT jlong JNICALL
+Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
+    printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");
+    return (jlong) maybe_load_vulkan();
 }
 
 EXTERNAL_API void pojavSwapInterval(int interval) {

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -331,6 +330,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void refreshViewGroupList(FCLSpinner<ControlViewGroup> spinner) {
+        if (getViewGroup() != null) {
+            setViewGroup(null);
+        }
         ArrayList<String> viewGroupNameList = controllerProperty.get().viewGroups().stream().map(ControlViewGroup::getName).collect(Collectors.toCollection(ArrayList::new));
         spinner.setDataList(new ArrayList<>(controllerProperty.get().viewGroups()));
         ArrayAdapter<String> viewGroupNameAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, viewGroupNameList);

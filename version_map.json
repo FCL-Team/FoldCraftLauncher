@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1202,
-    "versionName": "1.2.0.2",
-    "date": "2025.01.23",
+    "versionCode": 1205,
+    "versionName": "1.2.0.5",
+    "date": "2025.02.10",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复当前选择的版本启用特定游戏设置后无法更改全局设置内的渲染器和驱动的Bug\n2.修改渲染器插件Github链接\n3.修复编辑方向键样式时保存闪退的Bug\n4.修复编辑按键样式时取消也会错误保存的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:在安装后自动创建mods文件夹\n2.新增功能:下载光影\n3.新增功能:添加版本名称设置功能以显示安装器类型\n4.修复高清修复安装Bug\n5.更新部分依赖\n6.同步部分HMCL代码\n7.修复少量Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/63f710f4b030",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.2/FCL-release-1.2.0.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c877311dbae1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.5/FCL-release-1.2.0.5-all.apk"
   }
 ]

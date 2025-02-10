@@ -114,6 +114,9 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
                 case 4:
                     pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_WORLD);
                     break;
+                case 5:
+                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK);
+                    break;
                 default:
                     pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
                     break;

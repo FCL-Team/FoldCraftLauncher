@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -28,6 +27,11 @@ public class RuntimeUtils {
 
     public static boolean isLatest(String targetDir, String srcDir) throws IOException {
         File targetFile = new File(targetDir + "/version");
+        try (InputStream stream = RuntimeUtils.class.getResourceAsStream(srcDir + "/version")) {
+            if (stream == null) {
+                return true;
+            }
+        }
         long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));
         return targetFile.exists() && Long.parseLong(FileUtils.readText(targetFile)) == version;
     }
@@ -134,7 +138,7 @@ public class RuntimeUtils {
     public static void patchJava(Context context, String javaPath) throws IOException {
         Pack200Utils.unpack(context.getApplicationInfo().nativeLibraryDir, javaPath);
         File dest = new File(javaPath);
-        if(!dest.exists())
+        if (!dest.exists())
             return;
         String libFolder = FCLauncher.getJreLibDir(javaPath);
         File ftIn = new File(dest, libFolder + "/libfreetype.so.6");
