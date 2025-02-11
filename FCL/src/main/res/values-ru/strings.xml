@@ -1029,4 +1029,6 @@
     <string name="message_vulkan_driver_system">Текущий GPU Adreno, не рекомендуется включать эту опцию.</string>
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
     <string name="installed">Установлено</string>
+    
+    <string name="shaderpack">Шейдерпак</string>
 </resources>
