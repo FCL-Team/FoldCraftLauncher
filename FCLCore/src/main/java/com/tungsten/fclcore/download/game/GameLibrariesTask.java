@@ -132,7 +132,7 @@ public final class GameLibrariesTask extends Task<Void> {
                     }
                 }
             }
-            if (shouldDownloadLibrary(gameRepository, version, library, integrityCheck) && library.hasDownloadURL()) {
+            if (shouldDownloadLibrary(gameRepository, version, library, integrityCheck) && (library.hasDownloadURL() || !"optifine".equals(library.getGroupId()))) {
                 dependencies.add(new LibraryDownloadTask(dependencyManager, file, library));
             } else {
                 dependencyManager.getCacheRepository().tryCacheLibrary(library, file.toPath());
