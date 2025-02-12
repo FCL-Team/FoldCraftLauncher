@@ -57,6 +57,12 @@ _Noreturn void nominal_exit(int code);
     fflush(fcl->logFile); \
     } while (0)
 
+#define FCL_LOG(x...) do { \
+    fprintf(fcl->logFile, x); \
+    fprintf(fcl->logFile, "\n"); \
+    fflush(fcl->logFile); \
+    } while (0)
+
 #define PrepareFCLBridgeJNI() \
     JavaVM* vm = fcl->android_jvm; \
     JNIEnv* env = NULL; \

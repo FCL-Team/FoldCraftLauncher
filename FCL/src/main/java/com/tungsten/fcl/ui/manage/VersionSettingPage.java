@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.SelectControllerDialog;
@@ -18,7 +20,7 @@ import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.fclauncher.plugins.RendererPlugin;
+import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -93,8 +95,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
     private FCLImageButton rendererButton;
+    private FCLImageButton rendererInstallButton;
+    private FCLImageButton driverButton;
+    private FCLImageButton driverInstallButton;
 
     private FCLTextView rendererText;
+    private FCLTextView driverText;
 
     private final InvalidationListener specificSettingsListener;
     private final StringProperty selectedVersion = new SimpleStringProperty();
@@ -168,13 +174,20 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
         rendererButton = findViewById(R.id.edit_renderer);
+        rendererInstallButton = findViewById(R.id.install_renderer);
+        driverButton = findViewById(R.id.edit_driver);
+        driverInstallButton = findViewById(R.id.install_driver);
 
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
+        rendererInstallButton.setOnClickListener(this);
+        driverButton.setOnClickListener(this);
+        driverInstallButton.setOnClickListener(this);
 
         rendererText = findViewById(R.id.renderer);
+        driverText = findViewById(R.id.driver);
 
         FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
 
@@ -333,6 +346,20 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         } else {
             rendererText.setText(renderer.toString());
         }
+        if (!versionSetting.getDriver().equals("Turnip")) {
+            boolean isSelected = false;
+            for (DriverPlugin.Driver driver : DriverPlugin.getDriverList()) {
+                if (driver.getDriver().equals(versionSetting.getDriver())) {
+                    DriverPlugin.setSelected(driver);
+                    versionSetting.setDriver(driver.getDriver());
+                    isSelected = true;
+                }
+            }
+            if (!isSelected) {
+                versionSetting.setDriver("Turnip");
+            }
+        }
+        driverText.setText(versionSetting.getDriver());
 
         versionSetting.getUsesGlobalProperty().addListener(specificSettingsListener);
         if (versionId != null)
@@ -414,9 +441,61 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             dialog.show();
         }
         if (view == rendererButton) {
-            RendererUtil.openRendererMenu(getContext(), view, ConvertUtils.dip2px(getContext(), 400), ConvertUtils.dip2px(getContext(), 300), name -> {
-                rendererText.setText(name);
-            });
+            int[] pos = new int[2];
+            view.getLocationInWindow(pos);
+            int windowHeight = getActivity().getWindow().getDecorView().getHeight();
+            int y;
+            if (pos[1] < windowHeight / 2) {
+                y = pos[1];
+            } else {
+                y = 0;
+            }
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> rendererText.setText(name));
+        }
+        if (view == driverButton) {
+            RendererUtil.openDriverMenu(getContext(), view, globalSetting, name -> driverText.setText(name));
+        }
+        if (view == rendererInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/a9f6e9d860d9";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
+        }
+        if (view == driverInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/d87c59695250";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
         }
     }
 }

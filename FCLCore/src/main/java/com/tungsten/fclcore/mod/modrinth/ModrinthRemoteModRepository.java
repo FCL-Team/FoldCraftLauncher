@@ -48,6 +48,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     public static final ModrinthRemoteModRepository MODS = new ModrinthRemoteModRepository("mod");
     public static final ModrinthRemoteModRepository MODPACKS = new ModrinthRemoteModRepository("modpack");
     public static final ModrinthRemoteModRepository RESOURCE_PACKS = new ModrinthRemoteModRepository("resourcepack");
+    public static final ModrinthRemoteModRepository SHADER_PACKS = new ModrinthRemoteModRepository("shader");
 
     private static final String PREFIX = "https://api.modrinth.com";
 
@@ -332,7 +333,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, id),
                     iconUrl,
-                    this
+                    this,
+                    id
             );
         }
     }
@@ -716,7 +718,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, projectId),
                     iconUrl,
-                    this
+                    this,
+                    projectId
             );
         }
     }

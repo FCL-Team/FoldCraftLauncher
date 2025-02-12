@@ -59,7 +59,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         setContentView(R.layout.dialog_add_button_style);
         setCancelable(false);
         this.callback = callback;
-        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle;
+        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);

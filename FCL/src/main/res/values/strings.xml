@@ -786,10 +786,12 @@
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (unstable)(OpenGL 4.6, only support 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
+    <string name="settings_fcl_renderer_gl4esp" translatable="false">GL4ES+ (unstable)(OpenGL 2.1)</string>
+
+    <string name="settings_fcl_driver">Vulkan Driver</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
@@ -825,8 +827,8 @@
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
     <string name="settings_launcher_theme">Theme</string>
     <string name="settings_launcher_theme2">Theme2</string>
-    <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
-    <string name="settings_launcher_background_dk">Dark Mode Launcher Background</string>
+    <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
+    <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
     <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
@@ -1004,4 +1006,8 @@
     </string>
     <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
+    <string name="installed">Installed</string>
+    <string name="message_install_plugin">You can get plugins through the following ways.</string>
+
+    <string name="shaderpack">ShaderPack</string>
 </resources>

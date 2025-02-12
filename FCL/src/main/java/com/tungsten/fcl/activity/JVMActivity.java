@@ -38,6 +38,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static MenuType menuType;
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
+    private static boolean isRunning = false;
 
     public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -83,6 +84,17 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+        if (isRunning) {
+            fclBridge.setSurfaceTexture(surfaceTexture);
+            if (FCLBridge.BACKEND_IS_BOAT) {
+                fclBridge.setFCLNativeWindow(new Surface(surfaceTexture));
+            } else {
+                CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
+            }
+            menu.onGraphicOutput();
+            return;
+        }
+        isRunning = true;
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
         fclBridge.setSurfaceDestroyed(false);
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;

@@ -625,7 +625,8 @@ public class ZipPath implements Path {
 
     @Override
     public final File toFile() {
-        return toFile();
+        //todo: may cause crash
+        return null;
     }
 
     @Override

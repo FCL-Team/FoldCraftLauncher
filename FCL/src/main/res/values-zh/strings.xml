@@ -747,8 +747,9 @@
     <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (不稳定)(OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
+
+    <string name="settings_fcl_driver">Vulkan驱动</string>
 
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_game">游戏设置</string>
@@ -778,8 +779,8 @@
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
     <string name="settings_launcher_theme">主题</string>
     <string name="settings_launcher_theme2">主题2</string>
-    <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
-    <string name="settings_launcher_background_dk">暗色模式启动器背景图片</string>
+    <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
+    <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
     <string name="settings_launcher_menu_icon">菜单键图标</string>
     <string name="settings_launcher_ignore_notch">忽略刘海屏</string>
@@ -957,4 +958,8 @@
 
     <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
     <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
+    <string name="installed">已安装</string>
+    <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+
+    <string name="shaderpack">光影</string>
 </resources>

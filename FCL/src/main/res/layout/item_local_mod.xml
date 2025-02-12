@@ -22,6 +22,12 @@
             android:id="@+id/check"
             android:layout_gravity="center"/>
 
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_weight="1"
             android:layout_width="0dp"

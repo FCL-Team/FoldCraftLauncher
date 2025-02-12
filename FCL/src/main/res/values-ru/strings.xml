@@ -294,7 +294,7 @@
 
     <string name="edit_view_clone">Копировать</string>
     <string name="edit_view_delete">Удалить</string>
-    <string name="edit_view_event">Расширение настройки</string>
+    <string name="edit_view_event">Расширенные настройки</string>
     <string name="edit_view_info">Стандартные настройки</string>
     <string name="edit_view_no_group">Сначала добавьте или выберите группу просмотра!</string>
     <string name="edit_view_style">Стиль</string>
@@ -825,9 +825,9 @@
     <string name="settings_fcl_vulkan_driver_system">Разрешить Zink использовать системные драйвера Vulkan</string>
     <string name="settings_fcl_renderer">Рендер</string>
     <string name="settings_fcl_pojav_bigcore">Принудительно использовать мощные ядра для рендеринга (Ядро Pojav)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6, только 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
+    <string name="settings_fcl_driver">Vulkan драйвер</string>
 
     <string name="settings_game">Настройки игры</string>
     <string name="settings_game_dimension">Разрешение</string>
@@ -856,8 +856,8 @@
     <string name="settings_launcher_launcher_log_export_success">Журналы экспортированы в %s</string>
     <string name="settings_launcher_theme">Тема</string>
     <string name="settings_launcher_theme2">Тема 2</string>
-    <string name="settings_launcher_background_lt">Фон в светлой теме</string>
-    <string name="settings_launcher_background_dk">Фон в темной теме</string>
+    <string name="settings_launcher_background_lt">Фон в светлой теме (макс. 5120x5120)</string>
+    <string name="settings_launcher_background_dk">Фон в темной теме (макс. 5120x5120)</string>
     <string name="settings_launcher_cursor">Курсор</string>
     <string name="settings_launcher_menu_icon">Иконка меню</string>
     <string name="settings_launcher_ignore_notch">Игнорировать вырез фронтальной камеры</string>
@@ -1028,4 +1028,7 @@
     <string name="joystick_r">Правый стик</string>
     <string name="message_vulkan_driver_system">Текущий GPU Adreno, не рекомендуется включать эту опцию.</string>
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
+    <string name="installed">Установлено</string>
+    
+    <string name="shaderpack">Шейдерпак</string>
 </resources>

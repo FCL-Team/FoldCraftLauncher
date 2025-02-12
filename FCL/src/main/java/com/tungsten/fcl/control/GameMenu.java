@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
+import com.mio.TouchController;
 import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
@@ -124,6 +124,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private long time = 0;
 
     private MenuView menuView;
+
+    private TouchController touchController;
 
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
@@ -328,6 +330,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void refreshViewGroupList(FCLSpinner<ControlViewGroup> spinner) {
+        if (getViewGroup() != null) {
+            setViewGroup(null);
+        }
         ArrayList<String> viewGroupNameList = controllerProperty.get().viewGroups().stream().map(ControlViewGroup::getName).collect(Collectors.toCollection(ArrayList::new));
         spinner.setDataList(new ArrayList<>(controllerProperty.get().viewGroups()));
         ArrayAdapter<String> viewGroupNameAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, viewGroupNameList);
@@ -635,6 +640,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             BitmapDrawable drawable = new BitmapDrawable(getActivity().getResources(), bitmap);
             getCursor().setImageDrawable(drawable);
         }
+
+        if (getBridge() != null && getBridge().hasTouchController()) {
+            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
+        }
     }
 
     @Override
@@ -699,7 +708,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 getInput().setPointer(AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) / 2, AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) / 2, "Gyro");
             } else {
                 getCursor().setVisibility(View.GONE);
-                gameItemBar.setVisibility(View.VISIBLE);
+                if (getBridge() != null && !getBridge().hasTouchController()) {
+                    gameItemBar.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -835,6 +846,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             builder.setCancelable(false);
             builder.create().show();
         }
+    }
+
+    @Nullable
+    public TouchController getTouchController() {
+        return touchController;
     }
 
     static class FCLProcessListener implements FCLBridgeCallback {

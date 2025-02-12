@@ -18,13 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.fragment.EulaFragment;
 import com.tungsten.fcl.fragment.RuntimeFragment;
 import com.tungsten.fcl.util.RequestCodes;
+import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
@@ -76,12 +76,8 @@ public class SplashActivity extends FCLActivity {
                 init();
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, WRITE_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, READ_EXTERNAL_STORAGE)) {
-                    // 若用户第一次拒绝了授予，那么将会弹窗提醒用户为什么需要该权限
-                    enableAlertDialog(() -> {
-                        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, RequestCodes.PERMISSION_REQUEST_CODE);
-                    }, getString(R.string.splash_permission_title), getString(R.string.splash_permission_msg), getString(R.string.splash_permission_grant), getString(R.string.splash_permission_close));
+                    enableAlertDialog(() -> ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, RequestCodes.PERMISSION_REQUEST_CODE), getString(R.string.splash_permission_title), getString(R.string.splash_permission_msg), getString(R.string.splash_permission_grant), getString(R.string.splash_permission_close));
                 } else {
-                    // 没有勾选始终拒绝的化则继续请求权限
                     ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}, RequestCodes.PERMISSION_REQUEST_CODE);
                 }
             }
@@ -127,6 +123,7 @@ public class SplashActivity extends FCLActivity {
 
     public void enterLauncher() {
         RendererPlugin.init(this);
+        DriverPlugin.init(this);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

@@ -13,11 +13,11 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class DocCategoryAdapter extends FCLAdapter {
 
-    private final ArrayList<DocIndex> list;
+    private final List<DocIndex> list;
 
     private final ObjectProperty<DocIndex> selectedIndexProperty = new SimpleObjectProperty<>(null);
 
@@ -29,11 +29,11 @@ public class DocCategoryAdapter extends FCLAdapter {
         return selectedIndexProperty.get();
     }
 
-    public DocCategoryAdapter(Context context, ArrayList<DocIndex> list) {
+    public DocCategoryAdapter(Context context, List<DocIndex> list) {
         super(context);
         this.list = list;
 
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             selectedIndexProperty.set(list.get(0));
         }
         selectedIndexProperty.addListener(invalidate -> notifyDataSetChanged());

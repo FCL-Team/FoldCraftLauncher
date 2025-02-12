@@ -1,8 +1,6 @@
 package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,22 +9,21 @@ import com.bumptech.glide.Glide;
 import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.LocalModFile;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
-import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RemoteModListAdapter extends FCLAdapter {
@@ -34,12 +31,30 @@ public class RemoteModListAdapter extends FCLAdapter {
     private final DownloadPage downloadPage;
     private final ArrayList<RemoteMod> list;
     private final Callback callback;
+    private final List<String> modIdList = new ArrayList<>();
 
     public RemoteModListAdapter(Context context, DownloadPage downloadPage, ArrayList<RemoteMod> list, Callback callback) {
         super(context);
         this.downloadPage = downloadPage;
         this.list = list;
         this.callback = callback;
+        Task.runAsync(() -> {
+            ModManager modManager = ((ModDownloadPage) downloadPage).getModManager();
+            List<LocalModFile> modFiles = modManager.getMods().parallelStream().collect(Collectors.toList());
+            for (LocalModFile localModFile : modFiles) {
+                try {
+                    Optional<RemoteMod.Version> remoteVersionOptional = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                    remoteVersionOptional.ifPresent(localModFile::setRemoteVersion);
+                    RemoteMod.Version remoteVersion = localModFile.getRemoteVersion();
+                    if (remoteVersion != null) {
+                        String modId = remoteVersion.getModid();
+                        modIdList.add(modId);
+                    }
+                } catch (Throwable ignore) {
+                }
+            }
+
+        }).start();
     }
 
     private static class ViewHolder {
@@ -89,6 +104,14 @@ public class RemoteModListAdapter extends FCLAdapter {
         viewHolder.tag.setText(tag);
         viewHolder.description.setText(remoteMod.getDescription());
         AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
+        if (downloadPage instanceof ModDownloadPage) {
+            if (!modIdList.isEmpty() && modIdList.contains(remoteMod.getModID())) {
+                String text = viewHolder.name.getText().toString();
+                if (!text.startsWith(getContext().getString(R.string.installed))) {
+                    viewHolder.name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), text));
+                }
+            }
+        }
         return view;
     }
 

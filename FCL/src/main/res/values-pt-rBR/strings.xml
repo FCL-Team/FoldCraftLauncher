@@ -740,7 +740,6 @@
     <string name="settings_fcl_controller">Controle</string>
     <string name="settings_fcl_controller_injector">Gestos do Bedrock</string>
     <string name="settings_fcl_renderer">Renderizador</string>
-    <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6, suporta 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, suporta 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
 

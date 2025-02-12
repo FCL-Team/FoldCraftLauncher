@@ -234,7 +234,8 @@ public class CurseAddon implements RemoteMod.IMod {
                 categories.stream().map(category -> Integer.toString(category.getId())).collect(Collectors.toList()),
                 links.websiteUrl,
                 iconUrl,
-                this
+                this,
+                String.valueOf(id)
         );
     }
 

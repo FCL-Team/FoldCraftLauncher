@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1193,
-    "versionName": "1.1.9.3",
-    "date": "2024.12.12",
+    "versionCode": 1205,
+    "versionName": "1.2.0.5",
+    "date": "2025.02.10",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复隐藏菜单和隐藏控件同时使用时造成侧滑失效的Bug\n2.修复部分机型使用VulkanMod时打开F3闪退的Bug\n3.修复OAuth登录时轮询过于频繁的问题\n4.更新下载页面的“游戏版本”列表\n5.增加5.15.0版本的JNA Native库文件"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:在安装后自动创建mods文件夹\n2.新增功能:下载光影\n3.新增功能:添加版本名称设置功能以显示安装器类型\n4.修复高清修复安装Bug\n5.更新部分依赖\n6.同步部分HMCL代码\n7.修复少量Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/621a6575a6d9",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.1.9.3/FCL-release-1.1.9.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c877311dbae1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.5/FCL-release-1.2.0.5-all.apk"
   }
 ]
