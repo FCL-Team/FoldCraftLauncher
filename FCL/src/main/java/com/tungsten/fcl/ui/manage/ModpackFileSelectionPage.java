@@ -294,7 +294,8 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                                 /* overrideJavaArgs */ true,
                                 /* overrideConsole */ true,
                                 /* overrideCommands */ true,
-                                /* overrideWindow */ true
+                                /* overrideWindow */ true,
+                                /* iconKey */ null // TODO
                         ), modpackFile);
             }
 
