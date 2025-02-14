@@ -1030,5 +1030,5 @@
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
     <string name="installed">Установлено</string>
     
-    <string name="shaderpack">Шейдерпак</string>
+    <string name="shaderpack">Шейдеры</string>
 </resources>
