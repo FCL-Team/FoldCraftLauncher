@@ -52,8 +52,10 @@ public class LibraryDownloadTask extends Task<Void> {
     protected final File jar;
     protected final DefaultCacheRepository cacheRepository;
     protected final AbstractDependencyManager dependencyManager;
+    private final File xzFile;
     protected final Library library;
     protected final String url;
+    protected boolean xz;
     private final Library originalLibrary;
     private boolean cached = false;
 
@@ -71,6 +73,8 @@ public class LibraryDownloadTask extends Task<Void> {
 
         url = library.getDownload().getUrl();
         jar = file;
+
+        xzFile = new File(file.getAbsoluteFile().getParentFile(), file.getName() + ".pack.xz");
     }
 
     @Override
@@ -98,6 +102,8 @@ public class LibraryDownloadTask extends Task<Void> {
                 throw new CancellationException();
             else
                 throw new LibraryDownloadException(library, t);
+        } else {
+            if (xz) unpackLibrary(jar, Files.readAllBytes(xzFile.toPath()));
         }
     }
 
@@ -121,12 +127,39 @@ public class LibraryDownloadTask extends Task<Void> {
             }
         }
 
-        List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(url);
-        task = new FileDownloadTask(urls, jar,
-                library.getDownload().getSha1() != null ? new FileDownloadTask.IntegrityCheck("SHA-1", library.getDownload().getSha1()) : null);
-        task.setCacheRepository(cacheRepository);
-        task.setCaching(true);
-        task.addIntegrityCheckHandler(FileDownloadTask.ZIP_INTEGRITY_CHECK_HANDLER);
+        if (testURLExistence(url)) {
+            List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(url + ".pack.xz");
+            task = new FileDownloadTask(urls, xzFile, null);
+            task.setCacheRepository(cacheRepository);
+            task.setCaching(true);
+            xz = true;
+        } else {
+            List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(url);
+            task = new FileDownloadTask(urls, jar,
+                    library.getDownload().getSha1() != null ? new FileDownloadTask.IntegrityCheck("SHA-1", library.getDownload().getSha1()) : null);
+            task.setCacheRepository(cacheRepository);
+            task.setCaching(true);
+            task.addIntegrityCheckHandler(FileDownloadTask.ZIP_INTEGRITY_CHECK_HANDLER);
+            xz = false;
+        }
+    }
+
+    private boolean testURLExistence(String rawUrl) {
+        List<URL> urls = dependencyManager.getDownloadProvider().injectURLWithCandidates(rawUrl);
+        for (URL url : urls) {
+            URL rawURL = NetworkUtils.toURL(url.toString());
+            URL xzURL = NetworkUtils.toURL(url + ".pack.xz");
+            for (int retry = 0; retry < 3; retry++) {
+                try {
+                    if (NetworkUtils.urlExists(rawURL))
+                        return false;
+                    return NetworkUtils.urlExists(xzURL);
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, "Failed to test for url existence: " + url + ".pack.xz", e);
+                }
+            }
+        }
+        return false; // maybe some ugly implementation will give timeout for not existent url.
     }
 
     @Override
@@ -138,7 +171,7 @@ public class LibraryDownloadTask extends Task<Void> {
     public void postExecute() throws Exception {
         if (!cached) {
             try {
-                cacheRepository.cacheLibrary(library, jar.toPath(), false);
+                cacheRepository.cacheLibrary(library, jar.toPath(), xz);
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "Failed to cache downloaded library " + library, e);
             }
@@ -202,5 +235,43 @@ public class LibraryDownloadTask extends Task<Void> {
             return !failed;
         }
         return false;
+    }
+
+    private static void unpackLibrary(File dest, byte[] src) throws IOException {
+        if (dest.exists())
+            if (!dest.delete())
+                throw new IOException("Unable to delete file " + dest);
+
+        byte[] decompressed;
+        try {
+            decompressed = IOUtils.readFullyAsByteArray(new XZInputStream(new ByteArrayInputStream(src)));
+        } catch (IOException e) {
+            throw new ArtifactMalformedException("Library " + dest + " is malformed");
+        }
+
+        String end = new String(decompressed, decompressed.length - 4, 4);
+        if (!end.equals("SIGN"))
+            throw new IOException("Unpacking failed, signature missing " + end);
+
+        int x = decompressed.length;
+        int len = decompressed[(x - 8)] & 0xFF | (decompressed[(x - 7)] & 0xFF) << 8 | (decompressed[(x - 6)] & 0xFF) << 16 | (decompressed[(x - 5)] & 0xFF) << 24;
+
+        Path temp = Files.createTempFile("minecraft", ".pack");
+
+        byte[] checksums = Arrays.copyOfRange(decompressed, decompressed.length - len - 8, decompressed.length - 8);
+
+        try (OutputStream out = Files.newOutputStream(temp)) {
+            out.write(decompressed, 0, decompressed.length - len - 8);
+        }
+
+        try (FileOutputStream jarBytes = new FileOutputStream(dest); JarOutputStream jos = new JarOutputStream(jarBytes)) {
+            Pack200Utils.unpack(FCLPath.NATIVE_LIB_DIR, temp.toAbsolutePath().toString(), dest.getAbsolutePath());
+
+            JarEntry checksumsFile = new JarEntry("checksums.sha1");
+            checksumsFile.setTime(0L);
+            jos.putNextEntry(checksumsFile);
+            jos.write(checksums);
+            jos.closeEntry();
+        }
     }
 }
