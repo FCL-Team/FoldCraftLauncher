@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1205,
-    "versionName": "1.2.0.5",
-    "date": "2025.02.10",
+    "versionCode": 1206,
+    "versionName": "1.2.0.6",
+    "date": "2025.02.16",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:在安装后自动创建mods文件夹\n2.新增功能:下载光影\n3.新增功能:添加版本名称设置功能以显示安装器类型\n4.修复高清修复安装Bug\n5.更新部分依赖\n6.同步部分HMCL代码\n7.修复少量Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复导入 PrismLauncher 格式整合包时 $.jvmArgs 参数未正确移除两侧引号的Bug\n2.修复无法启动带Forge的1.11.2的Bug\n3.更新mod翻译数据\n4.修复1.20.2+Forge默认图标错误的Bug\n5.修复修改版本json可能导致的参数重复Bug\n6.修复launchwrapper缺失导致无法启动的Bug\n7.更新lwjgl-pojav"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c877311dbae1",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.5/FCL-release-1.2.0.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/beda40aa21a7",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.6/FCL-release-1.2.0.6-all.apk"
   }
 ]
