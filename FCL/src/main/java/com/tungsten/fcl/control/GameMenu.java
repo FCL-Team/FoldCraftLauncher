@@ -65,6 +65,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
+import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -283,12 +284,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
         FCLSwitch autoFit = findViewById(R.id.auto_fit);
 
-        FCLSeekBar autoFitDist = findViewById(R.id.auto_fit_dist);
-        FCLTextView autoFitText = findViewById(R.id.auto_fit_text);
+        FCLNumberSeekBar autoFitDist = findViewById(R.id.auto_fit_dist);
 
         FCLSpinner<Controller> currentControllerSpinner = findViewById(R.id.current_controller);
         FCLSpinner<ControlViewGroup> currentViewGroupSpinner = findViewById(R.id.current_view_group);
-        autoFitText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getAutoFitDistProperty().get() + " dp", menuSetting.getAutoFitDistProperty()));
 
         FCLLinearLayout editLayout = findViewById(R.id.edit_layout);
 
@@ -355,23 +354,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSpinner<GestureMode> gestureModeSpinner = findViewById(R.id.gesture_mode_spinner);
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
 
-        FCLSeekBar itemBarScaleSeekbar = findViewById(R.id.item_bar_scale);
-        FCLSeekBar windowScaleSeekbar = findViewById(R.id.window_scale);
-        FCLSeekBar cursorOffsetSeekbar = findViewById(R.id.cursor_offset);
-        FCLSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
-        FCLSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
-        FCLSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
-        FCLSeekBar gamepadAimZoneSeekbar = findViewById(R.id.gamepad_aimzone_size);
-        FCLSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
-
-        FCLTextView itemBarScaleText = findViewById(R.id.item_bar_scale_text);
-        FCLTextView windowScaleText = findViewById(R.id.window_scale_text);
-        FCLTextView cursorOffsetText = findViewById(R.id.cursor_offset_text);
-        FCLTextView mouseSensitivityText = findViewById(R.id.mouse_sensitivity_text);
-        FCLTextView mouseSizeText = findViewById(R.id.mouse_size_text);
-        FCLTextView gamepadDeadzoneText = findViewById(R.id.gamepad_deadzone_text);
-        FCLTextView gamepadAimZoneText = findViewById(R.id.gamepad_aimzone_text);
-        FCLTextView gyroSensitivityText = findViewById(R.id.gyro_sensitivity_text);
+        FCLNumberSeekBar itemBarScaleSeekbar = findViewById(R.id.item_bar_scale);
+        FCLNumberSeekBar windowScaleSeekbar = findViewById(R.id.window_scale);
+        FCLNumberSeekBar cursorOffsetSeekbar = findViewById(R.id.cursor_offset);
+        FCLNumberSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
+        FCLNumberSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
+        FCLNumberSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
+        FCLNumberSeekBar gamepadAimZoneSeekbar = findViewById(R.id.gamepad_aimzone_size);
+        FCLNumberSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
@@ -531,15 +521,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         gyroSensitivitySeekbar.addProgressListener();
         gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.getGyroscopeSensitivityProperty());
-
-        itemBarScaleText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(itemBarScaleProperty.get()), itemBarScaleProperty));
-        windowScaleText.stringProperty().bind(Bindings.createStringBinding(() -> windowScaleProperty.get() + " %", windowScaleProperty));
-        cursorOffsetText.stringProperty().bind(Bindings.createStringBinding(() -> String.valueOf(cursorOffsetProperty.get()), cursorOffsetProperty));
-        mouseSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> mouseSensitivityProperty.get() + " %", mouseSensitivityProperty));
-        mouseSizeText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getMouseSizeProperty().get() + " dp", menuSetting.getMouseSizeProperty()));
-        gamepadDeadzoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadDeadzoneProperty.get() + " %", gamepadDeadzoneProperty));
-        gamepadAimZoneText.stringProperty().bind(Bindings.createStringBinding(() -> gamepadAimZoneProperty.get() + " %", gamepadAimZoneProperty));
-        gyroSensitivityText.stringProperty().bind(Bindings.createStringBinding(() -> menuSetting.getGyroscopeSensitivityProperty().get() + "", menuSetting.getGyroscopeSensitivityProperty()));
 
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);

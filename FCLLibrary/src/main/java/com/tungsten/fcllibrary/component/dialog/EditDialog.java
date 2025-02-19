@@ -1,14 +1,11 @@
-package com.tungsten.fcl.ui.manage;
+package com.tungsten.fcllibrary.component.dialog;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.tungsten.fcl.R;
-import com.tungsten.fclcore.util.FutureCallback;
-import com.tungsten.fcllibrary.component.dialog.FCLDialog;
+import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 
@@ -39,7 +36,7 @@ public class EditDialog extends FCLDialog implements View.OnClickListener {
     public void onClick(View v) {
         if (v == positive) {
             String s = editText.getText().toString();
-            if (!s.trim().equals("")) {
+            if (!s.trim().isEmpty()) {
                 callback.accept(s);
                 dismiss();
             }

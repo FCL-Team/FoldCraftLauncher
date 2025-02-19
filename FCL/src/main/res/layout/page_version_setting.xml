@@ -239,22 +239,14 @@
                                 android:singleLine="true"
                                 android:text="@string/settings_memory_lower_bound"/>
 
-                            <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                                 android:layout_marginStart="10dp"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:layout_gravity="center"
+                                app:suffix="MB"
                                 android:id="@+id/edit_memory"/>
-
-                            <com.tungsten.fcllibrary.component.view.FCLTextView
-                                app:auto_text_tint="true"
-                                android:singleLine="true"
-                                android:layout_marginStart="10dp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:id="@+id/memory_text"/>
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -311,7 +303,7 @@
                             android:singleLine="true"
                             android:text="@string/settings_game_dimension"/>
 
-                        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                        <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                             android:layout_gravity="center"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -319,16 +311,8 @@
                             android:layout_weight="1"
                             android:min="25"
                             android:max="100"
+                            app:suffix="%"
                             android:id="@+id/edit_scale_factor"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLTextView
-                            app:auto_text_tint="true"
-                            android:singleLine="true"
-                            android:layout_marginStart="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:id="@+id/scale_factor_text"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 

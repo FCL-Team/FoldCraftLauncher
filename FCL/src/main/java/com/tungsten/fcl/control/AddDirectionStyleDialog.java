@@ -12,12 +12,11 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.BaseInfoData;
-import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
-import com.tungsten.fcl.ui.manage.EditDialog;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;

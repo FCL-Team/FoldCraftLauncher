@@ -184,24 +184,16 @@
                     android:text="@string/menu_controls_auto_fit_dist"
                     android:textSize="12sp"/>
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    app:auto_text_tint="true"
-                    android:singleLine="true"
-                    android:id="@+id/auto_fit_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textSize="12sp"/>
-
             </LinearLayout>
 
-            <com.tungsten.fcllibrary.component.view.FCLSeekBar
+            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:max="10"
                 android:min="0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:suffix="dp"
                 android:id="@+id/auto_fit_dist"/>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
