@@ -526,7 +526,6 @@
     <string name="menu_settings_gamepad_reset_mapper">Mapeamento</string>
     <string name="menu_settings_gamepad_reset">Redefinir</string>
     <string name="menu_settings_gamepad_deadzone">Deadzone</string>
-    <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
     <string name="menu_settings_multiplayer">Menu de multijogador</string>
     <string name="menu_settings_multiplayer_button">Abrir</string>
     <string name="menu_settings_quick_input">Área de transferência</string>

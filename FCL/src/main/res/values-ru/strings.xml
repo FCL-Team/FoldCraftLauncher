@@ -627,7 +627,6 @@
     <string name="menu_settings_gamepad_open_button">Выбрать</string>
     <string name="menu_settings_gamepad_reset">Сбросить</string>
     <string name="menu_settings_gamepad_deadzone">Мертвая зона</string>
-    <string name="menu_settings_gamepad_aimzone">Зона прицеливания аима</string>
     <string name="menu_settings_multiplayer">Многопользовательское меню</string>
     <string name="menu_settings_multiplayer_button">Открыть</string>
     <string name="menu_settings_quick_input">Быстрый ввод</string>

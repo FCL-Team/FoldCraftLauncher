@@ -506,30 +506,6 @@
                 app:layout_constraintTop_toBottomOf="@id/gamepad_deadzone_text" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/gamepad_aimzone_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_aimzone"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_deadzone_size" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/gamepad_aimzone_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="150"
-                android:min="0"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_aimzone_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/text_gyro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -539,7 +515,7 @@
                 android:textSize="11sp"
                 app:auto_text_tint="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_aimzone_size" />
+                app:layout_constraintTop_toBottomOf="@id/gamepad_deadzone_size" />
 
             <View
                 android:id="@+id/divider_gyro"

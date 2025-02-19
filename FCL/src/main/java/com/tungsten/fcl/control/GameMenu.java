@@ -47,6 +47,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -360,7 +361,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLNumberSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLNumberSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
         FCLNumberSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
-        FCLNumberSeekBar gamepadAimZoneSeekbar = findViewById(R.id.gamepad_aimzone_size);
         FCLNumberSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
         manageQuickInput = findViewById(R.id.open_quick_input);
@@ -431,102 +431,57 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(gestureModeSpinner, menuSetting.getGestureModeProperty());
         FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeProperty());
 
-        itemBarScaleSeekbar.addProgressListener();
-        IntegerProperty itemBarScaleProperty = new SimpleIntegerProperty(menuSetting.getItemBarScale()) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                menuSetting.setItemBarScale(get());
-                GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
-                if (optionListener != null) {
-                    optionListener.onOptionChanged();
-                }
+        initSeekbar(itemBarScaleSeekbar, menuSetting.getItemBarScale(), observable -> {
+            menuSetting.setItemBarScale(itemBarScaleSeekbar.progressProperty().get());
+            GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
+            if (optionListener != null) {
+                optionListener.onOptionChanged();
             }
-        };
-        itemBarScaleSeekbar.progressProperty().bindBidirectional(itemBarScaleProperty);
+        });
 
-        windowScaleSeekbar.addProgressListener();
-        IntegerProperty windowScaleProperty = new SimpleIntegerProperty((int) (menuSetting.getWindowScale() * 100)) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                double doubleValue = get() / 100d;
-                menuSetting.setWindowScale(doubleValue);
-                int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-                int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-                if (fclBridge != null) {
-                    fclBridge.setScaleFactor(doubleValue);
-                    int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * doubleValue);
-                    int height = (int) (screenHeight * doubleValue);
-                    fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
-                    fclBridge.pushEventWindow(width, height);
-                }
+        initSeekbar(windowScaleSeekbar, (int) menuSetting.getWindowScale() * 100, observable -> {
+            double doubleValue = windowScaleSeekbar.progressProperty().get() / 100d;
+            menuSetting.setWindowScale(doubleValue);
+            int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+            int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+            if (fclBridge != null) {
+                fclBridge.setScaleFactor(doubleValue);
+                int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * doubleValue);
+                int height = (int) (screenHeight * doubleValue);
+                fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+                fclBridge.pushEventWindow(width, height);
             }
-        };
-        windowScaleSeekbar.progressProperty().bindBidirectional(windowScaleProperty);
+        });
 
-        cursorOffsetSeekbar.addProgressListener();
-        IntegerProperty cursorOffsetProperty = new SimpleIntegerProperty((int) (menuSetting.getCursorOffset())) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                menuSetting.setCursorOffset(get());
-                int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-                int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-                if (fclBridge != null) {
-                    double scaleFactor = fclBridge.getScaleFactor();
-                    int width = (int) ((screenWidth + get()) * scaleFactor);
-                    int height = (int) (screenHeight * scaleFactor);
-                    fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
-                    fclBridge.pushEventWindow(width, height);
-                }
+        initSeekbar(cursorOffsetSeekbar, (int) (menuSetting.getCursorOffset()), observable -> {
+            menuSetting.setCursorOffset(cursorOffsetSeekbar.progressProperty().get());
+            int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+            int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+            if (fclBridge != null) {
+                double scaleFactor = fclBridge.getScaleFactor();
+                int width = (int) ((screenWidth + cursorOffsetSeekbar.progressProperty().get()) * scaleFactor);
+                int height = (int) (screenHeight * scaleFactor);
+                fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+                fclBridge.pushEventWindow(width, height);
             }
-        };
-        cursorOffsetSeekbar.progressProperty().bindBidirectional(cursorOffsetProperty);
+        });
 
-        mouseSensitivitySeekbar.addProgressListener();
-        IntegerProperty mouseSensitivityProperty = new SimpleIntegerProperty((int) (menuSetting.getMouseSensitivity() * 100)) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                double doubleValue = get() / 100d;
-                menuSetting.setMouseSensitivity(doubleValue);
-            }
-        };
-        mouseSensitivitySeekbar.progressProperty().bindBidirectional(mouseSensitivityProperty);
-        mouseSizeSeekbar.addProgressListener();
-        mouseSizeSeekbar.progressProperty().bindBidirectional(menuSetting.getMouseSizeProperty());
-
-        gamepadDeadzoneSeekbar.addProgressListener();
-        IntegerProperty gamepadDeadzoneProperty = new SimpleIntegerProperty((int) (menuSetting.getGamepadDeadzone() * 100)) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                double doubleValue = get() / 100d;
-                menuSetting.setGamepadDeadzone(doubleValue);
-            }
-        };
-        gamepadDeadzoneSeekbar.progressProperty().bindBidirectional(gamepadDeadzoneProperty);
-
-        gamepadAimZoneSeekbar.addProgressListener();
-        IntegerProperty gamepadAimZoneProperty = new SimpleIntegerProperty((int) (menuSetting.getGamepadAimAssistZone() * 100)) {
-            @Override
-            protected void invalidated() {
-                super.invalidated();
-                double doubleValue = get() / 100d;
-                menuSetting.setGamepadAimAssistZone(doubleValue);
-            }
-        };
-        gamepadAimZoneSeekbar.progressProperty().bindBidirectional(gamepadAimZoneProperty);
-
-        gyroSensitivitySeekbar.addProgressListener();
-        gyroSensitivitySeekbar.progressProperty().bindBidirectional(menuSetting.getGyroscopeSensitivityProperty());
+        initSeekbar(mouseSensitivitySeekbar, (int) (menuSetting.getMouseSensitivity() * 100), observable -> menuSetting.setMouseSensitivity(mouseSensitivitySeekbar.progressProperty().get() / 100d));
+        initSeekbar(mouseSizeSeekbar, menuSetting.getMouseSizeProperty().get(), observable -> menuSetting.setMouseSize(mouseSizeSeekbar.progressProperty().get()));
+        initSeekbar(gamepadDeadzoneSeekbar, (int) (menuSetting.getGamepadDeadzone() * 100), observable -> menuSetting.setGamepadDeadzone(gamepadDeadzoneSeekbar.progressProperty().get() / 100d));
+        initSeekbar(gyroSensitivitySeekbar, menuSetting.getGyroscopeSensitivityProperty().get(), observable -> menuSetting.setGyroscopeSensitivity(gyroSensitivitySeekbar.progressProperty().get()));
 
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
         gamepadResetMapper.setOnClickListener(this);
         gamepadButtonBinding.setOnClickListener(this);
         forceExit.setOnClickListener(this);
+    }
+
+    private void initSeekbar(FCLNumberSeekBar bar, int initValue, InvalidationListener listener) {
+        bar.addProgressListener();
+        bar.progressProperty().set(initValue);
+        bar.progressProperty().addListener(listener);
     }
 
     @Override
