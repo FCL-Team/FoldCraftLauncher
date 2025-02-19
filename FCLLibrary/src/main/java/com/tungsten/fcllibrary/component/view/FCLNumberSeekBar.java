@@ -128,7 +128,7 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
                     try {
                         int i = Integer.parseInt(s);
                         if (i >= getMin() && i <= getMax()) {
-                            progressProperty().set(i);
+                            setProgress(i);
                         }
                     } catch (Throwable ignore) {
                     }
