@@ -1016,7 +1016,6 @@
     <string name="world_show_all">Показать все</string>
 
     <string name="install_apk">Установить лаунчер</string>
-    <string name="edit">Изменить</string>
     <string name="modpack_download_warn_title">Предупреждение</string>
     <string name="modpack_download_warn_msg">Большинство модпаков разработаны для ПК, поэтому возможны сбои. Разработчик лаунчера не несет ответственности за совместимость модпаков.</string>
     <string name="view_incompatible">Несовместимые моды</string>
