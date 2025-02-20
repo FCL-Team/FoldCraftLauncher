@@ -16,9 +16,9 @@
             android:layout_height="match_parent"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingStart="5dp"
+            android:paddingStart="24dp"
             android:paddingTop="10dp"
-            android:paddingEnd="5dp"
+            android:paddingEnd="24dp"
             android:paddingBottom="10dp"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -120,7 +120,7 @@
                 android:layout_marginEnd="10dp"
                 android:singleLine="true"
                 android:text="@string/account"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:use_theme_color="true" />
@@ -205,7 +205,7 @@
                 android:layout_marginEnd="10dp"
                 android:singleLine="true"
                 android:text="@string/version"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/account"
                 app:use_theme_color="true" />
@@ -297,7 +297,7 @@
                 android:layout_marginEnd="10dp"
                 android:singleLine="true"
                 android:text="@string/launch_mode"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/view3"
                 app:use_theme_color="true" />
