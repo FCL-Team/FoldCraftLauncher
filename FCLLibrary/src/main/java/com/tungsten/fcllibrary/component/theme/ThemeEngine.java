@@ -5,7 +5,6 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -48,7 +47,7 @@ public class ThemeEngine {
             handler = new Handler();
             theme = Theme.getTheme(context);
             if (!theme.isModified()) {
-                theme.setColor(getWallpaperColor(context));
+                theme.setColor(getDefaultColor(context));
             }
             runnables = new HashMap<>();
             initialized = true;
@@ -164,14 +163,16 @@ public class ThemeEngine {
         Theme.saveTheme(context, theme);
     }
 
-    public static int getWallpaperColor(Context context) {
-        int color = Color.parseColor("#7797CF");
+    public static int getDefaultColor(Context context) {
+        int color = Color.parseColor("#4d8ac1");
+        /*
+        // getWallpaperColor
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             WallpaperColors colors = WallpaperManager.getInstance(context).getWallpaperColors(WallpaperManager.FLAG_SYSTEM);
             if (colors != null) {
                 color = colors.getPrimaryColor().toArgb();
             }
-        }
+        }*/
         return color;
     }
 

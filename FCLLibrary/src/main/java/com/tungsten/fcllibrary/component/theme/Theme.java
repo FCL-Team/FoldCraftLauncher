@@ -210,8 +210,8 @@ public class Theme {
     public static Theme getTheme(Context context) {
         SharedPreferences sharedPreferences;
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
-        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
-        int color2 = sharedPreferences.getInt("theme_color2", Color.parseColor("#7797CF"));
+        int color = sharedPreferences.getInt("theme_color", Color.parseColor("#4d8ac1"));
+        int color2 = sharedPreferences.getInt("theme_color2", Color.parseColor("#4d8ac1"));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
         boolean closeSkinModel = sharedPreferences.getBoolean("close_skin_model", false);
         boolean modified = sharedPreferences.getBoolean("modified", false);
