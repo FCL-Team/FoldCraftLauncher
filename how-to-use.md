@@ -100,10 +100,16 @@
 
 为了避免**安装包太大**，建议打包的客户端删除 libraries 和 assets，否则过大的安装包，会导致储存空间占用翻倍、增加使用门槛，且让玩家失去下载安装包的耐心。
 
-## 材质包自动更新器
+## 显示公告
 
-文件: `FCLCore/src/main/java/com/tungsten/fclcore/update/ResourcePackUpdater.java`
-位置: `enable`
+文件: `FCL/src/main/java/com/tungsten/fcl/ui/main/MainUI.java`
+位置: `enableAnnouncement`
 
-这个功能用作我服务器的材质包自动更新，避免进服时加载材质包，不然太慢了。  
-默认关闭，如需使用请自行研究。
+默认关闭
+
+## 隐藏皮肤模型预览
+
+文件: `FCLLibrary/src/main/java/com/tungsten/fcllibrary/component/theme/Theme.java`
+位置: 搜索 `sharedPreferences.getBoolean("close_skin_model", false);`，后面的即为默认值
+
+默认不隐藏

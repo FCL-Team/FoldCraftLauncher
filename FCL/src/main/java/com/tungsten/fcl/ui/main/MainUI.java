@@ -32,7 +32,7 @@ import com.tungsten.fcllibrary.util.LocaleUtils;
 import java.util.logging.Level;
 
 public class MainUI extends FCLCommonUI implements View.OnClickListener {
-
+    public static boolean enableAnnouncement = false;
     public static final String ANNOUNCEMENT_URL = "https://raw.githubusercontent.com/FCL-Team/FCL-Repo/refs/heads/main/res/announcement_v2.txt";
     public static final String ANNOUNCEMENT_URL_CN = "https://gitee.com/fcl-team/FCL-Repo/raw/main/res/announcement_v2.txt";
 
@@ -60,6 +60,9 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
         announcementContainer = findViewById(R.id.announcement_container);
         announcementLayout = findViewById(R.id.announcement_layout);
+        if (!enableAnnouncement) {
+            announcementLayout.setVisibility(View.GONE);
+        }
         title = findViewById(R.id.title);
         announcementView = findViewById(R.id.announcement);
         date = findViewById(R.id.date);
@@ -131,6 +134,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     }
 
     private void checkAnnouncement() {
+        if (!enableAnnouncement) return;
         try {
             String url = LocaleUtils.isChinese(getContext()) ? ANNOUNCEMENT_URL_CN : ANNOUNCEMENT_URL;
             Task.supplyAsync(() -> HttpRequest.HttpGetRequest.GET(url).getJson(Announcement.class))
