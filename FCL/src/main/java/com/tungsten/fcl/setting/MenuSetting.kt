@@ -76,7 +76,7 @@ class MenuSetting {
         }
 
     val menuPositionXProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "menuPositionX", 0.5)
+        SimpleDoubleProperty(this, "menuPositionX", 0.65)
     var menuPositionX: Double
         get() = menuPositionXProperty.get()
         set(menuPositionX) {
@@ -84,7 +84,7 @@ class MenuSetting {
         }
 
     val menuPositionYProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "menuPositionY", 0.5)
+        SimpleDoubleProperty(this, "menuPositionY", 0.0)
     var menuPositionY: Double
         get() = menuPositionYProperty.get()
         set(menuPositionY) {
