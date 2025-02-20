@@ -9,37 +9,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
-import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-
-import java.io.IOException;
 
 public class EulaFragment extends FCLFragment implements View.OnClickListener {
 
     // def: https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/eula.txt?inline=false
     public static final String EULA_URL = "https://www.mcio.dev/docs/rules";
-    private FCLProgressBar progressBar;
     private WebView eula;
 
     private FCLButton next;
-
-    private boolean load = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_eula, container, false);
 
-        progressBar = findViewById(view, R.id.progress);
         eula = findViewById(view, R.id.eula);
 
         next = findViewById(view, R.id.next);
@@ -51,25 +42,6 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
     }
 
     private void loadEula() {
-        new Thread(() -> {
-            String str;
-            try {
-                str = IOUtils.readFullyAsString(requireActivity().getAssets().open( "eula.txt"));
-                load = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                str = getString(R.string.splash_eula_error);
-            }
-            final String s = str;
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if (load) {
-                        next.setEnabled(true);
-                    }
-                    progressBar.setVisibility(View.GONE);
-                }
-            }
-        });
         eula.loadUrl(EULA_URL);
     }
 

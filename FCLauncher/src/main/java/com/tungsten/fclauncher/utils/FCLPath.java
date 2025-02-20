@@ -30,7 +30,7 @@ public class FCLPath {
     public static String BACKGROUND_DIR;
     public static String CONTROLLER_DIR;
 
-    public static String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/SweetRiceMC";
+    public static String STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/NeoWorld";
     public static String PRIVATE_COMMON_DIR;
     public static String SHARED_COMMON_DIR;
 

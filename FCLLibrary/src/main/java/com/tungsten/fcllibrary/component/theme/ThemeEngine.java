@@ -153,6 +153,11 @@ public class ThemeEngine {
         Theme.saveTheme(context, theme);
     }
 
+    public void applyAndSave(Context context, View view, String lt, String dk) {
+        applyBackground(context, view, lt, dk);
+        Theme.saveTheme(context, theme);
+    }
+
     public void applyAndSave(Context context, Window window, Theme theme) {
         applyColor(theme.getColor());
         applyFullscreen(window, theme.isFullscreen());

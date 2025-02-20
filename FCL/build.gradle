@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.tungsten.fcl.sweetrice"
+        applicationId "com.tungsten.fcl.neoworld"
         minSdk 26
         targetSdk 34
         versionCode 1206

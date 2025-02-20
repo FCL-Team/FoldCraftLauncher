@@ -38,7 +38,7 @@ jobs:
       - name: Build ${{matrix.arch}} .apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblerelease -Darch=${{matrix.arch}}
+          ./gradlew assembleRelease -Darch=${{matrix.arch}}
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -75,7 +75,7 @@ jobs:
       - name: Build debug apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblefordebug -Darch=all
+          ./gradlew assembleForDebug -Darch=all
 
       - name: Upload debug apk
         uses: actions/upload-artifact@v4

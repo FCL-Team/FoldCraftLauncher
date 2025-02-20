@@ -19,7 +19,7 @@
 
 (文件提供器)  
 文件: `FCLLibrary/src/main/res/values/strings.xml`  
-位置: `file_browser_provider`
+位置: `file_browser_provider`, `file_browser_document_provider`
 
 (默认 FCL 客户端公共目录)  
 文件: `FCLauncher/src/main/java/com/tungsten/fclauncher/utils/FCLPath.java`  

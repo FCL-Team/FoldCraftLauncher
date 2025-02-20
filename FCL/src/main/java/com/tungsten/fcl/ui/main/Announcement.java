@@ -100,10 +100,6 @@ public class Announcement {
     public boolean shouldDisplay(Context context) {
         if (outdated)
             return false;
-        if (minVersion != -1 && minVersion > UpdateChecker.getCurrentVersionCode(context))
-            return false;
-        if (maxVersion != -1 && maxVersion < UpdateChecker.getCurrentVersionCode(context))
-            return false;
         if (!specificLang.isEmpty()) {
             boolean cancel = true;
             for (String lang : specificLang) {

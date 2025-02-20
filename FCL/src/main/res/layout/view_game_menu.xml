@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:textColor="#FFFFFF"
-                    android:text="SweetRice 服务器客户端"
+                    android:text="NeoWorld 服务器客户端"
                     android:textSize="13sp"/>
 
         </LinearLayout>
