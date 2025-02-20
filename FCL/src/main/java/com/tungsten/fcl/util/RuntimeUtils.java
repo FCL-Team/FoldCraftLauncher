@@ -33,6 +33,14 @@ public class RuntimeUtils {
         }
     }
 
+    public static boolean hasResource(String srcDir) {
+        try (InputStream stream = RuntimeUtils.class.getResourceAsStream(srcDir + "/version")) {
+            return stream != null;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public static boolean isLatest(String targetDir, String srcDir) throws IOException {
         File targetFile = new File(targetDir + "/version");
         try (InputStream stream = RuntimeUtils.class.getResourceAsStream(srcDir + "/version")) {

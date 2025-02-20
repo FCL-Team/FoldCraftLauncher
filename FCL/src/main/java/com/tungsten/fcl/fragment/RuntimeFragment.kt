@@ -40,6 +40,39 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_runtime, container, false)
         bind = FragmentRuntimeBinding.bind(view)
         bind.install.setOnClickListener(this)
+        if (!RuntimeUtils.hasResource("/assets/app_runtime/java/jre8")) {
+            for (v in listOf<View>(
+                findViewById(view, R.id.line_java8),
+                findViewById(view, R.id.line1_java8)
+            )) {
+                v.visibility = View.GONE
+            }
+        }
+        if (!RuntimeUtils.hasResource("/assets/app_runtime/java/jre11")) {
+            for (v in listOf<View>(
+                findViewById(view, R.id.line_java11),
+                findViewById(view, R.id.line1_java11)
+            )) {
+                v.visibility = View.GONE
+            }
+        }
+        if (!RuntimeUtils.hasResource("/assets/app_runtime/java/jre17")) {
+            for (v in listOf<View>(
+                findViewById(view, R.id.line_java17),
+                findViewById(view, R.id.line1_java17)
+            )) {
+                v.visibility = View.GONE
+            }
+        }
+        if (!RuntimeUtils.hasResource("/assets/app_runtime/java/jre21")) {
+            for (v in listOf<View>(
+                findViewById(view, R.id.line_java21),
+                findViewById(view, R.id.line1_java21)
+            )) {
+                v.visibility = View.GONE
+            }
+        }
+
         Schedulers.defaultScheduler().execute {
             initState()
             Schedulers.androidUIThread().execute {

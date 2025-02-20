@@ -188,6 +188,7 @@
                     android:background="@android:color/darker_gray"/>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/line_java8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -224,11 +225,13 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <View
+                    android:id="@+id/line1_java8"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/line_java11"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -265,11 +268,13 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <View
+                    android:id="@+id/line1_java11"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/line_java17"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -306,11 +311,13 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <View
+                    android:id="@+id/line1_java17"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/line_java21"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
@@ -347,6 +354,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <View
+                    android:id="@+id/line1_java21"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray"/>
