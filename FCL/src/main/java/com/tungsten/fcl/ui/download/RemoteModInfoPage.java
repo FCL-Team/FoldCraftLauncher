@@ -2,16 +2,21 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.Schedulers;
@@ -19,27 +24,27 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.SimpleMultimap;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -62,7 +67,13 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private FCLTextView name;
     private FCLTextView tag;
     private FCLTextView description;
+    private FCLTextView mcmod;
     private FCLImageButton website;
+    private FCLProgressBar screenshotLoading;
+    private FCLImageView screenshotRetry;
+    private FCLTextView screenshotNoResult;
+    private RecyclerView screenshotView;
+    private FCLEditText search;
 
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
@@ -87,12 +98,23 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         name = findViewById(R.id.name);
         tag = findViewById(R.id.tag);
         description = findViewById(R.id.description);
+        mcmod = findViewById(R.id.mcmod);
         website = findViewById(R.id.website);
+        screenshotView = findViewById(R.id.screenshot_recyclerView);
+        screenshotLoading = findViewById(R.id.screenshot_loading);
+        screenshotRetry = findViewById(R.id.screenshot_retry);
+        screenshotNoResult = findViewById(R.id.screenshot_no_result);
+        search = findViewById(R.id.search);
 
         retry.setOnClickListener(this);
+        mcmod.setOnClickListener(this);
         website.setOnClickListener(this);
 
-        ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
+
+        search.stringProperty().addListener(observable -> {
+            loadGameVersions();
+        });
     }
 
     @Override
@@ -100,20 +122,9 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         super.onStart();
 
         icon.setImageDrawable(null);
-        new Thread(() -> {
-            try {
-                URL url = new URL(addon.getIconUrl());
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setDoInput(true);
-                httpURLConnection.connect();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                Bitmap icon = BitmapFactory.decodeStream(inputStream);
-                Schedulers.androidUIThread().execute(() -> RemoteModInfoPage.this.icon.setImageBitmap(icon));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
         ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
+        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
         name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
         description.setText(addon.getDescription());
         List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
@@ -123,11 +134,13 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         this.tag.setText(tag);
 
         loadModVersions();
+        loadScreenshots();
     }
 
     private void loadGameVersions() {
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), versions.keys().stream()
                 .sorted(Collections.reverseOrder(VersionNumber::compare))
+                .filter(it -> it.contains(Optional.ofNullable(search.getStringValue()).orElse("")))
                 .collect(Collectors.toList()), v -> {
             RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
             DownloadPageManager.getInstance().showTempPage(page);
@@ -145,10 +158,54 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             if (exception == null) {
                 this.versions = result;
                 loadGameVersions();
+                checkInstalled();
             } else {
                 setFailed();
             }
             setLoading(false);
+        }).start();
+    }
+
+    private void loadScreenshots() {
+        setScreenshotLoading(true);
+
+        Task.supplyAsync(() -> addon.getData().loadScreenshots(repository)).whenComplete(Schedulers.androidUIThread(), ((result, exception) -> {
+            if (exception == null) {
+                if (result.isEmpty()) {
+                    screenshotNoResult.setVisibility(View.VISIBLE);
+                } else {
+                    RemoteModScreenshotAdapter adapter = new RemoteModScreenshotAdapter(getContext(), result);
+                    screenshotView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    screenshotView.setAdapter(adapter);
+                }
+            } else {
+                setScreenshotFailed();
+            }
+            setScreenshotLoading(false);
+        })).start();
+    }
+
+    private void checkInstalled() {
+        Task.supplyAsync(() -> {
+            String remoteName = addon.getTitle().replace(" ", "").toLowerCase();
+            List<LocalModFile> modFiles = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().parallelStream().filter(localModFile -> {
+                String localName = localModFile.getName().replace(" ", "").toLowerCase();
+                return remoteName.contains(localName);
+            }).collect(Collectors.toList());
+            for (LocalModFile localModFile : modFiles) {
+                Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                if (remoteVersion.isPresent()) {
+                    String modId = remoteVersion.get().getModid();
+                    if (addon.getModID().equals(modId)) {
+                        return remoteVersion.get();
+                    }
+                }
+            }
+            return null;
+        }).whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+            if (exception == null && result != null) {
+                name.setText(String.format("[%s] %s", getContext().getString(R.string.installed), name.getText()));
+            }
         }).start();
     }
 
@@ -186,6 +243,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         });
     }
 
+    private void setScreenshotLoading(boolean loading) {
+        Schedulers.androidUIThread().execute(() -> {
+            screenshotLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+            if (loading) {
+                screenshotRetry.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void setScreenshotFailed() {
+        Schedulers.androidUIThread().execute(() -> {
+            screenshotRetry.setVisibility(View.VISIBLE);
+            screenshotLoading.setVisibility(View.GONE);
+        });
+    }
+
     @Override
     public Task<?> refresh(Object... param) {
         return null;
@@ -201,8 +274,18 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         if (v == retry) {
             loadModVersions();
         }
+        if (v == mcmod) {
+            ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
+            if (mod != null) {
+                String url = translations.getMcmodUrl(mod);
+                AndroidUtils.openLink(getContext(), url);
+            }
+        }
         if (v == website && StringUtils.isNotBlank(addon.getPageUrl())) {
             AndroidUtils.openLink(getContext(), addon.getPageUrl());
+        }
+        if (v == screenshotRetry) {
+            loadScreenshots();
         }
     }
 }

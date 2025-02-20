@@ -46,7 +46,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     private static final String PREFIX = "https://api.curseforge.com";
     private static final String apiKey = FCLPath.CONTEXT.getString(R.string.curse_api_key);
 
-    private static final int WORD_PERFECT_MATCH_WEIGHT = 50;
+    private static final int WORD_PERFECT_MATCH_WEIGHT = 5;
 
     public static boolean isAvailable() {
         return !apiKey.equals("null");
@@ -96,6 +96,10 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         return "asc";
     }
 
+    private int calculateTotalPages(Response<List<CurseAddon>> response, int pageSize) {
+        return (int) Math.ceil((double) Math.min(response.pagination.totalCount, 10000) / pageSize);
+    }
+
     @Override
     public SearchResult search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
@@ -113,9 +117,8 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 .header("X-API-KEY", apiKey)
                 .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                 }.getType());
-        Stream<RemoteMod> res = response.getData().stream().map(CurseAddon::toMod);
-        if (sortType != SortType.NAME || searchFilter.isEmpty()) {
-            return new SearchResult(res, (int)Math.ceil((double)response.pagination.totalCount / pageSize));
+        if (searchFilter.isEmpty()) {
+            return new SearchResult(response.getData().stream().map(CurseAddon::toMod), (int)Math.ceil((double)response.pagination.totalCount / pageSize));
         }
 
         String lowerCaseSearchFilter = searchFilter.toLowerCase();
@@ -126,7 +129,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
 
-        return new SearchResult(res.map(remoteMod -> {
+        return new SearchResult(response.getData().stream().map(CurseAddon::toMod).map(remoteMod -> {
             String lowerCaseResult = remoteMod.getTitle().toLowerCase();
             int diff = levCalculator.calc(lowerCaseSearchFilter, lowerCaseResult);
 
@@ -137,7 +140,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
             }
 
             return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), res, response.pagination.totalCount);
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.getData().stream().map(CurseAddon::toMod), response.pagination.totalCount);
     }
 
     @Override
@@ -244,12 +247,14 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     public static final int SECTION_UNKNOWN1 = 4944;
     public static final int SECTION_UNKNOWN2 = 4979;
     public static final int SECTION_UNKNOWN3 = 4984;
+    public static final int SECTION_SHADER_PACK = 6552;
 
     public static final CurseForgeRemoteModRepository MODS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.MOD, SECTION_MOD);
     public static final CurseForgeRemoteModRepository MODPACKS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.MODPACK, SECTION_MODPACK);
     public static final CurseForgeRemoteModRepository RESOURCE_PACKS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.RESOURCE_PACK, SECTION_RESOURCE_PACK);
     public static final CurseForgeRemoteModRepository WORLDS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.WORLD, SECTION_WORLD);
     public static final CurseForgeRemoteModRepository CUSTOMIZATIONS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.CUSTOMIZATION, SECTION_CUSTOMIZATION);
+    public static final CurseForgeRemoteModRepository SHADER_PACKS = new CurseForgeRemoteModRepository(Type.SHADER_PACK, SECTION_SHADER_PACK);
 
     public static class Pagination {
         private final int index;

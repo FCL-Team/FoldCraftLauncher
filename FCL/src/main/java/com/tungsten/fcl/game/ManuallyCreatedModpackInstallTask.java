@@ -17,6 +17,8 @@
  */
 package com.tungsten.fcl.game;
 
+import android.os.Environment;
+
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.CompressingUtils;
@@ -48,7 +50,7 @@ public class ManuallyCreatedModpackInstallTask extends Task<Path> {
             subdirectory = ModpackHelper.findMinecraftDirectoryInManuallyCreatedModpack(zipFile.toString(), fs);
         }
 
-        Path dest = Paths.get("externalgames").resolve(name);
+        Path dest = Paths.get(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL").resolve(name);
 
         setResult(dest);
 

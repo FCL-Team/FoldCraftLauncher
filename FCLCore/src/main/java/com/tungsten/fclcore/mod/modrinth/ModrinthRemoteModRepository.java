@@ -48,6 +48,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     public static final ModrinthRemoteModRepository MODS = new ModrinthRemoteModRepository("mod");
     public static final ModrinthRemoteModRepository MODPACKS = new ModrinthRemoteModRepository("modpack");
     public static final ModrinthRemoteModRepository RESOURCE_PACKS = new ModrinthRemoteModRepository("resourcepack");
+    public static final ModrinthRemoteModRepository SHADER_PACKS = new ModrinthRemoteModRepository("shader");
 
     private static final String PREFIX = "https://api.modrinth.com";
 
@@ -221,7 +222,10 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         private final List<String> versions;
 
-        public Project(String slug, String title, String description, List<String> categories, String body, String projectType, int downloads, String iconUrl, String id, String team, Instant published, Instant updated, List<String> versions) {
+        @SerializedName("gallery")
+        private final List<Screenshot> screenshots;
+
+        public Project(String slug, String title, String description, List<String> categories, String body, String projectType, int downloads, String iconUrl, String id, String team, Instant published, Instant updated, List<String> versions, List<Screenshot> screenshots) {
             this.slug = slug;
             this.title = title;
             this.description = description;
@@ -235,6 +239,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
             this.published = published;
             this.updated = updated;
             this.versions = versions;
+            this.screenshots = screenshots;
         }
 
         public String getSlug() {
@@ -289,6 +294,10 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
             return versions;
         }
 
+        public List<Screenshot> getScreenshots() {
+            return screenshots;
+        }
+
         @Override
         public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
             Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(getId())
@@ -306,6 +315,15 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
             return modRepository.getRemoteVersionsById(getId());
         }
 
+        @Override
+        public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) {
+            List<RemoteMod.Screenshot> screenshotList = new ArrayList<>();
+            for (Screenshot screenshot : this.screenshots) {
+                screenshotList.add(new RemoteMod.Screenshot(screenshot.url, screenshot.title, screenshot.description));
+            }
+            return screenshotList;
+        }
+
         public RemoteMod toMod() {
             return new RemoteMod(
                     slug,
@@ -315,7 +333,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, id),
                     iconUrl,
-                    this
+                    this,
+                    id
             );
         }
     }
@@ -684,6 +703,12 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
             return modRepository.getRemoteVersionsById(getProjectId());
         }
 
+        @Override
+        public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) throws IOException {
+            //由于直接搜索得到的截图信息只有链接，没有标题、描述等信息，所以需要直接获取这个Mod的详细信息
+            return modRepository.getModById(getProjectId()).getData().loadScreenshots(modRepository);
+        }
+
         public RemoteMod toMod() {
             return new RemoteMod(
                     slug,
@@ -693,7 +718,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     categories,
                     String.format("https://modrinth.com/%s/%s", projectType, projectId),
                     iconUrl,
-                    this
+                    this,
+                    projectId
             );
         }
     }
@@ -733,6 +759,55 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         public List<T> getHits() {
             return hits;
+        }
+    }
+
+    public static class Screenshot {
+        private final String url;
+        @SerializedName("raw_url")
+        private final String rawUrl;
+        private final boolean featured;
+        private final String title;
+        private final String description;
+        private final Instant created;
+        private final int ordering;
+
+        public Screenshot(String url, String rawUrl, boolean featured, String title, String description, Instant created, int ordering) {
+            this.url = url;
+            this.rawUrl = rawUrl;
+            this.featured = featured;
+            this.title = title;
+            this.description = description;
+            this.created = created;
+            this.ordering = ordering;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getRawUrl() {
+            return rawUrl;
+        }
+
+        public boolean isFeatured() {
+            return featured;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public Instant getCreated() {
+            return created;
+        }
+
+        public int getOrdering() {
+            return ordering;
         }
     }
 }

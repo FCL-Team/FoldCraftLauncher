@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
+    <string name="splash_permission_grant">授予</string>
+    <string name="splash_permission_title">需要存储权限</string>
+    <string name="splash_permission_close">关闭应用</string>
+    <string name="splash_permission_settings">去设置</string>
+    <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
 
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
@@ -11,6 +16,7 @@
 
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
+    <string name="launch_mode">启动方式</string>
     <string name="manage">管理版本</string>
     <string name="download">下载资源</string>
     <string name="controller">控制布局</string>
@@ -65,6 +71,7 @@
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
+    <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
     <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
@@ -83,6 +90,7 @@
 
     <string name="action_refresh">刷新</string>
     <string name="action_retry">重试</string>
+    <string name="action_share">分享</string>
     <string name="action_skip">跳过</string>
 
     <string name="announcement">公告：%s</string>
@@ -123,22 +131,41 @@
 
     <string name="control_create">创建新布局</string>
     <string name="control_delete">你确定要删除该布局吗？</string>
+    <string name="control_download">下载布局</string>
+    <string name="control_download_latest">下载最新版</string>
+    <string name="control_download_history">下载历史版本</string>
+    <string name="control_download_history_empty">没有历史版本！</string>
+    <string name="control_download_lang_current">当前语言</string>
+    <string name="control_download_source_cn">国内源</string>
+    <string name="control_download_device_phone">手机</string>
+    <string name="control_download_device_pad">平板</string>
+    <string name="control_download_device_other">其他</string>
+    <string name="control_download_exist">当前控件已存在，下载将会覆盖本地控件，确定要继续吗？</string>
     <string name="control_edit">编辑布局方案</string>
     <string name="control_import">导入布局</string>
     <string name="control_import_failed">导入布局失败！</string>
     <string name="control_upgrade">布局方案：%s 是一个过时的布局方案，它可能导致一些未知的错误，但我们仍然支持加载它，是否将其迁移至新版？</string>
     <string name="control_incompatible">布局方案：%s 是一个不兼容的布局方案，这可能是由于启动器版本过低或控件版本过低导致的，请检查。</string>
+    <string name="control_upload_requirement">请先加入 QQ 群，然后点击“分享”按键，分享你的控件和基本信息，等待管理员审核。请联系管理员告知你的控件类型。</string>
     <string name="control_info_author">作者：</string>
+    <string name="control_info_icon">图标：</string>
+    <string name="control_info_lang">语言：</string>
+    <string name="control_info_device">设备类型：</string>
+    <string name="control_info_screenshot">截图：</string>
+    <string name="control_info_intro">简介：</string>
     <string name="control_info_description">描述：</string>
+    <string name="control_info_screenshot_max">最多可以上传 16 张截图！</string>
     <string name="control_info_edit">编辑布局信息</string>
     <string name="control_info_more">更多信息</string>
     <string name="control_info_name">名称：</string>
     <string name="control_info_name_exist">该布局已存在，请换一个名字！</string>
     <string name="control_info_name_invalid">无效的名称</string>
     <string name="control_info_version">版本：</string>
+    <string name="control_info_version_code">版本号：</string>
     <string name="control_list">布局列表</string>
     <string name="control_select">选择布局</string>
     <string name="control_share">分享布局</string>
+    <string name="control_upload">上传布局</string>
 
     <string name="curse_category_0">全部</string>
 
@@ -267,12 +294,13 @@
 
     <string name="download_provider_mcbbs">我的世界中文论坛 (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
-    <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 BMCLAPI 下载源)</string>
+    <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 OF-302 下载源)</string>
     <string name="download_provider_official">尽量使用官方源</string>
     <string name="download_provider_balanced">选择加载速度快的下载源</string>
     <string name="download_provider_mirror">尽量使用镜像源</string>
 
     <string name="edit_view_clone">复制控件</string>
+    <string name="edit_view_delete">删除控件</string>
     <string name="edit_view_event">控件事件</string>
     <string name="edit_view_info">控件基本信息</string>
     <string name="edit_view_no_group">请先添加或选择一个控件组！</string>
@@ -291,6 +319,7 @@
     <string name="edit_button_event_auto_click">自动点击</string>
     <string name="edit_button_event_open_menu">打开菜单</string>
     <string name="edit_button_event_touch_mode">切换触控手势模式</string>
+    <string name="edit_button_event_mouse_mode">切换鼠标控制模式</string>
     <string name="edit_button_event_input">呼出输入法</string>
     <string name="edit_button_event_quick_input">打开快捷输入</string>
     <string name="edit_button_event_output_text">发送文本</string>
@@ -319,6 +348,7 @@
     <string name="folder_config">浏览配置文件夹</string>
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
+    <string name="folder_fcl_log">浏览FCL日志文件夹</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
@@ -382,6 +412,7 @@
     <string name="game_crash_reason_unknown">原因未知，请参考日志。\n如果你要求助他人，请你导出游戏崩溃信息后将导出的文件发送给他人以供分析。</string>
     <string name="game_crash_reason_unsatisfied_link_error">当前游戏因为缺少本地库，无法继续运行。</string>
     <string name="game_crash_title">游戏意外退出</string>
+    <string name="game_crash_title_add">(你应该将完整的日志文件发送出来，而不是在这个界面截图)</string>
 
     <string name="help">帮助</string>
     <string name="help_category">类别</string>
@@ -424,7 +455,8 @@
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
-    <string name="launch">启动游戏</string>
+    <string name="launch">Pojav</string>
+    <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
@@ -490,18 +522,26 @@
     <string name="menu_settings_gyro">陀螺仪</string>
     <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
+    <string name="menu_settings_hide_view">隐藏菜单键</string>
+    <string name="menu_settings_show_fps">显示FPS</string>
     <string name="menu_settings_mouse">鼠标</string>
     <string name="menu_settings_mouse_mode">鼠标控制模式</string>
     <string name="menu_settings_mouse_mode_click">点击</string>
     <string name="menu_settings_mouse_mode_slide">拖动</string>
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_gamepad">手柄</string>
+    <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
+    <string name="menu_settings_gamepad_reset">重置</string>
+    <string name="menu_settings_gamepad_deadzone">调整死区</string>
     <string name="menu_settings_multiplayer">联机菜单</string>
     <string name="menu_settings_multiplayer_button">打开</string>
     <string name="menu_settings_quick_input">快捷输入</string>
     <string name="menu_settings_quick_input_button">管理</string>
     <string name="menu_settings_send_key">发送键值</string>
     <string name="menu_settings_send_key_button">发送</string>
+    <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
+    <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_show_log">显示日志</string>
 
     <string name="message_cancelled">操作已取消</string>
@@ -668,6 +708,7 @@
     <string name="mods_restore">回滚</string>
     <string name="mods_url">官方页面</string>
     <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>
+    <string name="mods_screenshot_no_result">没有截图可以展示</string>
 
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
@@ -687,6 +728,7 @@
     <string name="search">搜索</string>
     <string name="search_hint_chinese">支持中英文搜索</string>
     <string name="search_hint_english">仅支持英文搜索</string>
+    <string name="search_device">设备类型</string>
     <string name="search_sort">排序</string>
     <string name="search_first_page">第一页</string>
     <string name="search_last_page">最后一页</string>
@@ -705,12 +747,17 @@
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
+    <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
-    <string name="settings_fcl_renderer_angle">ANGLE (OpenGL 4.6, 仅支持 1.17+)</string>
+    <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
+    <string name="settings_fcl_driver">Vulkan驱动</string>
+
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
+    <string name="settings_game_cursor_offset">鼠标指针偏移</string>
     <string name="settings_game_java_version">Java 版本</string>
     <string name="settings_game_java_version_auto">自动选择</string>
     <string name="settings_game_working_directory">版本隔离</string>
@@ -734,9 +781,13 @@
     <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
     <string name="settings_launcher_theme">主题</string>
-    <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
-    <string name="settings_launcher_background_dk">暗色模式启动器背景图片</string>
-    <string name="settings_launcher_ignore_notch">忽略刘海屏</string>
+    <string name="settings_launcher_theme2">主题2</string>
+    <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
+    <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
+    <string name="settings_launcher_cursor">鼠标图片</string>
+    <string name="settings_launcher_menu_icon">菜单键图标</string>
+    <string name="settings_launcher_ignore_notch">忽略刘海屏(全屏)</string>
+    <string name="settings_launcher_close_skin_view">关闭皮肤模型阅览</string>
     <string name="settings_launcher_animation_speed">动画速度</string>
 
     <string name="settings_memory">游戏内存</string>
@@ -782,6 +833,7 @@
 
     <string name="update">更新</string>
     <string name="update_netdisk">网盘</string>
+    <string name="update_check">检查更新</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
     <string name="update_date">日期：%s</string>
@@ -806,7 +858,7 @@
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
     <string name="version_manage">点击管理</string>
-    <string name="version_manage_clean">清理游戏目录</string>
+    <string name="version_manage_clean">清理游戏日志</string>
     <string name="version_manage_duplicate">复制游戏实例</string>
     <string name="version_manage_duplicate_duplicate_save">复制存档</string>
     <string name="version_manage_duplicate_prompt">实例名称</string>
@@ -890,4 +942,25 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
+    <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
+    <string name="install_apk">安装apk文件</string>
+    <string name="modpack_download_warn_title">注意</string>
+    <string name="modpack_download_warn_msg">在安装前，你需要明白，绝大多数整合包都是给电脑端制作的，所以当你尝试启动时会有极大概率出现崩溃或是其他问题，这往往不是在启动器层面上能解决的问题。所以你需要自己了解相关知识后尝试自己解决，或是寻求其他人帮忙（不要询问启动器开发者！）。</string>
+    <string name="view_incompatible">查看不兼容的模组</string>
+    <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“主题2”即可</string>
+    <string name="menu_settings_gamepad_button_binding">按键绑定</string>
+    <string name="menu_settings_gamepad_open_button">打开</string>
+    <string name="joystick_l">左摇杆</string>
+    <string name="gamepad_dpad">方向键</string>
+    <string name="gamepad_button_binding">手柄按键绑定</string>
+    <string name="joystick_r">右摇杆</string>
+    <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
+    <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
+
+    <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
+    <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
+    <string name="installed">已安装</string>
+    <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+
+    <string name="shaderpack">光影</string>
 </resources>

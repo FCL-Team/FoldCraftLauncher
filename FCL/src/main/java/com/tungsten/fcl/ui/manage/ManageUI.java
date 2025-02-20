@@ -47,28 +47,28 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);
-        container.post(this::initPages);
-
+        initPages();
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        // If we jumped to game list page and deleted this version
-        // and back to this page, we should return to main page.
-        if (!getProfile().getRepository().isLoaded() ||
-                !getProfile().getRepository().hasVersion(getVersion())) {
-            Schedulers.androidUIThread().execute(() -> {
-                if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
-                }
-            });
-            return;
-        }
-
-        loadVersion(getVersion(), getProfile());
+        addLoadingCallback(()->{
+            // If we jumped to game list page and deleted this version
+            // and back to this page, we should return to main page.
+            if (!getProfile().getRepository().isLoaded() ||
+                    !getProfile().getRepository().hasVersion(getVersion())) {
+                Schedulers.androidUIThread().execute(() -> {
+                    if (isShowing()) {
+                        MainActivity.getInstance().refreshMenuView(null);
+                        MainActivity.getInstance().bind.home.setSelected(true);
+                    }
+                });
+                return;
+            }
+            loadVersion(getVersion(), getProfile());
+        });
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                     loadVersion(preferredVersionName, this.version.get().getProfile());
                 } else if (isShowing()) {
                     MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
+                    MainActivity.getInstance().bind.home.setSelected(true);
                 }
             }
         });
@@ -176,7 +176,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
                     MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().home.setSelected(true);
+                    MainActivity.getInstance().bind.home.setSelected(true);
                 }
             });
             return;

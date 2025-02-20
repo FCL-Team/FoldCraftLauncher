@@ -42,6 +42,7 @@ public final class LocalModFile implements Comparable<LocalModFile> {
     private final String fileName;
     private final String logoPath;
     private final BooleanProperty activeProperty;
+    private RemoteMod.Version remoteVersion;
 
     public LocalModFile(ModManager modManager, LocalMod mod, Path file, String name, Description description) {
         this(modManager, mod, file, name, description, "", "", "", "", "");
@@ -196,6 +197,14 @@ public final class LocalModFile implements Comparable<LocalModFile> {
     @Override
     public int hashCode() {
         return Objects.hash(getFileName());
+    }
+
+    public RemoteMod.Version getRemoteVersion() {
+        return remoteVersion;
+    }
+
+    public void setRemoteVersion(RemoteMod.Version remoteVersion) {
+        this.remoteVersion = remoteVersion;
     }
 
     public static class ModUpdate {

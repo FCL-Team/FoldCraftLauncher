@@ -6,6 +6,8 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
@@ -23,6 +25,8 @@ import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.util.regex.Pattern;
 
 public class FCLEditText extends AppCompatEditText {
 
@@ -118,6 +122,30 @@ public class FCLEditText extends AppCompatEditText {
                 stringProperty().set(getText().toString());
                 fromUserOrSystem = false;
             }
+        });
+    }
+
+    private static final class SignedIntegerFilter implements InputFilter {
+        private final Pattern pattern;
+
+        SignedIntegerFilter(int min) {
+            pattern = Pattern.compile("^" + (min < 0 ? "-?" : "") + "[0-9]*$");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            StringBuilder builder = new StringBuilder(dest);
+            builder.insert(dstart, source);
+            if (!pattern.matcher(builder.toString()).matches()) {
+                return "";
+            }
+            return source;
+        }
+    }
+
+    public void setIntegerFilter(int min) {
+        setFilters(new InputFilter[]{
+                new SignedIntegerFilter(min)
         });
     }
 

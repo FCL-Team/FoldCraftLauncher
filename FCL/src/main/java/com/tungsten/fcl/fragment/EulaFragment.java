@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
-import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class EulaFragment extends FCLFragment implements View.OnClickListener {
 
     // def: https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/eula.txt?inline=false
-    public static final String EULA_URL = "https://docs.pds.ink/rules";
+    public static final String EULA_URL = "https://www.mcio.dev/docs/rules";
     private FCLProgressBar progressBar;
     private WebView eula;
 
@@ -51,13 +51,21 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
     }
 
     private void loadEula() {
-        eula.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (url.equals(EULA_URL)) {
-                    load = true;
-                    next.setEnabled(true);
+        new Thread(() -> {
+            String str;
+            try {
+                str = IOUtils.readFullyAsString(requireActivity().getAssets().open( "eula.txt"));
+                load = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                str = getString(R.string.splash_eula_error);
+            }
+            final String s = str;
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (load) {
+                        next.setEnabled(true);
+                    }
                     progressBar.setVisibility(View.GONE);
                 }
             }

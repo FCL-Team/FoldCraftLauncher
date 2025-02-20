@@ -1,0 +1,1032 @@
+<resources>
+    <string name="splash_permission_msg">Нет доступа к хранилищу, предоствьте разрешение Fold Craft Launcher в настройках.</string>
+    <string name="splash_permission_grant">Разрешить</string>
+    <string name="splash_permission_title">Необходимо разрешение на доступ к хранилищу</string>
+    <string name="splash_permission_close">Закрыть лаунчер</string>
+    <string name="splash_permission_settings">Настройки</string>
+    <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
+
+    <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
+    <string name="splash_eula_error">Не удалось подтвердить наличие лицензии, из за проблем с соединением.</string>
+    <string name="splash_eula_next">Принять и продолжить</string>
+    <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
+    <string name="splash_runtime_install">Установить</string>
+
+    <string name="account">Аккаунт</string>
+    <string name="version">Версия</string>
+    <string name="launch_mode">Запустить</string>
+    <string name="manage">Управление</string>
+    <string name="download">Загрузки</string>
+    <string name="controller">Контроллеры</string>
+    <string name="multiplayer">Мультиплеер</string>
+    <string name="setting">Настройки</string>
+    
+    <string name="about">О лаунчере</string>
+    <string name="about_sponsor">Спонсоры</string>
+    <string name="about_source">Исходный код</string>
+    <string name="about_desc">Fold Craft Launcher - это лаунчер который запускать Minecraft: Java Edition на Android устройствах.
+    
+    Fold Craft Launcher разработан командой FCL-Team.
+    
+    Большинство функций Fold Craft Launcher модифицированы на основе HMCLCore. Лаунчер использует и цитирует некоторые коды PojavLauncher и Boat, поэтому, если вы собираетесь распространять этот лаунчер, пожалуйста, следуйте лицензии GPL-v3.</string>
+
+    <string name="account_add_server">Сервер аутентификации</string>
+    <string name="account_add_server_url">URL адрес сервера</string>
+    <string name="account_add_server_name">Название сервера</string>
+    <string name="account_cape">Плащ OptiFine</string>
+    <string name="account_create">Создать аккаунт</string>
+    <string name="account_create_offline">Создать оффлайн аккаунт</string>
+    <string name="account_create_microsoft">Microsoft аккаунт</string>
+    <string name="account_create_external">Создать внешний аккаунт</string>
+    <string name="account_create_username">Имя пользователя</string>
+    <string name="account_create_password">Пароль</string>
+    <string name="account_create_server">Сервер аутентификации</string>
+    <string name="account_create_server_not_select">Отсутствует сервер аутентификации</string>
+    <string name="account_create_home">Домашняя страница</string>
+    <string name="account_create_register">Регистрация</string>
+    <string name="account_create_alert">Пожалуйста, сначала предоставьте больше информации об аккаунте!</string>
+    <string name="account_injector_server">Сервер аутентификации</string>
+    <string name="account_login">Войти</string>
+    <string name="account_methods_offline">Оффлайн аккаунт</string>
+    <string name="account_methods_offline_name_invalid">"Имя пользователя (до 16 символов) должно состоять из латинских букв, цифр и знаков подчёркивания. 
+    Некоторые допустимые имена: Llerey, Tungsten, Tungsten123; 
+    Некоторые недопустимые имена: Exam ple, Exam-a%%%, Tungsten_hello_world_hello_world. Если на сервере есть мод, снимающий эти ограничения, вы можете игнорировать это предупреждение."</string>
+    <string name="account_methods_yggdrasil">Аккаунт Mojang</string>
+    <string name="account_methods_authlib_injector">Внешний аккаунт</string>
+    <string name="account_methods_microsoft">Microsoft аккаунт</string>
+    <string name="account_failed">Не удалось обновить учетную запись</string>
+    <string name="account_failed_expired">Срок действия учетных данных истек, необходимо удалить свою учетную запись и повторно войти в систему.</string>
+    <string name="account_failed_no_character">К этому аккаунту не привязано ни одного персонажа.</string>
+    <string name="account_failed_connect_authentication_server">Невозможно связаться с серверами аутентификации, возможно, ваше подключение к Интернету не стабильно.</string>
+    <string name="account_failed_connect_injector_server">Невозможно подключиться к серверу аутентификации. Пожалуйста, проверьте свою сеть и убедитесь, что вы ввели правильный URL-адрес.</string>
+    <string name="account_failed_server_disconnected">Невозможно получить доступ к серверу аутентификации. Вы можете войти в систему в автономном режиме или попробовать войти заново.</string>
+    <string name="account_failed_server_response_malformed">Неверный ответ сервера, возможно, сервер аутентификации не работает.</string>
+    <string name="account_failed_invalid_credentials">Неверный пароль или количество попыток ограничено. Повторите попытку позже.</string>
+    <string name="account_failed_invalid_token">Пожалуйста, попробуйте повторно войти в систему еще раз.</string>
+    <string name="account_failed_invalid_password">Неверный пароль.</string>
+    <string name="account_failed_migration">Вашу учетную запись необходимо перенести в учетную запись Microsoft. Если вы уже это сделали, вам следует повторно войти в свою перенесенную учетную запись Microsoft.</string>
+    <string name="account_failed_injector_download_failure">Невозможно загрузить authlib-injector. Проверьте свою сеть или попробуйте переключиться на другое зеркало загрузки.</string>
+    <string name="account_failed_character_deleted">Персонаж уже удален.</string>
+    <string name="account_failed_ssl">При подключении к серверу произошла ошибка SSL.</string>
+    <string name="account_failed_wrong_account">Ошибка авторизации, попробуйте снова.</string>
+    <string name="account_skin_invalid_skin">Не удалось загрузить скин.</string>
+    <string name="account_methods_microsoft_error_add_family">Поскольку вам еще нет 18 лет, взрослый должен добавить вас в семейную группу Microsoft, чтобы вы могли играть в Minecraft.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live недоступен в вашей стране/регионе.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">С вашей учетной записью Microsoft еще нет связанной учетной записи Xbox. Пожалуйста, создайте её, прежде чем продолжить.</string>
+    <string name="account_methods_microsoft_error_unknown">Не удалось войти</string>
+    <string name="account_methods_microsoft_error_wrong_verify_method">Для входа используйте адрес электронной почты и пароль от учётной записи Microsoft. Коды подтверждения не поддерживаются.</string>
+    <string name="account_methods_microsoft_error_no_character">"В вашей учетной записи нет Minecraft Java Edition.
+    Возможно, игровой профиль не был создан."</string>
+    <string name="account_methods_microsoft_error_add_family_probably">Пожалуйста, проверьте, составляет ли возраст, указанный в настройках вашего аккаунта 18 лет. Если нет и вы считаете, что это ошибка, вы можете перейти на сайт Microsoft account, чтобы изменить его.</string>
+    <string name="account_methods_microsoft_close_page">Авторизация учетной записи Microsoft завершена.</string>
+    <string name="account_methods_microsoft_hint">Нажмите «Войти», код скопируется автоматически. Вставьте его в браузер.</string>
+    <string name="account_login_refresh">Повторный вход</string>
+    <string name="account_login_refresh_microsoft_hint">"Поскольку авторизация учетной записи недействительна, вам необходимо повторно добавить свою учетную запись Microsoft. 
+    Нажмите кнопку «ОК», вставьте код в строку в браузере, чтобы завершить процесс входа."</string>
+    <string name="account_select_character">Выберите персонажа</string>
+    <string name="account_skin">Скин</string>
+    <string name="account_skin_type_default">По умолчанию</string>
+    <string name="account_skin_type_csl_api_location_hint">URL-адрес</string>
+    <string name="account_skin_type_csl_api_hint">"Имя персонажа на сайте должно совпадать с именем аккаунта. Скин загрузится автоматически."</string>
+    <string name="account_skin_type_local_file">Локальный скин</string>
+    <string name="account_skin_upload">Выбрать скин на устройстве</string>
+    <string name="account_state_no_account">Нет аккаунта</string>
+    <string name="account_state_add">Нажмите, чтобы добавить</string>
+
+    <string name="action_refresh">Обновить</string>
+    <string name="action_retry">Повторить попытку</string>
+    <string name="action_share">Поделиться</string>
+    <string name="action_skip">Пропустить</string>
+
+    <string name="announcement">Объявление: %s</string>
+    <string name="announcement_significant">Это объявление является важным. Пожалуйста, подтвердите, что вы прочитали это объявление, прежде чем скрывать его.</string>
+
+    <string name="archive_author">Авторы</string>
+    <string name="archive_date">Дата публикации</string>
+    <string name="archive_game_version">Версия игры</string>
+    <string name="archive_name">Название файла</string>
+    <string name="archive_version">Версия</string>
+
+    <string name="assets_download">Загрузка ассетов</string>
+    <string name="assets_download_all">Проверка целостности</string>
+    <string name="assets_index_malformed">Загруженные файлы ресурсов были повреждены из за ошибки сети!</string>
+
+    <string name="button_back">Назад</string>
+    <string name="button_cancel">Отменить</string>
+    <string name="button_copy">Копировать</string>
+    <string name="button_download">Загрузить</string>
+    <string name="button_export">Экспорт</string>
+    <string name="button_hide">Скрыть</string>
+    <string name="button_install">Установить</string>
+    <string name="button_mouse_left">ЛКМ</string>
+    <string name="button_mouse_right">ПКМ</string>
+    <string name="button_next">Далее</string>
+    <string name="button_paste">Вставить</string>
+    <string name="button_prev">Предыдущий</string>
+    <string name="button_remove">Удалить</string>
+    <string name="button_remove_confirm">Вы уверены, что хотите удалить его навсегда? Это действие не может быть отменено!</string>
+    <string name="button_save_as">Загрузить в</string>
+    <string name="button_select_all">Выбрать всё</string>
+    <string name="button_set">Выбрать</string>
+    <string name="button_reset">Сбросить</string>
+
+    <string name="community">Сообщество</string>
+    <string name="community_hint">Присоединяйтесь к нашему сообществу, чтобы получать последние версии, сообщать об ошибках и т. д. Если вы присоединитесь, пожалуйста, следуйте правилам сообщества.</string>
+    <string name="community_qq">QQ группа</string>
+
+    <string name="control_create">Создать контроллер</string>
+    <string name="control_delete">Вы уверены, что хотите удалить этот контроллер?</string>
+    <string name="control_download">Загрузить контроллер</string>
+    <string name="control_download_latest">Загрузить последнюю версию</string>
+    <string name="control_download_history">Загрузить старые версии</string>
+    <string name="control_download_history_empty">Нет старых версий!</string>
+    <string name="control_download_lang_current">Текущий язык</string>
+    <string name="control_download_device_phone">Телефон</string>
+    <string name="control_download_device_pad">Планшет</string>
+    <string name="control_download_device_other">Другое</string>
+    <string name="control_download_exist">Контроллер уже существует. Загрузка перезапишет установленный контроллер. Продолжить?</string>
+    <string name="control_edit">Редактировать</string>
+    <string name="control_import">Импортировать</string>
+    <string name="control_import_failed">Ошибка импорта</string>
+    <string name="control_upgrade">"Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. 
+    Хотите перенести его на новую версию?"</string>
+    <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией Лаунчера или слишком низкой версией контроллера.</string>
+    <string name="control_upload_requirement">Сначала присоединитесь к QQ группе, затем нажмите "Поделиться", чтобы поделиться контроллером и его информацией с администратором и дождаться проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
+    <string name="control_info_author">Автор:</string>
+    <string name="control_info_icon">Иконка:</string>
+    <string name="control_info_lang">Язык:</string>
+    <string name="control_info_device">Тип устройства:</string>
+    <string name="control_info_screenshot">Скриншоты:</string>
+    <string name="control_info_intro">Описание:</string>
+    <string name="control_info_description">Описание:</string>
+    <string name="control_info_screenshot_max">Можно загрузить до 16 скриншотов!</string>
+    <string name="control_info_edit">Редактировать информацию о контроллере</string>
+    <string name="control_info_more">Подробнее</string>
+    <string name="control_info_name">Название:</string>
+    <string name="control_info_name_exist">Контроллер уже существует, измените название!</string>
+    <string name="control_info_name_invalid">Неверное название</string>
+    <string name="control_info_version">Версия:</string>
+    <string name="control_info_version_code">Версия:</string>
+    <string name="control_list">Список контроллеров</string>
+    <string name="control_select">Выберите контроллер</string>
+    <string name="control_share">Поделиться контроллером</string>
+    <string name="control_upload">Опубликовать контроллер</string>
+
+    <string name="curse_category_0">Все</string>
+
+    <string name="curse_category_4474">Научная фантастика</string>
+    <string name="curse_category_4481">Маленький / Легкий</string>
+    <string name="curse_category_4483">Бой</string>
+    <string name="curse_category_4477">Мини-игры</string>
+    <string name="curse_category_4478">Головоломки</string>
+    <string name="curse_category_4484">Мультиплеер</string>
+    <string name="curse_category_4476">Исследования</string>
+    <string name="curse_category_4736">Скайблок</string>
+    <string name="curse_category_4475">Приключения и RPG</string>
+    <string name="curse_category_4480">На основе карты</string>
+    <string name="curse_category_4479">Хардкор</string>
+    <string name="curse_category_4482">Очень большой</string>
+    <string name="curse_category_4472">Технологии</string>
+    <string name="curse_category_4473">Магия</string>
+    <string name="curse_category_5128">Ваниль+</string>
+
+    <string name="curse_category_5299">Изучения</string>
+    <string name="curse_category_5129">Ваниль+</string>
+    <string name="curse_category_5189">Утилиты и улучшения качества жизни</string>
+    <string name="curse_category_6814">Производительность</string>
+    <string name="curse_category_6954">Интегрированная динамика</string>
+    <string name="curse_category_6484">Создать</string>
+    <string name="curse_category_6821">Исправление ошибок</string>
+    <string name="curse_category_6145">Скайблок</string>
+    <string name="curse_category_5190">Улучшения качества жизни</string>
+    <string name="curse_category_5191">Утилиты и улучшения качества жизни</string>
+    <string name="curse_category_5192">Стильное меню</string>
+    <string name="curse_category_423">Карта и информация</string>
+    <string name="curse_category_426">Аддоны</string>
+    <string name="curse_category_434">Броня, инструменты и оружие</string>
+    <string name="curse_category_409">Структуры</string>
+    <string name="curse_category_4485">Сангвиномантия</string>
+    <string name="curse_category_420">Хранилище</string>
+    <string name="curse_category_429">Промышленный крафт</string>
+    <string name="curse_category_419">Магия</string>
+    <string name="curse_category_412">Технологии</string>
+    <string name="curse_category_4557">Красная пыль</string>
+    <string name="curse_category_428">Конструктор изобретателя</string>
+    <string name="curse_category_414">Транспорт</string>
+    <string name="curse_category_4486">Лаки блок</string>
+    <string name="curse_category_432">Строительство крафт</string>
+    <string name="curse_category_418">Генетика</string>
+    <string name="curse_category_4671">Интеграция с Twitch</string>
+    <string name="curse_category_408">Руды и ресурсы</string>
+    <string name="curse_category_4773">Редактор крафта</string>
+    <string name="curse_category_430">Таумотургия</string>
+    <string name="curse_category_422">Приключения и RPG</string>
+    <string name="curse_category_413">Обработка</string>
+    <string name="curse_category_417">Энергия</string>
+    <string name="curse_category_415">Транспортировка энергии, жидкостей и предметов</string>
+    <string name="curse_category_425">Разное</string>
+    <string name="curse_category_4545">Прикладная энергетика 2</string>
+    <string name="curse_category_416">Фарм</string>
+    <string name="curse_category_421">API и библиотеки</string>
+    <string name="curse_category_424">Косметические</string>
+    <string name="curse_category_406">Генерация мира</string>
+    <string name="curse_category_435">Утилиты для серверов</string>
+    <string name="curse_category_411">Мобы</string>
+    <string name="curse_category_407">Биомы</string>
+    <string name="curse_category_427">Тепловое расширение</string>
+    <string name="curse_category_410">Измерения</string>
+    <string name="curse_category_436">Еда</string>
+    <string name="curse_category_4558">Красная пыль</string>
+    <string name="curse_category_4843">Автоматизация</string>
+
+    <string name="curse_category_5244">Шрифты</string>
+    <string name="curse_category_5193">Датапаки</string>
+    <string name="curse_category_399">Стимпанк</string>
+    <string name="curse_category_398">512x и больше</string>
+    <string name="curse_category_397">256x</string>
+    <string name="curse_category_405">Разное</string>
+    <string name="curse_category_400">Реалистичные</string>
+    <string name="curse_category_403">Традиционные</string>
+    <string name="curse_category_404">Анимированные</string>
+    <string name="curse_category_4465">Поддерживаемые моды</string>
+    <string name="curse_category_402">Средневековые</string>
+    <string name="curse_category_401">Современные</string>
+
+    <string name="curse_category_4464">Модифицированный мир</string>
+    <string name="curse_category_250">Игровые карты</string>
+    <string name="curse_category_249">Творчество</string>
+    <string name="curse_category_251">Паркур</string>
+    <string name="curse_category_253">Выживание</string>
+    <string name="curse_category_248">Переключение</string>
+    <string name="curse_category_252">Пазлы</string>
+
+    <string name="curse_category_4551">Экстремальные квесты</string>
+    <string name="curse_category_4548">Лаки блоки</string>
+    <string name="curse_category_4556">Прогресс</string>
+    <string name="curse_category_4752">Модули строительства</string>
+    <string name="curse_category_4553">Редактор крафта</string>
+    <string name="curse_category_4554">Рецепты</string>
+    <string name="curse_category_4549">Гайды</string>
+    <string name="curse_category_4547">Конфигурации</string>
+    <string name="curse_category_4550">Квесты</string>
+    <string name="curse_category_4555">Генерация мира</string>
+    <string name="curse_category_4552">Скрипты</string>
+
+    <string name="curse_sort_author">Автор</string>
+    <string name="curse_sort_date_created">Дата создания</string>
+    <string name="curse_sort_last_updated">Последнее обновление</string>
+    <string name="curse_sort_name">Название</string>
+    <string name="curse_sort_popularity">Популярность</string>
+    <string name="curse_sort_total_downloads">Загрузки</string>
+
+    <string name="datapack_add">Установить датапак</string>
+    <string name="datapack_choose_datapack">Выберите датапак для импорта</string>
+
+    <string name="download_code_404">Файл не найден на сервере: %s</string>
+    <string name="download_failed">Ошибка загрузки %1$s, код: %2$d</string>
+    <string name="download_failed_empty">Нет доступных версий</string>
+    <string name="download_failed_refresh">Не удалось получить список версий. Пожалуйста, повторите попытку.</string>
+
+    <string name="download_provider_mojang">Mojang (OptiFine предоставляется BMCLAPI)</string>
+    <string name="download_provider_official">Из официальных источников</string>
+    <string name="download_provider_balanced">Из самых быстрых доступных</string>
+    <string name="download_provider_mirror">Зеркало</string>
+
+    <string name="edit_view_clone">Копировать</string>
+    <string name="edit_view_delete">Удалить</string>
+    <string name="edit_view_event">Расширенные настройки</string>
+    <string name="edit_view_info">Стандартные настройки</string>
+    <string name="edit_view_no_group">Сначала добавьте или выберите группу просмотра!</string>
+    <string name="edit_view_style">Стиль</string>
+
+    <string name="edit_button_title">Редактирование</string>
+    <string name="edit_button_delete">Удалить кнопку?</string>
+    <string name="edit_button_text">Текст на кнопке</string>
+    <string name="edit_button_event_follow">Пропускать касание</string>
+    <string name="edit_button_event_movable">Перемещаемая кнопка</string>
+    <string name="edit_button_event_press">Нажать</string>
+    <string name="edit_button_event_long_press">Долгое нажатие</string>
+    <string name="edit_button_event_click">Нажмите</string>
+    <string name="edit_button_event_double_click">Дважды нажмите</string>
+    <string name="edit_button_event_auto_keep">Удерживать кнопку при нажатии</string>
+    <string name="edit_button_event_auto_click">Нажимать на кнопку при удерживании</string>
+    <string name="edit_button_event_open_menu">Открыть меню</string>
+    <string name="edit_button_event_touch_mode">Переключить режим жестов</string>
+    <string name="edit_button_event_mouse_mode">Сменить режим мыши</string>
+    <string name="edit_button_event_input">Показать клавиатуру</string>
+    <string name="edit_button_event_quick_input">Открыть меню быстрого ввода</string>
+    <string name="edit_button_event_output_text">Отправить текст в чат</string>
+    <string name="edit_button_event_keycodes">Выбрать клавиши</string>
+    <string name="edit_button_event_keycodes_keyboard">Клавиатура</string>
+    <string name="edit_button_event_keycodes_mouse">Мышь</string>
+    <string name="edit_button_event_bind_group">Переключить видимость группы</string>
+
+    <string name="edit_direction_title">Редактировать стик</string>
+    <string name="edit_direction_delete">Вы уверены что хотите удалить этот контроллер?</string>
+    <string name="edit_direction_event_up">Имитация верхней кнопки</string>
+    <string name="edit_direction_event_down">Имитация нижней кнопки</string>
+    <string name="edit_direction_event_left">Имитация левой кнопки</string>
+    <string name="edit_direction_event_right">Имитация правой кнопки</string>
+    <string name="edit_direction_event_follow">Стик</string>
+    <string name="edit_direction_event_follow_fix">Фиксированный</string>
+    <string name="edit_direction_event_follow_center">Полудинамичный</string>
+    <string name="edit_direction_event_follow_always">Динамический</string>
+    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы краситься</string>
+    <string name="edit_direction_event_sneak_code">Имитация кнопки по центру</string>
+
+    <string name="exception_access_denied">Не удается получить доступ к файлу %s.</string>
+    <string name="exception_artifact_malformed">Не удается проверить целостность загруженных файлов.</string>
+    <string name="exception_ssl_handshake">Невозможно установить соединение SSL из-за отсутствия сертификатов SSL в текущей установке Java.</string>
+
+    <string name="folder_config">Конфигурации</string>
+    <string name="folder_game">Папка игры</string>
+    <string name="folder_log">Логи</string>
+    <string name="folder_fcl_log">Логи лаунчера</string>
+    <string name="folder_mod">Моды</string>
+    <string name="folder_resourcepacks">Ресурспаки</string>
+    <string name="folder_saves">Миры</string>
+    <string name="folder_screenshots">Скриншоты</string>
+    <string name="folder_shaderpacks">Шейдеры</string>
+
+    <string name="game_crash_info">Информация о сбое</string>
+    <string name="game_crash_reason">Причина сбоя</string>
+    <string name="game_crash_reason_multiple">"Обнаружено несколько причин:
+    
+    "</string>
+    <string name="game_crash_reason_block">"Аварийная ошибка произошла из-за блока.
+    
+    Вы можете попробовать удалить этот блок с помощью MCEdit или удалить тот мод, который его добавил.
+    
+    Тип блока: %1$s
+    Местоположение: %2$s"</string>
+    <string name="game_crash_reason_bootstrap_failed">"Аварийная ошибка произошла из-за мода. %1$s.
+    
+    Вы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_config">Аварийная ошибка произошла из-за того, что мод %1$s не может проанализировать свой файл конфигурации %2$s.</string>
+    <string name="game_crash_reason_debug_crash">"Аварийная ошибка произошла, потому что вы вызвали это вручную..
+    
+    Так что, вы, возможно, знаете, почему это произошло."</string>
+    <string name="game_crash_reason_duplicated_mod">"Запуск невозможен из-за дублированных модов: %1$s.
+    
+    %2$s
+    
+    Каждый мод может быть установлен только один раз, пожалуйста, удалите дубликат мода и попробуйте снова."</string>
+    <string name="game_crash_reason_entity">"Аварийная ошибка произошла из-за сущности.
+    
+    Вы можете попробовать удалить эту сущность с помощью MCEdit или удалить тот мод, который её добавил.
+    
+    Тип блока: %1$s
+    Местоположение: %2$s"</string>
+    <string name="game_crash_reason_modmixin_failure">"Запуск невозможен из-за неудачной инъекции мода.
+    Это означает, что мод неисправный или несовместим с текущей средой.
+    Чтобы найти неисправность, вы можете проверить лог."</string>
+    <string name="game_crash_reason_mod_repeat_installation">Поскольку в текущей игре неоднократно устанавливалось несколько одинаковых модов, каждый мод может появиться только один раз. Удалите повторяющиеся моды и перезапустите игру.</string>
+    <string name="game_crash_reason_forge_error">"Forge, возможно, предоставил информацию об ошибке.
+    Вы можете просмотреть лог и найти ошибку.
+    Если нет сообщения об ошибке, посмотрите лог, чтобы понять, как она произошла.
+    %1$s"</string>
+    <string name="game_crash_reason_mod_resolution0">"Текущая игра не может продолжиться из-за некоторых проблем с модами.
+    Вы можете проверить лог, чтобы найти модуль с ошибкой."</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">"Текущая игра не может продолжить выполнение из-за проблемы с конфигурационным файлом мода.
+    Вы можете проверить лог, чтобы найти модуль с ошибкой и его конфигурационный файл."</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">"Forge, возможно, предоставил информацию об ошибке.
+    Вы можете просмотреть лог и выполнить соответствующую обработку согласно информации в логе в отчете об ошибке.
+    Если вы не видите сообщение об ошибке, вы можете просмотреть отчет об ошибке, чтобы понять, как ошибка произошла."</string>
+    <string name="game_crash_reason_need_jdk11">"Текущая игра не может продолжить выполнение из-за неподходящей версии Java.
+    Требуется Java 11."</string>
+    <string name="game_crash_reason_mod_name">"Текущая игра не может продолжить выполнение из-за проблем с именем файла мода.
+    Имена файлов модов должны содержать только заглавные и строчные буквы латинского алфавита (Aa~Zz), цифры (0~9), дефисы (-), подчеркивания (_), и точки (.) в полуширине английского алфавита.
+    Пожалуйста, перейдите в папку с модами и добавьте во все неприемлемые имена файлов модов один из вышеуказанных допустимых символов."</string>
+    <string name="game_crash_reason_incomplete_forge_installation">"Текущая игра не может продолжиться из-за неполной установки Forge.
+    Пожалуйста, удалите и заново установите Forge."</string>
+    <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 и выше несовместимы с установленными модами. Вам нужно понизить его до 0.11.7.</string>
+    <string name="game_crash_reason_fabric_warnings">"Загрузчик модов Fabric предупредил:
+    %1$s"</string>
+    <string name="game_crash_reason_file_already_exists">"Аварийная ошибка произошла из-за того, что файл %1$s уже существует.
+    
+    Вы можете попробовать создать резервную копию этого файла, а затем удалить его и перезапустить игру."</string>
+    <string name="game_crash_reason_file_changed">"Аварийная ошибка произошла из-за несоответствия проверкам целостности.
+    
+    Если вы внесли изменения в файл Minecraft, вам нужно отменить эти изменения или загрузить игру заново."</string>
+    <string name="game_crash_reason_gl_operation_failure">"Аварийная ошибка произошла из-за некоторых модов, шейдеров и ресурспаков.
+    
+    Пожалуйста, отключите используемые моды/шейдеры/ресурспаки, а затем попробуйте снова."</string>
+    <string name="game_crash_reason_illegal_access_error">"Аварийная ошибка произошла из-за некоторых модов.
+    Если вы знаете, что это за мод %1$s, вы можете удалить его и попробовать снова."</string>
+    <string name="game_crash_reason_optifine_is_not_compatible_with_forge">Текущая игра вылетает из-за несовместимости OptiFine с текущей версией Forge.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">"Текущая игра не может продолжить выполнение, потому что файл мода был разархивирован.
+    Пожалуйста, поместите весь файл мода непосредственно в папку mods!
+    Если разархивирование вызывает ошибки в игре, пожалуйста, удалите разархивированный мод из папки mods, а затем запустите игру."</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">"Текущая игра не может быть найдена, потому что Forge не установлен полностью.
+    Вы можете попробовать удалить Forge и затем установить его заново."</string>
+    <string name="game_crash_reason_shaders_mod">"Текущая игра не может продолжиться из-за установки как OptiFine, так и Shaders Mod.
+    Поскольку OptiFine интегрировал функции Shaders Mod, просто удалите Shaders Mod."</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">"Текущая игра не может продолжиться из-за того, что вы установили слишком много модов, что превышает лимит в игре.
+    Попробуйте установить JEID или удалите некоторые крупные моды."</string>
+    <string name="game_crash_reason_night_config_fixes">"Текущая игра не может продолжить выполнение из-за проблем с Night Config.
+    Вы можете попробовать установить мод Night Config Fixes, который может помочь вам с этой проблемой.
+    Для получения дополнительной информации посетите репозиторий мода на GitHub."</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">"Текущая игра может не продолжить выполнение из-за OptiFine.
+    Эта проблема возникает только в определенной версии OptiFine. Вы можете попробовать изменить версию OptiFine."</string>
+    <string name="game_crash_reason_jvm_32bit">Игра вылетела из-за того, что текущее выделение памяти превышает лимит 32-разрядной виртуальной машины Java.</string>
+    <string name="game_crash_reason_loading_crashed_forge">"Аварийная ошибка произошла из-за мода %1$s (%2$s).
+    
+    Вы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_loading_crashed_fabric">"Аварийная ошибка произошла из-за мода %1$s.
+    
+    Вы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_forge_repeat_installation">"Текущая игра не может продолжить выполнение из-за дублирующейся установки Forge. Это известная проблема.
+    Рекомендуется загрузить лог на GitHub, чтобы мы могли найти больше подсказок и исправить этот вопрос.
+    В настоящее время вы можете удалить Forge и затем установить его заново."</string>
+    <string name="game_crash_reason_optifine_repeat_installation">"Текущая игра не может продолжить выполнение из-за повторной установки Optifine. 
+    Пожалуйста, удалите OptiFine из папки с модами или деинсталлируйте автоматически установленный OptiFine."</string>
+    <string name="game_crash_reason_memory_exceeded">Игра вылетала из-за того, что было выделено слишком много памяти.</string>
+    <string name="game_crash_reason_mod">"Аварийная ошибка произошла из-за мода %1$s.
+    
+    Вы можете обновить или удалить мод, а затем попробовать снова."</string>
+    <string name="game_crash_reason_mod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.
+    
+    Fabric предоставил следующие детали:
+    %1$s"</string>
+    <string name="game_crash_reason_forgemod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.
+    
+    Forge предоставил следующие детали:
+    %1$s"</string>
+    <string name="game_crash_reason_mod_resolution_collection">"Аварийная ошибка произошла из-за того, что версия мода несовместима.
+    
+    %1$s требует %2$s.
+    
+    Вам нужно обновить или понизить версию %3$s перед продолжением."</string>
+    <string name="game_crash_reason_mod_resolution_conflict">"Аварийная ошибка произошла из-за конфликта модов.
+    
+    %1$s не совместим с %2$s."</string>
+    <string name="game_crash_reason_mod_resolution_missing">"Игра вылетела, так как не установлены некоторые необходимые моды.
+    
+    %1$s требует мод: %2$s.
+    
+    Это означает, что вам нужно сначала загрузить и установить %2$s, чтобы продолжить игру."</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">"Аварийная ошибка произошла из-за того, что мод несовместим с текущей версией Minecraft.
+    
+    %1$s требует версию Minecraft %2$s.
+    
+    Если вы хотите играть с этой версией установленного мода, вам следует изменить версию Minecraft.
+    В противном случае вам следует установить версию, совместимую с этой версией Minecraft."</string>
+    <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Версия: %2$s)</string>
+    <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Любая версия)</string>
+    <string name="game_crash_reason_modlauncher_8">Игра вылетела из-за того, что ваша текущая версия Forge не совместима с вашей установкой Java, попробуйте обновить Forge.</string>
+    <string name="game_crash_reason_no_class_def_found_error">"Игра не может быть запущена из-за неполного кода.
+    
+    Ваш профиль игры не содержит %1$s. Это может быть связано с отсутствующим модом, установленным несовместимым модом или поврежденными файлами.
+    
+    Вам, возможно, придется переустановить игру и все моды, или обратиться к кому-то за помощью ."</string>
+    <string name="game_crash_reason_no_such_method_error">"Игра не может быть запущена из-за неполного кода.
+    
+    Ваш профиль игры, возможно, не содержит мод, установлен мод, который несовместим, или некоторые файлы могли быть повреждены.
+    
+    Вам, возможно, придется переустановить игру и все моды или обратиться к кому-то за помощью."</string>
+    <string name="game_crash_reason_opengl_not_supported">Игра вылетела из-за того, что ваш рендер не поддерживает OpenGL.</string>
+    <string name="game_crash_reason_out_of_memory">"Аварийная ошибка произошла из-за нехватки памяти.
+    
+    Это может быть вызвано недостатком доступной памяти или слишком большим количеством установленных модов. Вы можете попробовать исправить это, увеличив выделенную память в настройках игры.
+    
+    Если вы продолжаете сталкиваться с этими проблемами, возможно, вам понадобится более мощное устройство."</string>
+    <string name="game_crash_reason_resolution_too_high">"Аварийная ошибка произошла из-за того, что вы используете ресурспак с слишком высоким разрешением текстур.
+    
+    Вам следует переключиться на ресурспак с более низким разрешением текстур."</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">"Текущая аварийная ошибка произошла из-за сбоя обработки -javaagent.
+    Если вы добавили соответствующие параметры к параметрам Java, пожалуйста, проверьте, являются ли они законными и правильными."</string>
+    <string name="game_crash_reason_stacktrace">"Причина аварийной ошибки неизвестна.
+    
+    Есть некоторые ключевые слова, которые могут содержать идентификаторы модов. Вы можете искать их онлайн, чтобы разобраться в проблеме самостоятельно.
+    
+    %s"</string>
+    <string name="game_crash_reason_unknown">"Мы не можем выяснить, почему произошла аварийная ошибка. Пожалуйста, обратитесь к логам игры.
+    
+    При обращении к кому-то за помощью еще, пожалуйста, поделитесь с ними полным игровым логом и файлом отчета об аварийной ошибки!"</string>
+    <string name="game_crash_reason_unsatisfied_link_error">Невозможно запустить Minecraft из-за отсутствия библиотек: %1$s.</string>
+    <string name="game_crash_title">Произошла ошибка.</string>
+    <string name="game_crash_title_add">Вместо скриншота отправьте лог</string>
+
+    <string name="help">Помощь</string>
+    <string name="help_category">Категории</string>
+    <string name="help_website">Сайт</string>
+
+    <string name="input_hint_not_empty">Необходимо</string>
+    <string name="input_hint_optional">Необязательно</string>
+    <string name="input_not_empty">Заполните обязательные поля.</string>
+    <string name="input_number">Введите число</string>
+    <string name="input_url">Введите корректный URL-адрес.</string>
+
+    <string name="install_change_version">Выберите версию</string>
+    <string name="install_change_version_confirm">Вы уверены, что хотите сменить версию %s с %s на %s?</string>
+    <string name="install_failed">Ошибка установки</string>
+    <string name="install_failed_downloading">Не удалось загрузить некоторые необходимые файлы.</string>
+    <string name="install_failed_downloading_detail">Невозможно загрузить файл: %s</string>
+    <string name="install_failed_downloading_timeout">Тайм-аут загрузки при загрузке: %s</string>
+    <string name="install_failed_install_online">Не удалось идентифицировать предоставленный файл. Если вы устанавливаете мод, перейдите на страницу «Моды».</string>
+    <string name="install_failed_malformed">Загруженные файлы повреждены. Вы можете попытаться решить эту проблему, переключившись на другое зеркало загрузки.</string>
+    <string name="install_failed_optifine_conflict">Невозможно установить Fabric, OptiFine и Forge одновременно на версиях Minecraft 1.13 и выше.</string>
+    <string name="install_failed_optifine_forge_1.17">Minecraft 1.17.1 и ниже Forge совместим только с OptiFine H1 Pre2 и новее. Установите подходящую версию OptiFine.</string>
+    <string name="install_failed_version_mismatch">Для этой библиотеки требуется версия игры %s, а установлена версия %s.</string>
+    <string name="install_installer_change_version">Версия %s несовместима с текущей версией игры. Нажмите здесь, чтобы заменить ее другой версией или удалить.</string>
+    <string name="install_installer_choose">Выберите %s версию</string>
+    <string name="install_installer_depend">Требуется %s</string>
+    <string name="install_installer_fabric_api_warning">Fabric API будет установлен как мод. Изменение папки игры приведет к неработоспособности Fabric API.</string>
+    <string name="install_installer_incompatible">Несовместим с %s</string>
+    <string name="install_installer_install">Установка %s</string>
+    <string name="install_installer_install_offline">Выбрать файл</string>
+    <string name="install_installer_install_offline_extension">Установщик Forge/OptiFine</string>
+    <string name="install_installer_not_installed">Не выбран</string>
+    <string name="install_modpack">Установить модпак</string>
+    <string name="install_new_game">Добавление нового профиля</string>
+    <string name="install_new_game_already_exists">Этот профиль уже существует. Пожалуйста, используйте другое название.</string>
+    <string name="install_new_game_malformed">Некорректное название</string>
+    <string name="install_success">Установка завершена!</string>
+
+    <string name="jar_execute">Выбрать Jar</string>
+    <string name="jar_execute_custom_args">Выполнить с пользовательскими аргументами</string>
+    <string name="jar_executor_crash_title">Ошибка выполнения JAR-файла</string>
+    <string name="jar_executor_crash_reason">Анализ причин сбоя исполнителя Jar в настоящее время не поддерживается.</string>
+
+    <string name="launch_error_java">Вы используете устаревшую версию Java. Вы уверены, что хотите продолжить?</string>
+    <string name="launch_error_java_auto">Выбрать автоматически (рекомендуется)</string>
+    <string name="launch_error_java_continue">Продолжить</string>
+    <string name="launch_failed">Ошибка запуска</string>
+    <string name="launch_failed_download_library">Невозможно загрузить библиотеку %s.</string>
+
+    <string name="launch_state_dependencies">Зависимости</string>
+    <string name="launch_state_modpack">Загрузка зависимостей</string>
+    <string name="launch_state_java">Проверка Java</string>
+    <string name="launch_state_logging_in">Авторизация</string>
+    <string name="launch_state_waiting_launching">Запуск</string>
+    <string name="launch_state_done">Завершение запуска</string>
+
+    <string name="menu_controls">Управление</string>
+    <string name="menu_controls_current">Текущее управление</string>
+    <string name="menu_controls_edit_mode">Режим редактирования</string>
+    <string name="menu_controls_show_boundary">Показать границы кнопок</string>
+    <string name="menu_controls_hide_all">Скрыть все представления</string>
+    <string name="menu_controls_auto_fit">Автонастройки позиции</string>
+    <string name="menu_controls_auto_fit_dist">Автонастройка расстояния до позиции</string>
+    <string name="menu_controls_groups">Просмотр групп</string>
+    <string name="menu_controls_manage">Редактировать</string>
+    <string name="menu_controls_current_view_group">Текущая группа просмотра</string>
+    <string name="menu_controls_add_button">Добавить кнопку</string>
+    <string name="menu_controls_add_direction">Добавить стик</string>
+    <string name="menu_controls_add_view_button">Добавлять</string>
+    <string name="menu_controls_style">Стиль</string>
+    <string name="menu_controls_button_style">Стиль кнопок</string>
+    <string name="menu_controls_direction_style">Стиль стика</string>
+
+    <string name="menu_control_base">Базовая настройка</string>
+    <string name="menu_control_button">Кнопка</string>
+    <string name="menu_control_button_text">Текст</string>
+    <string name="menu_control_direction">Стик</string>
+    <string name="menu_control_event">Настройка события</string>
+    <string name="menu_control_select">Выбрать</string>
+    <string name="menu_control_set">Выбрать</string>
+    <string name="menu_control_style">Настройка стиля</string>
+    <string name="menu_control_style_add">Добавить стиль</string>
+    <string name="menu_control_style_edit">Редактировать стиль</string>
+    <string name="menu_control_view_group_add">Добавить группу просмотра</string>
+    <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу просмотра?</string>
+    <string name="menu_control_view_group_name">Название</string>
+    <string name="menu_control_view_group_visibility">Видимость группы</string>
+    <string name="menu_control_view_group_exist">Группа просмотра уже существует</string>
+    <string name="menu_control_view_group_empty">Сначала заполните название группы просмотра</string>
+    <string name="menu_control_view_group_visible">Видимый</string>
+    <string name="menu_control_view_group_invisible">Невидимый</string>
+
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_settings_debug">Лог</string>
+    <string name="menu_settings_disable_be_gesture">Отключить расширенные жесты</string>
+    <string name="menu_settings_disable_gesture">Отключить жесты</string>
+    <string name="menu_settings_force_exit">Принудительный выход</string>
+    <string name="menu_settings_force_exit_button">Выход</string>
+    <string name="menu_settings_force_exit_msg">Вы уверены, что хотите выйти?</string>
+    <string name="menu_settings_function">Функция</string>
+    <string name="menu_settings_gesture">Жест</string>
+    <string name="menu_settings_gesture_mode">Режим жестов</string>
+    <string name="menu_settings_gesture_mode_build">Строительный</string>
+    <string name="menu_settings_gesture_mode_fight">Боевой</string>
+    <string name="menu_settings_gesture_current">Текущий режим: %s</string>
+    <string name="menu_settings_gyro">Гироскоп</string>
+    <string name="menu_settings_gyro_sensitivity">Чувствительность гироскопа</string>
+    <string name="menu_settings_lock_view">Заблокировать меню</string>
+    <string name="menu_settings_hide_view">Скрыть меню</string>
+    <string name="menu_settings_show_fps">Отобразить FPS</string>
+    <string name="menu_settings_mouse">Мышь</string>
+    <string name="menu_settings_mouse_mode">Режим мыши</string>
+    <string name="menu_settings_mouse_mode_click">Тачпад</string>
+    <string name="menu_settings_mouse_mode_slide">Обычный</string>
+    <string name="menu_settings_mouse_sensitivity">Чувствительность мыши</string>
+    <string name="menu_settings_mouse_size">Размер мыши</string>
+    <string name="menu_settings_gamepad">Геймпад</string>
+    <string name="menu_settings_gamepad_reset_mapper">Сбросить настройки управления</string>
+    <string name="menu_settings_gamepad_button_binding">Привязка кнопок</string>
+    <string name="menu_settings_gamepad_open_button">Выбрать</string>
+    <string name="menu_settings_gamepad_reset">Сбросить</string>
+    <string name="menu_settings_gamepad_deadzone">Мертвая зона</string>
+    <string name="menu_settings_multiplayer">Многопользовательское меню</string>
+    <string name="menu_settings_multiplayer_button">Открыть</string>
+    <string name="menu_settings_quick_input">Быстрый ввод</string>
+    <string name="menu_settings_quick_input_button">Управлять</string>
+    <string name="menu_settings_send_key">Нажатие клавиши</string>
+    <string name="menu_settings_send_key_button">Выбрать</string>
+    <string name="menu_settings_soft_keyboard_adjust">Отключить автонастройку клавиатуры</string>
+    <string name="menu_settings_item_bar_scale">Размер панели предметов</string>
+    <string name="menu_settings_show_log">Показать лог</string>
+
+    <string name="message_cancelled">Операция отменена</string>
+    <string name="message_copy">Скопировано успешно!</string>
+    <string name="message_doing">Подождите</string>
+    <string name="message_downloading">Загрузка</string>
+    <string name="message_error">Ошибка</string>
+    <string name="message_failed">Операция не удалась</string>
+    <string name="message_file_exist">Файл уже существует</string>
+    <string name="message_success">Операция завершена успешно</string>
+    <string name="message_unknown">Неизвестный</string>
+    <string name="message_warning">Предупреждение</string>
+
+    <string name="modpack">Модпаки</string>
+    <string name="modpack_choose">Выберите модпак</string>
+    <string name="modpack_choose_local">Установить из файла</string>
+    <string name="modpack_choose_remote">Загрузить из интернета</string>
+    <string name="modpack_choose_remote_tooltip">Пожалуйста, введите URL вашего модпака</string>
+    <string name="modpack_completion">Загрузка зависимостей</string>
+    <string name="modpack_desc">Опишите ваш модпак, включая введение и, возможно, список изменений. В настоящее время поддерживаются Markdown и изображения из URL.</string>
+    <string name="modpack_description">Описание</string>
+    <string name="modpack_download">Загрузить модпак</string>
+    <string name="modpack_enter_name">Введите название для этого модпака.</string>
+    <string name="modpack_export">Экспортировать модпак</string>
+    <string name="modpack_export_as">Экспортировать модпак как…</string>
+    <string name="modpack_file_api">Префикс URL модпака</string>
+    <string name="modpack_files_blueprints">Чертежи BuildCraft</string>
+    <string name="modpack_files_config">Конфигурации модов</string>
+    <string name="modpack_files_dumps">Выходной файл отладки NEI</string>
+    <string name="modpack_files_fclversion_cfg">Файл конфигурации лаунчера</string>
+    <string name="modpack_files_liteconfig">Файл конфигурации мода</string>
+    <string name="modpack_files_mods">Моды</string>
+    <string name="modpack_files_mods_voxelmods">Параметры VoxelMods</string>
+    <string name="modpack_files_options_txt">Файл настроек Minecraft</string>
+    <string name="modpack_files_optionsshaders_txt">Файл настроек шейдеров</string>
+    <string name="modpack_files_resourcepacks">Ресурспаки</string>
+    <string name="modpack_files_saves">Сохранения игр</string>
+    <string name="modpack_files_scripts">Файл конфигурации MineTweaker</string>
+    <string name="modpack_files_servers_dat">Файл списка серверов</string>
+    <string name="modpack_install">Установить модпак %s</string>
+    <string name="modpack_installing">Установка модпака</string>
+    <string name="modpack_introduction">В настоящее время поддерживаются пакеты модов CurseForge, Modrinth, MultiMC и MCBBS.</string>
+    <string name="modpack_invalid">Неверный модпак, можете попробовать его перекачать.</string>
+    <string name="modpack_mismatched_type">Несоответствие типа модпака. Текущий профиль имеет тип %s, а предоставленный — %s.</string>
+    <string name="modpack_name">Название модпака</string>
+    <string name="modpack_not_a_valid_name">Недопустимое название модпака</string>
+    <string name="modpack_origin">Источник</string>
+    <string name="modpack_origin_url">Официальный веб-сайт</string>
+    <string name="modpack_origin_mcbbs_prompt">Идентификатор сообщения</string>
+    <string name="modpack_scan">Разбор индекса модпака</string>
+    <string name="modpack_task_install">Установка модпака</string>
+    <string name="modpack_task_install_error">Не удалось идентифицировать этот модпак. В настоящее время мы поддерживаем только пакеты модов Curse, Modrinth, MultiMC и MCBBS.</string>
+    <string name="modpack_task_install_will">Вы собираетесь установить модпак:</string>
+    <string name="modpack_type_curse">Проклинать</string>
+    <string name="modpack_type_curse_tolerable_error">Не удалось загрузить зависимости, вы можете попытаться продолжить загрузку, запустив этот профиль игры.</string>
+    <string name="modpack_type_curse_error">Не удалось загрузить зависимости с CurseForge. Повторите попытку или используйте прокси-соединение.</string>
+    <string name="modpack_type_curse_not_found">Некоторые зависимости больше не доступны, попробуйте установить более новую версию модпака.</string>
+    <string name="modpack_type_manual_warning">Этот модпак собран вручную автором и может содержать собственный лаунчер. Рекомендуется распаковать архив и попробовать запустить игру с помощью него. FCL может импортировать этот модпак, но корректная работа не гарантируется. Продолжить?</string>
+    <string name="modpack_type_mcbbs">Тип MCBBS</string>
+    <string name="modpack_type_mcbbs_export">Может быть импортирован FCL, HMCL и MultiMC</string>
+    <string name="modpack_type_multimc_export">Может быть импортирован FCL, HMCL и MultiMC</string>
+    <string name="modpack_type_server">Автоматическое обновление модпака с сервера</string>
+    <string name="modpack_type_server_export">Позволяет владельцу сервера удаленно обновлять профиль игры</string>
+    <string name="modpack_type_server_malformed">Неверный манифест модпака. Обратитесь к производителю модпак сервера, чтобы исправить эту проблему.</string>
+    <string name="modpack_unsupported">Неподдерживаемый формат модпака</string>
+    <string name="modpack_update">Обновление модпак</string>
+    <string name="modpack_wizard">Мастер экспорта модпака</string>
+    <string name="modpack_wizard_step_1">Базовые настройки</string>
+    <string name="modpack_wizard_step_1_title">Некоторые основные настройки модпака.</string>
+    <string name="modpack_wizard_step_2">Выбрать файлы</string>
+    <string name="modpack_wizard_step_2_title">Выберите файлы, которые вы хотите добавить в модпак.</string>
+    <string name="modpack_wizard_step_3">Тип модпака</string>
+    <string name="modpack_wizard_step_3_title">Выберите тип модпака, который вы хотите экспортировать.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">Версия игры для экспорта</string>
+    <string name="modpack_wizard_step_initialization_force_update">Принудительно обновите модпак до последней версии (вам понадобится файлообменник)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">Включить лаунчер</string>
+    <string name="modpack_wizard_step_initialization_save">Экспортировать в</string>
+    <string name="modpack_wizard_step_initialization_warning">"Перед созданием модпака, убедитесь, что игра запускается, и это релизная версия, а не снапшот.
+    Имейте в виду, что вам не разрешено добавлять моды и ресурсные пакеты, которые явно указаны как недоступные для распространения или включения в модпак."</string>
+
+    <string name="modrinth_category_adventure">Приключения</string>
+    <string name="modrinth_category_challenging">Сложное</string>
+    <string name="modrinth_category_combat">Бой</string>
+    <string name="modrinth_category_cursed">Проклятое</string>
+    <string name="modrinth_category_decoration">Декор</string>
+    <string name="modrinth_category_economy">Экономика</string>
+    <string name="modrinth_category_equipment">Снаряжение</string>
+    <string name="modrinth_category_food">Еда</string>
+    <string name="modrinth_category_game_mechanics">Игровые механики</string>
+    <string name="modrinth_category_library">Библиотека</string>
+    <string name="modrinth_category_lightweight">Легковесное</string>
+    <string name="modrinth_category_magic">Магия</string>
+    <string name="modrinth_category_management">Управление</string>
+    <string name="modrinth_category_minigame">Мини-игры</string>
+    <string name="modrinth_category_misc">Разное</string>
+    <string name="modrinth_category_mobs">Мобы</string>
+    <string name="modrinth_category_modloader">Загрузчик модов</string>
+    <string name="modrinth_category_multiplayer">Многопользовательская игра</string>
+    <string name="modrinth_category_optimization">Оптимизация</string>
+    <string name="modrinth_category_quests">Квесты</string>
+    <string name="modrinth_category_social">Социальное</string>
+    <string name="modrinth_category_storage">Хранение</string>
+    <string name="modrinth_category_technology">Технология</string>
+    <string name="modrinth_category_transportation">Транспортировка</string>
+    <string name="modrinth_category_utility">Утилиты</string>
+    <string name="modrinth_category_worldgen">Генерация мира</string>
+    <string name="modrinth_category_datapack">Датапак</string>
+
+    <string name="mods">Моды</string>
+    <string name="mods_add">Добавить моды</string>
+    <string name="mods_add_failed">Не удалось установить мод %s.</string>
+    <string name="mods_add_success">%s успешно установлено.</string>
+    <string name="mods_broken_dependency_title">Ошибка зависимости</string>
+    <string name="mods_broken_dependency_desc">Эта зависимость существовала ранее, но теперь отсутствует. Попробуйте использовать другой источник загрузки.</string>
+    <string name="mods_category">Категории</string>
+    <string name="mods_check_updates">Проверить обновления</string>
+    <string name="mods_check_updates_current_version">Текущая версия</string>
+    <string name="mods_check_updates_empty">Моды не нужно обновлять</string>
+    <string name="mods_check_updates_failed">Не удалось загрузить некоторые файлы.</string>
+    <string name="mods_check_updates_file">Файл</string>
+    <string name="mods_check_updates_source">Источник</string>
+    <string name="mods_check_updates_target_version">Целевая версия</string>
+    <string name="mods_check_updates_update">Обновить список</string>
+    <string name="mods_choose_mod">Выберите мод</string>
+    <string name="mods_dependency">Зависимость</string>
+    <string name="mods_dependency_embedded">Встроен в мод (не требует загрузки)</string>
+    <string name="mods_dependency_optional">Дополнительный мод</string>
+    <string name="mods_dependency_required">Обязательный мод</string>
+    <string name="mods_dependency_tool">Требуется отдельная библиотека</string>
+    <string name="mods_dependency_include">Встроен в мод (не требует загрузки)</string>
+    <string name="mods_dependency_incompatible">Несовместимый мод (может привести к сбоям)</string>
+    <string name="mods_dependency_broken">Зависимость недоступна (удалена из репозитория). Попробуйте другой источник.</string>
+    <string name="mods_disable">Отключить</string>
+    <string name="mods_download">Загрузить мод</string>
+    <string name="mods_download_title">Загрузить мод - %1s</string>
+    <string name="mods_download_recommend">Рекомендуемая версия мода - Minecraft %1s</string>
+    <string name="mods_enable">Включить</string>
+    <string name="mods_manage">Моды</string>
+    <string name="mods_mcmod_page">MCMOD страница</string>
+    <string name="mods_mcmod_search">Найти в MCMOD</string>
+    <string name="mods_name">Название</string>
+    <string name="mods_not_modded">Вы должны сначала установить загрузчик модов (Fabric, Forge или LiteLoader), чтобы управлять своими модами!</string>
+    <string name="mods_restore">Восстановить</string>
+    <string name="mods_url">Официальная страница</string>
+    <string name="mods_update_modpack_mod_warning">Обновление модов в модпаке может привести к непоправимым результатам, возможно, к повреждению модпака, из-за которого он не сможет запуститься. Вы уверены, что хотите обновить?</string>
+    <string name="mods_screenshot_no_result">Нет доступных скриншотов</string>
+
+    <string name="profile_shared">"Поделиться с папкой 
+    (хранилище устройства)"</string>
+    <string name="profile_private">"Приватная папка 
+    (хранилище игры)"</string>
+    <string name="profile_name">Название</string>
+    <string name="profile_path">Путь</string>
+    <string name="profile_select">Выбрать папку</string>
+    <string name="profile_already_exist">Это название уже существует, используйте другое название.</string>
+
+    <string name="quick_input_title">Быстрый ввод</string>
+    <string name="quick_input_add">Добавить шаблон текста</string>
+    <string name="quick_input_text">Быстрый ввод текста</string>
+    <string name="quick_input_exist">Текст уже существует!</string>
+    <string name="quick_input_empty">Сначала заполните текст!</string>
+
+    <string name="resourcepack">Ресурспаки</string>
+
+    <string name="search">Поиск</string>
+    <string name="search_hint_chinese">Поиск</string>
+    <string name="search_hint_english">Поиск</string>
+    <string name="search_device">Устройство</string>
+    <string name="search_sort">Сортировать по</string>
+    <string name="search_first_page">Начало</string>
+    <string name="search_last_page">Конец</string>
+
+    <string name="settings_advanced_dont_check_game_completeness">Не проверять целостность игры</string>
+    <string name="settings_advanced_dont_check_jvm_validity">Не проверять совместимость с JVM</string>
+    <string name="settings_advanced_game_dir_default">По умолчанию (.minecraft/)</string>
+    <string name="settings_advanced_game_dir_independent">Изолированно в (.minecraft/versions/&lt;instance name&gt;/, кроме ресурсов и библиотек)</string>
+    <string name="settings_advanced_java_permanent_generation_space">Объем постоянной памяти</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">рекомендуется от 256 до 512 МБ (можно не указывать)</string>
+    <string name="settings_advanced_jvm_args">JVM аргументы</string>
+    <string name="settings_advanced_minecraft_arguments">Аргументы лаунчера</string>
+    <string name="settings_advanced_minecraft_arguments_prompt">По умолчанию</string>
+    <string name="settings_advanced_server_ip">Адрес сервера</string>
+    <string name="settings_advanced_server_ip_prompt">Автоприсоединение после запуска</string>
+
+    <string name="settings_fcl_controller">Контроллер</string>
+    <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
+    <string name="settings_fcl_vulkan_driver_system">Разрешить Zink использовать системные драйвера Vulkan</string>
+    <string name="settings_fcl_renderer">Рендер</string>
+    <string name="settings_fcl_pojav_bigcore">Принудительно использовать мощные ядра для рендеринга (Ядро Pojav)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
+    <string name="settings_fcl_driver">Vulkan драйвер</string>
+
+    <string name="settings_game">Настройки игры</string>
+    <string name="settings_game_dimension">Разрешение</string>
+    <string name="settings_game_cursor_offset">Смещение курсора</string>
+    <string name="settings_game_java_version">Версия Java</string>
+    <string name="settings_game_java_version_auto">Авто</string>
+    <string name="settings_game_working_directory">Отдельное расположение файлов игры</string>
+
+    <string name="settings_icon">Иконка</string>
+
+    <string name="settings_launcher">Настройки лаунчера</string>
+    <string name="settings_launcher_debug">Лог лаунчера</string>
+    <string name="settings_launcher_upgrade">Обновление лаунчера</string>
+    <string name="settings_launcher_upgrade_check">Проверить</string>
+    <string name="settings_launcher_cache">Кэш лаунчера</string>
+    <string name="settings_launcher_clear_cache">Очистить кэш</string>
+    <string name="settings_launcher_download">Загрузка</string>
+    <string name="settings_launcher_download_threads">Потоки</string>
+    <string name="settings_launcher_download_threads_auto">Автоматически определять</string>
+    <string name="settings_launcher_download_source">Источник</string>
+    <string name="settings_launcher_download_source_auto">Автоматический выбор зеркала загрузки</string>
+    <string name="settings_launcher_language">Язык</string>
+    <string name="settings_launcher_language_system">Системный</string>
+    <string name="settings_launcher_launcher_log_export">Экспортировать</string>
+    <string name="settings_launcher_launcher_log_export_failed">Невозможно экспортировать журналы</string>
+    <string name="settings_launcher_launcher_log_export_success">Журналы экспортированы в %s</string>
+    <string name="settings_launcher_theme">Тема</string>
+    <string name="settings_launcher_theme2">Тема 2</string>
+    <string name="settings_launcher_background_lt">Фон в светлой теме (макс. 5120x5120)</string>
+    <string name="settings_launcher_background_dk">Фон в темной теме (макс. 5120x5120)</string>
+    <string name="settings_launcher_cursor">Курсор</string>
+    <string name="settings_launcher_menu_icon">Иконка меню</string>
+    <string name="settings_launcher_ignore_notch">Игнорировать вырез фронтальной камеры</string>
+    <string name="settings_launcher_close_skin_view">Скрыть модель скина</string>
+    <string name="settings_launcher_animation_speed">Скорость анимации переходов</string>
+
+    <string name="settings_memory">Память</string>
+    <string name="settings_memory_allocate_auto">%1$.1f ГБ минимум / %2$.1f ГБ выделенно</string>
+    <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ минимум / %2$.1f ГБ выделенно (%3$.1f ГБ свободно)</string>
+    <string name="settings_memory_allocate_manual">%1$.1f ГБ используется</string>
+    <string name="settings_memory_allocate_manual_exceeded">%1$.1f ГБ используется (%3$.1f ГБ свободно)</string>
+    <string name="settings_memory_auto_allocate">Автовыделение ОЗУ</string>
+    <string name="settings_memory_lower_bound">Минимум ОЗУ</string>
+    <string name="settings_memory_used_per_total">%1$.1f ГБ использованно / %2$.1f ГБ всего</string>
+    <string name="settings_physical_memory">Размер физической памяти</string>
+    <string name="settings_tabs_installers">Загрузчики модов</string>
+    <string name="settings_type_global_manage">Настройки</string>
+    <string name="settings_type_special_enable">Отдельные настройки</string>
+
+    <string name="style_name">Название</string>
+    <string name="style_warning_delete">Вы уверены, что хотите удалить этот стиль?</string>
+    <string name="style_warning_exist">Стиль уже существует!</string>
+    <string name="style_warning_name">Сначала заполните название стиля!</string>
+    <string name="style_button">Стиль кнопки</string>
+    <string name="style_button_normal">Обычный</string>
+    <string name="style_button_pressed">Включено</string>
+    <string name="style_button_text_size">Размер текста</string>
+    <string name="style_button_text_color">Цвет текста</string>
+    <string name="style_button_stroke_width">Ширина</string>
+    <string name="style_button_stroke_color">Цвет обводки</string>
+    <string name="style_button_corner_radius">Угловой радиус</string>
+    <string name="style_button_fill_color">Цвет заливки</string>
+    <string name="style_button_interval">Кнопка Интервал</string>
+    <string name="style_direction">Стиль стика</string>
+    <string name="style_direction_button">Кнопки</string>
+    <string name="style_direction_rocker">Стик</string>
+    <string name="style_rocker">Стиль стика</string>
+    <string name="style_rocker_size">Размер стика</string>
+    <string name="style_rocker_bg_stroke_width">Ширина обводки фона</string>
+    <string name="style_rocker_bg_stroke_color">Цвет обводки фона</string>
+    <string name="style_rocker_bg_corner_radius">Радиус углов фона</string>
+    <string name="style_rocker_bg_fill_color">Цвет заливки фона</string>
+    <string name="style_rocker_stroke_width">Ширина обводки стика</string>
+    <string name="style_rocker_stroke_color">Цвет обводки стика</string>
+    <string name="style_rocker_corner_radius">Радиус углов стика</string>
+    <string name="style_rocker_fill_color">Цвет заливки стика</string>
+
+    <string name="update">Обновить</string>
+    <string name="update_netdisk">Quark диск</string>
+    <string name="update_check">Проверить обновление</string>
+    <string name="update_checking">Проверка обновления</string>
+    <string name="update_check_failed">Ошибка во время проверки обновления</string>
+    <string name="update_date">Дата: %s</string>
+    <string name="update_description">"Описание:</string>
+    <string name="update_exist">Новая версия</string>
+    <string name="update_failed">Не удалось загрузить последнюю версию, повторите попытку или загрузите ее с официального сайта.</string>
+    <string name="update_ignore">Игнорировать</string>
+    <string name="update_launcher">Обновление лаунчера</string>
+    <string name="update_not_exist">Нет доступных обновлений</string>
+    <string name="update_type">Тип: %s</string>
+    <string name="update_version">Версия %s</string>
+    <string name="update_version_release">Релиз</string>
+    <string name="update_version_beta">Бета</string>
+
+    <string name="version_game">Версии</string>
+    <string name="version_game_old">Страрые бета/альфа</string>
+    <string name="version_game_release">Релиз</string>
+    <string name="version_game_releases">Релизы</string>
+    <string name="version_game_snapshot">Снапшот</string>
+    <string name="version_game_snapshots">Снапшоты</string>
+    <string name="version_empty_launch">Нет установленных версий игры, пожалуйста, установите для запуска.</string>
+    <string name="version_launch">Запуск игры</string>
+    <string name="version_no_version">Нет версий</string>
+    <string name="version_manage">Нажмите, чтобы управлять</string>
+    <string name="version_manage_clean">Удалить логи</string>
+    <string name="version_manage_duplicate">Скопировать профиль</string>
+    <string name="version_manage_duplicate_duplicate_save">Скопировать сохранение</string>
+    <string name="version_manage_duplicate_prompt">Название профиль</string>
+    <string name="version_manage_duplicate_confirm">Скопированый профиль будет содержать копию всех файлов этого профиля с отдельным расположением игры и настроек.</string>
+    <string name="version_manage_redownload_assets_index">Обновить ресурсы игры</string>
+    <string name="version_manage_remove_confirm">Вы уверены, что хотите навсегда удалить версию %s? Это действие не может быть отменено!</string>
+    <string name="version_manage_remove_confirm_independent">Поскольку этот профиль хранится в изолированном каталоге, его удаление также приведет к удалению его сохранений и других данных. Вы все еще хотите удалить профиль %s?</string>
+    <string name="version_manage_remove_libraries">Удалить все библиотеки</string>
+    <string name="version_manage_rename">Переименовать профиль</string>
+    <string name="version_manage_rename_message">Переименовать профиль</string>
+    <string name="version_manage_rename_new">Новое название</string>
+    <string name="version_manage_rename_fail">Не удалось переименовать</string>
+    <string name="version_new_profile">Новая папка</string>
+    <string name="version_update">Обновить модпак</string>
+
+    <string name="view_info_visibility">Видимость</string>
+    <string name="view_info_visibility_always">Всегда виден</string>
+    <string name="view_info_visibility_game">Видно в игре</string>
+    <string name="view_info_visibility_menu">Виден вне игры</string>
+    <string name="view_info_x">Позиция X</string>
+    <string name="view_info_y">Позиция Y</string>
+    <string name="view_info_size_type">Отображать в</string>
+    <string name="view_info_size_type_percentage">% размере</string>
+    <string name="view_info_size_type_absolute">DP размере</string>
+    <string name="view_info_width">Ширина</string>
+    <string name="view_info_height">Высота</string>
+    <string name="view_info_width_reference">Ширина по</string>
+    <string name="view_info_height_reference">Высота по</string>
+    <string name="view_info_size">Размер</string>
+    <string name="view_info_reference">Размер по</string>
+    <string name="view_info_reference_width">Ширине экрана</string>
+    <string name="view_info_reference_height">Высоте экрана</string>
+
+    <string name="world">Миры</string>
+    <string name="world_add">Добавить мир (.zip)</string>
+    <string name="world_datapack">Управление дата-паками</string>
+    <string name="world_datapack_1_13">Только Minecraft 1.13 или новее поддерживает дата-паки.</string>
+    <string name="world_description">%s. Последнее воспроизведение: %s. Версия игры: %s.</string>
+    <string name="world_download">Загрузить мир</string>
+    <string name="world_export">Экспорт мира</string>
+    <string name="world_export_title">Выберите каталог для этого экспортированного мира</string>
+    <string name="world_export_location">Экспортировать</string>
+    <string name="world_export_wizard">Экспорт мира %s</string>
+    <string name="world_extension">Архив мира</string>
+    <string name="world_game_version">Версия игры</string>
+    <string name="world_import_already_exists">Этот мир уже существует.</string>
+    <string name="world_import_choose">Выберите архив сохранения, который вы хотите импортировать</string>
+    <string name="world_import_failed">Невозможно загрузить этот мир: %s</string>
+    <string name="world_import_invalid">Не удалось загрузить сохранение.</string>
+    <string name="world_info_title">Мир %s — Информация</string>
+    <string name="world_info_basic">Основная информация</string>
+    <string name="world_info_allow_cheats">Читы</string>
+    <string name="world_info_dimension_the_nether">Нижний мир</string>
+    <string name="world_info_dimension_the_end">Хардкор</string>
+    <string name="world_info_difficulty">Сложность</string>
+    <string name="world_info_difficulty_peaceful">Мирный</string>
+    <string name="world_info_difficulty_easy">Легкий</string>
+    <string name="world_info_difficulty_normal">Нормальный</string>
+    <string name="world_info_difficulty_hard">Сложный</string>
+    <string name="world_info_game_version">Версия игры</string>
+    <string name="world_info_last_played">Последняя игра</string>
+    <string name="world_info_generate_features">Создание структур</string>
+    <string name="world_info_player">Информация об игроке</string>
+    <string name="world_info_player_food_level">Уровень голода</string>
+    <string name="world_info_player_game_type">Игровой режим</string>
+    <string name="world_info_player_game_type_adventure">Приключение</string>
+    <string name="world_info_player_game_type_creative">Творческий</string>
+    <string name="world_info_player_game_type_spectator">Зритель</string>
+    <string name="world_info_player_game_type_survival">Выживание</string>
+    <string name="world_info_player_health">Здоровье</string>
+    <string name="world_info_player_last_death_location">Место последней смерти</string>
+    <string name="world_info_player_location">Местоположение</string>
+    <string name="world_info_player_spawn">Место появления</string>
+    <string name="world_info_player_xp_level">Уровень опыта</string>
+    <string name="world_info_random_seed">Сид</string>
+    <string name="world_info_time">Время игры</string>
+    <string name="world_info_time_format">%s дней</string>
+    <string name="world_manage">Миры / Датапаки</string>
+    <string name="world_name">Название мира</string>
+    <string name="world_name_enter">Введите название мира</string>
+    <string name="world_reveal">Показать в проводнике</string>
+    <string name="world_show_all">Показать все</string>
+
+    <string name="install_apk">Установить лаунчер</string>
+    <string name="modpack_download_warn_title">Предупреждение</string>
+    <string name="modpack_download_warn_msg">Большинство модпаков разработаны для ПК, поэтому возможны сбои. Разработчик лаунчера не несет ответственности за совместимость модпаков.</string>
+    <string name="view_incompatible">Несовместимые моды</string>
+    <string name="guide_theme2">Если текст справа отображается нечетко, нажмите сюда, затем «Настройки лаунчера» и выберите «Тема 2»</string>
+    <string name="joystick_l">Левый стик</string>
+    <string name="gamepad_dpad">Крестовина</string>
+    <string name="gamepad_button_binding">Привязка кнопок геймпада</string>
+    <string name="joystick_r">Правый стик</string>
+    <string name="message_vulkan_driver_system">Текущий GPU Adreno, не рекомендуется включать эту опцию.</string>
+    <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
+    <string name="installed">Установлено</string>
+    
+    <string name="shaderpack">Шейдеры</string>
+</resources>

@@ -61,6 +61,7 @@ public class ProfileListAdapter extends FCLAdapter {
         viewHolder.parent.setBackground(profile == Profiles.getSelectedProfile() ? getContext().getDrawable(R.drawable.bg_container_transparent_selected) : getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
         viewHolder.name.setText(profile.getName());
         viewHolder.path.setText(profile.getGameDir().getAbsolutePath());
+        viewHolder.path.setSelected(true);
         viewHolder.parent.setOnClickListener(view1 -> {
             Profiles.setSelectedProfile(profile);
             notifyDataSetChanged();

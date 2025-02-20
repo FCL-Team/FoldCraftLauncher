@@ -32,10 +32,11 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.account.AccountListItem;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -67,6 +68,8 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -132,7 +135,8 @@ public final class LauncherHelper {
                                     ModpackConfiguration<?> configuration = ModpackHelper.readModpackConfiguration(repository.getModpackConfiguration(selectedVersion));
                                     ModpackProvider provider = ModpackHelper.getProviderByType(configuration.getType());
                                     if (provider == null) return null;
-                                    else return provider.createCompletionTask(dependencyManager, selectedVersion);
+                                    else
+                                        return provider.createCompletionTask(dependencyManager, selectedVersion);
                                 } catch (IOException e) {
                                     return null;
                                 }
@@ -141,12 +145,18 @@ public final class LauncherHelper {
                     );
                 }).withStage("launch.state.dependencies")
                 .thenComposeAsync(() -> {
-                    if (!new File(FCLPath.MULTIPLAYER_FIX_PATH).exists()) {
-                        try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MultiplayerFix.jar")) {
-                            Files.copy(input, new File(FCLPath.MULTIPLAYER_FIX_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        } catch (IOException e) {
-                            Logging.LOG.log(Level.WARNING, "Unable to unpack MultiplayerFix.jar", e);
-                        }
+                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibPatcher.jar")) {
+                        Files.copy(input, new File(FCLPath.LIB_PATCHER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
+                    }
+                    return null;
+                })
+                .thenComposeAsync(() -> {
+                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLaunchWrapper.jar")) {
+                        Files.copy(input, new File(FCLPath.MIO_LAUNCH_WRAPPER).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
                     }
                     return null;
                 })
@@ -154,22 +164,30 @@ public final class LauncherHelper {
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
                     LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), javaAgents);
-                    return new FCLGameLauncher(
+                    FCLGameLauncher launcher = new FCLGameLauncher(
                             context,
                             repository,
                             version.get(),
                             authInfo,
                             launchOptions
                     );
+                    version.get().getLibraries().forEach(library -> {
+                        if (library.getName().startsWith("net.java.dev.jna:jna:")) {
+                            launcher.setJnaVersion(library.getVersion());
+                        }
+                    });
+                    return launcher;
                 }).thenComposeAsync(launcher -> { // launcher is prev task's result
                     return Task.supplyAsync(launcher::launch);
                 }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                    CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                     Intent intent = new Intent(context, JVMActivity.class);
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
                     fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                     fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                     fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
                     fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
+                    checkMod(fclBridge);
                     JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
                     Bundle bundle = new Bundle();
                     bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
@@ -191,7 +209,7 @@ public final class LauncherHelper {
                 launchingStepsPane.dismiss();
                 if (!success) {
                     Exception ex = executor.getException();
-                    if (!(ex instanceof CancellationException)) {
+                    if (ex != null && !(ex instanceof CancellationException)) {
                         Schedulers.androidUIThread().execute(() -> {
                             String message;
                             if (ex instanceof ModpackCompletionException) {
@@ -266,6 +284,30 @@ public final class LauncherHelper {
         executor.start();
     }
 
+    private void checkMod(FCLBridge bridge) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().forEach(mod -> {
+                if (!mod.isActive()) {
+                    return;
+                }
+                sb.append(mod.getFileName());
+                sb.append(" | ");
+                sb.append(mod.getId());
+                sb.append(" | ");
+                sb.append(mod.getVersion());
+                sb.append(" | ");
+                sb.append(mod.getModLoaderType());
+                sb.append("\n");
+                if (mod.getId().equals("touchcontroller")) {
+                    bridge.setHasTouchController(true);
+                }
+            });
+            bridge.setModSummary(sb.toString());
+        } catch (Throwable ignore) {
+        }
+    }
+
     private static Task<JavaVersion> checkGameState(Context context, VersionSetting setting, Version version) {
         if (setting.isNotCheckJVM()) {
             return Task.composeAsync(() -> setting.getJavaVersion(version))
@@ -275,25 +317,25 @@ public final class LauncherHelper {
         return Task.composeAsync(() -> setting.getJavaVersion(version))
                 .thenComposeAsync(javaVersion -> Task.allOf(Task.completed(javaVersion), Task.supplyAsync(() -> JavaVersion.getSuitableJavaVersion(version))))
                 .thenComposeAsync(Schedulers.androidUIThread(), javaVersions -> {
-            JavaVersion javaVersion = (JavaVersion) javaVersions.get(0);
-            JavaVersion suggestedJavaVersion = (JavaVersion) javaVersions.get(1);
-            if (setting.getJava().equals(JavaVersion.JAVA_AUTO.getVersionName()) || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
-                return Task.completed(suggestedJavaVersion);
-            }
+                    JavaVersion javaVersion = (JavaVersion) javaVersions.get(0);
+                    JavaVersion suggestedJavaVersion = (JavaVersion) javaVersions.get(1);
+                    if (setting.getJava().equals(JavaVersion.JAVA_AUTO.getVersionName()) || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
+                        return Task.completed(suggestedJavaVersion);
+                    }
 
-            CompletableFuture<JavaVersion> future = new CompletableFuture<>();
-            Runnable continueAction = () -> future.complete(javaVersion);
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setCancelable(false);
-            builder.setMessage(context.getString(R.string.launch_error_java));
-            builder.setPositiveButton(context.getString(R.string.launch_error_java_auto), () -> {
-                setting.setJava(JavaVersion.JAVA_AUTO.getVersionName());
-                future.complete(suggestedJavaVersion);
-            });
-            builder.setNegativeButton(context.getString(R.string.launch_error_java_continue), continueAction::run);
-            builder.create().show();
-            return Task.fromCompletableFuture(future);
-        }).withStage("launch.state.java");
+                    CompletableFuture<JavaVersion> future = new CompletableFuture<>();
+                    Runnable continueAction = () -> future.complete(javaVersion);
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                    builder.setCancelable(false);
+                    builder.setMessage(context.getString(R.string.launch_error_java));
+                    builder.setPositiveButton(context.getString(R.string.launch_error_java_auto), () -> {
+                        setting.setJava(JavaVersion.JAVA_AUTO.getVersionName());
+                        future.complete(suggestedJavaVersion);
+                    });
+                    builder.setNegativeButton(context.getString(R.string.launch_error_java_continue), continueAction::run);
+                    builder.create().show();
+                    return Task.fromCompletableFuture(future);
+                }).withStage("launch.state.java");
     }
 
     private static Task<AuthInfo> logIn(Context context, Account account) {
@@ -303,7 +345,12 @@ public final class LauncherHelper {
             } catch (CredentialExpiredException e) {
                 LOG.log(Level.INFO, "Credential has expired", e);
 
-                return Task.completed(AccountListItem.logIn(account));
+                CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
+                Schedulers.androidUIThread().execute(() -> {
+                    TipReLoginLoginDialog dialog = new TipReLoginLoginDialog(context, account, future);
+                    dialog.show();
+                });
+                return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             } catch (AuthenticationException e) {
                 LOG.log(Level.WARNING, "Authentication failed, try skipping refresh", e);
 
@@ -354,6 +401,43 @@ public final class LauncherHelper {
                 }
             }
             if (view == cancel) {
+                future.completeExceptionally(new CancellationException());
+            }
+            dismiss();
+        }
+    }
+
+    static class TipReLoginLoginDialog extends FCLDialog implements View.OnClickListener {
+
+        private final Account account;
+        private final CompletableFuture<Task<AuthInfo>> future;
+
+        private FCLButton skip;
+        private FCLButton ok;
+
+        public TipReLoginLoginDialog(@NonNull Context context, Account account, CompletableFuture<Task<AuthInfo>> future) {
+            super(context);
+            this.account = account;
+            this.future = future;
+            setContentView(R.layout.dialog_tip_relogin);
+            setCancelable(false);
+
+            skip = findViewById(R.id.skip);
+            ok = findViewById(R.id.ok);
+            skip.setOnClickListener(this);
+            ok.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (view == skip) {
+                try {
+                    future.complete(Task.completed(account.playOffline()));
+                } catch (AuthenticationException e2) {
+                    future.completeExceptionally(e2);
+                }
+            }
+            if (view == ok) {
                 future.completeExceptionally(new CancellationException());
             }
             dismiss();

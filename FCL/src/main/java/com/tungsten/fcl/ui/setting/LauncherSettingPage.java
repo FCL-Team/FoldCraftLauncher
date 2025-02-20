@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -62,8 +63,19 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton clearCache;
     private FCLButton exportLog;
     private FCLButton theme;
+    private FCLButton theme2;
+    private FCLButton ltBackground;
+    private FCLButton dkBackground;
+    private FCLButton cursor;
+    private FCLButton menuIcon;
     private FCLButton resetTheme;
+    private FCLButton resetTheme2;
+    private FCLButton resetLtBackground;
+    private FCLButton resetDkBackground;
+    private FCLButton resetCursor;
+    private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
+    private FCLSwitch closeSkinModel;
     private FCLSeekBar animationSpeed;
     private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
@@ -84,8 +96,19 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
         theme = findViewById(R.id.theme);
+        theme2 = findViewById(R.id.theme2);
+        ltBackground = findViewById(R.id.background_lt);
+        dkBackground = findViewById(R.id.background_dk);
+        cursor = findViewById(R.id.cursor);
+        menuIcon = findViewById(R.id.menu_icon);
         resetTheme = findViewById(R.id.reset_theme);
+        resetTheme2 = findViewById(R.id.reset_theme2);
+        resetLtBackground = findViewById(R.id.reset_background_lt);
+        resetDkBackground = findViewById(R.id.reset_background_dk);
+        resetCursor = findViewById(R.id.reset_cursor);
+        resetMenuIcon = findViewById(R.id.reset_menu_icon);
         ignoreNotch = findViewById(R.id.ignore_notch);
+        closeSkinModel = findViewById(R.id.close_skin_model);
         animationSpeed = findViewById(R.id.animation_speed);
         animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
@@ -98,12 +121,25 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         clearCache.setOnClickListener(this);
         exportLog.setOnClickListener(this);
         theme.setOnClickListener(this);
+        theme2.setOnClickListener(this);
+        ltBackground.setOnClickListener(this);
+        dkBackground.setOnClickListener(this);
+        cursor.setOnClickListener(this);
+        menuIcon.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
+        resetTheme2.setOnClickListener(this);
+        resetLtBackground.setOnClickListener(this);
+        resetDkBackground.setOnClickListener(this);
+        resetCursor.setOnClickListener(this);
+        resetMenuIcon.setOnClickListener(this);
 
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add(getContext().getString(R.string.settings_launcher_language_system));
         languageList.add(getContext().getString(R.string.settings_launcher_language_english));
         languageList.add(getContext().getString(R.string.settings_launcher_language_simplified_chinese));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_russian));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_brazilian_portuguese));
+        languageList.add(getContext().getString(R.string.settings_launcher_language_persian));
         ArrayAdapter<String> languageAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, languageList);
         languageAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         language.setAdapter(languageAdapter);
@@ -112,6 +148,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         ignoreNotch.setOnCheckedChangeListener(this);
+
+        closeSkinModel.setChecked(ThemeEngine.getInstance().getTheme().isCloseSkinModel());
+        closeSkinModel.setOnCheckedChangeListener(this);
 
         animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
         animationSpeed.addProgressListener();
@@ -233,7 +272,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor, true);
                 }
 
                 @Override
@@ -243,8 +282,144 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
+        if (v == theme2) {
+            FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor2(), new FCLColorPickerDialog.Listener() {
+                @Override
+                public void onColorChanged(int color) {
+                    ThemeEngine.getInstance().applyColor2(color);
+                }
+
+                @Override
+                public void onPositive(int destColor) {
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor, true);
+                }
+
+                @Override
+                public void onNegative(int initColor) {
+                    ThemeEngine.getInstance().applyColor2(initColor);
+                }
+            });
+            dialog.show();
+        }
+        if (v == ltBackground) {
+            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setLibMode(LibMode.FILE_CHOOSER);
+            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+            ArrayList<String> suffix = new ArrayList<>();
+            suffix.add(".png");
+            builder.setSuffix(suffix);
+            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
+                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, path, null);
+                }
+            }));
+        }
+        if (v == dkBackground) {
+            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setLibMode(LibMode.FILE_CHOOSER);
+            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+            ArrayList<String> suffix = new ArrayList<>();
+            suffix.add(".png");
+            builder.setSuffix(suffix);
+            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
+                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    }
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, path);
+                }
+            }));
+        }
+        if (v == cursor) {
+            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setLibMode(LibMode.FILE_CHOOSER);
+            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+            ArrayList<String> suffix = new ArrayList<>();
+            suffix.add(".png");
+            builder.setSuffix(suffix);
+            builder.create().browse(getActivity(), RequestCodes.SELECT_CURSOR_CODE, ((requestCode, resultCode, data) -> {
+                if (requestCode == RequestCodes.SELECT_CURSOR_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    if (AndroidUtils.isDocUri(uri)) {
+                        AndroidUtils.copyFile(getActivity(), uri, new File(FCLPath.FILES_DIR, "cursor.png"));
+                    } else {
+                        try {
+                            FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "cursor.png"));
+                        } catch (IOException ignore) {
+                        }
+                    }
+                }
+            }));
+        }
+        if (v == menuIcon) {
+            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
+            builder.setLibMode(LibMode.FILE_CHOOSER);
+            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
+            ArrayList<String> suffix = new ArrayList<>();
+            suffix.add(".png");
+            suffix.add(".gif");
+            builder.setSuffix(suffix);
+            builder.create().browse(getActivity(), RequestCodes.SELECT_CURSOR_CODE, ((requestCode, resultCode, data) -> {
+                if (requestCode == RequestCodes.SELECT_CURSOR_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                    String path = FileBrowser.getSelectedFiles(data).get(0);
+                    Uri uri = Uri.parse(path);
+                    String type = getContext().getContentResolver().getType(uri);
+                    if (type != null) {
+                        if (type.contains("png")) {
+                            type = "png";
+                        } else if (type.contains("gif")) {
+                            type = "gif";
+                        }
+                    } else {
+                        type = "png";
+                    }
+                    if (AndroidUtils.isDocUri(uri)) {
+                        AndroidUtils.copyFile(getActivity(), uri, new File(FCLPath.FILES_DIR, "menu_icon." + type));
+                    } else {
+                        try {
+                            FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "menu_icon." + type));
+                        } catch (IOException ignore) {
+                        }
+                    }
+                }
+            }));
+        }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), null);
+            ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+        }
+        if (v == resetTheme2) {
+            ThemeEngine.getInstance().applyAndSave2(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+        }
+        if (v == resetLtBackground) {
+            new Thread(() -> {
+                if (!new File(FCLPath.LT_BACKGROUND_PATH).delete() && new File(FCLPath.LT_BACKGROUND_PATH).exists())
+                    Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
+
+                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, null));
+            }).start();
+        }
+        if (v == resetDkBackground) {
+            new Thread(() -> {
+                if (!new File(FCLPath.DK_BACKGROUND_PATH).delete() && new File(FCLPath.DK_BACKGROUND_PATH).exists())
+                    Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
+
+                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, null));
+            }).start();
+        }
+        if (v == resetCursor) {
+            new File(FCLPath.FILES_DIR, "cursor.png").delete();
+        }
+        if (v == resetMenuIcon) {
+            new File(FCLPath.FILES_DIR, "menu_icon.png").delete();
+            new File(FCLPath.FILES_DIR, "menu_icon.gif").delete();
         }
     }
 
@@ -266,6 +441,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (buttonView == ignoreNotch) {
             ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), isChecked);
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        } else if (buttonView == closeSkinModel) {
+            ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
+            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme(), true);
         }
     }
 }

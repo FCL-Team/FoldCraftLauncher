@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crash);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         config = CrashReporter.getConfigFromIntent(getIntent());
 
@@ -75,11 +77,10 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                 File file = File.createTempFile("crash_report", ".txt");
                 Files.write(file.toPath(), CrashReporter.getAllErrorDetailsFromIntent(this, getIntent()).getBytes(StandardCharsets.UTF_8));
                 Uri uri = FileProvider.getUriForFile(this, getString(R.string.file_browser_provider), file);
-                intent.setType("*/*");
+                intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
                 startActivity(Intent.createChooser(intent, getString(R.string.crash_reporter_share)));
             } catch (IOException e) {
                 e.printStackTrace();

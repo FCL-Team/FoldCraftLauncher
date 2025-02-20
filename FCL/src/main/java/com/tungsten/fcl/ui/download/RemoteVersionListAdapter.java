@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion;
 import com.tungsten.fclcore.download.fabric.FabricRemoteVersion;
@@ -23,11 +25,13 @@ import com.tungsten.fclcore.download.quilt.QuiltAPIRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RemoteVersionListAdapter extends FCLAdapter {
 
@@ -46,6 +50,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         FCLTextView version;
         FCLTextView tag;
         FCLTextView date;
+        FCLImageButton wiki;
     }
 
     @Override
@@ -70,6 +75,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder.version = view.findViewById(R.id.version);
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.date = view.findViewById(R.id.date);
+            viewHolder.wiki = view.findViewById(R.id.wiki);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -80,10 +86,17 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         viewHolder.version.setText(remoteVersion.getSelfVersion());
         viewHolder.tag.setBackground(getContext().getDrawable(R.drawable.bg_container_white));
         viewHolder.tag.setAutoBackgroundTint(true);
-        viewHolder.tag.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
+        viewHolder.tag.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
         viewHolder.tag.setText(getTag(remoteVersion));
         viewHolder.date.setVisibility(remoteVersion.getReleaseDate() == null ? View.GONE : View.VISIBLE);
         viewHolder.date.setText(remoteVersion.getReleaseDate() == null ? "" : formatDateTime(getContext(), remoteVersion.getReleaseDate()));
+        if (remoteVersion instanceof GameRemoteVersion && (remoteVersion.getVersionType() == RemoteVersion.Type.RELEASE || remoteVersion.getVersionType() == RemoteVersion.Type.SNAPSHOT)) {
+            viewHolder.wiki.setVisibility(View.VISIBLE);
+            viewHolder.wiki.setOnClickListener(v -> AndroidUtils.openLink(getContext(), remoteVersion.getVersionType() == RemoteVersion.Type.RELEASE ? String.format(getContext().getString(R.string.wiki_release), remoteVersion.getGameVersion()) : String.format(getContext().getString(R.string.wiki_snapshot), remoteVersion.getGameVersion())));
+        } else {
+            viewHolder.wiki.setVisibility(View.GONE);
+        }
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 
@@ -128,6 +141,10 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         } else {
             return remoteVersion.getGameVersion();
         }
+    }
+
+    public List<RemoteVersion> getList() {
+        return list;
     }
 
     public interface OnRemoteVersionSelectListener {

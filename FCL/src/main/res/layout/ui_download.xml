@@ -50,6 +50,11 @@
             android:layout_height="match_parent"
             android:text="@string/world"/>
 
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/shaderpack"/>
+
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLUILayout

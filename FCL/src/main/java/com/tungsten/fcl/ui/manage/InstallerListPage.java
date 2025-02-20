@@ -3,7 +3,9 @@ package com.tungsten.fcl.ui.manage;
 import static com.tungsten.fcl.ui.download.InstallersPage.alertFailureMessage;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -21,6 +23,7 @@ import com.tungsten.fcl.ui.download.InstallerVersionPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.event.Event;
@@ -41,6 +44,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -82,7 +86,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
         CompletableFuture.supplyAsync(() -> {
             gameVersion = profile.getRepository().getGameVersion(version).orElse(null);
 
-            return LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(versionId));
+            return LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(versionId), gameVersion);
         }).thenAcceptAsync(analyzer -> {
             Function<String, Runnable> removeAction = libraryId -> () -> profile.getDependency().removeLibraryAsync(version, libraryId)
                     .thenComposeAsync(profile.getRepository()::saveAsync)
@@ -101,8 +105,15 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
             for (InstallerItem installerItem : group.getLibraries()) {
                 String libraryId = installerItem.getLibraryId();
                 String libraryVersion = analyzer.getVersion(libraryId).orElse(null);
+                boolean libraryConfigurable = libraryVersion != null && analyzer.getLibraryStatus(libraryId) == LibraryAnalyzer.LibraryMark.LibraryStatus.CLEAR;
+
+                // Skip fabric-api and quilt-api
+                if (libraryId.contains("fabric-api") || libraryId.contains("quilt-api")) {
+                    continue;
+                }
+
                 installerItem.libraryVersion.set(libraryVersion);
-                installerItem.upgradable.set(libraryVersion != null);
+                installerItem.upgradable.set(libraryConfigurable);
                 installerItem.installable.set(true);
                 installerItem.action.set(() -> {
                     InstallerVersionPage page = new InstallerVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
@@ -121,7 +132,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     });
                     ManagePageManager.getInstance().showTempPage(page);
                 });
-                boolean removable = !"game".equals(libraryId) && libraryVersion != null;
+                boolean removable = !LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId().equals(libraryId) && libraryConfigurable;
                 installerItem.removable.set(removable);
                 if (removable) {
                     Runnable action = removeAction.apply(libraryId);
@@ -143,6 +154,10 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
         builder.create().browse(getActivity(), RequestCodes.SELECT_AUTO_INSTALLER_CODE, (requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_AUTO_INSTALLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (new File(path).exists()) {
                     doInstallOffline(new File(path));
                 }

@@ -17,11 +17,14 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     private UILoadingCallback callback;
 
+    private boolean init = false;
+
     public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
         super(context);
         this.parent = parent;
         setContentView(id, () -> {
             onCreate();
+            init = true;
             if (callback != null) {
                 callback.onLoad();
             }
@@ -46,13 +49,17 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     @Override
     public void onStart() {
         super.onStart();
-        DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.ui_show);
+        if (init) {
+            DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.ui_show);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        DisplayAnimUtils.hideViewWithAnim(getContentView(), R.anim.ui_hide);
+        if (init) {
+            DisplayAnimUtils.hideViewWithAnim(getContentView(), R.anim.ui_hide);
+        }
     }
 
     @Override
@@ -78,5 +85,8 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     public void addLoadingCallback(UILoadingCallback callback) {
         this.callback = callback;
+        if (init) {
+            callback.onLoad();
+        }
     }
 }

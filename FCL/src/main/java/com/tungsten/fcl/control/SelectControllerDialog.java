@@ -53,7 +53,7 @@ public class SelectControllerDialog extends FCLDialog implements View.OnClickLis
         this.selectedController.set(selectedController);
     }
 
-    public SelectControllerDialog(@NonNull Context context, String name, Callback callback) {
+    public SelectControllerDialog(@NonNull Context context, String id, Callback callback) {
         super(context);
         this.callback = callback;
         setContentView(R.layout.dialog_select_controller);
@@ -64,7 +64,7 @@ public class SelectControllerDialog extends FCLDialog implements View.OnClickLis
 
         boolean set = true;
         for (Controller controller : Controllers.getControllers()) {
-            if (controller.getName().equals(name)) {
+            if (controller.getId().equals(id)) {
                 setSelectedController(controller);
                 set = false;
             }

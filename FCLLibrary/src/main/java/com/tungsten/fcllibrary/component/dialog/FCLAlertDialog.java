@@ -3,6 +3,7 @@ package com.tungsten.fcllibrary.component.dialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
+import android.text.Spanned;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -120,6 +121,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     }
 
     public void setMessage(CharSequence message) {
+        this.message.setText(message);
+        checkHeight();
+    }
+
+    public void setMessage(Spanned message) {
         this.message.setText(message);
         checkHeight();
     }

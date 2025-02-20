@@ -8,15 +8,16 @@
 #include <android/native_window.h>
 #include "fcl_event.h"
 
+typedef void (* FCLinjectorfun)();
+
 ANativeWindow* fclGetNativeWindow(void);
 int fclWaitForEvent(int timeout);
 int fclPollEvent(FCLEvent* event);
 int fclGetEventFd(void);
-void fclLog(const char *buffer);
-void fclSetInjectorMode(int mode);
-int fclGetInjectorMode();
-void fclSetHitResultType(int type);
 void fclSetCursorMode(int mode);
+
+void fclSetInjectorCallback(FCLinjectorfun callback);
+void fclSetHitResultType(int type);
 void fclSetPrimaryClipString(const char* string);
 const char* fclGetPrimaryClipString(void);
 

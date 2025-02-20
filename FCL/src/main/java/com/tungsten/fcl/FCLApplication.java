@@ -18,19 +18,23 @@ public class FCLApplication extends Application implements Application.ActivityL
         // enabledStrictMode();
         super.onCreate();
         this.registerActivityLifecycleCallbacks(this);
+//        PerfUtil.install();
     }
 
     public static Activity getCurrentActivity() {
-        return currentActivity.get();
+        if (currentActivity != null) {
+            return currentActivity.get();
+        }
+        return null;
     }
 
     private void enabledStrictMode() {
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectNetwork()
                 .detectCustomSlowCalls()
                 .detectDiskReads()
-                .detectDiskWrites() 
+                .detectDiskWrites()
                 .detectAll()
-                .penaltyLog() 
+                .penaltyLog()
                 .build());
 
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects()
@@ -43,7 +47,7 @@ public class FCLApplication extends Application implements Application.ActivityL
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
-
+        currentActivity = new WeakReference<>(activity);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class FCLApplication extends Application implements Application.ActivityL
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-        if (currentActivity.get() == activity) {
+        if (currentActivity != null && currentActivity.get() == activity) {
             currentActivity = null;
         }
     }

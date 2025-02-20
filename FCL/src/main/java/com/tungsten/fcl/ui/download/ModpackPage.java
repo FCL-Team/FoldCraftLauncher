@@ -8,6 +8,7 @@ import android.widget.ScrollView;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -72,7 +73,13 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v == install) {
-            onInstall();
+            FCLAlertDialog dialog = new FCLAlertDialog(getContext());
+            dialog.setTitle(R.string.modpack_download_warn_title);
+            dialog.setMessage(getContext().getString(R.string.modpack_download_warn_msg));
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setPositiveButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), this::onInstall);
+            dialog.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_negative), null);
+            dialog.show();
         }
         if (v == describe) {
             onDescribe();

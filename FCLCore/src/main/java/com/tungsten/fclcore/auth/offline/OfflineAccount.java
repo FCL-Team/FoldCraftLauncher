@@ -38,7 +38,6 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactInfo;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactProvider;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
-import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
@@ -100,14 +99,7 @@ public class OfflineAccount extends Account {
     }
 
     protected boolean loadAuthlibInjector(Skin skin) {
-        if (skin == null) return false;
-        if (skin.getType() == Skin.Type.DEFAULT) return false;
-        TextureModel defaultModel = TextureModel.detectUUID(getUUID());
-        if (skin.getType() == Skin.Type.ALEX && defaultModel == TextureModel.ALEX ||
-            skin.getType() == Skin.Type.STEVE && defaultModel == TextureModel.STEVE) {
-            return false;
-        }
-        return true;
+        return skin != null && skin.getType() != Skin.Type.DEFAULT;
     }
 
     @Override

@@ -37,6 +37,7 @@ import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
@@ -49,11 +50,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @JsonAdapter(Controller.Serializer.class)
 public class Controller implements Cloneable, Observable {
+
+    private final SimpleStringProperty id;
+
+    public StringProperty idProperty() {
+        return id;
+    }
+
+    public String getId() {
+        return id.get();
+    }
+
+    public void setId(String id) {
+        this.id.set(id);
+    }
 
     private final SimpleStringProperty name;
 
@@ -81,6 +98,20 @@ public class Controller implements Cloneable, Observable {
 
     public void setVersion(String version) {
         this.version.set(version);
+    }
+
+    private final SimpleIntegerProperty versionCode;
+
+    public IntegerProperty versionCodeProperty() {
+        return versionCode;
+    }
+
+    public int getVersionCode() {
+        return versionCode.get();
+    }
+
+    public void setVersionCode(int versionCode) {
+        this.versionCode.set(versionCode);
     }
 
     private final SimpleStringProperty author;
@@ -132,28 +163,38 @@ public class Controller implements Cloneable, Observable {
     }
 
     public Controller(String name) {
-        this(name, "");
+        this(generateRandomId(), name);
     }
 
-    public Controller(String name, String version) {
-        this(name, version, "");
+    public Controller(String id, String name) {
+        this(id, name, "");
     }
 
-    public Controller(String name, String version, String author) {
-        this(name, version, author, "");
+    public Controller(String id, String name, String version) {
+        this(id, name, version, 1);
     }
 
-    public Controller(String name, String version, String author, String description) {
-        this(name, version, author, description, Constants.CONTROLLER_VERSION);
+    public Controller(String id, String name, String version, int versionCode) {
+        this(id, name, version, versionCode, "");
     }
 
-    public Controller(String name, String version, String author, String description, int controllerVersion) {
-        this(name, version, author, description, controllerVersion, FXCollections.observableArrayList(new ArrayList<>()));
+    public Controller(String id, String name, String version, int versionCode, String author) {
+        this(id, name, version, versionCode, author, "");
     }
 
-    public Controller(String name, String version, String author, String description, int controllerVersion, ObservableList<ControlViewGroup> viewGroups) {
+    public Controller(String id, String name, String version, int versionCode, String author, String description) {
+        this(id, name, version, versionCode, author, description, Constants.CONTROLLER_VERSION);
+    }
+
+    public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion) {
+        this(id, name, version, versionCode, author, description, controllerVersion, FXCollections.observableArrayList(new ArrayList<>()));
+    }
+
+    public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion, ObservableList<ControlViewGroup> viewGroups) {
+        this.id = new SimpleStringProperty(this, "id", id);
         this.name = new SimpleStringProperty(this, "name", name);
         this.version = new SimpleStringProperty(this, "version", version);
+        this.versionCode = new SimpleIntegerProperty(this, "versionCode", versionCode);
         this.author = new SimpleStringProperty(this, "author", author);
         this.description = new SimpleStringProperty(this, "description", description);
         this.viewGroups = viewGroups;
@@ -161,6 +202,10 @@ public class Controller implements Cloneable, Observable {
         this.controllerVersion.set(controllerVersion);
 
         addPropertyChangedListener(onInvalidating(this::invalidate));
+    }
+
+    public static String generateRandomId() {
+        return UUID.randomUUID().toString().substring(0, 8);
     }
 
     public void addViewGroup(ControlViewGroup viewGroup) {
@@ -200,8 +245,10 @@ public class Controller implements Cloneable, Observable {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("id", getId())
                 .append("name", getName())
                 .append("version", getVersion())
+                .append("versionCode", getVersionCode())
                 .append("author", getAuthor())
                 .append("description", getDescription())
                 .append("controllerVersion", getControllerVersion())
@@ -209,8 +256,10 @@ public class Controller implements Cloneable, Observable {
     }
 
     private void addPropertyChangedListener(InvalidationListener listener) {
+        id.addListener(listener);
         name.addListener(listener);
         version.addListener(listener);
+        versionCode.addListener(listener);
         author.addListener(listener);
         description.addListener(listener);
         viewGroups.addListener(listener);
@@ -242,40 +291,50 @@ public class Controller implements Cloneable, Observable {
     public Controller clone() {
         ObservableList<ControlViewGroup> viewGroups = FXCollections.observableArrayList(new ArrayList<>());
         viewGroups.addAll(viewGroups().stream().map(ControlViewGroup::clone).collect(Collectors.toList()));
-        return new Controller(getName() + "_clone", getVersion(), getAuthor(), getDescription(), getControllerVersion(), viewGroups);
+        return new Controller(generateRandomId(), getName() + "_clone", getVersion(), getVersionCode(), getAuthor(), getDescription(), getControllerVersion(), viewGroups);
     }
 
     // function
 
     public String getFileName() {
-        return getName() + ".json";
+        return getId() + ".json";
     }
 
-    public void saveToDisk() throws IOException {
-        String str = new GsonBuilder()
-                .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                .setPrettyPrinting()
-                .create().toJson(this);
-        FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
+    public synchronized void saveToDisk(){
+        Schedulers.io().execute(()->{
+            String str = new GsonBuilder()
+                    .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                    .setPrettyPrinting()
+                    .create().toJson(this);
+            try {
+                FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
+            } catch (IOException e) {
+                Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
+            }
+        });
     }
 
-    public void rename(String newName) throws IOException {
-        FileUtils.copyFile(new File(FCLPath.CONTROLLER_DIR, getFileName()), new File(FCLPath.CONTROLLER_DIR, newName + ".json"));
-        new File(FCLPath.CONTROLLER_DIR, getFileName()).delete();
-        setName(newName);
+    public void changeId(String newId) throws IOException {
+        renameFile(getFileName(), newId + ".json");
+        setId(newId);
+    }
+
+    public void renameFile(String oldFileName, String newFileName) throws IOException {
+        FileUtils.copyFile(new File(FCLPath.CONTROLLER_DIR, oldFileName), new File(FCLPath.CONTROLLER_DIR, newFileName));
+        new File(FCLPath.CONTROLLER_DIR, oldFileName).delete();
     }
 
     public void upgrade() {
         this.controllerVersion.set(Constants.CONTROLLER_VERSION);
     }
 
-    public static void showUpgradeDialog(Context context, String name) {
+    public static void showUpgradeDialog(Context context, String name, String id) {
         Schedulers.androidUIThread().execute(() -> {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
             builder.setMessage(String.format(context.getString(R.string.control_upgrade), name));
-            builder.setPositiveButton(() -> Controllers.findControllerByName(name).upgrade());
+            builder.setPositiveButton(() -> Controllers.findControllerById(id).upgrade());
             builder.setNegativeButton(null);
             builder.create().show();
         });
@@ -301,8 +360,10 @@ public class Controller implements Cloneable, Observable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("id", src.getId());
             jsonObject.addProperty("name", src.getName());
             jsonObject.addProperty("version", src.getVersion());
+            jsonObject.addProperty("versionCode", src.getVersionCode());
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
@@ -321,28 +382,35 @@ public class Controller implements Cloneable, Observable {
             JsonObject obj = (JsonObject) json;
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-            String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
-            String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
-            String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
-            String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
+            try {
+                String id = Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(generateRandomId());
+                String name = Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse("Error");
+                String version = Optional.ofNullable(obj.get("version")).map(JsonElement::getAsString).orElse("");
+                int versionCode = Optional.ofNullable(obj.get("versionCode")).map(JsonElement::getAsInt).orElse(1);
+                String author = Optional.ofNullable(obj.get("author")).map(JsonElement::getAsString).orElse("");
+                String description = Optional.ofNullable(obj.get("description")).map(JsonElement::getAsString).orElse("");
 
-            int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
-            if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
-                showIncompatibleDialog(FCLPath.CONTEXT, name);
-                return new Controller("Incompatible Controller - " + name);
+                int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
+                if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
+                    showIncompatibleDialog(FCLPath.CONTEXT, name);
+                    return new Controller("Incompatible Controller - " + name);
+                }
+
+                List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
+                List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
+                ButtonStyles.init();
+                DirectionStyles.init();
+                buttonStyles.forEach(ButtonStyles::addStyle);
+                directionStyles.forEach(DirectionStyles::addStyle);
+                ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
+
+                if (controllerVersion < Constants.CONTROLLER_VERSION) {
+                    showUpgradeDialog(FCLPath.CONTEXT, name, id);
+                }
+                return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
+            } catch (Exception e) {
+                throw new JsonParseException("Controller file may broken!");
             }
-
-            List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {}.getType());
-            List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {}.getType());
-            buttonStyles.forEach(ButtonStyles::addStyle);
-            directionStyles.forEach(DirectionStyles::addStyle);
-            ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>(){}.getType()));
-
-            if (controllerVersion < Constants.CONTROLLER_VERSION) {
-                showUpgradeDialog(FCLPath.CONTEXT, name);
-            }
-
-            return new Controller(name, version, author, description, controllerVersion, viewGroups);
         }
 
     }

@@ -1,14 +1,16 @@
 package com.tungsten.fcllibrary.component.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
@@ -51,14 +53,20 @@ public class FCLPreciseSeekBar extends RelativeLayout {
         init(autoTint, min, max);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     private void init(boolean autoTint, int min, int max) {
         add = new FCLImageButton(getContext());
         minus = new FCLImageButton(getContext());
         seekBar = new FCLSeekBar(getContext());
 
-        add.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_add_24));
-        minus.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_remove_24));
+        int[][] state = {{}};
+        int[] colorSrc = {
+                Color.GRAY
+        };
+        add.setImageDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.ic_baseline_add_24));
+        minus.setImageDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.ic_baseline_remove_24));
+        add.setImageTintList(new ColorStateList(state, colorSrc));
+        minus.setImageTintList(new ColorStateList(state, colorSrc));
+
         add.setNoPadding(true);
         minus.setNoPadding(true);
         setAutoTint(autoTint);

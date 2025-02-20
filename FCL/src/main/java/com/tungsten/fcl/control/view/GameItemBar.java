@@ -55,8 +55,8 @@ public class GameItemBar extends RelativeLayout {
         gameOption = new GameOption(gameMenu.getBridge().getGameDir());
         int width = (int) (gameMenu.getTouchPad().getWidth() * gameMenu.getBridge().getScaleFactor());
         int height = (int) (gameMenu.getTouchPad().getHeight() * gameMenu.getBridge().getScaleFactor());
-        notifySize(gameOption.getGuiScale(width, height) * 20);
-        optionListener = () -> notifySize(gameOption.getGuiScale(width, height) * 20);
+        notifySize(gameOption.getGuiScale(width, height, gameMenu.getMenuSetting().getItemBarScale()) * 20);
+        optionListener = () -> notifySize(gameOption.getGuiScale(width, height, gameMenu.getMenuSetting().getItemBarScale()) * 20);
         gameOption.addGameOptionListener(optionListener);
     }
 
@@ -135,5 +135,9 @@ public class GameItemBar extends RelativeLayout {
             }
         }
         return true;
+    }
+
+    public GameOption.GameOptionListener getOptionListener() {
+        return optionListener;
     }
 }

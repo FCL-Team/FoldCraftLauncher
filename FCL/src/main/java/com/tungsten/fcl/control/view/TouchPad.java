@@ -30,22 +30,17 @@ public class TouchPad extends View {
 
     private GameMenu gameMenu;
 
+
     public void init(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
     }
 
     public TouchPad(Context context) {
-        super(context);
-        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-        init();
+        this(context, null);
     }
 
     public TouchPad(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-        init();
+        this(context, attrs, 0);
     }
 
     public TouchPad(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -121,8 +116,7 @@ public class TouchPad extends View {
             showLineHorizontal = true;
             prefX = pref;
             selfX = self;
-        }
-        else {
+        } else {
             showLineVertical = true;
             prefY = pref;
             selfY = self;
@@ -165,6 +159,9 @@ public class TouchPad extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (gameMenu.getTouchController() != null) {
+            gameMenu.getTouchController().handleTouchEvent(event);
+        }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (gameMenu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK) {
                 gameMenu.getInput().setPointerId(POINTER_ID);

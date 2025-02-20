@@ -46,6 +46,8 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private String serverIp;
     private boolean beGesture;
+    private boolean vulkanDriverSystem;
+    private boolean pojavBigCore;
     private FCLConfig.Renderer renderer;
 
     /**
@@ -163,6 +165,17 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isBeGesture() {
         return beGesture;
+    }
+
+    /**
+     * vulkan Driver System
+     */
+    public boolean isVKDriverSystem() {
+        return vulkanDriverSystem;
+    }
+
+    public boolean isPojavBigCore() {
+        return pojavBigCore;
     }
 
     /**
@@ -294,6 +307,13 @@ public class LaunchOptions implements Serializable {
         }
 
         /**
+         * vulkanDriverSystem
+         */
+        public boolean isVKDriverSystem() {
+            return options.vulkanDriverSystem;
+        }
+
+        /**
          * Renderer
          */
         public FCLConfig.Renderer getRenderer() {
@@ -384,8 +404,18 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
+        public Builder setVkDriverSystem(boolean vulkanDriverSystem) {
+            options.vulkanDriverSystem = vulkanDriverSystem;
+            return this;
+        }
+
         public Builder setRenderer(FCLConfig.Renderer renderer) {
             options.renderer = renderer;
+            return this;
+        }
+
+        public Builder setPojavBigCore(boolean pojavBigCore) {
+            options.pojavBigCore = pojavBigCore;
             return this;
         }
 

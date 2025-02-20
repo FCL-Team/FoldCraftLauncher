@@ -1,121 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/ui_bg_color"
-    android:padding="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/ui_bg_color"
+    android:padding="10dp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintWidth_percent="0.3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintWidth_percent="0.3">
 
-        <TextView
-            android:singleLine="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+        <com.tungsten.fcllibrary.component.view.FCLTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/account_create"
-            android:textSize="11sp" />
-
-        <View
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:text="@string/account_create"
+            android:textSize="11sp"
+            app:use_theme_color="true" />
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/darker_gray" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_marginTop="10dp"
-            android:padding="10dp"
-            android:background="@drawable/bg_container_transparent_clickable"
-            android:focusable="true"
-            android:clickable="true"
             android:id="@+id/offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_gravity="center"
+            <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:background="@drawable/ic_baseline_person_add_24"/>
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_person_add_24"
+                app:use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:singleLine="true"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/account_methods_offline"/>
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/account_methods_offline"
+                app:use_theme_color="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:padding="10dp"
-            android:background="@drawable/bg_container_transparent_clickable"
-            android:focusable="true"
-            android:clickable="true"
             android:id="@+id/microsoft"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_gravity="center"
+            <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:background="@drawable/ic_baseline_microsoft_24"/>
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_microsoft_24"
+                app:use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:singleLine="true"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/account_methods_microsoft"/>
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/account_methods_microsoft"
+                app:use_theme_color="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <ListView
+            android:id="@+id/server_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"
-            android:id="@+id/server_list"
-            android:layout_weight="1"/>
+            android:dividerHeight="0dp" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:padding="10dp"
-            android:background="@drawable/bg_container_transparent_clickable"
-            android:focusable="true"
-            android:clickable="true"
             android:id="@+id/add_login_server"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
 
-            <ImageView
-                android:layout_gravity="center"
+            <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:background="@drawable/ic_baseline_add_24"/>
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_add_24"
+                app:use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:singleLine="true"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/account_create_server"/>
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/account_create_server"
+                app:use_theme_color="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -123,13 +133,13 @@
 
     <ListView
         android:id="@+id/list"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintWidth_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintWidth_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

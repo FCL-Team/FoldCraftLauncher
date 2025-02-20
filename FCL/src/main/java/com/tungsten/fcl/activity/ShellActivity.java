@@ -3,6 +3,10 @@ package com.tungsten.fcl.activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 
@@ -19,7 +23,7 @@ import java.util.Objects;
 
 public class ShellActivity extends FCLActivity {
 
-    private LogWindow logWindow;
+    private EditText logWindow;
     private FCLEditText editText;
     private ShellUtil shellUtil;
 
@@ -29,9 +33,9 @@ public class ShellActivity extends FCLActivity {
         setContentView(R.layout.activity_shell);
         logWindow = findViewById(R.id.shell_log_window);
         editText = findViewById(R.id.shell_input);
-        logWindow.appendLog("Welcome to use Fold Craft Launcher!\n");
-        logWindow.appendLog("Here is the shell command line!\n");
-        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> logWindow.appendLog("\t" + output + "\n"));
+        appendLog("Welcome to use Fold Craft Launcher!\n");
+        appendLog("Here is the shell command line!\n");
+        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> runOnUiThread(() -> appendLog("\t" + output + "\n")));
         shellUtil.start();
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -48,16 +52,49 @@ public class ShellActivity extends FCLActivity {
             public void afterTextChanged(Editable editable) {
                 String cmd = Objects.requireNonNull(editText.getText()).toString();
                 if (cmd.endsWith("\n")) {
-                    logWindow.appendLog("->" + cmd);
+                    appendLog("->" + cmd);
                     editText.setText("");
                     if (cmd.contains("clear")) {
-                        logWindow.cleanLog();
+                        logWindow.setText("");
                         return;
                     }
                     shellUtil.append(cmd);
                 }
             }
         });
+        logWindow.setOnClickListener(v -> {
+            editText.requestFocus();
+        });
+        logWindow.setKeyListener(new KeyListener() {
+            @Override
+            public int getInputType() {
+                return 0;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onKeyOther(View view, Editable text, KeyEvent event) {
+                return true;
+            }
+
+            @Override
+            public void clearMetaKeyState(View view, Editable content, int states) {
+
+            }
+        });
+    }
+
+    private void appendLog(String str) {
+        logWindow.append(str);
     }
 
     @Override
