@@ -106,7 +106,7 @@
             android:id="@+id/right_menu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:background="@color/ui_bg_color"
+            android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintWidth_percent="0.25">
