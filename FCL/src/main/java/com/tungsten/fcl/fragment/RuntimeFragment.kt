@@ -30,6 +30,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
     var java17: Boolean = false
     var java21: Boolean = false
     var jna: Boolean = false
+    var client: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,6 +76,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17")
             java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21")
             jna = RuntimeUtils.isLatest(FCLPath.JNA_PATH, "/assets/app_runtime/jna")
+            client = RuntimeUtils.isLatest(FCLPath.SHARED_COMMON_DIR, "/assets/minecraft")
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -100,6 +102,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 java17State.setBackgroundDrawable(if (java17) stateDone else stateUpdate)
                 java21State.setBackgroundDrawable(if (java21) stateDone else stateUpdate)
                 jnaState.setBackgroundDrawable(if (jna) stateDone else stateUpdate)
+                clientState.setBackgroundDrawable(if (client) stateDone else stateUpdate)
             }
         }
     }
@@ -359,6 +362,28 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                     activity?.runOnUiThread {
                         jnaState.visibility = View.VISIBLE
                         jnaProgress.visibility = View.GONE
+                        refreshDrawables()
+                        check()
+                    }
+                }.start()
+            }
+            if (!client) {
+                clientState.visibility = View.GONE
+                clientProgress.visibility = View.VISIBLE
+                Thread {
+                    try {
+                        RuntimeUtils.install(
+                            context,
+                            FCLPath.SHARED_COMMON_DIR,
+                            "minecraft"
+                        )
+                        client = true
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    activity?.runOnUiThread {
+                        clientState.visibility = View.VISIBLE
+                        clientProgress.visibility = View.GONE
                         refreshDrawables()
                         check()
                     }

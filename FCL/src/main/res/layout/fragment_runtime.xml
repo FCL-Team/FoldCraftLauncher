@@ -386,6 +386,47 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="horizontal">
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/splash_runtime_client"
+                        android:layout_gravity="center"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+                        android:visibility="gone"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:id="@+id/client_progress"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageView
+                        app:auto_src_tint="false"
+                        android:backgroundTint="@android:color/darker_gray"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/client_state"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </ScrollView>
