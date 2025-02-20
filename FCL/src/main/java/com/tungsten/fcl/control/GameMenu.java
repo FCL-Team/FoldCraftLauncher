@@ -439,7 +439,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
         });
 
-        initSeekbar(windowScaleSeekbar, (int) menuSetting.getWindowScale() * 100, observable -> {
+        initSeekbar(windowScaleSeekbar, (int) (menuSetting.getWindowScale() * 100), observable -> {
             double doubleValue = windowScaleSeekbar.progressProperty().get() / 100d;
             menuSetting.setWindowScale(doubleValue);
             int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
