@@ -347,6 +347,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/jar_execute"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:ripple="true" />
 
