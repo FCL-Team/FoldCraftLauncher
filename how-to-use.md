@@ -42,8 +42,7 @@
 
 ## 首次启动的 EULA 页面
 
-文件: `FCL/src/main/java/com/tungsten/fcl/fragment/EulaFragment.java`  
-位置: `EULA_URL`
+文件: `FCL/src/main/assets/eula.txt`
 
 ## 默认主题颜色
 
