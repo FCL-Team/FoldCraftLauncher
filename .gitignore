@@ -25,3 +25,5 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+FCL/src/main/assets/minecraft/*

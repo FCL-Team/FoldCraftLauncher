@@ -47,28 +47,32 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        refresh().start();
+        addLoadingCallback(() -> {
+            refresh().start();
+        });
     }
 
     @Override
     public Task<?> refresh(Object... param) {
-        if (accountListAdapter == null) {
-            ObservableList<AccountListItem> list = new ObservableListBase<AccountListItem>() {
-                @Override
-                public AccountListItem get(int i) {
-                    return new AccountListItem(getContext(), Accounts.getAccounts().get(i));
-                }
+        addLoadingCallback(() -> {
+            if (accountListAdapter == null) {
+                ObservableList<AccountListItem> list = new ObservableListBase<AccountListItem>() {
+                    @Override
+                    public AccountListItem get(int i) {
+                        return new AccountListItem(getContext(), Accounts.getAccounts().get(i));
+                    }
 
-                @Override
-                public int size() {
-                    return Accounts.getAccounts().size();
-                }
-            };
-            accountListAdapter = new AccountListAdapter(getContext(), list);
-            listView.setAdapter(accountListAdapter);
-        } else {
-            accountListAdapter.notifyDataSetChanged();
-        }
+                    @Override
+                    public int size() {
+                        return Accounts.getAccounts().size();
+                    }
+                };
+                accountListAdapter = new AccountListAdapter(getContext(), list);
+                listView.setAdapter(accountListAdapter);
+            } else {
+                accountListAdapter.notifyDataSetChanged();
+            }
+        });
         return Task.runAsync(() -> {
 
         });

@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
     id "org.hidetake.ssh" version "2.11.2"
 }
 
@@ -40,11 +41,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.tungsten.fcl.sweetrice"
+        applicationId "com.tungsten.fcl.neoworld"
         minSdk 26
         targetSdk 34
-        versionCode 1143
-        versionName "1.1.4.3"
+        versionCode 1206
+        versionName "1.2.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -82,7 +83,7 @@ android {
                     println(runtimeDir)
                     def files = fileTree(dir: runtimeDir, include: ['*.tar.xz'])
                     files.forEach { File file ->
-                        if (arch != 'all' && !file.getName().contains(arch) && !file.getName().contains("universal")) {
+                        if (arch != 'all' && !file.getName().contains("universal") && file.getName() != "bin-${arch}.tar.xz" ) {
                             print("delete:${file} :")
                             println(delete(file))
                         }
@@ -99,7 +100,17 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging true
+            pickFirsts += ['**/libbytehook.so']
         }
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    dataBinding {
+        enabled true
+    }
+    buildFeatures {
+        buildConfig true
     }
     splits {
         def arch = System.getProperty("arch", "all")
@@ -117,7 +128,7 @@ android {
                     case 'x86':
                         include 'x86'
                         break
-                    case 'x64':
+                    case 'x86_64':
                         include 'x86_64'
                         break
                 }
@@ -168,17 +179,21 @@ dependencies {
     implementation project(path: ':FCLCore')
     implementation project(path: ':FCLLibrary')
     implementation project(path: ':FCLauncher')
+    implementation 'com.getkeepsafe.taptargetview:taptargetview:1.14.0'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
-    implementation 'org.apache.commons:commons-compress:1.25.0'
+    implementation 'org.apache.commons:commons-compress:1.26.0'
     implementation 'org.tukaani:xz:1.9'
     implementation 'com.github.steveice10:opennbt:1.5'
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation 'top.fifthlight.touchcontroller:proxy-client-android:0.0.2'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
 
 ssh.settings {

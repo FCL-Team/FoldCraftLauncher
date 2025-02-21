@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -26,6 +27,7 @@ public class ModUpdateListAdapter extends FCLAdapter {
         FCLTextView file;
         FCLTextView source;
         FCLTextView desc;
+        BooleanProperty booleanProperty;
     }
 
     @Override
@@ -55,7 +57,10 @@ public class ModUpdateListAdapter extends FCLAdapter {
         }
         ModUpdatesPage.ModUpdateObject modUpdateObject = list.get(i);
         viewHolder.checkBox.addCheckedChangeListener();
-        viewHolder.checkBox.checkProperty().bindBidirectional(modUpdateObject.enabledProperty());
+        if (viewHolder.booleanProperty != null) {
+            viewHolder.checkBox.checkProperty().unbindBidirectional(viewHolder.booleanProperty);
+        }
+        viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modUpdateObject.enabledProperty());
         viewHolder.file.setText(modUpdateObject.getFileName());
         viewHolder.source.setText(modUpdateObject.getSource());
         viewHolder.desc.setText(modUpdateObject.getCurrentVersion() + "  ->  " + modUpdateObject.getTargetVersion());

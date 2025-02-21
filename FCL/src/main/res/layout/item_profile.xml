@@ -12,7 +12,8 @@
         android:clickable="true"
         android:focusable="true"
         android:background="@drawable/bg_container_transparent_clickable"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:stateListAnimator="@xml/anim_scale">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
@@ -29,6 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                app:use_theme_color="true"
                 android:id="@+id/name"/>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -36,6 +38,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                app:use_theme_color="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:id="@+id/path"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -46,10 +54,12 @@
             android:layout_height="20dp"
             android:src="@drawable/ic_baseline_close_24"
             app:no_padding="true"
+            app:use_theme_color="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.5"/>
+            app:layout_constraintVertical_bias="0.5"
+            android:stateListAnimator="@xml/anim_scale_large"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

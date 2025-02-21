@@ -19,6 +19,8 @@ package com.tungsten.fclcore.mod;
 
 import static com.tungsten.fclcore.util.io.NetworkUtils.encodeLocation;
 
+import androidx.annotation.NonNull;
+
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -51,6 +53,7 @@ public class RemoteMod {
     private final String pageUrl;
     private final String iconUrl;
     private final IMod data;
+    private String modID;
 
     public RemoteMod(String slug, String author, String title, String description, List<String> categories, String pageUrl, String iconUrl, IMod data) {
         this.slug = slug;
@@ -61,6 +64,12 @@ public class RemoteMod {
         this.pageUrl = pageUrl;
         this.iconUrl = iconUrl;
         this.data = data;
+        this.modID = "";
+    }
+
+    public RemoteMod(String slug, String author, String title, String description, List<String> categories, String pageUrl, String iconUrl, IMod data, String modID) {
+        this(slug, author, title, description, categories, pageUrl, iconUrl, data);
+        this.modID = modID;
     }
 
     public String getSlug() {
@@ -93,6 +102,14 @@ public class RemoteMod {
 
     public IMod getData() {
         return data;
+    }
+
+    public String getModID() {
+        return modID;
+    }
+
+    public void setModID(String modID) {
+        this.modID = modID;
     }
 
     public enum VersionType {
@@ -206,6 +223,8 @@ public class RemoteMod {
         List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException;
 
         Stream<Version> loadVersions(RemoteModRepository modRepository) throws IOException;
+
+        List<Screenshot> loadScreenshots(RemoteModRepository modRepository) throws IOException;
     }
 
     public interface IVersion {
@@ -317,6 +336,40 @@ public class RemoteMod {
 
         public String getFilename() {
             return filename;
+        }
+    }
+
+    public static class Screenshot {
+        private final String imageUrl;
+        private final String title;
+        private final String description;
+
+        public Screenshot(String imageUrl, String title, String description) {
+            this.imageUrl = imageUrl;
+            this.title = title;
+            this.description = description;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "Screenshot{" +
+                    "imageUrl='" + imageUrl + '\'' +
+                    ", title='" + title + '\'' +
+                    ", description=" + description +
+                    '}';
         }
     }
 }

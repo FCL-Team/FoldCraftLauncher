@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.controller;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
@@ -8,7 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Controller;
-import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -16,9 +17,6 @@ import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ControllerInfoDialog extends FCLDialog implements View.OnClickListener {
 
@@ -29,12 +27,14 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
     private FCLEditText editName;
 
     private FCLEditText editVersion;
+    private FCLEditText editVersionCode;
     private FCLEditText editAuthor;
     private FCLEditText editDescription;
 
     private FCLButton positive;
     private FCLButton negative;
 
+    @SuppressLint("SetTextI18n")
     public ControllerInfoDialog(@NonNull Context context, boolean create, Controller controller, Callback callback) {
         super(context);
         this.create = create;
@@ -50,11 +50,15 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
 
         FCLLinearLayout moreInfoLayout = findViewById(R.id.more_info_layout);
         editVersion = findViewById(R.id.version);
+        editVersionCode = findViewById(R.id.version_code);
         editAuthor = findViewById(R.id.author);
         editDescription = findViewById(R.id.description);
 
+        editVersionCode.setIntegerFilter(1);
+
         editName.setText(controller.getName());
         editVersion.setText(controller.getVersion());
+        editVersionCode.setText(controller.getVersionCode() + "");
         editAuthor.setText(controller.getAuthor());
         editDescription.setText(controller.getDescription());
 
@@ -72,17 +76,17 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == positive) {
-            List<String> nameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toList());
-            if (!create) {
-                nameList.remove(controller.getName());
-            }
             if (!OperatingSystem.isNameValid(editName.getText().toString()) || editName.getText().toString().equals("Error")) {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_info_name_invalid), Toast.LENGTH_SHORT).show();
-            } else if (nameList.contains(editName.getText().toString())) {
-                Toast.makeText(getContext(), getContext().getString(R.string.control_info_name_exist), Toast.LENGTH_SHORT).show();
             } else {
-                Controller controller = new Controller(editName.getText().toString(),
+                String id = this.controller.getId();
+                if (!editAuthor.getText().toString().equals(this.controller.getAuthor())) {
+                    id = Controller.generateRandomId();
+                }
+                Controller controller = new Controller(id,
+                        editName.getText().toString(),
                         editVersion.getText().toString(),
+                        Integer.parseInt(StringUtils.isBlank(editVersionCode.getText().toString()) ? "1" : editVersionCode.getText().toString()),
                         editAuthor.getText().toString(),
                         editDescription.getText().toString(),
                         this.controller.getControllerVersion());

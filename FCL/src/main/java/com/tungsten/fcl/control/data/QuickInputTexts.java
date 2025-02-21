@@ -59,13 +59,17 @@ public class QuickInputTexts {
 
     private static ArrayList<String> getInputTextsFromDisk() {
         try {
-            String json = FileUtils.readText(new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json"));
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            return gson.fromJson(json, new TypeToken<ArrayList<String>>(){}.getType());
+            File file = new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json");
+            if (file.exists()) {
+                String json = FileUtils.readText(file);
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                return gson.fromJson(json, new TypeToken<ArrayList<String>>() {
+                }.getType());
+            }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get quick input text", e);
-            return new ArrayList<>();
         }
+        return new ArrayList<>();
     }
 
     public static ObservableList<String> getInputTexts() {

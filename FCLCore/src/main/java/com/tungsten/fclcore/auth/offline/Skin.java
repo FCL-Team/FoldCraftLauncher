@@ -100,7 +100,30 @@ public class Skin {
         }
     }
 
-    private static Function<Type, InputStream> defaultSkinLoader = null;
+    private static Function<Type, InputStream> defaultSkinLoader = type -> {
+        switch (type) {
+            case ALEX:
+                return Skin.class.getResourceAsStream("/assets/img/alex.png");
+            case ARI:
+                return Skin.class.getResourceAsStream("/assets/img/ari.png");
+            case EFE:
+                return Skin.class.getResourceAsStream("/assets/img/efe.png");
+            case KAI:
+                return Skin.class.getResourceAsStream("/assets/img/kai.png");
+            case MAKENA:
+                return Skin.class.getResourceAsStream("/assets/img/makena.png");
+            case NOOR:
+                return Skin.class.getResourceAsStream("/assets/img/noor.png");
+            case STEVE:
+                return Skin.class.getResourceAsStream("/assets/img/steve.png");
+            case SUNNY:
+                return Skin.class.getResourceAsStream("/assets/img/sunny.png");
+            case ZURI:
+                return Skin.class.getResourceAsStream("/assets/img/zuri.png");
+            default:
+                return null;
+        }
+    };
 
     public static void registerDefaultSkinLoader(Function<Type, InputStream> defaultSkinLoader0) {
         defaultSkinLoader = defaultSkinLoader0;

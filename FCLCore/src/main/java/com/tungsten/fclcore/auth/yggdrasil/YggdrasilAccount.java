@@ -37,7 +37,7 @@ import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 
-public class YggdrasilAccount extends ClassicAccount {
+public abstract class YggdrasilAccount extends ClassicAccount {
 
     protected final YggdrasilService service;
     protected final UUID characterUUID;

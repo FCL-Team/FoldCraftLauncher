@@ -5,14 +5,19 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
@@ -42,6 +47,10 @@ public class JarExecutorHelper {
         builder.create().browse(activity, RequestCodes.SELECT_MANUAL_INSTALLER_CODE, ((requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_MANUAL_INSTALLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
                 String path = FileBrowser.getSelectedFiles(data).get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
+                }
                 if (new File(path).exists()) {
                     launchJarExecutor(context, new File(path));
                 }
@@ -50,9 +59,7 @@ public class JarExecutorHelper {
     }
 
     private static void launchJarExecutor(Context context, File file) {
-        int version = getJavaVersion(file);
-        int javaVersion = getNearestJavaVersion(version);
-        exec(context, file, javaVersion, null);
+        exec(context, file, getJava(file), null);
     }
 
     public static void exec(Context context, File file, int javaVersion, String args) {
@@ -72,6 +79,22 @@ public class JarExecutorHelper {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int getJava(File file) {
+        int javaVersion = JavaVersion.JAVA_VERSION_8;
+        if (file != null) {
+            int version = getJavaVersion(file);
+            javaVersion = getNearestJavaVersion(version);
+        }
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile != null) {
+            String java = profile.getGlobal().getJava();
+            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
+                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
+            }
+        }
+        return javaVersion;
     }
 
     private static int getNearestJavaVersion(int majorVersion) {
@@ -119,6 +142,7 @@ public class JarExecutorHelper {
             return -1;
         }
     }
+
     private static int classVersionToJavaVersion(int majorVersion) {
         if (majorVersion < 46)
             return 2;

@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ui_bg_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ScrollView
         android:id="@+id/eula_parent"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/ui_bg_color_dark"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintWidth_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <WebView
+        <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/eula"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

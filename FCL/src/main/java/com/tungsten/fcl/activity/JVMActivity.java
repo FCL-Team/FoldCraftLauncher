@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
@@ -13,15 +14,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.MenuCallback;
-import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
+import com.tungsten.fcl.control.MenuCallback;
+import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 import java.util.logging.Level;
@@ -34,6 +38,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static MenuType menuType;
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
+    private static boolean isRunning = false;
 
     public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -61,6 +66,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (menuType == MenuType.GAME && ((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
+                return;
+            }
             int screenHeight = getWindow().getDecorView().getHeight();
             Rect rect = new Rect();
             getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
@@ -76,25 +84,37 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+        if (isRunning) {
+            fclBridge.setSurfaceTexture(surfaceTexture);
+            if (FCLBridge.BACKEND_IS_BOAT) {
+                fclBridge.setFCLNativeWindow(new Surface(surfaceTexture));
+            } else {
+                CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
+            }
+            menu.onGraphicOutput();
+            return;
+        }
+        isRunning = true;
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
         fclBridge.setSurfaceDestroyed(false);
-        int width = menuType == MenuType.GAME ? (int) (i * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
+        int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
         if (menuType == MenuType.GAME) {
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
             gameOption.set("fullscreen", "false");
-            gameOption.set("overrideWidth", "" + width);
-            gameOption.set("overrideHeight", "" + height);
+            gameOption.set("overrideWidth", String.valueOf(width));
+            gameOption.set("overrideHeight", String.valueOf(height));
             gameOption.save();
         }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
+        fclBridge.setSurfaceTexture(surfaceTexture);
         fclBridge.pushEventWindow(width, height);
     }
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-        int width = menuType == MenuType.GAME ? (int) (i * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
+        int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.pushEventWindow(width, height);
@@ -103,16 +123,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
         fclBridge.setSurfaceDestroyed(true);
-        return false;
+        return true;
     }
 
     private int output = 0;
 
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
-        if (textureView != null && textureView.getSurfaceTexture() != null) {
-            textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
-        }
         if (output == 1) {
             menu.onGraphicOutput();
             output++;
@@ -127,6 +144,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (menu != null) {
             menu.onPause();
         }
+        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
         super.onPause();
     }
 
@@ -135,7 +153,20 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (menu != null) {
             menu.onResume();
         }
+        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
         super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
+    }
+
+    @Override
+    protected void onStop() {
+        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
+        super.onStop();
     }
 
     @Override
@@ -151,6 +182,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                     return true;
                 }
             }
+        }
+        return handleEvent;
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        boolean handleEvent = true;
+        if (menu != null && menuType == MenuType.GAME) {
+            handleEvent = menu.getInput().handleGenericMotionEvent(event);
         }
         return handleEvent;
     }

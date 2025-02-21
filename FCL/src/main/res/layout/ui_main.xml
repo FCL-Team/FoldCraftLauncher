@@ -49,6 +49,8 @@
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     android:padding="10dp"
                     android:id="@+id/announcement"
+                    android:autoLink="web"
+                    android:textColorLink="#77FF00"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:auto_text_tint="true"/>
@@ -83,7 +85,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <RelativeLayout
-        android:visibility="gone"
         android:id="@+id/skin_container"
         android:layout_width="0dp"
         android:layout_height="300dp"
@@ -93,6 +94,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

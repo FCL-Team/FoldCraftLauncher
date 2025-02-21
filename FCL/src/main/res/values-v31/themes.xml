@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.FoldCraftLauncher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/default_theme_color</item>
+        <item name="colorPrimaryVariant">@color/default_theme_color</item>
+        <item name="colorOnPrimary">@color/default_theme_color</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/default_theme_color</item>
+        <item name="colorSecondaryVariant">@color/default_theme_color</item>
+        <item name="colorOnSecondary">@color/default_theme_color</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/default_theme_color</item>
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowAnimationStyle">@style/ActivityAnimation</item>
+    </style>
+</resources>

@@ -23,9 +23,13 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+
+import static com.tungsten.fclcore.util.Logging.LOG;
 
 public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
     private final DownloadProvider downloadProvider;
@@ -39,9 +43,17 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
         return false;
     }
 
+    private static String toLookupVersion(String gameVersion) {
+        return "1.7.10-pre4".equals(gameVersion) ? "1.7.10_pre4" : gameVersion;
+    }
+
+    private static String fromLookupVersion(String lookupVersion) {
+        return "1.7.10_pre4".equals(lookupVersion) ? "1.7.10-pre4" : lookupVersion;
+    }
+
     @Override
     public CompletableFuture<?> refreshAsync() {
-        return HttpRequest.GET(downloadProvider.injectURL(FORGE_LIST)).getJsonAsync(ForgeVersionRoot.class)
+        return HttpRequest.GET(FORGE_LIST).getJsonAsync(ForgeVersionRoot.class)
                 .thenAcceptAsync(root -> {
                     lock.writeLock().lock();
 
@@ -51,7 +63,7 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
                         versions.clear();
 
                         for (Map.Entry<String, int[]> entry : root.getGameVersions().entrySet()) {
-                            String gameVersion = VersionNumber.normalize(entry.getKey());
+                            String gameVersion = fromLookupVersion(VersionNumber.normalize(entry.getKey()));
                             for (int v : entry.getValue()) {
                                 ForgeVersion version = root.getNumber().get(v);
                                 if (version == null)
@@ -67,8 +79,19 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
 
                                 if (jar == null)
                                     continue;
+
+                                Instant releaseDate = null;
+                                if (version.getModified() != null) {
+                                    try {
+                                        long timestamp = Long.parseLong(version.getModified());
+                                        releaseDate = Instant.ofEpochSecond(timestamp);
+                                    } catch (NumberFormatException e) {
+                                        LOG.log(Level.WARNING, "Failed to parse instant " + version.getModified(), e);
+                                    }
+                                }
+
                                 versions.put(gameVersion, new ForgeRemoteVersion(
-                                        version.getGameVersion(), version.getVersion(), null, Collections.singletonList(jar)
+                                        toLookupVersion(version.getGameVersion()), version.getVersion(), releaseDate, Collections.singletonList(jar)
                                 ));
                             }
                         }
@@ -78,5 +101,5 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
                 });
     }
 
-    public static final String FORGE_LIST = "https://files.minecraftforge.net/maven/net/minecraftforge/forge/json";
+    public static final String FORGE_LIST = "https://hmcl-dev.github.io/metadata/forge/";
 }

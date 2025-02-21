@@ -81,7 +81,7 @@ public class HelpPage extends FCLCommonPage implements View.OnClickListener {
             return JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<DocIndex>>(){}.getType());
         }).thenAcceptAsync(Schedulers.androidUIThread(), res -> {
             ArrayList<DocIndex> indexes = (ArrayList<DocIndex>) res;
-            DocCategoryAdapter adapter = new DocCategoryAdapter(getContext(), indexes);
+            DocCategoryAdapter adapter = new DocCategoryAdapter(getContext(), indexes.stream().filter(DocIndex::isVisible).collect(Collectors.toList()));
             categoryListView.setAdapter(adapter);
             showArticles(adapter.getSelectedIndex());
             adapter.selectedIndexProperty().addListener(i -> showArticles(adapter.getSelectedIndex()));

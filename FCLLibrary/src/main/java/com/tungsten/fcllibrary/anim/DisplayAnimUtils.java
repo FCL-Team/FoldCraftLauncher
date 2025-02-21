@@ -52,9 +52,11 @@ public class DisplayAnimUtils {
     }
 
     public static void hideViewWithAnim(View view, int animId) {
-        view.setVisibility(View.GONE);
-        Animation animation = AnimationUtils.loadAnimation(view.getContext(), animId);
-        animation.setDuration(ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 100L);
-        view.setAnimation(animation);
+        if (view != null) {
+            view.setVisibility(View.GONE);
+            Animation animation = AnimationUtils.loadAnimation(view.getContext(), animId);
+            animation.setDuration(ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 100L);
+            view.setAnimation(animation);
+        }
     }
 }

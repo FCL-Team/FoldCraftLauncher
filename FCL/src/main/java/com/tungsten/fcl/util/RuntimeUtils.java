@@ -5,10 +5,12 @@ import android.system.Os;
 
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.Pack200Utils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
+import com.tungsten.fclcore.util.io.Unzipper;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -18,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -32,8 +33,21 @@ public class RuntimeUtils {
         }
     }
 
+    public static boolean hasResource(String srcDir) {
+        try (InputStream stream = RuntimeUtils.class.getResourceAsStream(srcDir + "/version")) {
+            return stream != null;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     public static boolean isLatest(String targetDir, String srcDir) throws IOException {
         File targetFile = new File(targetDir + "/version");
+        try (InputStream stream = RuntimeUtils.class.getResourceAsStream(srcDir + "/version")) {
+            if (stream == null) {
+                return true;
+            }
+        }
         long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));
         return targetFile.exists() && Long.parseLong(FileUtils.readText(targetFile)) == version;
     }
@@ -43,6 +57,15 @@ public class RuntimeUtils {
         FileUtils.deleteDirectory(new File(targetDir));
         new File(targetDir).mkdirs();
         copyAssets(context, srcDir, targetDir);
+    }
+
+    public static void installJna(Context context, String targetDir, String srcDir) throws IOException {
+        FileUtils.deleteDirectory(new File(targetDir));
+        new File(targetDir).mkdirs();
+        copyAssets(context, srcDir, targetDir);
+        File file = new File(FCLPath.JNA_PATH, "jna-arm64.zip");
+        new Unzipper(file, new File(FCLPath.RUNTIME_DIR)).unzip();
+        file.delete();
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -131,7 +154,7 @@ public class RuntimeUtils {
     public static void patchJava(Context context, String javaPath) throws IOException {
         Pack200Utils.unpack(context.getApplicationInfo().nativeLibraryDir, javaPath);
         File dest = new File(javaPath);
-        if(!dest.exists())
+        if (!dest.exists())
             return;
         String libFolder = FCLauncher.getJreLibDir(javaPath);
         File ftIn = new File(dest, libFolder + "/libfreetype.so.6");

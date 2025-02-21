@@ -26,6 +26,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
+import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
@@ -131,7 +132,12 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> setAlpha(menu.isHideAllViews() ? 0 : 1));
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+            setAlpha(menu.isHideAllViews() ? 0 : 1);
+            if (!menu.getMenuSetting().isHideMenuView()) {
+                ((DrawerLayout) gameMenu.getLayout()).setDrawerLockMode(menu.isHideAllViews() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+        });
 
         post(() -> {
             notifyData();
@@ -176,7 +182,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             width = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
                     (int) (screenWidth * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f)) :
                     (int) (screenHeight * (data.getBaseInfo().getPercentageWidth().getSize() / 1000f));
-            height = data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
+            height = data.getBaseInfo().getPercentageHeight().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ?
                     (int) (screenWidth * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f)) :
                     (int) (screenHeight * (data.getBaseInfo().getPercentageHeight().getSize() / 1000f));
         }
@@ -271,21 +277,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
-    private final Runnable deleteRunnable = () -> {
-        Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setCancelable(false);
-        builder.setMessage(getContext().getString(R.string.edit_button_delete));
-        builder.setPositiveButton(this::deleteView);
-        builder.setNegativeButton(() -> {
-            setX(positionX);
-            setY(positionY);
-        });
-        builder.create().show();
-    };
-
     private void deleteView() {
         if (menu != null) {
             menu.getViewManager().removeView(getData());
@@ -304,7 +295,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
-                    handler.postDelayed(deleteRunnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
                     int deltaX = (int) (event.getX() - downX);
@@ -313,9 +303,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
                     setX(targetX);
                     setY(targetY);
-                    if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
-                        handler.removeCallbacks(deleteRunnable);
-                    }
                     autoFitPosition();
                     break;
                 case MotionEvent.ACTION_UP:
@@ -323,7 +310,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     removeLine(0);
                     removeLine(1);
                     setNormalStyle();
-                    handler.removeCallbacks(deleteRunnable);
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
@@ -343,6 +329,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             @Override
                             public void onClone(CustomControl view) {
                                 menu.getViewManager().addView(view);
+                            }
+
+                            @Override
+                            public void onDelete() {
+                                menu.getViewManager().removeView(getData());
                             }
                         }, true);
                         dialog.show();
@@ -430,8 +421,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         ViewGroup viewGroup = (ViewGroup) getParent();
 
-        final int autoFitDist = ConvertUtils.dip2px(getContext(), 5);
         int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
+        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
 
         boolean[] xyPref = {false, false};
         int[] prefXY = {0, 0};
@@ -668,6 +659,14 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
                             getContext().getString(R.string.menu_settings_gesture_mode_build) :
                             getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
+        }
+        if (event.isSwitchMouseMode()) {
+            menu.getMenuSetting().setMouseMoveMode(menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ? MouseMoveMode.SLIDE : MouseMoveMode.CLICK);
+            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+                    menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ?
+                            getContext().getString(R.string.menu_settings_mouse_mode_click) :
+                            getContext().getString(R.string.menu_settings_mouse_mode_slide)), Toast.LENGTH_SHORT).show();
+
         }
         if (event.isInput()) {
             menu.getTouchCharInput().switchKeyboardState();

@@ -74,9 +74,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
             modifyOptions(optionsFile, false);
             return;
         }
-        if (configFolder.isDirectory())
-            if (findFiles(configFolder, "options.txt"))
-                return;
         try {
             RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
         } catch (IOException e) {
@@ -102,8 +99,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
             while ((line = bfr.readLine()) != null) {
                 if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite && lang != null) {
                     str.append("lang:").append(lang).append("\n");
-                } else if (line.contains("forceUnicodeFont:")) {
-                    str.append("forceUnicodeFont:false\n");
                 } else {
                     str.append(line).append("\n");
                 }
@@ -177,7 +172,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
 
     @Override
     public FCLBridge launch() throws IOException, InterruptedException {
-        FileUtils.deleteDirectoryQuietly(new File("/data/user_de/0/com.tungsten.fcl/code_cache"));
         generateOptionsTxt();
         // Sodium
         modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);

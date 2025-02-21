@@ -19,11 +19,11 @@ package com.tungsten.fclcore.download;
 
 import com.tungsten.fclcore.download.fabric.FabricAPIVersionList;
 import com.tungsten.fclcore.download.fabric.FabricVersionList;
-import com.tungsten.fclcore.download.forge.ForgeBMCLVersionList;
+import com.tungsten.fclcore.download.forge.ForgeVersionList;
 import com.tungsten.fclcore.download.game.GameVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeOfficialVersionList;
-import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
+import com.tungsten.fclcore.download.optifine.OptiFine302VersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
 
@@ -34,10 +34,10 @@ public class MojangDownloadProvider implements DownloadProvider {
     private final GameVersionList game;
     private final FabricVersionList fabric;
     private final FabricAPIVersionList fabricApi;
-    private final ForgeBMCLVersionList forge;
+    private final ForgeVersionList forge;
     private final NeoForgeOfficialVersionList neoforge;
     private final LiteLoaderVersionList liteLoader;
-    private final OptiFineBMCLVersionList optifine;
+    private final OptiFine302VersionList optifine;
     private final QuiltVersionList quilt;
     private final QuiltAPIVersionList quiltApi;
 
@@ -47,10 +47,10 @@ public class MojangDownloadProvider implements DownloadProvider {
         this.game = new GameVersionList(this);
         this.fabric = new FabricVersionList(this);
         this.fabricApi = new FabricAPIVersionList(this);
-        this.forge = new ForgeBMCLVersionList(apiRoot);
+        this.forge = new ForgeVersionList(this);
         this.neoforge = new NeoForgeOfficialVersionList(this);
         this.liteLoader = new LiteLoaderVersionList(this);
-        this.optifine = new OptiFineBMCLVersionList(apiRoot);
+        this.optifine = new OptiFine302VersionList("https://hmcl-dev.github.io/metadata/optifine/");
         this.quilt = new QuiltVersionList(this);
         this.quiltApi = new QuiltAPIVersionList(this);
     }

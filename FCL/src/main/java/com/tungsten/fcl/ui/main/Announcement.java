@@ -74,11 +74,11 @@ public class Announcement {
     }
 
     public String getDisplayTitle(Context context) {
-        if (title.size() == 0) {
+        if (title.isEmpty()) {
             throw new IllegalStateException("No title list!");
         }
         for (Content c : title) {
-            if (c.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
@@ -86,11 +86,11 @@ public class Announcement {
     }
 
     public String getDisplayContent(Context context) {
-        if (content.size() == 0) {
+        if (content.isEmpty()) {
             throw new IllegalStateException("No content list!");
         }
         for (Content c : content) {
-            if (c.getLang().equals(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString())) {
+            if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(c.getLang())) {
                 return c.getText();
             }
         }
@@ -100,8 +100,17 @@ public class Announcement {
     public boolean shouldDisplay(Context context) {
         if (outdated)
             return false;
-        if (specificLang.size() != 0 && !specificLang.contains(LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString()))
-            return false;
+        if (!specificLang.isEmpty()) {
+            boolean cancel = true;
+            for (String lang : specificLang) {
+                if (LocaleUtils.getLocale(LocaleUtils.getLanguage(context)).toString().contains(lang)) {
+                    cancel = false;
+                    break;
+                }
+            }
+            if (cancel)
+                return false;
+        }
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("ignore_announcement", 0) < id;
     }

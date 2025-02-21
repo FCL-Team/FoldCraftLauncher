@@ -63,7 +63,7 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
             uri = Uri.parse("https://afdian.net/@mrxiaom");
         }
         if (v == sponsor) {
-            uri = Uri.parse("https://afdian.net/@tungs");
+            uri = Uri.parse("https://afdian.com/@tungs");
         }
         if (v == source) {
             uri = Uri.parse("https://github.com/MrXiaoM/FoldCraftLauncher");

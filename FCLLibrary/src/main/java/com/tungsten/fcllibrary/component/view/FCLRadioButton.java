@@ -2,6 +2,7 @@ package com.tungsten.fcllibrary.component.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 
@@ -13,6 +14,7 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
 public class FCLRadioButton extends AppCompatRadioButton {
@@ -20,6 +22,7 @@ public class FCLRadioButton extends AppCompatRadioButton {
     private BooleanProperty visibilityProperty;
     private BooleanProperty checkProperty;
     private BooleanProperty disableProperty;
+    private boolean textWithThemeColor = false;
 
     private final IntegerProperty theme = new IntegerPropertyBase() {
 
@@ -39,6 +42,9 @@ public class FCLRadioButton extends AppCompatRadioButton {
                     Color.GRAY
             };
             setButtonTintList(new ColorStateList(state, color));
+            if (textWithThemeColor) {
+                setTextColor(ThemeEngine.getInstance().getTheme().getColor());
+            }
         }
 
         @Override
@@ -59,11 +65,17 @@ public class FCLRadioButton extends AppCompatRadioButton {
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLRadioButton);
+        textWithThemeColor = typedArray.getBoolean(R.styleable.FCLRadioButton_text_with_theme_color, false);
+        typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLRadioButton);
+        textWithThemeColor = typedArray.getBoolean(R.styleable.FCLRadioButton_text_with_theme_color, false);
+        typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
     }
 

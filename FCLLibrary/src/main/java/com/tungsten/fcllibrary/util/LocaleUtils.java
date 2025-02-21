@@ -20,13 +20,16 @@ public class LocaleUtils {
      * 3: Traditional Chinese
      * 4: Vietnamese
      */
+    public static Locale RUSSIAN = new Locale("ru");
+    public static Locale BRAZILIAN_PORTUGUESE = new Locale("pt","BR");
+    public static Locale PERSIAN = new Locale("fa");
 
     private static DateTimeFormatter dateTimeFormatter;
 
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || (lang == 0 && getSystemLocale().toString().equals(Locale.CHINA.toString()));
+        return lang == 2 || (lang == 0 && getSystemLocale().toString().contains(Locale.CHINA.toString()));
     }
 
     public static int getLanguage(Context context) {
@@ -61,7 +64,11 @@ public class LocaleUtils {
             case 2:
                 return Locale.CHINA;
             case 3:
-                return Locale.TAIWAN;
+                return RUSSIAN;
+            case 4:
+                return BRAZILIAN_PORTUGUESE;
+            case 5:
+                return PERSIAN;
             default:
                 return getSystemLocale();
         }
@@ -78,7 +85,11 @@ public class LocaleUtils {
     public static DateTimeFormatter getDateTimeFormatter(Context context) {
         if (dateTimeFormatter == null) {
             @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier("world_time", "string", context.getPackageName());
-            dateTimeFormatter = DateTimeFormatter.ofPattern(context.getString(resId)).withZone(ZoneId.systemDefault());
+            String time = "EEE, MMM d, yyyy HH:mm:ss";
+            if (resId != 0) {
+                time = context.getString(resId);
+            }
+            dateTimeFormatter = DateTimeFormatter.ofPattern(time).withZone(ZoneId.systemDefault());
         }
         return dateTimeFormatter;
     }

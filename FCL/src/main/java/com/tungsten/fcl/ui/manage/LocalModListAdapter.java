@@ -2,10 +2,12 @@ package com.tungsten.fcl.ui.manage;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -13,15 +15,27 @@ import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.RemoteMod;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class LocalModListAdapter extends FCLAdapter {
 
@@ -49,7 +63,7 @@ public class LocalModListAdapter extends FCLAdapter {
         super(context);
         this.modListPage = modListPage;
 
-        this.listProperty.addListener((InvalidationListener)  observable -> {
+        this.listProperty.addListener((InvalidationListener) observable -> {
             fromSelf = true;
             selectedItemsProperty.clear();
             fromSelf = false;
@@ -65,6 +79,7 @@ public class LocalModListAdapter extends FCLAdapter {
     private static class ViewHolder {
         FCLLinearLayout parent;
         FCLCheckBox checkBox;
+        FCLImageView icon;
         FCLTextView name;
         FCLTextView tag;
         FCLTextView description;
@@ -91,6 +106,7 @@ public class LocalModListAdapter extends FCLAdapter {
             view = LayoutInflater.from(getContext()).inflate(R.layout.item_local_mod, null);
             viewHolder.parent = view.findViewById(R.id.parent);
             viewHolder.checkBox = view.findViewById(R.id.check);
+            viewHolder.icon = view.findViewById(R.id.icon);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.description = view.findViewById(R.id.description);
@@ -101,19 +117,19 @@ public class LocalModListAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         ModListPage.ModInfoObject modInfoObject = listProperty.get(i);
-        viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() }));
-        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() })));
+        viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor()}));
+        ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{selectedItemsProperty.contains(modInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor()})));
         viewHolder.parent.setOnClickListener(v -> {
             if (selectedItemsProperty.contains(modInfoObject)) {
                 fromSelf = true;
                 selectedItemsProperty.remove(modInfoObject);
                 fromSelf = false;
-                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() }));
+                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()}));
             } else {
                 fromSelf = true;
                 selectedItemsProperty.add(modInfoObject);
                 fromSelf = false;
-                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getColor() }));
+                viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
             }
         });
         viewHolder.checkBox.addCheckedChangeListener();
@@ -121,6 +137,9 @@ public class LocalModListAdapter extends FCLAdapter {
             viewHolder.checkBox.checkProperty().unbindBidirectional(viewHolder.booleanProperty);
         }
         viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modInfoObject.getActive());
+        viewHolder.icon.setTag(i);
+        viewHolder.icon.setImageBitmap(null);
+        viewHolder.icon.setVisibility(View.GONE);
         viewHolder.name.setText(modInfoObject.getTitle());
         String tag = getTag(modInfoObject);
         viewHolder.tag.setText(tag);
@@ -138,6 +157,31 @@ public class LocalModListAdapter extends FCLAdapter {
             ModInfoDialog dialog = new ModInfoDialog(getContext(), modInfoObject);
             dialog.show();
         });
+        Task.supplyAsync(() -> {
+            for (RemoteMod.Type type : RemoteMod.Type.values()) {
+                try {
+                    if (modInfoObject.getRemoteMod() == null) {
+                        Optional<RemoteMod.Version> remoteVersion = type.getRemoteModRepository().getRemoteVersionByLocalFile(modInfoObject.getModInfo(), modInfoObject.getModInfo().getFile());
+                        if (remoteVersion.isPresent()) {
+                            RemoteMod remoteMod = type.getRemoteModRepository().getModById(remoteVersion.get().getModid());
+                            modInfoObject.getModInfo().setRemoteVersion(remoteVersion.get());
+                            modInfoObject.setRemoteMod(remoteMod);
+                        } else {
+                            continue;
+                        }
+                    }
+                    return modInfoObject.getRemoteMod();
+                } catch (Throwable ignore) {
+                }
+            }
+            return null;
+        }).whenComplete(Schedulers.androidUIThread(), (remoteMod, exception) -> {
+            if ((int) viewHolder.icon.getTag() == i && remoteMod != null) {
+                viewHolder.icon.setVisibility(View.VISIBLE);
+                Glide.with(viewHolder.icon).load(remoteMod.getIconUrl()).into(viewHolder.icon);
+                viewHolder.name.setText(remoteMod.getTitle());
+            }
+        }).start();
         return view;
     }
 

@@ -68,8 +68,6 @@ import com.tungsten.fclcore.auth.microsoft.MicrosoftService;
 import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
 import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
-import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
-import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccountFactory;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -101,17 +99,15 @@ public final class Accounts {
     public static final OAuthServer.Factory OAUTH_CALLBACK = new OAuthServer.Factory();
 
     public static final OfflineAccountFactory FACTORY_OFFLINE = new OfflineAccountFactory(AUTHLIB_INJECTOR_DOWNLOADER);
-    public static final YggdrasilAccountFactory FACTORY_MOJANG = YggdrasilAccountFactory.MOJANG;
     public static final AuthlibInjectorAccountFactory FACTORY_AUTHLIB_INJECTOR = new AuthlibInjectorAccountFactory(AUTHLIB_INJECTOR_DOWNLOADER, Accounts::getOrCreateAuthlibInjectorServer);
     public static final MicrosoftAccountFactory FACTORY_MICROSOFT = new MicrosoftAccountFactory(new MicrosoftService(OAUTH_CALLBACK));
-    public static final List<AccountFactory<?>> FACTORIES = immutableListOf(FACTORY_OFFLINE, FACTORY_MOJANG, FACTORY_MICROSOFT, FACTORY_AUTHLIB_INJECTOR);
+    public static final List<AccountFactory<?>> FACTORIES = immutableListOf(FACTORY_OFFLINE, FACTORY_MICROSOFT, FACTORY_AUTHLIB_INJECTOR);
 
     // ==== login type / account factory mapping ====
     private static final Map<String, AccountFactory<?>> type2factory = new HashMap<>();
     private static final Map<AccountFactory<?>, String> factory2type = new HashMap<>();
     static {
         type2factory.put("offline", FACTORY_OFFLINE);
-        type2factory.put("yggdrasil", FACTORY_MOJANG);
         type2factory.put("authlibInjector", FACTORY_AUTHLIB_INJECTOR);
         type2factory.put("microsoft", FACTORY_MICROSOFT);
 
@@ -144,8 +140,6 @@ public final class Accounts {
             return FACTORY_OFFLINE;
         else if (account instanceof AuthlibInjectorAccount)
             return FACTORY_AUTHLIB_INJECTOR;
-        else if (account instanceof YggdrasilAccount)
-            return FACTORY_MOJANG;
         else if (account instanceof MicrosoftAccount)
             return FACTORY_MICROSOFT;
         else
@@ -243,7 +237,7 @@ public final class Accounts {
      */
     static void init() {
         if (initialized)
-            throw new IllegalStateException("Already initialized");
+            return;
 
         loadGlobalAccountStorages();
 
@@ -417,7 +411,6 @@ public final class Accounts {
     // ==== Login type name ===
     private static final Map<AccountFactory<?>, Integer> unlocalizedLoginTypeNames = mapOf(
             pair(Accounts.FACTORY_OFFLINE, R.string.account_methods_offline),
-            pair(Accounts.FACTORY_MOJANG, R.string.account_methods_yggdrasil),
             pair(Accounts.FACTORY_AUTHLIB_INJECTOR, R.string.account_methods_authlib_injector),
             pair(Accounts.FACTORY_MICROSOFT, R.string.account_methods_microsoft));
 
@@ -471,6 +464,8 @@ public final class Accounts {
             } else {
                 return context.getString(R.string.account_methods_microsoft_error_unknown);
             }
+        } else if (exception instanceof MicrosoftService.XBox400Exception) {
+            return context.getString(R.string.account_methods_microsoft_error_wrong_verify_method);
         } else if (exception instanceof MicrosoftService.NoMinecraftJavaEditionProfileException) {
             return context.getString(R.string.account_methods_microsoft_error_no_character);
         } else if (exception instanceof MicrosoftService.NoXuiException) {

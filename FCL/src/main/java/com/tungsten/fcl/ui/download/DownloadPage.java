@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -189,6 +190,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 break;
             case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
                 this.callback = (profile, version, file) -> download(context, profile, version, file, "resourcepacks");
+                break;
+            case PAGE_ID_DOWNLOAD_SHADER_PACK:
+                this.callback = (profile, version, file) -> download(context, profile, version, file, "shaderpacks");
                 break;
             default:
                 this.callback = null;
@@ -378,6 +382,10 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (v == retry && retrySearch != null) {
             retrySearch.run();
         }
+    }
+
+    public RemoteModRepository getRepository() {
+        return repository;
     }
 
     private static class CategoryIndented {

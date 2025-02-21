@@ -29,6 +29,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @JsonAdapter(ControlViewGroup.Serializer.class)
 public class ControlViewGroup implements Cloneable, Observable {
@@ -165,7 +166,8 @@ public class ControlViewGroup implements Cloneable, Observable {
 
             viewGroup.setName(Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse(""));
             viewGroup.setVisibility(Optional.ofNullable(obj.get("visibility")).map(JsonElement::getAsString).orElse(Visibility.VISIBLE.toString()).equals(Visibility.INVISIBLE.toString()) ? Visibility.INVISIBLE : Visibility.VISIBLE);
-            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), new TypeToken<ViewData>(){}.getType()));
+            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), new TypeToken<ViewData>() {
+            }.getType()));
 
             return viewGroup;
         }
@@ -178,11 +180,11 @@ public class ControlViewGroup implements Cloneable, Observable {
          * Button data list
          */
         private final ObservableList<ControlButtonData> buttonList = FXCollections.observableArrayList(new ArrayList<>());
-        
+
         public ObservableList<ControlButtonData> buttonList() {
             return buttonList;
         }
-        
+
         public void setButtonList(ObservableList<ControlButtonData> list) {
             buttonList.setAll(list);
         }
@@ -243,7 +245,7 @@ public class ControlViewGroup implements Cloneable, Observable {
                 }
             }
         }
-        
+
         public ViewData() {
             addPropertyChangedListener(onInvalidating(this::invalidate));
         }
@@ -294,8 +296,10 @@ public class ControlViewGroup implements Cloneable, Observable {
                 JsonObject obj = new JsonObject();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.buttonList()), new TypeToken<ArrayList<ControlButtonData>>(){}.getType()).getAsJsonArray());
-                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.directionList()), new TypeToken<ArrayList<ControlDirectionData>>(){}.getType()).getAsJsonArray());
+                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.buttonList()), new TypeToken<ArrayList<ControlButtonData>>() {
+                }.getType()).getAsJsonArray());
+                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.directionList()), new TypeToken<ArrayList<ControlDirectionData>>() {
+                }.getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -308,9 +312,21 @@ public class ControlViewGroup implements Cloneable, Observable {
 
                 ViewData data = new ViewData();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-                data.setButtonList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonData>>(){}.getType())));
-                data.setDirectionList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionData>>(){}.getType())));
+                ObservableList<ControlButtonData> buttonList = FXCollections.observableList(Optional.ofNullable(obj.get("buttonList"))
+                        .map(JsonElement::getAsJsonArray)
+                        .orElse(new JsonArray())
+                        .asList()
+                        .stream()
+                        .parallel()
+                        .map(button -> {
+                            if (button != null) {
+                                return gson.fromJson(button, ControlButtonData.class);
+                            }
+                            throw new JsonParseException("ControlButtonData broken!");
+                        }).collect(Collectors.toList()));
+                data.setButtonList(buttonList);
+                data.setDirectionList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionData>>() {
+                }.getType())));
 
                 return data;
             }

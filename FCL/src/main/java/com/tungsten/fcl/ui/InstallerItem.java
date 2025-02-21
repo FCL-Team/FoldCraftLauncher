@@ -258,7 +258,7 @@ public class InstallerItem {
                 if (installerItem.incompatibleWithGame.get()) {
                     return AndroidUtils.getLocalizedText(context, "install_installer_change_version", version);
                 } else if (incompatibleWith != null) {
-                    return AndroidUtils.getLocalizedText(context, "install_installer_incompatible", AndroidUtils.getLocalizedText(context, "install_installer_" + incompatibleWith));
+                    return AndroidUtils.getLocalizedText(context, "install_installer_incompatible", AndroidUtils.getLocalizedText(context, "install_installer_" + incompatibleWith.replace("-", "_")));
                 } else if (version == null) {
                     return context.getString(R.string.install_installer_not_installed);
                 } else {

@@ -65,8 +65,9 @@ public class CurseAddon implements RemoteMod.IMod {
     private final int gamePopularityRank;
     private final boolean isAvailable;
     private final int thumbsUpCount;
+    private final List<Screenshot> screenshots;
 
-    public CurseAddon(int id, int gameId, String name, String slug, Links links, String summary, int status, int downloadCount, boolean isFeatured, int primaryCategoryId, List<Category> categories, int classId, List<Author> authors, Logo logo, int mainFileId, List<LatestFile> latestFiles, List<LatestFileIndex> latestFileIndices, Instant dateCreated, Instant dateModified, Instant dateReleased, boolean allowModDistribution, int gamePopularityRank, boolean isAvailable, int thumbsUpCount) {
+    public CurseAddon(int id, int gameId, String name, String slug, Links links, String summary, int status, int downloadCount, boolean isFeatured, int primaryCategoryId, List<Category> categories, int classId, List<Author> authors, Logo logo, int mainFileId, List<LatestFile> latestFiles, List<LatestFileIndex> latestFileIndices, Instant dateCreated, Instant dateModified, Instant dateReleased, boolean allowModDistribution, int gamePopularityRank, boolean isAvailable, int thumbsUpCount, List<Screenshot> screenshots) {
         this.id = id;
         this.gameId = gameId;
         this.name = name;
@@ -91,6 +92,7 @@ public class CurseAddon implements RemoteMod.IMod {
         this.gamePopularityRank = gamePopularityRank;
         this.isAvailable = isAvailable;
         this.thumbsUpCount = thumbsUpCount;
+        this.screenshots = screenshots;
     }
 
     public int getId() {
@@ -189,6 +191,10 @@ public class CurseAddon implements RemoteMod.IMod {
         return thumbsUpCount;
     }
 
+    public List<Screenshot> getScreenshots() {
+        return screenshots;
+    }
+
     @Override
     public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
         Set<Integer> dependencies = latestFiles.stream()
@@ -208,6 +214,15 @@ public class CurseAddon implements RemoteMod.IMod {
         return modRepository.getRemoteVersionsById(Integer.toString(id));
     }
 
+    @Override
+    public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) {
+        List<RemoteMod.Screenshot> screenshotList = new ArrayList<>();
+        for (Screenshot screenshot : this.screenshots) {
+            screenshotList.add(new RemoteMod.Screenshot(screenshot.url, screenshot.title, screenshot.description));
+        }
+        return screenshotList;
+    }
+
     public RemoteMod toMod() {
         String iconUrl = Optional.ofNullable(logo).map(Logo::getThumbnailUrl).orElse("");
 
@@ -219,7 +234,8 @@ public class CurseAddon implements RemoteMod.IMod {
                 categories.stream().map(category -> Integer.toString(category.getId())).collect(Collectors.toList()),
                 links.websiteUrl,
                 iconUrl,
-                this
+                this,
+                String.valueOf(id)
         );
     }
 
@@ -716,6 +732,33 @@ public class CurseAddon implements RemoteMod.IMod {
                     this,
                     Integer.toString(id),
                     getSubcategories().stream().map(Category::toCategory).collect(Collectors.toList()));
+        }
+    }
+
+    public static class Screenshot {
+        private final int id;
+        private final int modid;
+        private final String title;
+        private final String description;
+        private final String thumbnailUrl;
+        private final String url;
+
+        public Screenshot() {
+            this.id = 0;
+            this.modid = 0;
+            this.title = "";
+            this.description = "";
+            this.thumbnailUrl = "";
+            this.url = "";
+        }
+
+        public Screenshot(int id, int modid, String title, String description, String thumbnailUrl, String url) {
+            this.id = id;
+            this.modid = modid;
+            this.title = title;
+            this.description = description;
+            this.thumbnailUrl = thumbnailUrl;
+            this.url = url;
         }
     }
 }
