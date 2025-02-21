@@ -526,7 +526,6 @@
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
     <string name="menu_settings_gamepad_reset">بازنشانی کنید</string>
     <string name="menu_settings_gamepad_deadzone">منطقه مرده</string>
-    <string name="menu_settings_gamepad_aimzone">منطقه کمک کننده ایم</string>
     <string name="menu_settings_multiplayer">منوی چند نفره</string>
     <string name="menu_settings_multiplayer_button">باز کن</string>
     <string name="menu_settings_quick_input">ورودی سریع</string>

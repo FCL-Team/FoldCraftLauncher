@@ -627,7 +627,6 @@
     <string name="menu_settings_gamepad_open_button">Выбрать</string>
     <string name="menu_settings_gamepad_reset">Сбросить</string>
     <string name="menu_settings_gamepad_deadzone">Мертвая зона</string>
-    <string name="menu_settings_gamepad_aimzone">Зона прицеливания аима</string>
     <string name="menu_settings_multiplayer">Многопользовательское меню</string>
     <string name="menu_settings_multiplayer_button">Открыть</string>
     <string name="menu_settings_quick_input">Быстрый ввод</string>
@@ -1017,7 +1016,6 @@
     <string name="world_show_all">Показать все</string>
 
     <string name="install_apk">Установить лаунчер</string>
-    <string name="edit">Изменить</string>
     <string name="modpack_download_warn_title">Предупреждение</string>
     <string name="modpack_download_warn_msg">Большинство модпаков разработаны для ПК, поэтому возможны сбои. Разработчик лаунчера не несет ответственности за совместимость модпаков.</string>
     <string name="view_incompatible">Несовместимые моды</string>

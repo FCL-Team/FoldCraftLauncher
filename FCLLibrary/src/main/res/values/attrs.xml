@@ -53,6 +53,9 @@
     <declare-styleable name="FCLRadioButton">
         <attr name="text_with_theme_color" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="FCLNumberSeekBar">
+        <attr name="suffix" format="string"/>
+    </declare-styleable>
 
     <declare-styleable name="ColorPickerView" parent="ColorPanelView">
         <attr format="boolean|reference" name="cpv_alphaChannelVisible"/>

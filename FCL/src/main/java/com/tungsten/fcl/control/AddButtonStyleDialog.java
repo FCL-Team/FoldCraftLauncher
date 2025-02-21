@@ -18,7 +18,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
-import com.tungsten.fcl.ui.manage.EditDialog;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.util.StringUtils;

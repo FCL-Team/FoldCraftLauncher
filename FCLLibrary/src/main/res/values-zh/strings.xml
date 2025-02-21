@@ -35,4 +35,5 @@
     <string name="dialog_positive">确认</string>
     <string name="dialog_negative">取消</string>
     <string name="file_browser_select_external">使用外部应用选择</string>
+    <string name="edit">编辑</string>
 </resources>
