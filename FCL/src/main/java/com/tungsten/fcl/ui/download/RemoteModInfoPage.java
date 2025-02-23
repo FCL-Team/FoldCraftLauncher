@@ -75,6 +75,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private RecyclerView screenshotView;
     private FCLEditText search;
 
+    private String recommendedVersion;
+
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
 
@@ -142,10 +144,9 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
                 .sorted(Collections.reverseOrder(VersionNumber::compare))
                 .filter(it -> it.contains(Optional.ofNullable(search.getStringValue()).orElse("")))
                 .collect(Collectors.toList());
-        String string = getContext().getString(R.string.recommend_version);
-        if (list.contains(string)) {
-            list.remove(string);
-            list.add(0, string);
+        if (list.contains(recommendedVersion)) {
+            list.remove(recommendedVersion);
+            list.add(0, recommendedVersion);
         }
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
             RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
@@ -237,12 +238,13 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             classifiedVersions.get(mcv).stream().filter(v -> {
                 for (ModLoaderType loader : v.getLoaders()) {
                     if (modLoaders.contains(loader)) {
+                        recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
                         return true;
                     }
                 }
                 return false;
             }).forEach(v -> {
-                classifiedVersions.put(getContext().getString(R.string.recommend_version), v);
+                classifiedVersions.put(recommendedVersion, v);
             });
         }
         return classifiedVersions;
