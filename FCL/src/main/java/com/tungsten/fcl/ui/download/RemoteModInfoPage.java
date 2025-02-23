@@ -243,9 +243,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
                     }
                 }
                 return false;
-            }).forEach(v -> {
-                classifiedVersions.put(recommendedVersion, v);
-            });
+            }).forEach(v -> classifiedVersions.put(recommendedVersion, v));
         }
         return classifiedVersions;
     }
