@@ -32,6 +32,7 @@
 package org.lwjgl;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.Platform;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -72,7 +73,11 @@ public final class Sys {
 		if (!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 	}
-
+	public static boolean is64Bit() {
+        	return Platform.getArchitecture()
+            		.toString()
+            		.endsWith("64");
+    	}
 	/**
 	 * Obtains the number of ticks that the hires timer does in a second. This method is fast;
 	 * it should be called as frequently as possible, as it recalibrates the timer.
