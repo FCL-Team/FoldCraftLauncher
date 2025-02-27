@@ -73,11 +73,7 @@ public final class Sys {
 		if (!GLFW.glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 	}
-	public static boolean is64Bit() {
-        	return Platform.getArchitecture()
-            		.toString()
-            		.endsWith("64");
-    	}
+
 	/**
 	 * Obtains the number of ticks that the hires timer does in a second. This method is fast;
 	 * it should be called as frequently as possible, as it recalibrates the timer.
@@ -183,4 +179,9 @@ public final class Sys {
 	public static String getClipboard() {
 		return GLFW.glfwGetClipboardString(GLFW.glfwGetPrimaryMonitor());
 	}
+
+    public static boolean is64Bit() {
+        String osArch = System.getProperty("os.arch");
+        return osArch.contains("64") || osArch.startsWith("armv8");
+    }
 }
