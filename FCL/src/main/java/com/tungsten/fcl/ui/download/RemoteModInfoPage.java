@@ -200,12 +200,15 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
                 return remoteName.contains(localName);
             }).collect(Collectors.toList());
             for (LocalModFile localModFile : modFiles) {
-                Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
-                if (remoteVersion.isPresent()) {
-                    String modId = remoteVersion.get().getModid();
-                    if (addon.getModID().equals(modId)) {
-                        return remoteVersion.get();
+                try {
+                    Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                    if (remoteVersion.isPresent()) {
+                        String modId = remoteVersion.get().getModid();
+                        if (addon.getModID().equals(modId)) {
+                            return remoteVersion.get();
+                        }
                     }
+                } catch (Throwable ignore) {
                 }
             }
             return null;
