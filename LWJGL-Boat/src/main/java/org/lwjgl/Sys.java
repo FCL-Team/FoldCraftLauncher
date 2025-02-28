@@ -32,6 +32,7 @@
 package org.lwjgl;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.Platform;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -178,4 +179,9 @@ public final class Sys {
 	public static String getClipboard() {
 		return GLFW.glfwGetClipboardString(GLFW.glfwGetPrimaryMonitor());
 	}
+
+    public static boolean is64Bit() {
+        String osArch = System.getProperty("os.arch");
+        return osArch.contains("64") || osArch.startsWith("armv8");
+    }
 }
