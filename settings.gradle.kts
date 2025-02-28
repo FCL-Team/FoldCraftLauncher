@@ -10,16 +10,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url "https://jitpack.io"
-        }
+        maven("https://jitpack.io")
     }
 }
 rootProject.name = "Fold Craft Launcher"
-include ':FCL'
-include ':FCLCore'
-include ':FCLauncher'
-include ':FCLLibrary'
-include ':LWJGL-Pojav'
-include ':LWJGL-Boat'
-include ':ZipFileSystem'
+include(":FCL")
+include(":FCLCore")
+include(":FCLauncher")
+include(":FCLLibrary")
+include(":LWJGL-Pojav")
+include(":LWJGL-Boat")
+include(":ZipFileSystem")
