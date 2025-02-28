@@ -1029,4 +1029,5 @@
     <string name="installed">Установлено</string>
     
     <string name="shaderpack">Шейдеры</string>
+    <string name="recommend_version">Рекомендуемая версия</string>
 </resources>
