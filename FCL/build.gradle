@@ -46,8 +46,6 @@ android {
         targetSdk 34
         versionCode 1208
         versionName "1.2.0.8"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -191,9 +189,6 @@ dependencies {
     implementation 'com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'top.fifthlight.touchcontroller:proxy-client-android:0.0.2'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
 
 ssh.settings {
