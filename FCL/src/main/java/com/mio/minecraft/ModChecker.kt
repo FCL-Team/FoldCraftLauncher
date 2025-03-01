@@ -10,7 +10,7 @@ class ModChecker(val context: Context) {
     val checkMap = mutableMapOf<String, (LocalModFile) -> Unit>()
 
     init {
-        checkMap.put("physicsmod") { mod ->
+        add("physicsmod") { mod ->
             val arch = AndroidUtil.getElfArchFromZip(
                 mod.file.toFile(),
                 "de/fabmax/physxjni/linux/libPhysXJniBindings_64.so"
@@ -23,6 +23,13 @@ class ModChecker(val context: Context) {
                     )
                 )
         }
+        add("mcef") {
+            throw ModCheckException(
+            context.getString(
+                R.string.mod_check_mcef,
+                it.file.toFile().name
+            )
+        )}
     }
 
     @Throws(ModCheckException::class)
@@ -35,6 +42,10 @@ class ModChecker(val context: Context) {
                 throw exception
             }
         }
+    }
+
+    private fun add(modID: String, action: (LocalModFile) -> Unit) {
+        checkMap.put(modID, action)
     }
 }
 
