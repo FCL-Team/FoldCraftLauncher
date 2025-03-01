@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -16,7 +15,9 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.mod.LocalModFile;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.Schedulers;
@@ -37,14 +38,13 @@ import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,6 +74,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     private FCLTextView screenshotNoResult;
     private RecyclerView screenshotView;
     private FCLEditText search;
+
+    private String recommendedVersion;
 
     public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, parent, resId);
@@ -138,10 +140,15 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     }
 
     private void loadGameVersions() {
-        ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), versions.keys().stream()
+        List<String> list = versions.keys().stream()
                 .sorted(Collections.reverseOrder(VersionNumber::compare))
                 .filter(it -> it.contains(Optional.ofNullable(search.getStringValue()).orElse("")))
-                .collect(Collectors.toList()), v -> {
+                .collect(Collectors.toList());
+        if (list.contains(recommendedVersion)) {
+            list.remove(recommendedVersion);
+            list.add(0, recommendedVersion);
+        }
+        ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
             RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
             DownloadPageManager.getInstance().showTempPage(page);
         });
@@ -193,12 +200,15 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
                 return remoteName.contains(localName);
             }).collect(Collectors.toList());
             for (LocalModFile localModFile : modFiles) {
-                Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
-                if (remoteVersion.isPresent()) {
-                    String modId = remoteVersion.get().getModid();
-                    if (addon.getModID().equals(modId)) {
-                        return remoteVersion.get();
+                try {
+                    Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                    if (remoteVersion.isPresent()) {
+                        String modId = remoteVersion.get().getModid();
+                        if (addon.getModID().equals(modId)) {
+                            return remoteVersion.get();
+                        }
                     }
+                } catch (Throwable ignore) {
                 }
             }
             return null;
@@ -221,6 +231,24 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         for (String gameVersion : classifiedVersions.keys()) {
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
+        }
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile.getSelectedVersion() != null) {
+            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
+            Set<ModLoaderType> modLoaders = analyzer.getModLoaders();
+            String mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("");
+
+            if (classifiedVersions.keys().contains(mcv)) {
+                classifiedVersions.get(mcv).stream().filter(v -> {
+                    for (ModLoaderType loader : v.getLoaders()) {
+                        if (modLoaders.contains(loader)) {
+                            recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
+                            return true;
+                        }
+                    }
+                    return false;
+                }).forEach(v -> classifiedVersions.put(recommendedVersion, v));
+            }
         }
         return classifiedVersions;
     }

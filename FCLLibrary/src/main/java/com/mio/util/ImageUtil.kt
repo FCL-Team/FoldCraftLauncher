@@ -26,7 +26,7 @@ class ImageUtil {
             if (!File(path).exists() or (getBitmapMemorySize(path) > 104857600)) {
                 return Optional.empty<Bitmap>()
             }
-            return Optional.of(BitmapFactory.decodeFile(path))
+            return Optional.ofNullable(BitmapFactory.decodeFile(path))
         }
     }
 }

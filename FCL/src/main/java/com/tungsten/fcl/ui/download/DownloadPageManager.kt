@@ -24,6 +24,7 @@ class DownloadPageManager(
         const val PAGE_ID_DOWNLOAD_MOD: Int = 15012
         const val PAGE_ID_DOWNLOAD_RESOURCE_PACK: Int = 15013
         const val PAGE_ID_DOWNLOAD_WORLD: Int = 15014
+        const val PAGE_ID_DOWNLOAD_SHADER_PACK: Int = 15015
     }
 
     var profile: Profile? = null
@@ -50,6 +51,14 @@ class DownloadPageManager(
             parent,
             R.layout.page_download,
             CurseForgeRemoteModRepository.WORLDS
+        )
+    }
+    private val downloadShaderPackPage: ShaderPackDownloadPage by lazy {
+        ShaderPackDownloadPage(
+            context,
+            PAGE_ID_DOWNLOAD_SHADER_PACK,
+            parent,
+            R.layout.page_download
         )
     }
 
@@ -79,6 +88,7 @@ class DownloadPageManager(
             PAGE_ID_DOWNLOAD_MOD -> downloadModPage
             PAGE_ID_DOWNLOAD_RESOURCE_PACK -> downloadResourcePackPage
             PAGE_ID_DOWNLOAD_WORLD -> downloadWorldPage
+            PAGE_ID_DOWNLOAD_SHADER_PACK -> downloadShaderPackPage
             else -> null
         }
         if (page != null) {

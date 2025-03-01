@@ -35,4 +35,5 @@
     <string name="dialog_info">Информация</string>
     <string name="dialog_positive">ОК</string>
     <string name="dialog_negative">Отменить</string>
+    <string name="edit">Изменить</string>
 </resources>

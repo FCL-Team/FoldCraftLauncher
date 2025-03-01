@@ -145,8 +145,8 @@ public final class LauncherHelper {
                     );
                 }).withStage("launch.state.dependencies")
                 .thenComposeAsync(() -> {
-                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibFixer.jar")) {
-                        Files.copy(input, new File(FCLPath.LIB_FIXER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibPatcher.jar")) {
+                        Files.copy(input, new File(FCLPath.LIB_PATCHER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     } catch (IOException e) {
                         Logging.LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
                     }

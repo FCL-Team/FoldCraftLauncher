@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1202,
-    "versionName": "1.2.0.2",
-    "date": "2025.01.23",
+    "versionCode": 1208,
+    "versionName": "1.2.0.8",
+    "date": "2025.02.28",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复当前选择的版本启用特定游戏设置后无法更改全局设置内的渲染器和驱动的Bug\n2.修改渲染器插件Github链接\n3.修复编辑方向键样式时保存闪退的Bug\n4.修复编辑按键样式时取消也会错误保存的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:根据当前选择的版本在模组详情页面自动推荐合适的版本\n2.优化拖动条的显示效果,修复文字过大的Bug,增加点击文字直接编辑的功能\n3.修复下载界面类别无法获取的Bug\n4.调整部分UI显示效果\n5.修复模组Angelica崩溃的Bug\n6.修复部分设备上模组过大导致的启动直接造成内存溢出的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/63f710f4b030",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.2/FCL-release-1.2.0.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a04b93d9c110",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.8/FCL-release-1.2.0.8-all.apk"
   }
 ]

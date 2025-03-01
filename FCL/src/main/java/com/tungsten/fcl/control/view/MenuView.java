@@ -94,8 +94,8 @@ public class MenuView extends View {
             layoutParams.width = DEFAULT_WIDTH;
             layoutParams.height = DEFAULT_HEIGHT;
             setLayoutParams(layoutParams);
-            setX((float) ((screenWidth - DEFAULT_WIDTH) * gameMenu.getMenuSetting().getMenuPositionX()));
-            setY((float) ((screenHeight - DEFAULT_HEIGHT) * gameMenu.getMenuSetting().getMenuPositionY()));
+            setX((float) (screenWidth * gameMenu.getMenuSetting().getMenuPositionX()));
+            setY((float) (screenHeight * gameMenu.getMenuSetting().getMenuPositionY()));
         });
     }
 

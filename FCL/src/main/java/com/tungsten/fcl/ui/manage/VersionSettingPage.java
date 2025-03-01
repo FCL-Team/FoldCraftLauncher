@@ -41,6 +41,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -48,6 +49,7 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
+import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -79,8 +81,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLImageView iconView;
 
-    private FCLSeekBar allocateSeekbar;
-    private FCLSeekBar scaleFactorSeekbar;
+    private FCLNumberSeekBar allocateSeekbar;
+    private FCLNumberSeekBar scaleFactorSeekbar;
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
@@ -145,10 +147,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         javaSpinner = findViewById(R.id.edit_java);
 
-        FCLTextView scaleFactorText = findViewById(R.id.scale_factor_text);
-
         scaleFactorSeekbar.addProgressListener();
-        scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> (int) (lastVersionSetting.getScaleFactor() * 100) + " %", scaleFactorSeekbar.percentProgressProperty()));
 
         // add spinner data
         ArrayList<String> javaVersionDataList = new ArrayList<>();
@@ -192,7 +191,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
 
         FCLTextView memoryStateText = findViewById(R.id.memory_state);
-        FCLTextView memoryText = findViewById(R.id.memory_text);
         FCLTextView memoryInfoText = findViewById(R.id.memory_info_text);
         FCLTextView memoryAllocateText = findViewById(R.id.memory_allocate_text);
 
@@ -209,17 +207,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         allocateSeekbar.addProgressListener();
         allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
-
-        memoryText.stringProperty().bind(Bindings.createStringBinding(() -> allocateSeekbar.progressProperty().intValue() + " MB", allocateSeekbar.progressProperty()));
-        memoryText.setOnClickListener(v -> {
-            EditDialog dialog = new EditDialog(getContext(), s -> {
-                if (s.matches("\\d+(\\.\\d+)?$")) {
-                    allocateSeekbar.setProgress(Integer.parseInt(s));
-                }
-            });
-            dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-            dialog.show();
-        });
 
         memoryBar.firstProgressProperty().bind(usedMemory);
         memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding(() -> {
