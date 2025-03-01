@@ -961,4 +961,6 @@
 
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>
+
+    <string name="mod_check_physics">当前使用的物理模组(%s)未经修补(将libPhysXJniBindings_64.so从x86_64架构替换到arm64)，启动后将会崩溃。</string>
 </resources>

@@ -1010,4 +1010,6 @@
 
     <string name="shaderpack">ShaderPack</string>
     <string name="recommend_version">Recommend version</string>
+
+    <string name="mod_check_physics">Physics mod (%s) currently in use has not been patched(replace libPhysXJniBindings_64.so form x86_64 to arm64), it will cause crash.</string>
 </resources>

@@ -28,6 +28,8 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.mio.minecraft.ModCheckException;
+import com.mio.minecraft.ModChecker;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
@@ -52,6 +54,7 @@ import com.tungsten.fclcore.download.game.LibraryDownloadException;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.game.Version;
+import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
@@ -80,7 +83,10 @@ import java.net.URL;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
@@ -179,7 +185,10 @@ public final class LauncherHelper {
                     return launcher;
                 }).thenComposeAsync(launcher -> { // launcher is prev task's result
                     return Task.supplyAsync(launcher::launch);
-                }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                }).thenComposeAsync(fclBridge -> Task.supplyAsync(() -> {
+                    checkMod(fclBridge);
+                    return fclBridge;
+                })).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                     CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                     Intent intent = new Intent(context, JVMActivity.class);
                     fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
@@ -187,7 +196,6 @@ public final class LauncherHelper {
                     fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                     fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
                     fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
-                    checkMod(fclBridge);
                     JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
                     Bundle bundle = new Bundle();
                     bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
@@ -260,6 +268,8 @@ public final class LauncherHelper {
                                     message = getLocalizedText(context, "download_failed", url, responseCode);
                             } else if (ex instanceof AccessDeniedException) {
                                 message = getLocalizedText(context, "exception_access_denied", ((AccessDeniedException) ex).getFile());
+                            } else if (ex instanceof ModCheckException) {
+                                message = ((ModCheckException) ex).getReason();
                             } else {
                                 if (ex == null) {
                                     message = "Task failed without exception!";
@@ -284,12 +294,13 @@ public final class LauncherHelper {
         executor.start();
     }
 
-    private void checkMod(FCLBridge bridge) {
+    private void checkMod(FCLBridge bridge) throws ModCheckException {
         try {
             StringBuilder sb = new StringBuilder();
-            Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods().forEach(mod -> {
+            ModChecker modChecker = new ModChecker(context);
+            for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
                 if (!mod.isActive()) {
-                    return;
+                    continue;
                 }
                 sb.append(mod.getFileName());
                 sb.append(" | ");
@@ -302,9 +313,15 @@ public final class LauncherHelper {
                 if (mod.getId().equals("touchcontroller")) {
                     bridge.setHasTouchController(true);
                 }
-            });
+                modChecker.check(mod);
+            }
             bridge.setModSummary(sb.toString());
-        } catch (Throwable ignore) {
+        } catch (IOException ignored) {
+        } catch (Throwable e) {
+            LOG.log(Level.WARNING, "CheckMod() failed", e);
+            if (e instanceof ModCheckException) {
+                throw e;
+            }
         }
     }
 
