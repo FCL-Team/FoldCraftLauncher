@@ -526,7 +526,6 @@
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
     <string name="menu_settings_gamepad_reset">بازنشانی کنید</string>
     <string name="menu_settings_gamepad_deadzone">منطقه مرده</string>
-    <string name="menu_settings_gamepad_aimzone">منطقه کمک کننده ایم</string>
     <string name="menu_settings_multiplayer">منوی چند نفره</string>
     <string name="menu_settings_multiplayer_button">باز کن</string>
     <string name="menu_settings_quick_input">ورودی سریع</string>
@@ -740,7 +739,6 @@
     <string name="settings_fcl_controller">کنترلر</string>
     <string name="settings_fcl_controller_injector">انجکتور کنترلر</string>
     <string name="settings_fcl_renderer">رندر</string>
-    <string name="settings_fcl_renderer_ltw">LTW (OpenGL 4.6، فقط از 1.17+ پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از 1.17- پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از GPU a616-a660 پشتیبانی می کند)</string>
 

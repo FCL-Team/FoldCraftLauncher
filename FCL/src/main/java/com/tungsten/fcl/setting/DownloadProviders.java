@@ -105,12 +105,11 @@ public final class DownloadProviders {
                     .orElse(providersById.get(DEFAULT_PROVIDER_ID));
         });
 
-        FXUtils.onChangeAndOperate(config().downloadTypeProperty(), downloadType -> {
-            if (!rawProviders.containsKey(downloadType)) {
-                config().setDownloadType(DEFAULT_RAW_PROVIDER_ID);
-                return;
-            }
+        if (!rawProviders.containsKey(config().getDownloadType())) {
+            config().setDownloadType(DEFAULT_RAW_PROVIDER_ID);
+        }
 
+        FXUtils.onChangeAndOperate(config().downloadTypeProperty(), downloadType -> {
             DownloadProvider primary = Optional.ofNullable(rawProviders.get(downloadType))
                     .orElse(rawProviders.get(DEFAULT_RAW_PROVIDER_ID));
             fileDownloadProvider.setDownloadProviderCandidates(

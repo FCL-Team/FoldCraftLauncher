@@ -272,17 +272,17 @@ public class FCLGameRepository extends DefaultGameRepository {
         File iconFile = getVersionIconFile(id);
         if (iconFile.exists())
             return BitmapDrawable.createFromPath(iconFile.getAbsolutePath());
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FORGE))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FORGE))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_forge);
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_neoforge);
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.LITELOADER))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.LITELOADER))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_chicken);
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.OPTIFINE))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.OPTIFINE))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_optifine);
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.FABRIC))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FABRIC))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_fabric);
-        else if (LibraryAnalyzer.analyze(version).has(LibraryAnalyzer.LibraryType.QUILT))
+        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.QUILT))
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_quilt);
         else
             return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);

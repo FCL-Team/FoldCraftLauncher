@@ -564,7 +564,6 @@
     <string name="menu_settings_gamepad_open_button">Open</string>
     <string name="menu_settings_gamepad_reset">Reset</string>
     <string name="menu_settings_gamepad_deadzone">DeadZone</string>
-    <string name="menu_settings_gamepad_aimzone">AimAssistZone</string>
     <string name="menu_settings_multiplayer">Multiplayer Menu</string>
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
@@ -786,7 +785,6 @@
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (unstable)(OpenGL 4.6, only support 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
@@ -1008,4 +1006,8 @@
     <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="installed">Installed</string>
+    <string name="message_install_plugin">You can get plugins through the following ways.</string>
+
+    <string name="shaderpack">ShaderPack</string>
+    <string name="recommend_version">Recommend version</string>
 </resources>

@@ -429,7 +429,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val analyzer = LibraryAnalyzer.analyze(
                     Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
-                    )
+                    ),
+                    Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)
                 )
                 for (mark in analyzer) {
                     val libraryId = mark.libraryId
@@ -495,7 +496,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun openRendererMenu(view: View) {
         RendererUtil.openRendererMenu(
-            this, bind.rightMenu, bind.rightMenu.x.toInt(), 0, bind.rightMenu.width, view.y.toInt()
+            this, bind.rightMenu, bind.rightMenu.x.toInt(), 0, bind.rightMenu.width, view.y.toInt(), false
         ) {
             onClick(view)
         }

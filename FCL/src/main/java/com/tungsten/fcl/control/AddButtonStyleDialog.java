@@ -18,7 +18,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
-import com.tungsten.fcl.ui.manage.EditDialog;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.util.StringUtils;
@@ -59,7 +59,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         setContentView(R.layout.dialog_add_button_style);
         setCancelable(false);
         this.callback = callback;
-        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle;
+        this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);

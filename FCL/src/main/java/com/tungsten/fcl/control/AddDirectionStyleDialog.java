@@ -12,12 +12,11 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.BaseInfoData;
-import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
-import com.tungsten.fcl.ui.manage.EditDialog;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -52,6 +51,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
 
     private ControlButtonStyle buttonStyle;
     private boolean isEdit;
+    private ControlButtonStyle beforeStyle;
 
     public interface Callback {
         void onStyleAdd(ControlDirectionStyle style);
@@ -108,9 +108,23 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             FCLTextView buttonStyleText = buttonStyleLayout.findViewById(R.id.button_style_text);
             FCLButton buttonStyleSet = buttonStyleLayout.findViewById(R.id.set_button_style);
 
-            buttonStyle = ButtonStyles.getStyles().get(0);
+            buttonStyle = new ControlButtonStyle("");
             buttonStyleText.setText(buttonStyle.getName());
             buttonStyleText.stringProperty().bind(buttonStyle.nameProperty());
+            buttonStyle.setTextSize(style.getButtonStyle().getTextSize());
+            buttonStyle.setTextColor(style.getButtonStyle().getTextColor());
+            buttonStyle.setStrokeWidth(style.getButtonStyle().getStrokeWidth());
+            buttonStyle.setStrokeColor(style.getButtonStyle().getStrokeColor());
+            buttonStyle.setCornerRadius(style.getButtonStyle().getCornerRadius());
+            buttonStyle.setFillColor(style.getButtonStyle().getFillColor());
+            buttonStyle.setTextSizePressed(style.getButtonStyle().getTextSizePressed());
+            buttonStyle.setTextColorPressed(style.getButtonStyle().getTextColorPressed());
+            buttonStyle.setStrokeWidthPressed(style.getButtonStyle().getStrokeWidthPressed());
+            buttonStyle.setStrokeColorPressed(style.getButtonStyle().getStrokeColorPressed());
+            buttonStyle.setCornerRadiusPressed(style.getButtonStyle().getCornerRadiusPressed());
+            buttonStyle.setFillColorPressed(style.getButtonStyle().getFillColorPressed());
+            buttonStyle.setFillColorPressed(style.getButtonStyle().getFillColorPressed());
+            this.beforeStyle = buttonStyle.clone();
             style.getButtonStyle().textSizeProperty().bind(buttonStyle.textSizeProperty());
             style.getButtonStyle().textColorProperty().bind(buttonStyle.textColorProperty());
             style.getButtonStyle().strokeWidthProperty().bind(buttonStyle.strokeWidthProperty());
@@ -139,6 +153,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
                     buttonStyle.setStrokeColorPressed(style.getStrokeColorPressed());
                     buttonStyle.setCornerRadiusPressed(style.getCornerRadiusPressed());
                     buttonStyle.setFillColorPressed(style.getFillColorPressed());
+                    changeDirectionStyle();
                 });
                 dialog.show();
             });
@@ -332,6 +347,19 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             }
         }
         if (v == negative) {
+            buttonStyle.setTextSize(beforeStyle.getTextSize());
+            buttonStyle.setTextColor(beforeStyle.getTextColor());
+            buttonStyle.setStrokeWidth(beforeStyle.getStrokeWidth());
+            buttonStyle.setStrokeColor(beforeStyle.getStrokeColor());
+            buttonStyle.setCornerRadius(beforeStyle.getCornerRadius());
+            buttonStyle.setFillColor(beforeStyle.getFillColor());
+            buttonStyle.setTextSizePressed(beforeStyle.getTextSizePressed());
+            buttonStyle.setTextColorPressed(beforeStyle.getTextColorPressed());
+            buttonStyle.setStrokeWidthPressed(beforeStyle.getStrokeWidthPressed());
+            buttonStyle.setStrokeColorPressed(beforeStyle.getStrokeColorPressed());
+            buttonStyle.setCornerRadiusPressed(beforeStyle.getCornerRadiusPressed());
+            buttonStyle.setFillColorPressed(beforeStyle.getFillColorPressed());
+            buttonStyle.setFillColorPressed(beforeStyle.getFillColorPressed());
             dismiss();
         }
     }

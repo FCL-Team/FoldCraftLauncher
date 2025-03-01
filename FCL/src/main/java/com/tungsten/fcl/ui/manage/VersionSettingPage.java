@@ -3,11 +3,11 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.PopupWindow;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
@@ -41,6 +41,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -48,6 +49,7 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
+import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -79,8 +81,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLImageView iconView;
 
-    private FCLSeekBar allocateSeekbar;
-    private FCLSeekBar scaleFactorSeekbar;
+    private FCLNumberSeekBar allocateSeekbar;
+    private FCLNumberSeekBar scaleFactorSeekbar;
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
@@ -95,7 +97,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
     private FCLImageButton rendererButton;
+    private FCLImageButton rendererInstallButton;
     private FCLImageButton driverButton;
+    private FCLImageButton driverInstallButton;
 
     private FCLTextView rendererText;
     private FCLTextView driverText;
@@ -143,10 +147,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         javaSpinner = findViewById(R.id.edit_java);
 
-        FCLTextView scaleFactorText = findViewById(R.id.scale_factor_text);
-
         scaleFactorSeekbar.addProgressListener();
-        scaleFactorText.stringProperty().bind(Bindings.createStringBinding(() -> (int) (lastVersionSetting.getScaleFactor() * 100) + " %", scaleFactorSeekbar.percentProgressProperty()));
 
         // add spinner data
         ArrayList<String> javaVersionDataList = new ArrayList<>();
@@ -172,13 +173,17 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
         rendererButton = findViewById(R.id.edit_renderer);
+        rendererInstallButton = findViewById(R.id.install_renderer);
         driverButton = findViewById(R.id.edit_driver);
+        driverInstallButton = findViewById(R.id.install_driver);
 
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
+        rendererInstallButton.setOnClickListener(this);
         driverButton.setOnClickListener(this);
+        driverInstallButton.setOnClickListener(this);
 
         rendererText = findViewById(R.id.renderer);
         driverText = findViewById(R.id.driver);
@@ -186,7 +191,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
 
         FCLTextView memoryStateText = findViewById(R.id.memory_state);
-        FCLTextView memoryText = findViewById(R.id.memory_text);
         FCLTextView memoryInfoText = findViewById(R.id.memory_info_text);
         FCLTextView memoryAllocateText = findViewById(R.id.memory_allocate_text);
 
@@ -203,17 +207,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         allocateSeekbar.addProgressListener();
         allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
-
-        memoryText.stringProperty().bind(Bindings.createStringBinding(() -> allocateSeekbar.progressProperty().intValue() + " MB", allocateSeekbar.progressProperty()));
-        memoryText.setOnClickListener(v -> {
-            EditDialog dialog = new EditDialog(getContext(), s -> {
-                if (s.matches("\\d+(\\.\\d+)?$")) {
-                    allocateSeekbar.setProgress(Integer.parseInt(s));
-                }
-            });
-            dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-            dialog.show();
-        });
 
         memoryBar.firstProgressProperty().bind(usedMemory);
         memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding(() -> {
@@ -444,14 +437,52 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             } else {
                 y = 0;
             }
-            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, name -> {
-                rendererText.setText(name);
-            });
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> rendererText.setText(name));
         }
         if (view == driverButton) {
-            RendererUtil.openDriverMenu(getContext(), view, name -> {
-                driverText.setText(name);
-            });
+            RendererUtil.openDriverMenu(getContext(), view, globalSetting, name -> driverText.setText(name));
+        }
+        if (view == rendererInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/a9f6e9d860d9";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
+        }
+        if (view == driverInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/d87c59695250";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .setPositiveButton(R.string.button_cancel, null)
+                    .create()
+                    .show();
         }
     }
 }
