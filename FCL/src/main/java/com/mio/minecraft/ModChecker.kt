@@ -33,10 +33,12 @@ class ModChecker(val context: Context) {
             )
         }
         add("valkyrienskies") {
-            throw ModCheckException(context.getString(
-                R.string.mod_check_mcef,
-                it.file.toFile().name
-            ))
+            throw ModCheckException(
+                context.getString(
+                    R.string.mod_check_valkyrienskies,
+                    it.file.toFile().name
+                )
+            )
         }
         add("yes_steve_model") { mod ->
             val arch = AndroidUtil.getElfArchFromZip(
