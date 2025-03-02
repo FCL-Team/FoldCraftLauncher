@@ -299,6 +299,7 @@ public final class LauncherHelper {
                 StringBuilder modCheckerInfo = new StringBuilder();
                 StringBuilder modSummary = new StringBuilder();
                 ModChecker modChecker = new ModChecker(context);
+                int count = 0;
                 for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
                     if (!mod.isActive()) {
                         continue;
@@ -317,13 +318,12 @@ public final class LauncherHelper {
                     try {
                         modChecker.check(mod);
                     } catch (ModCheckException e) {
-                        modCheckerInfo.append("=======================\n");
-                        modCheckerInfo.append(e.getReason());
-                        modCheckerInfo.append("\n");
+                        count++;
+                        modCheckerInfo.append(count).append(".").append(e.getReason()).append("\n\n");
                     }
                 }
                 bridge.setModSummary(modSummary.toString());
-                if (!modCheckerInfo.toString().trim().equals("")) {
+                if (!modCheckerInfo.toString().trim().isEmpty()) {
                     CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                     Schedulers.androidUIThread().execute(() -> {
                         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
