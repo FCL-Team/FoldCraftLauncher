@@ -1064,6 +1064,15 @@ public class GLFW
         nglfwSetShowingWindow(window);
     }
 
+    public static void glfwHideWindow(long window) {
+        GLFWWindowProperties win = internalGetWindow(window);
+        win.windowAttribs.put(GLFW_HOVERED, 0);
+        win.windowAttribs.put(GLFW_VISIBLE, 0);
+    }
+
+    public static void glfwFocusWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
     public static void glfwWindowHint(int hint, int value) {
         if (hint == GLFW_VISIBLE) {
             mGLFWWindowVisibleOnCreation = value == GLFW_TRUE;
