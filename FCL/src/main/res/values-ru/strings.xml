@@ -1032,7 +1032,7 @@
     <string name="recommend_version">Рекомендуемая версия</string>
 
     <string name="mod_check_continue">Продолжить</string>
-    <string name="mod_check_physics">Используемый мод Physics (%s) не пропатчен (нужно заменить libPhysXJniBindings_64.so от Linux x86_64 на версию для Android arm64/x86_64), это приведёт к сбою.</string>
+    <string name="mod_check_physics">Используемый мод Physics (%s) не пропатчен (нужно заменить libPhysXJniBindings_64.so от Linux x86_64 на версию для Android arm64/x86_64). Это приведёт к сбою.</string>
     <string name="mod_check_mcef">Мод MCEF (%s) не работает на Android. Обычно он нужен для работы WebDisplays или внутриигрового браузера.</string>
     <string name="mod_check_valkyrienskies">Мод Valkyrien Skies/Valkyrien Warfare (%s) не работает в одиночной игре напрямую. Необходим сервер, иначе игра вылетит.</string>
     <string name="mod_check_yes_steve_model">Мод Yes Steve Model (%s) версии 2.2.2 и выше не работает на Android.</string>
