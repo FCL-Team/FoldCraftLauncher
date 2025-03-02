@@ -578,7 +578,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 keycodeOutputting = press;
                 menu.getInput().sendKeyEvent(keycode, press);
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(20);
                 } catch (InterruptedException ignore) {
                 }
             }
