@@ -1,5 +1,5 @@
 <resources>
-    <string name="splash_permission_msg">Нет доступа к хранилищу, предоствьте разрешение Fold Craft Launcher в настройках.</string>
+    <string name="splash_permission_msg">Нет доступа к хранилищу. Предоствьте разрешение Fold Craft Launcher в настройках.</string>
     <string name="splash_permission_grant">Разрешить</string>
     <string name="splash_permission_title">Необходимо разрешение на доступ к хранилищу</string>
     <string name="splash_permission_close">Закрыть лаунчер</string>
@@ -7,7 +7,7 @@
     <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
 
     <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
-    <string name="splash_eula_error">Не удалось подтвердить наличие лицензии, из за проблем с соединением.</string>
+    <string name="splash_eula_error">Не удалось подтвердить наличие лицензии из-за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
     <string name="splash_runtime_install">Установить</string>
@@ -109,7 +109,7 @@
 
     <string name="assets_download">Загрузка ассетов</string>
     <string name="assets_download_all">Проверка целостности</string>
-    <string name="assets_index_malformed">Загруженные файлы ресурсов были повреждены из за ошибки сети!</string>
+    <string name="assets_index_malformed">Загруженные файлы ресурсов были повреждены из-за ошибки сети!</string>
 
     <string name="button_back">Назад</string>
     <string name="button_cancel">Отменить</string>
@@ -390,7 +390,7 @@
     <string name="game_crash_reason_mod_profile_causes_game_crash">"Текущая игра не может продолжить выполнение из-за проблемы с конфигурационным файлом мода.
     Вы можете проверить лог, чтобы найти модуль с ошибкой и его конфигурационный файл."</string>
     <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">"Forge, возможно, предоставил информацию об ошибке.
-    Вы можете просмотреть лог и выполнить соответствующую обработку согласно информации в логе в отчете об ошибке.
+    Вы можете просмотреть лог и выполнить соответствующую обработку согласно информации в отчете об ошибке.
     Если вы не видите сообщение об ошибке, вы можете просмотреть отчет об ошибке, чтобы понять, как ошибка произошла."</string>
     <string name="game_crash_reason_need_jdk11">"Текущая игра не может продолжить выполнение из-за неподходящей версии Java.
     Требуется Java 11."</string>
@@ -823,10 +823,10 @@
     <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="settings_fcl_vulkan_driver_system">Разрешить Zink использовать системные драйвера Vulkan</string>
     <string name="settings_fcl_renderer">Рендер</string>
-    <string name="settings_fcl_pojav_bigcore">Принудительно использовать мощные ядра для рендеринга (Ядро Pojav)</string>
+    <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга (Ядро Pojav)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
-    <string name="settings_fcl_driver">Vulkan драйвер</string>
+    <string name="settings_fcl_driver">Драйвер Vulkan</string>
 
     <string name="settings_game">Настройки игры</string>
     <string name="settings_game_dimension">Разрешение</string>
