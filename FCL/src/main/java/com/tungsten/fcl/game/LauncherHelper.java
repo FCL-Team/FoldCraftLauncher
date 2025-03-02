@@ -169,40 +169,39 @@ public final class LauncherHelper {
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
-                    LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), javaAgents);
-                    FCLGameLauncher launcher = new FCLGameLauncher(
-                            context,
-                            repository,
-                            version.get(),
-                            authInfo,
-                            launchOptions
-                    );
-                    version.get().getLibraries().forEach(library -> {
-                        if (library.getName().startsWith("net.java.dev.jna:jna:")) {
-                            launcher.setJnaVersion(library.getVersion());
-                        }
-                    });
-                    return launcher;
-                }).thenComposeAsync(launcher -> { // launcher is prev task's result
-                    return Task.supplyAsync(launcher::launch);
-                }).thenComposeAsync(fclBridge -> Task.supplyAsync(() -> {
-                    checkMod(fclBridge);
-                    return fclBridge;
-                })).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
-                    CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
-                    Intent intent = new Intent(context, JVMActivity.class);
-                    fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
-                    fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
-                    fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
-                    fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
-                    fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
-                    JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
-                    Bundle bundle = new Bundle();
-                    bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
-                    intent.putExtras(bundle);
-                    LOG.log(Level.INFO, "Start JVMActivity!");
-                    context.startActivity(intent);
-                })).withStage("launch.state.waiting_launching"))
+                            LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), javaAgents);
+                            FCLGameLauncher launcher = new FCLGameLauncher(
+                                    context,
+                                    repository,
+                                    version.get(),
+                                    authInfo,
+                                    launchOptions
+                            );
+                            version.get().getLibraries().forEach(library -> {
+                                if (library.getName().startsWith("net.java.dev.jna:jna:")) {
+                                    launcher.setJnaVersion(library.getVersion());
+                                }
+                            });
+                            return launcher;
+                        }).thenComposeAsync(launcher -> { // launcher is prev task's result
+                            return Task.supplyAsync(launcher::launch);
+                        }).thenComposeAsync(this::checkMod)
+                        .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                            CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
+                            Intent intent = new Intent(context, JVMActivity.class);
+                            fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
+                            fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
+                            fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
+                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
+                            fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
+                            JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
+                            intent.putExtras(bundle);
+                            LOG.log(Level.INFO, "Start JVMActivity!");
+                            context.startActivity(intent);
+                        }))
+                        .withStage("launch.state.waiting_launching"))
                 .withStagesHint(Lang.immutableListOf(
                         "launch.state.java",
                         "launch.state.dependencies",
@@ -294,35 +293,46 @@ public final class LauncherHelper {
         executor.start();
     }
 
-    private void checkMod(FCLBridge bridge) throws ModCheckException {
-        try {
-            StringBuilder sb = new StringBuilder();
-            ModChecker modChecker = new ModChecker(context);
-            for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
-                if (!mod.isActive()) {
-                    continue;
+    private Task<FCLBridge> checkMod(FCLBridge bridge) {
+        return Task.composeAsync(() -> {
+            try {
+                StringBuilder sb = new StringBuilder();
+                ModChecker modChecker = new ModChecker(context);
+                for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+                    if (!mod.isActive()) {
+                        continue;
+                    }
+                    sb.append(mod.getFileName());
+                    sb.append(" | ");
+                    sb.append(mod.getId());
+                    sb.append(" | ");
+                    sb.append(mod.getVersion());
+                    sb.append(" | ");
+                    sb.append(mod.getModLoaderType());
+                    sb.append("\n");
+                    if (mod.getId().equals("touchcontroller")) {
+                        bridge.setHasTouchController(true);
+                    }
+                    modChecker.check(mod);
                 }
-                sb.append(mod.getFileName());
-                sb.append(" | ");
-                sb.append(mod.getId());
-                sb.append(" | ");
-                sb.append(mod.getVersion());
-                sb.append(" | ");
-                sb.append(mod.getModLoaderType());
-                sb.append("\n");
-                if (mod.getId().equals("touchcontroller")) {
-                    bridge.setHasTouchController(true);
-                }
-                modChecker.check(mod);
+                bridge.setModSummary(sb.toString());
+                return Task.completed(bridge);
+            } catch (ModCheckException e) {
+                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                Schedulers.androidUIThread().execute(() -> {
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                    builder.setCancelable(false);
+                    builder.setMessage(e.getReason());
+                    builder.setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()));
+                    builder.setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge)));
+                    builder.create().show();
+                });
+                return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+            } catch (Throwable e) {
+                LOG.log(Level.WARNING, "CheckMod() failed", e);
+                return Task.completed(bridge);
             }
-            bridge.setModSummary(sb.toString());
-        } catch (IOException ignored) {
-        } catch (Throwable e) {
-            LOG.log(Level.WARNING, "CheckMod() failed", e);
-            if (e instanceof ModCheckException) {
-                throw e;
-            }
-        }
+        });
     }
 
     private static Task<JavaVersion> checkGameState(Context context, VersionSetting setting, Version version) {

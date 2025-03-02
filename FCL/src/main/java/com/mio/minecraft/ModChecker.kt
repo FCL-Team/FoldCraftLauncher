@@ -3,6 +3,7 @@ package com.mio.minecraft
 import android.content.Context
 import com.mio.util.AndroidUtil
 import com.tungsten.fcl.R
+import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
 import kotlin.jvm.Throws
 
@@ -15,7 +16,7 @@ class ModChecker(val context: Context) {
                 mod.file.toFile(),
                 "de/fabmax/physxjni/linux/libPhysXJniBindings_64.so"
             )
-            if (arch.contains("x86"))
+            if (arch.isBlank() or (!Architecture.isx86Device() and arch.contains("x86")))
                 throw ModCheckException(
                     context.getString(
                         R.string.mod_check_physics,
@@ -25,11 +26,12 @@ class ModChecker(val context: Context) {
         }
         add("mcef") {
             throw ModCheckException(
-            context.getString(
-                R.string.mod_check_mcef,
-                it.file.toFile().name
+                context.getString(
+                    R.string.mod_check_mcef,
+                    it.file.toFile().name
+                )
             )
-        )}
+        }
     }
 
     @Throws(ModCheckException::class)
