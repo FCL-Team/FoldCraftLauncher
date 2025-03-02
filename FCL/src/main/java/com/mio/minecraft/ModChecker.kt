@@ -38,6 +38,19 @@ class ModChecker(val context: Context) {
                 it.file.toFile().name
             ))
         }
+        add("yes_steve_model") { mod ->
+            val arch = AndroidUtil.getElfArchFromZip(
+                mod.file.toFile(),
+                "META-INF/native/libysm-core.so"
+            )
+            if (arch.isNotBlank())
+                throw ModCheckException(
+                    context.getString(
+                        R.string.mod_check_yes_steve_model,
+                        mod.file.toFile().name
+                    )
+                )
+        }
     }
 
     @Throws(ModCheckException::class)
