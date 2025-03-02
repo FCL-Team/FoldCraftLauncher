@@ -751,18 +751,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (v == sendKeycode) {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
             new SelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
-                new Thread(() -> {
-                    list.forEach(key -> {
-                        getInput().sendKeyEvent(key, true);
-                    });
+                Schedulers.io().execute(()->{
+                    list.forEach(key -> getInput().sendKeyEvent(key, true));
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException ignore) {
                     }
-                    list.forEach(key -> {
-                        getInput().sendKeyEvent(key, false);
-                    });
-                }).start();
+                    list.forEach(key -> getInput().sendKeyEvent(key, false));
+                });
                 return Unit.INSTANCE;
             }).show();
         }

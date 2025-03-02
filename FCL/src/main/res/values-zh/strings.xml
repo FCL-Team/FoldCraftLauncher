@@ -961,4 +961,10 @@
 
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>
+
+    <string name="mod_check_continue">无视风险!</string>
+    <string name="mod_check_physics">当前使用的物理模组（%s）未经修补（将libPhysXJniBindings_64.so从Linux x86_64架构替换到安卓arm64/x86_64），启动后将会崩溃。</string>
+    <string name="mod_check_mcef">MCEF（%s）无法在安卓上运行。它通常被用来作为WebDisplays/In-game Browser（浏览器）的前置依赖。</string>
+    <string name="mod_check_valkyrienskies">瓦尔基里天空/瓦尔基里战争（%s）无法直接在单人模式下运行。你必须使用服务器运行（可以使用Termux），否则游戏会崩溃。</string>
+    <string name="mod_check_yes_steve_model">是，史蒂夫模型（%s）2.2.2+无法在安卓系统上运行。</string>
 </resources>
