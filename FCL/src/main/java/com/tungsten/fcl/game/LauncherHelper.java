@@ -296,38 +296,46 @@ public final class LauncherHelper {
     private Task<FCLBridge> checkMod(FCLBridge bridge) {
         return Task.composeAsync(() -> {
             try {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder modCheckerInfo = new StringBuilder();
+                StringBuilder modSummary = new StringBuilder();
                 ModChecker modChecker = new ModChecker(context);
                 for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
                     if (!mod.isActive()) {
                         continue;
                     }
-                    sb.append(mod.getFileName());
-                    sb.append(" | ");
-                    sb.append(mod.getId());
-                    sb.append(" | ");
-                    sb.append(mod.getVersion());
-                    sb.append(" | ");
-                    sb.append(mod.getModLoaderType());
-                    sb.append("\n");
+                    modSummary.append(mod.getFileName());
+                    modSummary.append(" | ");
+                    modSummary.append(mod.getId());
+                    modSummary.append(" | ");
+                    modSummary.append(mod.getVersion());
+                    modSummary.append(" | ");
+                    modSummary.append(mod.getModLoaderType());
+                    modSummary.append("\n");
                     if (mod.getId().equals("touchcontroller")) {
                         bridge.setHasTouchController(true);
                     }
-                    modChecker.check(mod);
+                    try {
+                        modChecker.check(mod);
+                    } catch (ModCheckException e) {
+                        modCheckerInfo.append("=======================\n");
+                        modCheckerInfo.append(e.getReason());
+                        modCheckerInfo.append("\n");
+                    }
                 }
-                bridge.setModSummary(sb.toString());
+                bridge.setModSummary(modSummary.toString());
+                if (!modCheckerInfo.toString().trim().equals("")) {
+                    CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                    Schedulers.androidUIThread().execute(() -> {
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                        builder.setCancelable(false);
+                        builder.setMessage(modCheckerInfo.toString());
+                        builder.setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()));
+                        builder.setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge)));
+                        builder.create().show();
+                    });
+                    return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+                }
                 return Task.completed(bridge);
-            } catch (ModCheckException e) {
-                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
-                Schedulers.androidUIThread().execute(() -> {
-                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-                    builder.setCancelable(false);
-                    builder.setMessage(e.getReason());
-                    builder.setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()));
-                    builder.setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge)));
-                    builder.create().show();
-                });
-                return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             } catch (Throwable e) {
                 LOG.log(Level.WARNING, "CheckMod() failed", e);
                 return Task.completed(bridge);
