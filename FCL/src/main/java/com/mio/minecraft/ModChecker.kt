@@ -32,6 +32,12 @@ class ModChecker(val context: Context) {
                 )
             )
         }
+        add("valkyrienskies") {
+            throw ModCheckException(context.getString(
+                R.string.mod_check_mcef,
+                it.file.toFile().name
+            ))
+        }
     }
 
     @Throws(ModCheckException::class)
