@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.marschall.ZipFileSystem"
+    namespace = "com.sun.nio.zipfs"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {

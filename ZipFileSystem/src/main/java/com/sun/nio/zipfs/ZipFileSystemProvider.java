@@ -38,40 +38,21 @@
  */
 
 
-package com.github.marschall.com.sun.nio.zipfs;
+package com.sun.nio.zipfs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+import java.nio.file.DirectoryStream.Filter;
+import java.nio.file.attribute.*;
+import java.nio.file.spi.FileSystemProvider;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.AccessMode;
-import java.nio.file.CopyOption;
-import java.nio.file.DirectoryStream;
-import java.nio.file.DirectoryStream.Filter;
-import java.nio.file.FileStore;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemAlreadyExistsException;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.ProviderMismatchException;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileAttributeView;
-import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.zip.ZipError;
+import java.util.concurrent.ExecutorService;
 
 /*
  *
@@ -87,7 +68,7 @@ public class ZipFileSystemProvider extends FileSystemProvider {
 
     @Override
     public String getScheme() {
-        return "zipfs";
+        return "jar";
     }
 
     protected Path uriToPath(URI uri) {

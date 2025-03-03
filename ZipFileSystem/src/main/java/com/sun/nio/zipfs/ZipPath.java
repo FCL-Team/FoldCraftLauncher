@@ -38,48 +38,17 @@
  */
 
 
-package com.github.marschall.com.sun.nio.zipfs;
+package com.sun.nio.zipfs;
 
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static java.nio.file.StandardOpenOption.READ;
-import static java.nio.file.StandardOpenOption.WRITE;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
-import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
-import java.nio.file.AccessDeniedException;
-import java.nio.file.AccessMode;
-import java.nio.file.CopyOption;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.DirectoryStream;
+import java.nio.channels.*;
+import java.nio.file.*;
 import java.nio.file.DirectoryStream.Filter;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileStore;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.LinkOption;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.OpenOption;
-import java.nio.file.Path;
-import java.nio.file.ProviderMismatchException;
-import java.nio.file.ReadOnlyFileSystemException;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileTime;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.nio.file.attribute.*;
+import java.util.*;
+import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardCopyOption.*;
 
 
 /**
@@ -98,13 +67,28 @@ public class ZipPath implements Path {
         this(zfs, path, false);
     }
 
-    ZipPath(ZipFileSystem zfs, byte[] path, boolean normalized)
-    {
+    ZipPath(ZipFileSystem zfs, byte[] path, boolean normalized) {
         this.zfs = zfs;
-        if (normalized)
+        if (normalized) {
             this.path = path;
-        else
+        } else {
+            if (zfs.zc.isUTF8()) {
+                this.path = normalize(path);
+            } else {
+                // see normalize(String);
+                this.path = normalize(zfs.getString(path));
+            }
+        }
+    }
+
+    ZipPath(ZipFileSystem zfs, String path) {
+        this.zfs = zfs;
+        if (zfs.zc.isUTF8()) {
+            this.path = normalize(zfs.getBytes(path));
+        } else {
+            // see normalize(String);
             this.path = normalize(path);
+        }
     }
 
     @Override
@@ -225,7 +209,7 @@ public class ZipPath implements Path {
     @Override
     public URI toUri() {
         try {
-            return new URI(zfs.provider().getScheme(),
+            return new URI("jar",
                            zfs.getZipFile().toUri() +
                            "!" +
                            zfs.getString(toAbsolutePath().path),
@@ -509,6 +493,50 @@ public class ZipPath implements Path {
         return (m == to.length)? to : Arrays.copyOf(to, m);
     }
 
+    // if zfs is NOT in utf8, normalize the path as "String"
+    // to avoid incorrectly normalizing byte '0x5c' (as '\')
+    // to '/'.
+    private byte[] normalize(String path) {
+        int len = path.length();
+        if (len == 0)
+            return new byte[0];
+        char prevC = 0;
+        for (int i = 0; i < len; i++) {
+            char c = path.charAt(i);
+            if (c == '\\' || c == '\u0000')
+                return normalize(path, i, len);
+            if (c == '/' && prevC == '/')
+                return normalize(path, i - 1, len);
+            prevC = c;
+        }
+        if (len > 1 && prevC == '/')
+            path = path.substring(0, len - 1);
+        return zfs.getBytes(path);
+    }
+
+    private byte[] normalize(String path, int off, int len) {
+        StringBuilder to = new StringBuilder(len);
+        to.append(path, 0, off);
+        int m = off;
+        char prevC = 0;
+        while (off < len) {
+            char c = path.charAt(off++);
+            if (c == '\\')
+                c = '/';
+            if (c == '/' && prevC == '/')
+                continue;
+            if (c == '\u0000')
+                throw new InvalidPathException(path,
+                                               "Path: nul character not allowed");
+            to.append(c);
+            prevC = c;
+        }
+        len = to.length();
+        if (len > 1 && prevC == '/')
+            to.delete(len -1, len);
+        return zfs.getBytes(to.toString());
+    }
+
     // Remove DotSlash(./) and resolve DotDot (..) components
     private byte[] getResolved() {
         if (path.length == 0)
@@ -625,8 +653,7 @@ public class ZipPath implements Path {
 
     @Override
     public final File toFile() {
-        //todo: may cause crash
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -820,7 +847,7 @@ public class ZipPath implements Path {
     {
         if (options.length == 0)
             return zfs.newOutputStream(getResolvedPath(),
-                                       CREATE_NEW, WRITE);
+                                       CREATE, TRUNCATE_EXISTING, WRITE);
         return zfs.newOutputStream(getResolvedPath(), options);
     }
 

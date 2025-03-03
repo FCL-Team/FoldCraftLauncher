@@ -38,14 +38,14 @@
  */
 
 
-package com.github.marschall.com.sun.nio.zipfs;
+package com.sun.nio.zipfs;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.PatternSyntaxException;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
