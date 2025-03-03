@@ -1318,7 +1318,10 @@ public class ZipFileSystem extends FileSystem {
         // Set the POSIX permissions of the original Zip File if available
         // before moving the temp file
         if (attrs != null) {
-            Files.setPosixFilePermissions(tmpFile, attrs.permissions());
+            try {
+                Files.setPosixFilePermissions(tmpFile, attrs.permissions());
+            } catch (Throwable ignore) {
+            }
         }
         Files.move(tmpFile, zfpath, REPLACE_EXISTING);
         hasUpdate = false;    // clear
