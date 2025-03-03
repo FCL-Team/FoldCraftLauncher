@@ -38,7 +38,7 @@
  */
 
 
-package com.github.marschall.com.sun.nio.zipfs;
+package com.sun.nio.zipfs;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

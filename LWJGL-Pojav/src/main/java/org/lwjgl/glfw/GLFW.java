@@ -1064,6 +1064,15 @@ public class GLFW
         nglfwSetShowingWindow(window);
     }
 
+    public static void glfwHideWindow(long window) {
+        GLFWWindowProperties win = internalGetWindow(window);
+        win.windowAttribs.put(GLFW_HOVERED, 0);
+        win.windowAttribs.put(GLFW_VISIBLE, 0);
+    }
+
+    public static void glfwFocusWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
     public static void glfwWindowHint(int hint, int value) {
         if (hint == GLFW_VISIBLE) {
             mGLFWWindowVisibleOnCreation = value == GLFW_TRUE;
@@ -1318,17 +1327,27 @@ public class GLFW
 */
 
     /** Array version of: {@link #glfwGetMonitorContentScale GetMonitorContentScale} */
-/*
+
     public static void glfwGetMonitorContentScale(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("float *") float[] xscale, @Nullable @NativeType("float *") float[] yscale) {
-        long __functionAddress = Functions.GetMonitorContentScale;
         if (CHECKS) {
             // check(monitor);
             checkSafe(xscale, 1);
             checkSafe(yscale, 1);
         }
-        invokePPPV(monitor, xscale, yscale, __functionAddress);
+        xscale[0] = 1;
+        yscale[0] = 1;
     }
-*/
+
+    public static void glfwGetMonitorContentScale(@NativeType("GLFWmonitor *") long monitor, @NativeType("float *") @Nullable FloatBuffer xscale, @NativeType("float *") @Nullable FloatBuffer yscale) {
+        if (CHECKS) {
+            // check(monitor);
+            checkSafe(xscale, 1);
+            checkSafe(yscale, 1);
+        }
+        xscale.put(0, 1);
+        yscale.put(0, 1);
+    }
+
 
     /** Array version of: {@link #glfwGetWindowPos GetWindowPos} */
     public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("int *") int[] xpos, @Nullable @NativeType("int *") int[] ypos) {

@@ -371,7 +371,7 @@ public final class FileUtils {
         if (destFile.exists() && !destFile.canWrite())
             throw new IOException("Destination '" + destFile + "' exists but is read-only");
 
-        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static void copyFile(Path srcFile, Path destFile)
@@ -387,7 +387,7 @@ public final class FileUtils {
         if (Files.exists(destFile) && !Files.isWritable(destFile))
             throw new IOException("Destination '" + destFile + "' exists but is read-only");
 
-        Files.copy(srcFile, destFile, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING);
     }
 
     public static void moveFile(File srcFile, File destFile) throws IOException {

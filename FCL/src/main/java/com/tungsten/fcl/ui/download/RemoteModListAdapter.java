@@ -38,23 +38,24 @@ public class RemoteModListAdapter extends FCLAdapter {
         this.downloadPage = downloadPage;
         this.list = list;
         this.callback = callback;
-        Task.runAsync(() -> {
-            ModManager modManager = ((ModDownloadPage) downloadPage).getModManager();
-            List<LocalModFile> modFiles = modManager.getMods().parallelStream().collect(Collectors.toList());
-            for (LocalModFile localModFile : modFiles) {
-                try {
-                    Optional<RemoteMod.Version> remoteVersionOptional = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
-                    remoteVersionOptional.ifPresent(localModFile::setRemoteVersion);
-                    RemoteMod.Version remoteVersion = localModFile.getRemoteVersion();
-                    if (remoteVersion != null) {
-                        String modId = remoteVersion.getModid();
-                        modIdList.add(modId);
+        if (downloadPage instanceof ModDownloadPage) {
+            Task.runAsync(() -> {
+                ModManager modManager = ((ModDownloadPage) downloadPage).getModManager();
+                List<LocalModFile> modFiles = modManager.getMods().parallelStream().collect(Collectors.toList());
+                for (LocalModFile localModFile : modFiles) {
+                    try {
+                        Optional<RemoteMod.Version> remoteVersionOptional = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
+                        remoteVersionOptional.ifPresent(localModFile::setRemoteVersion);
+                        RemoteMod.Version remoteVersion = localModFile.getRemoteVersion();
+                        if (remoteVersion != null) {
+                            String modId = remoteVersion.getModid();
+                            modIdList.add(modId);
+                        }
+                    } catch (Throwable ignore) {
                     }
-                } catch (Throwable ignore) {
                 }
-            }
-
-        }).start();
+            }).start();
+        }
     }
 
     private static class ViewHolder {

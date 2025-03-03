@@ -17,16 +17,16 @@ tasks.register("buildLwjgl") {
 }
 
 tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.default.get().map {
+        println(it.name)
+        if (it.isDirectory) it else zipTree(it)
+    })
+    exclude("net/java/openjdk/cacio/ctc/**")
+    manifest {
+        attributes("Manifest-Version" to "3.3.3")
+    }
     doLast {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from(configurations.default.get().map {
-            println(it.name)
-            if (it.isDirectory) it else zipTree(it)
-        })
-        exclude("net/java/openjdk/cacio/ctc/**")
-        manifest {
-            attributes("Manifest-Version" to "3.3.3")
-        }
         val versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl/version")
         versionFile.writeText(System.currentTimeMillis().toString())
     }

@@ -1010,4 +1010,11 @@
 
     <string name="shaderpack">ShaderPack</string>
     <string name="recommend_version">Recommend version</string>
+
+    <string name="mod_check_continue">Continue</string>
+    <string name="mod_check_physics">Physics mod (%s) currently in use has not been patched(replace libPhysXJniBindings_64.so form Linux x86_64 to Android arm64/x86_64), it will cause crash.</string>
+    <string name="mod_check_mcef">MCEF mod (%s) cannot work on Android. It is usually used as a dependency of WebDisplays/In-game Browser.</string>
+    <string name="mod_check_valkyrienskies">Valkyrien Skies/Valkyrien Warfare mod (%s) cannot work directly in single player mode. You must use a server, otherwise it will crash the game.</string>
+    <string name="mod_check_yes_steve_model">Yes Steve Model mod (%s) 2.2.2+ cannot work on Android.</string>
+    <string name="mod_check_imblocker">IMBlocker (%s) is not for Android. It must make the game crash.</string>
 </resources>
