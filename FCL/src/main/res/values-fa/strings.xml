@@ -140,8 +140,8 @@
     <string name="control_edit">ویرایش کنترلر</string>
     <string name="control_import">وارد کردن کنترلر</string>
     <string name="control_import_failed">وارد کردن کنترلر ناموفق بود!</string>
-    <string name="control_upgrade">کنترلر: %s یک کنترلر منسوخ است ، ممکن است اشکالات زیر ناشناخته را تولید کند ، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
-    <string name="control_incompatible">کنترلر: %s یک کنترلر ناسازگار فولد‌کرفت‌لانچر است ، ممکن است توسط نسخه لانچر خیلی کم باشد یا نسخه کنترلر خیلی کم باشد ، لطفاً بررسی کنید.</string>
+    <string name="control_upgrade">کنترلر: %s یک کنترلر منسوخ است، ممکن است اشکالات زیر ناشناخته را تولید کند، آیا شما می خواهید آن را به نسخه جدید تغییر دهید؟</string>
+    <string name="control_incompatible">کنترلر: %s یک کنترلر ناسازگار فولد‌کرفت‌لانچر است، ممکن است نسخه لانچر خیلی پایین باشد یا نسخه کنترلر خیلی پایین باشد، لطفاً بررسی کنید.</string>
     <string name="control_upload_requirement">لطفا ابتدا به گروه QQ بپیوندید، سپس روی "اشتراک گذاری" کلیک کنید تا کنترلر و اطلاعات آن را با مدیر به اشتراک بگذارید و منتظر بررسی باشید. لطفاً با مدیر تماس بگیرید تا کنترلر خود را به او بگویید.</string>
     <string name="control_info_author">نویسنده:</string>
     <string name="control_info_icon">نماد:</string>
@@ -154,7 +154,7 @@
     <string name="control_info_edit">ویرایش اطلاعات کنترلر</string>
     <string name="control_info_more">اطلاعات بیشتر</string>
     <string name="control_info_name">نام:</string>
-    <string name="control_info_name_exist">کنترلر از قبل وجود دارد ، لطفاً نام را تغییر دهید!</string>
+    <string name="control_info_name_exist">کنترلر از قبل وجود دارد، لطفاً نام آن را تغییر دهید!</string>
     <string name="control_info_name_invalid">نام نامعتبر</string>
     <string name="control_info_version">نسخه:</string>
     <string name="control_info_version_code">کد نسخه:</string>
@@ -166,14 +166,14 @@
     <string name="curse_category_0">همه</string>
 
     <string name="curse_category_4474">علمی تخیلی</string>
-    <string name="curse_category_4481">کوچک /سبک</string>
+    <string name="curse_category_4481">کوچک/سبک</string>
     <string name="curse_category_4483">مبارزه</string>
     <string name="curse_category_4477">مینی گیم</string>
     <string name="curse_category_4478">کوشش</string>
     <string name="curse_category_4484">چند نفره</string>
     <string name="curse_category_4476">کاوش کردن</string>
     <string name="curse_category_4736">ارباب</string>
-    <string name="curse_category_4475">ماجراجویی و RPG</string>
+    <string name="curse_category_4475">ماجراجویی و رول‌پلی‌گیم</string>
     <string name="curse_category_4487">FTB</string>
     <string name="curse_category_4480">بر اساس نقشه</string>
     <string name="curse_category_4479">هاردکور</string>
@@ -185,18 +185,18 @@
     <string name="curse_category_5299">تحصیلات</string>
     <string name="curse_category_5232">بناچه کهکشان</string>
     <string name="curse_category_5129">وانیلا</string>
-    <string name="curse_category_5189">ابزار و آمپ ؛ قول</string>
+    <string name="curse_category_5189">ابزار و آمپ؛ قول</string>
     <string name="curse_category_6814">کارایی</string>
     <string name="curse_category_6954">پویایی یکپارچه</string>
     <string name="curse_category_6484">ايجاد كردن</string>
     <string name="curse_category_6821">رفع اشکال</string>
     <string name="curse_category_6145">ارباب</string>
     <string name="curse_category_5190">قول</string>
-    <string name="curse_category_5191">ابزار و آمپ ؛ قول</string>
+    <string name="curse_category_5191">ابزار و آمپ؛ قول</string>
     <string name="curse_category_5192">فانتزی</string>
     <string name="curse_category_423">نقشه و اطلاعات</string>
     <string name="curse_category_426">ترکیب</string>
-    <string name="curse_category_434">زره ، ابزار و سلاح</string>
+    <string name="curse_category_434">زره، ابزار و سلاح</string>
     <string name="curse_category_409">سازه ها</string>
     <string name="curse_category_4485">سحر</string>
     <string name="curse_category_420">ذخیره سازی</string>
@@ -278,15 +278,15 @@
     <string name="curse_sort_last_updated">اخرین به روز رسانی</string>
     <string name="curse_sort_name">نام</string>
     <string name="curse_sort_popularity">محبوبیت</string>
-    <string name="curse_sort_total_downloads">بارگیری کل</string>
+    <string name="curse_sort_total_downloads">دانلود کل</string>
 
     <string name="datapack_add">نصب دیتاپک</string>
     <string name="datapack_choose_datapack">برای وارد‌ کردن؛ یک دیتاپک را انتخاب کنید</string>
 
     <string name="download_code_404">پرونده در سرور از راه دور یافت نشد: %s</string>
-    <string name="download_failed">بارگیری %1 $s ، کد پاسخ: %2 $D بارگیری نشد</string>
+    <string name="download_failed">بارگیری %1 $s ،کد پاسخ: %2 $D بارگیری نشد</string>
     <string name="download_failed_empty">هیچ نسخه ای در دسترس نیست</string>
-    <string name="download_failed_refresh">نمی توان لیست نسخه را دریافت کرد. لطفا دوباره امتحان کنید.</string>
+    <string name="download_failed_refresh">نمی توان لیست نسخه‌ها را دریافت کرد. لطفا دوباره امتحان کنید.</string>
 
     <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (Bangbang93 ، https://bmclapi2.bangbang93.com)</string>
@@ -295,15 +295,15 @@
     <string name="download_provider_balanced">از سریعترین</string>
     <string name="download_provider_mirror">از میرور</string>
 
-    <string name="edit_view_clone">نمای کلون</string>
-    <string name="edit_view_delete">حذف نما</string>
-    <string name="edit_view_event">مشاهده رویداد</string>
-    <string name="edit_view_info">اطلاعات نمای پایه</string>
-    <string name="edit_view_no_group">لطفاً ابتدا یک گروه نما را اضافه یا انتخاب کنید!</string>
-    <string name="edit_view_style">سبک نما</string>
+    <string name="edit_view_clone">کلون کردن ویو</string>
+    <string name="edit_view_delete">حذف ویو</string>
+    <string name="edit_view_event">مشاهده ایونت</string>
+    <string name="edit_view_info">اطلاعات ویوِ پایه</string>
+    <string name="edit_view_no_group">لطفاً ابتدا یک گروه ویو را اضافه یا انتخاب کنید!</string>
+    <string name="edit_view_style">سبک ویو</string>
 
     <string name="edit_button_title">ویرایش دکمه</string>
-    <string name="edit_button_delete">آیا مطمئناً این دکمه را حذف می کنید؟</string>
+    <string name="edit_button_delete">آیا مطمعن هستید که این دکمه را حذف می کنید؟</string>
     <string name="edit_button_text">متن نمایشی</string>
     <string name="edit_button_event_follow">نشانگر از انگشت پیروی می کند</string>
     <string name="edit_button_event_movable">متحرک</string>
@@ -311,26 +311,26 @@
     <string name="edit_button_event_long_press">فشار طولانی</string>
     <string name="edit_button_event_click">کلیک</string>
     <string name="edit_button_event_double_click">دبل‌کلیک(کلیک ۲ بار)</string>
-    <string name="edit_button_event_auto_keep">نگه داشتن فشرده</string>
+    <string name="edit_button_event_auto_keep">نگه داشتن کلیک</string>
     <string name="edit_button_event_auto_click">کلیک خودکار</string>
-    <string name="edit_button_event_open_menu">باز کردن منو</string>
-    <string name="edit_button_event_touch_mode"> سوییچ کردن به حالت تاچ</string>
-    <string name="edit_button_event_mouse_mode">سوئیچ کردن به حالت ماوس</string>
+    <string name="edit_button_event_open_menu">باز کردن مِنو</string>
+    <string name="edit_button_event_touch_mode">تغییر به حالت تاچ</string>
+    <string name="edit_button_event_mouse_mode">تغییر به حالت ماوس</string>
     <string name="edit_button_event_input">ورودی</string>
     <string name="edit_button_event_quick_input">ورودی سریع</string>
     <string name="edit_button_event_output_text">ارسال متن</string>
     <string name="edit_button_event_keycodes">کد های کلیدی خروجی</string>
     <string name="edit_button_event_keycodes_keyboard">صفحه کلیدی</string>
     <string name="edit_button_event_keycodes_mouse">ماوس</string>
-    <string name="edit_button_event_bind_group">ویرایش چیدمان گروهٍ نما</string>
+    <string name="edit_button_event_bind_group">ویرایش چیدمان گروهٍ ویو</string>
 
-    <string name="edit_direction_title">ویرایش کنترلرٍ جهت</string>
-    <string name="edit_direction_delete">آیا مطمئناً این کنترلر جهت را حذف می کنید؟</string>
+    <string name="edit_direction_title">ویرایش کنترلرٍ دایرکشن</string>
+    <string name="edit_direction_delete">آیا مطمعن هستید که این کنترلر دایرکشن را حذف می کنید؟</string>
     <string name="edit_direction_event_up">کد کلیدی جلو</string>
     <string name="edit_direction_event_down">کد کلیدی عقب</string>
     <string name="edit_direction_event_left">کد کلیدی سمت چپ</string>
     <string name="edit_direction_event_right">کد کلیدی سمت راست</string>
-    <string name="edit_direction_event_follow">گزینه را دنبال کنید (فقط برای سبک راکر)</string>
+    <string name="edit_direction_event_follow">گزینه را دنبال میکند (فقط برای سبک راکر)</string>
     <string name="edit_direction_event_follow_fix">رفع دنبال‌کننده</string>
     <string name="edit_direction_event_follow_center">دنبال کننده انگشت</string>
     <string name="edit_direction_event_follow_always">همه قسمت ها انگشت را دنبال می کنند</string>
@@ -347,17 +347,17 @@
     <string name="folder_mod">مرور ماد ها</string>
     <string name="folder_resourcepacks">مرور ریسورس پک ها</string>
     <string name="folder_saves">مرور سیو ها</string>
-    <string name="folder_screenshots">مرور اسکرینشات ها</string>
+    <string name="folder_screenshots">مرور اسکرین شات ها</string>
     <string name="folder_shaderpacks">مرور شیدر ها</string>
 
     <string name="game_crash_info">اطلاعات خرابی</string>
     <string name="game_crash_reason">علت خرابی</string>
     <string name="game_crash_reason_multiple">دلایل متعددی شناسایی شد:\n\n</string>
-    <string name="game_crash_reason_block">بازی به دلیل مسدود شدن خراب شد.\n\nمی‌توانید این بلوک را با استفاده از MCEdit حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع مسدود کردن: %1$s\nمکان: %2$s</string>
-    <string name="game_crash_reason_bootstrap_failed">بازی به دلیل مود %1$s خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
-    <string name="game_crash_reason_config">بازی خراب شد زیرا مود %1$s نمی‌تواند فایل پیکربندی %2$s خود را تجزیه کند.</string>
+    <string name="game_crash_reason_block">بازی به دلیل یک بلاک خراب شد.\n\nمی‌توانید این بلاک را با استفاده از MCEdit حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع بلاک: %1$s\nمکان: %2$s</string>
+    <string name="game_crash_reason_bootstrap_failed">بازی به دلیل ماد %1$s خراب شد.\n\nمی‌توانید آن را حذف یا به‌روزرسانی کنید.</string>
+    <string name="game_crash_reason_config">بازی خراب شد زیرا ماد %1$s نمی‌تواند فایل پیکربندی %2$s خود را تجزیه کند.</string>
     <string name="game_crash_reason_debug_crash">بازی از کار افتاد زیرا شما آن را به صورت دستی فعال کردید.\n\nپس، احتمالاً می‌دانید چرا.</string>
-    <string name="game_crash_reason_duplicated_mod">بازی به دلیل حالت‌های تکراری راه‌اندازی نمی‌شود: %1$s.\n\n%2$s\n\nهر مد فقط یک بار قابل نصب است، لطفاً مد تکراری را حذف کنید و دوباره امتحان کنید.</string>
+    <string name="game_crash_reason_duplicated_mod">بازی به دلیل حالت‌های تکراری راه‌اندازی نمی‌شود: %1$s.\n\n%2$s\n\nهر ماد فقط یک بار قابل نصب است، لطفاً ماد تکراری را حذف کنید و دوباره امتحان کنید.</string>
     <string name="game_crash_reason_entity">بازی به دلیل وجود موجودی خراب شد.\n\nمی‌توانید با استفاده از MCEdit این موجود را حذف کنید یا حالتی را که آن را اضافه کرده است حذف کنید.\n\nنوع مسدود کردن: %1$s\nمکان: %2$s</string>
     <string name="game_crash_reason_modmixin_failure">بازی فعلی نمی تواند به اجرا ادامه دهد زیرا برخی از تزریق Mod انجام نشد.\nاین به طور کلی به این معنی است که Mod دارای اشکال است یا با محیط فعلی ناسازگار است.\nبرای یافتن ماژول خطا می توانید گزارش را بررسی کنید.</string>
     <string name="game_crash_reason_mod_repeat_installation">از آنجایی که بازی فعلی چندین مود یکسان را به طور مکرر نصب کرده است، هر مد فقط یک بار می تواند ظاهر شود. لطفا مودهای تکراری را حذف کنید و سپس بازی را دوباره راه اندازی کنید.</string>
