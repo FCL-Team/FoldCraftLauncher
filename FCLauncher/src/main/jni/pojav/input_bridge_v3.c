@@ -37,8 +37,9 @@ jint (*orig_ProcessImpl_forkAndExec)(JNIEnv *env, jobject process, jint mode, jb
 static void registerFunctions(JNIEnv *env);
 
 void hookExec();
-void installLinkerBugMitigation();
+extern void installLwjglDlopenHook();
 void installEMUIIteratorMititgation();
+
 JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv* env, jclass clazz, jint action, jbyteArray copySrc);
 
 jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
@@ -65,7 +66,7 @@ jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
         jobject mouseDownBufferJ = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticObjectField(pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass, field_mouseDownBuffer);
         pojav_environ->mouseDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetDirectBufferAddress(pojav_environ->runtimeJNIEnvPtr_JRE, mouseDownBufferJ);
         hookExec();
-        installLinkerBugMitigation();
+        installLwjglDlopenHook();
         installEMUIIteratorMititgation();
     }
 
@@ -225,12 +226,6 @@ void sendData(int type, int i1, int i2, int i3, int i4) {
     atomic_fetch_add_explicit(&pojav_environ->eventCounter, 1, memory_order_acquire);
 }
 
-jbyteArray convertStr(JNIEnv *env, char *str) {
-    jsize len = (jsize) strlen(str);
-    jbyteArray arr = (*env)->NewByteArray(env, len);
-    (*env)->SetByteArrayRegion(env, arr, 0, len, (jbyte *) str);
-    return arr;
-}
 /**
  * Hooked version of java.lang.UNIXProcess.forkAndExec()
  * which is used to handle the "open" command.
@@ -241,11 +236,7 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
 
     // Here we only handle the "xdg-open" command
     if (strcmp(basename(pProg), "xdg-open") != 0) {
-        (*env)->ReleaseByteArrayElements(env, prog, (jbyte *) pProg, 0);
-        if (getenv("JSP")) {
-            jbyteArray new_hp = convertStr(env, getenv("JSP"));
-            return orig_ProcessImpl_forkAndExec(env, process, mode, new_hp, prog, argBlock, argc, envBlock, envc, dir, std_fds, redirectErrorStream);
-        }
+        (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
         return orig_ProcessImpl_forkAndExec(env, process, mode, helperpath, prog, argBlock, argc, envBlock, envc, dir, std_fds, redirectErrorStream);
     }
     (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
@@ -268,47 +259,6 @@ void hookExec() {
     };
     (*pojav_environ->runtimeJNIEnvPtr_JRE)->RegisterNatives(pojav_environ->runtimeJNIEnvPtr_JRE, cls, methods, 1);
     printf("Registered forkAndExec\n");
-}
-
-/**
- * Basically a verbatim implementation of ndlopen(), found at
- * https://github.com/PojavLauncherTeam/lwjgl3/blob/3.3.1/modules/lwjgl/core/src/generated/c/linux/org_lwjgl_system_linux_DynamicLinkLoader.c#L11
- * The idea is that since, on Android 10 and earlier, the linker doesn't really do namespace nesting.
- * It is not a problem as most of the libraries are in the launcher path, but when you try to run
- * VulkanMod which loads shaderc outside of the default jni libs directory through this method,
- * it can't load it because the path is not in the allowed paths for the anonymous namesapce.
- * This method fixes the issue by being in libpojavexec, and thus being in the classloader namespace
- */
-jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
-                     __attribute__((unused)) jclass class,
-                     jlong filename_ptr,
-                     jint jmode) {
-    const char* filename = (const char*) filename_ptr;
-    int mode = (int)jmode;
-    return (jlong) dlopen(filename, mode);
-}
-
-/**
- * Install the linker bug mitigation for Android 10 and lower. Fixes VulkanMod crashing on these
- * Android versions due to missing namespace nesting.
- */
-void installLinkerBugMitigation() {
-    if(android_get_device_api_level() >= 30) return;
-    __android_log_print(ANDROID_LOG_INFO, "Api29LinkerFix", "API < 30 detected, installing linker bug mitigation");
-    JNIEnv* env = pojav_environ->runtimeJNIEnvPtr_JRE;
-    jclass dynamicLinkLoader = (*env)->FindClass(env, "org/lwjgl/system/linux/DynamicLinkLoader");
-    if(dynamicLinkLoader == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "Api29LinkerFix", "Failed to find the target class");
-        (*env)->ExceptionClear(env);
-        return;
-    }
-    JNINativeMethod ndlopenMethod[] = {
-            {"ndlopen", "(JI)J", &ndlopen_bugfix}
-    };
-    if((*env)->RegisterNatives(env, dynamicLinkLoader, ndlopenMethod, 1) != 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "Api29LinkerFix", "Failed to register the bugfix method");
-        (*env)->ExceptionClear(env);
-    }
 }
 
 /**

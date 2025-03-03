@@ -27,12 +27,14 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.skin.SkinCanvas;
 import com.tungsten.fcllibrary.skin.SkinRenderer;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.logging.Level;
 
 public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
-    public static final String ANNOUNCEMENT_URL = "https://gitcode.net/fcl-team/fold-craft-launcher/-/raw/master/res/announcement_v2.txt?inline=false";
+    public static final String ANNOUNCEMENT_URL = "https://raw.githubusercontent.com/FCL-Team/FCL-Repo/refs/heads/main/res/announcement_v2.txt";
+    public static final String ANNOUNCEMENT_URL_CN = "https://gitee.com/fcl-team/FCL-Repo/raw/main/res/announcement_v2.txt";
 
     private LinearLayoutCompat announcementContainer;
     private LinearLayoutCompat announcementLayout;
@@ -130,7 +132,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
     private void checkAnnouncement() {
         try {
-            Task.supplyAsync(() -> HttpRequest.HttpGetRequest.GET(ANNOUNCEMENT_URL).getJson(Announcement.class))
+            String url = LocaleUtils.isChinese(getContext()) ? ANNOUNCEMENT_URL_CN : ANNOUNCEMENT_URL;
+            Task.supplyAsync(() -> HttpRequest.HttpGetRequest.GET(url).getJson(Announcement.class))
                     .thenAcceptAsync(Schedulers.androidUIThread(), announcement -> {
                         this.announcement = announcement;
                         if (!announcement.shouldDisplay(getContext()))

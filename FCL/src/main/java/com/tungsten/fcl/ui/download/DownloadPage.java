@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -190,6 +191,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
                 this.callback = (profile, version, file) -> download(context, profile, version, file, "resourcepacks");
                 break;
+            case PAGE_ID_DOWNLOAD_SHADER_PACK:
+                this.callback = (profile, version, file) -> download(context, profile, version, file, "shaderpacks");
+                break;
             default:
                 this.callback = null;
                 break;
@@ -258,26 +262,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(0);
         FXUtils.bindSelection(categorySpinner, category);
-        downloadSource.addListener(observable -> Task.supplyAsync(() -> {
-            setLoading(true);
-            return repository.getCategories();
-        }).thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
-            ArrayList<CategoryIndented> result = new ArrayList<>();
-            result.add(new CategoryIndented(0, null));
-            for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
-                resolveCategory(category, 0, result);
-            }
-            categorySpinner.setDataList(result);
-            ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
-            adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            categorySpinner.setAdapter(adapter);
-            FXUtils.unbindSelection(categorySpinner, category);
-            categorySpinner.setSelection(0);
-            category.set(result.get(0));
-            FXUtils.bindSelection(categorySpinner, category);
-            search();
-        }).start());
+        downloadSource.addListener(observable -> refreshCategory());
 
         sortSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.SortType.values()).collect(Collectors.toList())));
         ArrayList<String> sorts = new ArrayList<>();
@@ -301,6 +286,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         )));
 
         search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
+        refreshCategory();
     }
 
     private static void download(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
@@ -407,5 +393,28 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         for (RemoteModRepository.Category subcategory : category.getSubcategories()) {
             resolveCategory(subcategory, indent + 1, result);
         }
+    }
+
+    private void refreshCategory() {
+        Task.supplyAsync(() -> {
+            setLoading(true);
+            return repository.getCategories();
+        }).thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
+            ArrayList<CategoryIndented> result = new ArrayList<>();
+            result.add(new CategoryIndented(0, null));
+            for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
+                resolveCategory(category, 0, result);
+            }
+            categorySpinner.setDataList(result);
+            ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
+            adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+            categorySpinner.setAdapter(adapter);
+            FXUtils.unbindSelection(categorySpinner, category);
+            categorySpinner.setSelection(0);
+            category.set(result.get(0));
+            FXUtils.bindSelection(categorySpinner, category);
+            search();
+        }).start();
     }
 }

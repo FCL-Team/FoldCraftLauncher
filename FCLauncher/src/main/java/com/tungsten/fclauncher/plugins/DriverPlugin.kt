@@ -2,9 +2,9 @@ package com.tungsten.fclauncher.plugins
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Build
 import com.tungsten.fclauncher.utils.FCLPath
 
 object DriverPlugin {
@@ -24,26 +24,20 @@ object DriverPlugin {
         }
 
     @JvmStatic
-    lateinit var selected: Driver
+    var selected: Driver = Driver("Turnip", "")
 
     @JvmStatic
     @SuppressLint("QueryPermissionsNeeded")
     fun init(context: Context) {
         isInit = true
-        val installedPackages =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getInstalledPackages(
-                    PackageManager.PackageInfoFlags.of(
-                        PACKAGE_FLAGS.toLong()
-                    )
-                )
-            } else {
-                context.packageManager.getInstalledPackages(PACKAGE_FLAGS)
-            }
         driverList.add(Driver("Turnip", context.applicationInfo.nativeLibraryDir))
-        selected = driverList.get(0)
-        installedPackages.forEach {
-            parse(it.applicationInfo)
+        selected = driverList[0]
+        val queryIntentActivities =
+            context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"),
+                PACKAGE_FLAGS
+            )
+        queryIntentActivities.forEach {
+            parse(it.activityInfo.applicationInfo)
         }
     }
 

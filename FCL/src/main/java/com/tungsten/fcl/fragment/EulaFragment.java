@@ -25,10 +25,7 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
 
     private FCLProgressBar progressBar;
     private FCLTextView eula;
-
     private FCLButton next;
-
-    private boolean load = false;
 
     @Nullable
     @Override
@@ -50,8 +47,7 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
         new Thread(() -> {
             String str;
             try {
-                str = IOUtils.readFullyAsString(requireActivity().getAssets().open( "eula.txt"));
-                load = true;
+                str = IOUtils.readFullyAsString(requireActivity().getAssets().open("eula.txt"));
             } catch (IOException e) {
                 e.printStackTrace();
                 str = getString(R.string.splash_eula_error);
@@ -59,9 +55,6 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
             final String s = str;
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    if (load) {
-                        next.setEnabled(true);
-                    }
                     progressBar.setVisibility(View.GONE);
                     eula.setText(s);
                 });

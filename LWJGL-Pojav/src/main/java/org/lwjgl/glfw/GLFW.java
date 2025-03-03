@@ -1064,6 +1064,15 @@ public class GLFW
         nglfwSetShowingWindow(window);
     }
 
+    public static void glfwHideWindow(long window) {
+        GLFWWindowProperties win = internalGetWindow(window);
+        win.windowAttribs.put(GLFW_HOVERED, 0);
+        win.windowAttribs.put(GLFW_VISIBLE, 0);
+    }
+
+    public static void glfwFocusWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
     public static void glfwWindowHint(int hint, int value) {
         if (hint == GLFW_VISIBLE) {
             mGLFWWindowVisibleOnCreation = value == GLFW_TRUE;
@@ -1318,17 +1327,27 @@ public class GLFW
 */
 
     /** Array version of: {@link #glfwGetMonitorContentScale GetMonitorContentScale} */
-/*
+
     public static void glfwGetMonitorContentScale(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("float *") float[] xscale, @Nullable @NativeType("float *") float[] yscale) {
-        long __functionAddress = Functions.GetMonitorContentScale;
         if (CHECKS) {
             // check(monitor);
             checkSafe(xscale, 1);
             checkSafe(yscale, 1);
         }
-        invokePPPV(monitor, xscale, yscale, __functionAddress);
+        xscale[0] = 1;
+        yscale[0] = 1;
     }
-*/
+
+    public static void glfwGetMonitorContentScale(@NativeType("GLFWmonitor *") long monitor, @NativeType("float *") @Nullable FloatBuffer xscale, @NativeType("float *") @Nullable FloatBuffer yscale) {
+        if (CHECKS) {
+            // check(monitor);
+            checkSafe(xscale, 1);
+            checkSafe(yscale, 1);
+        }
+        xscale.put(0, 1);
+        yscale.put(0, 1);
+    }
+
 
     /** Array version of: {@link #glfwGetWindowPos GetWindowPos} */
     public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("int *") int[] xpos, @Nullable @NativeType("int *") int[] ypos) {
@@ -1406,4 +1425,45 @@ public class GLFW
         // Fast path, but will return true if one has the same prefix
         return glGetString(GL_EXTENSIONS).contains(ext);
     }
+
+    /**
+     * Returns the size, in millimetres, of the display area of the specified monitor.
+     *
+     * <p>Some platforms do not provide accurate monitor size information, either because the monitor
+     * <a href="https://en.wikipedia.org/wiki/Extended_display_identification_data">EDID</a> data is incorrect or because the driver does not report it
+     * accurately.</p>
+     *
+     * <p>Any or all of the size arguments may be {@code NULL}. If an error occurs, all non-{@code NULL} size arguments will be set to zero.</p>
+     *
+     * <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
+     *
+     * <ul>
+     * <li>This function must only be called from the main thread.</li>
+     * <li><b>Windows</b>: On Windows 8 and earlier the physical size is calculated from the current resolution and system DPI instead of querying the monitor
+     * EDID data.</li>
+     * </ul></div>
+     *
+     * @param monitor  the monitor to query
+     * @param widthMM  where to store the width, in millimetres, of the monitor's display area, or {@code NULL}
+     * @param heightMM where to store the height, in millimetres, of the monitor's display area, or {@code NULL}
+     * @since version 3.0
+     */
+    public static void glfwGetMonitorPhysicalSize(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("int *") IntBuffer widthMM, @Nullable @NativeType("int *") IntBuffer heightMM) {
+        if (widthMM != null && heightMM != null) {
+            widthMM.put(mGLFWWindowWidth);
+            heightMM.put(mGLFWWindowHeight);
+        }
+    }
+
+    /**
+     * Array version of: {@link #glfwGetMonitorPhysicalSize GetMonitorPhysicalSize}
+     */
+    public static void glfwGetMonitorPhysicalSize(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("int *") int[] widthMM, @Nullable @NativeType("int *") int[] heightMM) {
+        if (widthMM != null && heightMM != null) {
+            widthMM[0] = mGLFWWindowWidth;
+            heightMM[0] = mGLFWWindowHeight;
+        }
+    }
+
+
 }

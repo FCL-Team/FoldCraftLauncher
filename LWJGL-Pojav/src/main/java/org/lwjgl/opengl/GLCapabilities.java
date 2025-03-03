@@ -4833,6 +4833,8 @@ public final class GLCapabilities {
     GLCapabilities(FunctionProvider provider, Set<String> ext, boolean fc, IntFunction<PointerBuffer> bufferFactory) {
         forwardCompatible = fc;
 
+        RendererInit.onCreateCapabilities(provider);
+
         PointerBuffer caps = bufferFactory.apply(ADDRESS_BUFFER_SIZE);
 
         OpenGL11 = check_GL11(provider, caps, ext, fc);

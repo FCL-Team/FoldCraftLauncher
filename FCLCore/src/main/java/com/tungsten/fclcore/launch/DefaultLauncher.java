@@ -31,6 +31,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Argument;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.GameRepository;
@@ -88,8 +89,13 @@ public class DefaultLauncher extends Launcher {
                 LOG.log(Level.WARNING, "Bad file encoding", ex);
             }
         }
-        res.addDefault("-Dsun.stdout.encoding=", encoding.name());
-        res.addDefault("-Dsun.stderr.encoding=", encoding.name());
+        if (options.getJava().getVersion() < 19) {
+            res.addDefault("-Dsun.stdout.encoding=", encoding.name());
+            res.addDefault("-Dsun.stderr.encoding=", encoding.name());
+        } else {
+            res.addDefault("-Dstdout.encoding=", encoding.name());
+            res.addDefault("-Dstderr.encoding=", encoding.name());
+        }
 
         // Fix RCE vulnerability of log4j2
         res.addDefault("-Djava.rmi.server.useCodebaseOnly=", "true");
@@ -161,6 +167,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
         res.addDefault("-Dorg.lwjgl.vulkan.libname=", "libvulkan.so");
         res.addDefault("-Dsodium.checks.issue2561=", "false");
+        res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
+        res.addDefault("-Dcpu.name=", FCLauncher.getSocName());
         File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
         if (jnaVersion != null && !jnaVersion.isEmpty()) {
             libJna = new File(libJna, jnaVersion);
@@ -180,7 +188,7 @@ public class DefaultLauncher extends Launcher {
 //        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
 //
 //        }
-        res.add("-javaagent:" + FCLPath.LIB_FIXER_PATH);
+        res.add("-javaagent:" + FCLPath.LIB_PATCHER_PATH);
 
         Set<String> classpath = repository.getClasspath(version);
         classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
@@ -332,7 +340,7 @@ public class DefaultLauncher extends Launcher {
                         return it.getId().equals(versionTypeId);
                     })
                     .findFirst();
-            return mapInfo.map(it -> it.getArgument().getArgument(version)).orElse(null);
+            return mapInfo.map(it -> it.getArgument().getArgument(version, repository.getGameVersion(version).orElse(null))).orElse(null);
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Failed to get game map", e);
             return null;
@@ -438,6 +446,8 @@ public class DefaultLauncher extends Launcher {
 
         String[] finalArgs = rawCommandLine.toArray(new String[0]);
 
+        LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
+
         FCLConfig.Renderer renderer = options.getRenderer();
         FCLConfig config = new FCLConfig(
                 context,
@@ -449,6 +459,14 @@ public class DefaultLauncher extends Launcher {
         );
         config.setUseVKDriverSystem(options.isVKDriverSystem());
         config.setPojavBigCore(options.isPojavBigCore());
+        config.setInstalledModLoaders(new FCLConfig.InstalledModLoaders(
+                analyzer.has(LibraryAnalyzer.LibraryType.FORGE),
+                analyzer.has(LibraryAnalyzer.LibraryType.NEO_FORGE),
+                analyzer.has(LibraryAnalyzer.LibraryType.OPTIFINE),
+                analyzer.has(LibraryAnalyzer.LibraryType.LITELOADER),
+                analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
+                analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
+        ));
         return FCLauncher.launchMinecraft(config);
     }
 

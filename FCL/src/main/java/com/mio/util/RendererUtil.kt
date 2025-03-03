@@ -25,6 +25,7 @@ class RendererUtil {
             y: Int,
             width: Int,
             height: Int,
+            isGlobal: Boolean,
             callback: Consumer<String>
         ) {
             val listView = ListView(context)
@@ -33,24 +34,23 @@ class RendererUtil {
                 ArrayAdapter(context, R.layout.item_renderer, mutableListOf<String>().apply {
                     add(context.getString(R.string.settings_fcl_renderer_gl4es))
                     add(context.getString(R.string.settings_fcl_renderer_virgl))
-                    add(context.getString(R.string.settings_fcl_renderer_ltw))
                     add(context.getString(R.string.settings_fcl_renderer_vgpu))
                     add(context.getString(R.string.settings_fcl_renderer_zink))
                     add(context.getString(R.string.settings_fcl_renderer_freedreno))
+                    add(context.getString(R.string.settings_fcl_renderer_gl4esp))
                     RendererPlugin.rendererList.forEach {
                         add(it.des)
                     }
                 })
             listView.setOnItemClickListener { _, _, position, _ ->
-                val versionSetting =
-                    Profiles.getSelectedProfile().versionSetting
+                val versionSetting = if (isGlobal) Profiles.getSelectedProfile().global else Profiles.getSelectedProfile().versionSetting
                 val rendererList = mutableListOf<FCLConfig.Renderer>().apply {
                     add(FCLConfig.Renderer.RENDERER_GL4ES)
                     add(FCLConfig.Renderer.RENDERER_VIRGL)
-                    add(FCLConfig.Renderer.RENDERER_LTW)
                     add(FCLConfig.Renderer.RENDERER_VGPU)
                     add(FCLConfig.Renderer.RENDERER_ZINK)
                     add(FCLConfig.Renderer.RENDERER_FREEDRENO)
+                    add(FCLConfig.Renderer.RENDERER_GL4ESPLUS)
                 }
                 if (position > rendererList.size - 1) {
                     versionSetting.renderer = FCLConfig.Renderer.RENDERER_CUSTOM
@@ -80,6 +80,7 @@ class RendererUtil {
         fun openDriverMenu(
             context: Context,
             view: View,
+            isGlobal: Boolean,
             callback: Consumer<String>
         ) {
             val listView = ListView(context)
@@ -91,8 +92,7 @@ class RendererUtil {
                     }
                 })
             listView.setOnItemClickListener { _, _, position, _ ->
-                val versionSetting =
-                    Profiles.getSelectedProfile().versionSetting
+                val versionSetting = if (isGlobal) Profiles.getSelectedProfile().global else Profiles.getSelectedProfile().versionSetting
                 versionSetting.driver = DriverPlugin.driverList[position].driver
                 DriverPlugin.selected = DriverPlugin.driverList[position]
                 popupWindow?.dismiss()

@@ -36,6 +36,7 @@ import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
+import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
@@ -122,8 +123,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         FCLEditText jvmArgsText = findViewById(R.id.jvm_args);
         FCLEditText originUrlText = findViewById(R.id.origin_url);
         FCLEditText mcbbsText = findViewById(R.id.mcbbs);
-        FCLSeekBar memorySeekbar = findViewById(R.id.memory);
-        FCLTextView memoryText = findViewById(R.id.memory_text);
+        FCLNumberSeekBar memorySeekbar = findViewById(R.id.memory);
         FCLEditText descText = findViewById(R.id.desc);
         FCLSpinner<String> serverSpinner = findViewById(R.id.server);
         FCLSwitch forceUpdateSwitch = findViewById(R.id.force_update);
@@ -170,7 +170,6 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
             memorySeekbar.setProgress(minMemory.get());
             memorySeekbar.addProgressListener();
             memorySeekbar.progressProperty().bindBidirectional(minMemory);
-            memoryText.stringProperty().bind(Bindings.createStringBinding(() -> minMemory.get() + " MB", minMemory));
         }
         memoryLayout.setVisibility(options.isRequireMinMemory() ? View.VISIBLE : View.GONE);
         splitF.setVisibility(options.isRequireMinMemory() ? View.VISIBLE : View.GONE);

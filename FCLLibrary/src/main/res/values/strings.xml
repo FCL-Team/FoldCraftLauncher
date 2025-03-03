@@ -38,4 +38,5 @@
     <string name="dialog_info">Info</string>
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">Cancel</string>
+    <string name="edit">Edit</string>
 </resources>

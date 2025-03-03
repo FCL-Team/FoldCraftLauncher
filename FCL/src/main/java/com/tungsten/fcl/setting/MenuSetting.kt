@@ -191,14 +191,6 @@ class MenuSetting {
             gamepadDeadzoneProperty.set(gamepadDeadzone)
         }
 
-    val gamepadAimAssistZoneProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "gamepadAimAssistZone", 0.95)
-    var gamepadAimAssistZone: Double
-        get() = gamepadAimAssistZoneProperty.get()
-        set(gamepadAimAssistZone) {
-            gamepadAimAssistZoneProperty.set(gamepadAimAssistZone)
-        }
-
     fun addPropertyChangedListener(listener: InvalidationListener?) {
         autoFitProperty.addListener(listener)
         autoFitDistProperty.addListener(listener)
@@ -220,7 +212,6 @@ class MenuSetting {
         windowScaleProperty.addListener(listener)
         cursorOffsetProperty.addListener(listener)
         gamepadDeadzoneProperty.addListener(listener)
-        gamepadAimAssistZoneProperty.addListener(listener)
         gamepadButtonBindingProperty.addListener(listener)
     }
 
@@ -252,7 +243,6 @@ class MenuSetting {
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
-                addProperty("gamepadAimAssistZone", src.gamepadAimAssistZone)
                 add(
                     "gamepadButtonBinding", Optional.of(src.gamepadButtonBindingProperty)
                         .map {
@@ -295,7 +285,6 @@ class MenuSetting {
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
-                ms.gamepadAimAssistZone = json["gamepadAimAssistZone"]?.asDouble ?: 0.98
                 ms.gamepadButtonBindingProperty.set(
                     Optional.ofNullable(json["gamepadButtonBinding"])
                         .map { it.asJsonArray }

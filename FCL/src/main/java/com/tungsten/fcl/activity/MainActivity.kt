@@ -5,18 +5,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.transition.Slide
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
-import android.widget.ArrayAdapter
 import android.widget.FrameLayout
-import android.widget.ListView
-import android.widget.PopupWindow
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.forEach
@@ -42,7 +37,6 @@ import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
@@ -429,7 +423,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val analyzer = LibraryAnalyzer.analyze(
                     Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
-                    )
+                    ),
+                    Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)
                 )
                 for (mark in analyzer) {
                     val libraryId = mark.libraryId
@@ -495,7 +490,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun openRendererMenu(view: View) {
         RendererUtil.openRendererMenu(
-            this, bind.rightMenu, bind.rightMenu.x.toInt(), 0, bind.rightMenu.width, view.y.toInt()
+            this,
+            bind.rightMenu,
+            bind.rightMenu.x.toInt(),
+            0,
+            bind.rightMenu.width,
+            view.y.toInt(),
+            false
         ) {
             onClick(view)
         }

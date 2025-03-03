@@ -19,6 +19,7 @@ public class GLFWInputImplementation implements InputImplementation {
     public final byte[] mouseBuffer = new byte[3];
     public int mouseX = 0;
     public int mouseY = 0;
+    public int mouseZ = 0;
     public int mouseLastX = 0;
     public int mouseLastY = 0;
     public boolean grab;
@@ -48,10 +49,12 @@ public class GLFWInputImplementation implements InputImplementation {
     public void pollMouse(IntBuffer coord_buffer, ByteBuffer buttons) {
         coord_buffer.put(0, grab ? mouseX - mouseLastX : mouseX);
         coord_buffer.put(1, grab ? mouseY - mouseLastY : mouseY);
+        coord_buffer.put(2, mouseZ);
         buttons.rewind();
         buttons.put(mouseBuffer);
         mouseLastX = mouseX;
         mouseLastY = mouseY;
+        mouseZ = 0;
     }
 
     @Override
@@ -170,6 +173,7 @@ public class GLFWInputImplementation implements InputImplementation {
         eventQueue.putEvent(eventBuffer);
         mouseX = rebaseX;
         mouseY = rebaseY;
+        mouseZ += dz;
     }
 
     public void putKeyboardEvent(int keycode, byte state, int ch, long nanos, boolean repeat) {

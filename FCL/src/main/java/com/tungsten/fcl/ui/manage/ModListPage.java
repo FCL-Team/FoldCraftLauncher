@@ -17,6 +17,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
@@ -34,8 +35,10 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;
+import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -192,7 +195,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         adapter.selectedItemsProperty().clear();
         cancelSearch();
 
-        libraryAnalyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(version));
+        FCLGameRepository repository = profile.getRepository();
+        Version resolved = repository.getResolvedPreservingPatchesVersion(versionId);
+        libraryAnalyzer = LibraryAnalyzer.analyze(resolved, repository.getGameVersion(resolved).orElse(null));
         setModded(libraryAnalyzer.hasModLoader());
         loadMods(profile.getRepository().getModManager(version));
     }
@@ -486,6 +491,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         private final String title;
         private final String message;
         private final ModTranslations.Mod mod;
+        private RemoteMod remoteMod;
 
         ModInfoObject(Context context, LocalModFile localModFile) {
             this.localModFile = localModFile;
@@ -529,6 +535,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         @Override
         public int compareTo(@NotNull ModInfoObject o) {
             return localModFile.getFileName().toLowerCase().compareTo(o.localModFile.getFileName().toLowerCase());
+        }
+
+        public RemoteMod getRemoteMod() {
+            return remoteMod;
+        }
+
+        public void setRemoteMod(RemoteMod remoteMod) {
+            this.remoteMod = remoteMod;
         }
     }
 

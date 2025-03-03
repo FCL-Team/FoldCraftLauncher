@@ -26,6 +26,7 @@ body:
       - label: I have searched for existing issues.我已经搜索了现有的 issues。
         required: true
       - label: I have tried switching renderer.我已经尝试过切换渲染器。
+      - label: I have tried switching launcher backend.我已经尝试过切换启动器后端。
   - type: input
     id: fcl-version
     attributes:
@@ -55,6 +56,17 @@ body:
         请尽可能详细地描述问题，特别是你是如何遇到这个bug的。
     validations:
       required: true
+  - type: dropdown
+    id: launcher-backend
+    attributes:
+      label: Launcher Backend / 启动器后端
+      description: |
+        Please choose the launcher backend you are using.
+        请选择你正在使用的启动器后端。
+      multiple: true
+      options:
+        - Pojav
+        - Boat
   - type: input
     id: java-version
     attributes:

@@ -32,9 +32,12 @@
 package org.lwjgl;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.Platform;
 
+import java.awt.Desktop;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
@@ -139,30 +142,18 @@ public final class Sys {
 	 * @return false if we are CERTAIN the call has failed
 	 */
 	public static boolean openURL(String url) {
-		// Attempt to use Webstart if we have it available
+		if (!Desktop.isDesktopSupported())
+			return false;
+
+		Desktop desktop = Desktop.getDesktop();
+		if (!desktop.isSupported(Desktop.Action.BROWSE))
+			return false;
+
 		try {
-			// Lookup the javax.jnlp.BasicService object
-			final Class<?> serviceManagerClass = Class.forName("javax.jnlp.ServiceManager");
-			Method lookupMethod = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
-				public Method run() throws Exception {
-					return serviceManagerClass.getMethod("lookup", String.class);
-				}
-			});
-			Object basicService = lookupMethod.invoke(serviceManagerClass, new Object[] {"javax.jnlp.BasicService"});
-			final Class<?> basicServiceClass = Class.forName("javax.jnlp.BasicService");
-			Method showDocumentMethod = AccessController.doPrivileged(new PrivilegedExceptionAction<Method>() {
-				public Method run() throws Exception {
-					return basicServiceClass.getMethod("showDocument", URL.class);
-				}
-			});
-			try {
-				Boolean ret = (Boolean) showDocumentMethod.invoke(basicService, new URL(url));
-				return ret;
-			} catch (MalformedURLException e) {
-				e.printStackTrace(System.err);
-				return false;
-			}
-		} catch (Exception ue) {
+			desktop.browse(new URI(url));
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
 			return false;
 		}
 	}
@@ -178,4 +169,9 @@ public final class Sys {
 	public static String getClipboard() {
 		return GLFW.glfwGetClipboardString(GLFW.glfwGetPrimaryMonitor());
 	}
+
+    public static boolean is64Bit() {
+        String osArch = System.getProperty("os.arch");
+        return osArch.contains("64") || osArch.startsWith("armv8");
+    }
 }

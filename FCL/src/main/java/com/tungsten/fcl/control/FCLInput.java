@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap;
 
 import java.util.HashMap;
@@ -23,11 +23,11 @@ import fr.spse.gamepad_remapper.RemapperView;
 
 public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler {
 
-    public static final int MOUSE_LEFT           = 1000;
-    public static final int MOUSE_MIDDLE         = 1001;
-    public static final int MOUSE_RIGHT          = 1002;
-    public static final int MOUSE_SCROLL_UP      = 1003;
-    public static final int MOUSE_SCROLL_DOWN    = 1004;
+    public static final int MOUSE_LEFT = 1000;
+    public static final int MOUSE_MIDDLE = 1001;
+    public static final int MOUSE_RIGHT = 1002;
+    public static final int MOUSE_SCROLL_UP = 1003;
+    public static final int MOUSE_SCROLL_DOWN = 1004;
 
     public static final String EXTERNAL_MOUSE_ID = "External";
 
@@ -165,13 +165,6 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
             gameMenu.getBridge().refreshHitResultType();
             deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
             deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-            double hypot = Math.hypot(Math.abs(lastXAxis), Math.abs(lastYAxis));
-            if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_ENTITY) {
-                if (hypot <= menu.getMenuSetting().getGamepadAimAssistZone()) {
-                    deltaX /= 10;
-                    deltaY /= 10;
-                }
-            }
         }
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
             int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX));
@@ -191,7 +184,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
                 setPointerId(null);
             }
         }
-        if (event != null){
+        if (event != null) {
             return handleExternalMouseEvent(event);
         }
         return false;
@@ -217,7 +210,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
             }
         }
         if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)) {
-            return remapperManager.handleKeyEventInput(menu.getActivity(),event,this);
+            return remapperManager.handleKeyEventInput(menu.getActivity(), event, this);
         }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
@@ -259,7 +252,7 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
                 };
                 choreographer.postFrameCallback(frameCallback);
             }
-            remapperManager.handleMotionEventInput(menu.getActivity(),event,this);
+            remapperManager.handleMotionEventInput(menu.getActivity(), event, this);
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 handleDPad(event);
                 handleLeftJoyStick(event);
@@ -284,9 +277,9 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         }
         sendKeyEvent(convertGamepadInput(dpadLastKey), (xAxis != 0 || yAxis != 0));
     }
-    
-    private int convertGamepadInput(int gamepadKey){
-        return GamepadKeycodeMap.convert(menu.getMenuSetting().getGamepadButtonBindingProperty(),gamepadKey);
+
+    private int convertGamepadInput(int gamepadKey) {
+        return GamepadKeycodeMap.convert(menu.getMenuSetting().getGamepadButtonBindingProperty(), gamepadKey);
     }
 
     private void handleLeftJoyStick(MotionEvent event) {
@@ -348,21 +341,23 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
             doTick();
         }
     }
-public void resetMapper() {
-    remapperManager = new RemapperManager(menu.getActivity(), new RemapperView.Builder(null)
-            .remapA(true)
-            .remapB(true)
-            .remapX(true)
-            .remapY(true)
-            .remapLeftJoystick(true)
-            .remapRightJoystick(true)
-            .remapStart(true)
-            .remapSelect(true)
-            .remapLeftShoulder(true)
-            .remapRightShoulder(true)
-            .remapLeftTrigger(true)
-            .remapRightTrigger(true));
-}
+
+    public void resetMapper() {
+        remapperManager = new RemapperManager(menu.getActivity(), new RemapperView.Builder(null)
+                .remapA(true)
+                .remapB(true)
+                .remapX(true)
+                .remapY(true)
+                .remapLeftJoystick(true)
+                .remapRightJoystick(true)
+                .remapStart(true)
+                .remapSelect(true)
+                .remapLeftShoulder(true)
+                .remapRightShoulder(true)
+                .remapLeftTrigger(true)
+                .remapRightTrigger(true));
+    }
+
     /**
      * Function handling all gamepad actions.
      *

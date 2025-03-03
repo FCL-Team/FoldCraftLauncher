@@ -163,7 +163,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
 
                 hint.setText(getString(R.string.game_crash_reason_unknown));
             } else {
-                List<CrashReportAnalyzer.Result> results = pair.getKey();
+                Set<CrashReportAnalyzer.Result> results = pair.getKey();
                 Set<String> keywords = pair.getValue();
 
                 StringBuilder stringBuilder = new StringBuilder();

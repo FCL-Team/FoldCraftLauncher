@@ -156,10 +156,9 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIE
     (*env)->ReleaseStringUTFChars(env, str2, value);
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIEnv* env, jobject jobject, jstring str) {
+JNIEXPORT jlong JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIEnv* env, jobject jobject, jstring str) {
     dlerror();
 
-    int ret = 0;
     char const* lib_name = (*env)->GetStringUTFChars(env, str, 0);
 
     void* handle;
@@ -167,14 +166,10 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIE
     handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
 
     char * error = dlerror();
-    __android_log_print(error == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", lib_name, error);
-
-    if (handle == NULL) {
-        ret = -1;
-    }
+    FCL_LOG("DLOPEN: loading %s (error = %s)", lib_name, error);
 
     (*env)->ReleaseStringUTFChars(env, str, lib_name);
-    return ret;
+    return (jlong) handle;
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibraryPath(JNIEnv *env, jobject jobject, jstring ldLibraryPath) {

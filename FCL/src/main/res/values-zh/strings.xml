@@ -747,7 +747,6 @@
     <string name="settings_fcl_vulkan_driver_system">允许Zink使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">渲染器</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
-    <string name="settings_fcl_renderer_ltw">LTW (不稳定)(OpenGL 4.6, 仅支持 1.17+)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
     <string name="settings_fcl_driver">Vulkan驱动</string>
@@ -784,7 +783,7 @@
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
     <string name="settings_launcher_menu_icon">菜单键图标</string>
-    <string name="settings_launcher_ignore_notch">忽略刘海屏</string>
+    <string name="settings_launcher_ignore_notch">忽略刘海屏(全屏)</string>
     <string name="settings_launcher_close_skin_view">关闭皮肤模型阅览</string>
     <string name="settings_launcher_animation_speed">动画速度</string>
 
@@ -940,10 +939,8 @@
     <string name="world_reveal">打开文件夹</string>
     <string name="world_show_all">显示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
-    <string name="menu_settings_gamepad_aimzone">辅助瞄准区</string>
     <string name="account_failed_expired">凭据已过期，请删除账户重新登录。</string>
     <string name="install_apk">安装apk文件</string>
-    <string name="edit">编辑</string>
     <string name="modpack_download_warn_title">注意</string>
     <string name="modpack_download_warn_msg">在安装前，你需要明白，绝大多数整合包都是给电脑端制作的，所以当你尝试启动时会有极大概率出现崩溃或是其他问题，这往往不是在启动器层面上能解决的问题。所以你需要自己了解相关知识后尝试自己解决，或是寻求其他人帮忙（不要询问启动器开发者！）。</string>
     <string name="view_incompatible">查看不兼容的模组</string>
@@ -960,4 +957,14 @@
     <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
     <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
     <string name="installed">已安装</string>
+    <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+
+    <string name="shaderpack">光影</string>
+    <string name="recommend_version">推荐的版本</string>
+
+    <string name="mod_check_continue">无视风险!</string>
+    <string name="mod_check_physics">当前使用的物理模组（%s）未经修补（将libPhysXJniBindings_64.so从Linux x86_64架构替换到安卓arm64/x86_64），启动后将会崩溃。</string>
+    <string name="mod_check_mcef">MCEF（%s）无法在安卓上运行。它通常被用来作为WebDisplays/In-game Browser（浏览器）的前置依赖。</string>
+    <string name="mod_check_valkyrienskies">瓦尔基里天空/瓦尔基里战争（%s）无法直接在单人模式下运行。你必须使用服务器运行（可以使用Termux），否则游戏会崩溃。</string>
+    <string name="mod_check_yes_steve_model">是，史蒂夫模型（%s）2.2.2+无法在安卓系统上运行。</string>
 </resources>

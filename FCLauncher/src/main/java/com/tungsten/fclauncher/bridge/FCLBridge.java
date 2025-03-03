@@ -111,7 +111,7 @@ public class FCLBridge implements Serializable {
 
     public native void setenv(String key, String value);
 
-    public native int dlopen(String path);
+    public native long dlopen(String path);
 
     public native void setLdLibraryPath(String path);
 

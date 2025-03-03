@@ -573,10 +573,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
         if (!press && !keycodeOutputting) {
             return;
         }
-        for (int keycode : event.outputKeycodesList()) {
-            keycodeOutputting = press;
-            menu.getInput().sendKeyEvent(keycode, press);
-        }
+        Schedulers.io().execute(()->{
+            for (int keycode : event.outputKeycodesList()) {
+                keycodeOutputting = press;
+                menu.getInput().sendKeyEvent(keycode, press);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignore) {
+                }
+            }
+        });
     }
 
     private boolean autoClick = false;
