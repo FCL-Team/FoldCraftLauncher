@@ -150,7 +150,7 @@
     <string name="control_import_failed">Ошибка импорта</string>
     <string name="control_upgrade">"Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. 
     Хотите перенести его на новую версию?"</string>
-    <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией Лаунчера или слишком низкой версией контроллера.</string>
+    <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией лаунчера или слишком низкой версией контроллера.</string>
     <string name="control_upload_requirement">Сначала присоединитесь к QQ группе, затем нажмите "Поделиться", чтобы поделиться контроллером и его информацией с администратором и дождаться проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
     <string name="control_info_author">Автор:</string>
     <string name="control_info_icon">Иконка:</string>
@@ -967,8 +967,8 @@
 
     <string name="world">Миры</string>
     <string name="world_add">Добавить мир (.zip)</string>
-    <string name="world_datapack">Управление дата-паками</string>
-    <string name="world_datapack_1_13">Только Minecraft 1.13 или новее поддерживает дата-паки.</string>
+    <string name="world_datapack">Управление датапаками</string>
+    <string name="world_datapack_1_13">Только Minecraft 1.13 или новее поддерживает датапаки.</string>
     <string name="world_description">%s. Последнее воспроизведение: %s. Версия игры: %s.</string>
     <string name="world_download">Загрузить мир</string>
     <string name="world_export">Экспорт мира</string>
