@@ -17,7 +17,7 @@
  */
 package com.tungsten.fclcore.util.io;
 
-import com.github.marschall.com.sun.nio.zipfs.ZipFileSystemProvider;
+import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 

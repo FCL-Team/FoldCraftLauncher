@@ -53,6 +53,14 @@ class ModChecker(val context: Context) {
                     )
                 )
         }
+        add("imblocker") {
+            throw ModCheckException(
+                context.getString(
+                    R.string.mod_check_imblocker,
+                    it.file.toFile().name
+                )
+            )
+        }
     }
 
     @Throws(ModCheckException::class)
