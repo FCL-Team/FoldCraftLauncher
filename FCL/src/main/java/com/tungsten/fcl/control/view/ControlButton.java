@@ -586,6 +586,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
         }).start();
     }
 
+    private void handleAutoKeyEvent(ButtonEventData.Event event, boolean press) {
+        if (!press && !keycodeOutputting) {
+            return;
+        }
+        for (int keycode : event.outputKeycodesList()) {
+            keycodeOutputting = press;
+            menu.getInput().sendKeyEvent(keycode, press);
+        }
+    }
+
     private boolean autoClick = false;
     private ButtonEventData.Event autoClickEvent;
     private final Handler autoClickHandler = new Handler();
@@ -593,8 +603,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         @Override
         public void run() {
             final ButtonEventData.Event event = autoClickEvent;
-            handleKeyEvent(event, true);
-            handleKeyEvent(event, false);
+            handleAutoKeyEvent(event, true);
+            handleAutoKeyEvent(event, false);
             if (autoClick) {
                 autoClickHandler.postDelayed(autoClickRunnable, 20);
             }
