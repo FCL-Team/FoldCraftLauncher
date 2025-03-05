@@ -277,6 +277,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
+
     private void deleteView() {
         if (menu != null) {
             menu.getViewManager().removeView(getData());
@@ -573,16 +574,26 @@ public class ControlButton extends AppCompatButton implements CustomView {
         if (!press && !keycodeOutputting) {
             return;
         }
-        Schedulers.io().execute(()->{
+        new Thread(() -> {
             for (int keycode : event.outputKeycodesList()) {
                 keycodeOutputting = press;
                 menu.getInput().sendKeyEvent(keycode, press);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(20);
                 } catch (InterruptedException ignore) {
                 }
             }
-        });
+        }).start();
+    }
+
+    private void handleAutoKeyEvent(ButtonEventData.Event event, boolean press) {
+        if (!press && !keycodeOutputting) {
+            return;
+        }
+        for (int keycode : event.outputKeycodesList()) {
+            keycodeOutputting = press;
+            menu.getInput().sendKeyEvent(keycode, press);
+        }
     }
 
     private boolean autoClick = false;
@@ -592,8 +603,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         @Override
         public void run() {
             final ButtonEventData.Event event = autoClickEvent;
-            handleKeyEvent(event, true);
-            handleKeyEvent(event, false);
+            handleAutoKeyEvent(event, true);
+            handleAutoKeyEvent(event, false);
             if (autoClick) {
                 autoClickHandler.postDelayed(autoClickRunnable, 20);
             }
