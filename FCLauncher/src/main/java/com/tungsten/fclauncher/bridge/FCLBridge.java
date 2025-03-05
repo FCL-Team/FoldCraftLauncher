@@ -73,6 +73,8 @@ public class FCLBridge implements Serializable {
 
     public static boolean BACKEND_IS_BOAT = false;
 
+    public static boolean HAS_SODIUM_OR_EMBEDDIUM_MOD = false;
+
     private FCLBridgeCallback callback;
 
     private double scaleFactor = 1f;

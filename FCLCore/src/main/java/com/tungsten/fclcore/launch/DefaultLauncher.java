@@ -190,6 +190,10 @@ public class DefaultLauncher extends Launcher {
 //        }
         res.add("-javaagent:" + FCLPath.LIB_PATCHER_PATH);
 
+        if (!FCLBridge.BACKEND_IS_BOAT && FCLBridge.HAS_SODIUM_OR_EMBEDDIUM_MOD) {
+            res.add("-javaagent:" + FCLPath.MOD_TRIMMER_PATH);
+        }
+
         Set<String> classpath = repository.getClasspath(version);
         classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
         File jar = new File(repository.getVersionRoot(version.getId()), version.getId() + ".jar");

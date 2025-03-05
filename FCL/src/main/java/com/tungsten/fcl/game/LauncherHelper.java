@@ -150,22 +150,9 @@ public final class LauncherHelper {
                             Task.composeAsync(() -> null)
                     );
                 }).withStage("launch.state.dependencies")
-                .thenComposeAsync(() -> {
-                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLibPatcher.jar")) {
-                        Files.copy(input, new File(FCLPath.LIB_PATCHER_PATH).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLibFixer.jar", e);
-                    }
-                    return null;
-                })
-                .thenComposeAsync(() -> {
-                    try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/MioLaunchWrapper.jar")) {
-                        Files.copy(input, new File(FCLPath.MIO_LAUNCH_WRAPPER).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        Logging.LOG.log(Level.WARNING, "Unable to unpack MioLaunchWrapper.jar", e);
-                    }
-                    return null;
-                })
+                .thenComposeAsync(() -> unpackSinglePlugin("MioLibPatcher.jar", FCLPath.LIB_PATCHER_PATH))
+                .thenComposeAsync(() -> unpackSinglePlugin("MioLaunchWrapper.jar", FCLPath.MIO_LAUNCH_WRAPPER))
+                .thenComposeAsync(() -> unpackSinglePlugin("ModTrimmer.jar", FCLPath.MOD_TRIMMER_PATH))
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
@@ -183,9 +170,10 @@ public final class LauncherHelper {
                                 }
                             });
                             return launcher;
-                        }).thenComposeAsync(launcher -> { // launcher is prev task's result
-                            return Task.supplyAsync(launcher::launch);
-                        }).thenComposeAsync(this::checkMod)
+                        }).thenComposeAsync(this::checkModForResult)
+                        .thenComposeAsync(checkModResult -> { // launcher is prev task's result
+                            return Task.supplyAsync(() -> new ProgressModResult(checkModResult, checkModResult.launcher.launch()));
+                        }).thenComposeAsync(this::progressModResult)
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
@@ -293,8 +281,20 @@ public final class LauncherHelper {
         executor.start();
     }
 
-    private Task<FCLBridge> checkMod(FCLBridge bridge) {
+    private Task<Object> unpackSinglePlugin(String pluginName, String targetPath) {
         return Task.composeAsync(() -> {
+            try (InputStream input = LauncherHelper.class.getResourceAsStream("/assets/game/" + pluginName)) {
+                Files.copy(input, new File(targetPath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Unable to unpack " + pluginName, e);
+            }
+            return null;
+        });
+    }
+
+    private Task<CheckModResult> checkModForResult(FCLGameLauncher launcher) {
+        return Task.composeAsync(() -> {
+            boolean hasTouchController = false;
             try {
                 StringBuilder modCheckerInfo = new StringBuilder();
                 StringBuilder modSummary = new StringBuilder();
@@ -304,16 +304,20 @@ public final class LauncherHelper {
                     if (!mod.isActive()) {
                         continue;
                     }
+                    String modId = mod.getId();
                     modSummary.append(mod.getFileName());
                     modSummary.append(" | ");
-                    modSummary.append(mod.getId());
+                    modSummary.append(modId);
                     modSummary.append(" | ");
                     modSummary.append(mod.getVersion());
                     modSummary.append(" | ");
                     modSummary.append(mod.getModLoaderType());
                     modSummary.append("\n");
-                    if (mod.getId().equals("touchcontroller")) {
-                        bridge.setHasTouchController(true);
+                    if (modId.equals("touchcontroller")) {
+                        hasTouchController = true;
+                    }
+                    if (modId.equals("sodium") || modId.equals("embeddium")) {
+                        FCLBridge.HAS_SODIUM_OR_EMBEDDIUM_MOD = true;
                     }
                     try {
                         modChecker.check(mod);
@@ -322,24 +326,35 @@ public final class LauncherHelper {
                         modCheckerInfo.append(count).append(".").append(e.getReason()).append("\n\n");
                     }
                 }
-                bridge.setModSummary(modSummary.toString());
-                if (!modCheckerInfo.toString().trim().isEmpty()) {
-                    CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
-                    Schedulers.androidUIThread().execute(() -> {
-                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-                        builder.setCancelable(false);
-                        builder.setMessage(modCheckerInfo.toString());
-                        builder.setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()));
-                        builder.setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge)));
-                        builder.create().show();
-                    });
-                    return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
-                }
-                return Task.completed(bridge);
+                CheckModResult result = new CheckModResult(launcher, modCheckerInfo, modSummary, hasTouchController);
+                return Task.completed(result);
             } catch (Throwable e) {
                 LOG.log(Level.WARNING, "CheckMod() failed", e);
-                return Task.completed(bridge);
+                return Task.completed(new CheckModResult(launcher, null, null, hasTouchController));
             }
+        });
+    }
+
+    private Task<FCLBridge> progressModResult(ProgressModResult modResult) {
+        return Task.composeAsync(() -> {
+            FCLBridge bridge = modResult.fclBridge;
+            if (modResult.hasTouchController) {
+                bridge.setHasTouchController(true);
+            }
+            bridge.setModSummary(modResult.modSummary.toString());
+            if (!modResult.modCheckerInfo.toString().trim().isEmpty()) {
+                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                Schedulers.androidUIThread().execute(() -> {
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                    builder.setCancelable(false);
+                    builder.setMessage(modResult.modCheckerInfo.toString());
+                    builder.setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()));
+                    builder.setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge)));
+                    builder.create().show();
+                });
+                return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+            }
+            return Task.completed(bridge);
         });
     }
 
@@ -479,4 +494,33 @@ public final class LauncherHelper {
         }
     }
 
+    private static class ModResult {
+        protected final StringBuilder modCheckerInfo;
+        protected final StringBuilder modSummary;
+        protected final boolean hasTouchController;
+
+        private ModResult(StringBuilder modCheckerInfo, StringBuilder modSummary, boolean hasTouchController) {
+            this.modCheckerInfo = modCheckerInfo;
+            this.modSummary = modSummary;
+            this.hasTouchController = hasTouchController;
+        }
+    }
+
+    private static class CheckModResult extends ModResult {
+        private final FCLGameLauncher launcher;
+
+        private CheckModResult(FCLGameLauncher launcher, StringBuilder modCheckerInfo, StringBuilder modSummary, boolean hasTouchController) {
+            super(modCheckerInfo, modSummary, hasTouchController);
+            this.launcher = launcher;
+        }
+    }
+
+    private static class ProgressModResult extends ModResult {
+        private final FCLBridge fclBridge;
+
+        private ProgressModResult(CheckModResult checkModResult, FCLBridge fclBridge) {
+            super(checkModResult.modCheckerInfo, checkModResult.modSummary, checkModResult.hasTouchController);
+            this.fclBridge = fclBridge;
+        }
+    }
 }
