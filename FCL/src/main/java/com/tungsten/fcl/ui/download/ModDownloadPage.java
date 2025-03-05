@@ -38,18 +38,6 @@ public class ModDownloadPage extends DownloadPage {
             downloadSource.set(context.getString(R.string.mods_modrinth));
 
         create();
-        View showIncompatible = findViewById(R.id.show_incompatible);
-        showIncompatible.setVisibility(View.VISIBLE);
-        showIncompatible.setOnClickListener(v -> {
-            try {
-                FCLAlertDialog dialog = new FCLAlertDialog(context);
-                dialog.setMessage(Html.fromHtml(IOUtils.readFullyAsString(context.getAssets().open("incompatible_mod_list.html")), 0));
-                dialog.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                dialog.show();
-            } catch (Exception ignore) {
-                ignore.printStackTrace();
-            }
-        });
     }
 
     @Override
