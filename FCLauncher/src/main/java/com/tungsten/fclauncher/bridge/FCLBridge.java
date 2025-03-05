@@ -224,7 +224,7 @@ public class FCLBridge implements Serializable {
         if (BACKEND_IS_BOAT) {
             pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
         } else {
-            CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
+            CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, CallbackBridge.getCurrentMods(), press);
         }
     }
 
