@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1208,
-    "versionName": "1.2.0.8",
-    "date": "2025.02.28",
+    "versionCode": 1209,
+    "versionName": "1.2.0.9",
+    "date": "2025.03.05",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能:根据当前选择的版本在模组详情页面自动推荐合适的版本\n2.优化拖动条的显示效果,修复文字过大的Bug,增加点击文字直接编辑的功能\n3.修复下载界面类别无法获取的Bug\n4.调整部分UI显示效果\n5.修复模组Angelica崩溃的Bug\n6.修复部分设备上模组过大导致的启动直接造成内存溢出的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复模组详情信息页面在未下载任何版本时无法加载的Bug\n2.更新崩溃日志检测\n3.增加启动前模组兼容性检测功能\n4.修补部分GLFW缺失方法\n5.修复组合键无法触发的Bug\n6.修复部分设备以及模拟器无法下载游戏等Bug\n7.自动禁用Sodium的警告\n8.移除查看模组兼容性按钮"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a04b93d9c110",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.8/FCL-release-1.2.0.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/21838b8c4ac0",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.0.9/FCL-release-1.2.0.9-all.apk"
   }
 ]
