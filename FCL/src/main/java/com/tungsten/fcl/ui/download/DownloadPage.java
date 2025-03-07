@@ -159,7 +159,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                         pageCount.set(-1);
                         retrySearch = () -> search(userGameVersion, category, pageOffset, searchFilter, sort);
                     }
-        }).executor(true);
+                }).executor(true);
     }
 
     protected String getLocalizedCategory(String category) {
@@ -206,7 +206,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
     public void create() {
         searchLayout = findViewById(R.id.search_layout);
-        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         search = findViewById(R.id.search);
         search.setOnClickListener(this);
@@ -262,7 +262,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(0);
         FXUtils.bindSelection(categorySpinner, category);
-        downloadSource.addListener(observable -> refreshCategory());
+        downloadSource.addListener(observable -> refreshCategory(true));
 
         sortSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.SortType.values()).collect(Collectors.toList())));
         ArrayList<String> sorts = new ArrayList<>();
@@ -285,8 +285,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 getContext(), "search_page_n", pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()
         )));
 
+        refreshCategory(false);
         search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
-        refreshCategory();
     }
 
     private static void download(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
@@ -395,26 +395,24 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         }
     }
 
-    private void refreshCategory() {
-        Task.supplyAsync(() -> {
-            setLoading(true);
-            return repository.getCategories();
-        }).thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
-            ArrayList<CategoryIndented> result = new ArrayList<>();
-            result.add(new CategoryIndented(0, null));
-            for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
-                resolveCategory(category, 0, result);
-            }
-            categorySpinner.setDataList(result);
-            ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
-            adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            categorySpinner.setAdapter(adapter);
-            FXUtils.unbindSelection(categorySpinner, category);
-            categorySpinner.setSelection(0);
-            category.set(result.get(0));
-            FXUtils.bindSelection(categorySpinner, category);
-            search();
-        }).start();
+    private void refreshCategory(boolean search) {
+        Task.supplyAsync(() -> repository.getCategories())
+                .thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
+                    ArrayList<CategoryIndented> result = new ArrayList<>();
+                    result.add(new CategoryIndented(0, null));
+                    for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
+                        resolveCategory(category, 0, result);
+                    }
+                    categorySpinner.setDataList(result);
+                    ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
+                    adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+                    categorySpinner.setAdapter(adapter);
+                    FXUtils.unbindSelection(categorySpinner, category);
+                    categorySpinner.setSelection(0);
+                    category.set(result.get(0));
+                    FXUtils.bindSelection(categorySpinner, category);
+                    if (search) search();
+                }).start();
     }
 }
