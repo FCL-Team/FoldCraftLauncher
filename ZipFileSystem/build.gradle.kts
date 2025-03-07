@@ -28,14 +28,3 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
-
-tasks.register<Copy>("buildLibrary") {
-    dependsOn("assembleRelease")
-    val libsDir = "../FCLCore/libs/"
-    val libName = "ZipFileSystem-release.aar"
-    delete("$libsDir/$libName")
-    from("build/outputs/aar/")
-    into(libsDir)
-    include(libName)
-}
-
