@@ -379,7 +379,9 @@ class VersionSetting : Cloneable {
                 vs.isAutoMemory = json["autoMemory"]?.asBoolean ?: true
                 vs.permSize = json["permSize"]?.asString ?: ""
                 vs.serverIp = json["serverIp"]?.asString ?: ""
-                vs.java = json["java"]?.asString ?: "Auto"
+                vs.java =
+                    JavaManager.javaList.find { it.versionName == json["java"]?.asString }?.versionName
+                        ?: "Auto"
                 vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
