@@ -319,7 +319,7 @@
     <string name="edit_button_event_keycodes">Выбрать клавиши</string>
     <string name="edit_button_event_keycodes_keyboard">Клавиатура</string>
     <string name="edit_button_event_keycodes_mouse">Мышь</string>
-    <string name="edit_button_event_bind_group">Переключить видимость группы</string>
+    <string name="edit_button_event_bind_group">Переключить отображение группы</string>
 
     <string name="edit_direction_title">Редактировать стик</string>
     <string name="edit_direction_delete">Вы уверены что хотите удалить этот контроллер?</string>
@@ -591,9 +591,9 @@
     <string name="menu_control_view_group_add">Добавить группу просмотра</string>
     <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу просмотра?</string>
     <string name="menu_control_view_group_name">Название</string>
-    <string name="menu_control_view_group_visibility">Видимость группы</string>
-    <string name="menu_control_view_group_exist">Группа просмотра уже существует</string>
-    <string name="menu_control_view_group_empty">Сначала заполните название группы просмотра</string>
+    <string name="menu_control_view_group_visibility">Отображение группы</string>
+    <string name="menu_control_view_group_exist">Группа уже существует</string>
+    <string name="menu_control_view_group_empty">Сначала ведите название группы</string>
     <string name="menu_control_view_group_visible">Видимый</string>
     <string name="menu_control_view_group_invisible">Невидимый</string>
 
