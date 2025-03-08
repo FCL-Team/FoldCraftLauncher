@@ -296,7 +296,7 @@
     <string name="edit_view_delete">Удалить</string>
     <string name="edit_view_event">Расширенные настройки</string>
     <string name="edit_view_info">Стандартные настройки</string>
-    <string name="edit_view_no_group">Сначала добавьте или выберите группу просмотра!</string>
+    <string name="edit_view_no_group">Сначала добавьте или выберите группу!</string>
     <string name="edit_view_style">Стиль</string>
 
     <string name="edit_button_title">Редактирование</string>
@@ -565,12 +565,12 @@
     <string name="menu_controls_current">Текущее управление</string>
     <string name="menu_controls_edit_mode">Режим редактирования</string>
     <string name="menu_controls_show_boundary">Показать границы кнопок</string>
-    <string name="menu_controls_hide_all">Скрыть все представления</string>
+    <string name="menu_controls_hide_all">Скрыть все элементы</string>
     <string name="menu_controls_auto_fit">Автонастройки позиции</string>
     <string name="menu_controls_auto_fit_dist">Автонастройка расстояния до позиции</string>
-    <string name="menu_controls_groups">Просмотр групп</string>
+    <string name="menu_controls_groups">Группа</string>
     <string name="menu_controls_manage">Редактировать</string>
-    <string name="menu_controls_current_view_group">Текущая группа просмотра</string>
+    <string name="menu_controls_current_view_group">Текущая группа</string>
     <string name="menu_controls_add_button">Добавить кнопку</string>
     <string name="menu_controls_add_direction">Добавить стик</string>
     <string name="menu_controls_add_view_button">Добавлять</string>
@@ -588,8 +588,8 @@
     <string name="menu_control_style">Настройка стиля</string>
     <string name="menu_control_style_add">Добавить стиль</string>
     <string name="menu_control_style_edit">Редактировать стиль</string>
-    <string name="menu_control_view_group_add">Добавить группу просмотра</string>
-    <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу просмотра?</string>
+    <string name="menu_control_view_group_add">Добавить группу</string>
+    <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу?</string>
     <string name="menu_control_view_group_name">Название</string>
     <string name="menu_control_view_group_visibility">Отображение группы</string>
     <string name="menu_control_view_group_exist">Группа уже существует</string>
@@ -631,7 +631,7 @@
     <string name="menu_settings_multiplayer_button">Открыть</string>
     <string name="menu_settings_quick_input">Быстрый ввод</string>
     <string name="menu_settings_quick_input_button">Управлять</string>
-    <string name="menu_settings_send_key">Нажатие клавиши</string>
+    <string name="menu_settings_send_key">Выбрать кнопку</string>
     <string name="menu_settings_send_key_button">Выбрать</string>
     <string name="menu_settings_soft_keyboard_adjust">Отключить автонастройку клавиатуры</string>
     <string name="menu_settings_item_bar_scale">Размер панели предметов</string>
