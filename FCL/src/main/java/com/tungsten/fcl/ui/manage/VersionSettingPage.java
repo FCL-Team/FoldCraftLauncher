@@ -3,12 +3,18 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 
+import com.mio.JavaManager;
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.SelectControllerDialog;
@@ -41,7 +47,6 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
-import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -51,8 +56,6 @@ import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
-import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -61,7 +64,9 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -91,8 +96,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch noGameCheckSwitch;
     private FCLSwitch noJVMCheckSwitch;
 
-    private FCLSpinner<String> javaSpinner;
-
+    private FCLImageButton javaButton;
     private FCLImageButton editIconButton;
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
@@ -101,6 +105,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton driverButton;
     private FCLImageButton driverInstallButton;
 
+    private FCLTextView javaText;
     private FCLTextView rendererText;
     private FCLTextView driverText;
 
@@ -144,31 +149,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
 
         isolateWorkingDirSwitch.disableProperty().bind(modpack);
-
-        javaSpinner = findViewById(R.id.edit_java);
-
         scaleFactorSeekbar.addProgressListener();
 
-        // add spinner data
-        ArrayList<String> javaVersionDataList = new ArrayList<>();
-        javaVersionDataList.add(JavaVersion.JAVA_AUTO.getVersionName());
-        javaVersionDataList.add(JavaVersion.JAVA_8.getVersionName());
-        javaVersionDataList.add(JavaVersion.JAVA_11.getVersionName());
-        javaVersionDataList.add(JavaVersion.JAVA_17.getVersionName());
-        javaVersionDataList.add(JavaVersion.JAVA_21.getVersionName());
-        javaSpinner.setDataList(javaVersionDataList);
-
-        // add spinner text
-        ArrayList<String> javaVersionList = new ArrayList<>();
-        javaVersionList.add(getContext().getString(R.string.settings_game_java_version_auto));
-        javaVersionList.add("JRE 8");
-        javaVersionList.add("JRE 11");
-        javaVersionList.add("JRE 17");
-        javaVersionList.add("JRE 21");
-        ArrayAdapter<String> javaAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, javaVersionList);
-        javaAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        javaSpinner.setAdapter(javaAdapter);
-
+        javaButton = findViewById(R.id.edit_java);
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
@@ -177,6 +160,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         driverButton = findViewById(R.id.edit_driver);
         driverInstallButton = findViewById(R.id.install_driver);
 
+        javaButton.setOnClickListener(this);
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
@@ -185,6 +169,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         driverButton.setOnClickListener(this);
         driverInstallButton.setOnClickListener(this);
 
+        javaText = findViewById(R.id.java);
         rendererText = findViewById(R.id.renderer);
         driverText = findViewById(R.id.driver);
 
@@ -302,7 +287,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.getNotCheckJVMProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
-            FXUtils.unbindSelection(javaSpinner, lastVersionSetting.getJavaProperty());
             scaleFactorSeekbar.percentProgressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
 
@@ -324,9 +308,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.getNotCheckJVMProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
-        FXUtils.bindSelection(javaSpinner, versionSetting.getJavaProperty());
         scaleFactorSeekbar.percentProgressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
+
+        javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
         FCLConfig.Renderer renderer = versionSetting.getRenderer();
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
             rendererText.setText(versionSetting.getCustomRenderer());
@@ -426,6 +411,32 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == controllerButton) {
             SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> lastVersionSetting.setController(controller.getId()));
             dialog.show();
+        }
+        if (view == javaButton) {
+            ListView listView = new ListView(getContext());
+            PopupWindow popupWindow = new PopupWindow(listView, ConvertUtils.dip2px(getContext(), 150F), ConvertUtils.dip2px(getContext(), 300F));
+            listView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_renderer, JavaManager.getJavaList().stream().map(javaVersion -> {
+                if (javaVersion.getVersionName().equals("Auto")) {
+                    return getContext().getString(R.string.settings_game_java_version_auto);
+                }
+                return javaVersion.getVersionName();
+            }).collect(Collectors.toList())));
+            listView.setDivider(null);
+            listView.setOnItemClickListener((parent, view1, position, id) -> {
+                popupWindow.dismiss();
+                JavaVersion javaVersion = JavaManager.getJavaList().get(position);
+                lastVersionSetting.setJava(javaVersion.getVersionName());
+                if (javaVersion.getVersionName().equals("Auto")) {
+                    javaText.setText(R.string.settings_game_java_version_auto);
+                } else {
+                    javaText.setText(javaVersion.getVersionName());
+                }
+            });
+            popupWindow.setContentView(listView);
+            popupWindow.setEnterTransition(new Slide(Gravity.TOP));
+            popupWindow.setExitTransition(new Slide(Gravity.TOP));
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.showAsDropDown(javaButton);
         }
         if (view == rendererButton) {
             int[] pos = new int[2];
