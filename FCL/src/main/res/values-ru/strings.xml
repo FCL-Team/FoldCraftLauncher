@@ -323,16 +323,16 @@
 
     <string name="edit_direction_title">Редактировать стик</string>
     <string name="edit_direction_delete">Вы уверены что хотите удалить этот контроллер?</string>
-    <string name="edit_direction_event_up">Имитация верхней кнопки</string>
-    <string name="edit_direction_event_down">Имитация нижней кнопки</string>
-    <string name="edit_direction_event_left">Имитация левой кнопки</string>
-    <string name="edit_direction_event_right">Имитация правой кнопки</string>
+    <string name="edit_direction_event_up">Верхняя кнопка</string>
+    <string name="edit_direction_event_down">Нижняя кнопка</string>
+    <string name="edit_direction_event_left">Левая кнопка</string>
+    <string name="edit_direction_event_right">Правая кнопка</string>
     <string name="edit_direction_event_follow">Стик</string>
     <string name="edit_direction_event_follow_fix">Фиксированный</string>
     <string name="edit_direction_event_follow_center">Полудинамичный</string>
     <string name="edit_direction_event_follow_always">Динамический</string>
-    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы краситься</string>
-    <string name="edit_direction_event_sneak_code">Имитация кнопки по центру</string>
+    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы красться</string>
+    <string name="edit_direction_event_sneak_code">Кнопка по центру</string>
 
     <string name="exception_access_denied">Не удается получить доступ к файлу %s.</string>
     <string name="exception_artifact_malformed">Не удается проверить целостность загруженных файлов.</string>
@@ -792,10 +792,10 @@
     <string name="profile_already_exist">Это название уже существует, используйте другое название.</string>
 
     <string name="quick_input_title">Быстрый ввод</string>
-    <string name="quick_input_add">Добавить шаблон текста</string>
-    <string name="quick_input_text">Быстрый ввод текста</string>
-    <string name="quick_input_exist">Текст уже существует!</string>
-    <string name="quick_input_empty">Сначала заполните текст!</string>
+    <string name="quick_input_add">Добавить текст</string>
+    <string name="quick_input_text">Текст для быстрого ввода</string>
+    <string name="quick_input_exist">Такой текст уже есть!</string>
+    <string name="quick_input_empty">Введите текст!</string>
 
     <string name="resourcepack">Ресурспаки</string>
 
@@ -842,7 +842,7 @@
     <string name="settings_launcher_upgrade">Обновление лаунчера</string>
     <string name="settings_launcher_upgrade_check">Проверить</string>
     <string name="settings_launcher_cache">Кэш лаунчера</string>
-    <string name="settings_launcher_clear_cache">Очистить кэш</string>
+    <string name="settings_launcher_clear_cache">Очистить</string>
     <string name="settings_launcher_download">Загрузка</string>
     <string name="settings_launcher_download_threads">Потоки</string>
     <string name="settings_launcher_download_threads_auto">Автоматически определять</string>
