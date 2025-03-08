@@ -6,7 +6,7 @@
     <string name="splash_permission_settings">Настройки</string>
     <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
 
-    <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
+    <string name="splash_title">Добро пожаловать в Fold Craft Launcher</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии из-за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
