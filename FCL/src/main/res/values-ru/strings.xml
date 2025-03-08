@@ -947,10 +947,10 @@
     <string name="version_new_profile">Новая папка</string>
     <string name="version_update">Обновить модпак</string>
 
-    <string name="view_info_visibility">Видимость</string>
-    <string name="view_info_visibility_always">Всегда виден</string>
-    <string name="view_info_visibility_game">Видно в игре</string>
-    <string name="view_info_visibility_menu">Виден вне игры</string>
+    <string name="view_info_visibility">Отображение</string>
+    <string name="view_info_visibility_always">Всегда</string>
+    <string name="view_info_visibility_game">В игре</string>
+    <string name="view_info_visibility_menu">Вне игры</string>
     <string name="view_info_x">Позиция X</string>
     <string name="view_info_y">Позиция Y</string>
     <string name="view_info_size_type">Отображать в</string>
