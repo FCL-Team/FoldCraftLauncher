@@ -5,12 +5,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
+import com.mio.util.AndroidUtil
 import com.tungsten.fcl.FCLApplication
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
@@ -20,7 +20,6 @@ import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.game.JavaVersion
 import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.browser.FileBrowser
 import com.tungsten.fcllibrary.browser.options.LibMode
@@ -32,6 +31,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.CompletableFuture
 import java.util.stream.Collectors
 
 @SuppressLint("NotifyDataSetChanged")
@@ -96,6 +96,14 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                                 File(path).name
                             }
                             if (!fileName.endsWith(".tar.xz")) {
+                                FCLAlertDialog.Builder(context)
+                                    .setMessage(context.getString(R.string.import_java_wrong_file))
+                                    .setAlertLevel(
+                                        FCLAlertDialog.AlertLevel.ALERT
+                                    )
+                                    .setNegativeButton(null)
+                                    .create()
+                                    .show()
                                 return
                             }
                             val inputStream = if (AndroidUtils.isDocUri(uri)) {
@@ -106,7 +114,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                             binding.progress.visibility = View.VISIBLE
                             binding.recyclerView.visibility = View.GONE
                             isLoading = true
-                            Task.runAsync {
+                            CompletableFuture.supplyAsync {
                                 try {
                                     val dest = File(FCLPath.JAVA_PATH, fileName)
                                     if (dest.exists()) {
@@ -117,17 +125,64 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                                         dest
                                     )
                                     RuntimeUtils.patchJava(context, dest.absolutePath)
-                                } catch (e: Throwable) {
-                                    Log.e("测试", e.toString())
+                                } catch (_: Throwable) {
+                                    return@supplyAsync false
                                 }
-                            }.whenComplete(Schedulers.androidUIThread()) {
-                                isLoading = false
-                                binding.progress.visibility = View.GONE
-                                binding.recyclerView.visibility = View.VISIBLE
-                                JavaManager.addToJavaVersion(File(FCLPath.JAVA_PATH, fileName))
-                                refresh()
-                                binding.recyclerView.adapter?.notifyDataSetChanged()
-                            }.start()
+                                return@supplyAsync true
+                            }.thenApplyAsync {
+                                if (it) {
+                                    AndroidUtil.checkElfIsAndroid(
+                                        File(
+                                            FCLPath.JAVA_PATH,
+                                            fileName
+                                        ).resolve("bin/java")
+                                    )
+                                    return@thenApplyAsync true
+                                }
+                                return@thenApplyAsync false
+                            }.thenAcceptAsync {
+                                Schedulers.androidUIThread().execute {
+                                    isLoading = false
+                                    binding.progress.visibility = View.GONE
+                                    binding.recyclerView.visibility = View.VISIBLE
+                                    if (it) {
+                                        JavaManager.addToJavaVersion(
+                                            File(
+                                                FCLPath.JAVA_PATH,
+                                                fileName
+                                            )
+                                        )
+                                        refresh()
+                                        binding.recyclerView.adapter?.notifyDataSetChanged()
+                                    } else {
+                                        FCLAlertDialog.Builder(context)
+                                            .setMessage(context.getString(R.string.import_java_error))
+                                            .setAlertLevel(
+                                                FCLAlertDialog.AlertLevel.ALERT
+                                            )
+                                            .setPositiveButton(context.getString(R.string.mod_check_continue)) {
+                                                JavaManager.addToJavaVersion(
+                                                    File(
+                                                        FCLPath.JAVA_PATH,
+                                                        fileName
+                                                    )
+                                                )
+                                                refresh()
+                                                binding.recyclerView.adapter?.notifyDataSetChanged()
+                                            }
+                                            .setNegativeButton(context.getString(R.string.button_cancel)) {
+                                                FileUtils.deleteDirectory(
+                                                    File(
+                                                        FCLPath.JAVA_PATH,
+                                                        fileName
+                                                    )
+                                                )
+                                            }
+                                            .create()
+                                            .show()
+                                    }
+                                }
+                            }
                         }
                     }
 
