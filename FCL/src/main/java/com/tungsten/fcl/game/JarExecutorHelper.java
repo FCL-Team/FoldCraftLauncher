@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.mio.JavaManager;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
@@ -90,8 +91,8 @@ public class JarExecutorHelper {
         Profile profile = Profiles.getSelectedProfile();
         if (profile != null) {
             String java = profile.getGlobal().getJava();
-            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
-                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
+            if (!java.equals(JavaVersion.JAVA_AUTO.getName())) {
+                javaVersion = JavaManager.getJavaFromVersionName(java).getVersion();
             }
         }
         return javaVersion;
