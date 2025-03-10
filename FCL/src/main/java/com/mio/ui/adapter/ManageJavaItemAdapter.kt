@@ -1,5 +1,6 @@
 package com.mio.ui.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ class ManageJavaItemAdapter(
         )
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
@@ -36,6 +38,7 @@ class ManageJavaItemAdapter(
         binding.javaVersion.text = data.versionName
         if (File(FCLPath.JAVA_PATH, data.name).resolve("version").exists()) {
             binding.delete.visibility = View.INVISIBLE
+            binding.javaName.text = "${data.name} (${context.getString(R.string.internal)})"
         } else {
             binding.delete.setOnClickListener {
                 action.invoke(data, true)
