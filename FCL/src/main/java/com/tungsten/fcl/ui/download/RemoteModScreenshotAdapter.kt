@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,11 +27,12 @@ class RemoteModScreenshotAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScreenshotViewHolder {
         return ScreenshotViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(context),
-                R.layout.view_mod_screenshot,
-                parent,
-                false
+            ViewModScreenshotBinding.bind(
+                LayoutInflater.from(context).inflate(
+                    R.layout.view_mod_screenshot,
+                    parent,
+                    false
+                )
             )
         )
     }

@@ -6,7 +6,7 @@
     <string name="splash_permission_settings">Настройки</string>
     <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
 
-    <string name="splash_title">Добро пожаловать в Fold Craft Launcher.</string>
+    <string name="splash_title">Добро пожаловать в Fold Craft Launcher</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии из-за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
@@ -150,7 +150,7 @@
     <string name="control_import_failed">Ошибка импорта</string>
     <string name="control_upgrade">"Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. 
     Хотите перенести его на новую версию?"</string>
-    <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией Лаунчера или слишком низкой версией контроллера.</string>
+    <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией лаунчера или слишком низкой версией контроллера.</string>
     <string name="control_upload_requirement">Сначала присоединитесь к QQ группе, затем нажмите "Поделиться", чтобы поделиться контроллером и его информацией с администратором и дождаться проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
     <string name="control_info_author">Автор:</string>
     <string name="control_info_icon">Иконка:</string>
@@ -296,7 +296,7 @@
     <string name="edit_view_delete">Удалить</string>
     <string name="edit_view_event">Расширенные настройки</string>
     <string name="edit_view_info">Стандартные настройки</string>
-    <string name="edit_view_no_group">Сначала добавьте или выберите группу просмотра!</string>
+    <string name="edit_view_no_group">Сначала добавьте или выберите группу!</string>
     <string name="edit_view_style">Стиль</string>
 
     <string name="edit_button_title">Редактирование</string>
@@ -319,20 +319,20 @@
     <string name="edit_button_event_keycodes">Выбрать клавиши</string>
     <string name="edit_button_event_keycodes_keyboard">Клавиатура</string>
     <string name="edit_button_event_keycodes_mouse">Мышь</string>
-    <string name="edit_button_event_bind_group">Переключить видимость группы</string>
+    <string name="edit_button_event_bind_group">Переключить отображение группы</string>
 
     <string name="edit_direction_title">Редактировать стик</string>
     <string name="edit_direction_delete">Вы уверены что хотите удалить этот контроллер?</string>
-    <string name="edit_direction_event_up">Имитация верхней кнопки</string>
-    <string name="edit_direction_event_down">Имитация нижней кнопки</string>
-    <string name="edit_direction_event_left">Имитация левой кнопки</string>
-    <string name="edit_direction_event_right">Имитация правой кнопки</string>
+    <string name="edit_direction_event_up">Верхняя кнопка</string>
+    <string name="edit_direction_event_down">Нижняя кнопка</string>
+    <string name="edit_direction_event_left">Левая кнопка</string>
+    <string name="edit_direction_event_right">Правая кнопка</string>
     <string name="edit_direction_event_follow">Стик</string>
     <string name="edit_direction_event_follow_fix">Фиксированный</string>
     <string name="edit_direction_event_follow_center">Полудинамичный</string>
     <string name="edit_direction_event_follow_always">Динамический</string>
-    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы краситься</string>
-    <string name="edit_direction_event_sneak_code">Имитация кнопки по центру</string>
+    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы красться</string>
+    <string name="edit_direction_event_sneak_code">Кнопка по центру</string>
 
     <string name="exception_access_denied">Не удается получить доступ к файлу %s.</string>
     <string name="exception_artifact_malformed">Не удается проверить целостность загруженных файлов.</string>
@@ -565,12 +565,12 @@
     <string name="menu_controls_current">Текущее управление</string>
     <string name="menu_controls_edit_mode">Режим редактирования</string>
     <string name="menu_controls_show_boundary">Показать границы кнопок</string>
-    <string name="menu_controls_hide_all">Скрыть все представления</string>
+    <string name="menu_controls_hide_all">Скрыть все элементы</string>
     <string name="menu_controls_auto_fit">Автонастройки позиции</string>
     <string name="menu_controls_auto_fit_dist">Автонастройка расстояния до позиции</string>
-    <string name="menu_controls_groups">Просмотр групп</string>
+    <string name="menu_controls_groups">Группа</string>
     <string name="menu_controls_manage">Редактировать</string>
-    <string name="menu_controls_current_view_group">Текущая группа просмотра</string>
+    <string name="menu_controls_current_view_group">Текущая группа</string>
     <string name="menu_controls_add_button">Добавить кнопку</string>
     <string name="menu_controls_add_direction">Добавить стик</string>
     <string name="menu_controls_add_view_button">Добавлять</string>
@@ -588,12 +588,12 @@
     <string name="menu_control_style">Настройка стиля</string>
     <string name="menu_control_style_add">Добавить стиль</string>
     <string name="menu_control_style_edit">Редактировать стиль</string>
-    <string name="menu_control_view_group_add">Добавить группу просмотра</string>
-    <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу просмотра?</string>
+    <string name="menu_control_view_group_add">Добавить группу</string>
+    <string name="menu_control_view_group_delete">Вы уверены, что хотите удалить эту группу?</string>
     <string name="menu_control_view_group_name">Название</string>
-    <string name="menu_control_view_group_visibility">Видимость группы</string>
-    <string name="menu_control_view_group_exist">Группа просмотра уже существует</string>
-    <string name="menu_control_view_group_empty">Сначала заполните название группы просмотра</string>
+    <string name="menu_control_view_group_visibility">Отображение группы</string>
+    <string name="menu_control_view_group_exist">Группа уже существует</string>
+    <string name="menu_control_view_group_empty">Сначала ведите название группы</string>
     <string name="menu_control_view_group_visible">Видимый</string>
     <string name="menu_control_view_group_invisible">Невидимый</string>
 
@@ -631,7 +631,7 @@
     <string name="menu_settings_multiplayer_button">Открыть</string>
     <string name="menu_settings_quick_input">Быстрый ввод</string>
     <string name="menu_settings_quick_input_button">Управлять</string>
-    <string name="menu_settings_send_key">Нажатие клавиши</string>
+    <string name="menu_settings_send_key">Выбрать кнопку</string>
     <string name="menu_settings_send_key_button">Выбрать</string>
     <string name="menu_settings_soft_keyboard_adjust">Отключить автонастройку клавиатуры</string>
     <string name="menu_settings_item_bar_scale">Размер панели предметов</string>
@@ -792,10 +792,10 @@
     <string name="profile_already_exist">Это название уже существует, используйте другое название.</string>
 
     <string name="quick_input_title">Быстрый ввод</string>
-    <string name="quick_input_add">Добавить шаблон текста</string>
-    <string name="quick_input_text">Быстрый ввод текста</string>
-    <string name="quick_input_exist">Текст уже существует!</string>
-    <string name="quick_input_empty">Сначала заполните текст!</string>
+    <string name="quick_input_add">Добавить текст</string>
+    <string name="quick_input_text">Текст для быстрого ввода</string>
+    <string name="quick_input_exist">Такой текст уже есть!</string>
+    <string name="quick_input_empty">Введите текст!</string>
 
     <string name="resourcepack">Ресурспаки</string>
 
@@ -842,7 +842,7 @@
     <string name="settings_launcher_upgrade">Обновление лаунчера</string>
     <string name="settings_launcher_upgrade_check">Проверить</string>
     <string name="settings_launcher_cache">Кэш лаунчера</string>
-    <string name="settings_launcher_clear_cache">Очистить кэш</string>
+    <string name="settings_launcher_clear_cache">Очистить</string>
     <string name="settings_launcher_download">Загрузка</string>
     <string name="settings_launcher_download_threads">Потоки</string>
     <string name="settings_launcher_download_threads_auto">Автоматически определять</string>
@@ -947,10 +947,10 @@
     <string name="version_new_profile">Новая папка</string>
     <string name="version_update">Обновить модпак</string>
 
-    <string name="view_info_visibility">Видимость</string>
-    <string name="view_info_visibility_always">Всегда виден</string>
-    <string name="view_info_visibility_game">Видно в игре</string>
-    <string name="view_info_visibility_menu">Виден вне игры</string>
+    <string name="view_info_visibility">Отображение</string>
+    <string name="view_info_visibility_always">Всегда</string>
+    <string name="view_info_visibility_game">В игре</string>
+    <string name="view_info_visibility_menu">Вне игры</string>
     <string name="view_info_x">Позиция X</string>
     <string name="view_info_y">Позиция Y</string>
     <string name="view_info_size_type">Отображать в</string>
@@ -967,8 +967,8 @@
 
     <string name="world">Миры</string>
     <string name="world_add">Добавить мир (.zip)</string>
-    <string name="world_datapack">Управление дата-паками</string>
-    <string name="world_datapack_1_13">Только Minecraft 1.13 или новее поддерживает дата-паки.</string>
+    <string name="world_datapack">Управление датапаками</string>
+    <string name="world_datapack_1_13">Только Minecraft 1.13 или новее поддерживает датапаки.</string>
     <string name="world_description">%s. Последнее воспроизведение: %s. Версия игры: %s.</string>
     <string name="world_download">Загрузить мир</string>
     <string name="world_export">Экспорт мира</string>
@@ -1035,4 +1035,5 @@
     <string name="mod_check_mcef">Мод MCEF (%s) не работает на Android. Обычно он нужен для работы WebDisplays или внутриигрового браузера.</string>
     <string name="mod_check_valkyrienskies">Мод Valkyrien Skies/Valkyrien Warfare (%s) не работает в одиночной игре напрямую. Необходим сервер, иначе игра вылетит.</string>
     <string name="mod_check_yes_steve_model">Мод Yes Steve Model (%s) версии 2.2.2 и выше не работает на Android.</string>
+    <string name="mod_check_imblocker">IMBlocker (%s) не предназначен для Android. Он вызовет сбой игры.</string>
 </resources>

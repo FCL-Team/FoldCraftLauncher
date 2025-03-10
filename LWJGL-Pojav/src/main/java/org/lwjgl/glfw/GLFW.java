@@ -1021,6 +1021,10 @@ public class GLFW
         //Return our context
     }
 
+    public static long nglfwCreateWindow(int width, int height, long title, long monitor, long share) {
+        return glfwCreateWindow(width,height,"Game",monitor,share);
+    }
+
     public static void glfwDestroyWindow(long window) {
         // Check window exists
         try {
