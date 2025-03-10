@@ -29,12 +29,6 @@ public class FCLInput implements View.OnCapturedPointerListener {
     private final int screenWidth;
     private final int screenHeight;
 
-    private long lastFrameTime;
-    private Choreographer choreographer;
-    private float lastXAxis;
-    private float lastYAxis;
-
-
     public static final HashMap<Integer, Integer> MOUSE_MAP = new HashMap<Integer, Integer>() {
         {
             put(MOUSE_LEFT, FCLBridge.Button1);
@@ -112,9 +106,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public void initExternalController(View view) {
         view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
         view.setOnCapturedPointerListener(this);
+        view.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
+            view.requestPointerCapture();
+        });
         view.requestFocus();
-        view.requestPointerCapture();
 
         this.focusableView = view;
     }
@@ -139,24 +136,19 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     @Override
     public boolean onCapturedPointer(View view, MotionEvent event) {
-        return handleMouse(event, 0);
+        return handleMouse(event);
     }
 
-    private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
-        int deltaX;
-        int deltaY;
+    private boolean handleMouse(MotionEvent event) {
+        int deltaX = 0;
+        int deltaY = 0;
         if (event != null) {
             deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
             deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
-        } else {
-            GameMenu gameMenu = menu;
-            gameMenu.getBridge().refreshHitResultType();
-            deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-            deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
         }
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX));
-            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY));
+            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * 2));
+            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * 2));
             setPointerId(EXTERNAL_MOUSE_ID);
             setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
             setPointerId(null);
@@ -218,24 +210,6 @@ public class FCLInput implements View.OnCapturedPointerListener {
             sendChar((char) (event.getUnicodeChar() != 0 ? event.getUnicodeChar() : '\u0000'));
         }
         return true;
-    }
-
-    public boolean handleGenericMotionEvent(MotionEvent event) {
-        if (!menu.getTouchCharInput().isEnabled()) {
-            focusableView.requestFocus();
-            focusableView.requestPointerCapture();
-        }
-        return false;
-    }
-
-    private void doTick() {
-        long newFrameTime = System.nanoTime();
-        if (lastXAxis != 0 || lastYAxis != 0) {
-            newFrameTime = System.nanoTime();
-            float deltaTimeScale = ((newFrameTime - lastFrameTime) / 16666666f);
-            handleMouse(null, deltaTimeScale);
-        }
-        lastFrameTime = newFrameTime;
     }
 
 }
