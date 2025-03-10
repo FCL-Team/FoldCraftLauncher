@@ -131,13 +131,12 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                                 return@supplyAsync true
                             }.thenApplyAsync {
                                 if (it) {
-                                    AndroidUtil.checkElfIsAndroid(
+                                    return@thenApplyAsync AndroidUtil.checkElfIsAndroid(
                                         File(
                                             FCLPath.JAVA_PATH,
                                             fileName
                                         ).resolve("bin/java")
                                     )
-                                    return@thenApplyAsync true
                                 }
                                 return@thenApplyAsync false
                             }.thenAcceptAsync {
