@@ -254,9 +254,9 @@ class VersionSetting : Cloneable {
     // launcher settings
     fun getJavaVersion(version: Version): Task<JavaVersion> {
         return Task.runAsync(Schedulers.androidUIThread()) {
-            java = JavaManager.getJavaFromVersionName(java).versionName
+            java = JavaManager.getJavaFromVersionName(java).name
         }.thenSupplyAsync {
-            if (java == JavaVersion.JAVA_AUTO.versionName) {
+            if (java == JavaVersion.JAVA_AUTO.name) {
                 return@thenSupplyAsync JavaVersion.getSuitableJavaVersion(version)
             } else {
                 return@thenSupplyAsync JavaManager.getJavaFromVersionName(java)
@@ -380,7 +380,7 @@ class VersionSetting : Cloneable {
                 vs.permSize = json["permSize"]?.asString ?: ""
                 vs.serverIp = json["serverIp"]?.asString ?: ""
                 vs.java =
-                    JavaManager.javaList.find { it.versionName == json["java"]?.asString }?.versionName
+                    JavaManager.javaList.find { it.name == json["java"]?.asString }?.name
                         ?: "Auto"
                 vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false

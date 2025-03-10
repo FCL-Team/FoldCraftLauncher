@@ -1,13 +1,14 @@
 package com.mio
 
-import android.util.Log
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.game.JavaVersion
 import com.tungsten.fclcore.game.Version
+import com.tungsten.fclcore.util.io.FileUtils
 import java.io.File
 
 object JavaManager {
     private var isInit = false;
+
     @JvmStatic
     val javaList: MutableList<JavaVersion> = mutableListOf()
         get() {
@@ -20,13 +21,16 @@ object JavaManager {
     @JvmStatic
     fun init() {
         isInit = true
-        javaList.add(JavaVersion(true, 8, "Auto"))
+        javaList.add(JavaVersion(true, "1.8", "Auto"))
         File(FCLPath.JAVA_PATH).listFiles()?.forEach {
             addToJavaVersion(it)
         }
-        javaList.forEach {
-            Log.e("测试", "${it.version} ${it.versionName}")
-        }
+    }
+
+    @JvmStatic
+    fun remove(name: String) {
+        FileUtils.deleteDirectory(File(FCLPath.JAVA_PATH, name))
+        javaList.removeIf { it.name == name }
     }
 
     fun addToJavaVersion(javaDir: File) {
@@ -36,19 +40,13 @@ object JavaManager {
                     ?.let { match ->
                         match.groupValues[1]
                     } ?: return
-            val split = version.split(".")
-            var versionInt = if (split[0] == "1") {
-                split[1].toInt()
-            } else {
-                split[0].toInt()
-            }
-            javaList.add(JavaVersion(false, versionInt, javaDir.name))
+            javaList.add(JavaVersion(false, version, javaDir.name))
         }
     }
 
     @JvmStatic
-    fun getJavaFromVersionName(versionName: String): JavaVersion {
-        return javaList.find { it.versionName == versionName } ?: javaList[0]
+    fun getJavaFromVersionName(name: String): JavaVersion {
+        return javaList.find { it.name == name } ?: javaList[0]
     }
 
     @JvmStatic
@@ -65,15 +63,15 @@ object JavaManager {
 
         for (java in javaList) {
             when {
-                java.version == version -> {
+                java.getVersion() == version -> {
                     exact = java
                     break
                 }
 
-                java.version > version -> {
+                java.getVersion() > version -> {
                     closestGreater = when {
                         closestGreater == null -> java
-                        java.version < closestGreater.version -> java
+                        java.getVersion() < closestGreater.getVersion() -> java
                         else -> closestGreater
                     }
                 }

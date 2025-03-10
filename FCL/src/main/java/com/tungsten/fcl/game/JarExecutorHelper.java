@@ -91,7 +91,7 @@ public class JarExecutorHelper {
         Profile profile = Profiles.getSelectedProfile();
         if (profile != null) {
             String java = profile.getGlobal().getJava();
-            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
+            if (!java.equals(JavaVersion.JAVA_AUTO.getName())) {
                 javaVersion = JavaManager.getJavaFromVersionName(java).getVersion();
             }
         }

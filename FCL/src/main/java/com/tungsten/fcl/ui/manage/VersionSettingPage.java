@@ -3,18 +3,11 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.PopupWindow;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
 
-import com.mio.JavaManager;
+import com.mio.ui.dialog.JavaManageDialog;
 import com.mio.util.RendererUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.SelectControllerDialog;
@@ -37,7 +30,6 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
@@ -64,9 +56,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -413,30 +403,15 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             dialog.show();
         }
         if (view == javaButton) {
-            ListView listView = new ListView(getContext());
-            PopupWindow popupWindow = new PopupWindow(listView, ConvertUtils.dip2px(getContext(), 150F), ConvertUtils.dip2px(getContext(), 300F));
-            listView.setAdapter(new ArrayAdapter<>(getContext(), R.layout.item_renderer, JavaManager.getJavaList().stream().map(javaVersion -> {
-                if (javaVersion.getVersionName().equals("Auto")) {
-                    return getContext().getString(R.string.settings_game_java_version_auto);
-                }
-                return javaVersion.getVersionName();
-            }).collect(Collectors.toList())));
-            listView.setDivider(null);
-            listView.setOnItemClickListener((parent, view1, position, id) -> {
-                popupWindow.dismiss();
-                JavaVersion javaVersion = JavaManager.getJavaList().get(position);
-                lastVersionSetting.setJava(javaVersion.getVersionName());
-                if (javaVersion.getVersionName().equals("Auto")) {
+            new JavaManageDialog(getContext(), java -> {
+                lastVersionSetting.setJava(java);
+                if (java.equals("Auto")) {
                     javaText.setText(R.string.settings_game_java_version_auto);
                 } else {
-                    javaText.setText(javaVersion.getVersionName());
+                    javaText.setText(java);
                 }
-            });
-            popupWindow.setContentView(listView);
-            popupWindow.setEnterTransition(new Slide(Gravity.TOP));
-            popupWindow.setExitTransition(new Slide(Gravity.TOP));
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.showAsDropDown(javaButton);
+                return null;
+            }).show();
         }
         if (view == rendererButton) {
             int[] pos = new int[2];
