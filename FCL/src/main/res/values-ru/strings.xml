@@ -1036,9 +1036,4 @@
     <string name="mod_check_valkyrienskies">Мод Valkyrien Skies/Valkyrien Warfare (%s) не работает в одиночной игре напрямую. Необходим сервер, иначе игра вылетит.</string>
     <string name="mod_check_yes_steve_model">Мод Yes Steve Model (%s) версии 2.2.2 и выше не работает на Android.</string>
     <string name="mod_check_imblocker">IMBlocker (%s) не предназначен для Android. Он вызовет сбой игры.</string>
-
-    <string name="internal">Встроенная</string>
-    <string name="import_java">Импорт Java</string>
-    <string name="import_java_wrong_file">Поддерживается импорт только файлов tar.xz.</string>
-    <string name="import_java_error">Обнаружено, что импортированная вами среда Java, возможно, не предназначена для использования на текущем устройстве. Запуск с ней может привести к сбою лаунчера. Вы хотите продолжить импорт?</string>
 </resources>
