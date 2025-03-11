@@ -32,7 +32,6 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
 
 @SuppressLint("NotifyDataSetChanged")
 class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
