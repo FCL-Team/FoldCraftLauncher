@@ -251,19 +251,6 @@ class VersionSetting : Cloneable {
             pojavBigCoreProperty.set(pojavBigCore)
         }
 
-    // launcher settings
-    fun getJavaVersion(version: Version): Task<JavaVersion> {
-        return Task.runAsync(Schedulers.androidUIThread()) {
-            java = JavaManager.getJavaFromVersionName(java).name
-        }.thenSupplyAsync {
-            if (java == JavaVersion.JAVA_AUTO.name) {
-                return@thenSupplyAsync JavaVersion.getSuitableJavaVersion(version)
-            } else {
-                return@thenSupplyAsync JavaManager.getJavaFromVersionName(java)
-            }
-        }
-    }
-
     fun checkController() {
         Controllers.addCallback {
             Controllers.checkControllers()

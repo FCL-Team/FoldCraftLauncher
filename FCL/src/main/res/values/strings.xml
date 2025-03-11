@@ -824,8 +824,8 @@
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
-    <string name="settings_launcher_theme">Theme</string>
-    <string name="settings_launcher_theme2">Theme2</string>
+    <string name="settings_launcher_theme">Main Theme Color</string>
+    <string name="settings_launcher_theme2">Secondary Theme Color</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
@@ -991,7 +991,7 @@
     <string name="edit">Edit</string>
     <string name="modpack_download_warn_title">Notice</string>
     <string name="modpack_download_warn_msg">Before installation, you should understand that most modpacks are designed for PC, so there is a high probability that you will encounter crashes or other issues when trying to launch. This is often not a problem that can be solved at the launcher level. Therefore, you need to understand the relevant knowledge and try to solve the problem yourself or seek help from others (do not ask the launcher developer!).</string>
-    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Theme 2\"</string>
+    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Secondary Theme Color\"</string>
     <string name="joystick_l">Left joystick</string>
     <string name="gamepad_dpad">DPAD</string>
     <string name="gamepad_button_binding">Gamepad button binding</string>

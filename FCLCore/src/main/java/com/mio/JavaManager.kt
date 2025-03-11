@@ -61,7 +61,7 @@ object JavaManager {
         var exact: JavaVersion? = null
         var closestGreater: JavaVersion? = null
 
-        for (java in javaList) {
+        for (java in javaList.filter { it.name != "Auto" }) {
             when {
                 java.getVersion() == version -> {
                     exact = java

@@ -1,8 +1,8 @@
 [
   {
     "type": "release",
-    "versionCode": 1212,
-    "versionName": "1.2.1.2",
+    "versionCode": 1213,
+    "versionName": "1.2.1.3",
     "date": "2025.03.11",
     "description": [
       {
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载界面刷新图标错误显示的Bug\n2.修复新版本DH修改了SQLite导致崩溃的Bug\n3.更新Cacio17支持Java25\n4.修复开启强制大核后无法正确获取核心数的Bug\n5.修复NTE/ANTE模组崩溃的Bug\n6.允许用户导入Java\n7.调整部分UI显示效果\n8.修复部分设备上鼠标无法正常使用的Bug\n9.暂时移除手柄支持"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.修复Java自动选择Java8时无法启动的Bug\n1.修复下载界面刷新图标错误显示的Bug\n2.修复新版本DH修改了SQLite导致崩溃的Bug\n3.更新Cacio17支持Java25\n4.修复开启强制大核后无法正确获取核心数的Bug\n5.修复NTE/ANTE模组崩溃的Bug\n6.允许用户导入Java\n7.调整部分UI显示效果\n8.修复部分设备上鼠标无法正常使用的Bug\n9.暂时移除手柄支持"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7d263374816d",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.2/FCL-release-1.2.1.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7674f8f557da",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.3/FCL-release-1.2.1.3-all.apk"
   }
 ]

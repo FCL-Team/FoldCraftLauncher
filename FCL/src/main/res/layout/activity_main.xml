@@ -76,9 +76,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_baseline_settings_24"
-            app:layout_constraintBottom_toTopOf="@id/back"
+            app:layout_constraintBottom_toTopOf="@id/jar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/multiplayer" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/jar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/java"
+            app:layout_constraintBottom_toTopOf="@id/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setting" />
 
         <com.tungsten.fcllibrary.component.view.FCLMenuView
             android:id="@+id/back"
@@ -88,7 +98,7 @@
             android:src="@drawable/ic_baseline_arrow_back_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/setting" />
+            app:layout_constraintTop_toBottomOf="@id/jar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -320,7 +330,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="10dp"
             android:text="@string/launch"
-            app:layout_constraintBottom_toTopOf="@id/execute_jar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/launch_boat"
             app:layout_constraintStart_toStartOf="parent"
             app:ripple="true" />
@@ -333,19 +343,9 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="10dp"
             android:text="@string/launch_boat"
-            app:layout_constraintBottom_toTopOf="@id/execute_jar"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/launch"
-            app:ripple="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/execute_jar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/jar_execute"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:ripple="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

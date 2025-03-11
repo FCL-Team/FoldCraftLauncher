@@ -32,7 +32,6 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
 
 @SuppressLint("NotifyDataSetChanged")
 class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
@@ -191,7 +190,17 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
 
     private fun refresh() {
         versionList.clear()
-        versionList.addAll(JavaManager.javaList.stream().filter { !it.isAuto }
-            .collect(Collectors.toList<JavaVersion>()))
+        versionList.addAll(JavaManager.javaList.filter { !it.isAuto }
+            .sortedWith(Comparator { v1, v2 ->
+                val parts1 = v1.versionName.split('.').map { it.toIntOrNull() ?: 0 }
+                val parts2 = v2.versionName.split('.').map { it.toIntOrNull() ?: 0 }
+                val maxLength = maxOf(parts1.size, parts2.size)
+                for (i in 0 until maxLength) {
+                    val p1 = parts1.getOrElse(i) { 0 }
+                    val p2 = parts2.getOrElse(i) { 0 }
+                    if (p1 != p2) return@Comparator p1.compareTo(p2)
+                }
+                0
+            }))
     }
 }

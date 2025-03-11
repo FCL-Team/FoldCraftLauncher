@@ -137,33 +137,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
                 account.setOnClickListener(this@MainActivity)
                 version.setOnClickListener(this@MainActivity)
-                executeJar.setOnClickListener(this@MainActivity)
-                executeJar.setOnLongClickListener {
-                    val editText = FCLEditText(this@MainActivity).apply {
-                        hint = "-jar xxx"
-                        setLines(1)
-                        maxLines = 1
-                        layoutParams = FrameLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    }
-                    AlertDialog.Builder(this@MainActivity)
-                        .setTitle(R.string.jar_execute_custom_args)
-                        .setView(editText)
-                        .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive) { _: DialogInterface?, _: Int ->
-                            JarExecutorHelper.exec(
-                                this@MainActivity,
-                                null,
-                                JarExecutorHelper.getJava(null),
-                                editText.text.toString()
-                            )
-                        }
-                        .setNegativeButton(com.tungsten.fcllibrary.R.string.dialog_negative, null)
-                        .create()
-                        .show()
-                    true
-                }
                 launch.setOnClickListener(this@MainActivity)
                 launchBoat.setOnClickListener(this@MainActivity)
                 OnLongClickListener { openRendererMenu(it);true }.apply {
@@ -191,10 +164,41 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     controller.setOnSelectListener(this@MainActivity)
                     multiplayer.setOnSelectListener(this@MainActivity)
                     setting.setOnSelectListener(this@MainActivity)
-                    back.setOnClickListener(this@MainActivity)
                     home.setSelected(true)
+
+                    jar.setOnClickListener(this@MainActivity)
+                    back.setOnClickListener(this@MainActivity)
                     back.setOnLongClickListener {
                         startActivity(Intent(this@MainActivity, ShellActivity::class.java))
+                        true
+                    }
+                    jar.setOnLongClickListener {
+                        val editText = FCLEditText(this@MainActivity).apply {
+                            hint = "-jar xxx"
+                            setLines(1)
+                            maxLines = 1
+                            layoutParams = FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                        }
+                        AlertDialog.Builder(this@MainActivity)
+                            .setTitle(R.string.jar_execute_custom_args)
+                            .setView(editText)
+                            .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive) { _: DialogInterface?, _: Int ->
+                                JarExecutorHelper.exec(
+                                    this@MainActivity,
+                                    null,
+                                    JarExecutorHelper.getJava(null),
+                                    editText.text.toString()
+                                )
+                            }
+                            .setNegativeButton(
+                                com.tungsten.fcllibrary.R.string.dialog_negative,
+                                null
+                            )
+                            .create()
+                            .show()
                         true
                     }
 
@@ -209,6 +213,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         setting,
                         getString(R.string.guide_theme2),
                         GuideUtil.TAG_GUIDE_THEME_2
+                    )
+                    GuideUtil.show(
+                        this@MainActivity,
+                        jar,
+                        getString(R.string.jar_execute),
+                        GuideUtil.TAG_GUIDE_EXECUTE_JAR
                     )
                 }
             }
@@ -308,7 +318,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             if (view === back) {
                 uiManager.onBackPressed()
             }
-            if (view === executeJar) {
+            if (view === jar) {
+                jar.isSelected = false
                 JarExecutorHelper.start(this@MainActivity, this@MainActivity)
             }
             if (view === launch) {
@@ -419,7 +430,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .orElse(getString(R.string.message_unknown))
                 }
                 if (game == null) return@execute
-                val libraries = StringBuilder(game!!)
+                val libraries = StringBuilder(game)
                 val analyzer = LibraryAnalyzer.analyze(
                     Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
@@ -522,7 +533,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 it.interpolator(BounceInterpolator()).start()
             }
             AnimUtil.playTranslationY(
-                listOf(executeJar, launch, launchBoat),
+                listOf(launch, launchBoat),
                 speed * 100L,
                 -200f,
                 0f
@@ -530,7 +541,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
             }
             AnimUtil.playTranslationY(
-                listOf(home, manage, download, controller, setting, back),
+                listOf(home, manage, download, controller, setting, jar, back),
                 speed * 100L,
                 -300f,
                 0f
@@ -538,7 +549,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
             }
             AnimUtil.playTranslationX(
-                listOf(home, manage, download, controller, setting, back),
+                listOf(home, manage, download, controller, setting, jar, back),
                 speed * 100L,
                 -100f,
                 0f
