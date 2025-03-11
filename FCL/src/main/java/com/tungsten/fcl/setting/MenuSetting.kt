@@ -1,6 +1,5 @@
 package com.tungsten.fcl.setting
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -12,21 +11,16 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.control.GestureMode
 import com.tungsten.fcl.control.MouseMoveMode
-import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.MapProperty
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleMapProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
-import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.lang.reflect.Type
-import java.util.Optional
 
 @JsonAdapter(MenuSetting.Serializer::class)
 class MenuSetting {
@@ -177,12 +171,6 @@ class MenuSetting {
             mouseSizeProperty.set(mouseSize)
         }
 
-    val gamepadButtonBindingProperty: MapProperty<Int, Int> = SimpleMapProperty(
-        this,
-        "gamepadButtonBinding",
-        FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP)
-    )
-
     val gamepadDeadzoneProperty: DoubleProperty =
         SimpleDoubleProperty(this, "gamepadDeadzone", 1.0)
     var gamepadDeadzone: Double
@@ -212,7 +200,6 @@ class MenuSetting {
         windowScaleProperty.addListener(listener)
         cursorOffsetProperty.addListener(listener)
         gamepadDeadzoneProperty.addListener(listener)
-        gamepadButtonBindingProperty.addListener(listener)
     }
 
     class Serializer : JsonSerializer<MenuSetting?>, JsonDeserializer<MenuSetting?> {
@@ -243,17 +230,6 @@ class MenuSetting {
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
-                add(
-                    "gamepadButtonBinding", Optional.of(src.gamepadButtonBindingProperty)
-                        .map {
-                            val ja = JsonArray()
-                            it.forEach { k: Int?, v: Int? ->
-                                ja.add(k)
-                                ja.add(v)
-                            }
-                            ja
-                        }.get()
-                )
             }
         }
 
@@ -285,24 +261,6 @@ class MenuSetting {
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
-                ms.gamepadButtonBindingProperty.set(
-                    Optional.ofNullable(json["gamepadButtonBinding"])
-                        .map { it.asJsonArray }
-                        .map {
-                            if (it.isEmpty || (it.size() % 2 != 0)) {
-                                return@map null
-                            } else {
-                                val iterator = it.iterator()
-                                val map = HashMap<Int, Int>()
-                                while (iterator.hasNext()) {
-                                    map[iterator.next().asInt] = iterator.next().asInt
-                                }
-                                return@map map
-                            }
-                        }
-                        .map { FXCollections.observableMap(it) }
-                        .orElse(FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP))
-                )
             }
         }
     }

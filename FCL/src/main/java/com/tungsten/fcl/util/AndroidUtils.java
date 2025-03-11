@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Point;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import android.opengl.EGLDisplay;
 import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.DisplayCutout;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -180,6 +182,17 @@ public class AndroidUtils {
 
     public static boolean isDocUri(Uri uri) {
         return Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE) || Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT);
+    }
+
+    public static String getFileName(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if(cursor == null) return uri.getLastPathSegment();
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        if(columnIndex == -1) return uri.getLastPathSegment();
+        String fileName = cursor.getString(columnIndex);
+        cursor.close();
+        return fileName;
     }
 
     public static boolean isAdrenoGPU() {

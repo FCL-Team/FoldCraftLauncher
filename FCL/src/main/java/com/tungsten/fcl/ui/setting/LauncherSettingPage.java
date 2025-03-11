@@ -331,7 +331,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     if (AndroidUtils.isDocUri(uri)) {
                         path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
                     }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, path, null);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, path, null);
                 }
             }));
         }
@@ -349,7 +349,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     if (AndroidUtils.isDocUri(uri)) {
                         path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
                     }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, path);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, null, path);
                 }
             }));
         }
@@ -419,7 +419,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 if (!new File(FCLPath.LT_BACKGROUND_PATH).delete() && new File(FCLPath.LT_BACKGROUND_PATH).exists())
                     Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
 
-                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, null));
+                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, null, null));
             }).start();
         }
         if (v == resetDkBackground) {
@@ -427,7 +427,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 if (!new File(FCLPath.DK_BACKGROUND_PATH).delete() && new File(FCLPath.DK_BACKGROUND_PATH).exists())
                     Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show());
 
-                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).bind.background, null, null));
+                Schedulers.androidUIThread().execute(() -> ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, null, null));
             }).start();
         }
         if (v == resetCursor) {

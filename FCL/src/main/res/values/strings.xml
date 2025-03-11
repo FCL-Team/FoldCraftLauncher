@@ -1016,4 +1016,8 @@
     <string name="mod_check_valkyrienskies">Valkyrien Skies/Valkyrien Warfare mod (%s) cannot work directly in single player mode. You must use a server, otherwise it will crash the game.</string>
     <string name="mod_check_yes_steve_model">Yes Steve Model mod (%s) 2.2.2+ cannot work on Android.</string>
     <string name="mod_check_imblocker">IMBlocker (%s) is not for Android. It must make the game crash.</string>
-</resources>
+
+    <string name="internal">Internal</string>
+    <string name="import_java">Import Java</string>
+    <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
+    <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string></resources>

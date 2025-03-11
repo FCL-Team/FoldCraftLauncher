@@ -13,15 +13,10 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap;
 
 import java.util.HashMap;
 
-import fr.spse.gamepad_remapper.GamepadHandler;
-import fr.spse.gamepad_remapper.RemapperManager;
-import fr.spse.gamepad_remapper.RemapperView;
-
-public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler {
+public class FCLInput implements View.OnCapturedPointerListener {
 
     public static final int MOUSE_LEFT = 1000;
     public static final int MOUSE_MIDDLE = 1001;
@@ -33,18 +28,6 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
 
     private final int screenWidth;
     private final int screenHeight;
-
-    //for gamepad
-    private int dpadLastKey = -1;
-    private int currentDirection = -1;
-    private long lastFrameTime;
-    private Choreographer choreographer;
-    private float lastXAxis;
-    private float lastYAxis;
-    private RemapperManager remapperManager;
-    private boolean leftTriggerDown = false;
-    private boolean rightTriggerDown = false;
-
 
     public static final HashMap<Integer, Integer> MOUSE_MAP = new HashMap<Integer, Integer>() {
         {
@@ -78,7 +61,6 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
 
         this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
         this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-        resetMapper();
     }
 
     public void setPointer(int x, int y, String id) {
@@ -124,9 +106,12 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
 
     public void initExternalController(View view) {
         view.setFocusable(true);
+        view.setFocusableInTouchMode(true);
         view.setOnCapturedPointerListener(this);
+        view.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
+            view.requestPointerCapture();
+        });
         view.requestFocus();
-        view.requestPointerCapture();
 
         this.focusableView = view;
     }
@@ -151,24 +136,19 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
 
     @Override
     public boolean onCapturedPointer(View view, MotionEvent event) {
-        return handleMouse(event, 0);
+        return handleMouse(event);
     }
 
-    private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
-        int deltaX;
-        int deltaY;
+    private boolean handleMouse(MotionEvent event) {
+        int deltaX = 0;
+        int deltaY = 0;
         if (event != null) {
             deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
             deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
-        } else {
-            GameMenu gameMenu = menu;
-            gameMenu.getBridge().refreshHitResultType();
-            deltaX = (int) (lastXAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-            deltaY = (int) (lastYAxis * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
         }
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX));
-            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY));
+            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * 2));
+            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * 2));
             setPointerId(EXTERNAL_MOUSE_ID);
             setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
             setPointerId(null);
@@ -209,9 +189,6 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
                 return true;
             }
         }
-        if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD)) {
-            return remapperManager.handleKeyEventInput(menu.getActivity(), event, this);
-        }
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 return true;
@@ -235,186 +212,4 @@ public class FCLInput implements View.OnCapturedPointerListener, GamepadHandler 
         return true;
     }
 
-    public boolean handleGenericMotionEvent(MotionEvent event) {
-        if (!menu.getTouchCharInput().isEnabled()) {
-            focusableView.requestFocus();
-            focusableView.requestPointerCapture();
-        }
-        if (event.getDevice() != null && event.getSource() == InputDevice.SOURCE_JOYSTICK) {
-            if (choreographer == null) {
-                choreographer = Choreographer.getInstance();
-                Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
-                    @Override
-                    public void doFrame(long frameTimeNanos) {
-                        doTick();
-                        choreographer.postFrameCallback(this);
-                    }
-                };
-                choreographer.postFrameCallback(frameCallback);
-            }
-            remapperManager.handleMotionEventInput(menu.getActivity(), event, this);
-            if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                handleDPad(event);
-                handleLeftJoyStick(event);
-                handleRightJoyStick(event);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private void handleDPad(MotionEvent event) {
-        float xAxis = event.getAxisValue(MotionEvent.AXIS_HAT_X);
-        float yAxis = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
-        if (Float.compare(xAxis, -1.0f) == 0) {
-            dpadLastKey = KeyEvent.KEYCODE_DPAD_LEFT;
-        } else if (Float.compare(xAxis, 1.0f) == 0) {
-            dpadLastKey = KeyEvent.KEYCODE_DPAD_RIGHT;
-        } else if (Float.compare(yAxis, -1.0f) == 0) {
-            dpadLastKey = KeyEvent.KEYCODE_DPAD_UP;
-        } else if (Float.compare(yAxis, 1.0f) == 0) {
-            dpadLastKey = KeyEvent.KEYCODE_DPAD_DOWN;
-        }
-        sendKeyEvent(convertGamepadInput(dpadLastKey), (xAxis != 0 || yAxis != 0));
-    }
-
-    private int convertGamepadInput(int gamepadKey) {
-        return GamepadKeycodeMap.convert(menu.getMenuSetting().getGamepadButtonBindingProperty(), gamepadKey);
-    }
-
-    private void handleLeftJoyStick(MotionEvent event) {
-        float xAxis = event.getAxisValue(MotionEvent.AXIS_X);
-        float yAxis = event.getAxisValue(MotionEvent.AXIS_Y);
-        double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        if (dist >= menu.getMenuSetting().getGamepadDeadzone()) {
-            double degrees = Math.toDegrees(-Math.atan2(yAxis, xAxis));
-            if (degrees < 0) {
-                degrees += 360;
-            }
-            int lastDirection = currentDirection;
-            currentDirection = ((int) ((degrees + 22.5) / 45)) % 8;
-            sendDirection(lastDirection, false);
-            sendDirection(currentDirection, true);
-        } else {
-            sendDirection(0, false);
-            sendDirection(2, false);
-            sendDirection(4, false);
-            sendDirection(6, false);
-        }
-    }
-
-    private void sendDirection(int direction, boolean press) {
-        if ((direction & 1) == 0) {
-            sendKeyEvent(convertGamepadInput(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction), press);
-        } else {
-            sendKeyEvent(convertGamepadInput(GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction - 1), press);
-            int keyCode = GamepadKeycodeMap.LEFT_JOYSTICK_RIGHT + direction + 1;
-            if (keyCode == 2008) {
-                keyCode = 0;
-            }
-            sendKeyEvent(convertGamepadInput(keyCode), press);
-        }
-    }
-
-    private void doTick() {
-        long newFrameTime = System.nanoTime();
-        if (lastXAxis != 0 || lastYAxis != 0) {
-            newFrameTime = System.nanoTime();
-            float deltaTimeScale = ((newFrameTime - lastFrameTime) / 16666666f);
-            handleMouse(null, deltaTimeScale);
-        }
-        lastFrameTime = newFrameTime;
-    }
-
-    private void handleRightJoyStick(MotionEvent event) {
-        float xAxis = event.getAxisValue(MotionEvent.AXIS_Z);
-        float yAxis = event.getAxisValue(MotionEvent.AXIS_RZ);
-        double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
-        if (dist < menu.getMenuSetting().getGamepadDeadzone()) {
-            lastXAxis = 0;
-            lastYAxis = 0;
-            return;
-        }
-        if (lastXAxis != xAxis || lastYAxis != yAxis) {
-            lastXAxis = xAxis;
-            lastYAxis = yAxis;
-            doTick();
-        }
-    }
-
-    public void resetMapper() {
-        remapperManager = new RemapperManager(menu.getActivity(), new RemapperView.Builder(null)
-                .remapA(true)
-                .remapB(true)
-                .remapX(true)
-                .remapY(true)
-                .remapLeftJoystick(true)
-                .remapRightJoystick(true)
-                .remapStart(true)
-                .remapSelect(true)
-                .remapLeftShoulder(true)
-                .remapRightShoulder(true)
-                .remapLeftTrigger(true)
-                .remapRightTrigger(true));
-    }
-
-    /**
-     * Function handling all gamepad actions.
-     *
-     * @param code  Either a keycode (Eg. KEYBODE_BUTTON_A), either an axis (Eg. AXIS_HAT_X)
-     * @param value For keycodes, 0 for released state, 1 for pressed state.
-     *              For Axis, the value of the axis. Varies between 0/1 or -1/1 depending on the axis.
-     */
-    @Override
-    public void handleGamepadInput(int code, float value) {
-        boolean isKeyDown = value == 1f;
-        switch (code) {
-            case KeyEvent.KEYCODE_BUTTON_A:
-            case KeyEvent.KEYCODE_BUTTON_B:
-            case KeyEvent.KEYCODE_BUTTON_X:
-            case KeyEvent.KEYCODE_BUTTON_Y:
-                //Shoulders
-            case KeyEvent.KEYCODE_BUTTON_L1:
-            case KeyEvent.KEYCODE_BUTTON_R1:
-                //Triggers
-            case KeyEvent.KEYCODE_BUTTON_L2:
-            case KeyEvent.KEYCODE_BUTTON_R2:
-                //L3 || R3
-            case KeyEvent.KEYCODE_BUTTON_THUMBL:
-            case KeyEvent.KEYCODE_BUTTON_THUMBR:
-                //DPAD
-            case KeyEvent.KEYCODE_DPAD_UP:
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-            case KeyEvent.KEYCODE_DPAD_CENTER:
-                //Start/select
-            case KeyEvent.KEYCODE_BUTTON_START:
-            case KeyEvent.KEYCODE_BUTTON_SELECT:
-                sendKeyEvent(convertGamepadInput(code), isKeyDown);
-                break;
-            // Triggers
-            case MotionEvent.AXIS_LTRIGGER:
-                if (!leftTriggerDown && value > 0.5) {
-                    leftTriggerDown = true;
-                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
-                } else if (leftTriggerDown && value < 0.5) {
-                    leftTriggerDown = false;
-                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_L2), leftTriggerDown);
-                }
-                break;
-            case MotionEvent.AXIS_RTRIGGER:
-                if (!rightTriggerDown && value > 0.5) {
-                    rightTriggerDown = true;
-                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
-                } else if (rightTriggerDown && value < 0.5) {
-                    rightTriggerDown = false;
-                    sendKeyEvent(convertGamepadInput(KeyEvent.KEYCODE_BUTTON_R2), rightTriggerDown);
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
 }

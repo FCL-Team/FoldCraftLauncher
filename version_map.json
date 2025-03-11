@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1211,
-    "versionName": "1.2.1.1",
-    "date": "2025.03.06",
+    "versionCode": 1212,
+    "versionName": "1.2.1.2",
+    "date": "2025.03.11",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n-1.修复1.2.1.0未完全修复的按键失灵Bug\n0.修复更新1.2.0.9后按键失灵的Bug\n1.修复模组详情信息页面在未下载任何版本时无法加载的Bug\n2.更新崩溃日志检测\n3.增加启动前模组兼容性检测功能\n4.修补部分GLFW缺失方法\n5.修复组合键无法触发的Bug\n6.修复部分设备以及模拟器无法下载游戏等Bug\n7.自动禁用Sodium的警告\n8.移除查看模组兼容性按钮"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载界面刷新图标错误显示的Bug\n2.修复新版本DH修改了SQLite导致崩溃的Bug\n3.更新Cacio17支持Java25\n4.修复开启强制大核后无法正确获取核心数的Bug\n5.修复NTE/ANTE模组崩溃的Bug\n6.允许用户导入Java\n7.调整部分UI显示效果\n8.修复部分设备上鼠标无法正常使用的Bug\n9.暂时移除手柄支持"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/29eda741178b",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.1/FCL-release-1.2.1.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7d263374816d",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.2/FCL-release-1.2.1.2-all.apk"
   }
 ]

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stateListAnimator="@xml/anim_scale">
+
+    <TextView
+        android:id="@+id/java_name"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:textColor="@color/primary_text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.28"
+        tools:text="Java 8" />
+
+    <TextView
+        android:id="@+id/java_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@+id/java_name"
+        app:layout_constraintTop_toBottomOf="@+id/java_name"
+        tools:text="1.8.0_292" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/delete"
+        android:text="@string/button_remove"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

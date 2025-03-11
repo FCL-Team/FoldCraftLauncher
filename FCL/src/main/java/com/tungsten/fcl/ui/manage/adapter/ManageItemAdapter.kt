@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemManageBinding
@@ -22,12 +21,11 @@ class ManageItemAdapter(val context: Context, private val itemList: MutableList<
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            DataBindingUtil.inflate<ItemManageBinding>(
-                LayoutInflater.from(context),
+            LayoutInflater.from(context).inflate(
                 R.layout.item_manage,
                 parent,
                 false
-            ).root
+            )
         )
     }
 
@@ -36,9 +34,12 @@ class ManageItemAdapter(val context: Context, private val itemList: MutableList<
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        DataBindingUtil.getBinding<ItemManageBinding>(holder.itemView)?.apply {
-            val data = itemList[position]
-            setItem(data)
+        val data = itemList[position]
+        ItemManageBinding.bind(holder.itemView).apply {
+            item.setOnClickListener {
+                data.action.invoke(item)
+            }
+            item.setText(data.text)
             val end = item.compoundDrawablesRelative[2]
             val start = AppCompatResources.getDrawable(
                 context,

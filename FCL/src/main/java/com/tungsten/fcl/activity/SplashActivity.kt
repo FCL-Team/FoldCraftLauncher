@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.mio.JavaManager
 import com.tungsten.fcl.R
 import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
@@ -29,8 +30,11 @@ import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.ButtonListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.util.LocaleUtils
+import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
+import java.util.Locale
 import kotlin.system.exitProcess
 
 @SuppressLint("CustomSplashScreen")
@@ -178,6 +182,7 @@ class SplashActivity : FCLActivity() {
     fun enterLauncher() {
         RendererPlugin.init(this)
         DriverPlugin.init(this)
+        JavaManager.init()
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
@@ -280,6 +285,23 @@ class SplashActivity : FCLActivity() {
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17")
             java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21")
             jna = RuntimeUtils.isLatest(FCLPath.JNA_PATH, "/assets/app_runtime/jna")
+            if (!File(FCLPath.JAVA_PATH, "resolv.conf").exists()) {
+                if (LocaleUtils.getSystemLocale().displayName != Locale.CHINA.displayName) {
+                    FileUtils.writeText(
+                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
+     nameserver 1.1.1.1
+     nameserver 1.0.0.1
+     """.trimIndent()
+                    )
+                } else {
+                    FileUtils.writeText(
+                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
+     nameserver 8.8.8.8
+     nameserver 8.8.4.4
+     """.trimIndent()
+                    )
+                }
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

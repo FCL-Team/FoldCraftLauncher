@@ -16,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
-import androidx.databinding.DataBindingUtil
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -80,7 +79,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    lateinit var bind: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
     private lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
@@ -91,9 +90,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = WeakReference(this)
-        bind = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        bind.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
+        binding.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -127,7 +127,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             Logging.LOG.log(Level.WARNING, e.message)
         }
 
-        bind.apply {
+        binding.apply {
             uiLayout.post {
                 ThemeEngine.getInstance().registerEvent(leftMenu) {
                     leftMenu.setBackgroundColor(
@@ -242,7 +242,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             .start()
         AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f)
             .start()
-        bind.apply {
+        binding.apply {
             when (view) {
                 home -> {
                     title.setTextWithAnim(getString(R.string.app_name) + " " + getString(R.string.app_version))
@@ -286,7 +286,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
-        bind.leftMenu.forEach {
+        binding.leftMenu.forEach {
             if (it is FCLMenuView && it != view) {
                 it.isSelected = false
             }
@@ -294,7 +294,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     override fun onClick(view: View) {
-        bind.apply {
+        binding.apply {
             if (view === account && uiManager.currentUI !== uiManager.accountUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.account))
@@ -341,7 +341,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun setupAccountDisplay() {
-        bind.apply {
+        binding.apply {
             currentAccount = object : SimpleObjectProperty<Account?>() {
                 override fun invalidated() {
                     val account = get()
@@ -385,8 +385,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     fun refreshAvatar(account: Account) {
         Schedulers.androidUIThread().execute {
             if (currentAccount.get() === account) {
-                bind.avatar.imageProperty().unbind()
-                bind.avatar.imageProperty().bind(
+                binding.avatar.imageProperty().unbind()
+                binding.avatar.imageProperty().bind(
                     TexturesLoader.avatarBinding(
                         currentAccount.get(), ConvertUtils.dip2px(
                             this@MainActivity, 30f
@@ -398,7 +398,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun loadVersion(version: String?) {
-        bind.versionProgress.visibility = View.VISIBLE
+        binding.versionProgress.visibility = View.VISIBLE
         if (Profiles.getSelectedProfile() != profile) {
             profile = Profiles.getSelectedProfile()
             if (profile != null) {
@@ -450,17 +450,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
                 val drawable = Profiles.getSelectedProfile().repository.getVersionIconImage(version)
                 Schedulers.androidUIThread().execute {
-                    bind.versionProgress.visibility = View.GONE
-                    bind.versionName.text = version
-                    bind.versionHint.text = libraries.toString()
-                    bind.icon.setBackgroundDrawable(drawable)
+                    binding.versionProgress.visibility = View.GONE
+                    binding.versionName.text = version
+                    binding.versionHint.text = libraries.toString()
+                    binding.icon.setBackgroundDrawable(drawable)
                 }
             }
         } else {
-            bind.versionProgress.visibility = View.GONE
-            bind.versionName.text = getString(R.string.version_no_version)
-            bind.versionHint.text = getString(R.string.version_manage)
-            bind.icon.setBackgroundDrawable(
+            binding.versionProgress.visibility = View.GONE
+            binding.versionName.text = getString(R.string.version_no_version)
+            binding.versionHint.text = getString(R.string.version_manage)
+            binding.icon.setBackgroundDrawable(
                 AppCompatResources.getDrawable(
                     this,
                     R.drawable.img_grass
@@ -491,10 +491,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun openRendererMenu(view: View) {
         RendererUtil.openRendererMenu(
             this,
-            bind.rightMenu,
-            bind.rightMenu.x.toInt(),
+            binding.rightMenu,
+            binding.rightMenu.x.toInt(),
             0,
-            bind.rightMenu.width,
+            binding.rightMenu.width,
             view.y.toInt(),
             false
         ) {
@@ -503,7 +503,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun playAnim() {
-        bind.apply {
+        binding.apply {
             val speed = ThemeEngine.getInstance().theme.animationSpeed
             AnimUtil.playTranslationX(
                 listOf(leftMenu),
