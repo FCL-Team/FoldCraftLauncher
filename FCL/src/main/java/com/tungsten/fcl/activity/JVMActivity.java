@@ -91,13 +91,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             menu.onGraphicOutput();
             return;
         }
-        menu.getInput().initExternalController(textureView);
         isRunning = true;
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
         fclBridge.setSurfaceDestroyed(false);
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
         if (menuType == MenuType.GAME) {
+            menu.getInput().initExternalController(textureView);
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
             gameOption.set("fullscreen", "false");
             gameOption.set("overrideWidth", String.valueOf(width));
