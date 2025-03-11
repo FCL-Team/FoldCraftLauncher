@@ -968,7 +968,7 @@
     <string name="mod_check_yes_steve_model">是，史蒂夫模型（%s）2.2.2+无法在安卓系统上运行。</string>
     <string name="mod_check_imblocker">输入法冲突修复 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
 
-    <string name="internal">启动器内部的</string>
+    <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
     <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
