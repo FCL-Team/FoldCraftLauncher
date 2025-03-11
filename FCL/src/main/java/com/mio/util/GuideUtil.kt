@@ -12,6 +12,7 @@ import java.io.File
 class GuideUtil {
     companion object {
         const val TAG_GUIDE_THEME_2 = "theme2"
+        const val TAG_GUIDE_EXECUTE_JAR = "executeJar"
         private val tagList = mutableListOf<String>()
         private val file = File(FCLPath.FILES_DIR + "/guide_tag.txt")
 
@@ -42,11 +43,9 @@ class GuideUtil {
             )
         }
 
-        private fun addTag(tag:String) {
+        private fun addTag(tag: String) {
             tagList.add(tag)
-            tagList.forEach {
-                file.writeText(it)
-            }
+            file.writeText(tagList.joinToString("\n"))
         }
 
         fun show(activity: Activity, view: View, title: String, tag: String) {
