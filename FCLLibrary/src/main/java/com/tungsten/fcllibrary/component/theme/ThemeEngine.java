@@ -122,8 +122,8 @@ public class ThemeEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        final Bitmap ltBitmap = getLightBackgroundBitmap(context);
-        final Bitmap dkBitmap = getDarkBackgroundBitmap(context);
+        final Bitmap ltBitmap = ImageUtil.load(FCLPath.LT_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
+        final Bitmap dkBitmap = ImageUtil.load(FCLPath.DK_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
         BitmapDrawable lt = new BitmapDrawable(context.getResources(), ltBitmap);
         BitmapDrawable dk = new BitmapDrawable(context.getResources(), dkBitmap);
         theme.setBackgroundLt(lt);
@@ -167,13 +167,5 @@ public class ThemeEngine {
             }
         }
         return color;
-    }
-
-    public Bitmap getLightBackgroundBitmap(Context context) {
-        return ImageUtil.load(FCLPath.LT_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
-    }
-
-    public Bitmap getDarkBackgroundBitmap(Context context) {
-        return ImageUtil.load(FCLPath.DK_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
     }
 }
