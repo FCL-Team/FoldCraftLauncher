@@ -427,22 +427,18 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (v == fetchBackgroundColor || v == fetchBackgroundColor2) {
             boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
 
-            Bitmap bitmap = isDarkMode ?
-                    ThemeEngine.getInstance().getDarkBackgroundBitmap(getContext()) :
-                    ThemeEngine.getInstance().getLightBackgroundBitmap(getContext());
+            Bitmap bitmap = (isDarkMode ?
+                    ThemeEngine.getInstance().theme.getBackgroundDk() :
+                    ThemeEngine.getInstance().theme.getBackgroundLt()
+            ).getBitmap();
 
             if (bitmap != null) {
                 Palette palette = Palette.from(bitmap).generate();
-                int defaultColor = getContext().getColor(R.color.default_theme_color);
-                int dominantColor = palette.getDominantColor(defaultColor);
+                int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
                 if (v == fetchBackgroundColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), isDarkMode ?
-                            palette.getDarkVibrantColor(dominantColor) :
-                            palette.getLightVibrantColor(dominantColor));
+                    ThemeEngine.getInstance().applyAndSave(getContext(), palette.getMutedColor(dominantColor));
                 } else {
-                    ThemeEngine.getInstance().applyAndSave2(getContext(), isDarkMode ?
-                            palette.getLightMutedColor(dominantColor) :
-                            palette.getDarkMutedColor(dominantColor));
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), palette.getVibrantColor(dominantColor));
                 }
             }
         }
