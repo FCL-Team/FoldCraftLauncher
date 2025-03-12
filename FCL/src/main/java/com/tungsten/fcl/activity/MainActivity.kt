@@ -143,7 +143,20 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 account.setOnClickListener(this@MainActivity)
                 version.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
-                start.setOnLongClickListener { openRendererMenu(it);true }
+                start.setOnLongClickListener { view ->
+                    RendererUtil.openRendererMenu(
+                        this@MainActivity,
+                        binding.rightMenu,
+                        binding.rightMenu.x.toInt(),
+                        0,
+                        binding.rightMenu.width,
+                        view.y.toInt(),
+                        false
+                    ) {
+                        onClick(view)
+                    }
+                    true
+                }
                 jar.setOnClickListener(this@MainActivity)
                 jar.setOnLongClickListener {
                     EditDialog(this@MainActivity) {
@@ -477,20 +490,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     Accounts.getAccountFactory(account)
                 )
             })
-        }
-    }
-
-    private fun openRendererMenu(view: View) {
-        RendererUtil.openRendererMenu(
-            this,
-            binding.rightMenu,
-            binding.rightMenu.x.toInt(),
-            0,
-            binding.rightMenu.width,
-            view.y.toInt(),
-            false
-        ) {
-            onClick(view)
         }
     }
 
