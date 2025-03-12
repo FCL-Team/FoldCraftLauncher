@@ -5,7 +5,6 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -123,10 +122,8 @@ public class ThemeEngine {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Bitmap ltBitmap;
-        Bitmap dkBitmap;
-        ltBitmap = ImageUtil.load(FCLPath.LT_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
-        dkBitmap = ImageUtil.load(FCLPath.DK_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
+        final Bitmap ltBitmap = getLightBackgroundBitmap(context);
+        final Bitmap dkBitmap = getDarkBackgroundBitmap(context);
         BitmapDrawable lt = new BitmapDrawable(context.getResources(), ltBitmap);
         BitmapDrawable dk = new BitmapDrawable(context.getResources(), dkBitmap);
         theme.setBackgroundLt(lt);
@@ -172,4 +169,11 @@ public class ThemeEngine {
         return color;
     }
 
+    public Bitmap getLightBackgroundBitmap(Context context) {
+        return ImageUtil.load(FCLPath.LT_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light));
+    }
+
+    public Bitmap getDarkBackgroundBitmap(Context context) {
+        return ImageUtil.load(FCLPath.DK_BACKGROUND_PATH).orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
+    }
 }

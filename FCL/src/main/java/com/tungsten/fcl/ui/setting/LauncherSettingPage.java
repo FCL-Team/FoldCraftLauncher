@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
+
+import androidx.palette.graphics.Palette;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -72,6 +76,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton menuIcon;
     private FCLButton resetTheme;
     private FCLButton resetTheme2;
+    private FCLButton fetchBackgroundColor;
+    private FCLButton fetchBackgroundColor2;
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLButton resetCursor;
@@ -106,6 +112,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         menuIcon = findViewById(R.id.menu_icon);
         resetTheme = findViewById(R.id.reset_theme);
         resetTheme2 = findViewById(R.id.reset_theme2);
+        fetchBackgroundColor = findViewById(R.id.fetch_background_color);
+        fetchBackgroundColor2 = findViewById(R.id.fetch_background_color2);
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         resetCursor = findViewById(R.id.reset_cursor);
@@ -132,6 +140,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         menuIcon.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
         resetTheme2.setOnClickListener(this);
+        fetchBackgroundColor.setOnClickListener(this);
+        fetchBackgroundColor2.setOnClickListener(this);
         resetLtBackground.setOnClickListener(this);
         resetDkBackground.setOnClickListener(this);
         resetCursor.setOnClickListener(this);
@@ -413,6 +423,28 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         }
         if (v == resetTheme2) {
             ThemeEngine.getInstance().applyAndSave2(getContext(), getContext().getColor(R.color.default_theme_color));
+        }
+        if (v == fetchBackgroundColor || v == fetchBackgroundColor2) {
+            boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+
+            Bitmap bitmap = isDarkMode ?
+                    ThemeEngine.getInstance().getDarkBackgroundBitmap(getContext()) :
+                    ThemeEngine.getInstance().getLightBackgroundBitmap(getContext());
+
+            if (bitmap != null) {
+                Palette palette = Palette.from(bitmap).generate();
+                int defaultColor = getContext().getColor(R.color.default_theme_color);
+                int dominantColor = palette.getDominantColor(defaultColor);
+                if (v == fetchBackgroundColor) {
+                    ThemeEngine.getInstance().applyAndSave(getContext(), isDarkMode ?
+                            palette.getDarkVibrantColor(dominantColor) :
+                            palette.getLightVibrantColor(dominantColor));
+                } else {
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), isDarkMode ?
+                            palette.getLightMutedColor(dominantColor) :
+                            palette.getDarkMutedColor(dominantColor));
+                }
+            }
         }
         if (v == resetLtBackground) {
             new Thread(() -> {

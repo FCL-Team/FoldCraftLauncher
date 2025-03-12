@@ -826,6 +826,7 @@
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
     <string name="settings_launcher_theme">Main Theme Color</string>
     <string name="settings_launcher_theme2">Secondary Theme Color</string>
+    <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
