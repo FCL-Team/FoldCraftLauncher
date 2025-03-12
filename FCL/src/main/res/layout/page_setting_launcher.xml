@@ -210,6 +210,15 @@
                     <com.tungsten.fcllibrary.component.view.FCLButton
                         app:ripple="true"
                         android:layout_marginStart="10dp"
+                        android:text="@string/settings_launcher_theme_fetch_background"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/fetch_background_color"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLButton
+                        app:ripple="true"
+                        android:layout_marginStart="10dp"
                         android:text="@string/button_set"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -253,6 +262,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:id="@+id/reset_theme2"/>
+
+                    <com.tungsten.fcllibrary.component.view.FCLButton
+                        app:ripple="true"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/settings_launcher_theme_fetch_background"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/fetch_background_color2"/>
 
                     <com.tungsten.fcllibrary.component.view.FCLButton
                         app:ripple="true"
