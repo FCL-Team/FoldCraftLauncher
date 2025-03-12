@@ -133,7 +133,6 @@
                 android:id="@+id/avatar"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:clickable="true"
                 android:elevation="50dp"
                 android:focusable="true"
                 android:stateListAnimator="@xml/anim_scale_large"

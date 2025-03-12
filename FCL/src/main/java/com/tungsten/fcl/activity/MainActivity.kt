@@ -6,10 +6,10 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.view.View.OnLongClickListener
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.content.res.AppCompatResources
@@ -25,7 +25,6 @@ import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
-import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
@@ -55,7 +54,6 @@ import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
@@ -66,7 +64,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.function.Consumer
-import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.system.exitProcess
 
@@ -91,6 +88,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var theme: IntegerProperty
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0, Color.TRANSPARENT)
+        } else {
+            overridePendingTransition(0, 0)
+        }
         super.onCreate(savedInstanceState)
         instance = WeakReference(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -123,12 +125,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 })
         )
-
-        try {
-            ConfigHolder.init()
-        } catch (e: IOException) {
-            Logging.LOG.log(Level.WARNING, e.message)
-        }
 
         binding.apply {
             initBackground()
