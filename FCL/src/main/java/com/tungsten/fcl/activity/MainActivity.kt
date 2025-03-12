@@ -141,7 +141,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 version.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { openRendererMenu(it);true }
-                launch.setOnClickListener(this@MainActivity)
                 jar.setOnClickListener(this@MainActivity)
                 jar.setOnLongClickListener {
                     EditDialog(this@MainActivity) {
@@ -310,9 +309,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             if (view === start) {
                 if (!Controllers.isInitialized()) {
                     title.setTextWithAnim(getString(R.string.message_loading_controllers))
-                    AnimUtil.playTranslationX(launch, 700, 0f, 50f, -50f, 50f, -50f, 0f)
-                        .interpolator(OvershootInterpolator()).start()
-                    AnimUtil.playTranslationX(launchBoat, 700, 0f, 50f, -50f, 50f, -50f, 0f)
+                    AnimUtil.playTranslationX(start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
                         .interpolator(OvershootInterpolator()).start()
                     return
                 }
@@ -504,8 +501,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     backend.itemActiveIndicatorColor =
                         ColorStateList.valueOf(ThemeEngine.getInstance().theme.ltColor)
                     start.background = createBackground()
-                    version.background = createBackground()
-                    jar.background = createBackground()
+                    createBackground().apply {
+                        version.background = this
+                        jar.background = this
+                    }
+                    version.backgroundTintList =  ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
+                        version.backgroundTintList = this
+                        jar.backgroundTintList = this
+                    }
+                    version.setTextColor(ThemeEngine.getInstance().theme.color2)
+                    jar.setTextColor(ThemeEngine.getInstance().theme.color2)
                 }
             }
 

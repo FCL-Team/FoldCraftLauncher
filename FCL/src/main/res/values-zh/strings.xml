@@ -447,7 +447,7 @@
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
 
-    <string name="jar_execute">执行 Jar 文件</string>
+    <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
