@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mio.JavaManager
+import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
@@ -58,7 +59,10 @@ class SplashActivity : FCLActivity() {
         setContentView(R.layout.activity_splash)
 
         val background = findViewById<ConstraintLayout>(R.id.background)
-        background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
+        ImageUtil.loadInto(
+            background,
+            ThemeEngine.getInstance().getTheme().getBackground(this)
+        )
 
         checkPermission()
     }

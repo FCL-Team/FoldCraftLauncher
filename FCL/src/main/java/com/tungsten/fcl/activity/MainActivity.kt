@@ -19,6 +19,7 @@ import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
 import com.mio.util.GuideUtil
+import com.mio.util.ImageUtil
 import com.mio.util.RendererUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
@@ -97,8 +98,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         instance = WeakReference(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
+        ImageUtil.loadInto(
+            binding.background,
+            ThemeEngine.getInstance().getTheme().getBackground(this)
+        )
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -505,10 +508,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         version.background = this
                         jar.background = this
                     }
-                    version.backgroundTintList =  ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
-                        version.backgroundTintList = this
-                        jar.backgroundTintList = this
-                    }
+                    version.backgroundTintList =
+                        ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
+                            version.backgroundTintList = this
+                            jar.backgroundTintList = this
+                        }
                     version.setTextColor(ThemeEngine.getInstance().theme.color2)
                     jar.setTextColor(ThemeEngine.getInstance().theme.color2)
                 }

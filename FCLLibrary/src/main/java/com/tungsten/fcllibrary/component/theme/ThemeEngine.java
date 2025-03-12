@@ -129,7 +129,7 @@ public class ThemeEngine {
         theme.setBackgroundLt(lt);
         theme.setBackgroundDk(dk);
         boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        view.setBackground(isNightMode ? dk : lt);
+        ImageUtil.loadInto(view, isNightMode ? dk : lt);
     }
 
     public void applyAndSave(Context context, int color) {
