@@ -327,12 +327,14 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
-        if (v == ltBackground) {
+        if (v == ltBackground || v == dkBackground) {
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
             builder.setLibMode(LibMode.FILE_CHOOSER);
             builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".png");
+            suffix.add(".jpg");
+            suffix.add(".jpeg");
             builder.setSuffix(suffix);
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
@@ -341,25 +343,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     if (AndroidUtils.isDocUri(uri)) {
                         path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
                     }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, path, null);
-                }
-            }));
-        }
-        if (v == dkBackground) {
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-            ArrayList<String> suffix = new ArrayList<>();
-            suffix.add(".png");
-            builder.setSuffix(suffix);
-            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    String path = FileBrowser.getSelectedFiles(data).get(0);
-                    Uri uri = Uri.parse(path);
-                    if (AndroidUtils.isDocUri(uri)) {
-                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-                    }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, null, path);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, v == ltBackground ? path : null, v == dkBackground ? path : null);
                 }
             }));
         }
@@ -436,7 +420,11 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 Palette palette = Palette.from(bitmap).generate();
                 int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
                 if (v == fetchBackgroundColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), palette.getMutedColor(dominantColor));
+                    int color = palette.getMutedColor(dominantColor);
+                    if (ThemeEngine.getInstance().getTheme().getColor() == color) {
+                        color = palette.getLightVibrantColor(dominantColor);
+                    }
+                    ThemeEngine.getInstance().applyAndSave(getContext(), color);
                 } else {
                     ThemeEngine.getInstance().applyAndSave2(getContext(), palette.getVibrantColor(dominantColor));
                 }
