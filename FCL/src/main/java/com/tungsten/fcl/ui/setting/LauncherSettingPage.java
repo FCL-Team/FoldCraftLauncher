@@ -288,7 +288,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor, true);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor);
                 }
 
                 @Override
@@ -307,7 +307,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor, true);
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor);
                 }
 
                 @Override
@@ -409,10 +409,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             }));
         }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+            ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
         }
         if (v == resetTheme2) {
-            ThemeEngine.getInstance().applyAndSave2(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+            ThemeEngine.getInstance().applyAndSave2(getContext(), getContext().getColor(R.color.default_theme_color));
         }
         if (v == resetLtBackground) {
             new Thread(() -> {
@@ -459,7 +459,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         } else if (buttonView == closeSkinModel) {
             ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
-            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme(), true);
+            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
         }
     }
 }

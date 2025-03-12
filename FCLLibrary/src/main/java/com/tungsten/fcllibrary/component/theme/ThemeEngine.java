@@ -47,9 +47,6 @@ public class ThemeEngine {
         if (!initialized) {
             handler = new Handler();
             theme = Theme.getTheme(context);
-            if (!theme.isModified()) {
-                theme.setColor(getWallpaperColor(context));
-            }
             runnables = new HashMap<>();
             initialized = true;
         }
@@ -138,14 +135,14 @@ public class ThemeEngine {
         view.setBackground(isNightMode ? dk : lt);
     }
 
-    public void applyAndSave(Context context, int color, boolean modified) {
+    public void applyAndSave(Context context, int color) {
         applyColor(color);
-        Theme.saveTheme(context, theme, modified);
+        Theme.saveTheme(context, theme);
     }
 
-    public void applyAndSave2(Context context, int color, boolean modified) {
+    public void applyAndSave2(Context context, int color) {
         applyColor2(color);
-        Theme.saveTheme(context, theme, modified);
+        Theme.saveTheme(context, theme);
     }
 
     public void applyAndSave(Context context, Window window, boolean fullscreen) {
