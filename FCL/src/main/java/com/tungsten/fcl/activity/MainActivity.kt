@@ -71,7 +71,6 @@ import kotlin.system.exitProcess
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
         private lateinit var instance: WeakReference<MainActivity>
-
         @JvmStatic
         fun getInstance(): MainActivity {
             return instance.get()!!
@@ -87,6 +86,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var onVersionIconChangedListener: Consumer<Event>? = null
 
     private lateinit var theme: IntegerProperty
+
+    var isVersionLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -404,6 +405,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun loadVersion(version: String?) {
+        isVersionLoading = true
         binding.versionProgress.visibility = View.VISIBLE
         if (Profiles.getSelectedProfile() != profile) {
             profile = Profiles.getSelectedProfile()
@@ -414,10 +416,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
             }
         }
-        if (version != null && Profiles.getSelectedProfile() != null && Profiles.getSelectedProfile().repository.hasVersion(
-                version
-            )
-        ) {
+        if (version != null && Profiles.getSelectedProfile().repository.hasVersion(version)) {
             Schedulers.defaultScheduler().execute {
                 var game: String? = null
                 kotlin.runCatching {
@@ -427,7 +426,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 if (game == null) return@execute
                 val libraries = StringBuilder(game)
                 val analyzer = LibraryAnalyzer.analyze(
-                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
+                    Profiles.getSelectedProfile().repository.
+                    getResolvedPreservingPatchesVersion(
                         version
                     ),
                     Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)
@@ -456,6 +456,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
                 val drawable = Profiles.getSelectedProfile().repository.getVersionIconImage(version)
                 Schedulers.androidUIThread().execute {
+                    isVersionLoading = false
                     binding.versionProgress.visibility = View.GONE
                     binding.versionName.text = version
 //                    binding.versionHint.text = libraries.toString()
@@ -463,6 +464,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
             }
         } else {
+            isVersionLoading = false
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
             binding.icon.setBackgroundDrawable(
