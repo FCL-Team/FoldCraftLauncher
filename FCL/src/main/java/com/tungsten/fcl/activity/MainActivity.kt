@@ -26,6 +26,7 @@ import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
+import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
@@ -55,6 +56,7 @@ import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.task.Schedulers
+import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
@@ -65,6 +67,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.function.Consumer
+import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.system.exitProcess
 
@@ -129,6 +132,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 })
         )
+
+        if (!ConfigHolder.isInit()) {
+            try {
+                ConfigHolder.init()
+            } catch (e: IOException) {
+                Logging.LOG.log(Level.WARNING, e.message)
+            }
+        }
 
         binding.apply {
             initBackground()
