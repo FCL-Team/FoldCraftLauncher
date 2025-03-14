@@ -74,6 +74,7 @@ import kotlin.system.exitProcess
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
         private lateinit var instance: WeakReference<MainActivity>
+
         @JvmStatic
         fun getInstance(): MainActivity {
             return instance.get()!!
@@ -148,7 +149,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     leftMenu.background = GradientDrawable().apply {
                         setColor(ThemeEngine.getInstance().getTheme().color)
                         shape = GradientDrawable.RECTANGLE
-                        cornerRadius = ConvertUtils.dip2px(this@MainActivity, 8f).toFloat()
+                        ConvertUtils.dip2px(this@MainActivity, 8f).toFloat().apply {
+                            cornerRadii = floatArrayOf(0f, 0f, this, this, this, this, 0f, 0f)
+                        }
                     }
                 }
 
@@ -180,9 +183,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         )
                     }.apply {
                         setTitle(R.string.jar_execute_custom_args)
-                        editText.hint = "-jar xxx"
-                        editText.setLines(1)
-                        editText.maxLines = 1
+                        binding.editText.hint = "-jar xxx"
+                        binding.editText.setLines(1)
+                        binding.editText.maxLines = 1
                     }.show()
                     true
                 }
@@ -437,8 +440,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 if (game == null) return@execute
                 val libraries = StringBuilder(game)
                 val analyzer = LibraryAnalyzer.analyze(
-                    Profiles.getSelectedProfile().repository.
-                    getResolvedPreservingPatchesVersion(
+                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
                         version
                     ),
                     Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)

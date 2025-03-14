@@ -106,7 +106,8 @@ public class AndroidUtils {
         Point point = new Point();
         wm.getDefaultDisplay().getRealSize(point);
         if (fullscreen || SDK_INT < Build.VERSION_CODES.P) {
-            return point.x;
+            int forceWidth = sharedPreferences.getInt("forceWidth", point.x);
+            return forceWidth != point.x ? forceWidth : point.x;
         } else {
             return point.x - getSafeInset(context);
         }
@@ -186,10 +187,10 @@ public class AndroidUtils {
 
     public static String getFileName(Context context, Uri uri) {
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if(cursor == null) return uri.getLastPathSegment();
+        if (cursor == null) return uri.getLastPathSegment();
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        if(columnIndex == -1) return uri.getLastPathSegment();
+        if (columnIndex == -1) return uri.getLastPathSegment();
         String fileName = cursor.getString(columnIndex);
         cursor.close();
         return fileName;
