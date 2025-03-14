@@ -822,7 +822,7 @@
     <string name="update_check">به روز رسانی ها را بررسی کنید</string>
     <string name="update_checking">بررسی به‌روزرسانی‌ها</string>
     <string name="update_check_failed">به روز رسانی بررسی نشد</string>
-    <string name="update_date">تاریخ</string>
+    <string name="update_date">تاریخ:%s</string>
     <string name="update_description">توضیحات:\n%s</string>
     <string name="update_exist">نسخه قابل به روز رسانی شناسایی شد</string>
     <string name="update_failed">آخرین نسخه دانلود نشد، لطفا دوباره امتحان کنید یا آن را از وب سایت رسمی دانلود کنید.</string>
