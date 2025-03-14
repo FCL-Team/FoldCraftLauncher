@@ -549,7 +549,7 @@
     <string name="jar_executor_crash_reason">Анализ причин сбоя исполнителя Jar в настоящее время не поддерживается.</string>
 
     <string name="launch_error_java">Вы используете устаревшую версию Java. Вы уверены, что хотите продолжить?</string>
-    <string name="launch_error_java_auto">Выбрать автоматически (рекомендуется)</string>
+    <string name="launch_error_java_auto">Автовыбор</string>
     <string name="launch_error_java_continue">Продолжить</string>
     <string name="launch_failed">Ошибка запуска</string>
     <string name="launch_failed_download_library">Невозможно загрузить библиотеку %s.</string>
@@ -855,6 +855,7 @@
     <string name="settings_launcher_launcher_log_export_success">Журналы экспортированы в %s</string>
     <string name="settings_launcher_theme">Основной цвет темы</string>
     <string name="settings_launcher_theme2">Дополнительный цвет темы</string>
+    <string name="settings_launcher_theme_fetch_background">Цвет фона</string>
     <string name="settings_launcher_background_lt">Фон в светлой теме (макс. 5120x5120)</string>
     <string name="settings_launcher_background_dk">Фон в темной теме (макс. 5120x5120)</string>
     <string name="settings_launcher_cursor">Курсор</string>
@@ -1041,4 +1042,7 @@
     <string name="import_java">Импорт Java</string>
     <string name="import_java_wrong_file">Поддерживается импорт только файлов tar.xz.</string>
     <string name="import_java_error">Обнаружено, что импортированная вами среда Java, возможно, не предназначена для использования на текущем устройстве. Запуск с ней может привести к сбою лаунчера. Вы хотите продолжить импорт?</string>
+
+    <string name="manage_version">Менеджер версий</string>
+    <string name="select_renderer">Выбрать рендерер</string>
 </resources>
