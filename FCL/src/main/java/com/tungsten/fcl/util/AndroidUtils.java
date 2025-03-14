@@ -106,8 +106,7 @@ public class AndroidUtils {
         Point point = new Point();
         wm.getDefaultDisplay().getRealSize(point);
         if (fullscreen || SDK_INT < Build.VERSION_CODES.P) {
-            int forceWidth = sharedPreferences.getInt("forceWidth", point.x);
-            return forceWidth != point.x ? forceWidth : point.x;
+            return point.x;
         } else {
             return point.x - getSafeInset(context);
         }
