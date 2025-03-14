@@ -826,6 +826,7 @@
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
     <string name="settings_launcher_theme">Main Theme Color</string>
     <string name="settings_launcher_theme2">Secondary Theme Color</string>
+    <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
@@ -1020,4 +1021,8 @@
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>
     <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
-    <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string></resources>
+    <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string>
+
+    <string name="manage_version">Manage Versions</string>
+    <string name="select_renderer">Select Renderer</string>
+</resources>

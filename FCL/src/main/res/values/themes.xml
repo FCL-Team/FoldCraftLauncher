@@ -26,4 +26,8 @@
         <item name="android:textAllCaps">false</item>
         <item name="singleLine">true</item>
     </style>
+
+    <style name="NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#FFF</item>
+    </style>
 </resources>

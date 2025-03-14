@@ -51,7 +51,7 @@ public class VersionList {
             progressBar.setVisibility(View.VISIBLE);
         });
         FCLGameRepository repository = profile.getRepository();
-        Schedulers.defaultScheduler().execute(()->{
+        Schedulers.defaultScheduler().execute(() -> {
             if (profile == Profiles.getSelectedProfile()) {
                 List<VersionListItem> children = repository.getDisplayVersions()
                         .parallel()
@@ -81,11 +81,13 @@ public class VersionList {
                         })
                         .collect(Collectors.toList());
                 Schedulers.androidUIThread().execute(() -> {
-                    VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
-                    listView.setAdapter(adapter);
-                    refreshButton.setEnabled(true);
-                    listView.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
+                    if (profile == Profiles.getSelectedProfile()) {
+                        VersionListAdapter adapter = new VersionListAdapter(context, (ArrayList<VersionListItem>) children);
+                        listView.setAdapter(adapter);
+                        refreshButton.setEnabled(true);
+                        listView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
                 });
                 children.forEach(it -> it.selectedProperty().bind(Bindings.createBooleanBinding(() -> profile.selectedVersionProperty().get().equals(it.getVersion()), profile.selectedVersionProperty())));
             }

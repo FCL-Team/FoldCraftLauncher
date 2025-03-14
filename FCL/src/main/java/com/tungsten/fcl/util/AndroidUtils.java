@@ -186,10 +186,10 @@ public class AndroidUtils {
 
     public static String getFileName(Context context, Uri uri) {
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if(cursor == null) return uri.getLastPathSegment();
+        if (cursor == null) return uri.getLastPathSegment();
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        if(columnIndex == -1) return uri.getLastPathSegment();
+        if (columnIndex == -1) return uri.getLastPathSegment();
         String fileName = cursor.getString(columnIndex);
         cursor.close();
         return fileName;

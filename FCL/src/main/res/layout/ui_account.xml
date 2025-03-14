@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ui_bg_color"
     android:padding="10dp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -25,7 +24,7 @@
             android:textSize="11sp"
             app:use_theme_color="true" />
 
-        <View
+        <com.tungsten.fcllibrary.component.view.FCLView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="10dp"

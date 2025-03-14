@@ -447,7 +447,7 @@
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
 
-    <string name="jar_execute">执行 Jar 文件</string>
+    <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
@@ -779,6 +779,7 @@
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
     <string name="settings_launcher_theme">主要主题色</string>
     <string name="settings_launcher_theme2">次要主题色</string>
+    <string name="settings_launcher_theme_fetch_background">从背景图片提取</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
@@ -972,4 +973,7 @@
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
     <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
+
+    <string name="manage_version">管理版本</string>
+    <string name="select_renderer">选择渲染器</string>
 </resources>

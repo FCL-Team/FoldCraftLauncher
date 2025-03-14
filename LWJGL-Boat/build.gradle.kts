@@ -4,10 +4,6 @@ plugins {
 
 group = "org.lwjgl"
 
-configurations.default.get().apply {
-    isCanBeResolved = true
-}
-
 project.setProperty("archivesBaseName", "lwjgl")
 
 project.setProperty("libsDirName", "${rootDir}/FCL/src/main/assets/app_runtime/lwjgl-boat")

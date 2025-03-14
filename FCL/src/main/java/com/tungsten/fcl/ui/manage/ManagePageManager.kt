@@ -43,7 +43,7 @@ class ManagePageManager(
             context,
             PAGE_ID_MANAGE_INSTALL,
             parent,
-            R.layout.page_installer_list
+            R.layout.page_manage_auto_install
         )
     }
     private val modListPage: ModListPage by lazy {
@@ -51,7 +51,7 @@ class ManagePageManager(
             context,
             PAGE_ID_MANAGE_MOD,
             parent,
-            R.layout.page_mod_list
+            R.layout.page_manage_mod
         )
     }
     private val worldListPage: WorldListPage by lazy {
@@ -59,7 +59,7 @@ class ManagePageManager(
             context,
             PAGE_ID_MANAGE_WORLD,
             parent,
-            R.layout.page_world_list
+            R.layout.page_manage_world
         )
     }
 
@@ -69,7 +69,7 @@ class ManagePageManager(
 
     override fun init(listener: UIListener?) {
         managePage =
-            ManagePage(context, PAGE_ID_MANAGE_MANAGE, parent, R.layout.page_manage)
+            ManagePage(context, PAGE_ID_MANAGE_MANAGE, parent, R.layout.page_manage_version)
         listener?.onLoad()
     }
 
