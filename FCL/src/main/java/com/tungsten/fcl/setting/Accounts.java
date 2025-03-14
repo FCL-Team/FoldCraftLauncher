@@ -81,9 +81,11 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 
 public final class Accounts {
-    private Accounts() {}
+    private Accounts() {
+    }
 
     private static final AuthlibInjectorArtifactProvider AUTHLIB_INJECTOR_DOWNLOADER = createAuthlibInjectorArtifactProvider();
+
     private static void triggerAuthlibInjectorUpdateCheck() {
         if (AUTHLIB_INJECTOR_DOWNLOADER instanceof AuthlibInjectorDownloader) {
             Schedulers.io().execute(() -> {
@@ -106,6 +108,7 @@ public final class Accounts {
     // ==== login type / account factory mapping ====
     private static final Map<String, AccountFactory<?>> type2factory = new HashMap<>();
     private static final Map<AccountFactory<?>, String> factory2type = new HashMap<>();
+
     static {
         type2factory.put("offline", FACTORY_OFFLINE);
         type2factory.put("authlibInjector", FACTORY_AUTHLIB_INJECTOR);
@@ -149,7 +152,7 @@ public final class Accounts {
     private static final String GLOBAL_PREFIX = "$GLOBAL:";
     private static final ObservableList<Map<Object, Object>> globalAccountStorages = FXCollections.observableArrayList();
 
-    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[] { account });
+    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[]{account});
     private static final ObjectProperty<Account> selectedAccount = new SimpleObjectProperty<>(Accounts.class, "selectedAccount");
 
     /**
@@ -423,7 +426,7 @@ public final class Accounts {
         if (exception instanceof NoCharacterException) {
             return context.getString(R.string.account_failed_no_character);
         } else if (exception instanceof ServerDisconnectException) {
-            return context.getString(R.string.account_failed_connect_authentication_server);
+            return context.getString(R.string.account_failed_connect_authentication_server) + "\n" + exception;
         } else if (exception instanceof ServerResponseMalformedException) {
             return context.getString(R.string.account_failed_server_response_malformed);
         } else if (exception instanceof RemoteAuthenticationException) {

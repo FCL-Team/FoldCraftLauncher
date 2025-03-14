@@ -448,6 +448,7 @@ GLFWAPI GLFWwindow* glfwGetCurrentContext(void)
 
 GLFWAPI void glfwSwapBuffers(GLFWwindow* handle)
 {
+    if (fcl->fps >= INT_MAX - 1) fcl->fps = 0;
     fcl->fps++;
     _GLFWwindow* window = (_GLFWwindow*) handle;
     assert(window != NULL);

@@ -151,6 +151,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("top.fifthlight.touchcontroller:proxy-client-android:0.0.2")
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }
 
 tasks.register("updateMap") {

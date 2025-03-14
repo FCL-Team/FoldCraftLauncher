@@ -35,17 +35,17 @@ class SettingPageManager(
             context,
             PAGE_ID_SETTING_LAUNCHER,
             parent,
-            R.layout.page_launcher_setting
+            R.layout.page_setting_launcher
         )
     }
     private val helpPage: HelpPage by lazy {
-        HelpPage(context, PAGE_ID_SETTING_HELP, parent, R.layout.page_help)
+        HelpPage(context, PAGE_ID_SETTING_HELP, parent, R.layout.page_setting_help)
     }
     private val communityPage: CommunityPage by lazy {
-        CommunityPage(context, PAGE_ID_SETTING_COMMUNITY, parent, R.layout.page_community)
+        CommunityPage(context, PAGE_ID_SETTING_COMMUNITY, parent, R.layout.page_setting_community)
     }
     private val aboutPage: AboutPage by lazy {
-        AboutPage(context, PAGE_ID_SETTING_ABOUT, parent, R.layout.page_about)
+        AboutPage(context, PAGE_ID_SETTING_ABOUT, parent, R.layout.page_setting_about)
     }
 
 

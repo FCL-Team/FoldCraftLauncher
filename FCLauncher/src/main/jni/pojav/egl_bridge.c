@@ -2,6 +2,7 @@
 #include <jni.h>
 #include <assert.h>
 #include <dlfcn.h>
+#include <limits.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -188,6 +189,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 }
 
 EXTERNAL_API void pojavSwapBuffers() {
+    if (fps >= INT_MAX - 1) fps = 0;
     fps++;
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapBuffers();

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.tungsten.fcl.R
-import com.tungsten.fcl.databinding.PageManageBinding
+import com.tungsten.fcl.databinding.PageManageVersionBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
 import com.tungsten.fcl.ui.UIManager.Companion.instance
@@ -34,7 +34,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     FCLCommonPage(context, id, parent, resId), VersionLoadable {
     private val currentVersionUpgradable: BooleanProperty = SimpleBooleanProperty()
 
-    private lateinit var binding: PageManageBinding
+    private lateinit var binding: PageManageVersionBinding
 
     init {
         create()
@@ -49,7 +49,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     }
 
     private fun create() {
-        binding = PageManageBinding.bind(contentView).apply {
+        binding = PageManageVersionBinding.bind(contentView).apply {
             ThemeEngine.getInstance().registerEvent(left) {
                 left.backgroundTintList = ColorStateList(
                     arrayOf(intArrayOf()), intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)

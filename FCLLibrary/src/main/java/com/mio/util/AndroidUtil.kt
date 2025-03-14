@@ -68,8 +68,8 @@ class AndroidUtil {
                         DataInputStream(stream).let { dataStream ->
                             val magic = ByteArray(4)
                             dataStream.readFully(magic)
-                            if (!(magic[0] == 0x7F.toByte() && magic[1] == 'E'.toByte() &&
-                                        magic[2] == 'L'.toByte() && magic[3] == 'F'.toByte())
+                            if (!(magic[0] == 0x7F.toByte() && magic[1] == 'E'.code.toByte() &&
+                                        magic[2] == 'L'.code.toByte() && magic[3] == 'F'.code.toByte())
                             ) {
                                 return@let
                             }

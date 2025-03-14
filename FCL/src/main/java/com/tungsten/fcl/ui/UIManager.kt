@@ -7,7 +7,6 @@ import com.tungsten.fcl.ui.controller.ControllerUI
 import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.manage.ManageUI
-import com.tungsten.fcl.ui.multiplayer.MultiplayerUI
 import com.tungsten.fcl.ui.setting.SettingUI
 import com.tungsten.fcl.ui.version.VersionUI
 import com.tungsten.fclcore.util.Logging
@@ -29,13 +28,6 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     val manageUI: ManageUI by lazy { ManageUI(context, parent, R.layout.ui_manage) }
     val downloadUI: DownloadUI by lazy { DownloadUI(context, parent, R.layout.ui_download) }
     val controllerUI: ControllerUI by lazy { ControllerUI(context, parent, R.layout.ui_controller) }
-    val multiplayerUI: MultiplayerUI by lazy {
-        MultiplayerUI(
-            context,
-            parent,
-            R.layout.ui_multiplayer
-        )
-    }
     val settingUI: SettingUI by lazy { SettingUI(context, parent, R.layout.ui_setting) }
 
     private val allUIList = mutableListOf<FCLBaseUI>()

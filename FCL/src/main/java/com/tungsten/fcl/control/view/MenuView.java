@@ -39,8 +39,8 @@ public class MenuView extends View {
     private final int screenWidth;
     private final int screenHeight;
 
-    private final int DEFAULT_WIDTH = ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 40);
-    private final int DEFAULT_HEIGHT = ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 40);
+    private final int DEFAULT_WIDTH = ConvertUtils.dip2px(getContext(), 40);
+    private final int DEFAULT_HEIGHT = ConvertUtils.dip2px(getContext(), 40);
 
     private GameMenu gameMenu;
 
@@ -70,7 +70,7 @@ public class MenuView extends View {
         strokePaint.setAntiAlias(true);
         strokePaint.setColor(Color.DKGRAY);
         strokePaint.setStyle(Paint.Style.STROKE);
-        strokePaint.setStrokeWidth(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 2));
+        strokePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 2));
 
         areaPaint = new Paint();
         areaPaint.setAntiAlias(true);
@@ -81,10 +81,10 @@ public class MenuView extends View {
         initIcon();
         if (!isGif) {
             srcRect = new Rect(0, 0, icon.getWidth(), icon.getHeight());
-            destRect = new Rect(ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
-                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 6),
-                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34),
-                    ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 34));
+            destRect = new Rect(ConvertUtils.dip2px(getContext(), 6),
+                    ConvertUtils.dip2px(getContext(), 6),
+                    ConvertUtils.dip2px(getContext(), 34),
+                    ConvertUtils.dip2px(getContext(), 34));
         }
     }
 
@@ -120,7 +120,7 @@ public class MenuView extends View {
                 }
             });
         } else {
-            icon = BitmapFactory.decodeResource(FCLApplication.getCurrentActivity().getResources(), R.drawable.img_app);
+            icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.img_app);
         }
     }
 
@@ -141,12 +141,12 @@ public class MenuView extends View {
             return;
         }
         if (pressed) {
-            areaPaint.setColor(FCLApplication.getCurrentActivity().getColor(R.color.ui_bg_color));
+            areaPaint.setColor(getContext().getColor(R.color.ui_bg_color));
         } else {
             areaPaint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 1), strokePaint);
-        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(FCLApplication.getCurrentActivity(), 2), areaPaint);
+        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(getContext(), 1), strokePaint);
+        canvas.drawCircle(getMeasuredWidth() >> 1, getMeasuredHeight() >> 1, (getMeasuredWidth() >> 1) - ConvertUtils.dip2px(getContext(), 2), areaPaint);
         canvas.drawBitmap(icon, srcRect, destRect, iconPaint);
     }
 

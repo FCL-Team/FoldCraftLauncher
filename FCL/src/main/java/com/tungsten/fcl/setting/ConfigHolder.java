@@ -42,6 +42,10 @@ public final class ConfigHolder {
     private static GlobalConfig globalConfigInstance;
     private static boolean newlyCreated;
 
+    public static boolean isInit() {
+        return configInstance != null;
+    }
+
     public static Config config() {
         if (configInstance == null) {
             throw new IllegalStateException("Configuration hasn't been loaded");

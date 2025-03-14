@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
+
+import androidx.palette.graphics.Palette;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -72,6 +76,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton menuIcon;
     private FCLButton resetTheme;
     private FCLButton resetTheme2;
+    private FCLButton fetchBackgroundColor;
+    private FCLButton fetchBackgroundColor2;
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLButton resetCursor;
@@ -106,6 +112,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         menuIcon = findViewById(R.id.menu_icon);
         resetTheme = findViewById(R.id.reset_theme);
         resetTheme2 = findViewById(R.id.reset_theme2);
+        fetchBackgroundColor = findViewById(R.id.fetch_background_color);
+        fetchBackgroundColor2 = findViewById(R.id.fetch_background_color2);
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         resetCursor = findViewById(R.id.reset_cursor);
@@ -132,6 +140,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         menuIcon.setOnClickListener(this);
         resetTheme.setOnClickListener(this);
         resetTheme2.setOnClickListener(this);
+        fetchBackgroundColor.setOnClickListener(this);
+        fetchBackgroundColor2.setOnClickListener(this);
         resetLtBackground.setOnClickListener(this);
         resetDkBackground.setOnClickListener(this);
         resetCursor.setOnClickListener(this);
@@ -288,7 +298,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor, true);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), destColor);
                 }
 
                 @Override
@@ -307,7 +317,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
                 @Override
                 public void onPositive(int destColor) {
-                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor, true);
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), destColor);
                 }
 
                 @Override
@@ -317,12 +327,14 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
-        if (v == ltBackground) {
+        if (v == ltBackground || v == dkBackground) {
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
             builder.setLibMode(LibMode.FILE_CHOOSER);
             builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".png");
+            suffix.add(".jpg");
+            suffix.add(".jpeg");
             builder.setSuffix(suffix);
             builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
                 if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
@@ -331,25 +343,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     if (AndroidUtils.isDocUri(uri)) {
                         path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
                     }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, path, null);
-                }
-            }));
-        }
-        if (v == dkBackground) {
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-            ArrayList<String> suffix = new ArrayList<>();
-            suffix.add(".png");
-            builder.setSuffix(suffix);
-            builder.create().browse(getActivity(), RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_LAUNCHER_BACKGROUND_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    String path = FileBrowser.getSelectedFiles(data).get(0);
-                    Uri uri = Uri.parse(path);
-                    if (AndroidUtils.isDocUri(uri)) {
-                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-                    }
-                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, null, path);
+                    ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, v == ltBackground ? path : null, v == dkBackground ? path : null);
                 }
             }));
         }
@@ -409,10 +403,32 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             }));
         }
         if (v == resetTheme) {
-            ThemeEngine.getInstance().applyAndSave(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+            ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
         }
         if (v == resetTheme2) {
-            ThemeEngine.getInstance().applyAndSave2(getContext(), ThemeEngine.getWallpaperColor(getContext()), false);
+            ThemeEngine.getInstance().applyAndSave2(getContext(), getContext().getColor(R.color.default_theme_color));
+        }
+        if (v == fetchBackgroundColor || v == fetchBackgroundColor2) {
+            boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+
+            Bitmap bitmap = (isDarkMode ?
+                    ThemeEngine.getInstance().theme.getBackgroundDk() :
+                    ThemeEngine.getInstance().theme.getBackgroundLt()
+            ).getBitmap();
+
+            if (bitmap != null) {
+                Palette palette = Palette.from(bitmap).generate();
+                int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
+                if (v == fetchBackgroundColor) {
+                    int color = palette.getMutedColor(dominantColor);
+                    if (ThemeEngine.getInstance().getTheme().getColor() == color) {
+                        color = palette.getLightVibrantColor(dominantColor);
+                    }
+                    ThemeEngine.getInstance().applyAndSave(getContext(), color);
+                } else {
+                    ThemeEngine.getInstance().applyAndSave2(getContext(), palette.getVibrantColor(dominantColor));
+                }
+            }
         }
         if (v == resetLtBackground) {
             new Thread(() -> {
@@ -459,7 +475,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         } else if (buttonView == closeSkinModel) {
             ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
-            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme(), true);
+            Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
         }
     }
 }

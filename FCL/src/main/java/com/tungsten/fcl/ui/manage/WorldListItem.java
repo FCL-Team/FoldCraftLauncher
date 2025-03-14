@@ -83,7 +83,7 @@ public class WorldListItem {
 
     public void showInfo() {
         try {
-            WorldInfoPage page = new WorldInfoPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_world_info, world);
+            WorldInfoPage page = new WorldInfoPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_manage_world_info, world);
             ManagePageManager.getInstance().showTempPage(page);
         } catch (Exception e) {
             // TODO

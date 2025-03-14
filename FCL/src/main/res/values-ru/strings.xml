@@ -910,7 +910,7 @@
     <string name="update_checking">Проверка обновления</string>
     <string name="update_check_failed">Ошибка во время проверки обновления</string>
     <string name="update_date">Дата: %s</string>
-    <string name="update_description">"Описание:</string>
+    <string name="update_description">"Описание: %s</string>
     <string name="update_exist">Новая версия</string>
     <string name="update_failed">Не удалось загрузить последнюю версию, повторите попытку или загрузите ее с официального сайта.</string>
     <string name="update_ignore">Игнорировать</string>
