@@ -23,8 +23,6 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import java.util.*;
 
-import sun.misc.Unsafe;
-
 public class GLFW
 {
     static FloatBuffer joystickData = (FloatBuffer)FloatBuffer.allocate(8).flip();
@@ -994,6 +992,14 @@ public class GLFW
         return invokePP(share, Functions.CreateContext);
     }
     public static long glfwCreateWindow(int width, int height, CharSequence title, long monitor, long share) {
+        return mglfwCreateWindow(width,height,title,monitor,share);
+    }
+
+    public static long nglfwCreateWindow(int width, int height, long title, long monitor, long share) {
+        return mglfwCreateWindow(width, height, "Game", monitor, share);
+    }
+
+    private static long mglfwCreateWindow(int width, int height, CharSequence title, long monitor, long share) {
         // Create an ACTUAL EGL context
         long ptr = nglfwCreateContext(share);
         //nativeEglMakeCurrent(ptr);
@@ -1019,10 +1025,6 @@ public class GLFW
 
         return ptr;
         //Return our context
-    }
-
-    public static long nglfwCreateWindow(int width, int height, long title, long monitor, long share) {
-        return glfwCreateWindow(width,height,"Game",monitor,share);
     }
 
     public static void glfwDestroyWindow(long window) {
