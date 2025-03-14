@@ -51,13 +51,13 @@ object JavaManager {
 
     @JvmStatic
     fun getSuitableJavaVersion(version: Version?): JavaVersion {
+        return findExactOrNextGreater(version?.javaVersion?.majorVersion)
+    }
+
+    private fun findExactOrNextGreater(version: Int?): JavaVersion {
         if (version == null) {
             return getJavaFromVersionName("jre8")
         }
-        return findExactOrNextGreater(version.javaVersion.majorVersion);
-    }
-
-    private fun findExactOrNextGreater(version: Int): JavaVersion {
         var exact: JavaVersion? = null
         var closestGreater: JavaVersion? = null
 
