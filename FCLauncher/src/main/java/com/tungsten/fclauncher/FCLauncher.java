@@ -364,8 +364,6 @@ public class FCLauncher {
         bridge.dlopen(jreLibDir + "/libawt.so");
         bridge.dlopen(jreLibDir + "/libawt_headless.so");
         bridge.dlopen(jreLibDir + "/libfontmanager.so");
-        bridge.dlopen(jreLibDir + "/libtinyiconv.so");
-        bridge.dlopen(jreLibDir + "/libinstrument.so");
         for (File file : locateLibs(new File(config.getJavaPath()))) {
             bridge.dlopen(file.getAbsolutePath());
         }
