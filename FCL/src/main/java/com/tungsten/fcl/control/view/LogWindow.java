@@ -56,7 +56,7 @@ public class LogWindow extends ScrollView {
         textView.setAutoTint(autoTint);
         textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         addView(textView);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(Color.BLACK);
         textView.setTextSize(15);
         textView.setLineSpacing(0, 1f);
         textView.setEllipsize(null);
