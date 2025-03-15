@@ -1025,4 +1025,5 @@
 
     <string name="manage_version">Manage Versions</string>
     <string name="select_renderer">Select Renderer</string>
+    <string name="open_link_failed">Failed to automatically redirect to the browser. The link has been copied automatically. Please manually open the browser and paste it in.</string>
 </resources>

@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.View;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -42,24 +43,23 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Uri uri = null;
+        String url = null;
 
         if (v == launcher) {
-            uri = Uri.parse("https://fcl-team.github.io/");
+            url = "https://fcl-team.github.io/";
         }
         if (v == developer) {
-            uri = Uri.parse("https://github.com/FCL-Team");
+            url = "https://github.com/FCL-Team";
         }
         if (v == sponsor) {
-            uri = Uri.parse("https://afdian.com/@tungs");
+            url = "https://afdian.com/@tungs";
         }
         if (v == source) {
-            uri = Uri.parse("https://github.com/FCL-Team/FoldCraftLauncher");
+            url = "https://github.com/FCL-Team/FoldCraftLauncher";
         }
 
-        if (uri != null) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            getContext().startActivity(intent);
+        if (url != null) {
+            AndroidUtils.openLink(getContext(), url);
         }
     }
 }
