@@ -483,7 +483,7 @@
     <string name="jar_executor_crash_title">Jar Executor Crashed</string>
     <string name="jar_executor_crash_reason">Jar Executor crash reason analyse is not supported now.</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
@@ -1026,4 +1026,6 @@
     <string name="manage_version">Manage Versions</string>
     <string name="select_renderer">Select Renderer</string>
     <string name="open_link_failed">Failed to automatically redirect to the browser. The link has been copied automatically. Please manually open the browser and paste it in.</string>
+
+    <string name="launch">Launch</string>
 </resources>

@@ -452,7 +452,7 @@
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
@@ -977,4 +977,5 @@
     <string name="manage_version">管理版本</string>
     <string name="select_renderer">选择渲染器</string>
     <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
+    <string name="launch">启动</string>
 </resources>

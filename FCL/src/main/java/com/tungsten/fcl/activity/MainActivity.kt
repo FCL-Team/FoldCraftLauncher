@@ -472,6 +472,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     isVersionLoading = false
                     binding.versionProgress.visibility = View.GONE
                     binding.versionName.text = version
+                    binding.versionName.isSelected = true
 //                    binding.versionHint.text = libraries.toString()
                     binding.icon.setBackgroundDrawable(drawable)
                 }
