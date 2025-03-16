@@ -310,33 +310,7 @@ public class DefaultGameRepository implements GameRepository {
                 }
 
                 if (!id.equals(version.getId())) {
-                    try {
-                        String from = id;
-                        String to = version.getId();
-                        Path fromDir = getVersionRoot(from).toPath();
-                        Path toDir = getVersionRoot(to).toPath();
-                        Files.move(fromDir, toDir);
-
-                        Path fromJson = toDir.resolve(from + ".json");
-                        Path fromJar = toDir.resolve(from + ".jar");
-                        Path toJson = toDir.resolve(to + ".json");
-                        Path toJar = toDir.resolve(to + ".jar");
-
-                        try {
-                            Files.move(fromJson, toJson);
-                            if (Files.exists(fromJar))
-                                Files.move(fromJar, toJar);
-                        } catch (IOException e) {
-                            // recovery
-                            Lang.ignoringException(() -> Files.move(toJson, fromJson));
-                            Lang.ignoringException(() -> Files.move(toJar, fromJar));
-                            Lang.ignoringException(() -> Files.move(toDir, fromDir));
-                            throw e;
-                        }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because version id does not match folder name " + id + ", and we cannot correct it.", e);
-                        return Stream.empty();
-                    }
+                    version._setId(id);
                 }
 
                 return Stream.of(version);
