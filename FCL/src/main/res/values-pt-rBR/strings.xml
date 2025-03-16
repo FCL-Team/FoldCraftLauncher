@@ -450,7 +450,7 @@
     <string name="jar_executor_crash_title">Execução de .jar falhou</string>
     <string name="jar_executor_crash_reason">O motivo da falha ainda não é suportado.</string>
 
-    <string name="launch">Jogar</string>
+    <string name="launch_pojav">Jogar</string>
     <string name="launch_error_java">Você está usando uma versão não suportada do Java, tem certeza que deseja continuar?</string>
     <string name="launch_error_java_auto">Seleção automática</string>
     <string name="launch_error_java_continue">Continuar</string>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -54,9 +55,7 @@ public class ArticleAdapter extends FCLAdapter {
         }
         DocIndex.Item item = list.get(i);
         viewHolder.parent.setOnClickListener(v -> {
-            Uri uri = Uri.parse("https://fcl-team.github.io/pages/documentation.html?path=" + item.getPath());
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            getContext().startActivity(intent);
+            AndroidUtils.openLink(getContext(), "https://fcl-team.github.io/pages/documentation.html?path=" + item.getPath());
         });
         viewHolder.title.setText(item.getTitle());
         viewHolder.subtitle.setText(item.getSubtitle());

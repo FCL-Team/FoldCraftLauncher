@@ -450,7 +450,7 @@
     <string name="jar_executor_crash_title">مجری کوزه سقوط کرد</string>
     <string name="jar_executor_crash_reason">تحلیل دلیل خرابی Jar Executor اکنون پشتیبانی نمی‌شود.</string>
 
-    <string name="launch">راه اندازی</string>
+    <string name="launch_pojav">راه اندازی</string>
     <string name="launch_error_java">شما از یک نسخه جاوا منسوخ استفاده می کنید، آیا مطمئن هستید که می خواهید ادامه دهید؟</string>
     <string name="launch_error_java_auto">انتخاب خودکار</string>
     <string name="launch_error_java_continue">ادامه هید</string>

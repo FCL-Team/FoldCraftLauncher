@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -146,7 +147,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
             dismiss();
         }
         if (v == netdisk) {
-            FCLBridge.openLink(version.getNetdiskUrl());
+            AndroidUtils.openLink(getContext(), version.getNetdiskUrl());
             dismiss();
         }
     }
