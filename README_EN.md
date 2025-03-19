@@ -56,6 +56,11 @@ You should have received a copy of the GNU General Public License
 along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
+<h1 align="center">Contributors</h1>
+<a href="https://github.com/FCL-Team/FoldCraftLauncher/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FCL-Team/FoldCraftLauncher" />
+</a>
+
 <h1 align="center">Third Party Components</h1>
 FCL depends on the following open source projects:
 

@@ -57,6 +57,11 @@ You should have received a copy of the GNU General Public License
 along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
+<h1 align="center">贡献者</h1>
+<a href="https://github.com/FCL-Team/FoldCraftLauncher/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FCL-Team/FoldCraftLauncher" />
+</a>
+
 <h1 align="center">相关项目</h1>
 FCL离不开以下开源项目的帮助：
 
