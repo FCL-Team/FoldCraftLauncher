@@ -5,6 +5,10 @@ on:
     branches-ignore:
       - ''
   push:
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**.md'
+      - 'version_map.json'
     tags:
       - '*'
     branches-ignore:
