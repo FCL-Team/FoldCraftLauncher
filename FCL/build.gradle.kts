@@ -56,7 +56,7 @@ android {
             signingConfig = signingConfigs.getByName("FCLDebugKey")
         }
         configureEach {
-            resValue("string", "app_version", android.defaultConfig.versionName.toString())
+            resValue("string", "app_version", defaultConfig.versionName.toString())
             resValue("string", "curse_api_key", curseApiKey.toString())
             resValue("string", "oauth_api_key", oauthApiKey.toString())
         }

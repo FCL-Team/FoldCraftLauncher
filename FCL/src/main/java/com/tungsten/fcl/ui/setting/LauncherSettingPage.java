@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
@@ -406,7 +407,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
         }
         if (v == resetTheme2) {
-            ThemeEngine.getInstance().applyAndSave2(getContext(), getContext().getColor(R.color.default_theme_color));
+            ThemeEngine.getInstance().applyAndSave2(getContext(), Color.parseColor("#000000"));
         }
         if (v == fetchBackgroundColor || v == fetchBackgroundColor2) {
             boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
