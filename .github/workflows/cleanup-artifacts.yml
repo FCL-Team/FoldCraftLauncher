@@ -1,0 +1,12 @@
+name: Cleanup Artifacts
+on:
+  workflow_dispatch:
+
+jobs:
+  delete-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete all artifacts
+        uses: actions/delete-artifact@v4
+        with:
+          name: '*'
