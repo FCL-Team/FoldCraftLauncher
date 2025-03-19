@@ -6,6 +6,7 @@ on:
     tags:
       - '*'
     paths:
+      - '*'
       - '!.github/workflows/**'
       - '!**.md'
       - '!version_map.json'
