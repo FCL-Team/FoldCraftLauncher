@@ -15,33 +15,32 @@
 
 </div>
 
-> 你说得对,但是「FCL」是由FCL-Team开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统,在这里,被系统选中的人将被授予「JVM」。导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。
+- [Fold Craft Launcher](https://fcl-team.github.io/):
+  The software attempts to launch Minecraft: Java Edition on Android devices, allowing players to manage Games, Mods, Controls and More.
 
-- <a href="./README_EN.md">English</a>
-- FCL是一款使用[HMCL](https://github.com/HMCL-dev/HMCL)实现大部分功能， [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) 和 [Boat](https://github.com/AOF-Dev/Boat) 作为后端启动 Minecraft 的启动器，它能够在 Android 设备上运行 [Minecraft: Java Edition](https://www.minecraft.net/)。
-- **直接在Android设备上运行Minecraft: Java Edition**，支持模组和所有版本的游戏。
+- **Run Minecraft: Java Edition directly on your Android device**, with mod support and all versions of the Game.
 
-<h1 align="center">功能</h1>
+<h1 align="center">Features</h1>
 
-- [x] 运行所有版本的Minecraft: Java Edition
-- [x] 可以运行Forge、NeoForge、LiteLoader、OptiFine、Fabric、Quilt .....
-- [x] 内置Java 8、Java 11、Java 17 和 Java 21
-- [x] 虚拟鼠标
-- [x] 下载模组、整合包、材质包、存档和光影
-- [x] 使用光影 (需要使用VirGL/Zink/MG渲染器)
-- [x] 创建自定义按键
-- [x] 自定义启动器背景和颜色
-- [x] 以及更多功能!
+- [x] Run Minecraft on all versions
+- [x] Run Forge, NeoForge, LiteLoader, OptiFine, Fabric, Quilt and others
+- [x] Java 8, Java 11, Java 17 and Java 21
+- [x] Mouse Virtual
+- [x] Download Mods, ModPacks, ResourcePacks and Worlds
+- [x] Using Shaders (with VirGL/Zink)
+- [x] Create custom controllers
+- [x] Customizable launcher themes and colors
+- [x] And much more!
 
-<h1 align="center">截图</h1>
+<h1 align="center">Screenshots</h1>
 
 ![GameScreen1](/.github/images/ui_main_light.jpg)
 ![GameScreen2](/.github/images/ui_main_dark.jpg)
 ![GameScreen3](/.github/images/game.jpg)
 
-<h1 align="center">协议</h1>
+<h1 align="center">License</h1>
 
-FCL在 [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html) 协议下开源。
+The software is distributed under [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html).
 ```
 Fold Craft Launcher is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,8 +56,8 @@ You should have received a copy of the GNU General Public License
 along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
 ```
 
-<h1 align="center">相关项目</h1>
-FCL离不开以下开源项目的帮助：
+<h1 align="center">Third Party Components</h1>
+FCL depends on the following open source projects:
 
 >- [HMCL](https://github.com/HMCL-dev/HMCL)
 >- [Boat and related projects](https://github.com/AOF-Dev/Boat)
