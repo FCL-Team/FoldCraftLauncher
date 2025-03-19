@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete all artifacts
-        uses: geekyeggo/delete-artifact@v5.1.0
+        uses: geekyeggo/delete-artifact@v5
         with:
-          name: '*'
+          name: app-*
