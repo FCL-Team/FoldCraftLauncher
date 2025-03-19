@@ -3,12 +3,12 @@ name: Android CI
 on:
   pull_request:
   push:
-    paths-ignore:
-      - '.github/workflows/**'
-      - '**.md'
-      - 'version_map.json'
     tags:
       - '*'
+    paths:
+      - '!.github/workflows/**'
+      - '!**.md'
+      - '!version_map.json'
   workflow_dispatch:
 
 jobs:
