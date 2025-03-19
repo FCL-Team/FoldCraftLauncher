@@ -10,7 +10,7 @@
 ![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
 ![Release](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
 
-[![Discord](https://img.shields.io/badge/Discord-red)](https://discord.gg/ffhvuXTwyV)
+[![Discord](https://img.shields.io/badge/Discord-red?logo=discord&logoColor=white)](https://discord.gg/ffhvuXTwyV)
 [![QQ](https://img.shields.io/badge/QQ-green)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=LwxydGEvBZJnn09sXOjkQo9tuuLcYwx5&authKey=seyY5pPUCIHMWS5FqVryq926T0G2GarSXetpxxV9DJxBVt%2FPcg1vxN%2F%2FXpsCowyk&noverify=0&group_code=762054349)
 [![Sponsor](https://img.shields.io/badge/sponsor-blue?logo=GitHub-Sponsors)](https://afdian.com/@tungs)
 
@@ -50,9 +50,13 @@
   <img src="/.github/images/game.jpg" width="30%" alt="游戏画面">
 </div>
 
+---
+
 ## 📜 开源协议
 
 本项目采用 **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html)** 授权
+
+---
 
 ## 🤝 贡献与致谢
 ### 贡献者墙
@@ -61,7 +65,7 @@
 </a>
 
 ### 相关项目
->- [HMCL](https://github.com/HMCL-dev/HMCL)
->- [Boat and related projects](https://github.com/AOF-Dev/Boat)
->- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
->- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+- [HMCL](https://github.com/HMCL-dev/HMCL)
+- [Boat and related projects](https://github.com/AOF-Dev/Boat)
+- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
+- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
