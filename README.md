@@ -66,6 +66,6 @@
 
 ### 相关项目
 - [HMCL](https://github.com/HMCL-dev/HMCL)
-- [Boat and related projects](https://github.com/AOF-Dev/Boat)
-- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
+- [Boat 及其相关项目](https://github.com/AOF-Dev/Boat)
+- [PojavLauncher 及其相关项目](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
