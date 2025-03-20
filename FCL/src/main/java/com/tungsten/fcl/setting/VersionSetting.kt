@@ -189,7 +189,7 @@ class VersionSetting : Cloneable {
      * 1 - .minecraft/versions/&lt;version&gt;/<br></br>
      */
     val isolateGameDirProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "isolateGameDir", false)
+        SimpleBooleanProperty(this, "isolateGameDir", true)
     var isIsolateGameDir: Boolean
         get() = isolateGameDirProperty.get()
         set(isolate) {
