@@ -76,9 +76,10 @@ public class VersionListAdapter extends FCLAdapter {
             viewHolder.tag.setText(versionListItem.getTag());
         }
         viewHolder.subtitle.setText(versionListItem.getLibraries());
-        viewHolder.radioButton.setOnClickListener(view1 -> versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion()));
+        viewHolder.radioButton.setOnClickListener(v -> versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion()));
         viewHolder.delete.setOnClickListener(view1 -> Versions.deleteVersion(getContext(), versionListItem.getProfile(), versionListItem.getVersion()));
         viewHolder.subtitle.setTag(i);
+        view.setOnClickListener(v -> versionListItem.getProfile().setSelectedVersion(versionListItem.getVersion()));
         Task.supplyAsync(() -> {
             ModManager modManager = versionListItem.getProfile().getRepository().getModManager(versionListItem.getVersion());
             return modManager.getMods().size();
