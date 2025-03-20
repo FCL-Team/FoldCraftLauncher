@@ -46,7 +46,7 @@ public class ProcessService extends Service {
                 command
         );
         startProcess(config);
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     private boolean firstLog = true;
