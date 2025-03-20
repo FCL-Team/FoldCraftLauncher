@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1214,
-    "versionName": "1.2.1.4",
-    "date": "2025.03.15",
+    "versionCode": 1215,
+    "versionName": "1.2.1.5",
+    "date": "2025.03.20",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新主界面右侧UI以及调整一些页面的背景为纯透明\n2.Java列表根据版本自动排序\n3.修复选择与启动器自带的Java相同时无法生效的Bug\n4.调整部分UI颜色使其更加美观\n5.在启动器设置的主题色内添加自动提取背景色的功能\n6.修复执行Jar崩溃的Bug\n7.修复版本Json缺失Java信息(可能存在于某些1.6.4 Mite)导致的无法启动的Bug\n8.启动器内更新改为下载特定架构安装包而不是全架构包\n9.修复少量Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复启动器设置内开关全屏无法立即生效的Bug\n2.调整游戏内日志显示的文字颜色位黑色\n3.当无法跳转浏览器是自动复制链接\n4.当版本json内的id与文件名不一致时不再自动重命名\n5.游戏内自动保持屏幕常亮\n6.修复版本列表点击项目时无法选择版本的Bug\n7.当版本名过长时自动滚动显示\n8.修复重置次要主题色时颜色错误的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/584f4f55cb37",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.4/FCL-release-1.2.1.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/3a72ceeed073",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.5/FCL-release-1.2.1.5-all.apk"
   }
 ]
