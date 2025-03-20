@@ -17,7 +17,7 @@
 </div>
 
 🌍 **语言**  
-简体中文 | [English](./README_EN.md)
+简体中文 | [English](./README_EN.md) | [Русский язык](./README_RU.md)
 
 > 你说得对,但是「FCL」是由FCL-Team开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统,在这里,被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。
 
@@ -66,6 +66,6 @@
 
 ### 相关项目
 - [HMCL](https://github.com/HMCL-dev/HMCL)
-- [Boat and related projects](https://github.com/AOF-Dev/Boat)
-- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
+- [Boat 及其相关项目](https://github.com/AOF-Dev/Boat)
+- [PojavLauncher 及其相关项目](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
