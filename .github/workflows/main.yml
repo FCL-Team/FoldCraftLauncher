@@ -1,15 +1,16 @@
 name: Android CI
 
 on:
-  pull_request:
+  pull_request:  
   push:
+    branches-ignore:
+      - ''
     tags:
       - '*'
-    paths:
-      - '*'
-      - '!.github/workflows/**'
-      - '!**.md'
-      - '!version_map.json'
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**.md'
+      - 'version_map.json'
   workflow_dispatch:
 
 jobs:
@@ -58,7 +59,7 @@ jobs:
           path: FCL/build/outputs/apk/release/*
         #  retention-days: 1
 
-#only for fork
+  #only for fork
   DebugBuild:
     if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
     name: Build Debug
