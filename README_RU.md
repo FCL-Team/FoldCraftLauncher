@@ -17,33 +17,33 @@
 </div>
 
 🌍 **Язык**
-[简体中文](./README.md) | [English](./README_EN.md) | Русский язык
+[简体中文](./README.md) | [English](./README_EN.md) | Русский
 
-> ✨ **Project Introduction**  
-> 「Fold Craft Launcher」 is a Minecraft: Java Edition launcher for Android platforms developed by the FCL Team. Built upon the core functionalities of [HMCL](https://github.com/HMCL-dev/HMCL) and integrating the [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) and [Boat](https://github.com/AOF-Dev/Boat) backends, it enables users to enjoy Java Edition MC on mobile devices, supporting mod loading and operation across all versions.
+> ✨ **Описание проекта**
+> 「Fold Craft Launcher」 - это лаунчер Minecraft: Java Edition для платформ Android, разработанный командой FCL.  Основанный на ядре [HMCL](https://github.com/HMCL-dev/HMCL) и интегрирующий бэкенды [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) и [Boat](https://github.com/AOF-Dev/Boat), он позволяет пользователям наслаждаться Java Edition MC на мобильных устройствах, поддерживая загрузку модов и работу во всех версиях.
 
-## 🚀 Core Features
+## 🚀 Основные возможности
 
-✅ **Full Version Support**  
-- Native support for all Minecraft versions (including latest snapshots)
-- Mod loader support: Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
+✅ **Полная поддержка версий**
+- Поддержка всех версий Minecraft (включая последние снапшоты)
+- Поддержка загрузчиков модов: Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
 
-⚙️ **Key Highlights**  
-- Built-in multi-version Java runtimes (Java 8/11/17/21) with custom Java import support
-- Virtual mouse and customizable key mapping
-- Shaders support (requires VirGL/Zink/MG renderers)
-- Dynamic resource management (mods/modpacks/textures/shaders/saves)
-- Personalized theme customization (background/color schemes)
-- Supports [renderer pluginization](https://github.com/ShirosakiMio/FCLRendererPlugin)
+⚙️ **Ключевые особенности**
+- Встроенные Java-рантаймы (Java 8/11/17/21) с поддержкой импорта пользовательских Java
+- Виртуальная мышь и переназначение клавиш
+- Поддержка шейдеров (требуются рендереры VirGL/Zink/MG)
+- Динамическое управление ресурсами (моды/модпаки/текстуры/шейдеры/сохранения)
+- Персонализированная настройка темы (фон/цветовые схемы)
+- Поддерживает [плагины для рендерера](https://github.com/ShirosakiMio/FCLRendererPlugin)
 
 ---
 
 ## 🎮 Скриншоты
 
 <div align="center">
-  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="Light Theme">
-  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="Dark Theme">
-  <img src="/.github/images/game.jpg" width="30%" alt="Gameplay Preview">
+  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="Светлая тема">
+  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="Темная тема">
+  <img src="/.github/images/game.jpg" width="30%" alt="Превью игрового процесса">
 </div>
 
 ---
