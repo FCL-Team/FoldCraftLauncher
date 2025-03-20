@@ -9,62 +9,59 @@
 [![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml)
 ![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
 ![Release](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
-[![Discord](https://img.shields.io/badge/Discord-red)](https://discord.gg/ffhvuXTwyV)
+
+[![Discord](https://img.shields.io/badge/Discord-red?logo=discord&logoColor=white)](https://discord.gg/ffhvuXTwyV)
 [![QQ](https://img.shields.io/badge/QQ-green)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=LwxydGEvBZJnn09sXOjkQo9tuuLcYwx5&authKey=seyY5pPUCIHMWS5FqVryq926T0G2GarSXetpxxV9DJxBVt%2FPcg1vxN%2F%2FXpsCowyk&noverify=0&group_code=762054349)
 [![Sponsor](https://img.shields.io/badge/sponsor-blue?logo=GitHub-Sponsors)](https://afdian.com/@tungs)
 
 </div>
 
-- [Fold Craft Launcher](https://fcl-team.github.io/):
-  The software attempts to launch Minecraft: Java Edition on Android devices, allowing players to manage Games, Mods, Controls and More.
+🌍 **Language**  
+[简体中文](./README.md) | English | [Русский язык](./README_RU.md)
 
-- **Run Minecraft: Java Edition directly on your Android device**, with mod support and all versions of the Game.
+> ✨ **Project Introduction**  
+> 「Fold Craft Launcher」 is a Minecraft: Java Edition launcher for Android platforms developed by the FCL Team. Built upon the core functionalities of [HMCL](https://github.com/HMCL-dev/HMCL) and integrating the [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) and [Boat](https://github.com/AOF-Dev/Boat) backends, it enables users to enjoy Java Edition MC on mobile devices, supporting mod loading and operation across all versions.
 
-<h1 align="center">Features</h1>
+## 🚀 Core Features
 
-- [x] Run Minecraft on all versions
-- [x] Run Forge, NeoForge, LiteLoader, OptiFine, Fabric, Quilt and others
-- [x] Java 8, Java 11, Java 17 and Java 21
-- [x] Mouse Virtual
-- [x] Download Mods, ModPacks, ResourcePacks and Worlds
-- [x] Using Shaders (with VirGL/Zink)
-- [x] Create custom controllers
-- [x] Customizable launcher themes and colors
-- [x] And much more!
+✅ **Full Version Support**  
+- Native support for all Minecraft versions (including latest snapshots)
+- Mod loader support: Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
 
-<h1 align="center">Screenshots</h1>
+⚙️ **Key Highlights**  
+- Built-in multi-version Java runtimes (Java 8/11/17/21) with custom Java import support
+- Virtual mouse and customizable key mapping
+- Shaders support (requires VirGL/Zink/MG renderers)
+- Dynamic resource management (mods/modpacks/textures/shaders/saves)
+- Personalized theme customization (background/color schemes)
+- Supports [renderer pluginization](https://github.com/ShirosakiMio/FCLRendererPlugin)
 
-![GameScreen1](/.github/images/ui_main_light.jpg)
-![GameScreen2](/.github/images/ui_main_dark.jpg)
-![GameScreen3](/.github/images/game.jpg)
+---
 
-<h1 align="center">License</h1>
+## 🎮 Screenshots
 
-The software is distributed under [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html).
-```
-Fold Craft Launcher is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+<div align="center">
+  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="Light Theme">
+  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="Dark Theme">
+  <img src="/.github/images/game.jpg" width="30%" alt="Gameplay Preview">
+</div>
 
-Fold Craft Launcher is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+---
 
-You should have received a copy of the GNU General Public License
-along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
-```
+## 📜 License
 
-<h1 align="center">Contributors</h1>
+This project is licensed under **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html)**
+
+---
+
+## 🤝 Contributions & Acknowledgements
+### Contributors Wall
 <a href="https://github.com/FCL-Team/FoldCraftLauncher/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=FCL-Team/FoldCraftLauncher" />
 </a>
 
-<h1 align="center">Third Party Components</h1>
-FCL depends on the following open source projects:
-
->- [HMCL](https://github.com/HMCL-dev/HMCL)
->- [Boat and related projects](https://github.com/AOF-Dev/Boat)
->- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
->- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+### Related Projects
+- [HMCL](https://github.com/HMCL-dev/HMCL)
+- [Boat and related projects](https://github.com/AOF-Dev/Boat)
+- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
+- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
