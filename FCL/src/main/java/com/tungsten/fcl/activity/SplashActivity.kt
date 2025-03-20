@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import com.mio.JavaManager
 import com.mio.util.ImageUtil
@@ -130,13 +131,10 @@ class SplashActivity : FCLActivity() {
                 Logging.LOG.log(Level.WARNING, e.message)
             }
         }.whenComplete(Schedulers.androidUIThread()) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, 0, Color.TRANSPARENT)
-            } else {
-                overridePendingTransition(0, 0)
-            }
+            startActivity(
+                Intent(this, MainActivity::class.java),
+                ActivityOptionsCompat.makeCustomAnimation(this, 0, 0).toBundle()
+            )
             finish()
         }.start()
     }
