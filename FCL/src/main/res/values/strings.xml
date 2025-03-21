@@ -1016,7 +1016,7 @@
     <string name="mod_check_mcef">MCEF mod (%s) cannot work on Android. It is usually used as a dependency of WebDisplays/In-game Browser.</string>
     <string name="mod_check_valkyrienskies">Valkyrien Skies/Valkyrien Warfare mod (%s) cannot work directly in single player mode. You must use a server, otherwise it will crash the game.</string>
     <string name="mod_check_yes_steve_model">Yes Steve Model mod (%s) 2.2.2+ cannot work on Android.</string>
-    <string name="mod_check_imblocker">IMBlocker (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) is not for Android. It must make the game crash.</string>
 
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>
