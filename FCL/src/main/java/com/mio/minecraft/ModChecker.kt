@@ -3,6 +3,7 @@ package com.mio.minecraft
 import android.content.Context
 import com.mio.util.AndroidUtil
 import com.tungsten.fcl.R
+import com.tungsten.fclauncher.plugins.FFmpegPlugin
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
 import kotlin.jvm.Throws
@@ -60,6 +61,27 @@ class ModChecker(val context: Context) {
                     it.file.toFile().name
                 )
             )
+        }
+        add("ingameime") {
+            throw ModCheckException(
+                context.getString(
+                    R.string.mod_check_imblocker,
+                    it.file.toFile().name
+                )
+            )
+        }
+        add("replaymod") {
+            FFmpegPlugin.discover(context)
+            if (!FFmpegPlugin.isAvailable) {
+                throw ModCheckException(
+                    context.getString(
+                        R.string.mod_check_replay,
+                        it.file.toFile().name,
+                        "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/ffmpeg/Pojav.FFmpeg.Plugin.1.1.APK",
+                        "https://pan.quark.cn/s/6201574edb62"
+                    )
+                )
+            }
         }
     }
 
