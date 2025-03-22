@@ -187,6 +187,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     }
 
     @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        if (menu != null && menuType == MenuType.GAME) {
+            if (menu.getInput().handleGenericMotionEvent(event)) {
+                return true;
+            }
+        }
+        return super.dispatchGenericMotionEvent(event);
+    }
+
+    @Override
     protected void onPostResume() {
         super.onPostResume();
         if (textureView != null && textureView.getSurfaceTexture() != null) {

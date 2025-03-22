@@ -152,6 +152,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("top.fifthlight.touchcontroller:proxy-client-android:0.0.2")
     implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3")
 }
 
 tasks.register("updateMap") {
