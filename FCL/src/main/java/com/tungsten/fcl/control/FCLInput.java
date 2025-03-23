@@ -331,4 +331,8 @@ public class FCLInput implements View.OnCapturedPointerListener {
         if (gamepad != null)
             gamepad.resetMapper();
     }
+
+    public Gamepad getGamepad() {
+        return gamepad;
+    }
 }

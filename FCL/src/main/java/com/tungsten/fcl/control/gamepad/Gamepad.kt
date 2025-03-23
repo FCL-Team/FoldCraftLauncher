@@ -30,7 +30,7 @@ class Gamepad(val context: Context, val fclInput: FCLInput) : GamepadHandler {
             .remapRightTrigger(true)
             .remapDpad(true)
     )
-    var currentMap: GamepadMap
+    lateinit var currentMap: GamepadMap
     private var xAxis = 0.0f
     private var yAxis = 0.0f
     private var axisZ = 0.0f
@@ -63,6 +63,10 @@ class Gamepad(val context: Context, val fclInput: FCLInput) : GamepadHandler {
 
     init {
         Companion.fclInput = WeakReference(fclInput)
+        refreshMapper()
+    }
+
+    fun refreshMapper() {
         val file = File(FCLPath.FILES_DIR, "gamepad.json")
         if (file.exists()) {
             try {
@@ -73,6 +77,11 @@ class Gamepad(val context: Context, val fclInput: FCLInput) : GamepadHandler {
         } else {
             currentMap = GamepadMap.getDefaultGameMap()
         }
+    }
+
+    fun saveMapper() {
+        val file = File(FCLPath.FILES_DIR, "gamepad.json")
+        file.writeText(Gson().toJson(currentMap))
     }
 
     fun handleMotionEventInput(event: MotionEvent): Boolean {

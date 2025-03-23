@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
 import com.mio.TouchController;
+import com.mio.ui.dialog.GamepadMapDialog;
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.FCLApplication;
@@ -765,7 +766,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             getInput().resetMapper();
         }
         if (v == gamepadButtonBinding) {
-
+            if (fclInput.getGamepad() != null) {
+                new GamepadMapDialog(getActivity(), fclInput).show();
+            }
         }
         if (v == forceExit) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
