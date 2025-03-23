@@ -24,6 +24,8 @@ public class FCLActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ThemeEngine.getInstance().setupThemeEngine(this);
+        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
         super.onCreate(savedInstanceState);
         boolean hasPermission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -34,15 +36,11 @@ public class FCLActivity extends AppCompatActivity {
         if (hasPermission) {
             FCLPath.loadPaths(this);
         }
-        ThemeEngine.getInstance().setupThemeEngine(this);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
-        }
     }
 
     @Override
@@ -59,7 +57,6 @@ public class FCLActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
     }
 
     @Override

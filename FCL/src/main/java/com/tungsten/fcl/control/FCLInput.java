@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.control.gamepad.Gamepad;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
@@ -28,6 +29,13 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     private final int screenWidth;
     private final int screenHeight;
+
+    private Gamepad gamepad;
+    private int currentDirection = -1;
+    private long lastFrameTime;
+    private Choreographer choreographer;
+    private float lastAxisZ;
+    private float lastAxisRZ;
 
     public static final HashMap<Integer, Integer> MOUSE_MAP = new HashMap<Integer, Integer>() {
         {
@@ -136,15 +144,19 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     @Override
     public boolean onCapturedPointer(View view, MotionEvent event) {
-        return handleMouse(event);
+        return handleMouse(event, 0);
     }
 
-    private boolean handleMouse(MotionEvent event) {
-        int deltaX = 0;
-        int deltaY = 0;
+    private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
+        int deltaX;
+        int deltaY;
         if (event != null) {
             deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
             deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
+        } else {
+            GameMenu gameMenu = menu;
+            deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+            deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
         }
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
             int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * 2));
@@ -203,6 +215,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
             }
             return true;
         }
+        if (Gamepad.isGamepadEvent(event)) {
+            if (gamepad == null) {
+                gamepad = new Gamepad(menu.getActivity(), this);
+            }
+            return gamepad.handleKeyEvent(event);
+        }
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
         sendKeyEvent(fclKeycode, event.getAction() == KeyEvent.ACTION_DOWN);
@@ -212,4 +230,109 @@ public class FCLInput implements View.OnCapturedPointerListener {
         return true;
     }
 
+    public boolean handleGenericMotionEvent(MotionEvent event) {
+        if (Gamepad.isGamepadEvent(event)) {
+            if (gamepad == null) {
+                gamepad = new Gamepad(menu.getActivity(), this);
+            }
+            if (choreographer == null) {
+                choreographer = Choreographer.getInstance();
+                Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
+                    @Override
+                    public void doFrame(long frameTimeNanos) {
+                        doTick();
+                        choreographer.postFrameCallback(this);
+                    }
+                };
+                choreographer.postFrameCallback(frameCallback);
+            }
+            return gamepad.handleMotionEventInput(event);
+        }
+        return false;
+    }
+
+    public void handleLeftJoyStick(float xAxis, float yAxis) {
+        double dist = Math.hypot(Math.abs(xAxis), Math.abs(yAxis));
+        if (dist >= menu.getMenuSetting().getGamepadDeadzone()) {
+            double degrees = Math.toDegrees(-Math.atan2(yAxis, xAxis));
+            if (degrees < 0) {
+                degrees += 360;
+            }
+            int lastDirection = currentDirection;
+            currentDirection = ((int) ((degrees + 22.5) / 45)) % 8;
+            sendDirection(lastDirection, false);
+            sendDirection(currentDirection, true);
+        } else {
+            sendDirection(0, false);
+            sendDirection(2, false);
+            sendDirection(4, false);
+            sendDirection(6, false);
+        }
+    }
+
+    private void sendDirection(int direction, boolean press) {
+        switch (direction) {
+            case 0:
+                gamepad.getCurrentMap().DIRECTION_RIGHT.update(press);
+                break;
+            case 1:
+                gamepad.getCurrentMap().DIRECTION_RIGHT.update(press);
+                gamepad.getCurrentMap().DIRECTION_FORWARD.update(press);
+                break;
+            case 2:
+                gamepad.getCurrentMap().DIRECTION_FORWARD.update(press);
+                break;
+            case 3:
+                gamepad.getCurrentMap().DIRECTION_FORWARD.update(press);
+                gamepad.getCurrentMap().DIRECTION_LEFT.update(press);
+                break;
+            case 4:
+                gamepad.getCurrentMap().DIRECTION_LEFT.update(press);
+                break;
+            case 5:
+                gamepad.getCurrentMap().DIRECTION_BACKWARD.update(press);
+                gamepad.getCurrentMap().DIRECTION_LEFT.update(press);
+                break;
+            case 6:
+                gamepad.getCurrentMap().DIRECTION_BACKWARD.update(press);
+                break;
+            case 7:
+                gamepad.getCurrentMap().DIRECTION_BACKWARD.update(press);
+                gamepad.getCurrentMap().DIRECTION_RIGHT.update(press);
+                break;
+        }
+    }
+
+    public void handleRightJoyStick(float axisZ, float axisRZ) {
+        double dist = Math.hypot(Math.abs(axisZ), Math.abs(axisRZ));
+        if (dist < menu.getMenuSetting().getGamepadDeadzone()) {
+            lastAxisZ = 0;
+            lastAxisRZ = 0;
+            return;
+        }
+        if (lastAxisZ != axisZ || lastAxisRZ != axisRZ) {
+            lastAxisZ = axisZ;
+            lastAxisRZ = axisRZ;
+            doTick();
+        }
+    }
+
+    private void doTick() {
+        long newFrameTime = System.nanoTime();
+        if (lastAxisZ != 0 || lastAxisRZ != 0) {
+            newFrameTime = System.nanoTime();
+            float deltaTimeScale = ((newFrameTime - lastFrameTime) / 16666666f);
+            handleMouse(null, deltaTimeScale);
+        }
+        lastFrameTime = newFrameTime;
+    }
+
+    public void resetMapper() {
+        if (gamepad != null)
+            gamepad.resetMapper();
+    }
+
+    public Gamepad getGamepad() {
+        return gamepad;
+    }
 }
