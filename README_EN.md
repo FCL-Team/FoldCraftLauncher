@@ -19,8 +19,12 @@
 🌍 **Language**  
 [简体中文](./README.md) | English | [Русский язык](./README_RU.md)
 
+> I agree with what you say, but「FCL」is a Minecraft Java Edition launcher made by FCL-Team, based on [HMCL](https://github.com/HMCL-dev/HMCL) core features, with [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) and [Boat](https://github.com/AOF-Dev/Boat) backends. The launcher can be used in a system called「Android」, where the person selected by the system will be authorized to use「JVM」and operate the power of「Java」. You are going to act a mysterious user called「Greenhand」. During the freely use of the launcher, you can install different versions, make various mods work together and find out the reason of crashes, discover the truth of「xxException:」.  
+
 > ✨ **Project Introduction**  
 > 「Fold Craft Launcher」 is a Minecraft: Java Edition launcher for Android platforms developed by the FCL Team. Built upon the core functionalities of [HMCL](https://github.com/HMCL-dev/HMCL) and integrating the [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) and [Boat](https://github.com/AOF-Dev/Boat) backends, it enables users to enjoy Java Edition MC on mobile devices, supporting mod loading and operation across all versions.
+
+---
 
 ## 🚀 Core Features
 
