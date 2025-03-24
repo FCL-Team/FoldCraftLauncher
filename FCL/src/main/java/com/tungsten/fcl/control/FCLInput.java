@@ -154,13 +154,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
             deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
             deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
         } else {
-            GameMenu gameMenu = menu;
-            deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
-            deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * gameMenu.getMenuSetting().getMouseSensitivity());
+            deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
+            deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
         }
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            int targetX = Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * 2));
-            int targetY = Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * 2));
+            int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
+            int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
             setPointerId(EXTERNAL_MOUSE_ID);
             setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
             setPointerId(null);
@@ -216,9 +215,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
             return true;
         }
         if (Gamepad.isGamepadEvent(event)) {
-            if (gamepad == null) {
-                gamepad = new Gamepad(menu.getActivity(), this);
-            }
+            checkGamepad();
             return gamepad.handleKeyEvent(event);
         }
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
@@ -232,9 +229,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public boolean handleGenericMotionEvent(MotionEvent event) {
         if (Gamepad.isGamepadEvent(event)) {
-            if (gamepad == null) {
-                gamepad = new Gamepad(menu.getActivity(), this);
-            }
+            checkGamepad();
             if (choreographer == null) {
                 choreographer = Choreographer.getInstance();
                 Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {
@@ -330,6 +325,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
     public void resetMapper() {
         if (gamepad != null)
             gamepad.resetMapper();
+    }
+
+    public void checkGamepad() {
+        if (gamepad == null) {
+            gamepad = new Gamepad(menu.getActivity(), this);
+        }
     }
 
     public Gamepad getGamepad() {
