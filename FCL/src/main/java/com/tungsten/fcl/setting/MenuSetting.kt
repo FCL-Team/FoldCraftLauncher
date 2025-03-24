@@ -164,6 +164,14 @@ class MenuSetting {
             mouseSensitivityProperty.set(mouseSensitivity)
         }
 
+    val mouseSensitivityCursorProperty: DoubleProperty =
+        SimpleDoubleProperty(this, "mouseSensitivityCursor", 2.0)
+    var mouseSensitivityCursor: Double
+        get() = mouseSensitivityCursorProperty.get()
+        set(mouseSensitivityCursor) {
+            mouseSensitivityCursorProperty.set(mouseSensitivityCursor)
+        }
+
     val mouseSizeProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseSize", 15)
     var mouseSize: Int
         get() = mouseSizeProperty.get()
@@ -195,6 +203,7 @@ class MenuSetting {
         gyroscopeSensitivityProperty.addListener(listener)
         mouseMoveModeProperty.addListener(listener)
         mouseSensitivityProperty.addListener(listener)
+        mouseSensitivityCursorProperty.addListener(listener)
         mouseSizeProperty.addListener(listener)
         itemBarScaleProperty.addListener(listener)
         windowScaleProperty.addListener(listener)
@@ -225,6 +234,7 @@ class MenuSetting {
                 addProperty("gyroscopeSensitivity", src.gyroscopeSensitivity)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
                 addProperty("mouseSensitivity", src.mouseSensitivity)
+                addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
                 addProperty("mouseSize", src.mouseSize)
                 addProperty("itemBarScale", src.itemBarScale)
                 addProperty("windowScale", src.windowScale)
@@ -256,6 +266,7 @@ class MenuSetting {
                 ms.gyroscopeSensitivity = json["gyroscopeSensitivity"]?.asInt ?: 10
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
+                ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
                 ms.mouseSize = json["mouseSize"]?.asInt ?: 15
                 ms.itemBarScale = json["itemBarScale"]?.asInt ?: 0
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0

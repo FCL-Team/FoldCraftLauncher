@@ -526,6 +526,7 @@
     <string name="menu_settings_mouse_mode_click">点击</string>
     <string name="menu_settings_mouse_mode_slide">拖动</string>
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">鼠标灵敏度（当指针可见时）</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
