@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1215,
-    "versionName": "1.2.1.5",
-    "date": "2025.03.20",
+    "versionCode": 1216,
+    "versionName": "1.2.1.6",
+    "date": "2025.03.25",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复启动器设置内开关全屏无法立即生效的Bug\n2.调整游戏内日志显示的文字颜色位黑色\n3.当无法跳转浏览器时自动复制链接\n4.当版本json内的id与文件名不一致时不再自动重命名\n5.游戏内自动保持屏幕常亮\n6.修复版本列表点击项目时无法选择版本的Bug\n7.当版本名过长时自动滚动显示\n8.修复重置次要主题色时颜色错误的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加手柄支持,允许在游戏内重新映射\n2.添加ingameime模组检查\n3.适配新版本FFmpeg插件,未安装时自动提示并引导安装\n4.支持自定义物理鼠标在游戏外的速度\n5.修复少量bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/3a72ceeed073",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.5/FCL-release-1.2.1.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/0dc51de39eb2",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.6/FCL-release-1.2.1.6-all.apk"
   }
 ]
