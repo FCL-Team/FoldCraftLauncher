@@ -620,6 +620,7 @@
     <string name="menu_settings_mouse_mode_click">Тачпад</string>
     <string name="menu_settings_mouse_mode_slide">Обычный</string>
     <string name="menu_settings_mouse_sensitivity">Чувствительность мыши</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">Чувствительность мыши (при отображении курсора)</string>
     <string name="menu_settings_mouse_size">Размер мыши</string>
     <string name="menu_settings_gamepad">Геймпад</string>
     <string name="menu_settings_gamepad_reset_mapper">Сбросить настройки управления</string>
@@ -1037,6 +1038,7 @@
     <string name="mod_check_valkyrienskies">Мод Valkyrien Skies/Valkyrien Warfare (%s) не работает в одиночной игре напрямую. Необходим сервер, иначе игра вылетит.</string>
     <string name="mod_check_yes_steve_model">Мод Yes Steve Model (%s) версии 2.2.2 и выше не работает на Android.</string>
     <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) не предназначен для Android. Он вызовет сбой игры.</string>
+    <string name="mod_check_replay">Replay (%s) требует плагин FFmpeg. Он не установлен. Установите из Google Play Store или здесь (%s или %s) (зажмите для копирования).</string>
 
     <string name="internal">Встроенная</string>
     <string name="import_java">Импорт Java</string>
