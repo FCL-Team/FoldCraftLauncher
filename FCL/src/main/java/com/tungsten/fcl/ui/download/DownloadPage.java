@@ -115,6 +115,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sortSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             listLayout.setVisibility(loading ? View.GONE : View.VISIBLE);
+            listView.setVisibility(loading ? View.GONE : View.VISIBLE);
             if (loading) {
                 retry.setVisibility(View.GONE);
             }
@@ -126,6 +127,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             retry.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             listLayout.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
         });
     }
 
