@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1216,
-    "versionName": "1.2.1.6",
-    "date": "2025.03.25",
+    "versionCode": 1217,
+    "versionName": "1.2.1.7",
+    "date": "2025.03.30",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加手柄支持,允许在游戏内重新映射\n2.添加ingameime模组检查\n3.适配新版本FFmpeg插件,未安装时自动提示并引导安装\n4.支持自定义物理鼠标在游戏外的速度\n5.修复少量bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载页面搜索时UI错误显示的Bug\n2.修复下载界面页码数计算错误的Bug\n3.修复微软账号登录后可能无法正常刷新token导致正版验证无法通过的Bug\n4.修复部分设备上由于配置文件损坏无法启动启动器的Bug\n5.修复部分设备无法正常使用手柄的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/0dc51de39eb2",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.6/FCL-release-1.2.1.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/02340a7c6134",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.7/FCL-release-1.2.1.7-all.apk"
   }
 ]
