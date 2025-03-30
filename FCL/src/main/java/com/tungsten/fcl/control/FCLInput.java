@@ -184,28 +184,27 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public boolean handleKeyEvent(KeyEvent event) {
         int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
-        if (event.getKeyCode() == KeyEvent.KEYCODE_UNKNOWN)
+        if (event.getKeyCode() == KeyEvent.KEYCODE_UNKNOWN || event.getAction() == KeyEvent.ACTION_MULTIPLE)
             return true;
-        if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN)
+        if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)
             return false;
-        if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)
-            return false;
-        if (event.getAction() == KeyEvent.ACTION_MULTIPLE)
-            return true;
         if (event.getAction() == KeyEvent.ACTION_UP && (event.getFlags() & KeyEvent.FLAG_CANCELED) != 0)
             return true;
+        //mouse button right
         if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE || (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
                 sendKeyEvent(MOUSE_RIGHT, event.getAction() == KeyEvent.ACTION_DOWN);
                 return true;
             }
         }
+        //soft keyboard enter
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 return true;
             menu.getTouchCharInput().dispatchKeyEvent(event);
             return true;
         }
+        // shift + enter switch soft keyboard state
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
             if (!menu.getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !menu.getTouchCharInput().isEnabled()) {
                 menu.getTouchCharInput().switchKeyboardState();
@@ -214,10 +213,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
             }
             return true;
         }
+        //gamepad
         if (Gamepad.isGamepadEvent(event)) {
             checkGamepad();
             return gamepad.handleKeyEvent(event);
         }
+        //keyboard
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
         sendKeyEvent(fclKeycode, event.getAction() == KeyEvent.ACTION_DOWN);

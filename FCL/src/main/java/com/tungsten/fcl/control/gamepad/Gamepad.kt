@@ -57,7 +57,7 @@ class Gamepad(val context: Context, val fclInput: FCLInput) : GamepadHandler {
                         || ((event.device != null) && ((event.device.sources and InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD))
             val isDpadEvent =
                 event.isFromSource(InputDevice.SOURCE_GAMEPAD) && (event.device == null || event.device.keyboardType != InputDevice.KEYBOARD_TYPE_ALPHABETIC)
-            return isGamepad && isDpadEvent
+            return isGamepad || isDpadEvent
         }
     }
 
