@@ -249,7 +249,7 @@ public class FCLauncher {
             }
             envList.forEach(env -> {
                 String[] split = env.split("=");
-                if (split[0].equals("DLOPEN")) {
+                if (split[0].equals("DLOPEN") || split.length < 2) {
                     return;
                 }
                 if (split[0].equals("LIB_MESA_NAME")) {

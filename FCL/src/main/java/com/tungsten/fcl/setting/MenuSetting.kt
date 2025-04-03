@@ -109,6 +109,14 @@ class MenuSetting {
             gestureModeProperty.set(gestureMode)
         }
 
+    val disableLeftTouchProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "disableLeftTouch", false)
+    var isDisableLeftTouch: Boolean
+        get() = disableLeftTouchProperty.get()
+        set(v) {
+            disableLeftTouchProperty.set(v)
+        }
+
     val enableGyroscopeProperty: BooleanProperty =
         SimpleBooleanProperty(this, "enableGyroscope", false)
     var isEnableGyroscope: Boolean
@@ -199,6 +207,7 @@ class MenuSetting {
         disableGestureProperty.addListener(listener)
         disableBEGestureProperty.addListener(listener)
         gestureModeProperty.addListener(listener)
+        disableLeftTouchProperty.addListener(listener)
         enableGyroscopeProperty.addListener(listener)
         gyroscopeSensitivityProperty.addListener(listener)
         mouseMoveModeProperty.addListener(listener)
@@ -230,6 +239,7 @@ class MenuSetting {
                 addProperty("disableGesture", src.isDisableGesture)
                 addProperty("disableBEGesture", src.isDisableBEGesture)
                 addProperty("gestureMode", src.gestureMode.id)
+                addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
                 addProperty("gyroscopeSensitivity", src.gyroscopeSensitivity)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
@@ -262,6 +272,7 @@ class MenuSetting {
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false
                 ms.isDisableBEGesture = json["disableBEGesture"]?.asBoolean ?: false
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
+                ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false
                 ms.gyroscopeSensitivity = json["gyroscopeSensitivity"]?.asInt ?: 10
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)

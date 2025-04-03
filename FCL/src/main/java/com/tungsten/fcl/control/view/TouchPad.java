@@ -218,6 +218,9 @@ public class TouchPad extends View {
         } else {
             initialX = gameMenu.getPointerX();
             initialY = gameMenu.getPointerY();
+            if (gameMenu.getMenuSetting().isDisableLeftTouch() && event.getX() <= (float) screenWidth / 2) {
+                return true;
+            }
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     currentPointerID = event.getPointerId(0);
