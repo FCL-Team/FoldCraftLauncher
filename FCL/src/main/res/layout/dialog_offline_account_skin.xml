@@ -97,7 +97,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
-                            app:auto_text_tint="true"
+                            app:use_theme_color="true"
                             android:text="@string/account_skin"/>
 
                         <View
@@ -111,7 +111,7 @@
                             android:layout_height="24dp"
                             android:src="@drawable/ic_baseline_edit_24"
                             android:layout_gravity="center"
-                            app:auto_tint="true"
+                            app:use_theme_color="true"
                             app:no_padding="true"/>
 
                     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
@@ -134,7 +134,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
-                            app:auto_text_tint="true"
+                            app:use_theme_color="true"
                             android:text="@string/account_cape"/>
 
                         <View
@@ -148,7 +148,7 @@
                             android:layout_height="24dp"
                             android:src="@drawable/ic_baseline_edit_24"
                             android:layout_gravity="center"
-                            app:auto_tint="true"
+                            app:use_theme_color="true"
                             app:no_padding="true"/>
 
                     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
