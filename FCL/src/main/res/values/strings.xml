@@ -538,6 +538,7 @@
     <string name="menu_settings_debug">Debug</string>
     <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
     <string name="menu_settings_disable_gesture">Disable Gesture</string>
+    <string name="menu_settings_disable_left_touch">Disable left half screen touch</string>
     <string name="menu_settings_force_exit">Force Exit</string>
     <string name="menu_settings_force_exit_button">Exit</string>
     <string name="menu_settings_force_exit_msg">Are you sure to force exit?</string>

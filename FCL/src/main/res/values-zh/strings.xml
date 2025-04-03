@@ -507,6 +507,7 @@
     <string name="menu_settings_debug">调试</string>
     <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
     <string name="menu_settings_disable_gesture">禁用手势</string>
+    <string name="menu_settings_disable_left_touch">禁用左半屏触控</string>
     <string name="menu_settings_force_exit">强制退出</string>
     <string name="menu_settings_force_exit_button">退出</string>
     <string name="menu_settings_force_exit_msg">你确定要强制退出吗？</string>
