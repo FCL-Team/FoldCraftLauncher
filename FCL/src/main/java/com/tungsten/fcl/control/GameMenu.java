@@ -282,6 +282,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void initLeftMenu() {
+        FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
@@ -300,6 +301,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageButtonStyle = findViewById(R.id.manage_button_style);
         manageDirectionStyle = findViewById(R.id.manage_direction_style);
 
+        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
