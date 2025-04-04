@@ -981,4 +981,5 @@
     <string name="select_renderer">选择渲染器</string>
     <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
     <string name="launch">启动</string>
+    <string name="tip_hide_menu_view">菜单按键已隐藏，按下音量键打开菜单。</string>
 </resources>

@@ -129,10 +129,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private TouchController touchController;
 
-    private boolean isHideMenu = false;
-
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
+    }
+
+    public MenuView getMenuView() {
+        return menuView;
     }
 
     public FCLActivity getActivity() {
@@ -324,15 +326,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             getController().addListener(i -> refreshViewGroupList(currentViewGroupSpinner));
         });
 
-        editLayout.visibilityProperty().bind(editModeProperty);
-
         hideAllViewsProperty.addListener(i -> {
             if (isHideAllViews()) {
-                ((DrawerLayout) getLayout()).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            } else if (!isHideMenu) {
-                ((DrawerLayout) getLayout()).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_SHORT).show();
             }
         });
+
+        editLayout.visibilityProperty().bind(editModeProperty);
 
         manageViewGroups.setOnClickListener(this);
         addButton.setOnClickListener(this);
@@ -391,9 +391,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         hideMenuSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             menuView.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
-            isHideMenu = isChecked;
-            if (!isHideAllViews()) {
-                ((DrawerLayout) getLayout()).setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            if (isChecked) {
+                Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_SHORT).show();
             }
         });
 

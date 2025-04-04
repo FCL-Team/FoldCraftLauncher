@@ -8,17 +8,21 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -180,6 +184,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, true);
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, false);
                     return true;
+                } else if ((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP) && event.getAction() == KeyEvent.ACTION_UP) {
+                    MenuView menuView = ((GameMenu) menu).getMenuView();
+                    if (menuView.getAlpha() == 0 || menuView.getVisibility() == View.INVISIBLE) {
+                        ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.START, true);
+                        ((DrawerLayout) menu.getLayout()).openDrawer(GravityCompat.END, true);
+                    }
                 }
             }
         }
