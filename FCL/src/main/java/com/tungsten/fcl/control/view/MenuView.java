@@ -166,14 +166,12 @@ public class MenuView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!gameMenu.getMenuSetting().isLockMenuView()) {
-                    float targetX = Math.max(0, Math.min(screenWidth - getMeasuredWidth(), getX() + event.getX() - downX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getMeasuredHeight(), getY() + event.getY() - downY));
-                    setX(targetX);
-                    setY(targetY);
-                    gameMenu.getMenuSetting().setMenuPositionX(targetX / screenWidth);
-                    gameMenu.getMenuSetting().setMenuPositionY(targetY / screenHeight);
-                }
+                float targetX = Math.max(0, Math.min(screenWidth - getMeasuredWidth(), getX() + event.getX() - downX));
+                float targetY = Math.max(0, Math.min(screenHeight - getMeasuredHeight(), getY() + event.getY() - downY));
+                setX(targetX);
+                setY(targetY);
+                gameMenu.getMenuSetting().setMenuPositionX(targetX / screenWidth);
+                gameMenu.getMenuSetting().setMenuPositionY(targetY / screenHeight);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:

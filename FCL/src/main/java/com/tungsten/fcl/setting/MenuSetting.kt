@@ -38,22 +38,6 @@ class MenuSetting {
             autoFitDistProperty.set(autoFitDist)
         }
 
-    val lockMenuViewProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "lockMenuView", false)
-    var isLockMenuView: Boolean
-        get() = lockMenuViewProperty.get()
-        set(lockMenuView) {
-            lockMenuViewProperty.set(lockMenuView)
-        }
-
-    val hideMenuViewViewProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "hideMenuView", false)
-    var isHideMenuView: Boolean
-        get() = hideMenuViewViewProperty.get()
-        set(hideMenuView) {
-            hideMenuViewViewProperty.set(hideMenuView)
-        }
-
     val disableSoftKeyAdjustProperty: BooleanProperty =
         SimpleBooleanProperty(this, "disableSoftKeyAdjust", false)
     var isDisableSoftKeyAdjust: Boolean
@@ -198,8 +182,6 @@ class MenuSetting {
     fun addPropertyChangedListener(listener: InvalidationListener?) {
         autoFitProperty.addListener(listener)
         autoFitDistProperty.addListener(listener)
-        lockMenuViewProperty.addListener(listener)
-        hideMenuViewViewProperty.addListener(listener)
         disableSoftKeyAdjustProperty.addListener(listener)
         showLogProperty.addListener(listener)
         menuPositionXProperty.addListener(listener)
@@ -230,8 +212,6 @@ class MenuSetting {
             return JsonObject().apply {
                 addProperty("autoFit", src.isAutoFit)
                 addProperty("autoFitDist", src.autoFitDist)
-                addProperty("lockMenuView", src.isLockMenuView)
-                addProperty("hideMenuView", src.isHideMenuView)
                 addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust)
                 addProperty("showLog", src.isShowLog)
                 addProperty("menuPositionX", src.menuPositionX)
@@ -263,8 +243,6 @@ class MenuSetting {
             return MenuSetting().also { ms ->
                 ms.isAutoFit = json["autoFit"]?.asBoolean ?: true
                 ms.autoFitDist = json["autoFitDist"]?.asInt ?: 0
-                ms.isLockMenuView = json["lockMenuView"]?.asBoolean ?: false
-                ms.isHideMenuView = json["hideMenuView"]?.asBoolean ?: false
                 ms.isDisableSoftKeyAdjust = json["disableSoftKeyAdjust"]?.asBoolean ?: false
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5

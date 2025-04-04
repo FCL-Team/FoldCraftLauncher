@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
@@ -127,6 +128,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private MenuView menuView;
 
     private TouchController touchController;
+
+    private boolean isHideMenu = false;
 
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
@@ -321,6 +324,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         editLayout.visibilityProperty().bind(editModeProperty);
 
+        hideAllViewsProperty.addListener(i -> {
+            if (isHideAllViews()) {
+                ((DrawerLayout) getLayout()).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            } else if (!isHideMenu) {
+                ((DrawerLayout) getLayout()).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+        });
+
         manageViewGroups.setOnClickListener(this);
         addButton.setOnClickListener(this);
         addDirection.setOnClickListener(this);
@@ -342,7 +353,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @SuppressLint("SetTextI18n")
     private void initRightMenu() {
-        FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
         FCLSwitch hideMenuSwitch = findViewById(R.id.switch_hide_view);
         FCLSwitch showFps = findViewById(R.id.switch_show_fps);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
@@ -370,8 +380,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
 
-        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
-        FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());
         FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
@@ -379,10 +387,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
 
-        menuSetting.getHideMenuViewViewProperty().addListener(observable -> {
-            menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);
+        hideMenuSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            menuView.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
+            isHideMenu = isChecked;
             if (!isHideAllViews()) {
-                ((DrawerLayout) getLayout()).setDrawerLockMode(menuSetting.isHideMenuView() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                ((DrawerLayout) getLayout()).setDrawerLockMode(isChecked ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             }
         });
 
