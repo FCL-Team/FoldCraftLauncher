@@ -41,22 +41,9 @@ public class ControllerActivity extends FCLActivity {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if ((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)) {
-            MenuView menuView = menu.getMenuView();
-            if (menuView.getAlpha() == 0 || menuView.getVisibility() == View.INVISIBLE) {
-                DrawerLayout drawerLayout = (DrawerLayout) menu.getLayout();
-                if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                    if (event.getAction() == KeyEvent.ACTION_UP) {
-                        drawerLayout.closeDrawers();
-                    }
-                } else {
-                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                        return true;
-                    } else {
-                        drawerLayout.openDrawer(GravityCompat.START, true);
-                        drawerLayout.openDrawer(GravityCompat.END, true);
-                    }
-                }
-            }
+            DrawerLayout drawerLayout = (DrawerLayout) menu.getLayout();
+            drawerLayout.openDrawer(GravityCompat.START, true);
+            drawerLayout.openDrawer(GravityCompat.END, true);
         }
         return super.dispatchKeyEvent(event);
     }

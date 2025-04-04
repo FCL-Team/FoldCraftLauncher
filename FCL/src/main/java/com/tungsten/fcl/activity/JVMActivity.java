@@ -44,6 +44,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
     private static boolean isRunning = false;
+    private long volumeDownTime = 0;
 
     public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -191,13 +192,18 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                         if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END)) {
                             if (event.getAction() == KeyEvent.ACTION_UP) {
                                 drawerLayout.closeDrawers();
+                                volumeDownTime = System.currentTimeMillis();
                             }
                         } else {
-                            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                                return true;
+                            if (System.currentTimeMillis() - volumeDownTime > 800) {
+                                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                                    return true;
+                                } else {
+                                    drawerLayout.openDrawer(GravityCompat.START, true);
+                                    drawerLayout.openDrawer(GravityCompat.END, true);
+                                }
                             } else {
-                                drawerLayout.openDrawer(GravityCompat.START, true);
-                                drawerLayout.openDrawer(GravityCompat.END, true);
+                                volumeDownTime = System.currentTimeMillis();
                             }
                         }
                     }
