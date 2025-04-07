@@ -96,24 +96,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.25">
 
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
+        <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
             android:id="@+id/backend"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="0dp"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:itemActiveIndicatorStyle="@style/NavIndicator"
-            app:itemBackground="@null"
-            app:itemRippleColor="@null"
-            app:labelVisibilityMode="unlabeled"
+            android:layout_marginHorizontal="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:menu="@menu/menu_backend" />
+            app:radius="30dp">
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:id="@+id/pojav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                app:text="Pojav" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:id="@+id/boat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                app:text="Boat" />
+
+        </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/account"

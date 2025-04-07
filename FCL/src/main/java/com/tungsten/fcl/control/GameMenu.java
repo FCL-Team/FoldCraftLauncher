@@ -284,7 +284,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void initLeftMenu() {
-        FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
         FCLSwitch hideAllViews = findViewById(R.id.hide_all);
@@ -303,7 +302,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         manageButtonStyle = findViewById(R.id.manage_button_style);
         manageDirectionStyle = findViewById(R.id.manage_direction_style);
 
-        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
@@ -355,6 +353,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @SuppressLint("SetTextI18n")
     private void initRightMenu() {
+        FCLSwitch lockMenuSwitch = findViewById(R.id.switch_lock_view);
         FCLSwitch hideMenuSwitch = findViewById(R.id.switch_hide_view);
         FCLSwitch showFps = findViewById(R.id.switch_show_fps);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
@@ -382,6 +381,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
 
+        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
+        FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());
         FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
@@ -389,9 +390,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
 
-        hideMenuSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            menuView.setVisibility(isChecked ? View.INVISIBLE : View.VISIBLE);
-            if (isChecked) {
+        menuSetting.getHideMenuViewViewProperty().addListener(i -> {
+            menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);
+            if (menuSetting.isHideMenuView()) {
                 Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_SHORT).show();
             }
         });
