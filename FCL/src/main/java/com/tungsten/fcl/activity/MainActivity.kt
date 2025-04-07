@@ -519,6 +519,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         0,
                         0
                     )
+                    backend.setRipple(ThemeEngine.getInstance().theme.color2)
                     pojav.textColor = ThemeEngine.getInstance().theme.color2
                     boat.textColor = ThemeEngine.getInstance().theme.color2
                     start.background = createBackground()
