@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -94,11 +93,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     var isVersionLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0, Color.TRANSPARENT)
-        } else {
-            overridePendingTransition(0, 0)
-        }
         super.onCreate(savedInstanceState)
         instance = WeakReference(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -222,14 +216,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
-                    backend.selectedItemId =
-                        if (getBoolean("backend", false)) R.id.boat else R.id.pojav
-                    backend.setOnItemSelectedListener {
+                    backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
+                    backend.setOnPositionChangedListener {
                         edit().apply {
-                            putBoolean("backend", it.itemId == R.id.boat)
+                            putBoolean("backend", it == 1)
                             apply()
                         }
-                        true
                     }
                 }
                 playAnim()
@@ -344,7 +336,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .interpolator(OvershootInterpolator()).start()
                     return
                 }
-                FCLBridge.BACKEND_IS_BOAT = binding.backend.selectedItemId == R.id.boat
+                FCLBridge.BACKEND_IS_BOAT = binding.backend.position == 1
                 val selectedProfile = Profiles.getSelectedProfile()
                 RendererPlugin.rendererList.forEach {
                     if (it.des == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).customRenderer) {
@@ -514,10 +506,21 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             override fun invalidated() {
                 get()
                 binding.apply {
-                    backend.itemIconTintList =
-                        ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2)
-                    backend.itemActiveIndicatorColor =
-                        ColorStateList.valueOf(ThemeEngine.getInstance().theme.ltColor)
+                    backend.setSelectedBackground(ThemeEngine.getInstance().theme.ltColor)
+                    backend.setDivider(
+                        ThemeEngine.getInstance().theme.color2,
+                        ConvertUtils.dip2px(this@MainActivity, 1f),
+                        1,
+                        1
+                    )
+                    backend.setBorder(
+                        ConvertUtils.dip2px(this@MainActivity, 1f),
+                        ThemeEngine.getInstance().theme.color2,
+                        0,
+                        0
+                    )
+                    pojav.textColor = ThemeEngine.getInstance().theme.color2
+                    boat.textColor = ThemeEngine.getInstance().theme.color2
                     start.background = createBackground()
                     createBackground().apply {
                         version.background = this
