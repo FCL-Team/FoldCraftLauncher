@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1218,
-    "versionName": "1.2.1.8",
-    "date": "2025.04.04",
+    "versionCode": 1219,
+    "versionName": "1.2.1.9",
+    "date": "2025.04.09",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复MUI(Forge版)在Boat后端运行时点击屏幕闪退的Bug\n2.修复渲染器插件变量缺失可能导致的删除Bug\n3.新增功能：允许禁用左侧屏幕的出口\n4.调整优化离线账户设置皮肤的页面\n5.移除锁定菜单功能\n6.不再保存隐藏菜单选项状态，防止部分玩家隐藏菜单后无法再打开菜单"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分机型上设置离线账户皮肤页面显示不全的Bug\n2.恢复锁定菜单的功能\n3.新增功能:菜单隐藏后按下音量键打开\n4.恢复保存菜单状态的功能\n5.新增功能:在版本列明内搜索版本\n6.修改后端选择UI\n7.调整部分UI"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c44d7ff81aeb",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.8/FCL-release-1.2.1.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/32f96f2c901as",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.1.9/FCL-release-1.2.1.9-all.apk"
   }
 ]
