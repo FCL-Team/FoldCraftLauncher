@@ -24,11 +24,7 @@
     <string name="about">О лаунчере</string>
     <string name="about_sponsor">Спонсоры</string>
     <string name="about_source">Исходный код</string>
-    <string name="about_desc">Fold Craft Launcher - это лаунчер который запускать Minecraft: Java Edition на Android устройствах.
-    
-    Fold Craft Launcher разработан командой FCL-Team.
-    
-    Большинство функций Fold Craft Launcher модифицированы на основе HMCLCore. Лаунчер использует и цитирует некоторые коды PojavLauncher и Boat, поэтому, если вы собираетесь распространять этот лаунчер, пожалуйста, следуйте лицензии GPL-v3.</string>
+    <string name="about_desc">Fold Craft Launcher - это лаунчер который запускать Minecraft: Java Edition на Android устройствах.\n\nFold Craft Launcher разработан командой FCL-Team.\n\nБольшинство функций Fold Craft Launcher модифицированы на основе HMCLCore. Лаунчер использует и цитирует некоторые коды PojavLauncher и Boat, поэтому, если вы собираетесь распространять этот лаунчер, пожалуйста, следуйте лицензии GPL-v3.</string>
 
     <string name="account_add_server">Сервер аутентификации</string>
     <string name="account_add_server_url">URL адрес сервера</string>
@@ -48,9 +44,7 @@
     <string name="account_injector_server">Сервер аутентификации</string>
     <string name="account_login">Войти</string>
     <string name="account_methods_offline">Оффлайн аккаунт</string>
-    <string name="account_methods_offline_name_invalid">"Имя пользователя (до 16 символов) должно состоять из латинских букв, цифр и знаков подчёркивания. 
-    Некоторые допустимые имена: Llerey, Tungsten, Tungsten123; 
-    Некоторые недопустимые имена: Exam ple, Exam-a%%%, Tungsten_hello_world_hello_world. Если на сервере есть мод, снимающий эти ограничения, вы можете игнорировать это предупреждение."</string>
+    <string name="account_methods_offline_name_invalid">"Имя пользователя (до 16 символов) должно состоять из латинских букв, цифр и знаков подчёркивания. \nНекоторые допустимые имена: Llerey, Tungsten, Tungsten123; \nНекоторые недопустимые имена: Exam ple, Exam-a%%%, Tungsten_hello_world_hello_world. Если на сервере есть мод, снимающий эти ограничения, вы можете игнорировать это предупреждение."</string>
     <string name="account_methods_yggdrasil">Аккаунт Mojang</string>
     <string name="account_methods_authlib_injector">Внешний аккаунт</string>
     <string name="account_methods_microsoft">Microsoft аккаунт</string>
@@ -75,14 +69,12 @@
     <string name="account_methods_microsoft_error_missing_xbox_account">С вашей учетной записью Microsoft еще нет связанной учетной записи Xbox. Пожалуйста, создайте её, прежде чем продолжить.</string>
     <string name="account_methods_microsoft_error_unknown">Не удалось войти</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Для входа используйте адрес электронной почты и пароль от учётной записи Microsoft. Коды подтверждения не поддерживаются.</string>
-    <string name="account_methods_microsoft_error_no_character">"В вашей учетной записи нет Minecraft Java Edition.
-    Возможно, игровой профиль не был создан."</string>
+    <string name="account_methods_microsoft_error_no_character">"В вашей учетной записи нет Minecraft Java Edition.\nВозможно, игровой профиль не был создан."</string>
     <string name="account_methods_microsoft_error_add_family_probably">Пожалуйста, проверьте, составляет ли возраст, указанный в настройках вашего аккаунта 18 лет. Если нет и вы считаете, что это ошибка, вы можете перейти на сайт Microsoft account, чтобы изменить его.</string>
     <string name="account_methods_microsoft_close_page">Авторизация учетной записи Microsoft завершена.</string>
     <string name="account_methods_microsoft_hint">Нажмите «Войти», код скопируется автоматически. Вставьте его в браузер.</string>
     <string name="account_login_refresh">Повторный вход</string>
-    <string name="account_login_refresh_microsoft_hint">"Поскольку авторизация учетной записи недействительна, вам необходимо повторно добавить свою учетную запись Microsoft. 
-    Нажмите кнопку «ОК», вставьте код в строку в браузере, чтобы завершить процесс входа."</string>
+    <string name="account_login_refresh_microsoft_hint">"Поскольку авторизация учетной записи недействительна, вам необходимо повторно добавить свою учетную запись Microsoft. \nНажмите кнопку «ОК», вставьте код в строку в браузере, чтобы завершить процесс входа."</string>
     <string name="account_select_character">Выберите персонажа</string>
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>
@@ -148,8 +140,7 @@
     <string name="control_edit">Редактировать</string>
     <string name="control_import">Импортировать</string>
     <string name="control_import_failed">Ошибка импорта</string>
-    <string name="control_upgrade">"Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. 
-    Хотите перенести его на новую версию?"</string>
+    <string name="control_upgrade">"Контроллер: %s — устарел, он может вызывать ошибки, но мы по-прежнему поддерживаем его. \nХотите перенести его на новую версию?"</string>
     <string name="control_incompatible">Контроллер %s — несовместимый контроллер. Это может быть вызвано слишком низкой версией лаунчера или слишком низкой версией контроллера.</string>
     <string name="control_upload_requirement">Сначала присоединитесь к QQ группе, затем нажмите "Поделиться", чтобы поделиться контроллером и его информацией с администратором и дождаться проверки. Свяжитесь с администратором, чтобы сообщить ему категорию вашего контроллера.</string>
     <string name="control_info_author">Автор:</string>
@@ -173,7 +164,6 @@
     <string name="control_upload">Опубликовать контроллер</string>
 
     <string name="curse_category_0">Все</string>
-
     <string name="curse_category_4474">Научная фантастика</string>
     <string name="curse_category_4481">Маленький / Легкий</string>
     <string name="curse_category_4483">Бой</string>
@@ -189,7 +179,6 @@
     <string name="curse_category_4472">Технологии</string>
     <string name="curse_category_4473">Магия</string>
     <string name="curse_category_5128">Ваниль+</string>
-
     <string name="curse_category_5299">Изучения</string>
     <string name="curse_category_5129">Ваниль+</string>
     <string name="curse_category_5189">Утилиты и улучшения качества жизни</string>
@@ -350,159 +339,59 @@
 
     <string name="game_crash_info">Информация о сбое</string>
     <string name="game_crash_reason">Причина сбоя</string>
-    <string name="game_crash_reason_multiple">"Обнаружено несколько причин:
-    
-    "</string>
-    <string name="game_crash_reason_block">"Аварийная ошибка произошла из-за блока.
-    
-    Вы можете попробовать удалить этот блок с помощью MCEdit или удалить тот мод, который его добавил.
-    
-    Тип блока: %1$s
-    Местоположение: %2$s"</string>
-    <string name="game_crash_reason_bootstrap_failed">"Аварийная ошибка произошла из-за мода. %1$s.
-    
-    Вы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_multiple">"Обнаружено несколько причин:\n\n"</string>
+    <string name="game_crash_reason_block">"Аварийная ошибка произошла из-за блока.\n\nВы можете попробовать удалить этот блок с помощью MCEdit или удалить тот мод, который его добавил.\n\nТип блока: %1$s\nМестоположение: %2$s"</string>
+    <string name="game_crash_reason_bootstrap_failed">"Аварийная ошибка произошла из-за мода. %1$s.\n\nВы можете попробовать удалить или обновить его."</string>
     <string name="game_crash_reason_config">Аварийная ошибка произошла из-за того, что мод %1$s не может проанализировать свой файл конфигурации %2$s.</string>
-    <string name="game_crash_reason_debug_crash">"Аварийная ошибка произошла, потому что вы вызвали это вручную..
-    
-    Так что, вы, возможно, знаете, почему это произошло."</string>
-    <string name="game_crash_reason_duplicated_mod">"Запуск невозможен из-за дублированных модов: %1$s.
-    
-    %2$s
-    
-    Каждый мод может быть установлен только один раз, пожалуйста, удалите дубликат мода и попробуйте снова."</string>
-    <string name="game_crash_reason_entity">"Аварийная ошибка произошла из-за сущности.
-    
-    Вы можете попробовать удалить эту сущность с помощью MCEdit или удалить тот мод, который её добавил.
-    
-    Тип блока: %1$s
-    Местоположение: %2$s"</string>
-    <string name="game_crash_reason_modmixin_failure">"Запуск невозможен из-за неудачной инъекции мода.
-    Это означает, что мод неисправный или несовместим с текущей средой.
-    Чтобы найти неисправность, вы можете проверить лог."</string>
+    <string name="game_crash_reason_debug_crash">"Аварийная ошибка произошла, потому что вы вызвали это вручную..\n\nТак что, вы, возможно, знаете, почему это произошло."</string>
+    <string name="game_crash_reason_duplicated_mod">"Запуск невозможен из-за дублированных модов: %1$s.\n\n%2$s\n\nКаждый мод может быть установлен только один раз, пожалуйста, удалите дубликат мода и попробуйте снова."</string>
+    <string name="game_crash_reason_entity">"Аварийная ошибка произошла из-за сущности.\n\nВы можете попробовать удалить эту сущность с помощью MCEdit или удалить тот мод, который её добавил.\n\nТип блока: %1$s\nМестоположение: %2$s"</string>
+    <string name="game_crash_reason_modmixin_failure">"Запуск невозможен из-за неудачной инъекции мода.\nЭто означает, что мод неисправный или несовместим с текущей средой.\nЧтобы найти неисправность, вы можете проверить лог."</string>
     <string name="game_crash_reason_mod_repeat_installation">Поскольку в текущей игре неоднократно устанавливалось несколько одинаковых модов, каждый мод может появиться только один раз. Удалите повторяющиеся моды и перезапустите игру.</string>
-    <string name="game_crash_reason_forge_error">"Forge, возможно, предоставил информацию об ошибке.
-    Вы можете просмотреть лог и найти ошибку.
-    Если нет сообщения об ошибке, посмотрите лог, чтобы понять, как она произошла.
-    %1$s"</string>
-    <string name="game_crash_reason_mod_resolution0">"Текущая игра не может продолжиться из-за некоторых проблем с модами.
-    Вы можете проверить лог, чтобы найти модуль с ошибкой."</string>
-    <string name="game_crash_reason_mod_profile_causes_game_crash">"Текущая игра не может продолжить выполнение из-за проблемы с конфигурационным файлом мода.
-    Вы можете проверить лог, чтобы найти модуль с ошибкой и его конфигурационный файл."</string>
-    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">"Forge, возможно, предоставил информацию об ошибке.
-    Вы можете просмотреть лог и выполнить соответствующую обработку согласно информации в отчете об ошибке.
-    Если вы не видите сообщение об ошибке, вы можете просмотреть отчет об ошибке, чтобы понять, как ошибка произошла."</string>
-    <string name="game_crash_reason_need_jdk11">"Текущая игра не может продолжить выполнение из-за неподходящей версии Java.
-    Требуется Java 11."</string>
-    <string name="game_crash_reason_mod_name">"Текущая игра не может продолжить выполнение из-за проблем с именем файла мода.
-    Имена файлов модов должны содержать только заглавные и строчные буквы латинского алфавита (Aa~Zz), цифры (0~9), дефисы (-), подчеркивания (_), и точки (.) в полуширине английского алфавита.
-    Пожалуйста, перейдите в папку с модами и добавьте во все неприемлемые имена файлов модов один из вышеуказанных допустимых символов."</string>
-    <string name="game_crash_reason_incomplete_forge_installation">"Текущая игра не может продолжиться из-за неполной установки Forge.
-    Пожалуйста, удалите и заново установите Forge."</string>
+    <string name="game_crash_reason_forge_error">"Forge, возможно, предоставил информацию об ошибке.\nВы можете просмотреть лог и найти ошибку.\nЕсли нет сообщения об ошибке, посмотрите лог, чтобы понять, как она произошла.\n%1$s"</string>
+    <string name="game_crash_reason_mod_resolution0">"Текущая игра не может продолжиться из-за некоторых проблем с модами.\nВы можете проверить лог, чтобы найти модуль с ошибкой."</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">"Текущая игра не может продолжить выполнение из-за проблемы с конфигурационным файлом мода.\nВы можете проверить лог, чтобы найти модуль с ошибкой и его конфигурационный файл."</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">"Forge, возможно, предоставил информацию об ошибке.\nВы можете просмотреть лог и выполнить соответствующую обработку согласно информации в отчете об ошибке.\nЕсли вы не видите сообщение об ошибке, вы можете просмотреть отчет об ошибке, чтобы понять, как ошибка произошла."</string>
+    <string name="game_crash_reason_need_jdk11">"Текущая игра не может продолжить выполнение из-за неподходящей версии Java.\nТребуется Java 11."</string>
+    <string name="game_crash_reason_mod_name">"Текущая игра не может продолжить выполнение из-за проблем с именем файла мода.\nИмена файлов модов должны содержать только заглавные и строчные буквы латинского алфавита (Aa~Zz), цифры (0~9), дефисы (-), подчеркивания (_), и точки (.) в полуширине английского алфавита.\nПожалуйста, перейдите в папку с модами и добавьте во все неприемлемые имена файлов модов один из вышеуказанных допустимых символов."</string>
+    <string name="game_crash_reason_incomplete_forge_installation">"Текущая игра не может продолжиться из-за неполной установки Forge.\nПожалуйста, удалите и заново установите Forge."</string>
     <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 и выше несовместимы с установленными модами. Вам нужно понизить его до 0.11.7.</string>
-    <string name="game_crash_reason_fabric_warnings">"Загрузчик модов Fabric предупредил:
-    %1$s"</string>
-    <string name="game_crash_reason_file_already_exists">"Аварийная ошибка произошла из-за того, что файл %1$s уже существует.
-    
-    Вы можете попробовать создать резервную копию этого файла, а затем удалить его и перезапустить игру."</string>
-    <string name="game_crash_reason_file_changed">"Аварийная ошибка произошла из-за несоответствия проверкам целостности.
-    
-    Если вы внесли изменения в файл Minecraft, вам нужно отменить эти изменения или загрузить игру заново."</string>
-    <string name="game_crash_reason_gl_operation_failure">"Аварийная ошибка произошла из-за некоторых модов, шейдеров и ресурспаков.
-    
-    Пожалуйста, отключите используемые моды/шейдеры/ресурспаки, а затем попробуйте снова."</string>
-    <string name="game_crash_reason_illegal_access_error">"Аварийная ошибка произошла из-за некоторых модов.
-    Если вы знаете, что это за мод %1$s, вы можете удалить его и попробовать снова."</string>
+    <string name="game_crash_reason_fabric_warnings">"Загрузчик модов Fabric предупредил:\n%1$s"</string>
+    <string name="game_crash_reason_file_already_exists">"Аварийная ошибка произошла из-за того, что файл %1$s уже существует.\n\nВы можете попробовать создать резервную копию этого файла, а затем удалить его и перезапустить игру."</string>
+    <string name="game_crash_reason_file_changed">"Аварийная ошибка произошла из-за несоответствия проверкам целостности.\n\nЕсли вы внесли изменения в файл Minecraft, вам нужно отменить эти изменения или загрузить игру заново."</string>
+    <string name="game_crash_reason_gl_operation_failure">"Аварийная ошибка произошла из-за некоторых модов, шейдеров и ресурспаков.\n\nПожалуйста, отключите используемые моды/шейдеры/ресурспаки, а затем попробуйте снова."</string>
+    <string name="game_crash_reason_illegal_access_error">"Аварийная ошибка произошла из-за некоторых модов.\nЕсли вы знаете, что это за мод %1$s, вы можете удалить его и попробовать снова."</string>
     <string name="game_crash_reason_optifine_is_not_compatible_with_forge">Текущая игра вылетает из-за несовместимости OptiFine с текущей версией Forge.</string>
-    <string name="game_crash_reason_mod_files_are_decompressed">"Текущая игра не может продолжить выполнение, потому что файл мода был разархивирован.
-    Пожалуйста, поместите весь файл мода непосредственно в папку mods!
-    Если разархивирование вызывает ошибки в игре, пожалуйста, удалите разархивированный мод из папки mods, а затем запустите игру."</string>
-    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">"Текущая игра не может быть найдена, потому что Forge не установлен полностью.
-    Вы можете попробовать удалить Forge и затем установить его заново."</string>
-    <string name="game_crash_reason_shaders_mod">"Текущая игра не может продолжиться из-за установки как OptiFine, так и Shaders Mod.
-    Поскольку OptiFine интегрировал функции Shaders Mod, просто удалите Shaders Mod."</string>
-    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">"Текущая игра не может продолжиться из-за того, что вы установили слишком много модов, что превышает лимит в игре.
-    Попробуйте установить JEID или удалите некоторые крупные моды."</string>
-    <string name="game_crash_reason_night_config_fixes">"Текущая игра не может продолжить выполнение из-за проблем с Night Config.
-    Вы можете попробовать установить мод Night Config Fixes, который может помочь вам с этой проблемой.
-    Для получения дополнительной информации посетите репозиторий мода на GitHub."</string>
-    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">"Текущая игра может не продолжить выполнение из-за OptiFine.
-    Эта проблема возникает только в определенной версии OptiFine. Вы можете попробовать изменить версию OptiFine."</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">"Текущая игра не может продолжить выполнение, потому что файл мода был разархивирован.\nПожалуйста, поместите весь файл мода непосредственно в папку mods!\nЕсли разархивирование вызывает ошибки в игре, пожалуйста, удалите разархивированный мод из папки mods, а затем запустите игру."</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">"Текущая игра не может быть найдена, потому что Forge не установлен полностью.\nВы можете попробовать удалить Forge и затем установить его заново."</string>
+    <string name="game_crash_reason_shaders_mod">"Текущая игра не может продолжиться из-за установки как OptiFine, так и Shaders Mod.\nПоскольку OptiFine интегрировал функции Shaders Mod, просто удалите Shaders Mod."</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">"Текущая игра не может продолжиться из-за того, что вы установили слишком много модов, что превышает лимит в игре.\nПопробуйте установить JEID или удалите некоторые крупные моды."</string>
+    <string name="game_crash_reason_night_config_fixes">"Текущая игра не может продолжить выполнение из-за проблем с Night Config.\nВы можете попробовать установить мод Night Config Fixes, который может помочь вам с этой проблемой.\nДля получения дополнительной информации посетите репозиторий мода на GitHub."</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">"Текущая игра может не продолжить выполнение из-за OptiFine.\nЭта проблема возникает только в определенной версии OptiFine. Вы можете попробовать изменить версию OptiFine."</string>
     <string name="game_crash_reason_jvm_32bit">Игра вылетела из-за того, что текущее выделение памяти превышает лимит 32-разрядной виртуальной машины Java.</string>
-    <string name="game_crash_reason_loading_crashed_forge">"Аварийная ошибка произошла из-за мода %1$s (%2$s).
-    
-    Вы можете попробовать удалить или обновить его."</string>
-    <string name="game_crash_reason_loading_crashed_fabric">"Аварийная ошибка произошла из-за мода %1$s.
-    
-    Вы можете попробовать удалить или обновить его."</string>
-    <string name="game_crash_reason_forge_repeat_installation">"Текущая игра не может продолжить выполнение из-за дублирующейся установки Forge. Это известная проблема.
-    Рекомендуется загрузить лог на GitHub, чтобы мы могли найти больше подсказок и исправить этот вопрос.
-    В настоящее время вы можете удалить Forge и затем установить его заново."</string>
-    <string name="game_crash_reason_optifine_repeat_installation">"Текущая игра не может продолжить выполнение из-за повторной установки Optifine. 
-    Пожалуйста, удалите OptiFine из папки с модами или деинсталлируйте автоматически установленный OptiFine."</string>
+    <string name="game_crash_reason_loading_crashed_forge">"Аварийная ошибка произошла из-за мода %1$s (%2$s).\n\nВы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_loading_crashed_fabric">"Аварийная ошибка произошла из-за мода %1$s.\n\nВы можете попробовать удалить или обновить его."</string>
+    <string name="game_crash_reason_forge_repeat_installation">"Текущая игра не может продолжить выполнение из-за дублирующейся установки Forge. Это известная проблема.\nРекомендуется загрузить лог на GitHub, чтобы мы могли найти больше подсказок и исправить этот вопрос.\nВ настоящее время вы можете удалить Forge и затем установить его заново."</string>
+    <string name="game_crash_reason_optifine_repeat_installation">"Текущая игра не может продолжить выполнение из-за повторной установки Optifine. \nПожалуйста, удалите OptiFine из папки с модами или деинсталлируйте автоматически установленный OptiFine."</string>
     <string name="game_crash_reason_memory_exceeded">Игра вылетала из-за того, что было выделено слишком много памяти.</string>
-    <string name="game_crash_reason_mod">"Аварийная ошибка произошла из-за мода %1$s.
-    
-    Вы можете обновить или удалить мод, а затем попробовать снова."</string>
-    <string name="game_crash_reason_mod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.
-    
-    Fabric предоставил следующие детали:
-    %1$s"</string>
-    <string name="game_crash_reason_forgemod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.
-    
-    Forge предоставил следующие детали:
-    %1$s"</string>
-    <string name="game_crash_reason_mod_resolution_collection">"Аварийная ошибка произошла из-за того, что версия мода несовместима.
-    
-    %1$s требует %2$s.
-    
-    Вам нужно обновить или понизить версию %3$s перед продолжением."</string>
-    <string name="game_crash_reason_mod_resolution_conflict">"Аварийная ошибка произошла из-за конфликта модов.
-    
-    %1$s не совместим с %2$s."</string>
-    <string name="game_crash_reason_mod_resolution_missing">"Игра вылетела, так как не установлены некоторые необходимые моды.
-    
-    %1$s требует мод: %2$s.
-    
-    Это означает, что вам нужно сначала загрузить и установить %2$s, чтобы продолжить игру."</string>
-    <string name="game_crash_reason_mod_resolution_missing_minecraft">"Аварийная ошибка произошла из-за того, что мод несовместим с текущей версией Minecraft.
-    
-    %1$s требует версию Minecraft %2$s.
-    
-    Если вы хотите играть с этой версией установленного мода, вам следует изменить версию Minecraft.
-    В противном случае вам следует установить версию, совместимую с этой версией Minecraft."</string>
+    <string name="game_crash_reason_mod">"Аварийная ошибка произошла из-за мода %1$s.\n\nВы можете обновить или удалить мод, а затем попробовать снова."</string>
+    <string name="game_crash_reason_mod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.\n\nFabric предоставил следующие детали:\n%1$s"</string>
+    <string name="game_crash_reason_forgemod_resolution">"Аварийная ошибка произошла из-за неудачного разрешения мода.\n\nForge предоставил следующие детали:\n%1$s"</string>
+    <string name="game_crash_reason_mod_resolution_collection">"Аварийная ошибка произошла из-за того, что версия мода несовместима.\n\n%1$s требует %2$s.\n\nВам нужно обновить или понизить версию %3$s перед продолжением."</string>
+    <string name="game_crash_reason_mod_resolution_conflict">"Аварийная ошибка произошла из-за конфликта модов.\n\n%1$s не совместим с %2$s."</string>
+    <string name="game_crash_reason_mod_resolution_missing">"Игра вылетела, так как не установлены некоторые необходимые моды.\n\n%1$s требует мод: %2$s.\n\nЭто означает, что вам нужно сначала загрузить и установить %2$s, чтобы продолжить игру."</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">"Аварийная ошибка произошла из-за того, что мод несовместим с текущей версией Minecraft.\n\n%1$s требует версию Minecraft %2$s.\n\nЕсли вы хотите играть с этой версией установленного мода, вам следует изменить версию Minecraft.\nВ противном случае вам следует установить версию, совместимую с этой версией Minecraft."</string>
     <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Версия: %2$s)</string>
     <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Любая версия)</string>
     <string name="game_crash_reason_modlauncher_8">Игра вылетела из-за того, что ваша текущая версия Forge не совместима с вашей установкой Java, попробуйте обновить Forge.</string>
-    <string name="game_crash_reason_no_class_def_found_error">"Игра не может быть запущена из-за неполного кода.
-    
-    Ваш профиль игры не содержит %1$s. Это может быть связано с отсутствующим модом, установленным несовместимым модом или поврежденными файлами.
-    
-    Вам, возможно, придется переустановить игру и все моды, или обратиться к кому-то за помощью ."</string>
-    <string name="game_crash_reason_no_such_method_error">"Игра не может быть запущена из-за неполного кода.
-    
-    Ваш профиль игры, возможно, не содержит мод, установлен мод, который несовместим, или некоторые файлы могли быть повреждены.
-    
-    Вам, возможно, придется переустановить игру и все моды или обратиться к кому-то за помощью."</string>
+    <string name="game_crash_reason_no_class_def_found_error">"Игра не может быть запущена из-за неполного кода.\n\nВаш профиль игры не содержит %1$s. Это может быть связано с отсутствующим модом, установленным несовместимым модом или поврежденными файлами.\n\nВам, возможно, придется переустановить игру и все моды, или обратиться к кому-то за помощью ."</string>
+    <string name="game_crash_reason_no_such_method_error">"Игра не может быть запущена из-за неполного кода.\n\nВаш профиль игры, возможно, не содержит мод, установлен мод, который несовместим, или некоторые файлы могли быть повреждены.\n\nВам, возможно, придется переустановить игру и все моды или обратиться к кому-то за помощью."</string>
     <string name="game_crash_reason_opengl_not_supported">Игра вылетела из-за того, что ваш рендер не поддерживает OpenGL.</string>
-    <string name="game_crash_reason_out_of_memory">"Аварийная ошибка произошла из-за нехватки памяти.
-    
-    Это может быть вызвано недостатком доступной памяти или слишком большим количеством установленных модов. Вы можете попробовать исправить это, увеличив выделенную память в настройках игры.
-    
-    Если вы продолжаете сталкиваться с этими проблемами, возможно, вам понадобится более мощное устройство."</string>
-    <string name="game_crash_reason_resolution_too_high">"Аварийная ошибка произошла из-за того, что вы используете ресурспак с слишком высоким разрешением текстур.
-    
-    Вам следует переключиться на ресурспак с более низким разрешением текстур."</string>
-    <string name="game_crash_reason_processing_of_javaagent_failed">"Текущая аварийная ошибка произошла из-за сбоя обработки -javaagent.
-    Если вы добавили соответствующие параметры к параметрам Java, пожалуйста, проверьте, являются ли они законными и правильными."</string>
-    <string name="game_crash_reason_stacktrace">"Причина аварийной ошибки неизвестна.
-    
-    Есть некоторые ключевые слова, которые могут содержать идентификаторы модов. Вы можете искать их онлайн, чтобы разобраться в проблеме самостоятельно.
-    
-    %s"</string>
-    <string name="game_crash_reason_unknown">"Мы не можем выяснить, почему произошла аварийная ошибка. Пожалуйста, обратитесь к логам игры.
-    
-    При обращении к кому-то за помощью еще, пожалуйста, поделитесь с ними полным игровым логом и файлом отчета об аварийной ошибки!"</string>
+    <string name="game_crash_reason_out_of_memory">"Аварийная ошибка произошла из-за нехватки памяти.\n\nЭто может быть вызвано недостатком доступной памяти или слишком большим количеством установленных модов. Вы можете попробовать исправить это, увеличив выделенную память в настройках игры.\n\nЕсли вы продолжаете сталкиваться с этими проблемами, возможно, вам понадобится более мощное устройство."</string>
+    <string name="game_crash_reason_resolution_too_high">"Аварийная ошибка произошла из-за того, что вы используете ресурспак с слишком высоким разрешением текстур.\n\nВам следует переключиться на ресурспак с более низким разрешением текстур."</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">"Текущая аварийная ошибка произошла из-за сбоя обработки -javaagent.\nЕсли вы добавили соответствующие параметры к параметрам Java, пожалуйста, проверьте, являются ли они законными и правильными."</string>
+    <string name="game_crash_reason_stacktrace">"Причина аварийной ошибки неизвестна.\n\nЕсть некоторые ключевые слова, которые могут содержать идентификаторы модов. Вы можете искать их онлайн, чтобы разобраться в проблеме самостоятельно.\n\n%s"</string>
+    <string name="game_crash_reason_unknown">"Мы не можем выяснить, почему произошла аварийная ошибка. Пожалуйста, обратитесь к логам игры.\n\nПри обращении к кому-то за помощью еще, пожалуйста, поделитесь с ними полным игровым логом и файлом отчета об аварийной ошибки!"</string>
     <string name="game_crash_reason_unsatisfied_link_error">Невозможно запустить Minecraft из-за отсутствия библиотек: %1$s.</string>
     <string name="game_crash_title">Произошла ошибка.</string>
     <string name="game_crash_title_add">Вместо скриншота отправьте лог</string>
@@ -714,8 +603,7 @@
     <string name="modpack_wizard_step_initialization_force_update">Принудительно обновите модпак до последней версии (вам понадобится файлообменник)</string>
     <string name="modpack_wizard_step_initialization_include_launcher">Включить лаунчер</string>
     <string name="modpack_wizard_step_initialization_save">Экспортировать в</string>
-    <string name="modpack_wizard_step_initialization_warning">"Перед созданием модпака, убедитесь, что игра запускается, и это релизная версия, а не снапшот.
-    Имейте в виду, что вам не разрешено добавлять моды и ресурсные пакеты, которые явно указаны как недоступные для распространения или включения в модпак."</string>
+    <string name="modpack_wizard_step_initialization_warning">"Перед созданием модпака, убедитесь, что игра запускается, и это релизная версия, а не снапшот.\nИмейте в виду, что вам не разрешено добавлять моды и ресурсные пакеты, которые явно указаны как недоступные для распространения или включения в модпак."</string>
 
     <string name="modrinth_category_adventure">Приключения</string>
     <string name="modrinth_category_challenging">Сложное</string>
@@ -784,10 +672,8 @@
     <string name="mods_update_modpack_mod_warning">Обновление модов в модпаке может привести к непоправимым результатам, возможно, к повреждению модпака, из-за которого он не сможет запуститься. Вы уверены, что хотите обновить?</string>
     <string name="mods_screenshot_no_result">Нет доступных скриншотов</string>
 
-    <string name="profile_shared">"Поделиться с папкой 
-    (хранилище устройства)"</string>
-    <string name="profile_private">"Приватная папка 
-    (хранилище игры)"</string>
+    <string name="profile_shared">"Поделиться с папкой \n(хранилище устройства)"</string>
+    <string name="profile_private">"Приватная папка \n(хранилище игры)"</string>
     <string name="profile_name">Название</string>
     <string name="profile_path">Путь</string>
     <string name="profile_select">Выбрать папку</string>
@@ -828,6 +714,7 @@
     <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга (Ядро Pojav)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
+
     <string name="settings_fcl_driver">Драйвер Vulkan</string>
 
     <string name="settings_game">Настройки игры</string>
@@ -1028,8 +915,9 @@
     <string name="joystick_r">Правый стик</string>
     <string name="message_vulkan_driver_system">Текущий GPU Adreno, не рекомендуется включать эту опцию.</string>
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
+
     <string name="installed">Установлено</string>
-    
+
     <string name="shaderpack">Шейдеры</string>
     <string name="recommend_version">Рекомендуемая версия</string>
 
