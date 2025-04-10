@@ -917,6 +917,8 @@
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
 
     <string name="installed">Установлено</string>
+    <string name="message_install_plugin">Плагины можно получить следующими способами.</string>
+    <string name="message_install_java">Java можно получить следующими способами.</string>
 
     <string name="shaderpack">Шейдеры</string>
     <string name="recommend_version">Рекомендуемая версия</string>
@@ -936,4 +938,8 @@
 
     <string name="manage_version">Менеджер версий</string>
     <string name="select_renderer">Выбрать рендерер</string>
+    <string name="open_link_failed">Не удалось автоматически перейти в браузер. Ссылка скопирована автоматически. Пожалуйста, откройте браузер вручную и вставьте её.</string>
+
+    <string name="launch">Запустить</string>
+    <string name="tip_hide_menu_view">Меню скрыто. Нажмите клавишу громкости, чтобы открыть меню.</string>
 </resources>
