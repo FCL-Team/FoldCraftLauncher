@@ -1,10 +1,12 @@
 package com.tungsten.fcl.ui.download;
 
+import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -57,12 +59,14 @@ public class ModGameVersionAdapter extends FCLAdapter {
             viewHolder.version.setSingleLine(true);
             viewHolder.version.setAutoTint(true);
             viewHolder.version.setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcllibrary.R.xml.anim_scale));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         viewHolder.parent.setOnClickListener(v -> callback.onSelect(list.get(i)));
         viewHolder.version.setText((list.get(i).contains(getContext().getString(R.string.recommend_version)) ? "" : "Minecraft ") + list.get(i));
+        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 
