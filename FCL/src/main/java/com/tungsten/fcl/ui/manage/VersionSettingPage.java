@@ -87,6 +87,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch noJVMCheckSwitch;
 
     private FCLImageButton javaButton;
+    private FCLImageButton javaInstallButton;
     private FCLImageButton editIconButton;
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
@@ -142,6 +143,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         scaleFactorSeekbar.addProgressListener();
 
         javaButton = findViewById(R.id.edit_java);
+        javaInstallButton = findViewById(R.id.install_java);
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
@@ -151,6 +153,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         driverInstallButton = findViewById(R.id.install_driver);
 
         javaButton.setOnClickListener(this);
+        javaInstallButton.setOnClickListener(this);
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
@@ -412,6 +415,26 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                 }
                 return null;
             }).show();
+        }
+        if (view == javaInstallButton) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_java)
+                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                        String url = null;
+                        switch (w) {
+                            case 0:
+                                url = "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
+                                break;
+                            case 1:
+                                url = "https://pan.quark.cn/s/d1c9894545f9";
+                                break;
+                        }
+                        if (url != null) {
+                            AndroidUtils.openLink(getContext(), url);
+                        }
+                    })
+                    .create()
+                    .show();
         }
         if (view == rendererButton) {
             int[] pos = new int[2];

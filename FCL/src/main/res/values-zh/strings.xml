@@ -960,6 +960,7 @@
     <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
     <string name="installed">已安装</string>
     <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+    <string name="message_install_java">你可以通过以下方式获取Java。</string>
 
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>

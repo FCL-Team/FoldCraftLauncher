@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,7 +31,6 @@ import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -59,7 +59,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> versions;
 
-    private FCLLinearLayout layout;
+    private LinearLayout layout;
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
     private ListView versionListView;
