@@ -433,6 +433,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                             AndroidUtils.openLink(getContext(), url);
                         }
                     })
+                    .setPositiveButton(R.string.button_cancel, null)
                     .create()
                     .show();
         }
