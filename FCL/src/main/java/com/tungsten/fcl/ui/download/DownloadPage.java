@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.databinding.PageDownloadBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
@@ -37,6 +38,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -105,6 +107,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
+    PageDownloadBinding binding;
+    ModLoaderType selectedModLoader;
+
     public void setLoading(boolean loading) {
         Schedulers.androidUIThread().execute(() -> {
             search.setEnabled(!loading);
@@ -145,12 +150,24 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
         }
-        executor = Task.supplyAsync(() -> repository.search(userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC))
-                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+        executor = Task.supplyAsync(() -> {
+                    RemoteModRepository.SearchResult result = repository.search(userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
+                    ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
+                    if (DownloadPage.this instanceof ModDownloadPage && selectedModLoader != null) {
+                        list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
+                            try {
+                                return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toList()).contains(selectedModLoader);
+                            } catch (Throwable ignore) {
+                            }
+                            return true;
+                        }).collect(Collectors.toList());
+                    }
+                    pageCount.set(result.getTotalPages());
+                    return list;
+                })
+                .whenComplete(Schedulers.androidUIThread(), (list, exception) -> {
                     setLoading(false);
                     if (exception == null) {
-                        ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
-                        pageCount.set(result.getTotalPages());
                         adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
                             RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
                             DownloadPageManager.getInstance().showTempPage(page);
@@ -207,6 +224,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     }
 
     public void create() {
+        binding = PageDownloadBinding.bind(getContentView());
         searchLayout = findViewById(R.id.search_layout);
         ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
