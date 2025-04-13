@@ -83,6 +83,14 @@ class ModChecker(val context: Context) {
                 )
             }
         }
+        add("borderlesswindow") {
+            throw ModCheckException(
+                context.getString(
+                    R.string.mod_check_borderlesswindow,
+                    it.file.toFile().name
+                )
+            )
+        }
     }
 
     @Throws(ModCheckException::class)
