@@ -3,9 +3,12 @@ package com.tungsten.fcl.ui.manage;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
@@ -139,7 +142,6 @@ public class LocalModListAdapter extends FCLAdapter {
         viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modInfoObject.getActive());
         viewHolder.icon.setTag(i);
         viewHolder.icon.setImageBitmap(null);
-        viewHolder.icon.setVisibility(View.GONE);
         viewHolder.name.setText(modInfoObject.getTitle());
         String tag = getTag(modInfoObject);
         viewHolder.tag.setText(tag);
@@ -157,6 +159,11 @@ public class LocalModListAdapter extends FCLAdapter {
             ModInfoDialog dialog = new ModInfoDialog(getContext(), modInfoObject);
             dialog.show();
         });
+        Drawable drawable = AppCompatResources.getDrawable(getContext(), R.drawable.ic_cube);
+        if (drawable != null) {
+            drawable.setTint(ThemeEngine.getInstance().getTheme().getColor());
+            viewHolder.icon.setImageDrawable(drawable);
+        }
         Task.supplyAsync(() -> {
             for (RemoteMod.Type type : RemoteMod.Type.values()) {
                 try {

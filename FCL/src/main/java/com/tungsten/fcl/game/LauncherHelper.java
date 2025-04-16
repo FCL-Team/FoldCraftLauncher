@@ -313,11 +313,8 @@ public final class LauncherHelper {
                     modSummary.append(" | ");
                     modSummary.append(mod.getModLoaderType());
                     modSummary.append("\n");
-                    if (mod.getId().equals("touchcontroller")) {
-                        bridge.setHasTouchController(true);
-                    }
                     try {
-                        modChecker.check(mod);
+                        modChecker.check(bridge, mod);
                     } catch (ModCheckException e) {
                         count++;
                         modCheckerInfo.append(count).append(".").append(e.getReason()).append("\n\n");

@@ -21,6 +21,8 @@ public class EditableControllerListAdapter extends FCLAdapter {
 
     private final ObservableList<Controller> list;
 
+    private Runnable onLongClickListener;
+
     public EditableControllerListAdapter(Context context, ObservableList<Controller> list) {
         super(context);
         this.list = list;
@@ -75,6 +77,16 @@ public class EditableControllerListAdapter extends FCLAdapter {
             builder.setNegativeButton(null);
             builder.create().show();
         });
+        viewHolder.parent.setOnLongClickListener(v -> {
+            if (onLongClickListener != null) {
+                onLongClickListener.run();
+            }
+            return true;
+        });
         return view;
+    }
+
+    public void setOnLongClickListener(Runnable onLongClickListener) {
+        this.onLongClickListener = onLongClickListener;
     }
 }

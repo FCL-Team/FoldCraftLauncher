@@ -25,6 +25,7 @@ import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.setting.SettingPageManager;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -141,7 +142,11 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
             refreshCategories(categories);
             ControllerListAdapter adapter = new ControllerListAdapter(getContext(), source, categories, indexes, mod -> {
                 ControllerDownloadPage page = new ControllerDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
-                ControllerPageManager.getInstance().showTempPage(page);
+                if (getId() == ControllerPageManager.PAGE_ID_CONTROLLER_REPO) {
+                    ControllerPageManager.getInstance().showTempPage(page);
+                } else {
+                    SettingPageManager.getInstance().showTempPage(page);
+                }
             });
             listView.setAdapter(adapter);
         }).whenComplete(Schedulers.androidUIThread(), exception -> {
