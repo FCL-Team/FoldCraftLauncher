@@ -317,7 +317,7 @@ public final class LauncherHelper {
                         bridge.setHasTouchController(true);
                     }
                     try {
-                        modChecker.check(mod);
+                        modChecker.check(bridge, mod);
                     } catch (ModCheckException e) {
                         count++;
                         modCheckerInfo.append(count).append(".").append(e.getReason()).append("\n\n");
