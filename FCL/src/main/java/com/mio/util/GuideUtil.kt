@@ -12,6 +12,7 @@ import java.io.File
 class GuideUtil {
     companion object {
         const val TAG_GUIDE_THEME_2 = "theme2"
+        const val TAG_GUIDE_SHARE_LOG = "share log"
         private val tagList = mutableListOf<String>()
         private val file = File(FCLPath.FILES_DIR + "/guide_tag.txt")
 
