@@ -14,6 +14,9 @@ class ModChecker(val context: Context) {
     fun check(bridge: FCLBridge, mod: LocalModFile) {
         val exception = runCatching {
             when (mod.id) {
+                "touchcontroller" -> {
+                    bridge.setHasTouchController(true);
+                }
                 "physicsmod" -> {
                     val arch = AndroidUtil.getElfArchFromZip(
                         mod.file.toFile(),
