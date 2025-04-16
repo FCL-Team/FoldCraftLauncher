@@ -14,6 +14,7 @@ import com.tungsten.fcl.control.SelectControllerDialog;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
+import com.tungsten.fcl.ui.setting.SettingPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -91,6 +92,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton editIconButton;
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
+    private FCLImageButton controllerInstallButton;
     private FCLImageButton rendererButton;
     private FCLImageButton rendererInstallButton;
     private FCLImageButton driverButton;
@@ -147,6 +149,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         editIconButton = findViewById(R.id.edit_icon);
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
+        controllerInstallButton = findViewById(R.id.install_controller);
         rendererButton = findViewById(R.id.edit_renderer);
         rendererInstallButton = findViewById(R.id.install_renderer);
         driverButton = findViewById(R.id.edit_driver);
@@ -157,6 +160,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         editIconButton.setOnClickListener(this);
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
+        controllerInstallButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
         rendererInstallButton.setOnClickListener(this);
         driverButton.setOnClickListener(this);
@@ -404,6 +408,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == controllerButton) {
             SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> lastVersionSetting.setController(controller.getId()));
             dialog.show();
+        }
+        if (view == controllerInstallButton) {
+            SettingPageManager.getInstance().switchPage(SettingPageManager.PAGE_ID_SETTING_CONTROLLER_REPO);
         }
         if (view == javaButton) {
             new JavaManageDialog(getContext(), java -> {

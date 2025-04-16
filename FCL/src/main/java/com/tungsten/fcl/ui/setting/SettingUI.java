@@ -7,6 +7,8 @@ import android.content.Context;
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.controller.ControllerPageManager;
+import com.tungsten.fcl.ui.controller.ControllerRepoPage;
 import com.tungsten.fcl.ui.manage.VersionSettingPage;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
@@ -50,6 +52,8 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();
+        } else if (pageManager != null && pageManager.getCurrentPage() instanceof ControllerRepoPage) {
+            pageManager.switchPage(SettingPageManager.PAGE_ID_SETTING_GAME);
         } else {
             super.onBackPressed();
         }

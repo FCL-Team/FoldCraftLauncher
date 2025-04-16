@@ -148,6 +148,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
 
     private void refreshList() {
         EditableControllerListAdapter adapter = new EditableControllerListAdapter(getContext(), Controllers.controllersProperty());
+        adapter.setOnLongClickListener(this::refreshList);
         listView.setAdapter(adapter);
     }
 
