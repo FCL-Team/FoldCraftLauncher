@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1220,
-    "versionName": "1.2.2.0",
-    "date": "2025.04.14",
+    "versionCode": 1221,
+    "versionName": "1.2.2.1",
+    "date": "2025.04.19",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复颜色选择器相关Bug\n2.调整部分UI增加动画效果\n3.添加获取Java的渠道\n4.新增功能：模组下载界面可根据模组加载器过滤模组\n5.增加对无边框全屏模组的警告\n6.调整模组管理界面内模组图标未获取时的显示方式"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.陀螺仪灵敏度增加至1000\n2.在设置页面增加布局下载按钮\n3.在控制布局页面增加长按布局列表刷新布局的功能\n4.调整模组检测功能\n5.增加长按主页按钮分享日志的功能\n6.更新版本过滤列表"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/8a78da4b7371",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.0/FCL-release-1.2.2.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/d20831bf17d2",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.1/FCL-release-1.2.2.1-all.apk"
   }
 ]
