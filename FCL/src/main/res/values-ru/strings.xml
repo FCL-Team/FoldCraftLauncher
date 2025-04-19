@@ -909,6 +909,7 @@
     <string name="modpack_download_warn_title">Предупреждение</string>
     <string name="modpack_download_warn_msg">Большинство модпаков разработаны для ПК, поэтому возможны сбои. Разработчик лаунчера не несет ответственности за совместимость модпаков.</string>
     <string name="guide_theme2">Если текст справа отображается нечетко, нажмите сюда, затем «Настройки лаунчера» и выберите «Дополнительный цвет темы»</string>
+    <string name="guide_share_log">Нажмите и удерживайте здесь, чтобы поделиться логом игры (latest_game.log).</string>
     <string name="joystick_l">Левый стик</string>
     <string name="gamepad_dpad">Крестовина</string>
     <string name="gamepad_button_binding">Привязка кнопок геймпада</string>
