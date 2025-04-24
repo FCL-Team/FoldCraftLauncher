@@ -40,6 +40,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.CancellationException;
 
 public class ControllerDownloadPage extends FCLTempPage implements View.OnClickListener {
@@ -101,6 +102,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             String versionStr = NetworkUtils.doGet(NetworkUtils.toURL(versionUrl));
             return JsonUtils.GSON.fromJson(versionStr, ControllerVersion.class);
         }).thenAcceptAsync((ExceptionalConsumer<ControllerVersion, Exception>) controllerVersion -> {
+            controllerVersion.getHistory().sort(Comparator.comparing(ControllerVersion.VersionInfo::getVersionCode).reversed());
             this.controllerVersion = controllerVersion;
             ArrayList<String> screenshotUrls = new ArrayList<>();
             for (int i = 1; i <= controllerVersion.getScreenshot(); i++) {
