@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1221,
-    "versionName": "1.2.2.1",
-    "date": "2025.04.19",
+    "versionCode": 1222,
+    "versionName": "1.2.2.2",
+    "date": "2025.04.24",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.陀螺仪灵敏度增加至1000\n2.在设置页面增加布局下载按钮\n3.在控制布局页面增加长按布局列表刷新布局的功能\n4.调整模组检测功能\n5.增加长按主页按钮分享日志的功能\n6.更新版本过滤列表"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分模组在Pojav后端上获取GL版本为0.0的Bug\n2.修复Boat后端LWJGL缺失package-info导致部分模组无法运行的Bug\n3.为布局下载的历史版本列表添加排序功能\n4.为模组下载页面显示的长文本添加滚动显示的效果\n5.修复部分设备上修改离线皮肤页面显示不完整的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/d20831bf17d2",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.1/FCL-release-1.2.2.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/ac7fd60afc56",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.2/FCL-release-1.2.2.2-all.apk"
   }
 ]
