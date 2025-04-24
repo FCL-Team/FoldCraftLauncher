@@ -20,20 +20,20 @@
 
     <com.tungsten.fcllibrary.skin.SkinCanvas
         android:id="@+id/skin_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/positive"
-        app:layout_constraintEnd_toStartOf="@id/scrollview"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <ScrollView
         android:id="@+id/scrollview"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/positive"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/skin_view"
+
         app:layout_constraintTop_toBottomOf="@id/title">
 
         <androidx.appcompat.widget.LinearLayoutCompat

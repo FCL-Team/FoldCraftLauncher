@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -77,7 +78,10 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         this.accountListItem = accountListItem;
         this.account = (OfflineAccount) accountListItem.getAccount();
 
-        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+        WindowManager wm = getWindow().getWindowManager();
+        Point point = new Point();
+        wm.getDefaultDisplay().getSize(point);
+        getWindow().setLayout(point.x * 2 / 3, WindowManager.LayoutParams.MATCH_PARENT);
 
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
