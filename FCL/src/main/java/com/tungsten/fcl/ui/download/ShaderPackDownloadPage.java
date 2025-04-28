@@ -19,10 +19,7 @@ public class ShaderPackDownloadPage extends DownloadPage {
 
         supportChinese.set(false);
         downloadSources.get().setAll(context.getString(R.string.mods_curseforge), context.getString(R.string.mods_modrinth));
-        if (CurseForgeRemoteModRepository.isAvailable())
-            downloadSource.set(context.getString(R.string.mods_curseforge));
-        else
-            downloadSource.set(context.getString(R.string.mods_modrinth));
+        downloadSource.set(context.getString(R.string.mods_modrinth));
 
         create();
     }

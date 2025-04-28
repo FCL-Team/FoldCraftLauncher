@@ -87,7 +87,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
-    private lateinit var uiManager: UIManager
+    lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
     private val holder = WeakListenerHolder()
     private var profile: Profile? = null

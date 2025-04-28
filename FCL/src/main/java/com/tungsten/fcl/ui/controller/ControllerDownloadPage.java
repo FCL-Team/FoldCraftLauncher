@@ -111,7 +111,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                     num = "0" + num;
                 screenshotUrls.add(screenshotUrl + num + ".png");
             }
-            String[] allDevices = new String[]{
+            String[] allDevices = new String[] {
                     getContext().getString(R.string.control_download_device_phone),
                     getContext().getString(R.string.control_download_device_pad),
                     getContext().getString(R.string.control_download_device_other)
@@ -229,10 +229,8 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                         .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                         .setPrettyPrinting()
                         .create().fromJson(FileUtils.readText(new File(destPath)), Controller.class);
-                Schedulers.androidUIThread().execute(() -> {
-                    Controllers.addController(controller);
-                    Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show();
-                });
+                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(controller);
+                Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show());
             }
         }).executor();
         taskDialog.setExecutor(executor);
