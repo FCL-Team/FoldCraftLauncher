@@ -133,6 +133,9 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                             builder.setMessage(getContext().getString(R.string.update_failed) + "\n" + exception.getMessage());
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setPositiveButton(getContext().getString(R.string.update_netdisk), ()->{
+                                AndroidUtils.openLink(getContext(), version.getNetdiskUrl());
+                            });
                             builder.create().show();
                         }
                     });
