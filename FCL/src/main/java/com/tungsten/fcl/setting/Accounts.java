@@ -216,8 +216,12 @@ public final class Accounts {
             }
         });
 
-        globalAccountStorages.addListener(onInvalidating(() ->
-                dispatcher.accept(Config.CONFIG_GSON.toJson(globalAccountStorages))));
+        globalAccountStorages.addListener(onInvalidating(() -> {
+            try {
+                dispatcher.accept(Config.CONFIG_GSON.toJson(globalAccountStorages));
+            } catch (Throwable ignore) {
+            }
+        }));
     }
 
     private static Account parseAccount(Map<Object, Object> storage) {

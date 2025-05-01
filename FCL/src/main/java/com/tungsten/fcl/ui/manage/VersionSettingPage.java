@@ -13,6 +13,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.control.SelectControllerDialog;
 import com.tungsten.fcl.game.FCLGameRepository;
+import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.UIManager;
@@ -101,6 +102,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton driverInstallButton;
 
     private FCLTextView javaText;
+    private FCLTextView controllerText;
     private FCLTextView rendererText;
     private FCLTextView driverText;
 
@@ -169,6 +171,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         driverInstallButton.setOnClickListener(this);
 
         javaText = findViewById(R.id.java);
+        controllerText = findViewById(R.id.controller);
         rendererText = findViewById(R.id.renderer);
         driverText = findViewById(R.id.driver);
 
@@ -311,6 +314,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
+        controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
         FCLConfig.Renderer renderer = versionSetting.getRenderer();
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
             rendererText.setText(versionSetting.getCustomRenderer());
@@ -408,7 +412,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             onDeleteIcon();
         }
         if (view == controllerButton) {
-            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> lastVersionSetting.setController(controller.getId()));
+            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
+                lastVersionSetting.setController(controller.getId());
+                controllerText.setText(controller.getName());
+            });
             dialog.show();
         }
         if (view == controllerInstallButton) {
