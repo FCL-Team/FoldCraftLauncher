@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1223,
-    "versionName": "1.2.2.3",
-    "date": "2025.04.29",
+    "versionCode": 1224,
+    "versionName": "1.2.2.4",
+    "date": "2025.05.02",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复NeoForge愚人节版本无法正常解析的Bug\n2.修复跳转布局下载页面可能导致的崩溃Bug\n3.修复共存版本后部分功能可能无法正常使用的Bug\n4.将模组/整合包/资源包/光影的默认下载源调整为Modrinth\n5.修复强制渲染器在大核上运行后可能在日志内报错刷屏的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复JVM无法正确识别当前设备使用的语言的Bug\n2.新增功能：将Fabric检测到不兼容模组时黑屏无响应的行为（手机上缺失相应的图像环境无法正确像PC端那样显示出弹窗）修改为直接产生崩溃\n3.修复点击跳转账户页面时可能产生的随机性崩溃的Bug\n4.新增功能：在设置页显示当前选择的控制布局\n5.调整更新对话框"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c1c45e76e041",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.3/FCL-release-1.2.2.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/846be1a256d9",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.4/FCL-release-1.2.2.4-all.apk"
   }
 ]
