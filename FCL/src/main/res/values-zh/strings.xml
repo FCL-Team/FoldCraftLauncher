@@ -542,6 +542,7 @@
     <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
     <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_show_log">显示日志</string>
+    <string name="menu_settings_performance_mode">持续性能模式</string>
 
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>

@@ -633,6 +633,26 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:singleLine="true"
+                android:text="@string/menu_settings_performance_mode"
+                android:textSize="12sp"
+                app:auto_text_tint="true"
+                app:layout_constraintBottom_toBottomOf="@id/switch_performance"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/switch_performance" />
+
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/switch_performance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_debug" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
                 android:text="@string/menu_settings_show_log"
                 android:textSize="12sp"
                 app:auto_text_tint="true"
@@ -646,7 +666,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_debug" />
+                app:layout_constraintTop_toBottomOf="@id/switch_performance" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"
