@@ -362,6 +362,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch disableLeftTouchSwitch = findViewById(R.id.switch_left_touch);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
         FCLSwitch showLogSwitch = findViewById(R.id.switch_show_log);
+        FCLSwitch performanceModeSwitch = findViewById(R.id.switch_performance);
 
         FCLSpinner<GestureMode> gestureModeSpinner = findViewById(R.id.gesture_mode_spinner);
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
@@ -389,6 +390,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
+
+        performanceModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            activity.getWindow().setSustainedPerformanceMode(isChecked);
+        });
 
         menuSetting.getHideMenuViewViewProperty().addListener(i -> {
             menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);
