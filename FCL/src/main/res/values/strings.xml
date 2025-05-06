@@ -1024,6 +1024,7 @@
     <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) is not for Android. It must make the game crash.</string>
     <string name="mod_check_replay">FFmpeg plugin is needed for Replay (%s). It seems that you haven\'t installed it yet. You can download from Google Play Store or here( %s or %s ) (Long press to copy).</string>
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_axiom">Axiom (%s) currently in use has not been patched, it will cause crash.</string>
 
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>
