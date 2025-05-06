@@ -94,6 +94,20 @@ class ModChecker(val context: Context) {
                         )
                     )
                 }
+
+                "axiom" -> {
+                    val arch = AndroidUtil.getElfArchFromZip(
+                        mod.file.toFile(),
+                        "io/imgui/java/native-bin/libimgui-javaarm64.so"
+                    )
+                    if (arch.isBlank())
+                        throw ModCheckException(
+                            context.getString(
+                                R.string.mod_check_axiom,
+                                mod.file.toFile().name
+                            )
+                        )
+                }
             }
         }.exceptionOrNull()
         if (exception != null) {
