@@ -701,7 +701,7 @@
     <string name="settings_advanced_game_dir_default">По умолчанию (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Изолированно в (.minecraft/versions/&lt;instance name&gt;/, кроме ресурсов и библиотек)</string>
     <string name="settings_advanced_java_permanent_generation_space">Объем постоянной памяти</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">рекомендуется от 256 до 512 МБ (можно не указывать)</string>
+    <string name="settings_advanced_java_permanent_generation_space_prompt">в МБ</string>
     <string name="settings_advanced_jvm_args">JVM аргументы</string>
     <string name="settings_advanced_minecraft_arguments">Аргументы лаунчера</string>
     <string name="settings_advanced_minecraft_arguments_prompt">По умолчанию</string>
@@ -926,13 +926,14 @@
     <string name="recommend_version">Рекомендуемая версия</string>
 
     <string name="mod_check_continue">Продолжить</string>
-    <string name="mod_check_physics">Используемый мод Physics (%s) не пропатчен (нужно заменить libPhysXJniBindings_64.so от Linux x86_64 на версию для Android arm64/x86_64). Это приведёт к сбою игры.</string>
+    <string name="mod_check_physics">Текущий мод Physics (%s) не пропатчен (нужно заменить libPhysXJniBindings_64.so от Linux x86_64 на версию для Android arm64/x86_64). Это приведёт к сбою игры.</string>
     <string name="mod_check_mcef">Мод MCEF (%s) не работает на Android. Обычно он нужен для работы WebDisplays или внутриигрового браузера.</string>
     <string name="mod_check_valkyrienskies">Мод Valkyrien Skies/Valkyrien Warfare (%s) не работает в одиночной игре напрямую. Необходим сервер, иначе это приведёт к сбою игры.</string>
     <string name="mod_check_yes_steve_model">Мод Yes Steve Model (%s) версии 2.2.2 и выше не работает на Android.</string>
     <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) не предназначен для Android. Это приведёт к сбою игры.</string>
     <string name="mod_check_replay">Replay (%s) требует плагин FFmpeg. Он не установлен. Установите из Google Play Store или здесь (%s или %s) (зажмите для копирования).</string>
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) не предназначен для Android. Это приведёт к сбою игры.</string>
+    <string name="mod_check_axiom">Текущий Axiom (%s) не пропатчен, это приведёт к сбою игры.</string>
 
     <string name="internal">Встроенная</string>
     <string name="import_java">Импорт Java</string>
