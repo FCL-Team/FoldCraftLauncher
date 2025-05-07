@@ -86,7 +86,7 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
         gl10.glPushMatrix();
         gl10.glBindTexture(GL10.GL_TEXTURE_2D, modelTextureData[0]);
         this.skinModel.drawBodyModel(gl10, slim);
-        if (cape != null && cape.getWidth() == 64 && cape.getHeight() == 32) {
+        if (cape != null /*&& cape.getWidth() == 64 && cape.getHeight() == 32*/) {
             gl10.glBindTexture(GL10.GL_TEXTURE_2D, modelTextureData[1]);
             this.skinModel.drawCapeModel(gl10);
         }
