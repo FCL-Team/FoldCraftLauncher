@@ -68,6 +68,7 @@ public class ServerListAdapter extends FCLAdapter {
         AuthlibInjectorServer server = list.get(i);
         viewHolder.name.setText(server.getName());
         viewHolder.url.setText(server.getUrl());
+        viewHolder.url.setSelected(true);
         viewHolder.parent.setOnClickListener(v -> {
             CreateAccountDialog dialog = new CreateAccountDialog(getContext(), server);
             dialog.show();
