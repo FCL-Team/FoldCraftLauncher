@@ -1038,4 +1038,5 @@
     <string name="launch">Launch</string>
     <string name="tip_hide_menu_view">The menu view is hidden. Press the volume key to open the menu.</string>
     <string name="modloader">ModLoader</string>
+    <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
 </resources>

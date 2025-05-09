@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -15,6 +16,7 @@ import com.tungsten.fcl.control.SelectControllerDialog;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.controller.ControllerPageManager;
@@ -465,7 +467,16 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             } else {
                 y = 0;
             }
-            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> rendererText.setText(name));
+            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> {
+                if(globalSetting && Profiles.getSelectedProfile().getVersionSetting() != null && !Profiles.getSelectedProfile().getVersionSetting().isGlobal()) {
+                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                    builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                    builder.setMessage(getContext().getString(R.string.message_warn_renderer_global_setting));
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive),null);
+                    builder.create().show();
+                }
+                rendererText.setText(name);
+            });
         }
         if (view == driverButton) {
             RendererUtil.openDriverMenu(getContext(), view, globalSetting, name -> driverText.setText(name));
