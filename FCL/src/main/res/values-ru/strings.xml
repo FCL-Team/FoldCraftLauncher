@@ -764,7 +764,7 @@
     <string name="settings_memory_used_per_total">%1$.1f ГБ использованно / %2$.1f ГБ всего</string>
     <string name="settings_physical_memory">Размер физической памяти</string>
     <string name="settings_tabs_installers">Загрузчики модов</string>
-    <string name="settings_type_global_manage">Настройки</string>
+    <string name="settings_type_global_manage">Основные настройки игры</string>
     <string name="settings_type_special_enable">Отдельные настройки</string>
 
     <string name="style_name">Название</string>
