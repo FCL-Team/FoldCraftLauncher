@@ -178,8 +178,15 @@ public class AccountListAdapter extends FCLAdapter {
             }
         });
         viewHolder.delete.setOnClickListener(v -> {
-            account.remove();
-            UIManager.getInstance().getAccountUI().refresh().start();
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), account.getTitle()));
+            builder.setPositiveButton(() -> {
+                account.remove();
+                UIManager.getInstance().getAccountUI().refresh().start();
+            });
+            builder.setNegativeButton(null);
+            builder.create().show();
         });
         return view;
     }

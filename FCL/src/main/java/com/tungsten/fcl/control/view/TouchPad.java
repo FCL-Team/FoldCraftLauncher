@@ -169,15 +169,11 @@ public class TouchPad extends View {
                 gameMenu.getInput().setPointerId(null);
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
-                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
-                        }, 33);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true), 33);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
-                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
-                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
-                        }, 33);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false), 33);
                         break;
                     default:
                         break;
@@ -192,8 +188,8 @@ public class TouchPad extends View {
                         initialY = gameMenu.getCursorY();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
-                        int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
+                        int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
+                        int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
                         int targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
                         int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                         gameMenu.getInput().setPointerId(POINTER_ID);

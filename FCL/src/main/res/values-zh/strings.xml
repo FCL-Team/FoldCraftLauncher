@@ -988,4 +988,5 @@
     <string name="launch">启动</string>
     <string name="tip_hide_menu_view">菜单按键已隐藏，按下音量键打开菜单。</string>
     <string name="modloader">模组加载器</string>
+    <string name="message_warn_renderer_global_setting">你当前选择的版本已启用游戏特定设置，所以在此处修改的渲染器无法应用于当前版本。建议长按“启动”按钮选择渲染器。</string>
 </resources>
