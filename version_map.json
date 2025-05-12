@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1225,
-    "versionName": "1.2.2.5",
-    "date": "2025.05.07",
+    "versionCode": 1226,
+    "versionName": "1.2.2.6",
+    "date": "2025.05.12",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：自动创建.nomedia文件防止游戏文件内的大量贴图出现在系统相册内\n2.新增功能：持续性能模式\n3.增加对Axiom模组的兼容性检查\n4.修复当用户名为中文时离线账户Little换肤失效的Bug\n5.修复启动器内皮肤站高清披风无法加载的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：当选定的版本启用了版本特定设置后修改全局渲染器设置时进行弹窗警告\n2.新增功能：删除账户时增加确认弹窗\n3.新增功能：删除认证服务器时增加弹窗确认\n4.调整认证服务器地址显示效果\n5.修复鼠标灵敏度对鼠标点击模式错误生效且当指针可见时的灵敏度不生效的Bug"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f9b7a5093570",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.5/FCL-release-1.2.2.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/5506be16bc95",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.6/FCL-release-1.2.2.6-all.apk"
   }
 ]
