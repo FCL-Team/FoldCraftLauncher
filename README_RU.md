@@ -20,7 +20,7 @@
 [简体中文](./README.md) | [English](./README_EN.md) | Русский
 
 > ✨ **О проекте**  
-> 「Fold Craft Launcher」 — это лаунчер Minecraft: Java Edition для платформы Android, разрабатываемый командой FCL Team. Созданный на базе ключевых функций [HMCL](https://github.com/HMCL-dev/HMCL) и с интеграцией бэкендов [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) и [Boat](https://github.com/AOF-Dev/Boat), он позволяет запускать Minecraft: Java Edition на мобильных устройствах, поддерживая загрузку и работу модов для всех версий игры.
+> 「DuckMC」 — это лаунчер Minecraft: Java Edition для платформы Android, разрабатываемый командой Duck Team. Созданный на базе ключевых функций [HMCL](https://github.com/HMCL-dev/HMCL) и с интеграцией бэкендов [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher) и [Boat](https://github.com/AOF-Dev/Boat), [FCL] (https://github.com/FCL-Team/FoldCraftLauncher), он позволяет запускать Minecraft: Java Edition на мобильных устройствах, поддерживая загрузку и работу модов для всех версий игры.
 
 ---
 
@@ -58,7 +58,7 @@
 
 ## 🤝 Участие и благодарности
 ### Стена участников
-<a href="https://github.com/FCL-Team/FoldCraftLauncher/graphs/contributors">
+<a href="https://github.com/FCL-Team/FoldCraftLaucher/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=FCL-Team/FoldCraftLauncher" />
 </a>
 
@@ -67,3 +67,4 @@
 - [Boat и связанные проекты](https://github.com/AOF-Dev/Boat)
 - [PojavLauncher и связанные проекты](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+- [Fold Craft Launcher] (https://github.com/FCL-Team/FoldCraftLauncher)
