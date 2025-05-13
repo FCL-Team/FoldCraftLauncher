@@ -63,3 +63,4 @@ This project is licensed under **[GPL-3.0 License](https://www.gnu.org/licenses/
 - [Boat and related projects](https://github.com/AOF-Dev/Boat)
 - [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+- [Fold Craft Launcher](https://github.com/FCL-Team/FoldCraftLauncher)
