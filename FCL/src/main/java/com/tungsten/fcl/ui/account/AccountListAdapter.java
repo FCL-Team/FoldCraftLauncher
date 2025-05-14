@@ -90,6 +90,7 @@ public class AccountListAdapter extends FCLAdapter {
         viewHolder.name.stringProperty().bind(account.titleProperty());
         viewHolder.type.stringProperty().unbind();
         viewHolder.type.stringProperty().bind(account.subtitleProperty());
+        viewHolder.type.setSelected(true);
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(v -> {
             Accounts.setSelectedAccount(account.getAccount());
