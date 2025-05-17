@@ -1,9 +1,9 @@
 [
   {
     "type": "release",
-    "versionCode": 1226,
-    "versionName": "1.2.2.6",
-    "date": "2025.05.12",
+    "versionCode": 1227,
+    "versionName": "1.2.2.7",
+    "date": "2025.05.17",
     "description": [
       {
         "lang": "en",
@@ -11,10 +11,10 @@
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：当选定的版本启用了版本特定设置后修改全局渲染器设置时进行弹窗警告\n2.新增功能：删除账户时增加确认弹窗\n3.新增功能：删除认证服务器时增加弹窗确认\n4.调整认证服务器地址显示效果\n5.修复鼠标灵敏度对鼠标点击模式错误生效且当指针可见时的灵敏度不生效的Bug"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复复制游戏实例里的“复制存档”选项失效问题\n2.修复 LiteLoader 下载相关问题\n3.修复 Fabric Metadata 无效时 FabricInstallTask空指针异常的问题\n4.调整账户类型显示效果\n5.调整部分翻译"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/5506be16bc95",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.6/FCL-release-1.2.2.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7b0cbd222578",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.7/FCL-release-1.2.2.7-all.apk"
   }
 ]
