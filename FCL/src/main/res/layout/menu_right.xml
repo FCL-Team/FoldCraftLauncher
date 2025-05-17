@@ -1,698 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_game_menu"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="vertical"
     android:padding="12dp">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/text_setting"
+        android:id="@+id/text_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:singleLine="true"
-        android:text="@string/menu_settings"
-        android:textSize="14sp"
+        android:text="Settings"
+        android:textSize="16sp"
+        android:textStyle="bold"
         app:auto_text_tint="true"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_setting">
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/text_settings"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_func"
-                android:layout_width="wrap_content"
+            <!-- Язык -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="@string/menu_settings_function"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="horizontal"
+                android:padding="6dp">
 
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Language"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSpinner
+                    android:id="@+id/spinner_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Версия Minecraft -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Minecraft Version"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSpinner
+                    android:id="@+id/spinner_mc_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Путь к Java -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Java Path"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/button_select_java"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Browse"/>
+            </LinearLayout>
+
+            <!-- RAM -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="RAM"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                    android:id="@+id/seekbar_ram"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:max="8192"
+                    android:progress="2048"/>
+            </LinearLayout>
+
+            <!-- Темы оформления -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Theme"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLSpinner
+                    android:id="@+id/spinner_theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <!-- Дополнительные настройки (пример) -->
             <View
-                android:id="@+id/divider_func"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_func" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_lock_view"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_lock_view"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_lock_view" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_lock_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_func" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_hide_view"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_hide_view"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_hide_view" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_hide_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_lock_view" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_show_fps"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_show_fps"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_show_fps" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_show_fps"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_hide_view" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_quick_input"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/open_quick_input"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/open_quick_input" />
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"/>
 
             <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/open_quick_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_quick_input_button"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_show_fps" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_send_key"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/open_send_key"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/open_send_key" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/open_send_key"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_send_key_button"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/open_quick_input" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_soft_keyboard_adjust"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_soft_keyboard_adjust"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_soft_keyboard_adjust" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_soft_keyboard_adjust"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/open_send_key" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/item_bar_scale_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_item_bar_scale"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_soft_keyboard_adjust" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/item_bar_scale"
+                android:id="@+id/button_save_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="2"
-                android:min="-2"
-                app:layout_constraintTop_toBottomOf="@id/item_bar_scale_text" />
+                android:text="Save Settings"
+                android:layout_marginTop="8dp"/>
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/window_scale_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/settings_game_dimension"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/item_bar_scale" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/window_scale"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="300"
-                android:min="1"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/window_scale_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/cursor_offset_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/settings_game_cursor_offset"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/window_scale" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/cursor_offset"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="150"
-                android:min="-150"
-                app:layout_constraintTop_toBottomOf="@id/cursor_offset_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_gesture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gesture"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintTop_toBottomOf="@id/cursor_offset" />
-
-            <View
-                android:id="@+id/divider_gesture"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_disable_gesture"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_gesture"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_gesture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_disable_be_gesture"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_be_gesture"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_be_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_be_gesture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gesture_mode"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/gesture_mode_spinner"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/gesture_mode_spinner" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSpinner
-                android:id="@+id/gesture_mode_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_be_gesture" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_disable_left_touch"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_left_touch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_left_touch" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_left_touch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gesture_mode_spinner" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_mouse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_mouse"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_left_touch" />
-
-            <View
-                android:id="@+id/divider_mouse"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_mouse" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_mouse_mode"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/mouse_mode_spinner"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/mouse_mode_spinner" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSpinner
-                android:id="@+id/mouse_mode_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_mouse" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/mouse_sensitivity_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_mouse_sensitivity"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_mode_spinner" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/mouse_sensitivity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="1000"
-                android:min="100"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/mouse_sensitivity_cursor_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_mouse_cursor_sensitivity"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/mouse_sensitivity_cursor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="1000"
-                android:min="100"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity_cursor_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/mouse_size_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_mouse_size"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity_cursor" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/mouse_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="30"
-                app:suffix="dp"
-                app:layout_constraintTop_toBottomOf="@id/mouse_size_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_gamepad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_size" />
-
-            <View
-                android:id="@+id/divider_gamepad"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_gamepad" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_reset_mapper"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/gamepad_reset_mapper"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/gamepad_reset_mapper" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/gamepad_reset_mapper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_reset"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_gamepad" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_button_binding"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/gamepad_reset_button_binding"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/gamepad_reset_button_binding" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/gamepad_reset_button_binding"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_open_button"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_reset_mapper" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/gamepad_deadzone_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gamepad_deadzone"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_reset_button_binding" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/gamepad_deadzone_size"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="100"
-                android:min="0"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_deadzone_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_gyro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gyro"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gamepad_deadzone_size" />
-
-            <View
-                android:id="@+id/divider_gyro"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_gyro" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gyro"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_gyro"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_gyro" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_gyro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_gyro" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/gyro_sensitivity_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_gyro_sensitivity"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_gyro" />
-
-            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                android:id="@+id/gyro_sensitivity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
-                android:max="1000"
-                app:layout_constraintTop_toBottomOf="@id/gyro_sensitivity_text" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/text_debug"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:singleLine="true"
-                android:text="@string/menu_settings_debug"
-                android:textSize="11sp"
-                app:auto_text_tint="true"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gyro_sensitivity" />
-
-            <View
-                android:id="@+id/divider_debug"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/text_debug" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_performance_mode"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_performance"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_performance" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_performance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_debug" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_show_log"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/switch_show_log"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/switch_show_log" />
-
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_show_log"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_performance" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_force_exit"
-                android:textSize="12sp"
-                app:auto_text_tint="true"
-                app:layout_constraintBottom_toBottomOf="@id/force_exit"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/force_exit" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/force_exit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/menu_settings_force_exit_button"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_show_log" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </LinearLayout>
     </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>	</androidx.constraintlayout.widget.ConstraintLayout>
