@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Основной контент (игра, интерфейс, HUD и т.п.) -->
     <RelativeLayout
         android:id="@+id/base_layout"
         android:layout_width="match_parent"
@@ -64,6 +65,7 @@
 
     </RelativeLayout>
 
+    <!-- Левое меню -->
     <RelativeLayout
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
@@ -76,9 +78,9 @@
             android:layout_marginStart="30dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
     </RelativeLayout>
 
+    <!-- Правое меню -->
     <RelativeLayout
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
@@ -91,7 +93,6 @@
             android:layout_marginEnd="30dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
     </RelativeLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
