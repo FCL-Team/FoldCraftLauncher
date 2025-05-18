@@ -695,7 +695,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     }
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
-                }, 50);
+                }, 150);
             }
         }
         for (String id : event.bindViewGroupList()) {

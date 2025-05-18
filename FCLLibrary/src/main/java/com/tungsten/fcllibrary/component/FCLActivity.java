@@ -41,6 +41,9 @@ public class FCLActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
+        }
     }
 
     @Override
@@ -57,6 +60,7 @@ public class FCLActivity extends AppCompatActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
     }
 
     @Override
