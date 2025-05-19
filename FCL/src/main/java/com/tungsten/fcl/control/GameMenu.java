@@ -403,6 +403,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         });
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            menuSetting.getShowFpsProperty().setValue(isChecked);
             if (isSimulated()) {
                 return;
             }
@@ -420,6 +421,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 fpsText.setText("");
             }
         });
+        showFps.setChecked(menuSetting.isShowFps());
 
         logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
         menuSetting.getShowLogProperty().addListener(observable -> {

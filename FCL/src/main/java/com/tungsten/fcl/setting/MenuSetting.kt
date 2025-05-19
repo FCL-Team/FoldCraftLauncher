@@ -54,6 +54,14 @@ class MenuSetting {
             hideMenuViewViewProperty.set(hideMenuView)
         }
 
+    val showFpsProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "showFps", false)
+    var isShowFps: Boolean
+        get() = showFpsProperty.get()
+        set(v) {
+            showFpsProperty.set(v)
+        }
+
     val disableSoftKeyAdjustProperty: BooleanProperty =
         SimpleBooleanProperty(this, "disableSoftKeyAdjust", false)
     var isDisableSoftKeyAdjust: Boolean
@@ -200,6 +208,7 @@ class MenuSetting {
         autoFitDistProperty.addListener(listener)
         lockMenuViewProperty.addListener(listener)
         hideMenuViewViewProperty.addListener(listener)
+        showFpsProperty.addListener(listener)
         disableSoftKeyAdjustProperty.addListener(listener)
         showLogProperty.addListener(listener)
         menuPositionXProperty.addListener(listener)
@@ -232,6 +241,7 @@ class MenuSetting {
                 addProperty("autoFitDist", src.autoFitDist)
                 addProperty("lockMenuView", src.isLockMenuView)
                 addProperty("hideMenuView", src.isHideMenuView)
+                addProperty("showFps", src.isShowFps)
                 addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust)
                 addProperty("showLog", src.isShowLog)
                 addProperty("menuPositionX", src.menuPositionX)
@@ -265,6 +275,7 @@ class MenuSetting {
                 ms.autoFitDist = json["autoFitDist"]?.asInt ?: 0
                 ms.isLockMenuView = json["lockMenuView"]?.asBoolean ?: false
                 ms.isHideMenuView = json["hideMenuView"]?.asBoolean ?: false
+                ms.isShowFps = json["showFps"]?.asBoolean ?: false
                 ms.isDisableSoftKeyAdjust = json["disableSoftKeyAdjust"]?.asBoolean ?: false
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
