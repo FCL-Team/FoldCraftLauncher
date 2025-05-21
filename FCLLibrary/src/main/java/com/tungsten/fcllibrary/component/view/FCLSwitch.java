@@ -46,6 +46,7 @@ public class FCLSwitch extends SwitchCompat {
             };
             setThumbTintList(new ColorStateList(state, color));
             setTrackTintList(new ColorStateList(state, subColor));
+            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
         }
 
         @Override

@@ -363,6 +363,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
         FCLSwitch showLogSwitch = findViewById(R.id.switch_show_log);
         FCLSwitch performanceModeSwitch = findViewById(R.id.switch_performance);
+        FCLSwitch autoShowLogSwitch = findViewById(R.id.switch_auto_show_log);
 
         FCLSpinner<GestureMode> gestureModeSpinner = findViewById(R.id.gesture_mode_spinner);
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
@@ -390,6 +391,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
+        FXUtils.bindBoolean(autoShowLogSwitch, menuSetting.getAutoShowLogProperty());
 
         performanceModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             activity.getWindow().setSustainedPerformanceMode(isChecked);
@@ -423,9 +425,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         });
         showFps.setChecked(menuSetting.isShowFps());
 
-        logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
+        logWindow.visibilityProperty().setValue(menuSetting.isShowLog() || menuSetting.isAutoShowLog());
         menuSetting.getShowLogProperty().addListener(observable -> {
             logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
+        });
+        menuSetting.getAutoShowLogProperty().addListener(observable -> {
+            if (baseLayout.getBackground() != null) {
+                logWindow.visibilityProperty().setValue(menuSetting.isAutoShowLog());
+            }
         });
 
         ArrayList<GestureMode> gestureModeDataList = new ArrayList<>();
@@ -653,6 +660,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     public void onGraphicOutput() {
         baseLayout.setBackground(null);
         baseLayout.removeView(launchProgress);
+        if (!menuSetting.isShowLog() && menuSetting.isAutoShowLog()) {
+            logWindow.visibilityProperty().setValue(false);
+        }
     }
 
     @Override
