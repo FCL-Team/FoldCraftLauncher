@@ -1,7 +1,9 @@
 package com.mio.ui.dialog
 
 import android.content.Context
+import android.graphics.Point
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ArrayAdapter
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogSelectRendererBinding
@@ -20,7 +22,16 @@ class DriverSelectDialog(
 ) : FCLDialog(context) {
 
     init {
-        window?.setLayout(ConvertUtils.dip2px(context, 500F), ViewGroup.LayoutParams.MATCH_PARENT)
+        val point = Point()
+        window?.windowManager?.defaultDisplay?.getSize(point)
+        val params = window?.attributes
+        params?.width = ConvertUtils.dip2px(context, 500f)
+        if (point.y * 2 < point.x) {
+            params?.height = WindowManager.LayoutParams.MATCH_PARENT
+        } else {
+            params?.height = point.y * 1 / 2
+        }
+        window?.attributes = params
         val binding = DialogSelectRendererBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = context.getString(R.string.settings_fcl_driver)
