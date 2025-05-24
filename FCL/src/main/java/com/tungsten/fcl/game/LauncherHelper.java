@@ -190,7 +190,7 @@ public final class LauncherHelper {
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
-                            fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor());
+                            fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor() / 100.0);
                             fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                             fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                             fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());

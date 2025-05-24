@@ -81,7 +81,14 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         WindowManager wm = getWindow().getWindowManager();
         Point point = new Point();
         wm.getDefaultDisplay().getSize(point);
-        getWindow().setLayout(point.x * 2 / 3, WindowManager.LayoutParams.MATCH_PARENT);
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.width = point.x * 2 / 3;
+        if (point.y * 2 < point.x) {
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        } else {
+            params.height = point.y * 2 / 3;
+        }
+        getWindow().setAttributes(params);
 
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
@@ -120,12 +127,6 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
         negative.post(() -> {
-            int size = root.getHeight() - title.getHeight() - positive.getHeight() - ConvertUtils.dip2px(getContext(), 40);
-            ViewGroup.LayoutParams layoutParams = skinCanvas.getLayoutParams();
-            layoutParams.width = size;
-            layoutParams.height = size;
-            skinCanvas.setLayoutParams(layoutParams);
-
             positive.setOnClickListener(this);
             negative.setOnClickListener(this);
         });

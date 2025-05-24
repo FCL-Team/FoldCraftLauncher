@@ -177,12 +177,10 @@ class VersionSetting : Cloneable {
             serverIpProperty.set(serverIp)
         }
 
-    val scaleFactorProperty: DoubleProperty = SimpleDoubleProperty(this, "scaleFactor", 1.0)
-    var scaleFactor: Double
+    val scaleFactorProperty: IntegerProperty = SimpleIntegerProperty(this, "newScaleFactor", 100)
+    var scaleFactor: Int
         get() = scaleFactorProperty.get()
-        set(scaleFactor) {
-            scaleFactorProperty.set(scaleFactor)
-        }
+        set(v) = scaleFactorProperty.set(v)
 
     /**
      * 0 - .minecraft<br></br>
@@ -330,7 +328,7 @@ class VersionSetting : Cloneable {
                 addProperty("permSize", src.permSize)
                 addProperty("serverIp", src.serverIp)
                 addProperty("java", src.java)
-                addProperty("scaleFactor", src.scaleFactor)
+                addProperty("newScaleFactor", src.scaleFactor)
                 addProperty("notCheckGame", src.isNotCheckGame)
                 addProperty("notCheckJVM", src.isNotCheckJVM)
                 addProperty("beGesture", src.isBeGesture)
@@ -369,7 +367,7 @@ class VersionSetting : Cloneable {
                 vs.java =
                     JavaManager.javaList.find { it.name == json["java"]?.asString }?.name
                         ?: "Auto"
-                vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
+                vs.scaleFactor = json["newScaleFactor"]?.asInt ?: 100
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
                 vs.isBeGesture = json["beGesture"]?.asBoolean ?: false

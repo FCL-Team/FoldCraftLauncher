@@ -15,12 +15,12 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
+import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
 import com.mio.util.GuideUtil
 import com.mio.util.ImageUtil
-import com.mio.util.RendererUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -60,7 +60,6 @@ import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
-import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -158,17 +157,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 version.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
-                    RendererUtil.openRendererMenu(
-                        this@MainActivity,
-                        binding.rightMenu,
-                        binding.rightMenu.x.toInt(),
-                        0,
-                        binding.rightMenu.width,
-                        view.y.toInt(),
-                        false
-                    ) {
+                    RendererSelectDialog(this@MainActivity, false) {
                         onClick(view)
-                    }
+                    }.show()
                     true
                 }
                 jar.setOnClickListener(this@MainActivity)

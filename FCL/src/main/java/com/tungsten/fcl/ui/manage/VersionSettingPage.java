@@ -3,13 +3,13 @@ package com.tungsten.fcl.ui.manage;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.mio.ui.dialog.DriverSelectDialog;
 import com.mio.ui.dialog.JavaManageDialog;
-import com.mio.util.RendererUtil;
+import com.mio.ui.dialog.RendererSelectDialog;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.control.SelectControllerDialog;
@@ -57,7 +57,6 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -291,7 +290,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.getNotCheckJVMProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
-            scaleFactorSeekbar.percentProgressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
+            scaleFactorSeekbar.progressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
 
             lastVersionSetting.getUsesGlobalProperty().removeListener(specificSettingsListener);
@@ -312,11 +311,13 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.getNotCheckJVMProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
-        scaleFactorSeekbar.percentProgressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
+        scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
-        controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
+        Controllers.addCallback(() -> {
+            controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
+        });
         FCLConfig.Renderer renderer = versionSetting.getRenderer();
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
             rendererText.setText(versionSetting.getCustomRenderer());
@@ -458,28 +459,19 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                     .show();
         }
         if (view == rendererButton) {
-            int[] pos = new int[2];
-            view.getLocationInWindow(pos);
-            int windowHeight = getActivity().getWindow().getDecorView().getHeight();
-            int y;
-            if (pos[1] < windowHeight / 2) {
-                y = pos[1];
-            } else {
-                y = 0;
-            }
-            RendererUtil.openRendererMenu(getContext(), view, pos[0], y, ConvertUtils.dip2px(getContext(), 200), windowHeight - y, globalSetting, name -> {
-                if(globalSetting && Profiles.getSelectedProfile().getVersionSetting() != null && !Profiles.getSelectedProfile().getVersionSetting().isGlobal()) {
+            new RendererSelectDialog(getContext(), globalSetting, name -> {
+                if (globalSetting && Profiles.getSelectedProfile().getVersionSetting() != null && !Profiles.getSelectedProfile().getVersionSetting().isGlobal()) {
                     FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                     builder.setMessage(getContext().getString(R.string.message_warn_renderer_global_setting));
-                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive),null);
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
                     builder.create().show();
                 }
                 rendererText.setText(name);
-            });
+            }).show();
         }
         if (view == driverButton) {
-            RendererUtil.openDriverMenu(getContext(), view, globalSetting, name -> driverText.setText(name));
+            new DriverSelectDialog(getContext(), globalSetting, name -> driverText.setText(name)).show();
         }
         if (view == rendererInstallButton) {
             new AlertDialog.Builder(getContext())
