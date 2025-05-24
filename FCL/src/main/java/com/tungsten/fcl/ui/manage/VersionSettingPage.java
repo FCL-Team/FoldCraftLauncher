@@ -316,7 +316,9 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
-        controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
+        Controllers.addCallback(() -> {
+            controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
+        });
         FCLConfig.Renderer renderer = versionSetting.getRenderer();
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
             rendererText.setText(versionSetting.getCustomRenderer());
