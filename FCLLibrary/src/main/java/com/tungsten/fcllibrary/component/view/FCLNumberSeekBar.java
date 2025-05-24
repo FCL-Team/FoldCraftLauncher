@@ -79,7 +79,6 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 fromUserOrSystem = true;
                 progressProperty().set(i);
-                percentProgressProperty().set((double) i / (double) getMax());
                 fromUserOrSystem = false;
             }
 
@@ -208,40 +207,6 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
         }
 
         return disableProperty;
-    }
-
-    public final void setPercentProgressValue(double percentProgressValue) {
-        percentProgressProperty().set(percentProgressValue);
-    }
-
-    public final double getPercentProgressValue() {
-        return percentProgressProperty == null ? -1 : percentProgressProperty.get();
-    }
-
-    public final DoubleProperty percentProgressProperty() {
-        if (percentProgressProperty == null) {
-            percentProgressProperty = new DoublePropertyBase() {
-
-                public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            double progress = get();
-                            setProgress((int) (progress * getMax()));
-                        }
-                    });
-                }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "percentProgress";
-                }
-            };
-        }
-
-        return percentProgressProperty;
     }
 
     public final void setProgressValue(int progressValue) {
