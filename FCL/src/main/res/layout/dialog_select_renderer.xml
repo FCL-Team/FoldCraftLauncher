@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="10dp"
+        android:dividerHeight="10dp"
         app:layout_constraintBottom_toTopOf="@id/cancel"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
