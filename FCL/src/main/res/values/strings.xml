@@ -560,6 +560,7 @@
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
     <string name="menu_settings_mouse_cursor_sensitivity">Mouse Sensitivity(When the cursor is displayed)</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
     <string name="menu_settings_gamepad_button_binding">Button binding</string>

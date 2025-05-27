@@ -361,6 +361,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
         FCLSwitch disableLeftTouchSwitch = findViewById(R.id.switch_left_touch);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
+        FCLSwitch physicalMouseSwitch = findViewById(R.id.switch_physical_mouse_mode);
         FCLSwitch showLogSwitch = findViewById(R.id.switch_show_log);
         FCLSwitch performanceModeSwitch = findViewById(R.id.switch_performance);
         FCLSwitch autoShowLogSwitch = findViewById(R.id.switch_auto_show_log);
@@ -390,6 +391,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
         FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
+        FXUtils.bindBoolean(physicalMouseSwitch, menuSetting.getPhysicalMouseMode());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
         FXUtils.bindBoolean(autoShowLogSwitch, menuSetting.getAutoShowLogProperty());
 
@@ -673,10 +675,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
                 getInput().setPointer(AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) / 2, AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) / 2, "Gyro");
+                if (menuSetting.isPhysicalMouseMode()) {
+                    getInput().getFocusableView().releasePointerCapture();
+                    getInput().getFocusableView().clearFocus();
+                }
             } else {
                 getCursor().setVisibility(View.GONE);
                 if (getBridge() != null && !getBridge().hasTouchController()) {
                     gameItemBar.setVisibility(View.VISIBLE);
+                }
+                if (menuSetting.isPhysicalMouseMode()) {
+                    getInput().getFocusableView().requestFocus();
+                    getInput().getFocusableView().requestPointerCapture();
                 }
             }
         });

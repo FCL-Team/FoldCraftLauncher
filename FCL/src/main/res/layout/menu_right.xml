@@ -388,6 +388,16 @@
                 app:layout_constraintTop_toBottomOf="@id/mouse_size_text"
                 app:suffix="dp" />
 
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/switch_physical_mouse_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/menu_settings_physical_mouse_mode"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mouse_size" />
+
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/text_gamepad"
                 android:layout_width="wrap_content"
@@ -398,7 +408,7 @@
                 android:textSize="11sp"
                 app:auto_text_tint="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_size" />
+                app:layout_constraintTop_toBottomOf="@id/switch_physical_mouse_mode" />
 
             <View
                 android:id="@+id/divider_gamepad"

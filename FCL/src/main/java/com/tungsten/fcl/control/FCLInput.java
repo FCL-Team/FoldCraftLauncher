@@ -117,7 +117,9 @@ public class FCLInput implements View.OnCapturedPointerListener {
         view.setFocusableInTouchMode(true);
         view.setOnCapturedPointerListener(this);
         view.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
-            view.requestPointerCapture();
+            if (!menu.getMenuSetting().isPhysicalMouseMode()) {
+                view.requestPointerCapture();
+            }
         });
         view.requestFocus();
 
@@ -206,10 +208,14 @@ public class FCLInput implements View.OnCapturedPointerListener {
         }
         // shift + enter switch soft keyboard state
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
-            if (!menu.getTouchCharInput().isLock() && event.getAction() == KeyEvent.ACTION_UP && !menu.getTouchCharInput().isEnabled()) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
                 menu.getTouchCharInput().switchKeyboardState();
-            } else if (menu.getTouchCharInput().isLock()) {
-                menu.getTouchCharInput().setLock(false);
+            }
+            return true;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                menu.getTouchCharInput().hide();
             }
             return true;
         }

@@ -202,6 +202,13 @@ class MenuSetting {
             mouseSizeProperty.set(mouseSize)
         }
 
+    val physicalMouseMode: BooleanProperty = SimpleBooleanProperty(this, "physicalMouseMode", false)
+    var isPhysicalMouseMode: Boolean
+        get() = physicalMouseMode.get()
+        set(v) {
+            physicalMouseMode.set(v)
+        }
+
     val gamepadDeadzoneProperty: DoubleProperty =
         SimpleDoubleProperty(this, "gamepadDeadzone", 1.0)
     var gamepadDeadzone: Double
@@ -231,6 +238,7 @@ class MenuSetting {
         mouseSensitivityProperty.addListener(listener)
         mouseSensitivityCursorProperty.addListener(listener)
         mouseSizeProperty.addListener(listener)
+        physicalMouseMode.addListener(listener)
         itemBarScaleProperty.addListener(listener)
         windowScaleProperty.addListener(listener)
         cursorOffsetProperty.addListener(listener)
@@ -265,6 +273,7 @@ class MenuSetting {
                 addProperty("mouseSensitivity", src.mouseSensitivity)
                 addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
                 addProperty("mouseSize", src.mouseSize)
+                addProperty("physicalMouseMode", src.isPhysicalMouseMode)
                 addProperty("itemBarScale", src.itemBarScale)
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
@@ -300,6 +309,7 @@ class MenuSetting {
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
                 ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
                 ms.mouseSize = json["mouseSize"]?.asInt ?: 15
+                ms.isPhysicalMouseMode = json["physicalMouseMode"]?.asBoolean ?: false
                 ms.itemBarScale = json["itemBarScale"]?.asInt ?: 0
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
