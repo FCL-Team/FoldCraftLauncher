@@ -1,26 +1,36 @@
-name: Android CI
+name: Build DuckMC APK
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
+      - uses: actions/checkout@v3
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download Gradle
+        run: |
+          mkdir -p $HOME/gradle
+          cd $HOME/gradle
+          wget https://services.gradle.org/distributions/gradle-7.6-bin.zip 
+          unzip gradle-7.6-bin.zip
+          export PATH=$PATH:$HOME/gradle/gradle-7.6/bin
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: duckmc-release
+          path: app/release/app-release.apk
