@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
@@ -610,6 +610,16 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (getBridge() != null && getBridge().hasTouchController()) {
             touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
         }
+
+        touchPad.setOnHoverListener((view, motionEvent) -> {
+            if (menuSetting.isPhysicalMouseMode()) {
+                if (getCursorMode() == FCLBridge.CursorEnabled && motionEvent.getAction() == MotionEvent.ACTION_HOVER_MOVE) {
+                    getInput().setPointer((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
     @Override
