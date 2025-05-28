@@ -493,6 +493,7 @@
     <string name="menu_settings_mouse_sensitivity">Чувствительность мыши</string>
     <string name="menu_settings_mouse_cursor_sensitivity">Чувствительность мыши (при отображении курсора)</string>
     <string name="menu_settings_mouse_size">Размер мыши</string>
+    <string name="menu_settings_physical_mouse_mode">Физическая мышь</string>
     <string name="menu_settings_gamepad">Геймпад</string>
     <string name="menu_settings_gamepad_reset_mapper">Сбросить настройки управления</string>
     <string name="menu_settings_gamepad_button_binding">Привязка кнопок</string>
