@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1228,
-    "versionName": "1.2.2.8",
-    "date": "2025.05.22",
+    "versionCode": 1229,
+    "versionName": "1.2.2.9",
+    "date": "2025.05.27",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1.Fixed an issue where full-screen mode does not take effect on some device models.\n2.Added a delay for custom key inputs when sending text to prevent failures caused by low frame rates.\n3.Auto-save operation settings for FPS display.\n4.New feature: Automatic log display (when enabled, logs will be shown from game launch until the game starts rendering output, then automatically closed).\n5.Simplified the layout of in-game menus."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where the auto-log display function was active in the layout editing interface.  \n2. Fixed lag when clicking the settings page before the control layout finished loading.  \n3. Fixed potential discrepancies between directly entered memory sizes and UI displays.  \n4. Adjusted layouts related to renderer & driver selection.  \n5. Modified the layout of the offline skin settings page.  \n6. Fixed an issue where the offline skin page might fail to open."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分机型全屏不生效的问题\n2.增加自定义按键发送文本的延迟防止帧数过低导致的发送失败的问题\n3.自动保存FPS显示的操作设置\n4.新增功能：自动显示日志（开启后将在启动游戏后至游戏开始输出画面前自动显示日志，之后会自动关闭日志）\n5.简化游戏内菜单布局"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复自动显示日志功能在编辑布局界面生效的问题\n2.修复控制布局未加载完成点击设置页面卡顿的问题\n3.修复直接输入的内存大小与UI显示可能不符的问题\n4.调整渲染器&驱动选择相关布局\n5.调整设置离线皮肤页面布局\n6.修复离线皮肤页面可能无法打开的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c94b1f3a6524",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.8/FCL-release-1.2.2.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/b7d0da7b980d",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.2.9/FCL-release-1.2.2.9-all.apk"
   }
 ]
