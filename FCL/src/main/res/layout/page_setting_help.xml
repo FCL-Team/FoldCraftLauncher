@@ -17,14 +17,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:singleLine="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+        <com.tungsten.fcllibrary.component.view.FCLTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:singleLine="true"
             android:text="@string/help_category"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            app:use_theme_color="true" />
 
         <View
             android:layout_marginStart="10dp"

@@ -132,6 +132,7 @@ public class FCLTextView extends AppCompatTextView {
 
     public void setUseThemeColor(boolean useThemeColor) {
         this.useThemeColor = useThemeColor;
+        setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
     }
 
     public boolean isUseThemeColor() {
