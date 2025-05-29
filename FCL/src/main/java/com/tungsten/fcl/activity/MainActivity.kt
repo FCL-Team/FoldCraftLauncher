@@ -36,6 +36,7 @@ import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
+import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
@@ -347,7 +348,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val selectedProfile = Profiles.getSelectedProfile()
                 RendererPlugin.selected = RendererPlugin.rendererList.find {
                     it.des == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).customRenderer
-                } ?: RendererPlugin.rendererList[0]
+                }
+                if (selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer == FCLConfig.Renderer.RENDERER_CUSTOM && RendererPlugin.selected == null) {
+                    selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer =
+                        FCLConfig.Renderer.RENDERER_GL4ES
+                }
                 DriverPlugin.selected = DriverPlugin.driverList.find {
                     it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
                 } ?: DriverPlugin.driverList[0]
