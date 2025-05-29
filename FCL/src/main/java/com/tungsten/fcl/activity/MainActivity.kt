@@ -615,9 +615,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             val file = File(FCLPath.LOG_DIR).resolve("latest_game.log")
             if (!file.exists()) return
             val intent = Intent(Intent.ACTION_SEND)
+
             val uri = FileProvider.getUriForFile(
                 this,
-                getString(com.tungsten.fcllibrary.R.string.file_browser_provider),
+                "${application.packageName}.provider",
                 file
             )
             intent.setType("text/plain")

@@ -279,7 +279,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 File file = File.createTempFile("fcl-latest", ".log");
                 FileUtils.writeText(file, error.getText().toString());
-                Uri uri = FileProvider.getUriForFile(this, getString(com.tungsten.fcllibrary.R.string.file_browser_provider), file);
+                Uri uri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".provider", file);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
