@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.KeyEvent
@@ -13,6 +12,7 @@ import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import com.mio.ui.dialog.RendererSelectDialog
@@ -46,7 +46,6 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
-import com.tungsten.fclcore.event.Event
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
@@ -57,7 +56,6 @@ import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
@@ -66,14 +64,16 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.system.exitProcess
-import androidx.core.graphics.drawable.toDrawable
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -85,13 +85,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
+    private val mainScope = MainScope()
     lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
     private val holder = WeakListenerHolder()
-    private var profile: Profile? = null
-    private var onVersionIconChangedListener: Consumer<Event>? = null
+    private lateinit var profile: Profile
 
     private lateinit var theme: IntegerProperty
 
@@ -137,7 +137,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             try {
                 ConfigHolder.init()
             } catch (e: IOException) {
-                Logging.LOG.log(Level.WARNING, e.message)
+                LOG.log(Level.WARNING, e.message)
             }
         }
 
@@ -413,42 +413,34 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun loadVersion(version: String?) {
         isVersionLoading = true
         binding.versionProgress.visibility = View.VISIBLE
-        if (Profiles.getSelectedProfile() != profile) {
-            profile = Profiles.getSelectedProfile()
-            if (profile != null) {
-                onVersionIconChangedListener =
-                    profile!!.repository.onVersionIconChanged.registerWeak {
-                        this.loadVersion(Profiles.getSelectedVersion())
-                    }
-            }
-        }
-        if (version != null && Profiles.getSelectedProfile().repository.hasVersion(version)) {
-            Schedulers.defaultScheduler().execute {
+        profile = Profiles.getSelectedProfile()
+        if (version != null && profile.repository.hasVersion(version)) {
+            mainScope.launch(Dispatchers.IO) {
                 var game: String? = null
-                kotlin.runCatching {
-                    game = Profiles.getSelectedProfile().repository.getGameVersion(version)
+                runCatching {
+                    game = profile.repository.getGameVersion(version)
                         .orElse(getString(R.string.message_unknown))
                 }
-                if (game == null) return@execute
+                if (game == null) return@launch
                 val libraries = StringBuilder(game)
                 val analyzer = LibraryAnalyzer.analyze(
-                    Profiles.getSelectedProfile().repository.getResolvedPreservingPatchesVersion(
+                    profile.repository.getResolvedPreservingPatchesVersion(
                         version
                     ),
-                    Profiles.getSelectedProfile().repository.getGameVersion(version).orElse(null)
+                    profile.repository.getGameVersion(version).orElse(null)
                 )
                 for (mark in analyzer) {
                     val libraryId = mark.libraryId
                     val libraryVersion = mark.libraryVersion
                     if (libraryId == LibraryType.MINECRAFT.patchId) continue
                     if (AndroidUtils.hasStringId(
-                            this,
+                            this@MainActivity,
                             "install_installer_" + libraryId.replace("-", "_")
                         )
                     ) {
                         libraries.append(", ").append(
                             AndroidUtils.getLocalizedText(
-                                this,
+                                this@MainActivity,
                                 "install_installer_" + libraryId.replace("-", "_")
                             )
                         )
@@ -459,8 +451,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         )
                     }
                 }
-                val drawable = Profiles.getSelectedProfile().repository.getVersionIconImage(version)
-                Schedulers.androidUIThread().execute {
+                val drawable = profile.repository.getVersionIconImage(version)
+                withContext(Dispatchers.Main) {
                     isVersionLoading = false
                     binding.versionProgress.visibility = View.GONE
                     binding.versionName.text = version

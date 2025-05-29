@@ -320,8 +320,7 @@ public class DefaultGameRepository implements GameRepository {
             try {
                 Version resolved = version.resolve(provider);
 
-                if (resolved.appliesToCurrentEnvironment() &&
-                        EventBus.EVENT_BUS.fireEvent(new LoadedOneVersionEvent(this, resolved)) != Event.Result.DENY)
+                if (resolved.appliesToCurrentEnvironment())
                     versions.put(version.getId(), version);
             } catch (VersionNotFoundException e) {
                 LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because it inherits from a nonexistent version.");
@@ -334,9 +333,6 @@ public class DefaultGameRepository implements GameRepository {
 
     @Override
     public void refreshVersions() {
-        if (EventBus.EVENT_BUS.fireEvent(new RefreshingVersionsEvent(this)) == Event.Result.DENY)
-            return;
-
         refreshVersionsImpl();
         EventBus.EVENT_BUS.fireEvent(new RefreshedVersionsEvent(this));
     }
