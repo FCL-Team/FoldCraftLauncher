@@ -33,19 +33,13 @@ import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty
-import com.tungsten.fclcore.game.JavaVersion
-import com.tungsten.fclcore.game.Version
-import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import java.lang.reflect.Type
@@ -380,9 +374,11 @@ class VersionSetting : Cloneable {
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.customRenderer = json["customRenderer"]?.asString ?: ""
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
-                if ((!RendererPlugin.isAvailable() && vs.customRenderer != "") || RendererPlugin.rendererList.find { it.des == vs.customRenderer } == null) {
-                    vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[0]
-                    vs.customRenderer = ""
+                if (vs.renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
+                    if (!RendererPlugin.isAvailable() || RendererPlugin.rendererList.find { it.des == vs.customRenderer } == null) {
+                        vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[0]
+                        vs.customRenderer = ""
+                    }
                 }
             }
         }
