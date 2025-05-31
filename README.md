@@ -6,11 +6,6 @@
 
 <div align="center">
 
-[![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml)
-![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
-![Release](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
-
-
 </div>
 
 🌍 **语言**  
@@ -36,16 +31,6 @@
 - 动态资源管理（模组/整合包/材质/光影/存档）
 - 个性化主题定制（背景/颜色方案）
 - 支持[渲染器插件化](https://github.com/ShirosakiMio/FCLRendererPlugin)
-
----
-
-## 🎮 使用截图
-
-<div align="center">
-  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="浅色界面">
-  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="深色界面">
-  <img src="/.github/images/game.jpg" width="30%" alt="游戏画面">
-</div>
 
 ---
 
