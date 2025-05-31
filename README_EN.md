@@ -29,17 +29,7 @@
 - Dynamic resource management (mods/modpacks/textures/shaders/saves)
 - Personalized theme customization (background/color schemes)
 - Supports [renderer pluginization](https://github.com/ShirosakiMio/FCLRendererPlugin)
-
----
-
-## 🎮 Screenshots
-
-<div align="center">
-  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="Light Theme">
-  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="Dark Theme">
-  <img src="/.github/images/game.jpg" width="30%" alt="Gameplay Preview">
-</div>
-
+  
 ---
 
 ## 📜 License
