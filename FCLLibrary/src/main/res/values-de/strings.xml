@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="file_browser_title">Datei-Browser</string>
+    <string name="file_browser_back">Zurück</string>
+    <string name="file_browser_close">Beenden</string>
+    <string name="file_browser_shared">Freigegebenes Verzeichnis</string>
+    <string name="file_browser_private">Privates Verzeichnis</string>
+    <string name="file_browser_open_external">In externer App öffnen</string>
+    <string name="file_browser_select_external">Mit externer App auswählen</string>
+    <string name="file_browser_private_alert">Kein Zugriff auf privates Verzeichnis. Bitte überprüfen Sie die Berechtigungen.</string>
+    <string name="file_browser_mode">Modus:</string>
+    <string name="file_browser_mode_browse">Dateien durchsuchen</string>
+    <string name="file_browser_mode_file">Datei auswählen</string>
+    <string name="file_browser_mode_folder">Ordner auswählen</string>
+    <string name="file_browser_selection">Typ:</string>
+    <string name="file_browser_selection_simple">Einzelauswahl</string>
+    <string name="file_browser_selection_multiple">Mehrfachauswahl</string>
+    <string name="file_browser_positive">Bestätigen</string>
+    <string name="file_browser_positive_alert">Keine Datei/Verzeichnis ausgewählt!</string>
+    <string name="file_browser_share_title">Datei teilen</string>
+    <string name="file_browser_share_message">Sind Sie sicher, dass Sie diese Datei teilen möchten?</string>
+
+    <string name="crash_reporter_title">Absturzbericht</string>
+    <string name="crash_reporter_hint">Fold Craft Launcher ist auf einen unlösbaren Fehler gestoßen. Bitte wenden Sie sich an den Entwickler oder andere um Hilfe.</string>
+    <string name="crash_reporter_restart">Neustart</string>
+    <string name="crash_reporter_close">Beenden</string>
+    <string name="crash_reporter_copy">Kopieren</string>
+    <string name="crash_reporter_share">Teilen</string>
+    <string name="crash_reporter_toast">Erfolgreich kopiert!</string>
+
+    <string name="color_picker_title">Farbauswahl</string>
+    <string name="color_picker_toast">Unbekannte Farbe!</string>
+
+    <string name="dialog_alert">Warnung</string>
+    <string name="dialog_info">Information</string>
+    <string name="dialog_positive">OK</string>
+    <string name="dialog_negative">Abbrechen</string>
+    <string name="edit">Bearbeiten</string>
+</resources>
