@@ -6,10 +6,6 @@
 
 <div align="center">
 
-[![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml)
-![Загрузки](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
-![Релиз](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
-
 </div>
 
 🌍 **Язык**
@@ -33,16 +29,6 @@
 - Гибкое управление ресурсами (моды/модпаки/текстуры/шейдеры/сохранения)
 - Настройка тем оформления (фон/цветовые схемы)
 - Поддержка [плагинов рендеринга](https://github.com/ShirosakiMio/FCLRendererPlugin)
-
----
-
-## 🎮 Скриншоты
-
-<div align="center">
-  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="Светлая тема">
-  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="Тёмная тема">
-  <img src="/.github/images/game.jpg" width="30%" alt="Игровой процесс">
-</div>
 
 ---
 
