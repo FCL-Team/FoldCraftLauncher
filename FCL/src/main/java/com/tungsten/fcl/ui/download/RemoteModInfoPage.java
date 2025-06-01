@@ -232,22 +232,29 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
         }
-        Profile profile = Profiles.getSelectedProfile();
-        if (profile.getSelectedVersion() != null) {
-            LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
-            Set<ModLoaderType> modLoaders = analyzer.getModLoaders();
-            String mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("");
+        if (!(page instanceof ModpackDownloadPage)) {
+            Profile profile = Profiles.getSelectedProfile();
+            if (profile.getSelectedVersion() != null) {
+                LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
+                Set<ModLoaderType> modLoaders = analyzer.getModLoaders();
+                String mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("");
 
-            if (classifiedVersions.keys().contains(mcv)) {
-                classifiedVersions.get(mcv).stream().filter(v -> {
-                    for (ModLoaderType loader : v.getLoaders()) {
-                        if (modLoaders.contains(loader)) {
-                            recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
+                if (classifiedVersions.keys().contains(mcv)) {
+                    classifiedVersions.get(mcv).stream().filter(v -> {
+                        if (page instanceof ModDownloadPage) {
+                            for (ModLoaderType loader : v.getLoaders()) {
+                                if (modLoaders.contains(loader)) {
+                                    recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
+                                    return true;
+                                }
+                            }
+                        } else {
+                            recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv;
                             return true;
                         }
-                    }
-                    return false;
-                }).forEach(v -> classifiedVersions.put(recommendedVersion, v));
+                        return false;
+                    }).forEach(v -> classifiedVersions.put(recommendedVersion, v));
+                }
             }
         }
         return classifiedVersions;
