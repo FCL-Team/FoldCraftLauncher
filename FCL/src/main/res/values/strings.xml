@@ -826,6 +826,8 @@
     <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
     <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
     <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
+    <string name="settings_launcher_language_ukrainian" translatable="false">Українська Мова</string>
+    <string name="settings_launcher_language_german" translatable="false">Deutsch</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>

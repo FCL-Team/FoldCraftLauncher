@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
+import androidx.lifecycle.lifecycleScope
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -86,7 +87,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    private val mainScope = MainScope()
     lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
@@ -420,7 +420,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding.versionProgress.visibility = View.VISIBLE
         profile = Profiles.getSelectedProfile()
         if (version != null && profile.repository.hasVersion(version)) {
-            mainScope.launch(Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.IO) {
                 var game: String? = null
                 runCatching {
                     game = profile.repository.getGameVersion(version)

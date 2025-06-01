@@ -26,7 +26,8 @@ class DriverSelectDialog(
         window?.windowManager?.defaultDisplay?.getSize(point)
         val params = window?.attributes
         params?.width = ConvertUtils.dip2px(context, 500f)
-        if (point.y * 2 < point.x) {
+        val ratio = point.x.toFloat() / point.y.toFloat()
+        if (ratio >= 1.5f) {
             params?.height = WindowManager.LayoutParams.MATCH_PARENT
         } else {
             params?.height = point.y * 1 / 2

@@ -89,6 +89,8 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
         langs.add(getContext().getString(R.string.settings_launcher_language_russian));
         langs.add(getContext().getString(R.string.settings_launcher_language_brazilian_portuguese));
         langs.add(getContext().getString(R.string.settings_launcher_language_persian));
+        langs.add(getContext().getString(R.string.settings_launcher_language_ukrainian));
+        langs.add(getContext().getString(R.string.settings_launcher_language_german));
         ArrayAdapter<String> langAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, langs);
         langAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         lang.setAdapter(langAdapter);

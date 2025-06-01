@@ -484,7 +484,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }
     }
 
-    static class ModInfoObject implements Comparable<ModInfoObject> {
+    public static class ModInfoObject implements Comparable<ModInfoObject> {
         private final BooleanProperty active;
         private final LocalModFile localModFile;
         private final String title;

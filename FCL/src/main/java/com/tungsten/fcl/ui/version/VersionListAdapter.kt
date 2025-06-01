@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.lifecycle.lifecycleScope
 import com.mio.util.AnimUtil.Companion.playTranslationX
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemVersionBinding
 import com.tungsten.fcllibrary.component.FCLAdapter
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -28,8 +30,6 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
         lateinit var subtitle: FCLTextView
         lateinit var delete: FCLImageButton
     }
-
-    private val scope = MainScope()
 
     override fun getCount(): Int {
         return list.size
@@ -81,7 +81,7 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
         view.setOnClickListener(View.OnClickListener { v: View? ->
             versionListItem.profile.selectedVersion = versionListItem.version
         })
-        scope.launch {
+        MainActivity.getInstance().lifecycleScope.launch {
             var modCount = 0
             runCatching {
                 modCount = withContext(Dispatchers.IO) {
