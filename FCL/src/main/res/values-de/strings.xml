@@ -480,7 +480,7 @@
     <string name="menu_settings_gesture_mode">Gestenmodus</string>
     <string name="menu_settings_gesture_mode_build">Bau-Modus</string>
     <string name="menu_settings_gesture_mode_fight">Kampfmodus</string>
-    <string name="menu_settings_gesture">Aktueller Modus: %s</string>
+    <string name="menu_settings_gesture_current">Aktueller Modus: %s</string>
     <string name="menu_settings_gyro">Gyroskop</string>
     <string name="menu_settings_gyro_sensitivity">Gyroskop-Empfindlichkeit</string>
     <string name="menu_settings_lock_view">Menü sperren</string>
