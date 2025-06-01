@@ -443,7 +443,6 @@
     <string name="menu_controls_current_view_group">Aktuelle Gruppe</string>
     <string name="menu_controls_add_button">Schaltfläche hinzufügen</string>
     <string name="menu_controls_add_direction">Stick hinzufügen</string>
-    <string name="menu_controls_add_view">Hinzufügen</string>
     <string name="menu_controls_style">Name</string>
     <string name="menu_controls_button_style">Schaltflächenstil</string>
     <string name="menu_controls_direction_style">Stick-Stil</string>
@@ -484,7 +483,6 @@
     <string name="menu_settings_gyro">Gyroskop</string>
     <string name="menu_settings_gyro_sensitivity">Gyroskop-Empfindlichkeit</string>
     <string name="menu_settings_lock_view">Menü sperren</string>
-    <string name="menu_settings_hide_menu">Menü ausblenden</string>
     <string name="menu_settings_show_fps">FPS anzeigen</string>
     <string name="menu_settings_mouse">Maus</string>
     <string name="menu_settings_mouse_mode">Mausmodus</string>
@@ -493,11 +491,9 @@
     <string name="menu_settings_mouse_sensitivity">Mausempfindlichkeit</string>
     <string name="menu_settings_mouse_cursor_sensitivity">Mausempfindlichkeit (bei sichtbarem Cursor)</string>
     <string name="menu_settings_mouse_size">Größe der Maus</string>
-    <string name="menu_settings_physical_mouse">Physikalische Maus</string>
     <string name="menu_settings_gamepad">Gamepad</string>
     <string name="menu_settings_gamepad_reset_mapper">Steuerung zurücksetzen</string>
     <string name="menu_settings_gamepad_button_binding">Tastenbelegung</string>
-    <string name="menu_settings_gamepad_open">Auswählen</string>
     <string name="menu_settings_gamepad_reset">Zurücksetzen</string>
     <string name="menu_settings_gamepad_deadzone">Tastatur</string>
     <string name="menu_settings_multiplayer">Multiplayer-Menü</string>
@@ -507,10 +503,8 @@
     <string name="menu_settings_send_key">Taste auswählen</string>
     <string name="menu_settings_send_key_button">Auswählen</string>
     <string name="menu_settings_soft_keyboard_adjust">Automatische Tastaturanpassung deaktivieren</string>
-    <string name="menu_settings_item_bar">Größe der Gegenstandsleiste</string>
     <string name="menu_settings_show_log">Log anzeigen</string>
     <string name="menu_settings_show_log_auto">Log automatisch anzeigen</string>
-    <string name="menu_settings_performance">Stabiler Leistungsmodus</string>
 
     <string name="message_cancelled">Operation abgebrochen</string>
     <string name="message_copy">Erfolgreich kopiert!</string>
@@ -526,8 +520,6 @@
     <string name="modpack">Modpacks</string>
     <string name="modpack_choose">Modpack auswählen</string>
     <string name="modpack_choose_local">Von Datei installieren</string>
-    <string name="modpack_choose_from">Aus dem Internet herunterladen</string>
-    <string name="modpack_choose_from_tooltip">Geben Sie die URL Ihres Modpacks ein</string>
     <string name="modpack_completion">Abhängigkeiten herunterladen</string>
     <string name="modpack_desc">Beschreiben Sie Ihr Modpack, einschließlich einer Einführung und möglicherweise einer Änderungsliste. Derzeit werden Markdown und Bilder von URLs unterstützt.</string>
     <string name="modpack_description">Beschreibung</string>
@@ -539,13 +531,8 @@
     <string name="modpack_files_blueprints">BuildCraft-Entwürfe</string>
     <string name="modpack_files_config">Mod-Konfigurationen</string>
     <string name="modpack_files_dumps">NEI-Debug-Ausgabedatei</string>
-    <string name="modpack_files_fclversion_config">Launcher-Konfigurationsdatei</string>
-    <string name="modpack_files_lightconfig">Mod-Konfigurationsdatei</string>
     <string name="modpack_files_mods">Mods</string>
-    <string name="modpack_files_voxelmods">VoxelMods-Einstellungen</string>
     <string name="modpack_files_options_txt">Minecraft-Einstellungsdatei</string>
-    <string name="modpack_files_shaders_txt">Shader-Einstellungsdatei</string>
-    <string name="modpack_files_resource">Ressourcenpack</string>
     <string name="modpack_files_saves">Spielstände</string>
     <string name="modpack_files_scripts">MineTweaker-Konfigurationsdatei</string>
     <string name="modpack_files_servers_dat">Serverlistendatei</string>
@@ -557,7 +544,6 @@
     <string name="modpack_not_a_valid_name">Ungültiger Modpackname</string>
     <string name="modpack_origin">Quelle</string>
     <string name="modpack_origin_url">Offizielle Website</string>
-    <string name="modpack_origin_mcbbs_from">Beitrags-ID</string>
     <string name="modpack_scan">Modpack-Index analysieren</string>
     <string name="modpack_task_install">Modpack installieren</string>
     <string name="modpack_task_install_error">Dieses Modpack konnte nicht identifiziert werden. Derzeit unterstützen wir nur Modpacks von Curse, Modrinth, MultiMC und MCBBS.</string>
@@ -584,8 +570,6 @@
     <string name="modpack_wizard_step_3_title">Wählen Sie den Typ des Modpacks, das Sie exportieren möchten.</string>
     <string name="modpack_wizard_step_initialization_exported_version">Spielversion für den Export</string>
     <string name="modpack_wizard_step_initialization_force_update">Modpack auf die neueste Version zwingen (erfordert einen Filehoster)</string>
-    <string name="modpack_wizard_step_initialization_include">Launcher einschließen</string>
-    <string name="modpack_wizard_step_initialization">Exportieren nach</string>
     <string name="modpack_wizard_step_initialization_warning">"Stellen Sie vor der Erstellung eines Modpacks sicher, dass das Spiel stabil läuft und es sich um eine stabile Version handelt, nicht um einen Snapshot.\n\nBitte beachten Sie, dass Sie keine Mods und Ressourcenpakete einbinden dürfen, die ausdrücklich als nicht für die Verbreitung oder Einbindung in Modpacks gekennzeichnet sind."</string>
 
     <string name="modrinth_category_adventure">Abenteuer</string>
