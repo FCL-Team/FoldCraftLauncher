@@ -554,7 +554,6 @@
     <string name="modpack_introduction">Derzeit werden Modpacks von CurseForge, Modrinth, MultiMC und MCBBS unterstützt.</string>
     <string name="modpack_invalid">Ungültiges Modpack, versuchen Sie es erneut herunterzuladen.</string>
     <string name="modpack_mismatched_type">Modpack-Typ stimmt nicht überein. Das aktuelle Profil hat den Typ %s, während das bereitgestellte Modpack den Typ %s hat.</string>
-    <string name="modpack_name">Modpack-Name</string>
     <string name="modpack_not_a_valid_name">Ungültiger Modpackname</string>
     <string name="modpack_origin">Quelle</string>
     <string name="modpack_origin_url">Offizielle Website</string>
