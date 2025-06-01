@@ -737,7 +737,7 @@
     <string name="settings_launcher_close_skin_view">Приховати модель скіна</string>
     <string name="settings_launcher_animation_speed">Швидкість анімації переходів</string>
 
-    <string name="settings_memory">Пам'ять</string>
+    <string name="settings_memory">Пам\'ять</string>
     <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ мінімум / %2$.1f ГБ виділено (%3$.1f ГБ вільно)</string>
     <string name="settings_memory_allocate_manual">%1$.1f ГБ використовується</string>
@@ -745,7 +745,7 @@
     <string name="settings_memory_auto_allocate">Автовиділення ОЗП</string>
     <string name="settings_memory_lower_bound">Мінімум ОЗП</string>
     <string name="settings_memory_used_per_total">%1$.1f ГБ використано / %2$.1f ГБ всього</string>
-    <string name="settings_physical_memory">Розмір фізичної пам'яті</string>
+    <string name="settings_physical_memory">Розмір фізичної пам\'яті</string>
     <string name="settings_tabs_installers">Завантажувачі модів</string>
     <string name="settings_type_global_manage">Основні налаштування гри</string>
     <string name="settings_type_special_enable">Окремі налаштування</string>
@@ -875,7 +875,7 @@
     <string name="world_info_player_game_type_creative">Творчий</string>
     <string name="world_info_player_game_type_spectator">Глядач</string>
     <string name="world_info_player_game_type_survival">Виживання</string>
-    <string name="world_info_player_health">Здоров'я</string>
+    <string name="world_info_player_health">Здоров\'я</string>
     <string name="world_info_player_last_death_location">Місце останньої смерті</string>
     <string name="world_info_player_location">Місцезнаходження</string>
     <string name="world_info_player_spawn">Місце появи</string>
@@ -896,7 +896,7 @@
     <string name="guide_share_log">Натисніть і утримуйте тут, щоб поділитися логом гри (latest_game.log).</string>
     <string name="joystick_l">Лівий стік</string>
     <string name="gamepad_dpad">Хрестовина</string>
-    <string name="gamepad_button_binding">Прив'язка кнопок геймпада</string>
+    <string name="gamepad_button_binding">Прив\'язка кнопок геймпада</string>
     <string name="joystick_r">Правий стік</string>
     <string name="message_vulkan_driver_system">Поточний GPU Adreno, не рекомендується вмикати цю опцію.</string>
     <string name="message_loading_controllers">Йде завантаження контролерів...</string>
