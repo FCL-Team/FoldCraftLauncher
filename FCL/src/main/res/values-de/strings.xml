@@ -172,7 +172,7 @@
     <string name="curse_category_4478">Quests</string>
     <string name="curse_category_4484">Multiplayer</string>
     <string name="curse_category_4476">Erkundung</string>
-    <string name="curse_category_4475">Abenteuer & RPG</string>
+    <string name="curse_category_4475">Abenteuer &amp; RPG</string>
     <string name="curse_category_4480">Kartenbasiert</string>
     <string name="curse_category_4479">Hardcore</string>
     <string name="curse_category_4482">Sehr groß</string>
@@ -180,14 +180,14 @@
     <string name="curse_category_4473">Magie</string>
 
     <string name="curse_category_5299">Bildung</string>
-    <string name="curse_category_5189">Dienstprogramme & Gameplay-Verbesserungen</string>
+    <string name="curse_category_5189">Dienstprogramme &amp; Gameplay-Verbesserungen</string>
     <string name="curse_category_6814">Leistung</string>
     <string name="curse_category_6821">Fehlerbehebungen</string>
     <string name="curse_category_5190">Gameplay-Verbesserungen</string>
-    <string name="curse_category_5191">Dienstprogramme & Gameplay-Verbesserungen</string>
-    <string name="curse_category_423">Karten & Informationen</string>
+    <string name="curse_category_5191">Dienstprogramme &amp; Gameplay-Verbesserungen</string>
+    <string name="curse_category_423">Karten &amp; Informationen</string>
     <string name="curse_category_426">Addons</string>
-    <string name="curse_category_434">Rüstung, Werkzeuge & Waffen</string>
+    <string name="curse_category_434">Rüstung, Werkzeuge &amp; Waffen</string>
     <string name="curse_category_409">Strukturen</string>
     <string name="curse_category_420">Lagerung</string>
     <string name="curse_category_419">Magie</string>
@@ -196,14 +196,14 @@
     <string name="curse_category_414">Spielertransport</string>
     <string name="curse_category_418">Genetik</string>
     <string name="curse_category_4671">Twitch-Integration</string>
-    <string name="curse_category_408">Erze & Ressourcen</string>
-    <string name="curse_category_422">Abenteuer & RPG</string>
+    <string name="curse_category_408">Erze &amp; Ressourcen</string>
+    <string name="curse_category_422">Abenteuer &amp; RPG</string>
     <string name="curse_category_413">Ressourcenverarbeitung</string>
     <string name="curse_category_417">Energie</string>
     <string name="curse_category_415">Transport von Energie, Flüssigkeiten und Gegenständen</string>
     <string name="curse_category_425">Verschiedenes</string>
     <string name="curse_category_416">Landwirtschaft</string>
-    <string name="curse_category_421">APIs & Bibliotheken</string>
+    <string name="curse_category_421">APIs &amp; Bibliotheken</string>
     <string name="curse_category_424">Kosmetisch</string>
     <string name="curse_category_406">Weltgenerierung</string>
     <string name="curse_category_435">Server-Dienstprogramme</string>
