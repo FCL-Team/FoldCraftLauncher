@@ -30,8 +30,6 @@ import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
-import java.util.ArrayList
-import java.util.HashSet
 import java.util.Optional
 import java.util.TreeMap
 import java.util.function.Consumer
@@ -56,6 +54,11 @@ object Profiles {
                 }
                 ConfigHolder.config().selectedProfile = profile.name
                 ConfigHolder.config().selectedProfile = profile.name
+                profile.gameDir.resolve(".nomedia").let {
+                    if (!it.exists()) {
+                        it.createNewFile()
+                    }
+                }
                 if (profile.repository.isLoaded) {
                     selectedVersion.bind(profile.selectedVersionProperty())
                 } else {
