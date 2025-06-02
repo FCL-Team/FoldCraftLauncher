@@ -90,14 +90,6 @@ public class FCLPath {
         init(CONTROLLER_DIR);
         init(PRIVATE_COMMON_DIR);
         init(SHARED_COMMON_DIR);
-
-        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),  "/FCL/.nomedia");
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (Exception ignore) {
-            }
-        }
     }
 
     private static boolean init(String path) {
