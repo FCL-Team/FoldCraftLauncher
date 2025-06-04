@@ -468,6 +468,8 @@ public final class Accounts {
                 return context.getString(R.string.account_methods_microsoft_error_country_unavailable);
             } else if (errorCode == MicrosoftService.XboxAuthorizationException.MISSING_XBOX_ACCOUNT) {
                 return context.getString(R.string.account_methods_microsoft_error_missing_xbox_account);
+            } else if (errorCode == MicrosoftService.XboxAuthorizationException.BANNED) {
+                return context.getString(R.string.account_methods_microsoft_error_banned);
             } else {
                 return context.getString(R.string.account_methods_microsoft_error_unknown);
             }

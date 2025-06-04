@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1230,
-    "versionName": "1.2.3.0",
-    "date": "2025.05.31",
+    "versionCode": 1231,
+    "versionName": "1.2.3.1",
+    "date": "2025.06.04",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the application would crash directly upon launch without manually selecting a renderer after the previously chosen renderer plugin was deleted.  \n2. Added feature: Physical mouse control (when the mouse cursor is visible, e.g., in the inventory interface, the system mouse can be used directly for operations).  \n3. Fixed an issue where the text color on the help page did not follow the secondary theme color.  \n4. Fixed a malfunction in certain features after installing package coexistence.  \n5. Optimized loading efficiency for certain features using coroutines."
+        "text": "(Translated from Chinese by AI)\n1. Optimize mod loading speed in the mod management page  \n2. New feature: Recommend compatible resource pack/world/shaders versions based on the currently selected game version  \n3. Add Ukrainian and German language support  \n4. Fix incorrect height of renderer selection dialog on some devices  \n5. Fix the issue where the auto-creation of \".nomedia\" files feature failed in custom directories"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复已选择的渲染器插件被删除后未手动选择渲染器启动直接闪退的问题\n2.新增功能：实体鼠标控制（当鼠标可见时，例如在背包界面，可直接使用系统鼠标进行操作）\n3.修复帮助页面文字颜色不跟随次要主题色的问题\n4.修复部分功能在安装包共存后布政校的问题\n5.使用协程优化部分功能加载速度"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.优化模组管理页面模组加载速度\n2.新增功能：根据当前选择的版本推荐资源包/世界/光影版本\n3.增加乌克兰语和德语\n4.修复部分设备上渲染器选择对话框高度不正确的问题\n5.修复自建目录自动创建“.nomedia”文件功能不生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a09ed4bdeeee",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.0/FCL-release-1.2.3.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a7436ce01b0f",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.1/FCL-release-1.2.3.1-all.apk"
   }
 ]

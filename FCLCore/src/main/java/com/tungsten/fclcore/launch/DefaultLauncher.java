@@ -44,7 +44,10 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
+
+import org.jackhuang.hmcl.util.ServerAddress;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -240,17 +243,21 @@ public class DefaultLauncher extends Launcher {
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getGame() != null && !argumentsFromAuthInfo.getGame().isEmpty())
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getGame(), configuration, features));
 
-        if (StringUtils.isNotBlank(options.getServerIp())) {
-            String[] args = options.getServerIp().split(":");
+        String address = options.getServerIp();
+
+        try {
+            ServerAddress parsed = ServerAddress.parse(address);
             if (VersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "1.20") < 0) {
                 res.add("--server");
-                res.add(args[0]);
+                res.add(parsed.getHost());
                 res.add("--port");
-                res.add(args.length > 1 ? args[1] : "25565");
+                res.add(parsed.getPort() >= 0 ? String.valueOf(parsed.getPort()) : "25565");
             } else {
                 res.add("--quickPlayMultiplayer");
-                res.add(args[0] + ":" + (args.length > 1 ? args[1] : "25565"));
+                res.add(parsed.getPort() < 0 ? address + ":25565" : address);
             }
+        } catch (IllegalArgumentException e) {
+            LOG.warning("Invalid server address: " + address + "\n" + e);
         }
 
         res.addAllWithoutParsing(Arguments.parseStringArguments(options.getGameArguments(), configuration));

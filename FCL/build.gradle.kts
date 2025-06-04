@@ -41,8 +41,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1230
-        versionName = "1.2.3.0"
+        versionCode = 1231
+        versionName = "1.2.3.1"
     }
 
     buildTypes {
