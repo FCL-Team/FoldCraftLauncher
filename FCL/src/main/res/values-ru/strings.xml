@@ -67,6 +67,7 @@
     <string name="account_methods_microsoft_error_add_family">Поскольку вам еще нет 18 лет, взрослый должен добавить вас в семейную группу Microsoft, чтобы вы могли играть в Minecraft.</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live недоступен в вашей стране/регионе.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">С вашей учетной записью Microsoft еще нет связанной учетной записи Xbox. Пожалуйста, создайте её, прежде чем продолжить.</string>
+    <string name="account_methods_microsoft_error_banned">Ваш аккаунт, возможно, был заблокирован в Xbox Live.\nВы можете нажать на «Запрос о блокировке» выше, чтобы узнать подробности.</string>
     <string name="account_methods_microsoft_error_unknown">Не удалось войти</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Для входа используйте адрес электронной почты и пароль от учётной записи Microsoft. Коды подтверждения не поддерживаются.</string>
     <string name="account_methods_microsoft_error_no_character">"В вашей учетной записи нет Minecraft Java Edition.\nВозможно, игровой профиль не был создан."</string>
