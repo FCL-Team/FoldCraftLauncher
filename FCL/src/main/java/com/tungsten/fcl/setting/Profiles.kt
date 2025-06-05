@@ -58,7 +58,10 @@ object Profiles {
                 ConfigHolder.config().selectedProfile = profile.name
                 profile.gameDir.resolve(".nomedia").let {
                     if (!it.exists()) {
-                        it.createNewFile()
+                        runCatching {
+                            it.parentFile?.mkdirs()
+                            it.createNewFile()
+                        }
                     }
                 }
                 if (profile.repository.isLoaded) {
