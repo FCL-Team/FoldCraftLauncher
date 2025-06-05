@@ -224,7 +224,7 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
                 null
             }
             mod?.let {
-                if (viewHolder.icon.tag as Int == i && mod != null) {
+                if (viewHolder.icon.tag as Int == i) {
                     viewHolder.icon.setVisibility(View.VISIBLE)
                     Glide.with(viewHolder.icon).load(mod.iconUrl)
                         .into(viewHolder.icon)
