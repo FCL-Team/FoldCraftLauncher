@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.lifecycleScope
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fcl.databinding.FragmentRuntimeBinding
@@ -13,19 +14,23 @@ import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.FCLFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class RuntimeFragment : FCLFragment(), View.OnClickListener {
     private lateinit var bind: FragmentRuntimeBinding
-    var lwjgl: Boolean = false
-    var cacio: Boolean = false
-    var cacio11: Boolean = false
-    var cacio17: Boolean = false
-    var java8: Boolean = false
-    var java11: Boolean = false
-    var java17: Boolean = false
-    var java21: Boolean = false
-    var jna: Boolean = false
+    var lwjgl = false
+    var cacio = false
+    var cacio11 = false
+    var cacio17 = false
+    var java8 = false
+    var java11 = false
+    var java17 = false
+    var java21 = false
+    var jna = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,12 +40,10 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_runtime, container, false)
         bind = FragmentRuntimeBinding.bind(view)
         bind.install.setOnClickListener(this)
-        Schedulers.defaultScheduler().execute {
-            initState()
-            Schedulers.androidUIThread().execute {
-                refreshDrawables()
-                check()
-            }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) { initState() }
+            refreshDrawables()
+            check()
         }
         return view
     }
@@ -100,201 +103,183 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
             if (!lwjgl) {
                 lwjglState.visibility = View.GONE
                 lwjglProgress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
-                        RuntimeUtils.install(
-                            context,
-                            FCLPath.LWJGL_DIR + "-boat",
-                            "app_runtime/lwjgl-boat"
-                        )
-                        lwjgl = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
+                            RuntimeUtils.install(
+                                context,
+                                FCLPath.LWJGL_DIR + "-boat",
+                                "app_runtime/lwjgl-boat"
+                            )
+                            lwjgl = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        lwjglState.visibility = View.VISIBLE
-                        lwjglProgress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    lwjglState.visibility = View.VISIBLE
+                    lwjglProgress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!cacio) {
                 cacioState.visibility = View.GONE
                 cacioProgress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.install(
-                            context,
-                            FCLPath.CACIOCAVALLO_8_DIR,
-                            "app_runtime/caciocavallo"
-                        )
-                        cacio = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.install(
+                                context,
+                                FCLPath.CACIOCAVALLO_8_DIR,
+                                "app_runtime/caciocavallo"
+                            )
+                            cacio = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        cacioState.visibility = View.VISIBLE
-                        cacioProgress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    cacioState.visibility = View.VISIBLE
+                    cacioProgress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!cacio11) {
                 cacio11State.visibility = View.GONE
                 cacio11Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.install(
-                            context,
-                            FCLPath.CACIOCAVALLO_11_DIR,
-                            "app_runtime/caciocavallo11"
-                        )
-                        cacio11 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.install(
+                                context,
+                                FCLPath.CACIOCAVALLO_11_DIR,
+                                "app_runtime/caciocavallo11"
+                            )
+                            cacio11 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        cacio11State.visibility = View.VISIBLE
-                        cacio11Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    cacio11State.visibility = View.VISIBLE
+                    cacio11Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!cacio17) {
                 cacio17State.visibility = View.GONE
                 cacio17Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.install(
-                            context,
-                            FCLPath.CACIOCAVALLO_17_DIR,
-                            "app_runtime/caciocavallo17"
-                        )
-                        cacio17 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.install(
+                                context,
+                                FCLPath.CACIOCAVALLO_17_DIR,
+                                "app_runtime/caciocavallo17"
+                            )
+                            cacio17 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        cacio17State.visibility = View.VISIBLE
-                        cacio17Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    cacio17State.visibility = View.VISIBLE
+                    cacio17Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!java8) {
                 java8State.visibility = View.GONE
                 java8Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.installJava(
-                            context,
-                            FCLPath.JAVA_8_PATH,
-                            "app_runtime/java/jre8"
-                        )
-                        java8 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJava(
+                                context,
+                                FCLPath.JAVA_8_PATH,
+                                "app_runtime/java/jre8"
+                            )
+                            java8 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        java8State.visibility = View.VISIBLE
-                        java8Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    java8State.visibility = View.VISIBLE
+                    java8Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!java11) {
                 java11State.visibility = View.GONE
                 java11Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.installJava(
-                            context,
-                            FCLPath.JAVA_11_PATH,
-                            "app_runtime/java/jre11"
-                        )
-                        java11 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJava(
+                                context,
+                                FCLPath.JAVA_11_PATH,
+                                "app_runtime/java/jre11"
+                            )
+                            java11 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        java11State.visibility = View.VISIBLE
-                        java11Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    java11State.visibility = View.VISIBLE
+                    java11Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!java17) {
                 java17State.visibility = View.GONE
                 java17Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.installJava(
-                            context,
-                            FCLPath.JAVA_17_PATH,
-                            "app_runtime/java/jre17"
-                        )
-                        java17 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJava(
+                                context,
+                                FCLPath.JAVA_17_PATH,
+                                "app_runtime/java/jre17"
+                            )
+                            java17 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        java17State.visibility = View.VISIBLE
-                        java17Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    java17State.visibility = View.VISIBLE
+                    java17Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!java21) {
                 java21State.visibility = View.GONE
                 java21Progress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.installJava(
-                            context,
-                            FCLPath.JAVA_21_PATH,
-                            "app_runtime/java/jre21"
-                        )
-                        java21 = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJava(
+                                context,
+                                FCLPath.JAVA_21_PATH,
+                                "app_runtime/java/jre21"
+                            )
+                            java21 = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        java21State.visibility = View.VISIBLE
-                        java21Progress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    java21State.visibility = View.VISIBLE
+                    java21Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
             if (!jna) {
                 jnaState.visibility = View.GONE
                 jnaProgress.visibility = View.VISIBLE
-                Thread {
-                    try {
-                        RuntimeUtils.installJna(
-                            context,
-                            FCLPath.JNA_PATH,
-                            "app_runtime/jna"
-                        )
-                        jna = true
-                    } catch (e: IOException) {
-                        e.printStackTrace()
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJna(
+                                context,
+                                FCLPath.JNA_PATH,
+                                "app_runtime/jna"
+                            )
+                            jna = true
+                        }
                     }
-                    activity?.runOnUiThread {
-                        jnaState.visibility = View.VISIBLE
-                        jnaProgress.visibility = View.GONE
-                        refreshDrawables()
-                        check()
-                    }
-                }.start()
+                    jnaState.visibility = View.VISIBLE
+                    jnaProgress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
             }
         }
     }
