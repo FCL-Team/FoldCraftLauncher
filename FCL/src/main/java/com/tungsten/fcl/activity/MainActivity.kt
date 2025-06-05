@@ -57,7 +57,6 @@ import com.tungsten.fclcore.fakefx.beans.value.ObservableValue
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
-import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
@@ -67,7 +66,6 @@ import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -206,15 +204,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         shareLog()
                         true
                     }
-
                     back.setOnClickListener(this@MainActivity)
                     back.setOnLongClickListener {
                         startActivity(Intent(this@MainActivity, ShellActivity::class.java))
                         true
                     }
-
-                    setupAccountDisplay()
-                    setupVersionDisplay()
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
@@ -226,6 +220,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         }
                     }
                 }
+                setupAccountDisplay()
+                setupVersionDisplay()
                 playAnim()
                 uiLayout.postDelayed(1500) {
                     GuideUtil.show(
@@ -401,7 +397,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     fun refreshAvatar(account: Account) {
-        Schedulers.androidUIThread().execute {
+        lifecycleScope.launch {
             if (currentAccount.get() === account) {
                 binding.avatar.imageProperty().unbind()
                 binding.avatar.imageProperty().bind(
@@ -481,7 +477,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun setupVersionDisplay() {
         holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty()) { s: String? ->
-            Schedulers.androidUIThread().execute { loadVersion(s) }
+            lifecycleScope.launch { loadVersion(s) }
         })
     }
 

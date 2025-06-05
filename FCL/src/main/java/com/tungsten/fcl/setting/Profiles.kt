@@ -35,6 +35,8 @@ import java.util.TreeMap
 import java.util.function.Consumer
 
 object Profiles {
+    private var isFirstRefresh = true
+
     @JvmStatic
     val profiles =
         FXCollections.observableArrayList<Profile> { arrayOf<Observable>(it) }
@@ -65,7 +67,7 @@ object Profiles {
                     selectedVersion.unbind()
                     selectedVersion.set(null)
                     // bind when repository was reloaded.
-                    profile.repository.refreshVersionsAsync().start()
+//                    profile.repository.refreshVersionsAsync().start()
                 }
             }
         }
@@ -96,7 +98,9 @@ object Profiles {
         profiles.addListener(FXUtils.onInvalidating { checkProfiles() })
 
         selectedProfile.addListener { _, _, newValue ->
-            newValue.repository.refreshVersionsAsync().start()
+            if (!isFirstRefresh) {
+                newValue.repository.refreshVersionsAsync().start()
+            }
         }
     }
 
@@ -131,15 +135,10 @@ object Profiles {
         checkProfiles()
 
         initialized = true
-
-        selectedProfile.set(
-            profiles.stream()
-                .filter {
-                    it.name == ConfigHolder.config().selectedProfile
-                }
-                .findFirst()
-                .orElse(profiles[0]))
-
+        val profile =
+            profiles.find { it.name == ConfigHolder.config().selectedProfile } ?: profiles[0]
+        profile.repository.refreshVersions()
+        selectedProfile.set(profile)
         holder.add(
             EventBus.EVENT_BUS.channel<RefreshedVersionsEvent?>(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
@@ -150,6 +149,7 @@ object Profiles {
                     }
                 }
         )
+        isFirstRefresh = false
     }
 
     @JvmStatic
