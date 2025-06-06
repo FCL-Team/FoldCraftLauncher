@@ -244,20 +244,21 @@ public class DefaultLauncher extends Launcher {
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getGame(), configuration, features));
 
         String address = options.getServerIp();
-
-        try {
-            ServerAddress parsed = ServerAddress.parse(address);
-            if (VersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "1.20") < 0) {
-                res.add("--server");
-                res.add(parsed.getHost());
-                res.add("--port");
-                res.add(parsed.getPort() >= 0 ? String.valueOf(parsed.getPort()) : "25565");
-            } else {
-                res.add("--quickPlayMultiplayer");
-                res.add(parsed.getPort() < 0 ? address + ":25565" : address);
+        if (StringUtils.isNotBlank(address)) {
+            try {
+                ServerAddress parsed = ServerAddress.parse(address);
+                if (VersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "1.20") < 0) {
+                    res.add("--server");
+                    res.add(parsed.getHost());
+                    res.add("--port");
+                    res.add(parsed.getPort() >= 0 ? String.valueOf(parsed.getPort()) : "25565");
+                } else {
+                    res.add("--quickPlayMultiplayer");
+                    res.add(parsed.getPort() < 0 ? address + ":25565" : address);
+                }
+            } catch (IllegalArgumentException e) {
+                LOG.warning("Invalid server address: " + address + "\n" + e);
             }
-        } catch (IllegalArgumentException e) {
-            LOG.warning("Invalid server address: " + address + "\n" + e);
         }
 
         res.addAllWithoutParsing(Arguments.parseStringArguments(options.getGameArguments(), configuration));

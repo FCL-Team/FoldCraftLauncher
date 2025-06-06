@@ -17,6 +17,7 @@ tasks.jar {
         archiveFileName.set("lwjgl.jar")
         manifest {
             attributes("Manifest-Version" to "3.3.3")
+            attributes("Automatic-Module-Name" to "org.lwjgl")
         }
         destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl-boat"))
         val versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl-boat/version")

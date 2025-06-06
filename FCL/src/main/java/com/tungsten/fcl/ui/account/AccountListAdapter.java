@@ -89,6 +89,7 @@ public class AccountListAdapter extends FCLAdapter {
         viewHolder.avatar.imageProperty().bind(account.imageProperty());
         viewHolder.name.stringProperty().unbind();
         viewHolder.name.stringProperty().bind(account.titleProperty());
+        viewHolder.name.setSelected(true);
         viewHolder.type.stringProperty().unbind();
         viewHolder.type.stringProperty().bind(account.subtitleProperty());
         viewHolder.type.setSelected(true);

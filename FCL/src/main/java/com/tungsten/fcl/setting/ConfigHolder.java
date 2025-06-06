@@ -36,10 +36,8 @@ public final class ConfigHolder {
     }
 
     public static final Path CONFIG_PATH = new File(FCLPath.FILES_DIR + "/config.json").toPath();
-    public static final Path GLOBAL_CONFIG_PATH = new File(FCLPath.FILES_DIR + "/global_config.json").toPath();
 
     private static Config configInstance;
-    private static GlobalConfig globalConfigInstance;
     private static boolean newlyCreated;
 
     public static boolean isInit() {
@@ -53,13 +51,6 @@ public final class ConfigHolder {
         return configInstance;
     }
 
-    public static GlobalConfig globalConfig() {
-        if (globalConfigInstance == null) {
-            throw new IllegalStateException("Configuration hasn't been loaded");
-        }
-        return globalConfigInstance;
-    }
-
     public static boolean isNewlyCreated() {
         return newlyCreated;
     }
@@ -71,9 +62,6 @@ public final class ConfigHolder {
 
         configInstance = loadConfig();
         configInstance.addListener(source -> markConfigDirty());
-
-        globalConfigInstance = loadGlobalConfig();
-        globalConfigInstance.addListener(source -> markGlobalConfigDirty());
 
         Settings.init();
 
@@ -125,47 +113,4 @@ public final class ConfigHolder {
         writeToConfig(configInstance.toJson());
     }
 
-    // Global Config
-
-    private static GlobalConfig loadGlobalConfig() throws IOException {
-        if (Files.exists(GLOBAL_CONFIG_PATH)) {
-            try {
-                String content = FileUtils.readText(GLOBAL_CONFIG_PATH);
-                GlobalConfig deserialized = GlobalConfig.fromJson(content);
-                if (deserialized == null) {
-                    LOG.info("Config is empty");
-                } else {
-                    return deserialized;
-                }
-            } catch (JsonParseException e) {
-                LOG.log(Level.WARNING, "Malformed config.", e);
-            }
-        }
-
-        LOG.info("Creating an empty global config");
-        return new GlobalConfig();
-    }
-
-    private static final InvocationDispatcher<String> globalConfigWriter = InvocationDispatcher.runOn(Lang::thread, content -> {
-        try {
-            writeToGlobalConfig(content);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Failed to save config", e);
-        }
-    });
-
-    private static void writeToGlobalConfig(String content) throws IOException {
-        LOG.info("Saving global config");
-        synchronized (GLOBAL_CONFIG_PATH) {
-            FileUtils.saveSafely(GLOBAL_CONFIG_PATH, content);
-        }
-    }
-
-    static void markGlobalConfigDirty() {
-        globalConfigWriter.accept(globalConfigInstance.toJson());
-    }
-
-    private static void saveGlobalConfigSync() throws IOException {
-        writeToConfig(globalConfigInstance.toJson());
-    }
 }
