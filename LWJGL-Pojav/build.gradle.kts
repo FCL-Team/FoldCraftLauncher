@@ -25,6 +25,7 @@ tasks.jar {
     exclude("net/java/openjdk/cacio/ctc/**")
     manifest {
         attributes("Manifest-Version" to "3.3.3")
+        attributes("Automatic-Module-Name" to "org.lwjgl")
     }
     doLast {
         val versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl/version")
