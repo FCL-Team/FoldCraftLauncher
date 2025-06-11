@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.mio.JavaManager
 import com.mio.util.ImageUtil
@@ -60,6 +61,7 @@ class SplashActivity : FCLActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContentView(R.layout.activity_splash)
 
         val background = findViewById<ConstraintLayout>(R.id.background)
