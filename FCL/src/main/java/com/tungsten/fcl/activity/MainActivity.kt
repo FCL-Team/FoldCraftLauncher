@@ -227,8 +227,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiLayout.postDelayed(1500) {
                     GuideUtil.show(
                         activity = this@MainActivity,
-                        setting.guideTarget(GuideUtil.TAG_GUIDE_THEME_2, getString(R.string.guide_theme2)),
-                        home.guideTarget(GuideUtil.TAG_GUIDE_SHARE_LOG, getString(R.string.guide_share_log))
+                        GuideUtil.TAG_GUIDE_THEME_2 to setting.guideTarget(title = getString(R.string.guide_theme2)),
+                        GuideUtil.TAG_GUIDE_SHARE_LOG to home.guideTarget(title = getString(R.string.guide_share_log))
                     )
                 }
             }
@@ -618,7 +618,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 )
             )
         } catch (e: Exception) {
-            LOG.log(Level.INFO, "Share error: $e");
+            LOG.log(Level.INFO, "Share error: $e")
         }
     }
 }

@@ -99,9 +99,5 @@ class GuideUtil {
                 .titleTextColorInt(ThemeEngine.getInstance().getTheme().autoTint)
                 .outerCircleColorInt(ThemeEngine.getInstance().getTheme().ltColor)
         }
-
-        fun View.guideTarget(tag: String, title: String, description: String? = null): Pair<String, TapTarget> {
-            return tag to this.guideTarget(title = title, description = description)
-        }
     }
 }
