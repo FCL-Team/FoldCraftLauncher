@@ -21,6 +21,7 @@ import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
 import com.mio.util.GuideUtil
+import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
@@ -225,16 +226,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 playAnim()
                 uiLayout.postDelayed(1500) {
                     GuideUtil.show(
-                        this@MainActivity,
-                        setting,
-                        getString(R.string.guide_theme2),
-                        GuideUtil.TAG_GUIDE_THEME_2
-                    )
-                    GuideUtil.show(
-                        this@MainActivity,
-                        home,
-                        getString(R.string.guide_share_log),
-                        GuideUtil.TAG_GUIDE_SHARE_LOG
+                        activity = this@MainActivity,
+                        setting.guideTarget(GuideUtil.TAG_GUIDE_THEME_2, getString(R.string.guide_theme2)),
+                        home.guideTarget(GuideUtil.TAG_GUIDE_SHARE_LOG, getString(R.string.guide_share_log))
                     )
                 }
             }
