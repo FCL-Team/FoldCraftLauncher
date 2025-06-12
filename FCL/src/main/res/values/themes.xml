@@ -18,7 +18,11 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.FoldCraftLauncher">
+    <style name="Theme.Splash" parent="@style/Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.FoldCraftLauncher</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">200</item>
+        <item name="windowSplashScreenBackground">@color/splash_theme_color</item>
     </style>
 
     <style name="TabTextAppearance">
