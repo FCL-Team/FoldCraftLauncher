@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1232,
-    "versionName": "1.2.3.2",
-    "date": "2025.06.09",
+    "versionCode": 1233,
+    "versionName": "1.2.3.3",
+    "date": "2025.06.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added Xbox account ban notifications  \n2. Fixed the issue where the auto-join server feature couldn’t recognize IPv6 addresses  \n3. Optimized the smoothness when the launcher enters the main interface  \n4. Fixed a crash issue that occurred when switching game directories on some devices  \n5. Fixed an issue where certain mods reported that the org.lwjgl module could not be found  \n6. Added scrollable display for overly long account names"
+        "text": "(Translated from Chinese by AI)\n1. Adapt SplashScreen for devices with Android 12 and below  \n2. Fix the issue with incorrect display of guidance  \n3. Fix the problem of theme-related UI elements extending beyond the screen on certain devices  \n4. Fix the issue where updating the renderer plugin while the launcher is running causes the renderer to be unavailable after launching the game"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加Xbox封禁相关提示\n2.修复自动加入服务器功能无法识别IPv6的问题\n3.优化启动器进入主界面时的流畅度\n4.修复部分设备切换游戏目录可能闪退的问题\n5.修复部分模组提示找不到org.lwjgl模块的问题\n6.为过长的账号名添加滚动显示效果"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.为安卓12以下的设备适配SplashScreen\n2.修复引导错误显示的问题\n3.修复部分设备上主题相关UI超出屏幕的问题\n4.修复当启动器在运行时更新渲染器插件导致启动游戏后无法找到渲染器的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/b160f397c33e",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.2/FCL-release-1.2.3.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/1f02ee0fa178",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.3/FCL-release-1.2.3.3-all.apk"
   }
 ]
