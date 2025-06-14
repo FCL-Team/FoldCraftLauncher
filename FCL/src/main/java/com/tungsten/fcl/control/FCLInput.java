@@ -73,19 +73,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public void setPointer(int x, int y, String id) {
         if (id.equals(pointerId) || id.equals("Gyro")) {
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                menu.getCursor().setX(x);
-                menu.getCursor().setY(y);
-            }
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                menu.setCursorX(x);
-                menu.setCursorY(y);
-            }
-            menu.setPointerX(x);
-            menu.setPointerY(y);
-            if (menu.getBridge() != null) {
-                menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
-            }
+            setPointer(x, y);
         }
     }
 
