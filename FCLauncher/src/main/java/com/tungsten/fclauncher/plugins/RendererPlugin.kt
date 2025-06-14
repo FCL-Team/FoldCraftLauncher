@@ -48,6 +48,13 @@ object RendererPlugin {
         return rendererList.isNotEmpty()
     }
 
+    @JvmStatic
+    fun refresh() {
+        rendererList.clear()
+        isInit = false
+        init(FCLPath.CONTEXT)
+    }
+
     private fun parse(info: ApplicationInfo) {
         if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
             val metaData = info.metaData ?: return

@@ -22,7 +22,7 @@
         <item name="postSplashScreenTheme">@style/Theme.FoldCraftLauncher</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="windowSplashScreenAnimationDuration">200</item>
-        <item name="windowSplashScreenBackground">@color/splash_theme_color</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
     </style>
 
     <style name="TabTextAppearance">
