@@ -295,7 +295,7 @@
                         android:marqueeRepeatLimit="marquee_forever"
                         android:text="@string/settings_launcher_theme_fetch_background"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/theme"
+                        app:layout_constraintEnd_toStartOf="@id/theme2"
                         app:layout_constraintStart_toEndOf="@id/reset_theme2"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_percent="0.25"
