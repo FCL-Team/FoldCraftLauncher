@@ -296,6 +296,9 @@
     <string name="curse_category_4550">Quests</string>
     <string name="curse_category_4555">World Gen</string>
     <string name="curse_category_4552">Scripts</string>
+    <string name="curse_category_6555">Vanilla</string>
+    <string name="curse_category_6554">Fantasy</string>
+    <string name="curse_category_6553">Realistic</string>
 
     <string name="curse_sort_author">Author</string>
     <string name="curse_sort_date_created">Date Created</string>
@@ -702,6 +705,25 @@
     <string name="modrinth_category_worldgen">Worldgen</string>
     <string name="modrinth_category_datapack">Datapack</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">Atmosphere</string>
+    <string name="modrinth_category_bloom">Bloom</string>
+    <string name="modrinth_category_cartoon">Cartoon</string>
+    <string name="modrinth_category_colored_lighting">Colored-Lighting</string>
+    <string name="modrinth_category_fantasy">Fantasy</string>
+    <string name="modrinth_category_foliage">Foliage</string>
+    <string name="modrinth_category_high">High</string>
+    <string name="modrinth_category_low">Low</string>
+    <string name="modrinth_category_medium">Medium</string>
+    <string name="modrinth_category_path_tracing">Path-Tracing</string>
+    <string name="modrinth_category_pbr" translatable="false">PBR</string>
+    <string name="modrinth_category_potato">Potato</string>
+    <string name="modrinth_category_realistic">Realistic</string>
+    <string name="modrinth_category_reflections">Reflections</string>
+    <string name="modrinth_category_screenshot">Screenshot</string>
+    <string name="modrinth_category_semi_realistic">Semi-Realistic</string>
+    <string name="modrinth_category_shadows">Shadows</string>
+    <string name="modrinth_category_vanilla_like">Vanilla-Like</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>
