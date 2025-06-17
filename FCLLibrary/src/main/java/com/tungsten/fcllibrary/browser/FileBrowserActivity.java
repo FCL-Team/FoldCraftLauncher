@@ -24,6 +24,7 @@ import com.tungsten.fcllibrary.browser.adapter.FileBrowserListener;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -154,6 +155,15 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             selectExternal.setVisibility(View.GONE);
             openExternal.setVisibility(View.GONE);
         }
+
+        currentText.setOnClickListener(v -> {
+            new EditDialog(this, path -> {
+                File file = new File(path);
+                if (file.exists() && file.isDirectory()) {
+                    refreshList(file.toPath());
+                }
+            }).show();
+        });
     }
 
     private String getMode() {
