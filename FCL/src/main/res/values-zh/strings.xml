@@ -274,6 +274,9 @@
     <string name="curse_category_4550">任务</string>
     <string name="curse_category_4555">世界生成</string>
     <string name="curse_category_4552">脚本</string>
+    <string name="curse_category_6555">原版风格</string>
+    <string name="curse_category_6554">幻想</string>
+    <string name="curse_category_6553">写实</string>
 
     <string name="curse_sort_author">作者</string>
     <string name="curse_sort_date_created">创建日期</string>
@@ -669,6 +672,24 @@
     <string name="modrinth_category_worldgen">世界生成</string>
     <string name="modrinth_category_datapack">数据包</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">氛围</string>
+    <string name="modrinth_category_bloom">泛光</string>
+    <string name="modrinth_category_cartoon">卡通</string>
+    <string name="modrinth_category_colored_lighting">彩色光照</string>
+    <string name="modrinth_category_fantasy">幻想</string>
+    <string name="modrinth_category_foliage">植被</string>
+    <string name="modrinth_category_high">高</string>
+    <string name="modrinth_category_low">低</string>
+    <string name="modrinth_category_medium">中</string>
+    <string name="modrinth_category_path_tracing">路径追踪</string>
+    <string name="modrinth_category_potato">极低</string>
+    <string name="modrinth_category_realistic">写实</string>
+    <string name="modrinth_category_reflections">反射</string>
+    <string name="modrinth_category_screenshot">极高</string>
+    <string name="modrinth_category_semi_realistic">半写实</string>
+    <string name="modrinth_category_shadows">阴影</string>
+    <string name="modrinth_category_vanilla_like">原版风格</string>
 
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
