@@ -242,6 +242,8 @@
     <string name="curse_category_4550">Квесты</string>
     <string name="curse_category_4555">Генерация мира</string>
     <string name="curse_category_4552">Скрипты</string>
+    <string name="curse_category_6554">Фэнтези</string>
+    <string name="curse_category_6553">Реализм</string>
 
     <string name="curse_sort_author">Автор</string>
     <string name="curse_sort_date_created">Дата создания</string>
@@ -617,6 +619,23 @@
     <string name="modrinth_category_utility">Утилиты</string>
     <string name="modrinth_category_worldgen">Генерация мира</string>
     <string name="modrinth_category_datapack">Датапак</string>
+    <!-- шейдеры -->
+    <string name="modrinth_category_atmosphere">Атмосфера</string>
+    <string name="modrinth_category_bloom">Свечение</string>
+    <string name="modrinth_category_cartoon">Мультяшный</string>
+    <string name="modrinth_category_colored_lighting">Цветное освещение</string>
+    <string name="modrinth_category_fantasy">Фэнтези</string>
+    <string name="modrinth_category_foliage">Листва</string>
+    <string name="modrinth_category_high">Высокий</string>
+    <string name="modrinth_category_low">Низкий</string>
+    <string name="modrinth_category_medium">Средний</string>
+    <string name="modrinth_category_path_tracing">Трассировка путей</string>
+    <string name="modrinth_category_potato">Картофельный</string>
+    <string name="modrinth_category_realistic">Реалистичный</string>
+    <string name="modrinth_category_reflections">Отражения</string>
+    <string name="modrinth_category_screenshot">Для скриншотов</string>
+    <string name="modrinth_category_semi_realistic">Полуреалистичный</string>
+    <string name="modrinth_category_shadows">Тени</string>
 
     <string name="mods">Моды</string>
     <string name="mods_add">Добавить моды</string>
