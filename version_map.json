@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1233,
-    "versionName": "1.2.3.3",
-    "date": "2025.06.14",
+    "versionCode": 1234,
+    "versionName": "1.2.3.4",
+    "date": "2025.06.19",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Adapt SplashScreen for devices with Android 12 and below  \n2. Fix the issue with incorrect display of guidance  \n3. Fix the problem of theme-related UI elements extending beyond the screen on certain devices  \n4. Fix the issue where updating the renderer plugin while the launcher is running causes the renderer to be unavailable after launching the game"
+        "text": "(Translated from Chinese by AI)\n1. New feature: Directly input paths by clicking on the built-in file browser paths  \n2. Added version 1.21.6 to the version filter options in the download interface  \n3. Adjusted the update detection link for the launcher  \n4. Added localization for category filters on the shader download page"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.为安卓12以下的设备适配SplashScreen\n2.修复引导错误显示的问题\n3.修复部分设备上主题相关UI超出屏幕的问题\n4.修复当启动器在运行时更新渲染器插件导致启动游戏后无法找到渲染器的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：通过点击内置文件浏览器路径直接输入路径\n2.下载界面版本过滤条件增加1.21.6版本\n3.调整启动器更新检测链接\n4.增加光影下载页面类别过滤条件的相关翻译"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/1f02ee0fa178",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.3/FCL-release-1.2.3.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/aa9b0cae2865",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.4/FCL-release-1.2.3.4-all.apk"
   }
 ]
