@@ -53,7 +53,7 @@ public class ResourcePackDownloadPage extends DownloadPage {
     @Override
     protected String getLocalizedCategory(String category) {
         if (getContext().getString(R.string.mods_modrinth).equals(downloadSource.get())) {
-            return AndroidUtils.getLocalizedText(getContext(), "modrinth_category_" + category.replaceAll("-", "_"));
+            return AndroidUtils.getLocalizedText(getContext(), "modrinth_category_" + category.replaceAll("-", "_").replaceAll("\\+", ""));
         } else {
             return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
         }

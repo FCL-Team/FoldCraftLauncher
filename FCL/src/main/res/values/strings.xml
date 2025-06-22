@@ -725,6 +725,29 @@
     <string name="modrinth_category_semi_realistic">Semi-Realistic</string>
     <string name="modrinth_category_shadows">Shadows</string>
     <string name="modrinth_category_vanilla_like">Vanilla-Like</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_128x" translatable="false">128x</string>
+    <string name="modrinth_category_16x" translatable="false">16x</string>
+    <string name="modrinth_category_256x" translatable="false">256x</string>
+    <string name="modrinth_category_32x" translatable="false">32x</string>
+    <string name="modrinth_category_48x" translatable="false">48x</string>
+    <string name="modrinth_category_512x" translatable="false">512x+</string>
+    <string name="modrinth_category_64x" translatable="false">64x</string>
+    <string name="modrinth_category_8x_" translatable="false">8x</string>
+    <string name="modrinth_category_gui" translatable="false">GUI</string>
+    <string name="modrinth_category_audio">Audio</string>
+    <string name="modrinth_category_blocks">Blocks</string>
+    <string name="modrinth_category_core_shaders">Core-shaders</string>
+    <string name="modrinth_category_entities">Entities</string>
+    <string name="modrinth_category_environment">Environment</string>
+    <string name="modrinth_category_fonts">Fonts</string>
+    <string name="modrinth_category_items">Items</string>
+    <string name="modrinth_category_locale">Locale</string>
+    <string name="modrinth_category_modded">Modded</string>
+    <string name="modrinth_category_models">Models</string>
+    <string name="modrinth_category_simplistic">Simplistic</string>
+    <string name="modrinth_category_themed">Themed</string>
+    <string name="modrinth_category_tweaks">Tweaks</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>

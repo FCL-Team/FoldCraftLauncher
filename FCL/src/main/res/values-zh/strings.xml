@@ -691,6 +691,20 @@
     <string name="modrinth_category_semi_realistic">半写实</string>
     <string name="modrinth_category_shadows">阴影</string>
     <string name="modrinth_category_vanilla_like">原版风格</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_audio">声音</string>
+    <string name="modrinth_category_blocks">方块</string>
+    <string name="modrinth_category_core_shaders">核心着色器</string>
+    <string name="modrinth_category_entities">实体</string>
+    <string name="modrinth_category_environment">环境</string>
+    <string name="modrinth_category_fonts">字体</string>
+    <string name="modrinth_category_items">物品</string>
+    <string name="modrinth_category_locale">本地化</string>
+    <string name="modrinth_category_modded">修改</string>
+    <string name="modrinth_category_models">模型</string>
+    <string name="modrinth_category_simplistic">简约</string>
+    <string name="modrinth_category_themed">主题</string>
+    <string name="modrinth_category_tweaks">优化</string>
 
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
