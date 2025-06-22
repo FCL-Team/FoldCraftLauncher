@@ -3,6 +3,7 @@ package com.mio.minecraft
 import android.content.Context
 import com.mio.util.AndroidUtil
 import com.tungsten.fcl.R
+import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.FFmpegPlugin
 import com.tungsten.fclauncher.utils.Architecture
@@ -17,6 +18,7 @@ class ModChecker(val context: Context) {
                 "touchcontroller" -> {
                     bridge.setHasTouchController(true);
                 }
+
                 "physicsmod" -> {
                     val arch = AndroidUtil.getElfArchFromZip(
                         mod.file.toFile(),
@@ -107,6 +109,17 @@ class ModChecker(val context: Context) {
                                 mod.file.toFile().name
                             )
                         )
+                }
+
+                "sodium", "embeddium" -> {
+                    if (bridge.renderer == FCLConfig.Renderer.RENDERER_GL4ES.toString()) {
+                        throw ModCheckException(
+                            context.getString(
+                                R.string.mod_check_axiom,
+                                mod.file.toFile().name
+                            )
+                        )
+                    }
                 }
             }
         }.exceptionOrNull()

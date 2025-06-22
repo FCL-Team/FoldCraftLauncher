@@ -1015,6 +1015,7 @@
     <string name="mod_check_replay">Replay (%s)需要FFmpeg插件，似乎你并没有安装。你可以从谷歌商店下载或者这里下载（ %s 或者 %s ）（长按复制）</string>
     <string name="mod_check_borderlesswindow">无边框全屏 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
     <string name="mod_check_axiom">当前使用的Axiom模组（%s）未经修补，启动后将会崩溃。</string>
+    <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃。</string>
 
     <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>
