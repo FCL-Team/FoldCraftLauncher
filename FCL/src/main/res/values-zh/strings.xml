@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="splash_agreement">FCL需要储存权限以管理/读取游戏文件，FCL在GitHub上完全开源，请不用担心您的数据安全。权限仅用于正常运行游戏，无任何安全问题。</string>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
     <string name="splash_permission_grant">授予</string>
     <string name="splash_permission_title">需要存储权限</string>
