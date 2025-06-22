@@ -115,7 +115,7 @@ class ModChecker(val context: Context) {
                     if (bridge.renderer == FCLConfig.Renderer.RENDERER_GL4ES.toString()) {
                         throw ModCheckException(
                             context.getString(
-                                R.string.mod_check_axiom,
+                                R.string.mod_check_sodium,
                                 mod.file.toFile().name
                             )
                         )

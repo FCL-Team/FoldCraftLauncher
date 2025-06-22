@@ -186,7 +186,10 @@ public final class LauncherHelper {
                             return launcher;
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
                             return Task.supplyAsync(launcher::launch);
-                        }).thenComposeAsync(this::checkMod)
+                        }).thenComposeAsync(fclBridge -> {
+                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
+                            return checkMod(fclBridge);
+                        })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
