@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1234,
-    "versionName": "1.2.3.4",
-    "date": "2025.06.19",
+    "versionCode": 1235,
+    "versionName": "1.2.3.5",
+    "date": "2025.06.24",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New feature: Directly input paths by clicking on the built-in file browser paths  \n2. Added version 1.21.6 to the version filter options in the download interface  \n3. Adjusted the update detection link for the launcher  \n4. Added localization for category filters on the shader download page"
+        "text": "(Translated from Chinese by AI)\n1. Add storage permission-related prompts  \n2. Fix missing translations for Modrinth resource pack categories  \n3. Add compatibility checks between GL4ES and Sodium/Embeddium  \n4. Fix CustomSkinLoader errors on the offline skins page"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：通过点击内置文件浏览器路径直接输入路径\n2.下载界面版本过滤条件增加1.21.6版本\n3.调整启动器更新检测链接\n4.增加光影下载页面类别过滤条件的相关翻译"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加储存权限相关提醒\n2.修复Modrinth资源包类别翻译缺失的问题\n3.增加GL4ES与Sodium/Embeddium的兼容性检查\n4.修复离线皮肤页面CustomSkinLoader报错"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/aa9b0cae2865",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.4/FCL-release-1.2.3.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/17cbfecdc8a5",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.5/FCL-release-1.2.3.5-all.apk"
   }
 ]
