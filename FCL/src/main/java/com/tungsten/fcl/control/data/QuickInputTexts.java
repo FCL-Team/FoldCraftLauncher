@@ -62,7 +62,7 @@ public class QuickInputTexts {
             File file = new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json");
             if (file.exists()) {
                 String json = FileUtils.readText(file);
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
                 return gson.fromJson(json, new TypeToken<ArrayList<String>>() {
                 }.getType());
             }
@@ -81,7 +81,7 @@ public class QuickInputTexts {
     }
 
     public static void saveInputTexts() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         String json = gson.toJson(new ArrayList<>(inputTexts));
         try {
             FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json"), json);

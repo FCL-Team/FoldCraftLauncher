@@ -3,6 +3,7 @@ package com.tungsten.fcl.control;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,9 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import java.util.Objects;
 
 public class QuickInputDialog extends FCLDialog implements View.OnClickListener {
 
@@ -28,6 +32,7 @@ public class QuickInputDialog extends FCLDialog implements View.OnClickListener 
         super(context);
         this.menu = menu;
         setCancelable(false);
+        Objects.requireNonNull(getWindow()).setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
         setContentView(R.layout.dialog_quick_input);
 
         addText = findViewById(R.id.add_text);

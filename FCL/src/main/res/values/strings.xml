@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
+    <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
     <string name="splash_permission_grant">Grant</string>
     <string name="splash_permission_title">Permission to store needed</string>
@@ -724,6 +725,29 @@
     <string name="modrinth_category_semi_realistic">Semi-Realistic</string>
     <string name="modrinth_category_shadows">Shadows</string>
     <string name="modrinth_category_vanilla_like">Vanilla-Like</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_128x" translatable="false">128x</string>
+    <string name="modrinth_category_16x" translatable="false">16x</string>
+    <string name="modrinth_category_256x" translatable="false">256x</string>
+    <string name="modrinth_category_32x" translatable="false">32x</string>
+    <string name="modrinth_category_48x" translatable="false">48x</string>
+    <string name="modrinth_category_512x" translatable="false">512x+</string>
+    <string name="modrinth_category_64x" translatable="false">64x</string>
+    <string name="modrinth_category_8x_" translatable="false">8x</string>
+    <string name="modrinth_category_gui" translatable="false">GUI</string>
+    <string name="modrinth_category_audio">Audio</string>
+    <string name="modrinth_category_blocks">Blocks</string>
+    <string name="modrinth_category_core_shaders">Core-shaders</string>
+    <string name="modrinth_category_entities">Entities</string>
+    <string name="modrinth_category_environment">Environment</string>
+    <string name="modrinth_category_fonts">Fonts</string>
+    <string name="modrinth_category_items">Items</string>
+    <string name="modrinth_category_locale">Locale</string>
+    <string name="modrinth_category_modded">Modded</string>
+    <string name="modrinth_category_models">Models</string>
+    <string name="modrinth_category_simplistic">Simplistic</string>
+    <string name="modrinth_category_themed">Themed</string>
+    <string name="modrinth_category_tweaks">Tweaks</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>
@@ -778,6 +802,7 @@
     <string name="quick_input_title">Quick Input</string>
     <string name="quick_input_add">Add New Text</string>
     <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_remarks">Remarks (optional)</string>
     <string name="quick_input_exist">The text already exist!</string>
     <string name="quick_input_empty">Fill the text first!</string>
 
@@ -1052,6 +1077,7 @@
     <string name="mod_check_replay">FFmpeg plugin is needed for Replay (%s). It seems that you haven\'t installed it yet. You can download from Google Play Store or here( %s or %s ) (Long press to copy).</string>
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) is not for Android. It must make the game crash.</string>
     <string name="mod_check_axiom">Axiom (%s) currently in use has not been patched, it will cause crash.</string>
+    <string name="mod_check_sodium">The currently used GL4ES renderer may not support the mods Sodium/Embeddium (%s). Continuing to launch could cause the game to crash. It is recommended to download and use the MobileGlues renderer instead (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
 
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>

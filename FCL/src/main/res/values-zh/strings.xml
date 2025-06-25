@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="splash_agreement">FCL需要储存权限以管理/读取游戏文件，FCL在GitHub上完全开源，请不用担心您的数据安全。权限仅用于正常运行游戏，无任何安全问题。</string>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
     <string name="splash_permission_grant">授予</string>
     <string name="splash_permission_title">需要存储权限</string>
@@ -690,6 +691,20 @@
     <string name="modrinth_category_semi_realistic">半写实</string>
     <string name="modrinth_category_shadows">阴影</string>
     <string name="modrinth_category_vanilla_like">原版风格</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_audio">声音</string>
+    <string name="modrinth_category_blocks">方块</string>
+    <string name="modrinth_category_core_shaders">核心着色器</string>
+    <string name="modrinth_category_entities">实体</string>
+    <string name="modrinth_category_environment">环境</string>
+    <string name="modrinth_category_fonts">字体</string>
+    <string name="modrinth_category_items">物品</string>
+    <string name="modrinth_category_locale">本地化</string>
+    <string name="modrinth_category_modded">修改</string>
+    <string name="modrinth_category_models">模型</string>
+    <string name="modrinth_category_simplistic">简约</string>
+    <string name="modrinth_category_themed">主题</string>
+    <string name="modrinth_category_tweaks">优化</string>
 
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
@@ -744,6 +759,7 @@
     <string name="quick_input_title">快捷输入</string>
     <string name="quick_input_add">添加新文本</string>
     <string name="quick_input_text">快捷输入文本</string>
+    <string name="quick_input_remarks">备注（可空）</string>
     <string name="quick_input_exist">该文本已存在！</string>
     <string name="quick_input_empty">请先填写文本！</string>
 
@@ -1000,6 +1016,7 @@
     <string name="mod_check_replay">Replay (%s)需要FFmpeg插件，似乎你并没有安装。你可以从谷歌商店下载或者这里下载（ %s 或者 %s ）（长按复制）</string>
     <string name="mod_check_borderlesswindow">无边框全屏 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
     <string name="mod_check_axiom">当前使用的Axiom模组（%s）未经修补，启动后将会崩溃。</string>
+    <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
 
     <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>
