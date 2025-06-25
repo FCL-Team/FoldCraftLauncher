@@ -802,6 +802,7 @@
     <string name="quick_input_title">Quick Input</string>
     <string name="quick_input_add">Add New Text</string>
     <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_remarks">Remarks (optional)</string>
     <string name="quick_input_exist">The text already exist!</string>
     <string name="quick_input_empty">Fill the text first!</string>
 
