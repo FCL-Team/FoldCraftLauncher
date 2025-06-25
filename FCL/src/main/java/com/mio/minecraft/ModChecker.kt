@@ -8,9 +8,10 @@ import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.FFmpegPlugin
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
+import com.tungsten.fclcore.util.versioning.VersionNumber
 import kotlin.jvm.Throws
 
-class ModChecker(val context: Context) {
+class ModChecker(val context: Context, val version: String) {
     @Throws(ModCheckException::class)
     fun check(bridge: FCLBridge, mod: LocalModFile) {
         val exception = runCatching {
@@ -112,7 +113,11 @@ class ModChecker(val context: Context) {
                 }
 
                 "sodium", "embeddium" -> {
-                    if (bridge.renderer == FCLConfig.Renderer.RENDERER_GL4ES.toString()) {
+                    if (bridge.renderer == FCLConfig.Renderer.RENDERER_GL4ES.toString() && VersionNumber.compare(
+                            version,
+                            "1.17"
+                        ) >= 0
+                    ) {
                         throw ModCheckException(
                             context.getString(
                                 R.string.mod_check_sodium,

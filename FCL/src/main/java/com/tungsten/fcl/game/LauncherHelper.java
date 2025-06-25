@@ -188,7 +188,7 @@ public final class LauncherHelper {
                             return Task.supplyAsync(launcher::launch);
                         }).thenComposeAsync(fclBridge -> {
                             fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
-                            return checkMod(fclBridge);
+                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse("0.0"));
                         })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
@@ -297,12 +297,12 @@ public final class LauncherHelper {
         executor.start();
     }
 
-    private Task<FCLBridge> checkMod(FCLBridge bridge) {
+    private Task<FCLBridge> checkMod(FCLBridge bridge, String version) {
         return Task.composeAsync(() -> {
             try {
                 StringBuilder modCheckerInfo = new StringBuilder();
                 StringBuilder modSummary = new StringBuilder();
-                ModChecker modChecker = new ModChecker(context);
+                ModChecker modChecker = new ModChecker(context, version);
                 int count = 0;
                 for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
                     if (!mod.isActive()) {
