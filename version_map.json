@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1235,
-    "versionName": "1.2.3.5",
-    "date": "2025.06.24",
+    "versionCode": 1236,
+    "versionName": "1.2.3.6",
+    "date": "2025.06.29",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add storage permission-related prompts  \n2. Fix missing translations for Modrinth resource pack categories  \n3. Add compatibility checks between GL4ES and Sodium/Embeddium  \n4. Fix CustomSkinLoader errors on the offline skins page"
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where some mods crashed due to missing glfwMaximizeWindow in the Pojav backend GLFW implementation.  \n2. Fixed the incorrect compatibility check error prompt between GL4ES and Sodium/Embeddium.  \n3. Optimized the quick input feature with enhanced note display.  \n4. Fixed an issue where some mods in the Boat backend reported inability to find the org.lwjgl module."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加储存权限相关提醒\n2.修复Modrinth资源包类别翻译缺失的问题\n3.增加GL4ES与Sodium/Embeddium的兼容性检查\n4.修复离线皮肤页面CustomSkinLoader报错"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Pojav后端GLFW缺失glfwMaximizeWindow导致的部分模组崩溃问题\n2.修复GL4ES与Sodium/Embeddium兼容性检测错误提示问题\n3.优化快捷输入功能，增加备注优化显示\n4.修复Boat后端部分模组提示找不到org.lwjgl模块的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/17cbfecdc8a5",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.5/FCL-release-1.2.3.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/d17592bf1f35",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.6/FCL-release-1.2.3.6-all.apk"
   }
 ]
