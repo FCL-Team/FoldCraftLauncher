@@ -3,14 +3,12 @@ package com.mio
 import android.content.Context
 import android.os.Vibrator
 import android.system.Os
-import android.util.Log
 import android.util.SparseIntArray
 import android.view.MotionEvent
 import com.tungsten.fclcore.util.Logging
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient
 import top.fifthlight.touchcontroller.proxy.client.android.SimpleVibrationHandler
 import top.fifthlight.touchcontroller.proxy.client.android.transport.UnixSocketTransport
-import top.fifthlight.touchcontroller.proxy.data.Offset
 import java.util.logging.Level
 
 class TouchController(context: Context, val width: Int, val height: Int) {
@@ -41,10 +39,8 @@ class TouchController(context: Context, val width: Int, val height: Int) {
         }
     }
 
-    private fun MotionEvent.getOffset(index: Int) = Offset(
-        getX(index) / width,
-        getY(index) / height
-    )
+    private fun LauncherProxyClient.addPointer(pointerId: Int, event: MotionEvent, index: Int) =
+        addPointer(pointerId, event.getX(index) / width, event.getY(index) / height)
 
     fun handleTouchEvent(event: MotionEvent) {
         val client = client ?: return
@@ -52,20 +48,20 @@ class TouchController(context: Context, val width: Int, val height: Int) {
             MotionEvent.ACTION_DOWN -> {
                 val pointerId = nextPointerId++
                 pointerIdMap.put(event.getPointerId(0), pointerId)
-                client.addPointer(pointerId, event.getOffset(0))
+                client.addPointer(pointerId, event, 0)
             }
 
             MotionEvent.ACTION_POINTER_DOWN -> {
                 val pointerId = nextPointerId++
                 val i = event.actionIndex
                 pointerIdMap.put(event.getPointerId(i), pointerId)
-                client.addPointer(pointerId, event.getOffset(i))
+                client.addPointer(pointerId, event, i)
             }
 
             MotionEvent.ACTION_MOVE -> {
                 for (i in 0 until event.pointerCount) {
                     val pointerId = pointerIdMap.get(event.getPointerId(i))
-                    client.addPointer(pointerId, event.getOffset(i))
+                    client.addPointer(pointerId, event, i)
                 }
             }
 
