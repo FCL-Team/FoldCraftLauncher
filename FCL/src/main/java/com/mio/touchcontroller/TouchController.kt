@@ -1,4 +1,4 @@
-package com.mio
+package com.mio.touchcontroller
 
 import android.content.Context
 import android.os.VibrationEffect
@@ -8,6 +8,7 @@ import android.util.SparseIntArray
 import android.view.MotionEvent
 import com.tungsten.fclcore.util.Logging
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient
+import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient.VibrationHandler
 import top.fifthlight.touchcontroller.proxy.client.android.transport.UnixSocketTransport
 import top.fifthlight.touchcontroller.proxy.message.VibrateMessage
@@ -19,7 +20,8 @@ class TouchController(
     val height: Int,
     val vibrationDuration: Long = 100
 ) {
-    private var client: LauncherProxyClient? = null
+    var client: LauncherProxyClient? = null
+        private set
     private val socketName = "FoldCraftLauncher"
     private val pointerIdMap = SparseIntArray()
     private var nextPointerId = 1
@@ -32,7 +34,10 @@ class TouchController(
         try {
             val transport = UnixSocketTransport(socketName)
             Os.setenv("TOUCH_CONTROLLER_PROXY_SOCKET", socketName, true)
-            client = LauncherProxyClient(transport)
+            client = LauncherProxyClient(
+                transport = transport,
+                capabilities = setOf(PlatformCapability.TEXT_STATUS),
+            )
             val vibrator = context.getSystemService<Vibrator>(Vibrator::class.java)
             val handler = object : VibrationHandler {
                 override fun vibrate(kind: VibrateMessage.Kind) {
