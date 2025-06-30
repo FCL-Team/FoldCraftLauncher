@@ -19,7 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.gson.GsonBuilder;
-import com.mio.TouchController;
+import com.mio.touchcontroller.TouchController;
+import com.mio.touchcontroller.TouchControllerInputView;
 import com.mio.ui.dialog.GamepadMapDialog;
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.BuildConfig;
@@ -106,6 +107,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private LogWindow logWindow;
     private TextView fpsText;
     private TouchCharInput touchCharInput;
+    private TouchControllerInputView touchControllerInputView;
     private FCLProgressBar launchProgress;
     private FCLImageView cursorView;
     private ViewManager viewManager;
@@ -570,6 +572,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         logWindow = findViewById(R.id.log_window);
         fpsText = findViewById(R.id.fps);
         touchCharInput = findViewById(R.id.input_scanner);
+        touchControllerInputView = findViewById(R.id.touchcontroller_input_view);
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
 
@@ -609,6 +612,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         if (getBridge() != null && getBridge().hasTouchController()) {
             touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
+            touchControllerInputView.setClient(touchController.getClient());
+            touchControllerInputView.setFclInput(fclInput);
+            touchControllerInputView.setSize(AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
         }
 
         touchPad.setOnHoverListener((view, motionEvent) -> {
