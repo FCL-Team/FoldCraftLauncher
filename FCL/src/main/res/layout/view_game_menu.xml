@@ -54,6 +54,11 @@
             android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
             android:id="@+id/input_scanner"/>
 
+        <com.mio.touchcontroller.TouchControllerInputView
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:id="@+id/touchcontroller_input_view"/>
+
         <com.tungsten.fcl.control.view.GameItemBar
             android:visibility="gone"
             android:id="@+id/game_item_bar"
