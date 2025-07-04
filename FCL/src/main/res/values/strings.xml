@@ -8,6 +8,7 @@
     <string name="splash_permission_close">Close the app</string>
     <string name="splash_permission_settings">Settings</string>
     <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
+    <string name="notification_permission">FCL requires permission to post notifications to prevent issues with normal game installation or startup.</string>
 
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
