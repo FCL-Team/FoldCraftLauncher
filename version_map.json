@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1236,
-    "versionName": "1.2.3.6",
-    "date": "2025.06.29",
+    "versionCode": 1237,
+    "versionName": "1.2.3.7",
+    "date": "2025.07.04",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where some mods crashed due to missing glfwMaximizeWindow in the Pojav backend GLFW implementation.  \n2. Fixed the incorrect compatibility check error prompt between GL4ES and Sodium/Embeddium.  \n3. Optimized the quick input feature with enhanced note display.  \n4. Fixed an issue where some mods in the Boat backend reported inability to find the org.lwjgl module."
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the delete button might crash during rapid clicking in the auto-install process.  \n2. Added version 1.21.7 to the version filter criteria on the download interface.  \n3. Updated mod translation information.  \n4. Use foreground services to run Forge/NeoForge/Optifine-related installation tasks, fixing the issue where installation might fail on some devices."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Pojav后端GLFW缺失glfwMaximizeWindow导致的部分模组崩溃问题\n2.修复GL4ES与Sodium/Embeddium兼容性检测错误提示问题\n3.优化快捷输入功能，增加备注优化显示\n4.修复Boat后端部分模组提示找不到org.lwjgl模块的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复快速点击自动安装中的删除按键可能崩溃的问题\n2.下载界面版本过滤条件增加1.21.7版本\n3.更新模组翻译信息\n4.使用前台服务运行forge/neoforge/optifine相关安装任务，修复部分设备上无法正常安装的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/d17592bf1f35",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.6/FCL-release-1.2.3.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/aa222cbe7735",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.7/FCL-release-1.2.3.7-all.apk"
   }
 ]
