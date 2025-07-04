@@ -3,4 +3,5 @@
     <string name="app_version">auto_change_by_gradle</string>
 
     <string name="curse_api_key">null</string>
+    <string name="notification_title">FCL Process service is running!</string>
 </resources>

@@ -7,6 +7,7 @@
     <string name="splash_permission_close">关闭应用</string>
     <string name="splash_permission_settings">去设置</string>
     <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
+    <string name="notification_permission">FCL需要发布通知的权限，防止无法正常安装/启动游戏 。</string>
 
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>

@@ -1,17 +1,28 @@
 package com.tungsten.fcl.activity
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
@@ -62,6 +73,7 @@ import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
@@ -92,10 +104,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var currentAccount: ObjectProperty<Account?>
     private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
-
     private lateinit var theme: IntegerProperty
-
     var isVersionLoading = false
+    private lateinit var permissionResultLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -211,6 +222,23 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         true
                     }
                     UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
+                    if (!checkNotificationPermission() && getSharedPreferences(
+                            "launcher",
+                            MODE_PRIVATE
+                        ).getBoolean("check_notification_permission", true)
+                    ) {
+                        getSharedPreferences("launcher", MODE_PRIVATE).edit {
+                            putBoolean("check_notification_permission", false)
+                        }
+                        FCLAlertDialog.Builder(this@MainActivity)
+                            .setMessage(getString(R.string.notification_permission))
+                            .setPositiveButton {
+                                requestNotificationPermission()
+                            }
+                            .setNegativeButton {}
+                            .create()
+                            .show()
+                    }
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
                     backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
@@ -233,6 +261,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
             }
         }
+        permissionResultLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -627,6 +658,40 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             )
         } catch (e: Exception) {
             LOG.log(Level.INFO, "Share error: $e")
+        }
+    }
+
+    private fun checkNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            true
+        } else {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_DENIED
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || !ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        ) {
+            try {
+                val intent = Intent()
+                intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, applicationInfo.uid)
+                startActivity(intent)
+            } catch (_: Exception) {
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                intent.data = Uri.fromParts("package", packageName, null)
+                startActivity(intent)
+            }
+        } else {
+            permissionResultLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }
