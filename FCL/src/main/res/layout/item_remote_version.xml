@@ -85,6 +85,15 @@
             android:visibility="gone"
             app:auto_tint="true" />
 
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_jump_24"
+            android:stateListAnimator="@xml/anim_scale_large"
+            android:visibility="gone"
+            app:auto_tint="true" />
+
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
