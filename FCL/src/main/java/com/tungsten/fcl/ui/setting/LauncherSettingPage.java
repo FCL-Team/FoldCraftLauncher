@@ -87,15 +87,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
     private FCLSwitch closeSkinModel;
-    private FCLSeekBar animationSpeed;
+    private FCLNumberSeekBar animationSpeed;
     private FCLNumberSeekBar vibrationDuration;
-    private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
     private FCLSpinner<String> downloadType;
     private FCLCheckBox autoThreads;
-    private FCLSeekBar threads;
-    private FCLTextView threadsText;
+    private FCLNumberSeekBar threads;
 
     public LauncherSettingPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
@@ -126,13 +124,11 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         closeSkinModel = findViewById(R.id.close_skin_model);
         animationSpeed = findViewById(R.id.animation_speed);
         vibrationDuration = findViewById(R.id.vibration_duration);
-        animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
         downloadType = findViewById(R.id.source);
         autoThreads = findViewById(R.id.check_auto_threads);
         threads = findViewById(R.id.threads);
-        threadsText = findViewById(R.id.threads_text);
 
         checkUpdate.setOnClickListener(this);
         clearCache.setOnClickListener(this);
@@ -183,7 +179,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
         animationSpeed.addProgressListener();
         animationSpeed.progressProperty().bindBidirectional(ThemeEngine.getInstance().getTheme().animationSpeedProperty());
-        animationSpeedText.stringProperty().bind(Bindings.createStringBinding(() -> animationSpeed.getProgress() * 100 + " MS", animationSpeed.progressProperty()));
         ThemeEngine.getInstance().getTheme().animationSpeedProperty().addListener(observable -> Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme()));
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
@@ -228,7 +223,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         threads.setProgress(config().getDownloadThreads());
         threads.addProgressListener();
         threads.progressProperty().bindBidirectional(config().downloadThreadsProperty());
-        threadsText.stringProperty().bind(Bindings.createStringBinding(() -> threads.getProgress() + "", threads.progressProperty()));
 
         if (System.currentTimeMillis() - getLastClearCacheTime() >= 3 * ONE_DAY) {
             FileUtils.cleanDirectoryQuietly(new File(FCLPath.CACHE_DIR).getParentFile());

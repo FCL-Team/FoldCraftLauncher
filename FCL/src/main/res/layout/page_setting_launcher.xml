@@ -601,24 +601,16 @@
                         android:text="@string/settings_launcher_animation_speed"
                         app:auto_text_tint="true" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                    <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                         android:id="@+id/animation_speed"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
+                        app:suffix="00"
                         android:max="20"
                         android:min="1" />
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/animation_speed_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
-                        android:singleLine="true"
-                        app:auto_text_tint="true" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -647,7 +639,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        app:suffix="ms"
+                        app:suffix="MS"
                         android:max="500"
                         android:min="20" />
 
@@ -767,7 +759,7 @@
                             android:text="@string/settings_launcher_download_threads"
                             app:auto_text_tint="true" />
 
-                        <com.tungsten.fcllibrary.component.view.FCLSeekBar
+                        <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                             android:id="@+id/threads"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -776,15 +768,6 @@
                             android:layout_weight="1"
                             android:max="128"
                             android:min="1" />
-
-                        <com.tungsten.fcllibrary.component.view.FCLTextView
-                            android:id="@+id/threads_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="10dp"
-                            android:singleLine="true"
-                            app:auto_text_tint="true" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
