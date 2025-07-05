@@ -890,6 +890,7 @@
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
+    <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>

@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.setting;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fcl.setting.ConfigHolder.config;
 import static com.tungsten.fclcore.util.Lang.thread;
 import static com.tungsten.fclcore.util.Logging.LOG;
@@ -45,6 +46,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
+import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
@@ -86,6 +88,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLSwitch ignoreNotch;
     private FCLSwitch closeSkinModel;
     private FCLSeekBar animationSpeed;
+    private FCLNumberSeekBar vibrationDuration;
     private FCLTextView animationSpeedText;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
@@ -122,6 +125,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         ignoreNotch = findViewById(R.id.ignore_notch);
         closeSkinModel = findViewById(R.id.close_skin_model);
         animationSpeed = findViewById(R.id.animation_speed);
+        vibrationDuration = findViewById(R.id.vibration_duration);
         animationSpeedText = findViewById(R.id.animation_speed_text);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
@@ -182,6 +186,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         animationSpeedText.stringProperty().bind(Bindings.createStringBinding(() -> animationSpeed.getProgress() * 100 + " MS", animationSpeed.progressProperty()));
         ThemeEngine.getInstance().getTheme().animationSpeedProperty().addListener(observable -> Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme()));
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
+        vibrationDuration.setProgress(sharedPreferences.getInt("vibrationDuration", 100));
+        vibrationDuration.addProgressListener();
+        vibrationDuration.progressProperty().addListener(observable -> {
+            sharedPreferences.edit().putInt("vibrationDuration", vibrationDuration.getProgress()).apply();
+        });
+
         autoSource.setChecked(config().autoChooseDownloadTypeProperty().get());
         autoSource.addCheckedChangeListener();
         autoSource.checkProperty().bindBidirectional(config().autoChooseDownloadTypeProperty());
@@ -226,12 +237,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     }
 
     public long getLastClearCacheTime() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", MODE_PRIVATE);
         return sharedPreferences.getLong("clear_cache", 0L);
     }
 
     public void setLastClearCacheTime(long time) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putLong("clear_cache", time);
         editor.apply();
