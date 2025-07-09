@@ -837,7 +837,7 @@
     <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
