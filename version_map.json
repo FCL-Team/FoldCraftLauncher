@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1237,
-    "versionName": "1.2.3.7",
-    "date": "2025.07.04",
+    "versionCode": 1238,
+    "versionName": "1.2.3.8",
+    "date": "2025.07.09",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the delete button might crash during rapid clicking in the auto-install process.  \n2. Added version 1.21.7 to the version filter criteria on the download interface.  \n3. Updated mod translation information.  \n4. Use foreground services to run Forge/NeoForge/Optifine-related installation tasks, fixing the issue where installation might fail on some devices."
+        "text": "(Translated from Chinese by AI)\n1. New Feature: Adjust TouchController mod vibration strength in the launcher settings.\n2. New Feature: Access mod loader download links within the launcher.\n3. Made adjustments to some UI elements.\n4. Modified the GL4ES description. (Note: GL4ES supports versions up to 1.21.4 and will not function properly after 1.21.5)"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复快速点击自动安装中的删除按键可能崩溃的问题\n2.下载界面版本过滤条件增加1.21.7版本\n3.更新模组翻译信息\n4.使用前台服务运行forge/neoforge/optifine相关安装任务，修复部分设备上无法正常安装的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：在启动器设置内调节TouchController模组震动强度\n2.新增功能：在启动器内获取模组加载器下载链接\n3.调整部分UI\n4.修改GL4ES描述（注意：GL4ES支持的版本最高为1.21.4，1.21.5后无法正常使用）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/aa222cbe7735",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.7/FCL-release-1.2.3.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/b9abe9d87dab",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.8/FCL-release-1.2.3.8-all.apk"
   }
 ]
