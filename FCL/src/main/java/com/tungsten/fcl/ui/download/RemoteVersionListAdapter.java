@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
@@ -51,6 +53,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         FCLTextView tag;
         FCLTextView date;
         FCLImageButton wiki;
+        FCLImageButton save;
     }
 
     @Override
@@ -76,6 +79,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.date = view.findViewById(R.id.date);
             viewHolder.wiki = view.findViewById(R.id.wiki);
+            viewHolder.save = view.findViewById(R.id.save);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -95,6 +99,19 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             viewHolder.wiki.setOnClickListener(v -> AndroidUtils.openLink(getContext(), remoteVersion.getVersionType() == RemoteVersion.Type.RELEASE ? String.format(getContext().getString(R.string.wiki_release), remoteVersion.getGameVersion()) : String.format(getContext().getString(R.string.wiki_snapshot), remoteVersion.getGameVersion())));
         } else {
             viewHolder.wiki.setVisibility(View.GONE);
+        }
+        if (!(remoteVersion instanceof GameRemoteVersion) && !(remoteVersion instanceof FabricAPIRemoteVersion) && !(remoteVersion instanceof QuiltAPIRemoteVersion)) {
+            viewHolder.save.setVisibility(View.VISIBLE);
+            viewHolder.save.setOnClickListener(v -> {
+                List<String> urls = remoteVersion.getUrls();
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.message_select_url)
+                        .setItems(urls.toArray(new String[0]), (d, w) -> AndroidUtils.openLink(getContext(), urls.get(w)))
+                        .setNegativeButton(R.string.button_cancel, null)
+                        .create().show();
+            });
+        } else {
+            viewHolder.save.setVisibility(View.GONE);
         }
         AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;

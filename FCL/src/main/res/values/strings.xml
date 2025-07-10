@@ -837,7 +837,7 @@
     <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
@@ -890,6 +890,7 @@
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
+    <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
@@ -1093,4 +1094,5 @@
     <string name="tip_hide_menu_view">The menu view is hidden. Press the volume key to open the menu.</string>
     <string name="modloader">ModLoader</string>
     <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
+    <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
 </resources>

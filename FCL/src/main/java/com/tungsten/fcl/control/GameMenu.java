@@ -1,6 +1,9 @@
 package com.tungsten.fcl.control;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -608,7 +611,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
 
         if (getBridge() != null && getBridge().hasTouchController()) {
-            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
+            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()), (int)sharedPreferences.getInt("vibrationDuration", 100));
         }
 
         touchPad.setOnHoverListener((view, motionEvent) -> {
