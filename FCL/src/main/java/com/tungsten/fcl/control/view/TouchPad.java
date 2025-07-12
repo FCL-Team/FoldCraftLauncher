@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Choreographer;
+import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -163,6 +164,29 @@ public class TouchPad extends View {
             gameMenu.getTouchController().handleTouchEvent(event);
         }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
+            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                int state = event.getButtonState();
+                if (state == MotionEvent.BUTTON_PRIMARY) {
+                    state = FCLInput.MOUSE_LEFT;
+                } else if (state == MotionEvent.BUTTON_SECONDARY) {
+                    state = FCLInput.MOUSE_RIGHT;
+                } else if (state == MotionEvent.BUTTON_TERTIARY) {
+                    state = FCLInput.MOUSE_MIDDLE;
+                } else {
+                    return true;
+                }
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_BUTTON_PRESS:
+                    case MotionEvent.ACTION_DOWN:
+                        gameMenu.getInput().sendKeyEvent(state, true);
+                        break;
+                    case MotionEvent.ACTION_BUTTON_RELEASE:
+                    case MotionEvent.ACTION_UP:
+                        gameMenu.getInput().sendKeyEvent(state, false);
+                        break;
+                }
+                return true;
+            }
             if (gameMenu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK) {
                 gameMenu.getInput().setPointerId(POINTER_ID);
                 gameMenu.getInput().setPointer((int) event.getX(), (int) event.getY(), POINTER_ID);

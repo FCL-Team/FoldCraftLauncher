@@ -253,6 +253,11 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 choreographer.postFrameCallback(frameCallback);
             }
             return gamepad.handleMotionEventInput(event);
+        } else if (event.getSource() == InputDevice.SOURCE_MOUSE && event.getActionMasked() == MotionEvent.ACTION_SCROLL) {
+            for (int i = 0; i < Math.abs((int) event.getAxisValue(MotionEvent.AXIS_VSCROLL)); i++) {
+                sendKeyEvent(event.getAxisValue(MotionEvent.AXIS_VSCROLL) > 0 ? MOUSE_SCROLL_UP : MOUSE_SCROLL_DOWN, true);
+            }
+            return true;
         }
         return false;
     }
