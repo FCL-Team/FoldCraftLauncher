@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1238,
-    "versionName": "1.2.3.8",
-    "date": "2025.07.09",
+    "versionCode": 1239,
+    "versionName": "1.2.3.9",
+    "date": "2025.07.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New Feature: Adjust TouchController mod vibration strength in the launcher settings.\n2. New Feature: Access mod loader download links within the launcher.\n3. Made adjustments to some UI elements.\n4. Modified the GL4ES description. (Note: GL4ES supports versions up to 1.21.4 and will not function properly after 1.21.5)"
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where the physical mouse could not properly recognize right-click/middle-click/scroll wheel.  \n2. Fixed a crash issue that could occur due to corrupted shortcut input files.  \n3. Fixed missing versions in the game's version list.  \n4. Updated ANGLE library files."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：在启动器设置内调节TouchController模组震动强度\n2.新增功能：在启动器内获取模组加载器下载链接\n3.调整部分UI\n4.修改GL4ES描述（注意：GL4ES支持的版本最高为1.21.4，1.21.5后无法正常使用）"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复物理鼠标无法正常识别右键/中键/滚轮的问题\n2.修复快捷输入文件损坏后可能造成的闪退问题\n3.修复游戏版本列表内部分版本缺失的问题\n4.更新ANGLE库文件"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/b9abe9d87dab",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.8/FCL-release-1.2.3.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/bfadee23063b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.9/FCL-release-1.2.3.9-all.apk"
   }
 ]
