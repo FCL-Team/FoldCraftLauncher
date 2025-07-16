@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -351,7 +352,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setPojavBigCore(vs.isPojavBigCore())
-                .setRenderer(vs.getRenderer());
+                .setRenderer(RendererManager.getRenderer(vs.getRenderer()));
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {

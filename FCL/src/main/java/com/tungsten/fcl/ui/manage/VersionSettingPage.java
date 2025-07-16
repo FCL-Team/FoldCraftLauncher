@@ -7,6 +7,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.mio.data.Renderer;
+import com.mio.manager.RendererManager;
 import com.mio.ui.dialog.DriverSelectDialog;
 import com.mio.ui.dialog.JavaManageDialog;
 import com.mio.ui.dialog.RendererSelectDialog;
@@ -318,12 +320,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         Controllers.addCallback(() -> {
             controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
         });
-        FCLConfig.Renderer renderer = versionSetting.getRenderer();
-        if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
-            rendererText.setText(versionSetting.getCustomRenderer());
-        } else {
-            rendererText.setText(renderer.toString());
-        }
+        Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
+        rendererText.setText(renderer.getDes());
         if (!versionSetting.getDriver().equals("Turnip")) {
             boolean isSelected = false;
             for (DriverPlugin.Driver driver : DriverPlugin.getDriverList()) {

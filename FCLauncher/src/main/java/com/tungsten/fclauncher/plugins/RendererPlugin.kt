@@ -4,19 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.mio.data.Renderer
 import com.tungsten.fclauncher.utils.FCLPath
 
 object RendererPlugin {
-    data class Renderer(
-        val name: String,
-        val des: String,
-        val glName: String,
-        val eglName: String,
-        val path: String,
-        val boatEnv: List<String>,
-        val pojavEnv: List<String>
-    )
-
     private var isInit = false;
     private const val PACKAGE_FLAGS =
         PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
@@ -29,9 +20,6 @@ object RendererPlugin {
             }
             return field
         }
-
-    @JvmStatic
-    var selected: Renderer? = null
 
     @JvmStatic
     fun init(context: Context) {
@@ -49,10 +37,10 @@ object RendererPlugin {
     }
 
     @JvmStatic
-    fun refresh() {
+    fun refresh(context: Context) {
         rendererList.clear()
         isInit = false
-        init(FCLPath.CONTEXT)
+        init(context)
     }
 
     private fun parse(info: ApplicationInfo) {
@@ -67,6 +55,8 @@ object RendererPlugin {
                 val renderer = rendererString.split(":")
                 val boatEnv = boatEnvString.split(":")
                 val pojavEnv = pojavEnvString.split(":")
+                val minMCVer = metaData.getString("minMCVer") ?: ""
+                val maxMCVer = metaData.getString("maxMCVer") ?: ""
                 rendererList.add(
                     Renderer(
                         renderer[0],
@@ -75,7 +65,10 @@ object RendererPlugin {
                         renderer[2],
                         nativeLibraryDir,
                         boatEnv,
-                        pojavEnv
+                        pojavEnv,
+                        info.packageName,
+                        minMCVer,
+                        maxMCVer
                     )
                 )
             }

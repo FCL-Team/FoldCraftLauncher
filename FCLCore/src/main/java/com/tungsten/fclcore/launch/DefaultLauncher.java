@@ -25,6 +25,7 @@ import android.content.Context;
 import android.os.Build;
 
 import com.google.gson.GsonBuilder;
+import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -456,7 +457,7 @@ public class DefaultLauncher extends Launcher {
 
         LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
 
-        FCLConfig.Renderer renderer = options.getRenderer();
+        Renderer renderer = options.getRenderer();
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,

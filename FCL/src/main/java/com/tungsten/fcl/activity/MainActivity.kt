@@ -27,6 +27,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -367,26 +368,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
                 FCLBridge.BACKEND_IS_BOAT = binding.backend.position == 1
                 val selectedProfile = Profiles.getSelectedProfile()
-                checkRenderer(selectedProfile)
-                if (RendererPlugin.selected != null && !File(RendererPlugin.selected!!.path).exists()) {
-                    RendererPlugin.refresh()
-                    checkRenderer(selectedProfile)
-                }
+                var renderer =
+                    selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer
+                RendererManager.getRenderer(selectedProfile.selectedVersion)
                 DriverPlugin.selected = DriverPlugin.driverList.find {
                     it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
                 } ?: DriverPlugin.driverList[0]
                 Versions.launch(this@MainActivity, selectedProfile)
             }
-        }
-    }
-
-    private fun checkRenderer(selectedProfile: Profile) {
-        RendererPlugin.selected = RendererPlugin.rendererList.find {
-            it.des == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).customRenderer
-        }
-        if (selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer == FCLConfig.Renderer.RENDERER_CUSTOM && RendererPlugin.selected == null) {
-            selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer =
-                FCLConfig.Renderer.RENDERER_GL4ES
         }
     }
 

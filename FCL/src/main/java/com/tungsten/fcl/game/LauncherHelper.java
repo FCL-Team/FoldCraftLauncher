@@ -29,6 +29,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.mio.JavaManager;
+import com.mio.data.Renderer;
+import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
 import com.tungsten.fcl.R;
@@ -187,7 +189,8 @@ public final class LauncherHelper {
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
                             return Task.supplyAsync(launcher::launch);
                         }).thenComposeAsync(fclBridge -> {
-                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
+                            Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
+                            fclBridge.setRenderer(renderer.getName());
                             return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse("0.0"));
                         })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
@@ -196,7 +199,6 @@ public final class LauncherHelper {
                             fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor() / 100.0);
                             fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                             fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
-                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
                             fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
                             JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
                             Bundle bundle = new Bundle();

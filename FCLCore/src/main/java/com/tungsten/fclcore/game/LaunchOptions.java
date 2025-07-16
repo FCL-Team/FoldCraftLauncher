@@ -17,13 +17,12 @@
  */
 package com.tungsten.fclcore.game;
 
-import com.tungsten.fclauncher.FCLConfig;
+import com.mio.data.Renderer;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +47,7 @@ public class LaunchOptions implements Serializable {
     private boolean beGesture;
     private boolean vulkanDriverSystem;
     private boolean pojavBigCore;
-    private FCLConfig.Renderer renderer;
+    private Renderer renderer;
 
     /**
      * The game directory
@@ -181,7 +180,7 @@ public class LaunchOptions implements Serializable {
     /**
      * Renderer
      */
-    public FCLConfig.Renderer getRenderer() {
+    public Renderer getRenderer() {
         return renderer;
     }
 
@@ -316,7 +315,7 @@ public class LaunchOptions implements Serializable {
         /**
          * Renderer
          */
-        public FCLConfig.Renderer getRenderer() {
+        public Renderer getRenderer() {
             return options.renderer;
         }
 
@@ -409,7 +408,7 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setRenderer(FCLConfig.Renderer renderer) {
+        public Builder setRenderer(Renderer renderer) {
             options.renderer = renderer;
             return this;
         }

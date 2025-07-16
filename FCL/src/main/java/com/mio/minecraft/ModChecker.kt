@@ -1,6 +1,7 @@
 package com.mio.minecraft
 
 import android.content.Context
+import com.mio.manager.RendererManager
 import com.mio.util.AndroidUtil
 import com.tungsten.fcl.R
 import com.tungsten.fclauncher.FCLConfig
@@ -113,7 +114,7 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "sodium", "embeddium" -> {
-                    if (bridge.renderer == FCLConfig.Renderer.RENDERER_GL4ES.toString() && VersionNumber.compare(
+                    if (bridge.renderer == RendererManager.RENDERER_GL4ES.name && VersionNumber.compare(
                             version,
                             "1.17"
                         ) >= 0
