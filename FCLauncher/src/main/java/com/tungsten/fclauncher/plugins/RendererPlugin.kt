@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Bundle
 import com.mio.data.Renderer
 import com.tungsten.fclauncher.utils.FCLPath
 
@@ -25,7 +26,10 @@ object RendererPlugin {
     fun init(context: Context) {
         isInit = true
         val queryIntentActivities =
-            context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
+            context.packageManager.queryIntentActivities(
+                Intent("android.intent.action.MAIN"),
+                PACKAGE_FLAGS
+            )
         queryIntentActivities.forEach {
             parse(it.activityInfo.applicationInfo)
         }
@@ -55,8 +59,8 @@ object RendererPlugin {
                 val renderer = rendererString.split(":")
                 val boatEnv = boatEnvString.split(":")
                 val pojavEnv = pojavEnvString.split(":")
-                val minMCVer = metaData.getString("minMCVer") ?: ""
-                val maxMCVer = metaData.getString("maxMCVer") ?: ""
+                val minMCVer = metaData.safeGetString("minMCVer") ?: ""
+                val maxMCVer = metaData.safeGetString("maxMCVer") ?: ""
                 rendererList.add(
                     Renderer(
                         renderer[0],
@@ -73,5 +77,12 @@ object RendererPlugin {
                 )
             }
         }
+    }
+
+    private fun Bundle.safeGetString(key: String): String? {
+        return if (containsKey(key)) {
+            return runCatching { getString(key) }.getOrNull()
+                ?: runCatching { getFloat(key).toString() }.getOrNull()
+        } else null
     }
 }

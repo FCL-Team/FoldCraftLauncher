@@ -36,7 +36,13 @@ class RendererSelectDialog(
         binding.listView.adapter =
             ArrayAdapter(context, R.layout.item_renderer, mutableListOf<String>().apply {
                 RendererManager.rendererList.forEach {
-                    add(it.des)
+                    val ver = when {
+                        it.minMCver.isNotEmpty() && it.maxMCver.isNotEmpty() -> "${it.minMCver}~${it.maxMCver}"
+                        it.minMCver.isNotEmpty() -> ">=${it.minMCver}"
+                        it.maxMCver.isNotEmpty() -> "<=${it.maxMCver}"
+                        else -> ""
+                    }
+                    add(if (ver.isNotEmpty()) "${it.des} (${context.getString(R.string.supported_mc_version)} $ver)" else it.des)
                 }
             })
         binding.listView.setOnItemClickListener { _, _, position, _ ->

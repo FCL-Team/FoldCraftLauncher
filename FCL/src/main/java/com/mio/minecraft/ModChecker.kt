@@ -114,7 +114,7 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "sodium", "embeddium" -> {
-                    if (bridge.renderer == RendererManager.RENDERER_GL4ES.name && VersionNumber.compare(
+                    if (version.isNotEmpty() && bridge.renderer == RendererManager.RENDERER_GL4ES.name && VersionNumber.compare(
                             version,
                             "1.17"
                         ) >= 0

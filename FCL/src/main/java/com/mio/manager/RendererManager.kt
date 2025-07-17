@@ -3,7 +3,6 @@ package com.mio.manager
 import android.content.Context
 import com.mio.data.Renderer
 import com.tungsten.fcl.R
-import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
