@@ -330,8 +330,8 @@ public class FCLBridge implements Serializable {
 
     public static void putClipboardData(String data, String mimeType) {
         Context context = FCLPath.CONTEXT;
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
         ((Activity) context).runOnUiThread(() -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = null;
             switch (mimeType) {
                 case "text/plain":
