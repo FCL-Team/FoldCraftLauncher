@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="splash_agreement">FCL需要储存权限以管理/读取游戏文件，FCL在GitHub上完全开源，请不用担心您的数据安全。权限仅用于正常运行游戏，无任何安全问题。</string>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
     <string name="splash_permission_grant">授予</string>
     <string name="splash_permission_title">需要存储权限</string>
     <string name="splash_permission_close">关闭应用</string>
     <string name="splash_permission_settings">去设置</string>
     <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
+    <string name="notification_permission">FCL需要发布通知的权限，防止无法正常安装/启动游戏 。</string>
 
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
@@ -67,6 +69,7 @@
     <string name="account_methods_microsoft_error_add_family">你尚未满 18 岁，需要一位成年将你加入至家庭中。</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
+    <string name="account_methods_microsoft_error_banned">你的账户可能被 Xbox Live 封禁。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
     <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
@@ -273,6 +276,9 @@
     <string name="curse_category_4550">任务</string>
     <string name="curse_category_4555">世界生成</string>
     <string name="curse_category_4552">脚本</string>
+    <string name="curse_category_6555">原版风格</string>
+    <string name="curse_category_6554">幻想</string>
+    <string name="curse_category_6553">写实</string>
 
     <string name="curse_sort_author">作者</string>
     <string name="curse_sort_date_created">创建日期</string>
@@ -447,12 +453,12 @@
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
 
-    <string name="jar_execute">执行 Jar 文件</string>
+    <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
@@ -507,6 +513,7 @@
     <string name="menu_settings_debug">调试</string>
     <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
     <string name="menu_settings_disable_gesture">禁用手势</string>
+    <string name="menu_settings_disable_left_touch">禁用左半屏触控</string>
     <string name="menu_settings_force_exit">强制退出</string>
     <string name="menu_settings_force_exit_button">退出</string>
     <string name="menu_settings_force_exit_msg">你确定要强制退出吗？</string>
@@ -526,7 +533,9 @@
     <string name="menu_settings_mouse_mode_click">点击</string>
     <string name="menu_settings_mouse_mode_slide">拖动</string>
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">鼠标灵敏度（当指针可见时）</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
     <string name="menu_settings_gamepad_reset">重置</string>
@@ -540,6 +549,8 @@
     <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
     <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_show_log">显示日志</string>
+    <string name="menu_settings_show_log_auto">自动显示日志</string>
+    <string name="menu_settings_performance_mode">持续性能模式</string>
 
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>
@@ -663,6 +674,38 @@
     <string name="modrinth_category_worldgen">世界生成</string>
     <string name="modrinth_category_datapack">数据包</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">氛围</string>
+    <string name="modrinth_category_bloom">泛光</string>
+    <string name="modrinth_category_cartoon">卡通</string>
+    <string name="modrinth_category_colored_lighting">彩色光照</string>
+    <string name="modrinth_category_fantasy">幻想</string>
+    <string name="modrinth_category_foliage">植被</string>
+    <string name="modrinth_category_high">高</string>
+    <string name="modrinth_category_low">低</string>
+    <string name="modrinth_category_medium">中</string>
+    <string name="modrinth_category_path_tracing">路径追踪</string>
+    <string name="modrinth_category_potato">极低</string>
+    <string name="modrinth_category_realistic">写实</string>
+    <string name="modrinth_category_reflections">反射</string>
+    <string name="modrinth_category_screenshot">极高</string>
+    <string name="modrinth_category_semi_realistic">半写实</string>
+    <string name="modrinth_category_shadows">阴影</string>
+    <string name="modrinth_category_vanilla_like">原版风格</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_audio">声音</string>
+    <string name="modrinth_category_blocks">方块</string>
+    <string name="modrinth_category_core_shaders">核心着色器</string>
+    <string name="modrinth_category_entities">实体</string>
+    <string name="modrinth_category_environment">环境</string>
+    <string name="modrinth_category_fonts">字体</string>
+    <string name="modrinth_category_items">物品</string>
+    <string name="modrinth_category_locale">本地化</string>
+    <string name="modrinth_category_modded">修改</string>
+    <string name="modrinth_category_models">模型</string>
+    <string name="modrinth_category_simplistic">简约</string>
+    <string name="modrinth_category_themed">主题</string>
+    <string name="modrinth_category_tweaks">优化</string>
 
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
@@ -717,6 +760,7 @@
     <string name="quick_input_title">快捷输入</string>
     <string name="quick_input_add">添加新文本</string>
     <string name="quick_input_text">快捷输入文本</string>
+    <string name="quick_input_remarks">备注（可空）</string>
     <string name="quick_input_exist">该文本已存在！</string>
     <string name="quick_input_empty">请先填写文本！</string>
 
@@ -777,8 +821,9 @@
     <string name="settings_launcher_launcher_log_export">导出启动器日志</string>
     <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
-    <string name="settings_launcher_theme">主题</string>
-    <string name="settings_launcher_theme2">主题2</string>
+    <string name="settings_launcher_theme">主要主题色</string>
+    <string name="settings_launcher_theme2">次要主题色</string>
+    <string name="settings_launcher_theme_fetch_background">从背景图片提取</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
@@ -786,6 +831,7 @@
     <string name="settings_launcher_ignore_notch">忽略刘海屏(全屏)</string>
     <string name="settings_launcher_close_skin_view">关闭皮肤模型阅览</string>
     <string name="settings_launcher_animation_speed">动画速度</string>
+    <string name="settings_launcher_vibrate_duration">震动时长（用于TouchController模组）</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>
@@ -829,14 +875,14 @@
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
     <string name="update">更新</string>
-    <string name="update_netdisk">网盘</string>
+    <string name="update_netdisk">更新（网盘）</string>
     <string name="update_check">检查更新</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
     <string name="update_date">日期：%s</string>
     <string name="update_description">描述：\n%s</string>
     <string name="update_exist">检测到可更新的版本</string>
-    <string name="update_failed">无法下载最新版，请重试或从官网下载。</string>
+    <string name="update_failed">无法下载最新版，请重试或从网盘下载。</string>
     <string name="update_ignore">忽略此版本</string>
     <string name="update_launcher">更新启动器</string>
     <string name="update_not_exist">没有可更新的版本</string>
@@ -943,8 +989,8 @@
     <string name="install_apk">安装apk文件</string>
     <string name="modpack_download_warn_title">注意</string>
     <string name="modpack_download_warn_msg">在安装前，你需要明白，绝大多数整合包都是给电脑端制作的，所以当你尝试启动时会有极大概率出现崩溃或是其他问题，这往往不是在启动器层面上能解决的问题。所以你需要自己了解相关知识后尝试自己解决，或是寻求其他人帮忙（不要询问启动器开发者！）。</string>
-    <string name="view_incompatible">查看不兼容的模组</string>
-    <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“主题2”即可</string>
+    <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“次要主题色”即可</string>
+    <string name="guide_share_log">长按这里分享游戏日志（latest_game.log）。</string>
     <string name="menu_settings_gamepad_button_binding">按键绑定</string>
     <string name="menu_settings_gamepad_open_button">打开</string>
     <string name="joystick_l">左摇杆</string>
@@ -958,6 +1004,7 @@
     <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
     <string name="installed">已安装</string>
     <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+    <string name="message_install_java">你可以通过以下方式获取Java。</string>
 
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>
@@ -967,5 +1014,25 @@
     <string name="mod_check_mcef">MCEF（%s）无法在安卓上运行。它通常被用来作为WebDisplays/In-game Browser（浏览器）的前置依赖。</string>
     <string name="mod_check_valkyrienskies">瓦尔基里天空/瓦尔基里战争（%s）无法直接在单人模式下运行。你必须使用服务器运行（可以使用Termux），否则游戏会崩溃。</string>
     <string name="mod_check_yes_steve_model">是，史蒂夫模型（%s）2.2.2+无法在安卓系统上运行。</string>
-    <string name="mod_check_imblocker">输入法冲突修复 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
+    <string name="mod_check_imblocker">输入法冲突修复/游戏内输入法 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
+    <string name="mod_check_replay">Replay (%s)需要FFmpeg插件，似乎你并没有安装。你可以从谷歌商店下载或者这里下载（ %s 或者 %s ）（长按复制）</string>
+    <string name="mod_check_borderlesswindow">无边框全屏 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
+    <string name="mod_check_axiom">当前使用的Axiom模组（%s）未经修补，启动后将会崩溃。</string>
+    <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
+
+    <string name="internal">内置的</string>
+    <string name="import_java">导入Java</string>
+    <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
+    <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
+
+    <string name="manage_version">管理版本</string>
+    <string name="select_renderer">选择渲染器</string>
+    <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
+    <string name="launch">启动</string>
+    <string name="tip_hide_menu_view">菜单按键已隐藏，按下音量键打开菜单。</string>
+    <string name="modloader">模组加载器</string>
+    <string name="message_warn_renderer_global_setting">你当前选择的版本已启用游戏特定设置，所以在此处修改的渲染器无法应用于当前版本。建议长按“启动”按钮选择渲染器。</string>
+    <string name="message_select_url">请选择一个链接进行下载（将会跳转至浏览器）</string>
+    <string name="supported_mc_version">支持的MC版本：</string>
+    <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
 </resources>

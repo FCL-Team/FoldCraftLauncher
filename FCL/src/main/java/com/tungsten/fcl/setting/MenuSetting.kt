@@ -1,6 +1,5 @@
 package com.tungsten.fcl.setting
 
-import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -12,21 +11,16 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.control.GestureMode
 import com.tungsten.fcl.control.MouseMoveMode
-import com.tungsten.fclauncher.keycodes.GamepadKeycodeMap
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.MapProperty
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleMapProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
-import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.lang.reflect.Type
-import java.util.Optional
 
 @JsonAdapter(MenuSetting.Serializer::class)
 class MenuSetting {
@@ -60,6 +54,14 @@ class MenuSetting {
             hideMenuViewViewProperty.set(hideMenuView)
         }
 
+    val showFpsProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "showFps", false)
+    var isShowFps: Boolean
+        get() = showFpsProperty.get()
+        set(v) {
+            showFpsProperty.set(v)
+        }
+
     val disableSoftKeyAdjustProperty: BooleanProperty =
         SimpleBooleanProperty(this, "disableSoftKeyAdjust", false)
     var isDisableSoftKeyAdjust: Boolean
@@ -73,6 +75,13 @@ class MenuSetting {
         get() = showLogProperty.get()
         set(showLog) {
             showLogProperty.set(showLog)
+        }
+
+    val autoShowLogProperty: BooleanProperty = SimpleBooleanProperty(this, "autoShowLog", false)
+    var isAutoShowLog: Boolean
+        get() = autoShowLogProperty.get()
+        set(v) {
+            autoShowLogProperty.set(v)
         }
 
     val menuPositionXProperty: DoubleProperty =
@@ -113,6 +122,14 @@ class MenuSetting {
         get() = gestureModeProperty.get()
         set(gestureMode) {
             gestureModeProperty.set(gestureMode)
+        }
+
+    val disableLeftTouchProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "disableLeftTouch", false)
+    var isDisableLeftTouch: Boolean
+        get() = disableLeftTouchProperty.get()
+        set(v) {
+            disableLeftTouchProperty.set(v)
         }
 
     val enableGyroscopeProperty: BooleanProperty =
@@ -170,6 +187,14 @@ class MenuSetting {
             mouseSensitivityProperty.set(mouseSensitivity)
         }
 
+    val mouseSensitivityCursorProperty: DoubleProperty =
+        SimpleDoubleProperty(this, "mouseSensitivityCursor", 2.0)
+    var mouseSensitivityCursor: Double
+        get() = mouseSensitivityCursorProperty.get()
+        set(mouseSensitivityCursor) {
+            mouseSensitivityCursorProperty.set(mouseSensitivityCursor)
+        }
+
     val mouseSizeProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseSize", 15)
     var mouseSize: Int
         get() = mouseSizeProperty.get()
@@ -177,11 +202,12 @@ class MenuSetting {
             mouseSizeProperty.set(mouseSize)
         }
 
-    val gamepadButtonBindingProperty: MapProperty<Int, Int> = SimpleMapProperty(
-        this,
-        "gamepadButtonBinding",
-        FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP)
-    )
+    val physicalMouseMode: BooleanProperty = SimpleBooleanProperty(this, "physicalMouseMode", false)
+    var isPhysicalMouseMode: Boolean
+        get() = physicalMouseMode.get()
+        set(v) {
+            physicalMouseMode.set(v)
+        }
 
     val gamepadDeadzoneProperty: DoubleProperty =
         SimpleDoubleProperty(this, "gamepadDeadzone", 1.0)
@@ -196,23 +222,27 @@ class MenuSetting {
         autoFitDistProperty.addListener(listener)
         lockMenuViewProperty.addListener(listener)
         hideMenuViewViewProperty.addListener(listener)
+        showFpsProperty.addListener(listener)
         disableSoftKeyAdjustProperty.addListener(listener)
         showLogProperty.addListener(listener)
+        autoShowLogProperty.addListener(listener)
         menuPositionXProperty.addListener(listener)
         menuPositionYProperty.addListener(listener)
         disableGestureProperty.addListener(listener)
         disableBEGestureProperty.addListener(listener)
         gestureModeProperty.addListener(listener)
+        disableLeftTouchProperty.addListener(listener)
         enableGyroscopeProperty.addListener(listener)
         gyroscopeSensitivityProperty.addListener(listener)
         mouseMoveModeProperty.addListener(listener)
         mouseSensitivityProperty.addListener(listener)
+        mouseSensitivityCursorProperty.addListener(listener)
         mouseSizeProperty.addListener(listener)
+        physicalMouseMode.addListener(listener)
         itemBarScaleProperty.addListener(listener)
         windowScaleProperty.addListener(listener)
         cursorOffsetProperty.addListener(listener)
         gamepadDeadzoneProperty.addListener(listener)
-        gamepadButtonBindingProperty.addListener(listener)
     }
 
     class Serializer : JsonSerializer<MenuSetting?>, JsonDeserializer<MenuSetting?> {
@@ -227,33 +257,27 @@ class MenuSetting {
                 addProperty("autoFitDist", src.autoFitDist)
                 addProperty("lockMenuView", src.isLockMenuView)
                 addProperty("hideMenuView", src.isHideMenuView)
+                addProperty("showFps", src.isShowFps)
                 addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust)
                 addProperty("showLog", src.isShowLog)
+                addProperty("autoShowLog", src.isAutoShowLog)
                 addProperty("menuPositionX", src.menuPositionX)
                 addProperty("menuPositionY", src.menuPositionY)
                 addProperty("disableGesture", src.isDisableGesture)
                 addProperty("disableBEGesture", src.isDisableBEGesture)
                 addProperty("gestureMode", src.gestureMode.id)
+                addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
                 addProperty("gyroscopeSensitivity", src.gyroscopeSensitivity)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
                 addProperty("mouseSensitivity", src.mouseSensitivity)
+                addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
                 addProperty("mouseSize", src.mouseSize)
+                addProperty("physicalMouseMode", src.isPhysicalMouseMode)
                 addProperty("itemBarScale", src.itemBarScale)
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
-                add(
-                    "gamepadButtonBinding", Optional.of(src.gamepadButtonBindingProperty)
-                        .map {
-                            val ja = JsonArray()
-                            it.forEach { k: Int?, v: Int? ->
-                                ja.add(k)
-                                ja.add(v)
-                            }
-                            ja
-                        }.get()
-                )
             }
         }
 
@@ -269,40 +293,27 @@ class MenuSetting {
                 ms.autoFitDist = json["autoFitDist"]?.asInt ?: 0
                 ms.isLockMenuView = json["lockMenuView"]?.asBoolean ?: false
                 ms.isHideMenuView = json["hideMenuView"]?.asBoolean ?: false
+                ms.isShowFps = json["showFps"]?.asBoolean ?: false
                 ms.isDisableSoftKeyAdjust = json["disableSoftKeyAdjust"]?.asBoolean ?: false
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
+                ms.isAutoShowLog = json["autoShowLog"]?.asBoolean ?: false
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
                 ms.menuPositionY = json["menuPositionY"]?.asDouble ?: 0.5
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false
                 ms.isDisableBEGesture = json["disableBEGesture"]?.asBoolean ?: false
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
+                ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false
                 ms.gyroscopeSensitivity = json["gyroscopeSensitivity"]?.asInt ?: 10
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
+                ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
                 ms.mouseSize = json["mouseSize"]?.asInt ?: 15
+                ms.isPhysicalMouseMode = json["physicalMouseMode"]?.asBoolean ?: false
                 ms.itemBarScale = json["itemBarScale"]?.asInt ?: 0
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
-                ms.gamepadButtonBindingProperty.set(
-                    Optional.ofNullable(json["gamepadButtonBinding"])
-                        .map { it.asJsonArray }
-                        .map {
-                            if (it.isEmpty || (it.size() % 2 != 0)) {
-                                return@map null
-                            } else {
-                                val iterator = it.iterator()
-                                val map = HashMap<Int, Int>()
-                                while (iterator.hasNext()) {
-                                    map[iterator.next().asInt] = iterator.next().asInt
-                                }
-                                return@map map
-                            }
-                        }
-                        .map { FXCollections.observableMap(it) }
-                        .orElse(FXCollections.observableMap(GamepadKeycodeMap.KEY_MAP))
-                )
             }
         }
     }

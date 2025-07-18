@@ -120,11 +120,15 @@ static void releaseMonitor(_GLFWwindow* window)
     _glfwInputMonitorWindow(window->monitor, NULL);
 }
 
+static _GLFWwindow* mWindow;
 // Process the specified FCL event
 //
 static void processEvent(FCLEvent *event)
 {
-    _GLFWwindow* window = _glfw.fcl.eventCurrent;
+    if (mWindow == NULL) {
+        mWindow = _glfw.fcl.eventCurrent;
+    }
+    _GLFWwindow* window = mWindow;
 
     switch (event->type)
     {

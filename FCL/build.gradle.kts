@@ -41,8 +41,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1208
-        versionName = "1.2.0.8"
+        versionCode = 1239
+        versionName = "1.2.3.9"
     }
 
     buildTypes {
@@ -56,7 +56,7 @@ android {
             signingConfig = signingConfigs.getByName("FCLDebugKey")
         }
         configureEach {
-            resValue("string", "app_version", android.defaultConfig.versionName.toString())
+            resValue("string", "app_version", defaultConfig.versionName.toString())
             resValue("string", "curse_api_key", curseApiKey.toString())
             resValue("string", "oauth_api_key", oauthApiKey.toString())
         }
@@ -113,7 +113,7 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
     }
 
@@ -147,11 +147,14 @@ dependencies {
     implementation("com.github.steveice10:opennbt:1.5")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    implementation("com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("top.fifthlight.touchcontroller:proxy-client-android:0.0.2")
+    implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3")
+    implementation("com.github.addisonElliott:SegmentedButton:3.1.9")
 }
 
 tasks.register("updateMap") {

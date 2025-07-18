@@ -3,39 +3,55 @@ package com.tungsten.fcl.activity
 import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import com.mio.JavaManager
+import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
-import com.tungsten.fcl.util.RequestCodes
+import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLActivity
-import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.ButtonListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.util.LocaleUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
-import kotlin.system.exitProcess
+import java.util.Locale
+import java.util.logging.Level
+import androidx.core.content.edit
+import com.mio.manager.RendererManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
-
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var permissionResultLauncher: ActivityResultLauncher<Array<String>>
     var lwjgl: Boolean = false
     var cacio: Boolean = false
     var cacio11: Boolean = false
@@ -45,114 +61,75 @@ class SplashActivity : FCLActivity() {
     var java17: Boolean = false
     var java21: Boolean = false
     var jna: Boolean = false
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContentView(R.layout.activity_splash)
-
+        sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         val background = findViewById<ConstraintLayout>(R.id.background)
-        background.background = ThemeEngine.getInstance().getTheme().getBackground(this)
+        ImageUtil.loadInto(
+            background,
+            ThemeEngine.getInstance().getTheme().getBackground(this)
+        )
 
-        checkPermission()
-    }
-
-    private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                init()
-            } else {
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                intent.setData(Uri.parse("package:$packageName"))
-                ResultListener.startActivityForResult(
-                    this,
-                    intent,
-                    RequestCodes.PERMISSION_REQUEST_CODE,
-                    ResultListener.Listener { requestCode: Int, resultCode: Int, data: Intent? ->
-                        if (requestCode == RequestCodes.PERMISSION_REQUEST_CODE) {
-                            if (Environment.isExternalStorageManager()) {
-                                init()
-                            } else {
-                                recheckPermission()
-                            }
-                        }
-                    })
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                checkPermission()
             }
+        permissionResultLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                checkPermission()
+            }
+        if (sharedPreferences.getBoolean("isAgree", false)) {
+            checkPermission()
         } else {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                    this,
-                    permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                init()
-            } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        permission.WRITE_EXTERNAL_STORAGE
-                    ) || ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        permission.READ_EXTERNAL_STORAGE
-                    )
-                ) {
-                    enableAlertDialog(
-                        ButtonListener {
-                            ActivityCompat.requestPermissions(
-                                this,
-                                arrayOf<String>(
-                                    permission.WRITE_EXTERNAL_STORAGE,
-                                    permission.READ_EXTERNAL_STORAGE
-                                ),
-                                RequestCodes.PERMISSION_REQUEST_CODE
-                            )
-                        },
-                        getString(R.string.splash_permission_title),
-                        getString(R.string.splash_permission_msg),
-                        getString(R.string.splash_permission_grant),
-                        getString(R.string.splash_permission_close)
-                    )
-                } else {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf<String>(
-                            permission.WRITE_EXTERNAL_STORAGE,
-                            permission.READ_EXTERNAL_STORAGE
-                        ),
-                        RequestCodes.PERMISSION_REQUEST_CODE
-                    )
+            FCLAlertDialog.Builder(this).apply {
+                setCancelable(false)
+                setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                setMessage(getString(R.string.splash_agreement))
+                setPositiveButton {
+                    sharedPreferences.edit { putBoolean("isAgree", true) }
+                    checkPermission()
                 }
+                setNegativeButton(getString(com.tungsten.fcllibrary.R.string.crash_reporter_close)) { finish() }
+                create().show()
             }
         }
     }
 
-    private fun recheckPermission() {
-        val builder = FCLAlertDialog.Builder(this)
-        builder.setCancelable(false)
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-        builder.setMessage(getString(R.string.splash_permission_msg))
-        builder.setPositiveButton(ButtonListener { this.checkPermission() })
-        builder.setNegativeButton(ButtonListener { this.finish() })
-        builder.create().show()
+    private fun checkPermission() {
+        if (hasPermission()) {
+            init()
+            return
+        }
+        FCLAlertDialog.Builder(this).apply {
+            setCancelable(false)
+            setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+            setMessage(getString(R.string.splash_permission_msg))
+            setPositiveButton { requestPermission() }
+            setNegativeButton { finish() }
+            create().show()
+        }
     }
 
     private fun init() {
-        FCLPath.loadPaths(this)
-        transFile()
-        Logging.start(Paths.get(FCLPath.LOG_DIR))
-        Task.runAsync {
-            initState()
-        }.whenComplete(Schedulers.androidUIThread()) {
+        lifecycleScope.launch {
+            async(Dispatchers.IO) {
+                FCLPath.loadPaths(this@SplashActivity)
+                Logging.start(Paths.get(FCLPath.LOG_DIR))
+                initState()
+            }.await()
             if (lwjgl && cacio && cacio11 && cacio17 && java8 && java11 && java17 && java21 && jna) {
                 enterLauncher()
             } else {
                 start()
             }
-        }.start()
+        }
     }
 
     fun start() {
-        val sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         if (sharedPreferences.getBoolean("isFirstLaunch", true)) {
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.frag_start_anim, R.anim.frag_stop_anim)
@@ -164,94 +141,71 @@ class SplashActivity : FCLActivity() {
         }
     }
 
-    private fun transFile() {
-        try {
-            val controlDir = Paths.get(FCLPath.FILES_DIR + "/control")
-            if (controlDir.toFile().exists()) {
-                FileUtils.copyDirectory(controlDir, Paths.get(FCLPath.CONTROLLER_DIR))
-                FileUtils.deleteDirectory(controlDir.toFile())
+
+    fun enterLauncher() {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                RendererManager.init(this@SplashActivity)
+                JavaManager.init()
+                runCatching { ConfigHolder.init() }.exceptionOrNull()?.let {
+                    Logging.LOG.log(Level.WARNING, it.message)
+                }
             }
-        } catch (_: IOException) {
+            startActivity(
+                Intent(this@SplashActivity, MainActivity::class.java),
+                ActivityOptionsCompat.makeCustomAnimation(this@SplashActivity, 0, 0).toBundle()
+            )
+            finish()
         }
     }
 
-    fun enterLauncher() {
-        RendererPlugin.init(this)
-        DriverPlugin.init(this)
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == RequestCodes.PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                init()
-            } else {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        permission.WRITE_EXTERNAL_STORAGE
-                    ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
+    private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                    data = "package:$packageName".toUri()
+                    activityResultLauncher.launch(this)
+                }
+            } catch (_: Exception) {
+                activityResultLauncher.launch(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+            }
+        } else {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    permission.WRITE_EXTERNAL_STORAGE
+                ) || !ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    permission.READ_EXTERNAL_STORAGE
+                )
+            ) {
+                permissionResultLauncher.launch(
+                    arrayOf(
+                        permission.WRITE_EXTERNAL_STORAGE,
                         permission.READ_EXTERNAL_STORAGE
                     )
-                ) {
-                    enableAlertDialog(
-                        ButtonListener {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri = Uri.fromParts("package", packageName, null)
-                            intent.setData(uri)
-                            ResultListener.startActivityForResult(
-                                this,
-                                intent,
-                                RequestCodes.PERMISSION_REQUEST_CODE,
-                                ResultListener.Listener { requestCode1: Int, resultCode: Int, data: Intent? ->
-                                    if (requestCode1 == RequestCodes.PERMISSION_REQUEST_CODE) {
-                                        if (ActivityCompat.checkSelfPermission(
-                                                this,
-                                                permission.READ_EXTERNAL_STORAGE
-                                            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                                                this,
-                                                permission.WRITE_EXTERNAL_STORAGE
-                                            ) == PackageManager.PERMISSION_GRANTED
-                                        ) {
-                                            init()
-                                        } else {
-                                            onRequestPermissionsResult(
-                                                requestCode1,
-                                                permissions,
-                                                grantResults
-                                            )
-                                        }
-                                    }
-                                })
-                        },
-                        getString(R.string.splash_permission_title),
-                        getString(R.string.splash_permission_settings_msg),
-                        getString(R.string.splash_permission_settings),
-                        getString(R.string.splash_permission_close)
-                    )
-                } else {
-                    checkPermission()
+                )
+            } else {
+                Toast.makeText(this, R.string.splash_permission_settings_msg, Toast.LENGTH_LONG)
+                    .show()
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = "package:$packageName".toUri()
+                    activityResultLauncher.launch(this)
                 }
             }
         }
     }
 
-    private fun enableAlertDialog(positiveButtonEvent: ButtonListener?, vararg strings: String?) {
-        FCLAlertDialog.Builder(this)
-            .setTitle(strings[0].toString())
-            .setMessage(strings[1].toString())
-            .setPositiveButton(strings[2].toString(), positiveButtonEvent)
-            .setNegativeButton(strings[3].toString(), ButtonListener { exitProcess(0) })
-            .setCancelable(false)
-            .create()
-            .show()
+    private fun hasPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager()
+        }
+        return ContextCompat.checkSelfPermission(
+            this,
+            permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            this,
+            permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun initState() {
@@ -280,6 +234,23 @@ class SplashActivity : FCLActivity() {
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17")
             java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21")
             jna = RuntimeUtils.isLatest(FCLPath.JNA_PATH, "/assets/app_runtime/jna")
+            if (!File(FCLPath.JAVA_PATH, "resolv.conf").exists()) {
+                if (LocaleUtils.getSystemLocale().displayName != Locale.CHINA.displayName) {
+                    FileUtils.writeText(
+                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
+     nameserver 1.1.1.1
+     nameserver 1.0.0.1
+     """.trimIndent()
+                    )
+                } else {
+                    FileUtils.writeText(
+                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
+     nameserver 8.8.8.8
+     nameserver 8.8.4.4
+     """.trimIndent()
+                    )
+                }
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }

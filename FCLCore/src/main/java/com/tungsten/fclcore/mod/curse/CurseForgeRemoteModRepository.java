@@ -118,7 +118,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                 }.getType());
         if (searchFilter.isEmpty()) {
-            return new SearchResult(response.getData().stream().map(CurseAddon::toMod), (int)Math.ceil((double)response.pagination.totalCount / pageSize));
+            return new SearchResult(response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
         }
 
         String lowerCaseSearchFilter = searchFilter.toLowerCase();
@@ -140,7 +140,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
             }
 
             return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.getData().stream().map(CurseAddon::toMod), response.pagination.totalCount);
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
     }
 
     @Override

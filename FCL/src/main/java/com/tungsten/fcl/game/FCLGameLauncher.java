@@ -19,6 +19,8 @@ package com.tungsten.fcl.game;
 
 import android.content.Context;
 
+import com.mio.data.Renderer;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.FCLConfig;
@@ -115,12 +117,12 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
     }
 
-    private void modifyIfConfigDetected(String config, String option, String replacement, boolean overwrite, FCLConfig.Renderer... renderers) {
+    private void modifyIfConfigDetected(String config, String option, String replacement, boolean overwrite, Renderer... renderers) {
         boolean patch = false;
         if (renderers.length == 0) {
             patch = true;
         } else {
-            for (FCLConfig.Renderer renderer : renderers) {
+            for (Renderer renderer : renderers) {
                 if (renderer == options.getRenderer()) {
                     patch = true;
                     break;
@@ -174,23 +176,23 @@ public final class FCLGameLauncher extends DefaultLauncher {
     public FCLBridge launch() throws IOException, InterruptedException {
         generateOptionsTxt();
         // Sodium
-        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // Rubidium
-        modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // DraconicEvolution
         String config = "brandon3055/DraconicEvolution.cfg";
-        modifyIfConfigDetected(config, "B:useShaders=", "B:useShaders=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"crystalShaders\"=", "B:\"crystalShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"reactorShaders\"=", "B:\"reactorShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"guardianShaders\"=", "B:\"guardianShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
-        modifyIfConfigDetected(config, "B:\"otherShaders\"=", "B:\"otherShaders\"=false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:useShaders=", "B:useShaders=false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"crystalShaders\"=", "B:\"crystalShaders\"=false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"reactorShaders\"=", "B:\"reactorShaders\"=false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"guardianShaders\"=", "B:\"guardianShaders\"=false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
+        modifyIfConfigDetected(config, "B:\"otherShaders\"=", "B:\"otherShaders\"=false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // Pixelmon
         modifyIfConfigDetected("pixelmon/config.yml", "use-discord-rich-presence:", "use-discord-rich-presence: false", true);
         // ImmersiveEngineering
-        modifyIfConfigDetected("immersiveengineering-client.toml", "stencilBufferEnabled", "stencilBufferEnabled = false", true, FCLConfig.Renderer.RENDERER_GL4ES, FCLConfig.Renderer.RENDERER_VGPU);
+        modifyIfConfigDetected("immersiveengineering-client.toml", "stencilBufferEnabled", "stencilBufferEnabled = false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // Create
-        modifyIfConfigDetected("flywheel-client.toml", "enabled", "enabled = false", true, FCLConfig.Renderer.RENDERER_GL4ES);
-        modifyIfConfigDetected("flywheel-client.toml", "backend =", "backend = \"OFF\"", true, FCLConfig.Renderer.RENDERER_GL4ES);
+        modifyIfConfigDetected("flywheel-client.toml", "enabled", "enabled = false", true, RendererManager.RENDERER_GL4ES);
+        modifyIfConfigDetected("flywheel-client.toml", "backend =", "backend = \"OFF\"", true, RendererManager.RENDERER_GL4ES);
         return super.launch();
     }
 }

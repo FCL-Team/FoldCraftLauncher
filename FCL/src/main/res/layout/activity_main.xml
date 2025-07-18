@@ -1,374 +1,302 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionName="background"
+    tools:context=".activity.MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:transitionName="background"
-        tools:context=".activity.MainActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/left_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_game_menu"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="100dp"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="5dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/left_menu"
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/home"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:paddingStart="5dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="5dp"
-            android:paddingBottom="10dp"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_home_24"
+            app:layout_constraintBottom_toTopOf="@id/manage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/home"
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/manage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_build_24"
+            app:layout_constraintBottom_toTopOf="@id/download"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_cloud_download_24"
+            app:layout_constraintBottom_toTopOf="@id/controller"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/manage" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/controller"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_videogame_asset_24"
+            app:layout_constraintBottom_toTopOf="@id/setting"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/download" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_settings_24"
+            app:layout_constraintBottom_toTopOf="@id/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/controller" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_arrow_back_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setting" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/right_menu"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_right_menu"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.25">
+
+        <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/backend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:radius="30dp">
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:id="@+id/pojav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_home_24"
-                app:layout_constraintBottom_toTopOf="@id/manage"
+                android:layout_weight="1"
+                android:padding="10dp"
+                app:text="Pojav" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:id="@+id/boat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                app:text="Boat" />
+
+        </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:focusable="true"
+            app:layout_constraintBottom_toTopOf="@id/start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backend">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:id="@+id/avatar"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:elevation="50dp"
+                android:focusable="true"
+                android:stateListAnimator="@xml/anim_scale_large"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/manage"
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/account_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_build_24"
-                app:layout_constraintBottom_toTopOf="@id/download"
+                android:layout_marginTop="4dp"
+                android:singleLine="true"
+                android:text="@string/account_state_no_account"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/home" />
+                app:layout_constraintTop_toBottomOf="@id/avatar"
+                app:use_theme_color="true" />
 
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/download"
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/account_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_cloud_download_24"
-                app:layout_constraintBottom_toTopOf="@id/controller"
+                android:layout_marginTop="2dp"
+                android:singleLine="true"
+                android:text="@string/account_state_add"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/manage" />
+                app:layout_constraintTop_toBottomOf="@id/account_name"
+                app:use_theme_color="true" />
 
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/controller"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_videogame_asset_24"
-                app:layout_constraintBottom_toTopOf="@id/multiplayer"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/download" />
-
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/multiplayer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_wifi_24"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/setting"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/controller" />
-
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_settings_24"
-                app:layout_constraintBottom_toTopOf="@id/back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/multiplayer" />
-
-            <com.tungsten.fcllibrary.component.view.FCLMenuView
-                android:id="@+id/back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/setting" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.tungsten.fcllibrary.component.view.FCLView
-            android:id="@+id/split_right"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintEnd_toStartOf="@id/right_menu"
-            app:use_theme_color="true" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/right_menu"
+            android:id="@+id/start"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@color/ui_bg_color"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="5dp"
+            android:stateListAnimator="@xml/anim_scale"
+            app:layout_constraintBottom_toTopOf="@id/version"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintWidth_percent="0.25">
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/account_textview"
+                android:id="@+id/text_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:singleLine="true"
-                android:text="@string/account"
-                android:textSize="11sp"
+                android:text="@string/launch"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/version_name"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:use_theme_color="true" />
 
-            <com.tungsten.fcllibrary.component.view.FCLView
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintTop_toBottomOf="@id/account_textview"
-                app:use_theme_color="true" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/account"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_container_transparent_clickable"
-                android:clickable="true"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:stateListAnimator="@xml/anim_scale"
-                app:layout_constraintTop_toBottomOf="@+id/view">
-
-                <com.tungsten.fcllibrary.component.view.FCLImageView
-                    android:id="@+id/avatar"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:stateListAnimator="@xml/anim_scale_large" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/account_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@string/account_state_no_account"
-                        app:use_theme_color="true" />
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/account_hint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@string/account_state_add"
-                        android:textSize="11sp"
-                        app:use_theme_color="true" />
-
-                </LinearLayout>
-
-                <com.tungsten.fcllibrary.component.view.FCLImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/ic_baseline_list_24"
-                    app:use_theme_color="true" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:id="@+id/icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/version_textview"
-                android:layout_width="wrap_content"
+                android:id="@+id/version_name"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="31dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                android:text="@string/version"
-                android:textSize="11sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/account"
-                app:use_theme_color="true" />
-
-            <com.tungsten.fcllibrary.component.view.FCLView
-                android:id="@+id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/version_textview"
-                app:use_theme_color="true" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/version"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_container_transparent_clickable"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:stateListAnimator="@xml/anim_scale"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view2">
-
-                <com.tungsten.fcllibrary.component.view.FCLImageView
-                    android:id="@+id/icon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/version_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@string/version_no_version"
-                        app:use_theme_color="true" />
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/version_hint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@string/version_manage"
-                        android:textSize="11sp"
-                        app:use_theme_color="true" />
-
-                </LinearLayout>
-
-                <com.tungsten.fcllibrary.component.view.FCLImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/ic_baseline_list_24"
-                    app:use_theme_color="true" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icon"
+                app:layout_constraintTop_toBottomOf="@id/text_start"
+                app:use_theme_color="true"
+                tools:text="1.21.1-Forge" />
 
             <com.tungsten.fcllibrary.component.view.FCLProgressBar
                 android:id="@+id/version_progress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/view2" />
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/launch_textview"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:singleLine="true"
-                android:text="@string/launch_mode"
-                android:textSize="11sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/view3"
-                app:use_theme_color="true" />
-
-            <com.tungsten.fcllibrary.component.view.FCLView
-                android:id="@+id/view3"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/launch"
-                app:use_theme_color="true" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/launch"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/launch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/launch_boat"
-                app:layout_constraintBottom_toTopOf="@id/execute_jar"
-                app:ripple="true" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/launch_boat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/launch_boat"
-                app:layout_constraintStart_toEndOf="@id/launch"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/execute_jar"
-                app:ripple="true" />
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                android:id="@+id/execute_jar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/jar_execute"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:ripple="true" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.tungsten.fcllibrary.component.view.FCLUILayout
-            android:id="@+id/ui_layout"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/version"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@id/split_right"
-            app:layout_constraintStart_toEndOf="@+id/left_menu" />
-
-        <com.tungsten.fcllibrary.component.view.FCLDynamicIsland
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:stateListAnimator="@null"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:stateListAnimator="@xml/anim_scale"
+            android:text="@string/manage_version"
+            android:textAllCaps="false"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@id/jar"
+            app:layout_constraintHeight_percent="0.1"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/jar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:stateListAnimator="@xml/anim_scale"
+            android:text="@string/jar_execute"
+            android:textAllCaps="false"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toEndOf="@id/version" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+    <com.tungsten.fcllibrary.component.view.FCLUILayout
+        android:id="@+id/ui_layout"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toStartOf="@id/right_menu"
+        app:layout_constraintStart_toEndOf="@+id/left_menu" />
+
+    <com.tungsten.fcllibrary.component.view.FCLDynamicIsland
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

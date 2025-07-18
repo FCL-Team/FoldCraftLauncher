@@ -1,215 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="10dp">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
-        android:text="@string/account_skin"
-        android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:singleLine="true"
+        android:text="@string/account_skin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/positive"
-        app:layout_constraintTop_toBottomOf="@+id/title">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.tungsten.fcllibrary.skin.SkinCanvas
-            android:id="@+id/skin_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <com.tungsten.fcllibrary.skin.SkinCanvas
+        android:id="@+id/skin_view"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/positive"
+        app:layout_constraintEnd_toStartOf="@id/scrollview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
-        <ScrollView
-            app:layout_constraintStart_toEndOf="@+id/skin_view"
-            android:layout_width="240dp"
-            android:layout_height="match_parent">
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/skin_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/positive"
+        app:layout_constraintTop_toBottomOf="@id/title">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                android:id="@+id/default_skin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_skin_type_default"
+                app:text_with_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                android:id="@+id/steve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_skin_type_steve"
+                app:text_with_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                android:id="@+id/alex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_skin_type_alex"
+                app:text_with_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                android:id="@+id/local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_skin_type_local_file"
+                app:text_with_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                android:id="@+id/csl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_skin_type_csl_api"
+                app:text_with_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:id="@+id/local_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                    android:layout_width="wrap_content"
+                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/default_skin"
-                    app:text_with_theme_color="true"
-                    android:text="@string/account_skin_type_default"/>
+                    android:orientation="horizontal">
 
-                <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/steve"
-                    app:text_with_theme_color="true"
-                    android:text="@string/account_skin_type_steve"/>
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:singleLine="true"
+                        android:text="@string/account_skin"
+                        app:use_theme_color="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/alex"
-                    app:text_with_theme_color="true"
-                    android:text="@string/account_skin_type_alex"/>
+                    <com.tungsten.fcllibrary.component.view.FCLImageButton
+                        android:id="@+id/skin_path"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_baseline_edit_24"
+                        app:no_padding="true"
+                        app:use_theme_color="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/local"
-                    app:text_with_theme_color="true"
-                    android:text="@string/account_skin_type_local_file"/>
+                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                    android:layout_width="wrap_content"
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/skin_path_text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/csl"
-                    app:text_with_theme_color="true"
-                    android:text="@string/account_skin_type_csl_api"/>
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:singleLine="true" />
 
                 <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/local_layout">
-
-                    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.tungsten.fcllibrary.component.view.FCLTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:singleLine="true"
-                            app:auto_text_tint="true"
-                            android:text="@string/account_skin"/>
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLImageButton
-                            android:id="@+id/skin_path"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_baseline_edit_24"
-                            android:layout_gravity="center"
-                            app:auto_tint="true"
-                            app:no_padding="true"/>
-
-                    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                    android:orientation="horizontal">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:padding="10dp"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
-                        android:id="@+id/skin_path_text"/>
+                        android:text="@string/account_cape"
+                        app:use_theme_color="true" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.tungsten.fcllibrary.component.view.FCLTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:singleLine="true"
-                            app:auto_text_tint="true"
-                            android:text="@string/account_cape"/>
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"/>
-
-                        <com.tungsten.fcllibrary.component.view.FCLImageButton
-                            android:id="@+id/cape_path"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_baseline_edit_24"
-                            android:layout_gravity="center"
-                            app:auto_tint="true"
-                            app:no_padding="true"/>
-
-                    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
-
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:padding="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                    <com.tungsten.fcllibrary.component.view.FCLImageButton
+                        android:id="@+id/cape_path"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_gravity="center"
-                        android:singleLine="true"
-                        android:id="@+id/cape_path_text"/>
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_baseline_edit_24"
+                        app:no_padding="true"
+                        app:use_theme_color="true" />
 
                 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-                <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/cape_path_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:id="@+id/csl_layout">
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:singleLine="true" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:text="@string/account_skin_type_csl_api_hint"
-                        android:background="@drawable/bg_container_white"
-                        android:padding="10dp"
-                        app:auto_text_tint="true"
-                        app:auto_text_background_tint="true"/>
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-                    <com.tungsten.fcllibrary.component.view.FCLEditText
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:singleLine="true"
-                        android:hint="@string/account_skin_type_csl_api_location_hint"
-                        android:id="@+id/csl_url"/>
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:id="@+id/csl_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_container_white"
+                    android:padding="10dp"
+                    android:text="@string/account_skin_type_csl_api_hint"
+                    android:textSize="13sp"
+                    app:auto_text_background_tint="true"
+                    app:auto_text_tint="true" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                <com.tungsten.fcllibrary.component.view.FCLEditText
+                    android:id="@+id/csl_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="@string/account_skin_type_csl_api_location_hint"
+                    android:singleLine="true"
+                    android:textSize="13sp" />
 
-        </ScrollView>
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
-        android:text="@string/dialog_positive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:text="@string/dialog_positive"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/negative"
-        android:text="@string/dialog_negative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:text="@string/dialog_negative"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

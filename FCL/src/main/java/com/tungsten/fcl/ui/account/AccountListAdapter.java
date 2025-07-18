@@ -11,6 +11,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
+import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
@@ -88,8 +89,10 @@ public class AccountListAdapter extends FCLAdapter {
         viewHolder.avatar.imageProperty().bind(account.imageProperty());
         viewHolder.name.stringProperty().unbind();
         viewHolder.name.stringProperty().bind(account.titleProperty());
+        viewHolder.name.setSelected(true);
         viewHolder.type.stringProperty().unbind();
         viewHolder.type.stringProperty().bind(account.subtitleProperty());
+        viewHolder.type.setSelected(true);
         viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
         viewHolder.radioButton.setOnClickListener(v -> {
             Accounts.setSelectedAccount(account.getAccount());
@@ -159,6 +162,9 @@ public class AccountListAdapter extends FCLAdapter {
                             e.printStackTrace();
                         }
                     }).start();
+                } else if (account.getAccount() instanceof OfflineAccount) {
+                    OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(getContext(), account);
+                    dialog.show();
                 } else {
                     Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
                     if (uploadTask != null) {
@@ -178,8 +184,15 @@ public class AccountListAdapter extends FCLAdapter {
             }
         });
         viewHolder.delete.setOnClickListener(v -> {
-            account.remove();
-            UIManager.getInstance().getAccountUI().refresh().start();
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), account.getTitle()));
+            builder.setPositiveButton(() -> {
+                account.remove();
+                UIManager.getInstance().getAccountUI().refresh().start();
+            });
+            builder.setNegativeButton(null);
+            builder.create().show();
         });
         return view;
     }

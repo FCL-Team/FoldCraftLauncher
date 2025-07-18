@@ -35,17 +35,8 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
     }
 
     private GameMenu menu;
-    private boolean lock = false;
     private boolean isDoingInternalChanges = false;
     private CharacterSenderStrategy characterSender;
-
-    public void setLock(boolean lock) {
-        this.lock = lock;
-    }
-
-    public boolean isLock() {
-        return lock;
-    }
 
     /**
      * We take the new chars, and send them to the game.
@@ -105,13 +96,17 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
             clear();
             disable();
             if (menu != null && menu.getInput().getFocusableView() != null) {
-                menu.getInput().getFocusableView().requestFocus();
-                menu.getInput().getFocusableView().requestPointerCapture();
+                if (!menu.getMenuSetting().isPhysicalMouseMode()) {
+                    menu.getInput().getFocusableView().requestFocus();
+                    menu.getInput().getFocusableView().requestPointerCapture();
+                }
             }
-        } else{
+        } else {
             if (menu != null && menu.getInput().getFocusableView() != null) {
-                menu.getInput().getFocusableView().releasePointerCapture();
-                menu.getInput().getFocusableView().clearFocus();
+                if (!menu.getMenuSetting().isPhysicalMouseMode()) {
+                    menu.getInput().getFocusableView().releasePointerCapture();
+                    menu.getInput().getFocusableView().clearFocus();
+                }
             }
             enable();
             inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT);
@@ -131,7 +126,9 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         isDoingInternalChanges = false;
     }
 
-    /** Regain ability to exist, take focus and have some text being input */
+    /**
+     * Regain ability to exist, take focus and have some text being input
+     */
     public void enable() {
         setEnabled(true);
         setFocusable(true);
@@ -139,7 +136,9 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         requestFocus();
     }
 
-    /** Lose ability to exist, take focus and have some text being input */
+    /**
+     * Lose ability to exist, take focus and have some text being input
+     */
     public void disable() {
         clear();
         setVisibility(GONE);
@@ -147,33 +146,48 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         setEnabled(false);
     }
 
-    /** Send the enter key. */
+    /**
+     * Send the enter key.
+     */
     private void sendEnter() {
         characterSender.sendEnter();
         clear();
     }
 
-    /** Just sets the char sender that should be used. */
+    /**
+     * Just sets the char sender that should be used.
+     */
     public void setCharacterSender(GameMenu gameMenu, CharacterSenderStrategy characterSender) {
         this.menu = gameMenu;
         this.characterSender = characterSender;
     }
 
-    /** This function deals with anything that has to be executed when the constructor is called */
+    /**
+     * This function deals with anything that has to be executed when the constructor is called
+     */
     private void setup() {
         setOnEditorActionListener((textView, i, keyEvent) -> {
-            setLock(true);
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getWindowToken(), 0);
             sendEnter();
             clear();
             disable();
             if (menu != null && menu.getInput().getFocusableView() != null) {
-                menu.getInput().getFocusableView().requestFocus();
-                menu.getInput().getFocusableView().requestPointerCapture();
+                if (!menu.getMenuSetting().isPhysicalMouseMode()) {
+                    menu.getInput().getFocusableView().requestFocus();
+                    menu.getInput().getFocusableView().requestPointerCapture();
+                }
             }
             return false;
         });
+        clear();
+        disable();
+    }
+
+    public void hide() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getWindowToken(), 0);
+        sendEnter();
         clear();
         disable();
     }

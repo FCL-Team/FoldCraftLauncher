@@ -104,6 +104,8 @@ public class RemoteModListAdapter extends FCLAdapter {
         String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
         viewHolder.tag.setText(tag);
         viewHolder.description.setText(remoteMod.getDescription());
+        viewHolder.tag.setSelected(true);
+        viewHolder.description.setSelected(true);
         AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         if (downloadPage instanceof ModDownloadPage) {
             if (!modIdList.isEmpty() && modIdList.contains(remoteMod.getModID())) {

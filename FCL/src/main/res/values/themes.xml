@@ -18,12 +18,20 @@
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.FoldCraftLauncher">
+    <style name="Theme.Splash" parent="@style/Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.FoldCraftLauncher</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">200</item>
+        <item name="windowSplashScreenBackground">@color/white</item>
     </style>
 
     <style name="TabTextAppearance">
         <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">false</item>
         <item name="singleLine">true</item>
+    </style>
+
+    <style name="NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#FFF</item>
     </style>
 </resources>

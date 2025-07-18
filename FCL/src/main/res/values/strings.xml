@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
 
+    <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
     <string name="splash_permission_grant">Grant</string>
     <string name="splash_permission_title">Permission to store needed</string>
     <string name="splash_permission_close">Close the app</string>
     <string name="splash_permission_settings">Settings</string>
     <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
+    <string name="notification_permission">FCL requires permission to post notifications to prevent issues with normal game installation or startup.</string>
 
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
@@ -80,6 +82,7 @@
     <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live is not available in your current country/region.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">Your Microsoft account does not have a linked Xbox account yet. Please create one before continuing.</string>
+    <string name="account_methods_microsoft_error_banned">Your account may have been banned by Xbox Live.\nYou can click on "Ban Query" above for more details.</string>
     <string name="account_methods_microsoft_error_unknown">Failed to log in</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Please log in using your account(like phone number) and password on the Microsoft account login page. Please do not use a verification code to log in.</string>
     <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
@@ -295,6 +298,9 @@
     <string name="curse_category_4550">Quests</string>
     <string name="curse_category_4555">World Gen</string>
     <string name="curse_category_4552">Scripts</string>
+    <string name="curse_category_6555">Vanilla</string>
+    <string name="curse_category_6554">Fantasy</string>
+    <string name="curse_category_6553">Realistic</string>
 
     <string name="curse_sort_author">Author</string>
     <string name="curse_sort_date_created">Date Created</string>
@@ -483,7 +489,7 @@
     <string name="jar_executor_crash_title">Jar Executor Crashed</string>
     <string name="jar_executor_crash_reason">Jar Executor crash reason analyse is not supported now.</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
@@ -538,6 +544,7 @@
     <string name="menu_settings_debug">Debug</string>
     <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
     <string name="menu_settings_disable_gesture">Disable Gesture</string>
+    <string name="menu_settings_disable_left_touch">Disable left half screen touch</string>
     <string name="menu_settings_force_exit">Force Exit</string>
     <string name="menu_settings_force_exit_button">Exit</string>
     <string name="menu_settings_force_exit_msg">Are you sure to force exit?</string>
@@ -557,7 +564,9 @@
     <string name="menu_settings_mouse_mode_click">Click</string>
     <string name="menu_settings_mouse_mode_slide">Slide</string>
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">Mouse Sensitivity(When the cursor is displayed)</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
     <string name="menu_settings_gamepad_button_binding">Button binding</string>
@@ -573,6 +582,8 @@
     <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
     <string name="menu_settings_item_bar_scale">ItemBarScale</string>
     <string name="menu_settings_show_log">Show Log</string>
+    <string name="menu_settings_show_log_auto">Show Log Automatically</string>
+    <string name="menu_settings_performance_mode">Sustained Performance Mode</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_copy">Copy successfully!</string>
@@ -696,6 +707,48 @@
     <string name="modrinth_category_worldgen">Worldgen</string>
     <string name="modrinth_category_datapack">Datapack</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">Atmosphere</string>
+    <string name="modrinth_category_bloom">Bloom</string>
+    <string name="modrinth_category_cartoon">Cartoon</string>
+    <string name="modrinth_category_colored_lighting">Colored-Lighting</string>
+    <string name="modrinth_category_fantasy">Fantasy</string>
+    <string name="modrinth_category_foliage">Foliage</string>
+    <string name="modrinth_category_high">High</string>
+    <string name="modrinth_category_low">Low</string>
+    <string name="modrinth_category_medium">Medium</string>
+    <string name="modrinth_category_path_tracing">Path-Tracing</string>
+    <string name="modrinth_category_pbr" translatable="false">PBR</string>
+    <string name="modrinth_category_potato">Potato</string>
+    <string name="modrinth_category_realistic">Realistic</string>
+    <string name="modrinth_category_reflections">Reflections</string>
+    <string name="modrinth_category_screenshot">Screenshot</string>
+    <string name="modrinth_category_semi_realistic">Semi-Realistic</string>
+    <string name="modrinth_category_shadows">Shadows</string>
+    <string name="modrinth_category_vanilla_like">Vanilla-Like</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_128x" translatable="false">128x</string>
+    <string name="modrinth_category_16x" translatable="false">16x</string>
+    <string name="modrinth_category_256x" translatable="false">256x</string>
+    <string name="modrinth_category_32x" translatable="false">32x</string>
+    <string name="modrinth_category_48x" translatable="false">48x</string>
+    <string name="modrinth_category_512x" translatable="false">512x+</string>
+    <string name="modrinth_category_64x" translatable="false">64x</string>
+    <string name="modrinth_category_8x_" translatable="false">8x</string>
+    <string name="modrinth_category_gui" translatable="false">GUI</string>
+    <string name="modrinth_category_audio">Audio</string>
+    <string name="modrinth_category_blocks">Blocks</string>
+    <string name="modrinth_category_core_shaders">Core-shaders</string>
+    <string name="modrinth_category_entities">Entities</string>
+    <string name="modrinth_category_environment">Environment</string>
+    <string name="modrinth_category_fonts">Fonts</string>
+    <string name="modrinth_category_items">Items</string>
+    <string name="modrinth_category_locale">Locale</string>
+    <string name="modrinth_category_modded">Modded</string>
+    <string name="modrinth_category_models">Models</string>
+    <string name="modrinth_category_simplistic">Simplistic</string>
+    <string name="modrinth_category_themed">Themed</string>
+    <string name="modrinth_category_tweaks">Tweaks</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>
@@ -750,6 +803,7 @@
     <string name="quick_input_title">Quick Input</string>
     <string name="quick_input_add">Add New Text</string>
     <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_remarks">Remarks (optional)</string>
     <string name="quick_input_exist">The text already exist!</string>
     <string name="quick_input_empty">Fill the text first!</string>
 
@@ -783,7 +837,7 @@
     <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
@@ -821,11 +875,14 @@
     <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
     <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
     <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
+    <string name="settings_launcher_language_ukrainian" translatable="false">Українська Мова</string>
+    <string name="settings_launcher_language_german" translatable="false">Deutsch</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
-    <string name="settings_launcher_theme">Theme</string>
-    <string name="settings_launcher_theme2">Theme2</string>
+    <string name="settings_launcher_theme">Main Theme Color</string>
+    <string name="settings_launcher_theme2">Secondary Theme Color</string>
+    <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
@@ -833,6 +890,7 @@
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
+    <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
@@ -991,8 +1049,8 @@
     <string name="edit">Edit</string>
     <string name="modpack_download_warn_title">Notice</string>
     <string name="modpack_download_warn_msg">Before installation, you should understand that most modpacks are designed for PC, so there is a high probability that you will encounter crashes or other issues when trying to launch. This is often not a problem that can be solved at the launcher level. Therefore, you need to understand the relevant knowledge and try to solve the problem yourself or seek help from others (do not ask the launcher developer!).</string>
-    <string name="view_incompatible">View incompatible mods</string>
-    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Theme 2\"</string>
+    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Secondary Theme Color\"</string>
+    <string name="guide_share_log">Long press here to share the game log (latest_game.log).</string>
     <string name="joystick_l">Left joystick</string>
     <string name="gamepad_dpad">DPAD</string>
     <string name="gamepad_button_binding">Gamepad button binding</string>
@@ -1007,6 +1065,7 @@
     <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
     <string name="installed">Installed</string>
     <string name="message_install_plugin">You can get plugins through the following ways.</string>
+    <string name="message_install_java">You can get Java through the following ways.</string>
 
     <string name="shaderpack">ShaderPack</string>
     <string name="recommend_version">Recommend version</string>
@@ -1016,5 +1075,26 @@
     <string name="mod_check_mcef">MCEF mod (%s) cannot work on Android. It is usually used as a dependency of WebDisplays/In-game Browser.</string>
     <string name="mod_check_valkyrienskies">Valkyrien Skies/Valkyrien Warfare mod (%s) cannot work directly in single player mode. You must use a server, otherwise it will crash the game.</string>
     <string name="mod_check_yes_steve_model">Yes Steve Model mod (%s) 2.2.2+ cannot work on Android.</string>
-    <string name="mod_check_imblocker">IMBlocker (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_replay">FFmpeg plugin is needed for Replay (%s). It seems that you haven\'t installed it yet. You can download from Google Play Store or here( %s or %s ) (Long press to copy).</string>
+    <string name="mod_check_borderlesswindow">BorderlessWindow (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_axiom">Axiom (%s) currently in use has not been patched, it will cause crash.</string>
+    <string name="mod_check_sodium">The currently used GL4ES renderer may not support the mods Sodium/Embeddium (%s). Continuing to launch could cause the game to crash. It is recommended to download and use the MobileGlues renderer instead (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
+
+    <string name="internal">Internal</string>
+    <string name="import_java">Import Java</string>
+    <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
+    <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string>
+
+    <string name="manage_version">Manage Versions</string>
+    <string name="select_renderer">Select Renderer</string>
+    <string name="open_link_failed">Failed to automatically redirect to the browser. The link has been copied automatically. Please manually open the browser and paste it in.</string>
+
+    <string name="launch">Launch</string>
+    <string name="tip_hide_menu_view">The menu view is hidden. Press the volume key to open the menu.</string>
+    <string name="modloader">ModLoader</string>
+    <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
+    <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
+    <string name="supported_mc_version">Supported MC version:</string>
+    <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
 </resources>

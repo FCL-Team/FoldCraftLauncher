@@ -76,7 +76,7 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 File file = File.createTempFile("crash_report", ".txt");
                 Files.write(file.toPath(), CrashReporter.getAllErrorDetailsFromIntent(this, getIntent()).getBytes(StandardCharsets.UTF_8));
-                Uri uri = FileProvider.getUriForFile(this, getString(R.string.file_browser_provider), file);
+                Uri uri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".provider", file);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

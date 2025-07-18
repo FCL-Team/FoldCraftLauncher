@@ -41,4 +41,6 @@ public class RequestCodes {
     public static final int SELECT_CONTROLLER_ICON_CODE = 900;
 
     public static final int SELECT_CONTROLLER_SCREENSHOT_CODE = 950;
+
+    public static final int SELECT_JAVA_CODE = 1000;
 }

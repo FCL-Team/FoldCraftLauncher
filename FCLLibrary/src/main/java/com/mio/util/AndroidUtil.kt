@@ -1,5 +1,6 @@
 package com.mio.util
 
+import net.fornwall.jelf.ElfFile
 import java.io.DataInputStream
 import java.io.File
 import java.io.RandomAccessFile
@@ -44,6 +45,17 @@ class AndroidUtil {
             }
         }
 
+        fun checkElfIsAndroid(file: File): Boolean {
+            val elfFile = ElfFile.from(file)
+            var isAndroid = true
+            elfFile.dynamicSection.neededLibraries.forEach {
+                if (Regex("lib[^.]+\\.so\\.\\d+").matches(it)) {
+                    isAndroid = false
+                }
+            }
+            return isAndroid
+        }
+
         fun getElfArchFromZip(zipFile: File, elfEntryPath: String): String {
             var arch = ""
             try {
@@ -56,8 +68,8 @@ class AndroidUtil {
                         DataInputStream(stream).let { dataStream ->
                             val magic = ByteArray(4)
                             dataStream.readFully(magic)
-                            if (!(magic[0] == 0x7F.toByte() && magic[1] == 'E'.toByte() &&
-                                        magic[2] == 'L'.toByte() && magic[3] == 'F'.toByte())
+                            if (!(magic[0] == 0x7F.toByte() && magic[1] == 'E'.code.toByte() &&
+                                        magic[2] == 'L'.code.toByte() && magic[3] == 'F'.code.toByte())
                             ) {
                                 return@let
                             }

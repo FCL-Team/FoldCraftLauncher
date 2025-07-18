@@ -27,24 +27,19 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
-import com.tungsten.fclauncher.FCLConfig
-import com.tungsten.fclauncher.plugins.RendererPlugin
+import com.mio.JavaManager
+import com.mio.data.Renderer
+import com.mio.manager.RendererManager
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty
-import com.tungsten.fclcore.game.JavaVersion
-import com.tungsten.fclcore.game.Version
-import com.tungsten.fclcore.task.Schedulers
-import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import java.lang.reflect.Type
@@ -72,7 +67,7 @@ class VersionSetting : Cloneable {
 
     // java
     val javaProperty: StringProperty =
-        SimpleStringProperty(this, "java", JavaVersion.JAVA_AUTO.versionName)
+        SimpleStringProperty(this, "java", "Auto")
     var java: String
         get() = javaProperty.get()
         set(java) {
@@ -176,19 +171,17 @@ class VersionSetting : Cloneable {
             serverIpProperty.set(serverIp)
         }
 
-    val scaleFactorProperty: DoubleProperty = SimpleDoubleProperty(this, "scaleFactor", 1.0)
-    var scaleFactor: Double
+    val scaleFactorProperty: IntegerProperty = SimpleIntegerProperty(this, "newScaleFactor", 100)
+    var scaleFactor: Int
         get() = scaleFactorProperty.get()
-        set(scaleFactor) {
-            scaleFactorProperty.set(scaleFactor)
-        }
+        set(v) = scaleFactorProperty.set(v)
 
     /**
      * 0 - .minecraft<br></br>
      * 1 - .minecraft/versions/&lt;version&gt;/<br></br>
      */
     val isolateGameDirProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "isolateGameDir", false)
+        SimpleBooleanProperty(this, "isolateGameDir", true)
     var isIsolateGameDir: Boolean
         get() = isolateGameDirProperty.get()
         set(isolate) {
@@ -218,20 +211,12 @@ class VersionSetting : Cloneable {
             controllerProperty.set(controller)
         }
 
-    val rendererProperty: ObjectProperty<FCLConfig.Renderer> =
-        SimpleObjectProperty(this, "render", FCLConfig.Renderer.RENDERER_GL4ES)
-    var renderer: FCLConfig.Renderer
+    val rendererProperty: StringProperty =
+        SimpleStringProperty(this, "render", Renderer.ID_GL4ES)
+    var renderer: String
         get() = rendererProperty.get()
         set(renderer) {
             rendererProperty.set(renderer)
-        }
-
-    val customRendererProperty: ObjectProperty<String> =
-        SimpleObjectProperty(this, "customRenderer", "")
-    var customRenderer: String
-        get() = customRendererProperty.get()
-        set(renderer) {
-            customRendererProperty.set(renderer)
         }
 
     val driverProperty: StringProperty =
@@ -249,26 +234,6 @@ class VersionSetting : Cloneable {
         set(pojavBigCore) {
             pojavBigCoreProperty.set(pojavBigCore)
         }
-
-    // launcher settings
-    fun getJavaVersion(version: Version?): Task<JavaVersion> {
-        return Task.runAsync(Schedulers.androidUIThread()) {
-            if (java != JavaVersion.JAVA_AUTO.versionName &&
-                java != JavaVersion.JAVA_8.versionName &&
-                java != JavaVersion.JAVA_11.versionName &&
-                java != JavaVersion.JAVA_17.versionName &&
-                java != JavaVersion.JAVA_21.versionName
-            ) {
-                java = JavaVersion.JAVA_AUTO.versionName
-            }
-        }.thenSupplyAsync {
-            if (java == JavaVersion.JAVA_AUTO.versionName) {
-                return@thenSupplyAsync JavaVersion.getSuitableJavaVersion(version)
-            } else {
-                return@thenSupplyAsync JavaVersion.getJavaFromVersionName(java)
-            }
-        }
-    }
 
     fun checkController() {
         Controllers.addCallback {
@@ -299,7 +264,6 @@ class VersionSetting : Cloneable {
         vkDriverSystemProperty.addListener(listener)
         controllerProperty.addListener(listener)
         rendererProperty.addListener(listener)
-        customRendererProperty.addListener(listener)
         driverProperty.addListener(listener)
         pojavBigCoreProperty.addListener(listener)
     }
@@ -323,7 +287,6 @@ class VersionSetting : Cloneable {
             it.isVKDriverSystem = isVKDriverSystem
             it.controller = controller
             it.renderer = renderer
-            it.customRenderer = customRenderer
             it.driver = driver
             it.isPojavBigCore = isPojavBigCore
         }
@@ -349,16 +312,15 @@ class VersionSetting : Cloneable {
                 addProperty("permSize", src.permSize)
                 addProperty("serverIp", src.serverIp)
                 addProperty("java", src.java)
-                addProperty("scaleFactor", src.scaleFactor)
+                addProperty("newScaleFactor", src.scaleFactor)
                 addProperty("notCheckGame", src.isNotCheckGame)
                 addProperty("notCheckJVM", src.isNotCheckJVM)
                 addProperty("beGesture", src.isBeGesture)
                 addProperty("vulkanDriverSystem", src.isVKDriverSystem)
                 addProperty("controller", src.controller)
-                addProperty("renderer", src.renderer.ordinal)
+                addProperty("renderer", src.renderer)
                 addProperty("driver", src.driver)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
-                addProperty("customRenderer", src.customRenderer)
                 addProperty("pojavBigCore", src.isPojavBigCore)
             }
         }
@@ -385,23 +347,20 @@ class VersionSetting : Cloneable {
                 vs.isAutoMemory = json["autoMemory"]?.asBoolean ?: true
                 vs.permSize = json["permSize"]?.asString ?: ""
                 vs.serverIp = json["serverIp"]?.asString ?: ""
-                vs.java = json["java"]?.asString ?: JavaVersion.JAVA_AUTO.versionName
-                vs.scaleFactor = json["scaleFactor"]?.asDouble ?: 1.0
+                vs.java =
+                    JavaManager.javaList.find { it.name == json["java"]?.asString }?.name
+                        ?: "Auto"
+                vs.scaleFactor = json["newScaleFactor"]?.asInt ?: 100
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
                 vs.isBeGesture = json["beGesture"]?.asBoolean ?: false
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
-                val renderers = FCLConfig.Renderer.entries.toTypedArray()
-                vs.renderer = renderers[json["renderer"]?.asInt?.coerceIn(0, renderers.size - 1) ?: 0]
+                vs.renderer =
+                    json["renderer"]?.asString ?: Renderer.ID_GL4ES
                 vs.driver = json["driver"]?.asString ?: "Turnip"
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
-                vs.customRenderer = json["customRenderer"]?.asString ?: ""
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
-                if (!RendererPlugin.isAvailable() && vs.customRenderer != "") {
-                    vs.renderer = FCLConfig.Renderer.entries.toTypedArray()[0]
-                    vs.customRenderer = ""
-                }
             }
         }
 

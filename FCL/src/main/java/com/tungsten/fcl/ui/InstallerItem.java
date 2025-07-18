@@ -290,7 +290,10 @@ public class InstallerItem {
                 }
             }
             if (view == remove) {
-                installerItem.removeAction.get().run();
+                Runnable runnable = installerItem.removeAction.get();
+                if (runnable != null) {
+                    runnable.run();
+                }
             }
         }
     }

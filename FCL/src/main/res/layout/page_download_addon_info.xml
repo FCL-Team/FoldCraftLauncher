@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ui_bg_color"
     android:paddingStart="10dp"
     android:paddingTop="10dp"
     android:paddingEnd="10dp">
@@ -28,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+    <LinearLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -134,6 +133,7 @@
                 android:layout_weight="0.5"
                 android:background="@drawable/bg_container_white"
                 android:orientation="vertical"
+                app:auto_constraint_background_tint="true"
                 android:paddingHorizontal="8dp">
 
                 <com.tungsten.fcllibrary.component.view.FCLEditText
@@ -199,11 +199,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_container_white"
-                android:divider="@android:color/darker_gray"
-                android:dividerHeight="1dp" />
+                android:divider="@android:color/transparent"
+                android:dividerHeight="10dp" />
 
         </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

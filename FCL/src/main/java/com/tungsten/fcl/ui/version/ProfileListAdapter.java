@@ -1,14 +1,18 @@
 package com.tungsten.fcl.ui.version;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -63,13 +67,27 @@ public class ProfileListAdapter extends FCLAdapter {
         viewHolder.path.setText(profile.getGameDir().getAbsolutePath());
         viewHolder.path.setSelected(true);
         viewHolder.parent.setOnClickListener(view1 -> {
-            Profiles.setSelectedProfile(profile);
-            notifyDataSetChanged();
+            if (!MainActivity.getInstance().isVersionLoading()) {
+                Profiles.setSelectedProfile(profile);
+                notifyDataSetChanged();
+            } else {
+                playAnim(viewHolder.parent);
+            }
         });
         viewHolder.delete.setOnClickListener(view1 -> {
+            if (Profiles.getProfiles().size() == 1) {
+                playAnim(viewHolder.parent);
+                return;
+            }
             Profiles.getProfiles().remove(profile);
             ((VersionListPage) VersionPageManager.getInstance().getAllPages().get(0)).refreshProfile();
         });
         return view;
+    }
+
+    private void playAnim(View v) {
+        ObjectAnimator animator = AnimUtil.playTranslationX(v, 700, 0f, 50f, -50f, 50f, -50f, 0f);
+        animator.setInterpolator(new OvershootInterpolator());
+        animator.start();
     }
 }

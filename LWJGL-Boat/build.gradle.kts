@@ -4,10 +4,6 @@ plugins {
 
 group = "org.lwjgl"
 
-configurations.default.get().apply {
-    isCanBeResolved = true
-}
-
 project.setProperty("archivesBaseName", "lwjgl")
 
 project.setProperty("libsDirName", "${rootDir}/FCL/src/main/assets/app_runtime/lwjgl-boat")
@@ -17,12 +13,11 @@ tasks.register("buildLwjglBoat") {
 }
 
 tasks.jar {
+    manifest {
+        attributes("Manifest-Version" to "3.3.3")
+        attributes("Automatic-Module-Name" to "org.lwjgl")
+    }
     doLast {
-        archiveFileName.set("lwjgl.jar")
-        manifest {
-            attributes("Manifest-Version" to "3.3.3")
-        }
-        destinationDirectory.set(file("../FCL/src/main/assets/app_runtime/lwjgl-boat"))
         val versionFile = file("../FCL/src/main/assets/app_runtime/lwjgl-boat/version")
         versionFile.writeText(System.currentTimeMillis().toString())
     }

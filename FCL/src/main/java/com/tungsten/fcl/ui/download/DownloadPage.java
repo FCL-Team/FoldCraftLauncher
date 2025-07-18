@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.databinding.PageDownloadBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
@@ -37,6 +38,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -105,6 +107,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
+    PageDownloadBinding binding;
+    ModLoaderType selectedModLoader;
+
     public void setLoading(boolean loading) {
         Schedulers.androidUIThread().execute(() -> {
             search.setEnabled(!loading);
@@ -115,6 +120,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sortSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             listLayout.setVisibility(loading ? View.GONE : View.VISIBLE);
+            listView.setVisibility(loading ? View.GONE : View.VISIBLE);
             if (loading) {
                 retry.setVisibility(View.GONE);
             }
@@ -126,6 +132,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             retry.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             listLayout.setVisibility(View.GONE);
+            listView.setVisibility(View.GONE);
         });
     }
 
@@ -143,12 +150,24 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
         }
-        executor = Task.supplyAsync(() -> repository.search(userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC))
-                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+        executor = Task.supplyAsync(() -> {
+                    RemoteModRepository.SearchResult result = repository.search(userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
+                    ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
+                    if (DownloadPage.this instanceof ModDownloadPage && selectedModLoader != null) {
+                        list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
+                            try {
+                                return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toList()).contains(selectedModLoader);
+                            } catch (Throwable ignore) {
+                            }
+                            return true;
+                        }).collect(Collectors.toList());
+                    }
+                    pageCount.set(result.getTotalPages());
+                    return list;
+                })
+                .whenComplete(Schedulers.androidUIThread(), (list, exception) -> {
                     setLoading(false);
                     if (exception == null) {
-                        ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
-                        pageCount.set(result.getTotalPages());
                         adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
                             RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
                             DownloadPageManager.getInstance().showTempPage(page);
@@ -159,7 +178,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                         pageCount.set(-1);
                         retrySearch = () -> search(userGameVersion, category, pageOffset, searchFilter, sort);
                     }
-        }).executor(true);
+                }).executor(true);
     }
 
     protected String getLocalizedCategory(String category) {
@@ -205,8 +224,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     }
 
     public void create() {
+        binding = PageDownloadBinding.bind(getContentView());
         searchLayout = findViewById(R.id.search_layout);
-        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         search = findViewById(R.id.search);
         search.setOnClickListener(this);
@@ -262,7 +282,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(0);
         FXUtils.bindSelection(categorySpinner, category);
-        downloadSource.addListener(observable -> refreshCategory());
+        downloadSource.addListener(observable -> refreshCategory(true));
 
         sortSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.SortType.values()).collect(Collectors.toList())));
         ArrayList<String> sorts = new ArrayList<>();
@@ -285,8 +305,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 getContext(), "search_page_n", pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()
         )));
 
+        refreshCategory(false);
         search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
-        refreshCategory();
     }
 
     private static void download(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
@@ -395,26 +415,24 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         }
     }
 
-    private void refreshCategory() {
-        Task.supplyAsync(() -> {
-            setLoading(true);
-            return repository.getCategories();
-        }).thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
-            ArrayList<CategoryIndented> result = new ArrayList<>();
-            result.add(new CategoryIndented(0, null));
-            for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
-                resolveCategory(category, 0, result);
-            }
-            categorySpinner.setDataList(result);
-            ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
-            adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            categorySpinner.setAdapter(adapter);
-            FXUtils.unbindSelection(categorySpinner, category);
-            categorySpinner.setSelection(0);
-            category.set(result.get(0));
-            FXUtils.bindSelection(categorySpinner, category);
-            search();
-        }).start();
+    private void refreshCategory(boolean search) {
+        Task.supplyAsync(() -> repository.getCategories())
+                .thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
+                    ArrayList<CategoryIndented> result = new ArrayList<>();
+                    result.add(new CategoryIndented(0, null));
+                    for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
+                        resolveCategory(category, 0, result);
+                    }
+                    categorySpinner.setDataList(result);
+                    ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
+                    adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+                    categorySpinner.setAdapter(adapter);
+                    FXUtils.unbindSelection(categorySpinner, category);
+                    categorySpinner.setSelection(0);
+                    category.set(result.get(0));
+                    FXUtils.bindSelection(categorySpinner, category);
+                    if (search) search();
+                }).start();
     }
 }

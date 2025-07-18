@@ -1,19 +1,25 @@
 package com.mio
 
 import android.content.Context
+import android.os.VibrationEffect
 import android.os.Vibrator
 import android.system.Os
-import android.util.Log
 import android.util.SparseIntArray
 import android.view.MotionEvent
 import com.tungsten.fclcore.util.Logging
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient
-import top.fifthlight.touchcontroller.proxy.client.android.SimpleVibrationHandler
+import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient.VibrationHandler
 import top.fifthlight.touchcontroller.proxy.client.android.transport.UnixSocketTransport
 import top.fifthlight.touchcontroller.proxy.data.Offset
+import top.fifthlight.touchcontroller.proxy.message.VibrateMessage
 import java.util.logging.Level
 
-class TouchController(context: Context, val width: Int, val height: Int) {
+class TouchController(
+    context: Context,
+    val width: Int,
+    val height: Int,
+    val vibrationDuration: Long = 100
+) {
     private var client: LauncherProxyClient? = null
     private val socketName = "FoldCraftLauncher"
     private val pointerIdMap = SparseIntArray()
@@ -29,7 +35,18 @@ class TouchController(context: Context, val width: Int, val height: Int) {
             Os.setenv("TOUCH_CONTROLLER_PROXY_SOCKET", socketName, true)
             client = LauncherProxyClient(transport)
             val vibrator = context.getSystemService<Vibrator>(Vibrator::class.java)
-            val handler = SimpleVibrationHandler(vibrator)
+            val handler = object : VibrationHandler {
+                override fun viberate(kind: VibrateMessage.Kind) {
+                    runCatching {
+                        val effect = VibrationEffect.createOneShot(
+                            vibrationDuration,
+                            VibrationEffect.DEFAULT_AMPLITUDE
+                        )
+                        vibrator.vibrate(effect)
+                    }
+                }
+            }
+
             client?.vibrationHandler = handler
             client?.run()
         } catch (ex: Throwable) {

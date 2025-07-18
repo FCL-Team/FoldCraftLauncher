@@ -1,14 +1,16 @@
 name: Android CI
 
 on:
-  pull_request:
+  pull_request:  
+  push:
     branches-ignore:
       - ''
-  push:
     tags:
       - '*'
-    branches-ignore:
-      - ''
+    paths-ignore:
+      - '.github/workflows/**'
+      - '**.md'
+      - 'version_map.json'
   workflow_dispatch:
 
 jobs:
@@ -23,7 +25,7 @@ jobs:
       CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
       OAUTH_API_KEY: ${{ secrets.OAUTH_API_KEY }}
     name: Build for ${{matrix.arch}}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +36,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
+          cache: 'gradle'
 
       - name: Build ${{matrix.arch}} .apk
         run: |
@@ -56,11 +59,11 @@ jobs:
           path: FCL/build/outputs/apk/release/*
         #  retention-days: 1
 
-#only for fork
+  #only for fork
   DebugBuild:
     if: github.repository_owner != 'FCL-Team' || startsWith(github.ref, 'refs/pull/')
     name: Build Debug
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:

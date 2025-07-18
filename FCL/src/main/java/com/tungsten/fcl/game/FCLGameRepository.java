@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -152,21 +153,27 @@ public class FCLGameRepository extends DefaultGameRepository {
 
         Version fromVersion = getVersion(srcId);
 
-        if (Files.exists(dstDir)) throw new IOException("Version exists");
-        FileUtils.copyDirectory(srcDir, dstDir);
+        List<String> blackList = new ArrayList<>(ModAdviser.MODPACK_BLACK_LIST);
+        blackList.add(srcId + ".jar");
+        blackList.add(srcId + ".json");
+        if (!copySaves)
+            blackList.add("saves");
 
-        Path fromJson = dstDir.resolve(srcId + ".json");
-        Path fromJar = dstDir.resolve(srcId + ".jar");
+        if (Files.exists(dstDir)) throw new IOException("Version exists");
+        FileUtils.copyDirectory(srcDir, dstDir, path -> Modpack.acceptFile(path, blackList, null));
+
+        Path fromJson = srcDir.resolve(srcId + ".json");
+        Path fromJar = srcDir.resolve(srcId + ".jar");
         Path toJson = dstDir.resolve(dstId + ".json");
         Path toJar = dstDir.resolve(dstId + ".jar");
 
         if (Files.exists(fromJar)) {
-            Files.move(fromJar, toJar);
+            Files.copy(fromJar, toJar);
         }
-        Files.move(fromJson, toJson);
+        Files.copy(fromJson, toJson);
 
         FileUtils.writeText(toJson.toFile(), JsonUtils.GSON.toJson(fromVersion.setId(dstId)));
-        
+
         VersionSetting oldVersionSetting = getVersionSetting(srcId).clone();
         GameDirectoryType originalGameDirType = (oldVersionSetting.isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER);
         oldVersionSetting.setUsesGlobal(false);
@@ -176,12 +183,6 @@ public class FCLGameRepository extends DefaultGameRepository {
 
         File srcGameDir = getRunDirectory(srcId);
         File dstGameDir = getRunDirectory(dstId);
-
-        List<String> blackList = new ArrayList<>(ModAdviser.MODPACK_BLACK_LIST);
-        blackList.add(srcId + ".jar");
-        blackList.add(srcId + ".json");
-        if (!copySaves)
-            blackList.add("saves");
 
         if (originalGameDirType != GameDirectoryType.VERSION_FOLDER)
             FileUtils.copyDirectory(srcGameDir.toPath(), dstGameDir.toPath(), path -> Modpack.acceptFile(path, blackList, null));
@@ -205,6 +206,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     /**
      * Create new version setting if version id has no version setting.
+     *
      * @param id the version id.
      * @return new version setting, null if given version does not exist.
      */
@@ -227,7 +229,6 @@ public class FCLGameRepository extends DefaultGameRepository {
      * Get the version setting for version id.
      *
      * @param id version id
-     *
      * @return corresponding version setting, null if the version has no its own version setting.
      */
     @Nullable
@@ -306,6 +307,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     /**
      * Make version use self version settings instead of the global one.
+     *
      * @param id the version id.
      * @return specialized version setting, null if given version does not exist.
      */
@@ -343,14 +345,14 @@ public class FCLGameRepository extends DefaultGameRepository {
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMinMemory())
                 .setMetaspace(Lang.toIntOrNull(vs.getPermSize()))
-                .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
-                .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
+                .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
+                .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
                 .setServerIp(vs.getServerIp())
                 .setJavaAgents(javaAgents)
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setPojavBigCore(vs.isPojavBigCore())
-                .setRenderer(vs.getRenderer());
+                .setRenderer(RendererManager.getRenderer(vs.getRenderer()));
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {

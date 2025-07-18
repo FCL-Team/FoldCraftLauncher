@@ -219,7 +219,7 @@ public class Versions {
             builder.setMessage(context.getString(R.string.version_empty_launch));
             builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
                 MainActivity.getInstance().refreshMenuView(null);
-                MainActivity.getInstance().bind.download.setSelected(true);
+                MainActivity.getInstance().binding.download.setSelected(true);
             });
             builder.create().show();
             return false;

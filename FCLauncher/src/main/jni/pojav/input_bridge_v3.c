@@ -9,7 +9,7 @@
  * 
  * - Implements glfwSetCursorPos() to handle grab camera pos correctly.
  */
- 
+
 #include <assert.h>
 #include <dlfcn.h>
 #include <jni.h>
@@ -77,7 +77,7 @@ jint JNI_OnLoad(JavaVM* vm, __attribute__((unused)) void* reserved) {
         registerFunctions(env);
     }
     pojav_environ->isGrabbing = JNI_FALSE;
-    
+
     return JNI_VERSION_1_4;
 }
 
@@ -226,6 +226,13 @@ void sendData(int type, int i1, int i2, int i3, int i4) {
     atomic_fetch_add_explicit(&pojav_environ->eventCounter, 1, memory_order_acquire);
 }
 
+static jbyteArray stringToBytes(JNIEnv *env, const char* string) {
+    const jsize string_data_len = (jsize)(strlen(string) + 1);
+    jbyteArray result = (*env)->NewByteArray(env, (jsize)string_data_len);
+    (*env)->SetByteArrayRegion(env, result, 0, (jsize)string_data_len, (const jbyte*) string);
+    return result;
+}
+
 /**
  * Hooked version of java.lang.UNIXProcess.forkAndExec()
  * which is used to handle the "open" command.
@@ -237,6 +244,12 @@ hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArr
     // Here we only handle the "xdg-open" command
     if (strcmp(basename(pProg), "xdg-open") != 0) {
         (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
+        if (strcmp(basename(pProg), "ffmpeg") == 0) {
+            const char* ffmpeg_path = getenv("FFMPEG_PATH");
+            if (ffmpeg_path != NULL) {
+                prog = stringToBytes(env, ffmpeg_path);
+            }
+        }
         return orig_ProcessImpl_forkAndExec(env, process, mode, helperpath, prog, argBlock, argc, envBlock, envc, dir, std_fds, redirectErrorStream);
     }
     (*env)->ReleaseByteArrayElements(env, prog, (jbyte *)pProg, 0);
@@ -326,7 +339,7 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
     (*pojav_environ->dalvikJavaVMPtr)->AttachCurrentThread(pojav_environ->dalvikJavaVMPtr, &dalvikEnv, NULL);
     assert(dalvikEnv != NULL);
     assert(pojav_environ->bridgeClazz != NULL);
-    
+
     FCL_INTERNAL_LOG("Clipboard: Converting string\n");
     char *copySrcC;
     jstring copyDst = NULL;
@@ -339,7 +352,7 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
     jstring pasteDst = convertStringJVM(dalvikEnv, env, (jstring) (*dalvikEnv)->CallStaticObjectMethod(dalvikEnv, pojav_environ->bridgeClazz, pojav_environ->method_accessAndroidClipboard, action, copyDst));
 
     if (copySrc) {
-        (*dalvikEnv)->DeleteLocalRef(dalvikEnv, copyDst);    
+        (*dalvikEnv)->DeleteLocalRef(dalvikEnv, copyDst);
         (*env)->ReleaseByteArrayElements(env, copySrc, (jbyte *)copySrcC, 0);
     }
     (*pojav_environ->dalvikJavaVMPtr)->DetachCurrentThread(pojav_environ->dalvikJavaVMPtr);

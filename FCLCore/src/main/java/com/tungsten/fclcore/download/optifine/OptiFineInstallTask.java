@@ -19,11 +19,13 @@ package com.tungsten.fclcore.download.optifine;
 
 import static com.tungsten.fclcore.util.Lang.getOrDefault;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -230,6 +232,7 @@ public final class OptiFineInstallTask extends Task<Version> {
     }
 
     private void runJVMProcess(String[] command, int java) throws Exception {
+        Activity context = FCLApplication.getCurrentActivity();
         int exitCode;
         boolean listen = true;
         while (listen) {
@@ -243,12 +246,12 @@ public final class OptiFineInstallTask extends Task<Version> {
             server1.stop();
             latch.countDown();
         });
-        Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+        Intent service = new Intent(context, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command);
         bundle.putInt("java", java);
         service.putExtras(bundle);
-        FCLPath.CONTEXT.startService(service);
+        context.startForegroundService(service);
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());

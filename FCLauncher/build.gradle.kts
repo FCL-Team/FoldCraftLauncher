@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -48,7 +48,6 @@ android {
 
 dependencies {
     implementation("com.bytedance:bytehook:1.0.10")
-    implementation("com.jaredrummler:android-device-names:2.1.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
 }

@@ -8,6 +8,7 @@ import android.widget.ListView;
 
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -78,7 +79,8 @@ public class HelpPage extends FCLCommonPage implements View.OnClickListener {
         setLoading(true);
         Task.supplyAsync(() -> {
             String res = NetworkUtils.doGet(NetworkUtils.toURL(DOC_INDEX_URL));
-            return JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<DocIndex>>(){}.getType());
+            return JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<DocIndex>>() {
+            }.getType());
         }).thenAcceptAsync(Schedulers.androidUIThread(), res -> {
             ArrayList<DocIndex> indexes = (ArrayList<DocIndex>) res;
             DocCategoryAdapter adapter = new DocCategoryAdapter(getContext(), indexes.stream().filter(DocIndex::isVisible).collect(Collectors.toList()));
@@ -110,9 +112,7 @@ public class HelpPage extends FCLCommonPage implements View.OnClickListener {
             refresh();
         }
         if (v == website) {
-            Uri uri = Uri.parse("https://fcl-team.github.io/pages/documentation.html");
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            getContext().startActivity(intent);
+            AndroidUtils.openLink(getContext(), "https://fcl-team.github.io/pages/documentation.html");
         }
     }
 }
