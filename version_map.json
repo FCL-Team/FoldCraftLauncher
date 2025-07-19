@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1239,
-    "versionName": "1.2.3.9",
-    "date": "2025.07.14",
+    "versionCode": 1240,
+    "versionName": "1.2.4.0",
+    "date": "2025.07.19",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where the physical mouse could not properly recognize right-click/middle-click/scroll wheel.  \n2. Fixed a crash issue that could occur due to corrupted shortcut input files.  \n3. Fixed missing versions in the game's version list.  \n4. Updated ANGLE library files."
+        "text": "(Translated from Chinese by AI)\n1. Refactor the renderer-related configuration code  \n2. Add compatibility checks between the renderer and Minecraft versions  \n3. Display supported Minecraft versions for each renderer in the list  \n4. Fix crash issues when pressing Ctrl+C in-game on some devices"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复物理鼠标无法正常识别右键/中键/滚轮的问题\n2.修复快捷输入文件损坏后可能造成的闪退问题\n3.修复游戏版本列表内部分版本缺失的问题\n4.更新ANGLE库文件"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.重构渲染器相关设置代码\n2.增加渲染器与MC版本的兼容性检查\n3.在渲染器列表显示渲染器支持的MC版本\n4.修复部分机型在游戏内按下Ctrl+C卡死的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/bfadee23063b",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.9/FCL-release-1.2.3.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/0d783cf3b9d1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.0/FCL-release-1.2.4.0-all.apk"
   }
 ]
