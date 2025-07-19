@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Process
 import androidx.core.app.NotificationCompat
+import com.mio.data.Renderer
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.FCLauncher
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback
@@ -43,7 +44,18 @@ class ProcessService : Service() {
             Environment.getExternalStorageDirectory().absolutePath + "/FCL/log",
             applicationContext.getDir("runtime", 0).absolutePath + "/java/" + jre,
             applicationContext.cacheDir.toString() + "/fclauncher",
-            null,
+            Renderer(
+                "Holy-GL4ES",
+                "",
+                "libgl4es_114.so",
+                "libEGL.so",
+                "",
+                null,
+                null,
+                Renderer.ID_GL4ES,
+                "",
+                ""
+            ),
             command
         )
         startProcess(config)
