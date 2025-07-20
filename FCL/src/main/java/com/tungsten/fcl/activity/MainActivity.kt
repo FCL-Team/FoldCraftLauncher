@@ -368,9 +368,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
                 FCLBridge.BACKEND_IS_BOAT = binding.backend.position == 1
                 val selectedProfile = Profiles.getSelectedProfile()
-                var renderer =
-                    selectedProfile.getVersionSetting(selectedProfile.selectedVersion).renderer
-                RendererManager.getRenderer(selectedProfile.selectedVersion)
                 DriverPlugin.selected = DriverPlugin.driverList.find {
                     it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
                 } ?: DriverPlugin.driverList[0]
