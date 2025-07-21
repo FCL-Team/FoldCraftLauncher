@@ -25,6 +25,7 @@ public class LocaleUtils {
     public static Locale PERSIAN = new Locale("fa");
     public static Locale UKRAINIAN = new Locale("uk");
     public static Locale GERMAN = new Locale("de");
+    public static Locale HK = new Locale("zh", "HK");
 
     private static DateTimeFormatter dateTimeFormatter;
 
@@ -75,6 +76,8 @@ public class LocaleUtils {
                 return UKRAINIAN;
             case 7:
                 return GERMAN;
+            case 8:
+                return HK;
             default:
                 return getSystemLocale();
         }
