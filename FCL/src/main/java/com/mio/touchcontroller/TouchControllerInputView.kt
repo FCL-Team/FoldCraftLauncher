@@ -155,6 +155,7 @@ class TouchControllerInputView @JvmOverloads constructor(
         private var inBatchEdit: Int = 0
         private var delayedNewStateByBatchEdit: TextInputState? = null
         private var extractTextToken: Int? = null
+        private var hasZeroExtractToken = false
 
         private fun TextRange.isEmpty() = length == 0
         private fun String.removeRange(range: TextRange) =
@@ -237,8 +238,12 @@ class TouchControllerInputView @JvmOverloads constructor(
                 state.composition.start,
                 state.composition.end
             )
+            val extractedText = getExtractedText()
+            if (hasZeroExtractToken) {
+                inputMethodManager.updateExtractedText(view, 0, extractedText)
+            }
             extractTextToken?.let { token ->
-                inputMethodManager.updateExtractedText(view, token, getExtractedText())
+                inputMethodManager.updateExtractedText(view, token, extractedText)
             }
         }
 
@@ -463,13 +468,15 @@ class TouchControllerInputView @JvmOverloads constructor(
         }
 
         override fun getExtractedText(request: ExtractedTextRequest, flags: Int): ExtractedText {
-            this.extractTextToken = request.token
+            if (request.token == 0) {
+                hasZeroExtractToken = true
+            } else {
+                this.extractTextToken = request.token
+            }
             return getExtractedText()
         }
 
-        override
-
-        fun getHandler() = null
+        override fun getHandler() = null
 
         override fun getSelectedText(flags: Int): CharSequence? {
             return if (!state.selection.isEmpty()) {
