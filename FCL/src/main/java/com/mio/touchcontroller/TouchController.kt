@@ -18,7 +18,7 @@ class TouchController(
     context: Context,
     val width: Int,
     val height: Int,
-    val vibrationDuration: Long = 100
+    val vibrationDuration: Long = 100,
 ) {
     var client: LauncherProxyClient? = null
         private set

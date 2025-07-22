@@ -45,6 +45,7 @@ class TouchControllerInputView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
+    var disableFullScreenInput: Boolean = false
     var client: LauncherProxyClient? = null
         set(value) {
             val prev = field
@@ -127,6 +128,9 @@ class TouchControllerInputView @JvmOverloads constructor(
             initialSelEnd = state.selection.end
             EditorInfoCompat.setInitialSurroundingText(this, state.text)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
+            imeOptions = if (disableFullScreenInput) {
+                EditorInfo.IME_FLAG_NO_FULLSCREEN
+            } else { 0 }
         }
         return InputConnectionImpl(state) {
             client.updateTextInputState(it)

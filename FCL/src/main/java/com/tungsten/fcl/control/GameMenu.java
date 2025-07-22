@@ -620,6 +620,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             touchControllerInputView.setClient(touchController.getClient());
             touchControllerInputView.setFclInput(fclInput);
             touchControllerInputView.setSize(AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
+            touchControllerInputView.setDisableFullScreenInput(sharedPreferences.getBoolean("disableFullscreenInput", true));
         }
 
         touchPad.setOnHoverListener((view, motionEvent) -> {
