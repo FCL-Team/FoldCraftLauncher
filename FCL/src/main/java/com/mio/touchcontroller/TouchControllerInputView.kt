@@ -3,6 +3,8 @@ package com.mio.touchcontroller
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.RectF
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -12,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.CursorAnchorInfo
+import android.view.inputmethod.EditorBoundsInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedText
 import android.view.inputmethod.ExtractedTextRequest
@@ -209,20 +212,20 @@ class TouchControllerInputView @JvmOverloads constructor(
                                 CursorAnchorInfo.FLAG_HAS_VISIBLE_REGION,
                             )
                         }
-                        /*inputAreaRect?.let {
+                        inputAreaRect?.let {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 setEditorBoundsInfo(EditorBoundsInfo.Builder().apply {
                                     setEditorBounds(
                                         RectF(
-                                            inputAreaRect.left.toFloat(),
-                                            inputAreaRect.top.toFloat(),
-                                            inputAreaRect.bottom.toFloat(),
-                                            inputAreaRect.bottom.toFloat(),
+                                            inputAreaRect.left * width,
+                                            inputAreaRect.top * height,
+                                            (inputAreaRect.left + inputAreaRect.width) * width,
+                                            (inputAreaRect.top + inputAreaRect.height) * height,
                                         )
                                     )
                                 }.build())
                             }
-                        }*/
+                        }
                         setMatrix(view.matrix)
                     }.build())
                 }
