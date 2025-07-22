@@ -3,7 +3,6 @@ package com.mio.touchcontroller
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
@@ -13,7 +12,6 @@ import android.view.View
 import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.CursorAnchorInfo
-import android.view.inputmethod.EditorBoundsInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedText
 import android.view.inputmethod.ExtractedTextRequest
@@ -47,10 +45,6 @@ class TouchControllerInputView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-    init {
-        isFocusableInTouchMode = true
-    }
-
     var client: LauncherProxyClient? = null
         set(value) {
             val prev = field
@@ -85,12 +79,11 @@ class TouchControllerInputView @JvmOverloads constructor(
                 if (textInputState != null) {
                     visibility = VISIBLE
                     focusable = FOCUSABLE
-                } else {
-                    visibility = GONE
-                    focusable = NOT_FOCUSABLE
                 }
                 when {
                     prevState == null && textInputState != null -> {
+                        isFocusableInTouchMode = true
+                        clearFocus()
                         requestFocus()
                         inputMethodManager.showSoftInput(
                             this@TouchControllerInputView,
@@ -100,7 +93,6 @@ class TouchControllerInputView @JvmOverloads constructor(
 
                     prevState != null && textInputState == null -> {
                         clearFocus()
-                        inputConnection = null
                         inputMethodManager.hideSoftInputFromWindow(
                             windowToken,
                             InputMethodManager.HIDE_IMPLICIT_ONLY
@@ -109,6 +101,9 @@ class TouchControllerInputView @JvmOverloads constructor(
                 }
                 if (textInputState != null) {
                     inputConnection?.updateState(textInputState)
+                } else {
+                    visibility = GONE
+                    focusable = NOT_FOCUSABLE
                 }
             }
         }
@@ -128,9 +123,9 @@ class TouchControllerInputView @JvmOverloads constructor(
         val client = client ?: return null
         val state = inputState ?: return null
         outAttrs.apply {
-            EditorInfoCompat.setInitialSurroundingText(this, state.text)
             initialSelStart = state.selection.start
             initialSelEnd = state.selection.end
+            EditorInfoCompat.setInitialSurroundingText(this, state.text)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
         }
         return InputConnectionImpl(state) {
