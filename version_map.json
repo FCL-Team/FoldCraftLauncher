@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1241,
-    "versionName": "1.2.4.1",
-    "date": "2025.07.19",
+    "versionCode": 1242,
+    "versionName": "1.2.4.2",
+    "date": "2025.07.24",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n0.Fix the issue where the mod loader cannot be installed after updating to 1.2.4.0 \n1. Refactor the renderer-related configuration code  \n2. Add compatibility checks between the renderer and Minecraft versions  \n3. Display supported Minecraft versions for each renderer in the list  \n4. Fix crash issues when pressing Ctrl+C in-game on some devices"
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue where clicking launch without downloaded games causes an immediate crash \n2. New feature: Added a refresh button in the renderer selection dialog  \n3. Fix GLFW missing glfwRestoreWindow in Pojav backend causing certain mods to malfunction on some devices  \n4. Resolve text-background color indistinguishability in built-in file picker caused by mobile themes  \n5. Add Traditional Chinese (Hong Kong) language support"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.修复1.2.4.0更新导致的无法安装模组加载器的问题\n1.重构渲染器相关设置代码\n2.增加渲染器与MC版本的兼容性检查\n3.在渲染器列表显示渲染器支持的MC版本\n4.修复部分机型在游戏内按下Ctrl+C卡死的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复未下载游戏时点击启动直接崩溃的问题\n2.新增功能：在选择渲染器的对话框内添加刷新按键\n3.修复Pojav后端的GLFW缺少glfwRestoreWindow导致部分设备部分模组无法运行的问题\n4.修复手机主题可能导致的内置文件选择器文字颜色与背景色无法区分的问题\n5.增加繁体中文（香港）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/cbdb7291a5e1",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.1/FCL-release-1.2.4.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/968458583f99",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.2/FCL-release-1.2.4.2-all.apk"
   }
 ]
