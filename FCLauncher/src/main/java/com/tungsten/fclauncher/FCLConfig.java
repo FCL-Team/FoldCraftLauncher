@@ -2,54 +2,11 @@ package com.tungsten.fclauncher;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
+import com.mio.data.Renderer;
 
 import java.io.Serializable;
 
 public class FCLConfig implements Serializable {
-
-    public enum Renderer implements Serializable {
-        RENDERER_GL4ES("Holy-GL4ES:libgl4es_114.so:libEGL.so"),
-        RENDERER_VIRGL("VirGLRenderer:libOSMesa_81.so:libEGL.so"),
-        RENDERER_VGPU("VGPU:libvgpu.so:libEGL.so"),
-        RENDERER_ZINK("Zink:libOSMesa_8.so:libEGL.so"),
-        RENDERER_FREEDRENO("Freedreno:libOSMesa_8.so:libEGL.so"),
-        RENDERER_GL4ESPLUS("GL4ES+:libgl4es_plus.so:libEGL.so"),
-        RENDERER_CUSTOM("Custom:libCustom.so:libEGL.so");
-
-        private final String glInfo;
-        private String glVersion;
-
-        Renderer(String glInfo) {
-            this.glInfo = glInfo;
-        }
-
-        public String getGlLibName() {
-            return glInfo.split(":")[1];
-        }
-
-        public String getEglLibName() {
-            return glInfo.split(":")[2];
-        }
-
-        public String getGlInfo() {
-            return glInfo;
-        }
-
-        public void setGlVersion(String glVersion) {
-            this.glVersion = glVersion;
-        }
-
-        public String getGlVersion() {
-            return glVersion;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return glInfo.split(":")[0];
-        }
-    }
 
     public static class InstalledModLoaders {
         private final boolean installForge;

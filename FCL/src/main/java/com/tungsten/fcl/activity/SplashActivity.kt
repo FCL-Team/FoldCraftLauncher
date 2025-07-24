@@ -46,6 +46,7 @@ import java.nio.file.Paths
 import java.util.Locale
 import java.util.logging.Level
 import androidx.core.content.edit
+import com.mio.manager.RendererManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
@@ -144,8 +145,7 @@ class SplashActivity : FCLActivity() {
     fun enterLauncher() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                RendererPlugin.init(this@SplashActivity)
-                DriverPlugin.init(this@SplashActivity)
+                RendererManager.init(this@SplashActivity)
                 JavaManager.init()
                 runCatching { ConfigHolder.init() }.exceptionOrNull()?.let {
                     Logging.LOG.log(Level.WARNING, it.message)

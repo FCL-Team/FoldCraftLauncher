@@ -1033,4 +1033,6 @@
     <string name="modloader">模组加载器</string>
     <string name="message_warn_renderer_global_setting">你当前选择的版本已启用游戏特定设置，所以在此处修改的渲染器无法应用于当前版本。建议长按“启动”按钮选择渲染器。</string>
     <string name="message_select_url">请选择一个链接进行下载（将会跳转至浏览器）</string>
+    <string name="supported_mc_version">支持的MC版本：</string>
+    <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
 </resources>

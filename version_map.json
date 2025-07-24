@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1238,
-    "versionName": "1.2.3.8",
-    "date": "2025.07.09",
+    "versionCode": 1242,
+    "versionName": "1.2.4.2",
+    "date": "2025.07.24",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New Feature: Adjust TouchController mod vibration strength in the launcher settings.\n2. New Feature: Access mod loader download links within the launcher.\n3. Made adjustments to some UI elements.\n4. Modified the GL4ES description. (Note: GL4ES supports versions up to 1.21.4 and will not function properly after 1.21.5)"
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue where clicking launch without downloaded games causes an immediate crash \n2. New feature: Added a refresh button in the renderer selection dialog  \n3. Fix GLFW missing glfwRestoreWindow in Pojav backend causing certain mods to malfunction on some devices  \n4. Resolve text-background color indistinguishability in built-in file picker caused by mobile themes  \n5. Add Traditional Chinese (Hong Kong) language support"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：在启动器设置内调节TouchController模组震动强度\n2.新增功能：在启动器内获取模组加载器下载链接\n3.调整部分UI\n4.修改GL4ES描述（注意：GL4ES支持的版本最高为1.21.4，1.21.5后无法正常使用）"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复未下载游戏时点击启动直接崩溃的问题\n2.新增功能：在选择渲染器的对话框内添加刷新按键\n3.修复Pojav后端的GLFW缺少glfwRestoreWindow导致部分设备部分模组无法运行的问题\n4.修复手机主题可能导致的内置文件选择器文字颜色与背景色无法区分的问题\n5.增加繁体中文（香港）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/b9abe9d87dab",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.3.8/FCL-release-1.2.3.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/968458583f99",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.2/FCL-release-1.2.4.2-all.apk"
   }
 ]

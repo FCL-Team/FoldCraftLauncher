@@ -877,6 +877,7 @@
     <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
     <string name="settings_launcher_language_ukrainian" translatable="false">Українська Мова</string>
     <string name="settings_launcher_language_german" translatable="false">Deutsch</string>
+    <string name="settings_launcher_language_traditional_chinese_hk" translatable="false">繁體中文（香港）</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
@@ -1095,4 +1096,6 @@
     <string name="modloader">ModLoader</string>
     <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
     <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
+    <string name="supported_mc_version">Supported MC version:</string>
+    <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
 </resources>

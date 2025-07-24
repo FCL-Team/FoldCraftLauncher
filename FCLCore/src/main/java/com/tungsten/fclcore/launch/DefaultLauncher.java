@@ -25,12 +25,13 @@ import android.content.Context;
 import android.os.Build;
 
 import com.google.gson.GsonBuilder;
+import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
-import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Argument;
 import com.tungsten.fclcore.game.Arguments;
@@ -44,15 +45,26 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.jackhuang.hmcl.util.ServerAddress;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -456,7 +468,7 @@ public class DefaultLauncher extends Launcher {
 
         LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(version, repository.getGameVersion(version).orElse(null));
 
-        FCLConfig.Renderer renderer = options.getRenderer();
+        Renderer renderer = options.getRenderer();
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,

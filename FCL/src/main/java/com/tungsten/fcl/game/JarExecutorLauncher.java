@@ -2,6 +2,7 @@ package com.tungsten.fcl.game;
 
 import android.content.Context;
 
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
@@ -120,7 +121,7 @@ public class JarExecutorLauncher extends Launcher {
                 FCLPath.LOG_DIR,
                 javaVersion == 8 ? FCLPath.JAVA_8_PATH : javaVersion == 11 ? FCLPath.JAVA_11_PATH : javaVersion == 17 ? FCLPath.JAVA_17_PATH : FCLPath.JAVA_21_PATH,
                 Profiles.getSelectedProfile().getGameDir().getAbsolutePath(),
-                FCLConfig.Renderer.RENDERER_GL4ES,
+                RendererManager.RENDERER_GL4ES,
                 finalArgs
         );
         return FCLauncher.launchJarExecutor(config);

@@ -23,6 +23,7 @@ import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.game.ReleaseType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 
 import java.time.Instant;
 import java.util.List;
@@ -49,8 +50,8 @@ public final class GameRemoteVersion extends RemoteVersion {
     public int compareTo(RemoteVersion o) {
         if (!(o instanceof GameRemoteVersion))
             return 0;
-
-        return o.getReleaseDate().compareTo(getReleaseDate());
+        int dateCompare = o.getReleaseDate().compareTo(getReleaseDate());
+        return dateCompare != 0 ? dateCompare : GameVersionNumber.compare(getGameVersion(), o.getGameVersion());
     }
 
     private static Type getReleaseType(ReleaseType type) {

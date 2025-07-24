@@ -1471,5 +1471,8 @@ public class GLFW
     public static void glfwMaximizeWindow(@NativeType("GLFWwindow *") long window) {
     }
 
+    public static void glfwRestoreWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
 
 }

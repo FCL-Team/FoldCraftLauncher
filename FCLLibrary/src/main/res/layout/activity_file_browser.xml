@@ -106,7 +106,8 @@
         android:singleLine="true"
         android:text="@string/file_browser_mode"
         app:layout_constraintBottom_toTopOf="@+id/type_hint"
-        app:layout_constraintStart_toEndOf="@+id/split" />
+        app:layout_constraintStart_toEndOf="@+id/split"
+        app:use_theme_color="true" />
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/mode"
@@ -117,7 +118,8 @@
         android:gravity="end"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/type"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:use_theme_color="true" />
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/type_hint"
@@ -128,7 +130,8 @@
         android:singleLine="true"
         android:text="@string/file_browser_selection"
         app:layout_constraintBottom_toTopOf="@+id/close"
-        app:layout_constraintStart_toEndOf="@+id/split" />
+        app:layout_constraintStart_toEndOf="@+id/split"
+        app:use_theme_color="true" />
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/type"
@@ -139,7 +142,8 @@
         android:gravity="end"
         android:singleLine="true"
         app:layout_constraintBottom_toTopOf="@+id/close"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:use_theme_color="true" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/close"

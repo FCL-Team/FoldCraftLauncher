@@ -29,6 +29,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.mio.JavaManager;
+import com.mio.data.Renderer;
+import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
 import com.tungsten.fcl.R;
@@ -69,6 +71,7 @@ import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -187,16 +190,16 @@ public final class LauncherHelper {
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
                             return Task.supplyAsync(launcher::launch);
                         }).thenComposeAsync(fclBridge -> {
-                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
-                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse("0.0"));
-                        })
+                            Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
+                            fclBridge.setRenderer(renderer.getName());
+                            return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
+                        }).thenComposeAsync(fclBridge -> checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse("")))
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
                             fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor() / 100.0);
                             fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                             fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
-                            fclBridge.setRenderer(repository.getVersionSetting(selectedVersion).getRenderer().toString());
                             fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
                             JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
                             Bundle bundle = new Bundle();
@@ -295,6 +298,40 @@ public final class LauncherHelper {
         });
 
         executor.start();
+    }
+
+    private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version) {
+        return Task.composeAsync(() -> {
+            try {
+                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                if (!version.isEmpty()) {
+                    if (!renderer.getMinMCver().isEmpty()) {
+                        if (VersionNumber.compare(version, renderer.getMinMCver()) < 0) {
+                            Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
+                                    .setCancelable(false)
+                                    .setMessage(context.getString(R.string.message_check_renderer, renderer.getName()))
+                                    .setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()))
+                                    .setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge))).create().show());
+                            return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+                        }
+                    }
+                    if (!renderer.getMaxMCver().isEmpty()) {
+                        if (VersionNumber.compare(version, renderer.getMaxMCver()) > 0) {
+                            Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
+                                    .setCancelable(false)
+                                    .setMessage(context.getString(R.string.message_check_renderer, renderer.getName()))
+                                    .setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()))
+                                    .setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge))).create().show());
+                            return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+                        }
+                    }
+                }
+                return Task.completed(bridge);
+            } catch (Throwable e) {
+                LOG.log(Level.WARNING, "checkRenderer() failed", e);
+                return Task.completed(bridge);
+            }
+        });
     }
 
     private Task<FCLBridge> checkMod(FCLBridge bridge, String version) {
