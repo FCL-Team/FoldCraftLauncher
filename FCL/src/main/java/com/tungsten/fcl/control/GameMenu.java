@@ -476,15 +476,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         initSeekbar(windowScaleSeekbar, (int) (menuSetting.getWindowScale() * 100), observable -> {
             double doubleValue = windowScaleSeekbar.progressProperty().get() / 100d;
             menuSetting.setWindowScale(doubleValue);
-            int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-            int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
-            if (fclBridge != null) {
-                fclBridge.setScaleFactor(doubleValue);
-                int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * doubleValue);
-                int height = (int) (screenHeight * doubleValue);
-                fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
-                fclBridge.pushEventWindow(width, height);
-            }
+            refreshWindowsSize(doubleValue);
         });
 
         initSeekbar(cursorOffsetSeekbar, (int) (menuSetting.getCursorOffset()), observable -> {
@@ -615,7 +607,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         if (getBridge() != null && getBridge().hasTouchController()) {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
-            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()), (int)sharedPreferences.getInt("vibrationDuration", 100));
+            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()), (int) sharedPreferences.getInt("vibrationDuration", 100));
 
             touchControllerInputView.setClient(touchController.getClient());
             touchControllerInputView.setFclInput(fclInput);
@@ -687,6 +679,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!menuSetting.isShowLog() && menuSetting.isAutoShowLog()) {
             logWindow.visibilityProperty().setValue(false);
         }
+        refreshWindowsSize(menuSetting.getWindowScale());
     }
 
     @Override
@@ -843,6 +836,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             builder.setNegativeButton(null);
             builder.setCancelable(false);
             builder.create().show();
+        }
+    }
+
+    private void refreshWindowsSize(double factor) {
+        int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
+        int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        if (fclBridge != null) {
+            fclBridge.setScaleFactor(factor);
+            int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * factor);
+            int height = (int) (screenHeight * factor);
+            fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+            fclBridge.pushEventWindow(width, height);
         }
     }
 
