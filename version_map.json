@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1242,
-    "versionName": "1.2.4.2",
-    "date": "2025.07.24",
+    "versionCode": 1243,
+    "versionName": "1.2.4.3",
+    "date": "2025.07.29",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue where clicking launch without downloaded games causes an immediate crash \n2. New feature: Added a refresh button in the renderer selection dialog  \n3. Fix GLFW missing glfwRestoreWindow in Pojav backend causing certain mods to malfunction on some devices  \n4. Resolve text-background color indistinguishability in built-in file picker caused by mobile themes  \n5. Add Traditional Chinese (Hong Kong) language support"
+        "text": "(Translated from Chinese by AI)\n1. Added TouchController input support  \n2. Removed the APK.1 installation feature  \n3. Fixed an issue where invoking the file manager within certain system games caused errors  \n4. Fixed an issue where resolution changes in the in-game menu did not apply automatically after restarting"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复未下载游戏时点击启动直接崩溃的问题\n2.新增功能：在选择渲染器的对话框内添加刷新按键\n3.修复Pojav后端的GLFW缺少glfwRestoreWindow导致部分设备部分模组无法运行的问题\n4.修复手机主题可能导致的内置文件选择器文字颜色与背景色无法区分的问题\n5.增加繁体中文（香港）"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加 TouchController 输入支持\n2.删除安装apk.1功能\n3.修复部分系统游戏内调用文件管理器错误的问题\n4.修复游戏内菜单修改分辨率后重启无法自动生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/968458583f99",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.2/FCL-release-1.2.4.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/4f5ab5fb263c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.3/FCL-release-1.2.4.3-all.apk"
   }
 ]
