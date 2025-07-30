@@ -1,15 +1,17 @@
 package com.mio.touchcontroller
 
 import android.content.Context
+import android.graphics.PointF
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.system.Os
+import android.util.SparseArray
 import android.util.SparseIntArray
 import android.view.MotionEvent
 import com.tungsten.fclcore.util.Logging
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient
-import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.client.LauncherProxyClient.VibrationHandler
+import top.fifthlight.touchcontroller.proxy.client.PlatformCapability
 import top.fifthlight.touchcontroller.proxy.client.android.transport.UnixSocketTransport
 import top.fifthlight.touchcontroller.proxy.message.VibrateMessage
 import java.util.logging.Level
@@ -23,8 +25,17 @@ class TouchController(
     var client: LauncherProxyClient? = null
         private set
     private val socketName = "FoldCraftLauncher"
+
+    //handleTouchEvent
     private val pointerIdMap = SparseIntArray()
     private var nextPointerId = 1
+
+    //moveView
+    // 存储每个手指的初始位置（key = pointerId）
+    private val initialPoints = SparseArray<PointF>()
+
+    // 存储每个手指的上次位置（用于计算增量位移）
+    private val lastPoints = SparseArray<PointF>()
 
     init {
         createProxy(context)
@@ -101,6 +112,48 @@ class TouchController(
                     pointerIdMap.delete(pointerId)
                     client.removePointer(pointerId)
                 }
+            }
+        }
+    }
+
+    fun moveView(event: MotionEvent) {
+        val client = client ?: return
+        val pointerIndex = event.actionIndex
+        val pointerId = event.getPointerId(pointerIndex)
+
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
+                // 新手指按下，记录初始位置和上次位置
+                val x = event.getX(pointerIndex)
+                val y = event.getY(pointerIndex)
+                initialPoints.put(pointerId, PointF(x, y))
+                lastPoints.put(pointerId, PointF(x, y))
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                for (i in 0 until event.pointerCount) {
+                    val activePointerId = event.getPointerId(i)
+                    val initialPoint = initialPoints.get(activePointerId)
+                    val lastPoint = lastPoints.get(activePointerId)
+                    if (initialPoint != null && lastPoint != null) {
+                        val deltaX = event.getX(i) - lastPoint.x
+                        val deltaY = event.getY(i) - lastPoint.y
+                        // 更新上次位置
+                        lastPoint.x = event.getX(i)
+                        lastPoint.y = event.getY(i)
+                        client.moveView(true, deltaY / height, deltaX / width)
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                initialPoints.remove(pointerId)
+                lastPoints.remove(pointerId)
+            }
+
+            MotionEvent.ACTION_CANCEL -> {
+                initialPoints.clear()
+                lastPoints.clear()
             }
         }
     }
