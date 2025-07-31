@@ -24,11 +24,12 @@
             android:focusable="false"
             android:clickable="false"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
+        <com.mio.ui.view.DraggableTextView
             android:id="@+id/fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:textStyle="bold"
             app:use_theme_color="true" />
 
