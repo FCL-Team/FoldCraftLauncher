@@ -53,9 +53,9 @@ public class AndroidUtils {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         ComponentName componentName = intent.resolveActivity(context.getPackageManager());
         if (componentName != null) {
-            context.startActivity(intent);
+            context.startActivity(Intent.createChooser(intent, ""));
         } else {
-            ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("FCL Clipboard", link);
             clipboard.setPrimaryClip(clip);
             Toast.makeText(context, context.getString(R.string.open_link_failed), Toast.LENGTH_LONG).show();

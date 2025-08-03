@@ -24,11 +24,12 @@
             android:focusable="false"
             android:clickable="false"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
+        <com.mio.ui.view.DraggableTextView
             android:id="@+id/fps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:textStyle="bold"
             app:use_theme_color="true" />
 
@@ -53,6 +54,11 @@
             android:imeOptions="flagNoFullscreen|flagNoExtractUi|flagNoPersonalizedLearning|actionDone"
             android:inputType="textFilter|textImeMultiLine|textAutoComplete|textAutoCorrect"
             android:id="@+id/input_scanner"/>
+
+        <com.mio.touchcontroller.TouchControllerInputView
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:id="@+id/touchcontroller_input_view"/>
 
         <com.tungsten.fcl.control.view.GameItemBar
             android:visibility="gone"

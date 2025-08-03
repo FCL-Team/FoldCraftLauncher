@@ -301,7 +301,7 @@ public class FCLBridge implements Serializable {
                     uri = FileProvider.getUriForFile(context, ((Activity) context).getApplication().getPackageName() + ".provider", new File(targetLink));
                 }
                 intent.setDataAndType(uri, "*/*");
-                context.startActivity(intent);
+                context.startActivity(Intent.createChooser(intent, ""));
             } catch (Exception e) {
                 Log.e("openLink error", "link:" + link + " err:" + e.toString());
             }

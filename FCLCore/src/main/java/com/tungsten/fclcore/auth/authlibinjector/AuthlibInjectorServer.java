@@ -174,7 +174,11 @@ public class AuthlibInjectorServer implements Observable {
 
         metadataRefreshed = true;
         LOG.info("authlib-injector server metadata refreshed: " + url);
-        helper.invalidate();
+        try {
+            helper.invalidate();
+        } catch (Throwable e) {
+            LOG.info("refreshMetadata error: " + e);
+        }
     }
 
     private void setMetadataResponse(String metadataResponse, long metadataTimestamp) throws JsonParseException {
