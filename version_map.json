@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1243,
-    "versionName": "1.2.4.3",
-    "date": "2025.07.29",
+    "versionCode": 1244,
+    "versionName": "1.2.4.4",
+    "date": "2025.08.03",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added TouchController input support  \n2. Removed the APK.1 installation feature  \n3. Fixed an issue where invoking the file manager within certain system games caused errors  \n4. Fixed an issue where resolution changes in the in-game menu did not apply automatically after restarting"
+        "text": "(Translated from Chinese by AI)\n1. Support enabling pointer following finger when using TouchController  \n2. New feature: Adjust FPS display position  \n3. Fixed an issue where GLFW returned the OpenGL version as the GLFW version  \n4. Fixed an issue where AuthlibInjector server auto-refresh might cause the launcher to crash"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加 TouchController 输入支持\n2.删除安装apk.1功能\n3.修复部分系统游戏内调用文件管理器错误的问题\n4.修复游戏内菜单修改分辨率后重启无法自动生效的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.支持使用TouchController时启用指针跟随手指\n2.新增功能：调整FPS显示位置\n3.修复GLFW返回的OpneGL版本为GLFW版本的问题\n4.修复AuthlibInjector服务器自动刷新可能导致的启动器崩溃的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/4f5ab5fb263c",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.3/FCL-release-1.2.4.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/96a3e888dbd5",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.4/FCL-release-1.2.4.4-all.apk"
   }
 ]
