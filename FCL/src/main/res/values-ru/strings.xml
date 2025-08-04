@@ -283,11 +283,11 @@
     <string name="edit_button_event_long_press">Долгое нажатие</string>
     <string name="edit_button_event_click">Нажмите</string>
     <string name="edit_button_event_double_click">Дважды нажмите</string>
-    <string name="edit_button_event_auto_keep">Удерживать кнопку при нажатии</string>
-    <string name="edit_button_event_auto_click">Нажимать на кнопку при удерживании</string>
+    <string name="edit_button_event_auto_keep">Удерживать нажатие</string>
+    <string name="edit_button_event_auto_click">Удерживать клик</string>
     <string name="edit_button_event_open_menu">Открыть меню</string>
     <string name="edit_button_event_touch_mode">Переключить режим жестов</string>
-    <string name="edit_button_event_mouse_mode">Сменить режим мыши</string>
+    <string name="edit_button_event_mouse_mode">Переключить режим мыши</string>
     <string name="edit_button_event_input">Показать клавиатуру</string>
     <string name="edit_button_event_quick_input">Открыть меню быстрого ввода</string>
     <string name="edit_button_event_output_text">Отправить текст в чат</string>
@@ -306,7 +306,7 @@
     <string name="edit_direction_event_follow_fix">Фиксированный</string>
     <string name="edit_direction_event_follow_center">Полудинамичный</string>
     <string name="edit_direction_event_follow_always">Динамический</string>
-    <string name="edit_direction_event_sneak">Двойное нажатие по центру, чтобы красться</string>
+    <string name="edit_direction_event_sneak">Двойное нажатие по центру для приседания</string>
     <string name="edit_direction_event_sneak_code">Кнопка по центру</string>
 
     <string name="exception_access_denied">Не удается получить доступ к файлу %s.</string>
@@ -493,8 +493,8 @@
     <string name="menu_settings_show_fps">Отобразить FPS</string>
     <string name="menu_settings_mouse">Мышь</string>
     <string name="menu_settings_mouse_mode">Режим мыши</string>
-    <string name="menu_settings_mouse_mode_click">Тачпад</string>
-    <string name="menu_settings_mouse_mode_slide">Обычный</string>
+    <string name="menu_settings_mouse_mode_click">Клик</string>
+    <string name="menu_settings_mouse_mode_slide">Скольжение</string>
     <string name="menu_settings_mouse_sensitivity">Чувствительность мыши</string>
     <string name="menu_settings_mouse_cursor_sensitivity">Чувствительность мыши (при отображении курсора)</string>
     <string name="menu_settings_mouse_size">Размер мыши</string>
@@ -621,7 +621,7 @@
     <string name="modrinth_category_utility">Утилиты</string>
     <string name="modrinth_category_worldgen">Генерация мира</string>
     <string name="modrinth_category_datapack">Датапак</string>
-    <!-- шейдеры -->
+    <!--  шейдеры  -->
     <string name="modrinth_category_atmosphere">Атмосфера</string>
     <string name="modrinth_category_bloom">Свечение</string>
     <string name="modrinth_category_cartoon">Мультяшный</string>
@@ -773,6 +773,8 @@
     <string name="settings_launcher_ignore_notch">Игнорировать вырез фронтальной камеры</string>
     <string name="settings_launcher_close_skin_view">Скрыть модель скина</string>
     <string name="settings_launcher_animation_speed">Скорость анимации переходов</string>
+    <string name="settings_launcher_vibrate_duration">Длительность вибрации (для мода TouchController)</string>
+    <string name="settings_disable_fullscreen_input">Отключить полноэкранный ввод (для мода TouchController)</string>
 
     <string name="settings_memory">Память</string>
     <string name="settings_memory_allocate_auto">%1$.1f ГБ минимум / %2$.1f ГБ выделенно</string>
@@ -969,4 +971,7 @@
     <string name="tip_hide_menu_view">Меню скрыто. Нажмите клавишу громкости, чтобы открыть меню.</string>
     <string name="modloader">Загрузчик модов</string>
     <string name="message_warn_renderer_global_setting">Выбранная вами версия имеет отдельные настройки для каждого профиля, поэтому указанный здесь рендерер не может быть применен к текущей версии. Рекомендуется длительное нажатие кнопки "Запуск" для выбора рендерера.</string>
+    <string name="message_select_url">Пожалуйста, выберите ссылку для скачивания (она откроется в вашем браузере).</string>
+    <string name="supported_mc_version">Поддерживаемая версия MC:</string>
+    <string name="message_check_renderer">Текущий рендерер %s не поддерживает эту версию игры. Продолжение его использования может привести к ошибкам рендеринга или сбоям игры! Хотите продолжить?</string>
 </resources>
