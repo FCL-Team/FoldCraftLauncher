@@ -124,6 +124,7 @@
     <string name="button_select_all">全选</string>
     <string name="button_set">设置</string>
     <string name="button_reset">重置</string>
+    <string name="button_overwrite">覆盖</string>
 
     <string name="community">社区</string>
     <string name="community_hint">加入社区以获取最新版本，反馈 bug 等。如果你要加入社区，请遵守社区规定。\n注：由于 QQ 群聊人数有限，加入 QQ 群需先赞助10元或以上金额，赞助方式见关于页面。</string>
@@ -1026,6 +1027,7 @@
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
     <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
+    <string name="import_java_overwrite_wrong">该版本的Java已经导入过了，是否覆盖当前版本？</string>
 
     <string name="manage_version">管理版本</string>
     <string name="select_renderer">选择渲染器</string>

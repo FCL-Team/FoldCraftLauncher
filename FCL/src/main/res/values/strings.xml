@@ -140,6 +140,7 @@
     <string name="button_select_all">Select All</string>
     <string name="button_set">Set</string>
     <string name="button_reset">Reset</string>
+    <string name="button_overwrite">Overwrite</string>
     <string name="button_up" translatable="false">▲</string>
     <string name="button_down" translatable="false">▼</string>
     <string name="button_left" translatable="false">◀</string>
@@ -1088,6 +1089,7 @@
     <string name="import_java">Import Java</string>
     <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
     <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string>
+    <string name="import_java_overwrite_wrong">This version of Java has already been imported. Overwrite the current version?</string>
 
     <string name="manage_version">Manage Versions</string>
     <string name="select_renderer">Select Renderer</string>
