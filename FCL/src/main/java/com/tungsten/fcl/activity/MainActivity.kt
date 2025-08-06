@@ -19,7 +19,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
@@ -27,7 +26,6 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
-import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -50,10 +48,8 @@ import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.DriverPlugin
-import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
