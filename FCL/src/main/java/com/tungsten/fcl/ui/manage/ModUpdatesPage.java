@@ -52,6 +52,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     private ListView listView;
     private FCLButton export;
     private FCLButton update;
+    private FCLButton updateWithout;
     private FCLButton cancel;
 
     public ModUpdatesPage(Context context, int id, FCLUILayout parent, int resId, ModListPage modListPage, ModManager modManager, List<LocalModFile.ModUpdate> list) {
@@ -65,13 +66,16 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     public void onCreate() {
         super.onCreate();
         listView = findViewById(R.id.list);
-        ThemeEngine.getInstance().registerEvent(listView, () -> listView.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(listView, () -> listView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
         export = findViewById(R.id.export);
         update = findViewById(R.id.update);
+        updateWithout = findViewById(R.id.update_without);
         cancel = findViewById(R.id.cancel);
         export.setOnClickListener(this);
         update.setOnClickListener(this);
+        updateWithout.setOnClickListener(this);
         cancel.setOnClickListener(this);
+        updateWithout.setSelected(true);
     }
 
     @Override
@@ -96,20 +100,23 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
             exportList();
         }
         if (v == update) {
-            updateMods();
+            updateMods(true);
+        }
+        if (v == updateWithout) {
+            updateMods(false);
         }
         if (v == cancel) {
             ManagePageManager.getInstance().dismissCurrentTempPage();
         }
     }
 
-    private void updateMods() {
+    private void updateMods(boolean keepOldVersion) {
         ModUpdateTask task = new ModUpdateTask(
                 modManager,
                 objects.stream()
                         .filter(o -> o.enabled.get())
                         .map(object -> pair(object.data.getLocalMod(), object.data.getCandidates().get(0)))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()), keepOldVersion);
         TaskDialog taskDialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
         taskDialog.setTitle(getContext().getString(R.string.mods_check_updates_update));
         TaskExecutor executor = task.whenComplete(Schedulers.androidUIThread(), exception -> {
@@ -270,7 +277,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
         private final Collection<Task<?>> dependents;
         private final List<LocalModFile> failedMods = new ArrayList<>();
 
-        ModUpdateTask(ModManager modManager, List<Pair<LocalModFile, RemoteMod.Version>> mods) {
+        ModUpdateTask(ModManager modManager, List<Pair<LocalModFile, RemoteMod.Version>> mods, boolean keepOldVersion) {
             setStage("mods.check_updates.update");
             getProperties().put("total", mods.size());
 
@@ -301,6 +308,10 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
                                 if (isDisabled)
                                     local.disable();
                                 failedMods.add(local);
+                            } else {
+                                if (!keepOldVersion) {
+                                    local.getFile().toFile().delete();
+                                }
                             }
                         })
                         .withCounter("mods.check_updates.update"));

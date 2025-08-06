@@ -765,6 +765,7 @@
     <string name="mods_check_updates_source">Source</string>
     <string name="mods_check_updates_target_version">Target Version</string>
     <string name="mods_check_updates_update">Update</string>
+    <string name="mods_check_updates_update_without">Update(without retaining old versions)</string>
     <string name="mods_choose_mod">Choose a mod</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Dependency</string>

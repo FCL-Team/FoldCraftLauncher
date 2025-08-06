@@ -722,6 +722,7 @@
     <string name="mods_check_updates_source">下载源</string>
     <string name="mods_check_updates_target_version">目标版本</string>
     <string name="mods_check_updates_update">更新</string>
+    <string name="mods_check_updates_update_without">更新（不保留旧版本）</string>
     <string name="mods_choose_mod">选择模组</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">依赖</string>
