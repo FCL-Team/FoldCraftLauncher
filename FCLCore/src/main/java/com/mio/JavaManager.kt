@@ -10,7 +10,7 @@ object JavaManager {
     private var isInit = false;
 
     @JvmStatic
-    val javaList: MutableList<JavaVersion> = mutableListOf()
+    val javaList: LinkedHashSet<JavaVersion> = linkedSetOf()
         get() {
             if (!isInit) {
                 init()
@@ -46,7 +46,7 @@ object JavaManager {
 
     @JvmStatic
     fun getJavaFromVersionName(name: String): JavaVersion {
-        return javaList.find { it.name == name } ?: javaList[0]
+        return javaList.find { it.name == name } ?: javaList.first()
     }
 
     @JvmStatic
