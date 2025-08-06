@@ -67,7 +67,7 @@ class ModChecker(val context: Context, val version: String) {
                         )
                 }
 
-                "imblocker", "ingameime" -> {
+                "imblocker", "ingameime", "inputmethodblocker" -> {
                     throw ModCheckException(
                         context.getString(
                             R.string.mod_check_imblocker,
