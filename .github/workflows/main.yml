@@ -51,11 +51,14 @@ jobs:
         run: yes | sdkmanager --licenses
 
       - name: Provision keystore from secret (optional)
-        if: ${{ secrets.ANDROID_KEYSTORE_B64 != '' }}
         env:
           ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
         run: |
-          echo "$ANDROID_KEYSTORE_B64" | base64 -d > key-store.jks
+          if [ -n "$ANDROID_KEYSTORE_B64" ]; then
+            echo "$ANDROID_KEYSTORE_B64" | base64 -d > key-store.jks
+          else
+            echo "ANDROID_KEYSTORE_B64 not set; skipping keystore provisioning"
+          fi
 
       - name: Build ${{matrix.arch}} .apk
         run: |
