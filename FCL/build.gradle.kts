@@ -1,4 +1,3 @@
-import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.tasks.MergeSourceSetFolders
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,7 +46,11 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("FCLKey")
         }
         create("fordebug") {
@@ -62,32 +65,26 @@ android {
         }
     }
 
+    // Use default output naming and set the base archive name; default naming will include buildType and ABI when splits are enabled
+    project.setProperty("archivesBaseName", "FCL-${defaultConfig.versionName}")
+
     androidComponents {
         onVariants { variant ->
-            variant.outputs.forEach { output ->
-                if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
-                    (output.getFilter(ABI)?.identifier ?: "all").let { abi ->
-                        output.outputFileName =
-                            "FCL-${variant.buildType}-${defaultConfig.versionName}-${abi}.apk"
-                    }
-
-                    val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
-                    afterEvaluate {
-                        val task =
-                            tasks.named("merge${variantName}Assets").get() as MergeSourceSetFolders
-                        task.doLast {
-                            val arch = System.getProperty("arch", "all")
-                            val assetsDir = task.outputDir.get().asFile
-                            val jreList = listOf("jre8", "jre11", "jre17", "jre21")
-                            println("arch:$arch")
-                            jreList.forEach { jre ->
-                                val runtimeDir = "$assetsDir/app_runtime/java/$jre"
-                                println("runtimeDir:$runtimeDir")
-                                File(runtimeDir).listFiles().forEach {
-                                    if (arch != "all" && it.name != "version" && !it.name.contains("universal") && it.name != "bin-${arch}.tar.xz") {
-                                        println("delete:${it} : ${it.delete()}")
-                                    }
-                                }
+            // Prune embedded JRE assets per selected arch after assets are merged
+            val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
+            afterEvaluate {
+                val task = tasks.named("merge${variantName}Assets").get() as MergeSourceSetFolders
+                task.doLast {
+                    val arch = System.getProperty("arch", "all")
+                    val assetsDir = task.outputDir.get().asFile
+                    val jreList = listOf("jre8", "jre11", "jre17", "jre21")
+                    println("arch:$arch")
+                    jreList.forEach { jre ->
+                        val runtimeDir = "$assetsDir/app_runtime/java/$jre"
+                        println("runtimeDir:$runtimeDir")
+                        File(runtimeDir).listFiles().forEach {
+                            if (arch != "all" && it.name != "version" && !it.name.contains("universal") && it.name != "bin-${arch}.tar.xz") {
+                                println("delete:${it} : ${it.delete()}")
                             }
                         }
                     }
@@ -129,6 +126,7 @@ android {
                     "x86" -> include("x86")
                     "x86_64" -> include("x86_64")
                 }
+                isUniversalApk = false
             }
         }
     }
@@ -142,10 +140,10 @@ dependencies {
     implementation(project(":FCLauncher"))
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.14.0")
     implementation("org.nanohttpd:nanohttpd:2.3.1")
-    implementation("org.apache.commons:commons-compress:1.26.0")
-    implementation("org.tukaani:xz:1.9")
+    implementation("org.apache.commons:commons-compress:1.26.2")
+    implementation("org.tukaani:xz:1.10")
     implementation("com.github.steveice10:opennbt:1.5")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.android.material:material:1.12.0")

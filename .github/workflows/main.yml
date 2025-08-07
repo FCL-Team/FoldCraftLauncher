@@ -22,6 +22,7 @@ jobs:
       FCL_KEYSTORE_PASSWORD: ${{ secrets.FCL_KEYSTORE_PASSWORD }}
       CURSE_API_KEY: ${{ secrets.CURSE_API_KEY }}
       OAUTH_API_KEY: ${{ secrets.OAUTH_API_KEY }}
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
     name: Build for ${{matrix.arch}}
     runs-on: ubuntu-22.04
     steps:
@@ -36,10 +37,30 @@ jobs:
           java-version: 17
           cache: 'gradle'
 
+      - name: Set up Android SDK and NDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+            ndk;27.0.12077973
+            cmdline-tools;latest
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Provision keystore from secret (optional)
+        if: ${{ secrets.ANDROID_KEYSTORE_B64 != '' }}
+        env:
+          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_B64" | base64 -d > key-store.jks
+
       - name: Build ${{matrix.arch}} .apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblerelease -Darch=${{matrix.arch}}
+          ./gradlew assemblerelease -Darch=${{matrix.arch}} --warning-mode all
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -73,10 +94,22 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+            cmdline-tools;latest
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
+
       - name: Build debug apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblefordebug -Darch=all
+          ./gradlew assemblefordebug -Darch=all --warning-mode all
 
       - name: Upload debug apk
         uses: actions/upload-artifact@v4
