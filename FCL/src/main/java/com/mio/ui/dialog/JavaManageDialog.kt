@@ -29,6 +29,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.File
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
@@ -37,11 +38,12 @@ import java.util.concurrent.CompletableFuture
 class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
     private val versionList = mutableListOf<JavaVersion>()
     private var isLoading = false
+    private val binding: DialogManageJavaBinding
 
     init {
         setCancelable(false)
         window?.setLayout(ConvertUtils.dip2px(context, 500F), ViewGroup.LayoutParams.MATCH_PARENT)
-        val binding = DialogManageJavaBinding.inflate(layoutInflater)
+        binding = DialogManageJavaBinding.inflate(layoutInflater)
         setContentView(binding.root)
         refresh()
         binding.recyclerView.adapter =
@@ -110,81 +112,99 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                             } else {
                                 Files.newInputStream(Paths.get(path))
                             }
-                            binding.progress.visibility = View.VISIBLE
-                            binding.recyclerView.visibility = View.GONE
-                            isLoading = true
-                            CompletableFuture.supplyAsync {
-                                try {
-                                    val dest = File(FCLPath.JAVA_PATH, fileName)
-                                    if (dest.exists()) {
-                                        FileUtils.deleteDirectory(dest)
+                            if (JavaManager.javaList.any { it.name == fileName }) {
+                                FCLAlertDialog.Builder(context)
+                                    .setMessage(context.getString(R.string.import_java_overwrite_wrong))
+                                    .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                                    .setPositiveButton(context.getString(R.string.button_overwrite)) {
+                                        doImport(inputStream, fileName)
                                     }
-                                    RuntimeUtils.uncompressTarXZ(
-                                        inputStream,
-                                        dest
-                                    )
-                                    RuntimeUtils.patchJava(context, dest.absolutePath)
-                                } catch (_: Throwable) {
-                                    return@supplyAsync false
-                                }
-                                return@supplyAsync true
-                            }.thenApplyAsync {
-                                if (it) {
-                                    return@thenApplyAsync AndroidUtil.checkElfIsAndroid(
-                                        File(
-                                            FCLPath.JAVA_PATH,
-                                            fileName
-                                        ).resolve("bin/java")
-                                    )
-                                }
-                                return@thenApplyAsync false
-                            }.thenAcceptAsync {
-                                Schedulers.androidUIThread().execute {
-                                    isLoading = false
-                                    binding.progress.visibility = View.GONE
-                                    binding.recyclerView.visibility = View.VISIBLE
-                                    if (it) {
-                                        JavaManager.addToJavaVersion(
-                                            File(
-                                                FCLPath.JAVA_PATH,
-                                                fileName
-                                            )
-                                        )
-                                        refresh()
-                                        binding.recyclerView.adapter?.notifyDataSetChanged()
-                                    } else {
-                                        FCLAlertDialog.Builder(context)
-                                            .setMessage(context.getString(R.string.import_java_error))
-                                            .setAlertLevel(
-                                                FCLAlertDialog.AlertLevel.ALERT
-                                            )
-                                            .setPositiveButton(context.getString(R.string.mod_check_continue)) {
-                                                JavaManager.addToJavaVersion(
-                                                    File(
-                                                        FCLPath.JAVA_PATH,
-                                                        fileName
-                                                    )
-                                                )
-                                                refresh()
-                                                binding.recyclerView.adapter?.notifyDataSetChanged()
-                                            }
-                                            .setNegativeButton(context.getString(R.string.button_cancel)) {
-                                                FileUtils.deleteDirectory(
-                                                    File(
-                                                        FCLPath.JAVA_PATH,
-                                                        fileName
-                                                    )
-                                                )
-                                            }
-                                            .create()
-                                            .show()
+                                    .setNegativeButton(context.getString(R.string.button_cancel)) {
+                                        inputStream?.close()
                                     }
-                                }
+                                    .create()
+                                    .show()
+                            } else {
+                                doImport(inputStream, fileName)
                             }
                         }
                     }
+                }
+            )
+        }
+    }
 
-                })
+    private fun doImport(inputStream: InputStream?, fileName: String) {
+        binding.progress.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
+        isLoading = true
+        CompletableFuture.supplyAsync {
+            try {
+                val dest = File(FCLPath.JAVA_PATH, fileName)
+                JavaManager.remove(fileName)
+                RuntimeUtils.uncompressTarXZ(
+                    inputStream,
+                    dest
+                )
+                RuntimeUtils.patchJava(context, dest.absolutePath)
+            } catch (_: Throwable) {
+                return@supplyAsync false
+            } finally {
+                inputStream?.close()
+            }
+            return@supplyAsync true
+        }.thenApplyAsync {
+            if (it) {
+                return@thenApplyAsync AndroidUtil.checkElfIsAndroid(
+                    File(
+                        FCLPath.JAVA_PATH,
+                        fileName
+                    ).resolve("bin/java")
+                )
+            }
+            return@thenApplyAsync false
+        }.thenAcceptAsync {
+            Schedulers.androidUIThread().execute {
+                isLoading = false
+                binding.progress.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+                if (it) {
+                    JavaManager.addToJavaVersion(
+                        File(
+                            FCLPath.JAVA_PATH,
+                            fileName
+                        )
+                    )
+                    refresh()
+                    binding.recyclerView.adapter?.notifyDataSetChanged()
+                } else {
+                    FCLAlertDialog.Builder(context)
+                        .setMessage(context.getString(R.string.import_java_error))
+                        .setAlertLevel(
+                            FCLAlertDialog.AlertLevel.ALERT
+                        )
+                        .setPositiveButton(context.getString(R.string.mod_check_continue)) {
+                            JavaManager.addToJavaVersion(
+                                File(
+                                    FCLPath.JAVA_PATH,
+                                    fileName
+                                )
+                            )
+                            refresh()
+                            binding.recyclerView.adapter?.notifyDataSetChanged()
+                        }
+                        .setNegativeButton(context.getString(R.string.button_cancel)) {
+                            FileUtils.deleteDirectory(
+                                File(
+                                    FCLPath.JAVA_PATH,
+                                    fileName
+                                )
+                            )
+                        }
+                        .create()
+                        .show()
+                }
+            }
         }
     }
 

@@ -29,7 +29,11 @@ object JavaManager {
 
     @JvmStatic
     fun remove(name: String) {
-        FileUtils.deleteDirectory(File(FCLPath.JAVA_PATH, name))
+        File(FCLPath.JAVA_PATH, name).let {
+            if (it.exists()) {
+                FileUtils.deleteDirectory(it)
+            }
+        }
         javaList.removeIf { it.name == name }
     }
 
@@ -40,13 +44,14 @@ object JavaManager {
                     ?.let { match ->
                         match.groupValues[1]
                     } ?: return
+            javaList.removeIf { it.name == javaDir.name }
             javaList.add(JavaVersion(false, version, javaDir.name))
         }
     }
 
     @JvmStatic
     fun getJavaFromVersionName(name: String): JavaVersion {
-        return javaList.find { it.name == name } ?: javaList[0]
+        return javaList.find { it.name == name } ?: javaList.first()
     }
 
     @JvmStatic

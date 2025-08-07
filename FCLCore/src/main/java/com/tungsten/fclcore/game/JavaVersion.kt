@@ -33,4 +33,13 @@ class JavaVersion(val isAuto: Boolean, val versionName: String, val name: String
             return JavaManager.getSuitableJavaVersion(version)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other !is JavaVersion) false
+        else name == other.name
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
 }
