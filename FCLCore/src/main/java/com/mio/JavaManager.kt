@@ -10,7 +10,7 @@ object JavaManager {
     private var isInit = false;
 
     @JvmStatic
-    val javaList: LinkedHashSet<JavaVersion> = linkedSetOf()
+    val javaList: MutableList<JavaVersion> = mutableListOf()
         get() {
             if (!isInit) {
                 init()
@@ -29,7 +29,11 @@ object JavaManager {
 
     @JvmStatic
     fun remove(name: String) {
-        FileUtils.deleteDirectory(File(FCLPath.JAVA_PATH, name))
+        File(FCLPath.JAVA_PATH, name).let {
+            if (it.exists()) {
+                FileUtils.deleteDirectory(it)
+            }
+        }
         javaList.removeIf { it.name == name }
     }
 
@@ -40,6 +44,7 @@ object JavaManager {
                     ?.let { match ->
                         match.groupValues[1]
                     } ?: return
+            javaList.removeIf { it.name == javaDir.name }
             javaList.add(JavaVersion(false, version, javaDir.name))
         }
     }
