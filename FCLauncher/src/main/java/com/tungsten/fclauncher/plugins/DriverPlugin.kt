@@ -31,7 +31,7 @@ object DriverPlugin {
     fun init(context: Context) {
         isInit = true
         driverList.add(Driver("Turnip", context.applicationInfo.nativeLibraryDir))
-        selected = driverList[0]
+        selected = driverList.first()
         val queryIntentActivities =
             context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"),
                 PACKAGE_FLAGS
@@ -47,7 +47,7 @@ object DriverPlugin {
             if (metaData.getBoolean("fclPlugin", false)) {
                 val driver = metaData.getString("driver") ?: return
                 val nativeLibraryDir = info.nativeLibraryDir
-                driverList.add(
+                add(
                     Driver(
                         driver,
                         nativeLibraryDir
@@ -55,5 +55,10 @@ object DriverPlugin {
                 )
             }
         }
+    }
+
+    private fun add(driver: Driver) {
+        driverList.removeIf { it.path == driver.path }
+        driverList.add(driver)
     }
 }
