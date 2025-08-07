@@ -61,7 +61,7 @@ object RendererPlugin {
                 val pojavEnv = pojavEnvString.split(":")
                 val minMCVer = metaData.safeGetString("minMCVer") ?: ""
                 val maxMCVer = metaData.safeGetString("maxMCVer") ?: ""
-                rendererList.add(
+                addRenderer(
                     Renderer(
                         renderer[0],
                         des,
@@ -77,6 +77,11 @@ object RendererPlugin {
                 )
             }
         }
+    }
+
+    private fun addRenderer(renderer: Renderer) {
+        rendererList.removeIf { it.id == renderer.id }
+        rendererList.add(renderer)
     }
 
     private fun Bundle.safeGetString(key: String): String? {
