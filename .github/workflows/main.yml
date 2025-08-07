@@ -11,6 +11,10 @@ on:
       - 'version_map.json'
   workflow_dispatch:
 
+concurrency:
+  group: android-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   FCLTeamBuild:
     if: github.repository_owner == 'FCL-Team' && !startsWith(github.ref, 'refs/pull/')
@@ -63,7 +67,15 @@ jobs:
       - name: Build ${{matrix.arch}} .apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblerelease -Darch=${{matrix.arch}} --warning-mode all
+          ./gradlew assembleRelease -Darch=${{matrix.arch}} --warning-mode all --parallel --build-cache
+
+      - name: Upload mapping (release)
+        if: startsWith(github.ref, 'refs/tags/') || startsWith(github.ref, 'refs/heads/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapping-${{matrix.arch}}
+          path: FCL/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: ignore
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -112,7 +124,7 @@ jobs:
       - name: Build debug apk
         run: |
           chmod +x gradlew
-          ./gradlew assemblefordebug -Darch=all --warning-mode all
+          ./gradlew assembleForDebug -Darch=all --warning-mode all --parallel --build-cache
 
       - name: Upload debug apk
         uses: actions/upload-artifact@v4
