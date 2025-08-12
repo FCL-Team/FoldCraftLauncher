@@ -70,7 +70,7 @@ public class DefaultCacheRepository extends CacheRepository {
                 index = JsonUtils.fromNonNullJson(FileUtils.readText(indexFile), Index.class);
             else
                 index = new Index();
-        } catch (IOException | JsonParseException e) {
+        } catch (Exception e) {
             Logging.LOG.log(Level.WARNING, "Unable to read index file", e);
             index = new Index();
         } finally {

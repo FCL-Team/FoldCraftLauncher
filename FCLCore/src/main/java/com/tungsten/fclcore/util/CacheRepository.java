@@ -77,7 +77,7 @@ public class CacheRepository {
                     index = joinETagIndexes(raw.eTag);
             } else
                 index = new HashMap<>();
-        } catch (IOException | JsonParseException e) {
+        } catch (Exception e) {
             LOG.log(Level.WARNING, "Unable to read index file", e);
             index = new HashMap<>();
         } finally {
