@@ -22,6 +22,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -81,7 +82,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     }
 
     @Override
-    public SearchResult search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sort, SortOrder sortOrder) throws IOException {
+    public SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sort, SortOrder sortOrder) throws IOException {
         List<List<String>> facets = new ArrayList<>();
         facets.add(Collections.singletonList("project_type:" + projectType));
         if (StringUtils.isNotBlank(gameVersion)) {
@@ -97,10 +98,10 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                 pair("limit", Integer.toString(pageSize)),
                 pair("index", convertSortType(sort))
         );
-        Response<ProjectSearchResult> response = HttpRequest.GET(NetworkUtils.withQuery(PREFIX + "/v2/search", query))
+        Response<ProjectSearchResult> response = HttpRequest.GET(downloadProvider.injectURL(NetworkUtils.withQuery(PREFIX + "/v2/search", query)))
                 .getJson(new TypeToken<Response<ProjectSearchResult>>() {
                 }.getType());
-        return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int)Math.ceil((double)response.totalHits / pageSize));
+        return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int) Math.ceil((double) response.totalHits / pageSize));
     }
 
     @Override
@@ -143,7 +144,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     }
 
     public List<Category> getCategoriesImpl() throws IOException {
-        List<Category> categories = HttpRequest.GET(PREFIX + "/v2/tag/category").getJson(new TypeToken<List<Category>>() {}.getType());
+        List<Category> categories = HttpRequest.GET(PREFIX + "/v2/tag/category").getJson(new TypeToken<List<Category>>() {
+        }.getType());
         return categories.stream().filter(category -> category.getProjectType().equals(projectType)).collect(Collectors.toList());
     }
 
@@ -161,7 +163,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         private final String projectType;
 
         public Category() {
-            this("","","");
+            this("", "", "");
         }
 
         public Category(String icon, String name, String projectType) {
@@ -534,11 +536,16 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     }).filter(Objects::nonNull).collect(Collectors.toList()),
                     gameVersions,
                     loaders.stream().flatMap(loader -> {
-                        if ("fabric".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FABRIC);
-                        else if ("forge".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FORGE);
-                        else if ("neoforge".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.NEO_FORGED);
-                        else if ("quilt".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.QUILT);
-                        else if ("liteloader".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.LITE_LOADER);
+                        if ("fabric".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FABRIC);
+                        else if ("forge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FORGE);
+                        else if ("neoforge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.NEO_FORGED);
+                        else if ("quilt".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.QUILT);
+                        else if ("liteloader".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.LITE_LOADER);
                         else return Stream.empty();
                     }).collect(Collectors.toList())
             ));

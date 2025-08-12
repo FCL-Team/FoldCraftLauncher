@@ -27,6 +27,7 @@ import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
@@ -109,6 +110,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
     PageDownloadBinding binding;
     ModLoaderType selectedModLoader;
+    private final DownloadProvider downloadProvider;
 
     public void setLoading(boolean loading) {
         Schedulers.androidUIThread().execute(() -> {
@@ -151,7 +153,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             executor.cancel();
         }
         executor = Task.supplyAsync(() -> {
-                    RemoteModRepository.SearchResult result = repository.search(userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
+                    RemoteModRepository.SearchResult result = repository.search(downloadProvider, userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
                     ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
                     if (DownloadPage.this instanceof ModDownloadPage && selectedModLoader != null) {
                         list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
@@ -199,7 +201,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     public DownloadPage(Context context, int id, FCLUILayout parent, int resId, RemoteModRepository repository) {
         super(context, id, parent, resId);
         this.repository = repository;
-
+        this.downloadProvider = DownloadProviders.getDownloadProvider();
         switch (id) {
             case PAGE_ID_DOWNLOAD_MODPACK:
                 this.callback = ((profile, version, file) -> Versions.downloadModpackImpl(context, parent, profile, file));
