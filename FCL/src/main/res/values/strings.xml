@@ -1065,8 +1065,8 @@
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
     </string>
-    <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
-    <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
+    <string name="wiki_game">https://es.minecraft.wiki/w/Special:Search?search=%s</string>
+    <string name="wiki_game_search">Java_Edition_%s</string>
     <string name="installed">Installed</string>
     <string name="message_install_plugin">You can get plugins through the following ways.</string>
     <string name="message_install_java">You can get Java through the following ways.</string>

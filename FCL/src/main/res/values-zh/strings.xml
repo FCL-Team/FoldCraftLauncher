@@ -1003,8 +1003,8 @@
     <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
 
-    <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
-    <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
+    <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>
+    <string name="wiki_game_search">Java版%s</string>
     <string name="installed">已安装</string>
     <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
     <string name="message_install_java">你可以通过以下方式获取Java。</string>
