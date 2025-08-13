@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1245,
-    "versionName": "1.2.4.5",
-    "date": "2025.08.08",
+    "versionCode": 1246,
+    "versionName": "1.2.4.6",
+    "date": "2025.08.13",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added detection for the InputMethodBlocker mod  \n2. Added the feature to remove old version files when updating mods  \n3. Fixed the issue of duplicate display when importing Java with duplicate names  \n4. Added a pop-up warning for duplicate Java imports  \n5. Fixed the issue where the renderer plugins list might display duplicates  \n6. Fixed the issue where the Vulkan driver plugins list might show duplicates"
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where initializing CacheRepository caused the launcher to crash  \n2. Fixed RemoteMod::getIntegrityCheck not using the correct algorithm  \n3. Fixed version Wiki mapping  \n4. Added support for accelerating mod search via MCIM"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加对InputMethodBlocker模组的检测\n2.增加更新模组不保留旧版本文件的功能\n3.修复导入重名的Java后重复显示的问题\n4.增加重复导入Java的弹窗提示\n5.修复渲染器插件列表可能重复显示的问题\n6.修复Vulkan驱动插件列表可能重复的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复初始化 CacheRepository 导致启动器崩溃的问题\n2.修复 RemoteMod::getIntegrityCheck 未选择正确的算法的问题\n3.修复版本 Wiki 映射\n4.支持通过 MCIM 加速模组搜索"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/0a7312fc35c7",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.5/FCL-release-1.2.4.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/1b506b8c6d18",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.6/FCL-release-1.2.4.6-all.apk"
   }
 ]
