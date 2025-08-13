@@ -29,4 +29,13 @@ data class Renderer(
     fun isEqual(id: String): Boolean {
         return this.id == id
     }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other !is Renderer) false
+        else id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }
