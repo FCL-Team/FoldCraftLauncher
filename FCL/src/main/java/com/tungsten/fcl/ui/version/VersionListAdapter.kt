@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemVersionBinding
+import com.tungsten.fcl.ui.manage.ManagePageManager
 import com.tungsten.fcllibrary.component.FCLAdapter
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLImageButton
@@ -28,6 +29,7 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
         lateinit var title: FCLTextView
         lateinit var tag: FCLTextView
         lateinit var subtitle: FCLTextView
+        lateinit var setting: FCLImageButton
         lateinit var delete: FCLImageButton
     }
 
@@ -52,6 +54,7 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
             viewHolder.title = binding.title
             viewHolder.tag = binding.tag
             viewHolder.subtitle = binding.subtitle
+            viewHolder.setting = binding.setting
             viewHolder.delete = binding.delete
             view.tag = viewHolder
         } else {
@@ -81,6 +84,19 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
         view.setOnClickListener(View.OnClickListener { v: View? ->
             versionListItem.profile.selectedVersion = versionListItem.version
         })
+        if (!versionListItem.profile.getVersionSetting(versionListItem.version).isGlobal) {
+            viewHolder.setting.visibility = View.VISIBLE
+            viewHolder.setting.setOnClickListener {
+                versionListItem.profile.selectedVersion = versionListItem.version
+                val uiManager = MainActivity.getInstance().uiManager
+                MainActivity.getInstance().binding.manage.isSelected = true
+                uiManager.manageUI.checkPageManager {
+                    uiManager.manageUI.pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_SETTING)
+                }
+            }
+        } else {
+            viewHolder.setting.visibility = View.GONE
+        }
         MainActivity.getInstance().lifecycleScope.launch {
             var modCount = 0
             runCatching {

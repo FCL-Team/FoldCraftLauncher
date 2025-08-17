@@ -8,6 +8,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.controller.ControllerPageManager;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
@@ -31,6 +32,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     private ManagePageManager pageManager;
 
     private FCLUILayout container;
+    private Runnable runnable;
 
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
@@ -99,6 +101,9 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void initPages() {
         pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING, null);
+        if (runnable != null) {
+            runnable.run();
+        }
     }
 
     @Override
@@ -199,5 +204,16 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     public interface VersionLoadable {
         void loadVersion(Profile profile, String version);
+    }
+
+    public ManagePageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void checkPageManager(Runnable runnable) {
+        this.runnable = runnable;
+        if (pageManager != null) {
+            runnable.run();
+        }
     }
 }
