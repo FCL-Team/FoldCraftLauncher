@@ -98,7 +98,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     @Override
     public void initPages() {
-        pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_MANAGE, null);
+        pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING, null);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         if (pageManager != null) {
             switch (tab.getPosition()) {
                 case 1:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_SETTING);
+                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE);
                     break;
                 case 2:
                     pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_INSTALL);
@@ -133,7 +133,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                     pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_WORLD);
                     break;
                 default:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE);
+                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_SETTING);
                     break;
             }
         }
