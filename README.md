@@ -69,3 +69,7 @@
 - [Boat 及其相关项目](https://github.com/AOF-Dev/Boat)
 - [PojavLauncher 及其相关项目](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+
+### 第三方组件
+- [NG-GL4ES (Krypton Wrapper)](https://github.com/BZLZHH/NG-GL4ES)
+- [mesa](https://gitlab.freedesktop.org/mesa/mesa)
