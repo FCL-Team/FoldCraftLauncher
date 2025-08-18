@@ -310,6 +310,7 @@ public class FCLauncher {
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
+            // TODO: set NGG_DIR_PATH to custom path
             if (!FCLBridge.BACKEND_IS_BOAT) {
                 envMap.put("POJAV_RENDERER", "opengles3");
                 envMap.put("POJAVEXEC_EGL", "libEGL.so");
