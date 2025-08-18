@@ -795,6 +795,7 @@
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
+    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.0+, 内置的)</string>
     <string name="settings_fcl_driver">Vulkan驱动</string>
 
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>

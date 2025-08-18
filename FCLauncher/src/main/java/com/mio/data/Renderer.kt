@@ -19,6 +19,7 @@ data class Renderer(
         const val ID_ZINK = "18d93f17-ff53-a319-fa61-58709a77bf87"
         const val ID_FREEDRENO = "8d427e6c-9d22-2d19-db0c-3b9ac2c1543f"
         const val ID_GL4ESPLUS = "1a46495a-5503-eaf5-9e3d-1ba08626b95b"
+        const val ID_NGGL4ES = "e7b90ed6-e518-4d4e-93dc-5c7133cd5b31"
     }
 
     fun getGLPath(): String {

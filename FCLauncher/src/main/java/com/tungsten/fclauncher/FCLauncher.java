@@ -302,6 +302,18 @@ public class FCLauncher {
                 envMap.put("POJAV_RENDERER", "opengles3");
                 envMap.put("POJAVEXEC_EGL", useAngle ? "libEGL_angle.so" : renderer.getEglName());
             }
+        } else if (renderer.isEqual(Renderer.ID_NGGL4ES)) {
+            envMap.put("LIBGL_USE_MC_COLOR", "1");
+            envMap.put("DLOPEN", "libspirv-cross-c-shared.so");
+            envMap.put("LIBGL_GL", "30");
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBGL_NORMALIZE", "1");
+            envMap.put("LIBGL_NOINTOVLHACK", "1");
+            envMap.put("LIBGL_NOERROR", "1");
+            if (!FCLBridge.BACKEND_IS_BOAT) {
+                envMap.put("POJAV_RENDERER", "opengles3");
+                envMap.put("POJAVEXEC_EGL", "libEGL.so");
+            }
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
             envMap.put("MESA_GL_VERSION_OVERRIDE", renderer.isEqual(Renderer.ID_VIRGL) ? "4.3" : "4.6");

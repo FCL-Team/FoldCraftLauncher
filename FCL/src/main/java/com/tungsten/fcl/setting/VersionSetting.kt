@@ -212,7 +212,7 @@ class VersionSetting : Cloneable {
         }
 
     val rendererProperty: StringProperty =
-        SimpleStringProperty(this, "render", Renderer.ID_GL4ES)
+        SimpleStringProperty(this, "render", Renderer.ID_NGGL4ES)
     var renderer: String
         get() = rendererProperty.get()
         set(renderer) {
@@ -357,7 +357,7 @@ class VersionSetting : Cloneable {
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
                 vs.renderer =
-                    json["renderer"]?.asString ?: Renderer.ID_GL4ES
+                    json["renderer"]?.asString ?: Renderer.ID_NGGL4ES
                 vs.driver = json["driver"]?.asString ?: "Turnip"
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
