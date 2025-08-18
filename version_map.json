@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1246,
-    "versionName": "1.2.4.6",
-    "date": "2025.08.13",
+    "versionCode": 1247,
+    "versionName": "1.2.4.7",
+    "date": "2025.08.18",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where initializing CacheRepository caused the launcher to crash  \n2. Fixed RemoteMod::getIntegrityCheck not using the correct algorithm  \n3. Fixed version Wiki mapping  \n4. Added support for accelerating mod search via MCIM"
+        "text": "(Translated from Chinese by AI)\n1. New feature: Added local storage management launcher for `/data/data` and `Android/data` folders using MT Manager.  \n2. Temporarily disabled MCIM acceleration.  \n3. Optimized the initial size of ByteArrayOutputStream in GetTask.  \n4. Relocated game settings (game-specific settings) and version management positions.  \n5. New feature: Added quick jump option for versions with enabled game-specific settings in the version list."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复初始化 CacheRepository 导致启动器崩溃的问题\n2.修复 RemoteMod::getIntegrityCheck 未选择正确的算法的问题\n3.修复版本 Wiki 映射\n4.支持通过 MCIM 加速模组搜索"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：使用MT管理器添加本地储存管理启动器/data/data与Android/data文件夹\n2.暂时禁用MCIM加速\n3.优化 GetTask 中 ByteArrayOutputStream 的初始大小\n4.调整游戏设置（特定游戏设置）与版本管理位置\n5.新增功能：在版本列表内添加对已启用特定游戏设置的版本快捷跳转的选项"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/1b506b8c6d18",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.6/FCL-release-1.2.4.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/0e5ae2f91cfa",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.7/FCL-release-1.2.4.7-all.apk"
   }
 ]
