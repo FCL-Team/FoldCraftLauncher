@@ -13,7 +13,6 @@ object RendererManager {
     lateinit var RENDERER_VGPU: Renderer
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_FREEDRENO: Renderer
-    lateinit var RENDERER_GL4ESPLUS: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
     private var isInit = false
 
@@ -94,19 +93,6 @@ object RendererManager {
             ""
         )
 
-        RENDERER_GL4ESPLUS = Renderer(
-            "GL4ES+",
-            context.getString(R.string.settings_fcl_renderer_gl4esp),
-            "libgl4es_plus.so",
-            "libEGL.so",
-            "",
-            null,
-            null,
-            Renderer.ID_GL4ESPLUS,
-            "",
-            ""
-        )
-
         RENDERER_NGGL4ES = Renderer(
             "Krypton Wrapper",
             context.getString(R.string.settings_fcl_renderer_nggl4es),
@@ -132,7 +118,6 @@ object RendererManager {
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
         rendererList.add(RENDERER_FREEDRENO)
-        rendererList.add(RENDERER_GL4ESPLUS)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 
@@ -144,7 +129,7 @@ object RendererManager {
 
     @JvmStatic
     fun getRenderer(id: String): Renderer {
-        return rendererList.find { it.id == id } ?: RENDERER_GL4ES
+        return rendererList.find { it.id == id } ?: RENDERER_NGGL4ES
     }
 
 }
