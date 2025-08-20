@@ -67,3 +67,7 @@ This project is licensed under **[GPL-3.0 License](https://www.gnu.org/licenses/
 - [Boat and related projects](https://github.com/AOF-Dev/Boat)
 - [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+
+### Third-party components
+- [NG-GL4ES (Krypton Wrapper)](https://github.com/BZLZHH/NG-GL4ES)
+- [mesa](https://gitlab.freedesktop.org/mesa/mesa)

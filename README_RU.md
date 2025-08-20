@@ -67,3 +67,7 @@
 - [Boat и связанные проекты](https://github.com/AOF-Dev/Boat)
 - [PojavLauncher и связанные проекты](https://github.com/PojavLauncherTeam/PojavLauncher)
 - [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+
+### Сторонние компоненты
+- [NG-GL4ES (Krypton Wrapper)](https://github.com/BZLZHH/NG-GL4ES)
+- [mesa](https://gitlab.freedesktop.org/mesa/mesa)

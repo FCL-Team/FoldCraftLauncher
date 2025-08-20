@@ -14,6 +14,7 @@ object RendererManager {
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_FREEDRENO: Renderer
     lateinit var RENDERER_GL4ESPLUS: Renderer
+    lateinit var RENDERER_NGGL4ES: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -66,6 +67,7 @@ object RendererManager {
             "",
             "1.16.5"
         )
+
         RENDERER_ZINK = Renderer(
             "Zink",
             context.getString(R.string.settings_fcl_renderer_zink),
@@ -104,12 +106,27 @@ object RendererManager {
             "",
             ""
         )
+
+        RENDERER_NGGL4ES = Renderer(
+            "Krypton Wrapper",
+            context.getString(R.string.settings_fcl_renderer_nggl4es),
+            "libng_gl4es.so",
+            "libEGL.so",
+            "",
+            null,
+            null,
+            Renderer.ID_NGGL4ES,
+            "",
+            ""
+        )
+
         RendererPlugin.init(context)
         addRenderer()
         DriverPlugin.init(context)
     }
 
     private fun addRenderer() {
+        rendererList.add(RENDERER_NGGL4ES)
         rendererList.add(RENDERER_GL4ES)
         rendererList.add(RENDERER_VIRGL)
         rendererList.add(RENDERER_VGPU)
