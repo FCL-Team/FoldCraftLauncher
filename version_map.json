@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1247,
-    "versionName": "1.2.4.7",
-    "date": "2025.08.18",
+    "versionCode": 1248,
+    "versionName": "1.2.4.8",
+    "date": "2025.08.23",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New feature: Added local storage management launcher for `/data/data` and `Android/data` folders using MT Manager.  \n2. Temporarily disabled MCIM acceleration.  \n3. Optimized the initial size of ByteArrayOutputStream in GetTask.  \n4. Relocated game settings (game-specific settings) and version management positions.  \n5. New feature: Added quick jump option for versions with enabled game-specific settings in the version list."
+        "text": "(Translated from Chinese by AI)\n1. Built-in Krypton Wrapper renderer and use Krypton Wrapper by default  \n2. Remove GL4ES+ renderer  \n3. Optimize version number sorting rules  \n4. Support parsing Indev version numbers  \n5. Add release/snapshot categorization for NeoForge downloads"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：使用MT管理器添加本地储存管理启动器/data/data与Android/data文件夹\n2.暂时禁用MCIM加速\n3.优化 GetTask 中 ByteArrayOutputStream 的初始大小\n4.调整游戏设置（特定游戏设置）与版本管理位置\n5.新增功能：在版本列表内添加对已启用特定游戏设置的版本快捷跳转的选项"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.内置 Krypton Wrapper 渲染器并默认使用 Krypton Wrapper\n2.删除GL4ES+渲染器\n3.优化版本号排序规则\n4.支持解析 Indev 版本号\n5.为 NeoForge 下载添加正式版/快照分类"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/0e5ae2f91cfa",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.7/FCL-release-1.2.4.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/e3494f0eeac7",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.8/FCL-release-1.2.4.8-all.apk"
   }
 ]
