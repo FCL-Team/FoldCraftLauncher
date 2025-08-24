@@ -286,7 +286,7 @@ public class FCLauncher {
         } else if (renderer.isEqual(Renderer.ID_NGGL4ES)) {
             envMap.put("LIBGL_USE_MC_COLOR", "1");
             envMap.put("DLOPEN", "libspirv-cross-c-shared.so");
-            envMap.put("LIBGL_GL", "30");
+            envMap.put("LIBGL_GL", "31");
             envMap.put("LIBGL_ES", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
