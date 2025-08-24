@@ -26,6 +26,7 @@ object RendererManager {
         }
 
     fun init(context: Context) {
+        if (isInit) return
         isInit = true
         rendererList.clear()
         RENDERER_GL4ES = Renderer(

@@ -26,6 +26,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -144,6 +145,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         if (!ConfigHolder.isInit()) {
             try {
                 ConfigHolder.init()
+                //当强制关闭进程时，不会经过SplashActivity，此时需要重新初始化
+                RendererManager.init(this@MainActivity)
             } catch (e: IOException) {
                 LOG.log(Level.WARNING, e.message)
             }
