@@ -957,6 +957,7 @@
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>
+    <string name="version_game_april_fools">April Fools</string>
     <string name="version_game_release">Release</string>
     <string name="version_game_releases">Releases</string>
     <string name="version_game_snapshot">Snapshot</string>

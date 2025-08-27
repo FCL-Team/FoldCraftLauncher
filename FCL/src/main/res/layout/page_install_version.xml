@@ -47,6 +47,15 @@
             android:text="@string/version_game_old"
             app:auto_hint_tint="true" />
 
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/april_fools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="@string/version_game_april_fools"
+            app:auto_hint_tint="true" />
+
         <com.tungsten.fcllibrary.component.view.FCLEditText
             android:id="@+id/search"
             android:layout_width="0dp"

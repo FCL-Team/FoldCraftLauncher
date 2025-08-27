@@ -890,6 +890,7 @@
 
     <string name="version_game">遊戲</string>
     <string name="version_game_old">遠古版</string>
+    <string name="version_game_april_fools">愚人節</string>
     <string name="version_game_release">正式版</string>
     <string name="version_game_releases">正式版</string>
     <string name="version_game_snapshot">測試版</string>

@@ -15,6 +15,7 @@ import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -32,6 +33,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
     private FCLCheckBox checkRelease;
     private FCLCheckBox checkSnapShot;
     private FCLCheckBox checkOld;
+    private FCLCheckBox checkAprilFools;
     private FCLImageButton refresh;
     private FCLImageButton failedRefresh;
     private FCLProgressBar progressBar;
@@ -50,6 +52,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
         checkRelease = findViewById(R.id.release);
         checkSnapShot = findViewById(R.id.snapshot);
         checkOld = findViewById(R.id.old);
+        checkAprilFools = findViewById(R.id.april_fools);
         refresh = findViewById(R.id.refresh);
         failedRefresh = findViewById(R.id.failed_refresh);
         progressBar = findViewById(R.id.progress);
@@ -61,6 +64,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
         checkRelease.setOnCheckedChangeListener(this);
         checkSnapShot.setOnCheckedChangeListener(this);
         checkOld.setOnCheckedChangeListener(this);
+        checkAprilFools.setOnCheckedChangeListener(this);
         refresh.setOnClickListener(this);
         failedRefresh.setOnClickListener(this);
 
@@ -81,9 +85,15 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
                         case RELEASE:
                             return checkRelease.isChecked();
                         case SNAPSHOT:
-                            return checkSnapShot.isChecked();
+                            if (checkSnapShot.isChecked()) return true;
+                            else if (checkAprilFools.isChecked())
+                                return GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
+                            return false;
                         case OLD:
-                            return checkOld.isChecked();
+                            if (checkOld.isChecked()) return true;
+                            else if (checkAprilFools.isChecked())
+                                return GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
+                            return false;
                         default:
                             return true;
                     }
@@ -153,7 +163,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if (compoundButton == checkRelease || compoundButton == checkSnapShot || compoundButton == checkOld) {
+        if (compoundButton == checkRelease || compoundButton == checkSnapShot || compoundButton == checkOld || compoundButton == checkAprilFools) {
             refreshDisplayVersions();
         }
     }
