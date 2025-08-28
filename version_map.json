@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1248,
-    "versionName": "1.2.4.8",
-    "date": "2025.08.23",
+    "versionCode": 1249,
+    "versionName": "1.2.4.9",
+    "date": "2025.08.28",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Built-in Krypton Wrapper renderer and use Krypton Wrapper by default  \n2. Remove GL4ES+ renderer  \n3. Optimize version number sorting rules  \n4. Support parsing Indev version numbers  \n5. Add release/snapshot categorization for NeoForge downloads"
+        "text": "(Translated from Chinese by AI)\n1. Update the Krypton Wrapper renderer  \n2. Fix a crash that may occur due to uninitialized renderer  \n3. Resolve the issue of being unable to download all required files for NeoForge from BMCLAPI  \n4. Fix the launcher crash when importing data packs with abnormal formats  \n5. Add an April Fools' Day version download category"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.内置 Krypton Wrapper 渲染器并默认使用 Krypton Wrapper\n2.删除GL4ES+渲染器\n3.优化版本号排序规则\n4.支持解析 Indev 版本号\n5.为 NeoForge 下载添加正式版/快照分类"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新 Krypton Wrapper 渲染器\n2.修复渲染器未初始化可能造成的闪退\n3.修复无法从 BMCLAPI 下载 NeoForge 所有所需文件的问题\n4.修复导入异常格式的数据包时启动器崩溃的问题\n5.添加愚人节版本下载分类"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/e3494f0eeac7",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.8/FCL-release-1.2.4.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/fe67f0173fe5",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.9/FCL-release-1.2.4.9-all.apk"
   }
 ]
