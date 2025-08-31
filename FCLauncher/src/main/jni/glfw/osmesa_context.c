@@ -160,16 +160,14 @@ GLFWbool _glfwInitOSMesa(void)
     if (_glfw.osmesa.handle)
         return GLFW_TRUE;
 
+    load_vulkan();
+
     char *lib_name = getenv("LIB_MESA_NAME");
+    char *renderer = getenv("LIBGL_STRING");
     if (!lib_name) {
         lib_name = getenv("LIBGL_NAME");
     }
     _glfw.osmesa.handle = _glfw_dlopen(lib_name);
-
-    const char *renderer = getenv("LIBGL_STRING");
-    
-    if (!strcmp(renderer, "Zink") || !strcmp(renderer, "custom_gallium"))
-        load_vulkan();
 
     if (!_glfw.osmesa.handle)
     {
