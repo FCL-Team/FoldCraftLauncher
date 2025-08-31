@@ -37,16 +37,18 @@ object JavaManager {
         javaList.removeIf { it.name == name }
     }
 
-    fun addToJavaVersion(javaDir: File) {
+    fun addToJavaVersion(javaDir: File): Boolean {
         if (javaDir.isDirectory && javaDir.resolve("release").exists()) {
             val version =
                 Regex("JAVA_VERSION=\"([^\"]+)\"").find(javaDir.resolve("release").readText())
                     ?.let { match ->
                         match.groupValues[1]
-                    } ?: return
+                    } ?: return false
             javaList.removeIf { it.name == javaDir.name }
             javaList.add(JavaVersion(false, version, javaDir.name))
+            return true
         }
+        return false
     }
 
     @JvmStatic

@@ -1091,6 +1091,7 @@
     <string name="import_java">Import Java</string>
     <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
     <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string>
+    <string name="import_java_error_not_valid">It is detected that the currently imported Java file structure is invalid and cannot be used!</string>
     <string name="import_java_overwrite_wrong">This version of Java has already been imported. Overwrite the current version?</string>
 
     <string name="manage_version">Manage Versions</string>

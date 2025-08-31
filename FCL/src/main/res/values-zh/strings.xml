@@ -1029,6 +1029,7 @@
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
     <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
+    <string name="import_java_error_not_valid">检测到当前导入的Java文件结构无效，无法使用！</string>
     <string name="import_java_overwrite_wrong">该版本的Java已经导入过了，是否覆盖当前版本？</string>
 
     <string name="manage_version">管理版本</string>
