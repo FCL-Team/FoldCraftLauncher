@@ -166,7 +166,7 @@ JNIEXPORT jlong JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNI
     handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
 
     char * error = dlerror();
-    if(error) {
+    if(error != NULL && handle == NULL) {
         FCL_LOG("DLOPEN: loading %s (error = %s)", lib_name, error);
     } else {
         FCL_LOG("DLOPEN: loading %s", lib_name);
