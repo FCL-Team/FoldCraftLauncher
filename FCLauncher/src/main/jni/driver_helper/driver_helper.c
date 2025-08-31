@@ -1,12 +1,17 @@
 //
 // Created by Vera-Firefly on 17.01.2025.
 //
+
 #include <EGL/egl.h>
 #include <stdbool.h>
-#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <dlfcn.h>
+#include <inttypes.h>
 #include <android/dlext.h>
+#include "driver_helper.h"
 #include "nsbypass.h"
 #include "glfw/include/gl.h"
 
@@ -112,3 +117,26 @@ void* loadTurnipVulkan() {
 }
 
 #endif
+
+static void set_vulkan_ptr(void* ptr) {
+    char envval[64];
+    sprintf(envval, "%"PRIxPTR, (uintptr_t)ptr);
+    setenv("VULKAN_PTR", envval, 1);
+}
+
+void load_vulkan() {
+    if(getenv("VULKAN_DRIVER_SYSTEM") == NULL && android_get_device_api_level() >= 28) {
+#ifdef ADRENO_POSSIBLE
+        void* result = loadTurnipVulkan();
+        if(result != NULL) {
+            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
+            set_vulkan_ptr(result);
+            return;
+        }
+#endif
+    }
+    printf("OSMDroid: loading vulkan regularly...\n");
+    void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
+    printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
+    set_vulkan_ptr(vulkan_ptr);
+}
