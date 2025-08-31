@@ -31,6 +31,7 @@
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
 #include "fcl/include/utils.h"
+#include "driver_helper/driver_helper.h"
 
 #define GLFW_CLIENT_API 0x22001
 /* Consider GLFW_NO_API as Vulkan API */
@@ -46,8 +47,6 @@ EGLConfig config;
 struct PotatoBridge potatoBridge;
 
 void bigcore_set_affinity();
-
-void* loadTurnipVulkan();
 
 #define RENDERER_GL4ES 1
 #define RENDERER_VK_ZINK 2
@@ -97,32 +96,8 @@ EXTERNAL_API void* pojavGetCurrentContext() {
     return br_get_current();
 }
 
-static void set_vulkan_ptr(void* ptr) {
-    char envval[64];
-    sprintf(envval, "%"PRIxPTR, (uintptr_t)ptr);
-    setenv("VULKAN_PTR", envval, 1);
-}
-
-void load_vulkan() {
-    if (getenv("VULKAN_DRIVER_SYSTEM") == NULL &&
-        android_get_device_api_level() >= 28) { // the loader does not support below that
-#ifdef ADRENO_POSSIBLE
-        void* result = loadTurnipVulkan();
-        if(result != NULL) {
-            printf("AdrenoSupp: Loaded Turnip, loader address: %p\n", result);
-            set_vulkan_ptr(result);
-            return;
-        }
-#endif
-    }
-    printf("OSMDroid: loading vulkan regularly...\n");
-    void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
-    printf("OSMDroid: loaded vulkan, ptr=%p\n", vulkan_ptr);
-    set_vulkan_ptr(vulkan_ptr);
-    printVulkanInfo(vulkan_ptr);
-}
-
 int pojavInitOpenGL() {
+    load_vulkan();
     // Only affects GL4ES as of now
     const char *forceVsync = getenv("FORCE_VSYNC");
     if (!strcmp(forceVsync, "true"))
@@ -130,29 +105,39 @@ int pojavInitOpenGL() {
 
     // NOTE: Override for now.
     const char *renderer = getenv("POJAV_RENDERER");
-    if (!strncmp("opengles", renderer, 8)) {
+    if (!strncmp("opengles", renderer, 8))
+    {
         pojav_environ->config_renderer = RENDERER_GL4ES;
         set_gl_bridge_tbl();
-    } else if (!strcmp(renderer, "gallium_virgl")) {
+    }
+
+    if (!strcmp(renderer, "gallium_virgl"))
+    {
         pojav_environ->config_renderer = RENDERER_VIRGL;
         setenv("GALLIUM_DRIVER", "virpipe", 1);
         loadSymbolsVirGL();
         virglInit();
         return 0;
-    } else if (!strcmp(renderer, "vulkan_zink")) {
+    }
+
+    if (!strcmp(renderer, "vulkan_zink"))
+    {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
         setenv("GALLIUM_DRIVER", "zink", 1);
         set_osm_bridge_tbl();
-    } else if (!strcmp(renderer, "gallium_freedreno")) {
+    }
+
+    if (!strcmp(renderer, "gallium_freedreno"))
+    {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
         setenv("GALLIUM_DRIVER", "freedreno", 1);
         setenv("MESA_LOADER_DRIVER_OVERRIDE", "kgsl", 1);
         set_osm_bridge_tbl();
-    } else if (!strcmp(renderer, "custom_gallium")) {
+    }
+
+    if (!strcmp(renderer, "custom_gallium"))
+    {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
         set_osm_bridge_tbl();
     }
 
