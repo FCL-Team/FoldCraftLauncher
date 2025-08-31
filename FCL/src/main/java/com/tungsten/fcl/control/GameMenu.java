@@ -432,6 +432,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             }
         });
         showFps.setChecked(menuSetting.isShowFps());
+        showFps.setOnLongClickListener((view -> {
+            fpsText.resetPosition();
+            return true;
+        }));
 
         logWindow.visibilityProperty().setValue(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
         menuSetting.getShowLogProperty().addListener(observable -> {
