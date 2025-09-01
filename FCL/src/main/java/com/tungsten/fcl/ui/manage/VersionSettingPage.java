@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 
@@ -26,7 +27,6 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.WeakListenerHolder;
-import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.event.Event;
@@ -400,8 +400,10 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (versionId == null) {
             return;
         }
-
-        iconView.setImageDrawable(profile.getRepository().getVersionIconImage(versionId));
+        Schedulers.defaultScheduler().execute(() -> {
+            Drawable icon = profile.getRepository().getVersionIconImage(versionId);
+            Schedulers.androidUIThread().execute(() -> iconView.setImageDrawable(icon));
+        });
     }
 
     @Override
