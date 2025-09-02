@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1249,
-    "versionName": "1.2.4.9",
-    "date": "2025.08.28",
+    "versionCode": 1250,
+    "versionName": "1.2.5.0",
+    "date": "2025.09.02",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Update the Krypton Wrapper renderer  \n2. Fix a crash that may occur due to uninitialized renderer  \n3. Resolve the issue of being unable to download all required files for NeoForge from BMCLAPI  \n4. Fix the launcher crash when importing data packs with abnormal formats  \n5. Add an April Fools' Day version download category"
+        "text": "(Translated from Chinese by AI)\n1. New feature: Long press the 'Show FPS' switch to reset the FPS text position.  \n2. New feature: Detect whether the imported Java file structure is correct and provide reminders.  \n3. Fixed the issue of incorrect display of dlopen errors.  \n4. Fixed the crash caused by an exception in Pojav backend's call to GLFW#glfwExtensionSupported.  \n5. Optimized the issue of abnormal lag when loading the settings interface.  \n6. Force loading of Vulkan drivers."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新 Krypton Wrapper 渲染器\n2.修复渲染器未初始化可能造成的闪退\n3.修复无法从 BMCLAPI 下载 NeoForge 所有所需文件的问题\n4.修复导入异常格式的数据包时启动器崩溃的问题\n5.添加愚人节版本下载分类"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：长按‘显示FPS’开关重置FPS文本位置\n2.新增功能：检测导入的Java文件结构是否正确并提醒\n3.修复dlopen错误显示的问题\n4.修复Pojav后端调用GLFW#glfwExtensionSupported异常闪退的问题\n5.优化点击设置界面加载异常卡顿的问题\n6.强制加载Vulkan驱动"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/fe67f0173fe5",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.4.9/FCL-release-1.2.4.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/ef656af85f2c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.0/FCL-release-1.2.5.0-all.apk"
   }
 ]
