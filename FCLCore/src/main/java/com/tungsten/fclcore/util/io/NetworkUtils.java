@@ -26,6 +26,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -39,6 +40,16 @@ public final class NetworkUtils {
     private static final int TIME_OUT = 8000;
 
     private NetworkUtils() {
+    }
+
+    public static String addHttpsIfMissing(String url) {
+        if (Pattern.compile("^(?<scheme>[a-zA-Z][a-zA-Z0-9+.-]*)://").matcher(url).find())
+            return url;
+
+        if (url.startsWith("//"))
+            return "https:" + url;
+        else
+            return "https://" + url;
     }
 
     public static String withQuery(String baseUrl, Map<String, String> params) {
@@ -92,7 +103,12 @@ public final class NetworkUtils {
     }
 
     public static URLConnection createConnection(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
+        URLConnection connection;
+        try {
+            connection = url.openConnection();
+        } catch (IllegalArgumentException | MalformedURLException e) {
+            throw new IOException(e);
+        }
         String host = url.getHost().toLowerCase();
         if (endsWithDomainSuffix(host, "d.pcs.baidu.com") || endsWithDomainSuffix(host, "baidupcs.com")) {
             // Docs: https://alist.nn.ci/zh/guide/drivers/baidu.html

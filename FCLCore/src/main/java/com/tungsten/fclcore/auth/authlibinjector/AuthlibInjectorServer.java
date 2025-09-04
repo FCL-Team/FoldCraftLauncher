@@ -19,9 +19,6 @@ package com.tungsten.fclcore.auth.authlibinjector;
 
 import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Logging.LOG;
-import static com.tungsten.fclcore.util.io.IOUtils.readFullyAsByteArray;
-import static com.tungsten.fclcore.util.io.IOUtils.readFullyWithoutClosing;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 
 import java.io.IOException;
@@ -51,6 +48,7 @@ import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.IOUtils;
+import com.tungsten.fclcore.util.io.NetworkUtils;
 
 @JsonAdapter(AuthlibInjectorServer.Deserializer.class)
 public class AuthlibInjectorServer implements Observable {
@@ -59,7 +57,7 @@ public class AuthlibInjectorServer implements Observable {
 
     public static AuthlibInjectorServer locateServer(String url) throws IOException {
         try {
-            url = addHttpsIfMissing(url);
+            url = NetworkUtils.addHttpsIfMissing(url);
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestProperty("Accept-Language", Locale.getDefault().toLanguageTag());
 
@@ -87,14 +85,6 @@ public class AuthlibInjectorServer implements Observable {
         } catch (IllegalArgumentException e) {
             throw new IOException(e);
         }
-    }
-
-    private static String addHttpsIfMissing(String url) {
-        String lowercased = url.toLowerCase();
-        if (!lowercased.startsWith("http://") && !lowercased.startsWith("https://")) {
-            url = "https://" + url;
-        }
-        return url;
     }
 
     private static boolean urlEqualsIgnoreSlash(String a, String b) {
