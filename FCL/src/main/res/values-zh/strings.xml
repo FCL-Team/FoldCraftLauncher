@@ -1042,4 +1042,6 @@
     <string name="message_select_url">请选择一个链接进行下载（将会跳转至浏览器）</string>
     <string name="supported_mc_version">支持的MC版本：</string>
     <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
+    <string name="enabled">已启用</string>
+    <string name="disabled">已禁用</string>
 </resources>

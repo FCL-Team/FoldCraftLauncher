@@ -46,6 +46,22 @@
             android:layout_height="wrap_content"
             android:text="@string/search"/>
 
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/enabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/enabled"
+            app:auto_hint_tint="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/disabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/disabled"
+            app:auto_hint_tint="true" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
