@@ -1107,4 +1107,5 @@
     <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="message_warn_restart_after_change">The changes will take effect after restarting.</string>
 </resources>

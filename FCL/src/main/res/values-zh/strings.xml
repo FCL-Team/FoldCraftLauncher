@@ -1044,4 +1044,5 @@
     <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
     <string name="enabled">已启用</string>
     <string name="disabled">已禁用</string>
+    <string name="message_warn_restart_after_change">改动的内容将在重启后生效。</string>
 </resources>

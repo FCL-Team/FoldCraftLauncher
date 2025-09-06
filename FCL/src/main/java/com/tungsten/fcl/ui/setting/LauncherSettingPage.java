@@ -96,6 +96,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLCheckBox autoThreads;
     private FCLNumberSeekBar threads;
 
+    private boolean isFirst = true;
+
     public LauncherSettingPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
     }
@@ -480,6 +482,18 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (parent == language) {
             LocaleUtils.changeLanguage(getContext(), position);
             LocaleUtils.setLanguage(getContext());
+            if (!isFirst) {
+                new FCLAlertDialog.Builder(getContext())
+                        .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                        .setMessage(getContext().getString(R.string.message_warn_restart_after_change))
+                        .setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+
+                        })
+                        .create()
+                        .show();
+            } else {
+                isFirst = false;
+            }
         }
     }
 
