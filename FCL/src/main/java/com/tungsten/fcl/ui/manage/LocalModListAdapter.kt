@@ -12,7 +12,6 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemLocalModBinding
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty
@@ -37,8 +36,8 @@ import java.util.Optional
 class LocalModListAdapter(context: Context?, private val modListPage: ModListPage) :
     FCLAdapter(context) {
 
-    val listProperty: ListProperty<ModInfoObject> = SimpleListProperty<ModInfoObject>(
-        FXCollections.observableArrayList<ModInfoObject?>()
+    val listProperty: ListProperty<ModInfoObject> = SimpleListProperty(
+        FXCollections.observableArrayList()
     )
     val selectedItemsProperty: ListProperty<ModInfoObject?> =
         SimpleListProperty<ModInfoObject?>(
@@ -61,17 +60,17 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
     private var fromSelf = false
 
     init {
-        this.listProperty.addListener(InvalidationListener { observable: Observable? ->
+        this.listProperty.addListener { observable: Observable? ->
             fromSelf = true
             selectedItemsProperty.clear()
             fromSelf = false
             notifyDataSetChanged()
-        })
-        selectedItemsProperty.addListener(InvalidationListener { observable: Observable? ->
+        }
+        selectedItemsProperty.addListener { observable: Observable? ->
             if (!fromSelf) {
                 notifyDataSetChanged()
             }
-        })
+        }
     }
 
     private class ViewHolder {
@@ -114,8 +113,16 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
             viewHolder = view.tag as ViewHolder
         }
         val modInfoObject = listProperty[i]
-        viewHolder.parent.setBackgroundTintList(
-            ColorStateList(
+        viewHolder.parent.backgroundTintList = ColorStateList(
+            arrayOf<IntArray?>(intArrayOf()),
+            intArrayOf(
+                if (selectedItemsProperty.contains(modInfoObject)) ThemeEngine.getInstance()
+                    .getTheme().color else ThemeEngine.getInstance().getTheme()
+                    .ltColor
+            )
+        )
+        ThemeEngine.getInstance().registerEvent(viewHolder.parent) {
+            viewHolder.parent.backgroundTintList = ColorStateList(
                 arrayOf<IntArray?>(intArrayOf()),
                 intArrayOf(
                     if (selectedItemsProperty.contains(modInfoObject)) ThemeEngine.getInstance()
@@ -123,44 +130,28 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
                         .ltColor
                 )
             )
-        )
-        ThemeEngine.getInstance().registerEvent(viewHolder.parent, Runnable {
-            viewHolder.parent.setBackgroundTintList(
-                ColorStateList(
-                    arrayOf<IntArray?>(intArrayOf()),
-                    intArrayOf(
-                        if (selectedItemsProperty.contains(modInfoObject)) ThemeEngine.getInstance()
-                            .getTheme().color else ThemeEngine.getInstance().getTheme()
-                            .ltColor
-                    )
-                )
-            )
-        })
-        viewHolder.parent.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+        viewHolder.parent.setOnClickListener { v: View? ->
             if (selectedItemsProperty.contains(modInfoObject)) {
                 fromSelf = true
                 selectedItemsProperty.remove(modInfoObject)
                 fromSelf = false
-                viewHolder.parent.setBackgroundTintList(
-                    ColorStateList(
-                        arrayOf<IntArray?>(
-                            intArrayOf()
-                        ), intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)
-                    )
+                viewHolder.parent.backgroundTintList = ColorStateList(
+                    arrayOf<IntArray?>(
+                        intArrayOf()
+                    ), intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)
                 )
             } else {
                 fromSelf = true
                 selectedItemsProperty.add(modInfoObject)
                 fromSelf = false
-                viewHolder.parent.setBackgroundTintList(
-                    ColorStateList(
-                        arrayOf<IntArray?>(
-                            intArrayOf()
-                        ), intArrayOf(ThemeEngine.getInstance().getTheme().color)
-                    )
+                viewHolder.parent.backgroundTintList = ColorStateList(
+                    arrayOf<IntArray?>(
+                        intArrayOf()
+                    ), intArrayOf(ThemeEngine.getInstance().getTheme().color)
                 )
             }
-        })
+        }
         viewHolder.checkBox.addCheckedChangeListener()
         viewHolder.booleanProperty?.let {
             viewHolder.checkBox.checkProperty().unbindBidirectional(it)
@@ -174,25 +165,23 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
         viewHolder.tag.text = tag
         viewHolder.tag.visibility = if (tag == "") View.GONE else View.VISIBLE
         viewHolder.description.text = modInfoObject.subtitle
-        viewHolder.restore.setVisibility(
-            if (modInfoObject.modInfo.mod.oldFiles
-                    .isEmpty()
-            ) View.GONE else View.VISIBLE
-        )
-        viewHolder.restore.setOnClickListener(View.OnClickListener { v: View? ->
+        viewHolder.restore.visibility = if (modInfoObject.modInfo.mod.oldFiles
+                .isEmpty()
+        ) View.GONE else View.VISIBLE
+        viewHolder.restore.setOnClickListener {
             val dialog = ModRollbackDialog(
                 context,
-                ArrayList<LocalModFile?>(modInfoObject.modInfo.mod.oldFiles),
-                ModRollbackDialog.Callback { localModFile: LocalModFile? ->
-                    modListPage.rollback(modInfoObject.modInfo, localModFile)
-                    notifyDataSetChanged()
-                })
+                ArrayList<LocalModFile?>(modInfoObject.modInfo.mod.oldFiles)
+            ) { localModFile: LocalModFile? ->
+                modListPage.rollback(modInfoObject.modInfo, localModFile)
+                notifyDataSetChanged()
+            }
             dialog.show()
-        })
-        viewHolder.info.setOnClickListener(View.OnClickListener { v: View? ->
+        }
+        viewHolder.info.setOnClickListener {
             val dialog = ModInfoDialog(context, modInfoObject)
             dialog.show()
-        })
+        }
         val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)
         if (drawable != null) {
             drawable.setTint(ThemeEngine.getInstance().getTheme().color)
@@ -225,7 +214,7 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
             }
             mod?.let {
                 if (viewHolder.icon.tag as Int == i) {
-                    viewHolder.icon.setVisibility(View.VISIBLE)
+                    viewHolder.icon.visibility = View.VISIBLE
                     Glide.with(viewHolder.icon).load(mod.iconUrl)
                         .into(viewHolder.icon)
                     viewHolder.name.text = mod.title
