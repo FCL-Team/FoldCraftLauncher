@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1250,
-    "versionName": "1.2.5.0",
-    "date": "2025.09.02",
+    "versionCode": 1251,
+    "versionName": "1.2.5.1",
+    "date": "2025.09.07",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New feature: Long press the 'Show FPS' switch to reset the FPS text position.  \n2. New feature: Detect whether the imported Java file structure is correct and provide reminders.  \n3. Fixed the issue of incorrect display of dlopen errors.  \n4. Fixed the crash caused by an exception in Pojav backend's call to GLFW#glfwExtensionSupported.  \n5. Optimized the issue of abnormal lag when loading the settings interface.  \n6. Force loading of Vulkan drivers."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue of incorrect display of cloaks on the launcher homepage.  \n2. Fixed the issue where the skin change feature for offline accounts used an invalid CSL API, causing the launcher to fail to start.  \n3. New feature: View enabled/disabled mods.  \n4. Prompt the user to restart after changing the language.  \n5. Optimized the layout of the download page."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：长按‘显示FPS’开关重置FPS文本位置\n2.新增功能：检测导入的Java文件结构是否正确并提醒\n3.修复dlopen错误显示的问题\n4.修复Pojav后端调用GLFW#glfwExtensionSupported异常闪退的问题\n5.优化点击设置界面加载异常卡顿的问题\n6.强制加载Vulkan驱动"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复启动器主页披风错误显示的问题\n2.修复离线账户换肤功能使用无效 CSL API 导致启动失败的问题\n3.新增功能：查看已启用/已禁用mod\n4.修改语言后提示用户重启\n5.优化下载页面布局"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/ef656af85f2c",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.0/FCL-release-1.2.5.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f5eb5002581a",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.1/FCL-release-1.2.5.1-all.apk"
   }
 ]
