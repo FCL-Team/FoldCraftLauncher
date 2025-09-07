@@ -266,7 +266,7 @@ public class FCLauncher {
             return;
         }
         if (FCLBridge.BACKEND_IS_BOAT) {
-            envMap.put("LIBGL_STRING", renderer.toString());
+            envMap.put("LIBGL_STRING", renderer.getName());
             envMap.put("LIBGL_NAME", renderer.getGlName());
             envMap.put("LIBEGL_NAME", renderer.getEglName());
         }
