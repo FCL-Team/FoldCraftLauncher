@@ -26,6 +26,8 @@ import android.opengl.GLES20;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -105,8 +107,11 @@ public class AndroidUtils {
     public static int getScreenHeight(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Point point = new Point();
-        wm.getDefaultDisplay().getRealSize(point);
-        return point.y;
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        Display defaultDisplay = wm.getDefaultDisplay();
+        defaultDisplay.getRealSize(point);
+        defaultDisplay.getMetrics(displayMetrics);
+        return Math.max(point.y, displayMetrics.heightPixels);
     }
 
     public static int getScreenWidth(Activity context) {
