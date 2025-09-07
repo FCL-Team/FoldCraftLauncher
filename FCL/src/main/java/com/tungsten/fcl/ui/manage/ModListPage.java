@@ -291,7 +291,11 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }, Schedulers.defaultScheduler()).whenCompleteAsync((list, exception) -> {
             setLoading(false);
             if (exception == null)
-                itemsProperty.setAll(list.stream().map(it -> new ModInfoObject(getContext(), it)).sorted().collect(Collectors.toList()));
+                try {
+                    itemsProperty.setAll(list.stream().map(it -> new ModInfoObject(getContext(), it)).sorted().collect(Collectors.toList()));
+                } catch (Throwable e) {
+                    LOG.log(Level.SEVERE, "Failed to load local mod list", e);
+                }
             else
                 LOG.log(Level.SEVERE, "Failed to load local mod list", exception);
 
