@@ -31,6 +31,7 @@ import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
+import com.mio.util.DisplayUtil
 import com.mio.util.GuideUtil
 import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
@@ -372,6 +373,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
                     }
                 }.getOrNull() ?: DriverPlugin.driverList[0]
+                DisplayUtil.refreshDisplayMetrics(this@MainActivity)
                 Versions.launch(this@MainActivity, selectedProfile)
             }
         }

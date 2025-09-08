@@ -57,6 +57,7 @@ public class FCLActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         LocaleUtils.setLanguage(this);
+        DisplayUtil.refreshDisplayMetrics(this);
     }
 
     @Override

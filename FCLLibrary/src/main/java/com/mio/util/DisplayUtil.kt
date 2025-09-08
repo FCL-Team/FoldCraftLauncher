@@ -14,7 +14,7 @@ object DisplayUtil {
     var notchSize = 0
 
     @JvmStatic
-    fun getDisplayMetrics(activity: Activity): DisplayMetrics? {
+    fun getDisplayMetrics(activity: Activity): DisplayMetrics {
         var displayMetrics = DisplayMetrics()
         if (activity.isInMultiWindowMode || activity.isInPictureInPictureMode) {
             displayMetrics = activity.resources.displayMetrics
@@ -29,14 +29,18 @@ object DisplayUtil {
                 else displayMetrics.widthPixels -= notchSize
             }
         }
-        currentDisplayMetrics = displayMetrics
         return displayMetrics
+    }
+
+    @JvmStatic
+    fun refreshDisplayMetrics(activity: Activity) {
+        currentDisplayMetrics = getDisplayMetrics(activity)
     }
 
     @JvmStatic
     fun updateWindowSize(activity: Activity) {
         if (notchSize == 0) computeNotchSize(activity)
-        getDisplayMetrics(activity)
+        refreshDisplayMetrics(activity)
     }
 
     private fun computeNotchSize(activity: Activity) {
