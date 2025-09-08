@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.mio.util.DisplayUtil;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -27,6 +28,7 @@ public class FCLActivity extends AppCompatActivity {
         ThemeEngine.getInstance().setupThemeEngine(this);
         ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
         super.onCreate(savedInstanceState);
+        DisplayUtil.updateWindowSize(this);
         boolean hasPermission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             hasPermission = Environment.isExternalStorageManager();
@@ -55,6 +57,7 @@ public class FCLActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         LocaleUtils.setLanguage(this);
+        DisplayUtil.refreshDisplayMetrics(this);
     }
 
     @Override
