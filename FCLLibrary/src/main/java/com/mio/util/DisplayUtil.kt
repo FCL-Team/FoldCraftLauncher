@@ -11,7 +11,7 @@ object DisplayUtil {
     lateinit var currentDisplayMetrics: DisplayMetrics
 
     @JvmField
-    var notchSize = 0
+    var notchSize = -1
 
     @JvmStatic
     fun getDisplayMetrics(activity: Activity): DisplayMetrics {
@@ -39,29 +39,27 @@ object DisplayUtil {
 
     @JvmStatic
     fun updateWindowSize(activity: Activity) {
-        if (notchSize == 0) computeNotchSize(activity)
+        if (notchSize == -1) computeNotchSize(activity)
         refreshDisplayMetrics(activity)
     }
 
     private fun computeNotchSize(activity: Activity) {
+        notchSize = 0
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return
         runCatching {
-            notchSize = 0
             val cutout: Rect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                activity.windowManager.currentWindowMetrics.getWindowInsets()
-                    .displayCutout?.getBoundingRects()?.get(0)
+                activity.windowManager.currentWindowMetrics.windowInsets
+                    .displayCutout?.boundingRects?.get(0)
             } else {
-                activity.window.decorView.getRootWindowInsets().displayCutout
-                    ?.getBoundingRects()?.get(0)
+                activity.window.decorView.rootWindowInsets.displayCutout
+                    ?.boundingRects?.get(0)
             } ?: return
             val orientation: Int = activity.resources.configuration.orientation
-            if (orientation == Configuration.ORIENTATION_PORTRAIT)
-                notchSize = cutout.height()
-            else if (orientation == Configuration.ORIENTATION_LANDSCAPE)
-                notchSize = cutout.width()
-            else notchSize =
-                cutout.width().coerceAtMost(cutout.height())
+            notchSize = when (orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> cutout.height()
+                Configuration.ORIENTATION_LANDSCAPE -> cutout.width()
+                else -> cutout.width().coerceAtMost(cutout.height())
+            }
         }
-        updateWindowSize(activity)
     }
 }
