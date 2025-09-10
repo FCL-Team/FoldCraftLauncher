@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -87,7 +88,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     private boolean isSearching = false;
 
     private FCLTextView warningText;
-    private LinearLayoutCompat left;
+    private ScrollView left;
     private RelativeLayout right;
     private FCLEditText searchBar;
     private FCLButton searchButton;

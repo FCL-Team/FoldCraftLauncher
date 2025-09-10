@@ -18,9 +18,8 @@
         app:auto_text_tint="true"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <ScrollView
         android:id="@+id/left"
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
@@ -31,115 +30,123 @@
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintWidth_percent="0.3">
 
-        <com.tungsten.fcllibrary.component.view.FCLEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="14sp"
-            android:id="@+id/search_filter"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            app:ripple="true"
-            android:id="@+id/search"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/search"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/enabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/enabled"
-            app:auto_hint_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/disabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/disabled"
-            app:auto_hint_tint="true" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:orientation="vertical"
-            android:id="@+id/normal_layout">
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/add"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/mods_add"/>
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/check_update_all"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/mods_check_updates"/>
-
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/refresh"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/action_refresh"/>
-
-        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
-
-        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/selected_layout">
+            android:layout_height="wrap_content">
+
+            <com.tungsten.fcllibrary.component.view.FCLEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textSize="14sp"
+                android:id="@+id/search_filter"/>
 
             <com.tungsten.fcllibrary.component.view.FCLButton
                 app:ripple="true"
-                android:id="@+id/check_update"
+                android:id="@+id/search"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/mods_check_updates"/>
+                android:text="@string/search"/>
 
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/delete"
-                android:layout_marginTop="10dp"
+            <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                android:id="@+id/enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/enabled"
+                app:auto_hint_tint="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                android:id="@+id/disabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/disabled"
+                app:auto_hint_tint="true" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/button_remove"/>
+                android:orientation="vertical"
+                android:id="@+id/normal_layout">
 
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/select_all"
-                android:layout_marginTop="10dp"
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/add"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mods_add"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/check_update_all"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mods_check_updates"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/refresh"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_refresh"/>
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/button_select_all"/>
+                android:orientation="vertical"
+                android:id="@+id/selected_layout">
 
-            <com.tungsten.fcllibrary.component.view.FCLButton
-                app:ripple="true"
-                android:id="@+id/cancel"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/button_cancel"/>
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/check_update"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mods_check_updates"/>
 
-        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/delete"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_remove"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/select_all"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_select_all"/>
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    app:ripple="true"
+                    android:id="@+id/cancel"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_cancel"/>
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
 
     <RelativeLayout
         android:id="@+id/right"
