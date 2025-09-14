@@ -15,8 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
-
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.FCLGameRepository;
@@ -151,12 +149,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         selectAllButton.setOnClickListener(this);
         cancelButton.setOnClickListener(this);
         CompoundButton.OnCheckedChangeListener listener = (compoundButton, b) -> {
-            ObservableList<ModInfoObject> modInfoObjects = itemsProperty.get();
-            adapter.listProperty().clear();
-            modInfoObjects.stream().filter(modInfoObject -> {
-                boolean active = modInfoObject.getModInfo().isActive();
-                return (enabled.isChecked() && active) || (disabled.isChecked() && !active);
-            }).forEach(modInfoObject -> adapter.listProperty().add(modInfoObject));
+            refresh();
         };
         enabled.setOnCheckedChangeListener(listener);
         disabled.setOnCheckedChangeListener(listener);
@@ -246,8 +239,6 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 cancelButton.setEnabled(false);
                 listView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
-                enabled.setVisibility(View.GONE);
-                disabled.setVisibility(View.GONE);
             } else {
                 searchBar.setEnabled(true);
                 searchButton.setEnabled(true);
@@ -260,8 +251,6 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 cancelButton.setEnabled(true);
                 listView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
-                enabled.setVisibility(View.VISIBLE);
-                disabled.setVisibility(View.VISIBLE);
                 cancelSearch();
             }
         });
@@ -297,7 +286,10 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             setLoading(false);
             if (exception == null)
                 try {
-                    itemsProperty.setAll(list.stream().map(it -> new ModInfoObject(getContext(), it)).sorted().collect(Collectors.toList()));
+                    itemsProperty.setAll(list.stream().map(it -> new ModInfoObject(getContext(), it)).filter(modInfoObject -> {
+                        boolean active = modInfoObject.getModInfo().isActive();
+                        return (enabled.isChecked() && active) || (disabled.isChecked() && !active);
+                    }).sorted().collect(Collectors.toList()));
                 } catch (Throwable e) {
                     LOG.log(Level.SEVERE, "Failed to load local mod list", e);
                 }
