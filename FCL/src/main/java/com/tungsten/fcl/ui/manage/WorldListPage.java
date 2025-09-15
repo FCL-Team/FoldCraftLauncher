@@ -132,8 +132,6 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
                         itemsProperty.setAll(result.stream()
                                 .filter(world -> isShowAll() || world.getGameVersion() == null || world.getGameVersion().equals(gameVersion))
                                 .map(it -> new WorldListItem(getContext(), getActivity(), getParent(), it)).collect(Collectors.toList()));
-
-                    System.gc();
                 }, Schedulers.androidUIThread());
     }
 

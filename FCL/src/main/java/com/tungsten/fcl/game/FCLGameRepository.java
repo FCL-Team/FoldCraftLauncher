@@ -128,8 +128,6 @@ public class FCLGameRepository extends DefaultGameRepository {
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Unable to create launcher_profiles.json, Forge/LiteLoader installer will not work.", ex);
         }
-
-        System.gc();
     }
 
     public void changeDirectory(File newDirectory) {

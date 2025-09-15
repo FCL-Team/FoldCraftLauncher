@@ -295,8 +295,6 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 }
             else
                 LOG.log(Level.SEVERE, "Failed to load local mod list", exception);
-
-            System.gc();
         }, Schedulers.androidUIThread());
     }
 
