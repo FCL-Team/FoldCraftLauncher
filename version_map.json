@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1253,
-    "versionName": "1.2.5.3",
-    "date": "2025.09.12",
+    "versionCode": 1254,
+    "versionName": "1.2.5.4",
+    "date": "2025.09.17",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n0.Fix the issue where the inventory cannot be triggered due to the 1.2.5.2 update.\n1. Fixed the crash issue when viewing enabled/disabled mods during refresh.  \n2. Fixed the issue where Boat backend VirGL could not be used.  \n3. Fixed the problem of incorrect resolution detection on some devices causing touch position offset.  \n4. Added feature: Inventory key bindings now change according to options.txt.  \n5. Fixed the issue of incomplete UI display on the left side of the mod management page."
+        "text": "(Translated from Chinese by AI)\n1. Fix crashes related to the mod management page  \n2. Remove the automatic replenishment feature for mods deleted from modpacks  \n3. Update mod and modpack data  \n4. Remove unnecessary System.gc() calls to reduce launcher page stuttering"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.修复1.2.5.2更新造成的物品栏无法触发的问题\n1.修复刷新时除法查看已启用/禁用mod功能闪退的问题\n2.修复Boat后端VirGL无法使用的问题\n3.修复部分设备分辨率获取错误导致点击位置偏移的问题\n4.新增功能：物品栏对应键值跟随options.txt变化\n5.修复模组管理页面左侧UI显示不全的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复模组管理页面相关闪退问题\n2.取消整合包模组删除后自动补全的功能\n3.更新模组和整合包数据\n4.删除不必要的System.gc()调用减少启动器页面卡顿"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/819bbc680f45",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.3/FCL-release-1.2.5.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/9fbb54dbf8cc",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.4/FCL-release-1.2.5.4-all.apk"
   }
 ]
