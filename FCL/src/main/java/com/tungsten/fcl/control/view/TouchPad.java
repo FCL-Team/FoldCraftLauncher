@@ -165,6 +165,9 @@ public class TouchPad extends View {
         }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    gameMenu.getInput().setPointer((int) event.getRawX(), (int) event.getRawY());
+                }
                 //防止被外接鼠标触发
                 return true;
             }
