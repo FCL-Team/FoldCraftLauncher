@@ -8,13 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -620,15 +620,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             touchControllerInputView.setDisableFullScreenInput(sharedPreferences.getBoolean("disableFullscreenInput", true));
         }
 
-        touchPad.setOnHoverListener((view, motionEvent) -> {
-            if (menuSetting.isPhysicalMouseMode()) {
+        touchPad.setOnGenericMotionListener((view, motionEvent) -> {
+            if (motionEvent.isFromSource(InputDevice.SOURCE_MOUSE) && menuSetting.isPhysicalMouseMode()) {
                 if (getCursorMode() == FCLBridge.CursorEnabled && motionEvent.getAction() == MotionEvent.ACTION_HOVER_MOVE) {
                     getInput().setPointer((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
                     return true;
                 }
+                return fclInput.handleExternalMouseEvent(motionEvent);
             }
             return false;
         });
+
     }
 
     @Override

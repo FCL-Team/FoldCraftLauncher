@@ -130,7 +130,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
         this.focusableView = view;
     }
 
-    private boolean handleExternalMouseEvent(MotionEvent event) {
+    public boolean handleExternalMouseEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS || event.getActionMasked() == MotionEvent.ACTION_BUTTON_RELEASE) {
             boolean press = event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS;
             if (event.getActionButton() == MotionEvent.BUTTON_PRIMARY) {
