@@ -809,7 +809,9 @@
     <string name="settings_icon">版本图标</string>
 
     <string name="settings_launcher">启动器设置</string>
+    <string name="settings_launcher_request">请求</string>
     <string name="settings_launcher_debug">调试</string>
+    <string name="settings_launcher_request_recording_permission">请求麦克风权限（用于语音聊天模组）</string>
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_check">检测</string>
     <string name="settings_launcher_cache">缓存文件夹</string>

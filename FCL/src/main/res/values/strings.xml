@@ -861,7 +861,9 @@
     <string name="settings_icon">Icon</string>
 
     <string name="settings_launcher">Launcher Settings</string>
+    <string name="settings_launcher_request">Request</string>
     <string name="settings_launcher_debug">Debug</string>
+    <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>

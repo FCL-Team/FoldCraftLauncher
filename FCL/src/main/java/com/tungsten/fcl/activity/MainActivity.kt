@@ -105,7 +105,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var profile: Profile
     private lateinit var theme: IntegerProperty
     var isVersionLoading = false
-    private lateinit var permissionResultLauncher: ActivityResultLauncher<String>
+    lateinit var permissionResultLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
