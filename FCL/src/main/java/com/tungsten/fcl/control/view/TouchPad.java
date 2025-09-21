@@ -220,6 +220,7 @@ public class TouchPad extends View {
                 }
             }
         } else {
+            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
             initialX = gameMenu.getPointerX();
             initialY = gameMenu.getPointerY();
             if (gameMenu.getMenuSetting().isDisableLeftTouch() && event.getX() <= (float) screenWidth / 2) {

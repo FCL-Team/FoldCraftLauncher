@@ -154,31 +154,40 @@ public class FCLInput implements View.OnCapturedPointerListener {
     }
 
     private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
-        int deltaX;
-        int deltaY;
-        if (event != null) {
-            deltaX = (int) (event.getX() * menu.getMenuSetting().getMouseSensitivity());
-            deltaY = (int) (event.getY() * menu.getMenuSetting().getMouseSensitivity());
-        } else {
-            deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
-            deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
-        }
-        if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
-            int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
-            setPointerId(EXTERNAL_MOUSE_ID);
-            setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-            setPointerId(null);
-        } else {
-            int targetX = menu.getPointerX() + deltaX;
-            int targetY = menu.getPointerY() + deltaY;
-            if (menu.getMenuSetting().isEnableGyroscope()) {
-                menu.setPointerX(targetX);
-                menu.setPointerY(targetY);
+        if (event == null || event.getAction() == MotionEvent.ACTION_MOVE) {
+            int deltaX;
+            int deltaY;
+            if (event != null) {
+                deltaX = (int) event.getX();
+                deltaY = (int) event.getY();
+                final int historySize = event.getHistorySize();
+                for (int i = 0; i < historySize; i++) {
+                    deltaX += (int) event.getHistoricalX(i);
+                    deltaY += (int) event.getHistoricalY(i);
+                }
+                deltaX *= (int) menu.getMenuSetting().getMouseSensitivity();
+                deltaY *= (int) menu.getMenuSetting().getMouseSensitivity();
             } else {
+                deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
+                deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
+            }
+            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+                int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
+                int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
                 setPointerId(EXTERNAL_MOUSE_ID);
                 setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
                 setPointerId(null);
+            } else {
+                int targetX = menu.getPointerX() + deltaX;
+                int targetY = menu.getPointerY() + deltaY;
+                if (menu.getMenuSetting().isEnableGyroscope()) {
+                    menu.setPointerX(targetX);
+                    menu.setPointerY(targetY);
+                } else {
+                    setPointerId(EXTERNAL_MOUSE_ID);
+                    setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
+                    setPointerId(null);
+                }
             }
         }
         if (event != null) {
