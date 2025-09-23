@@ -140,13 +140,20 @@ public class RuntimeUtils {
         File dest = new File(javaPath);
         if (!dest.exists())
             return;
-        String libFolder = FCLauncher.getJreLibDir(javaPath);
+        String libFolder = FCLauncher.getJavaLibDir(javaPath);
+        if (FCLauncher.isJDK8(javaPath)) {
+            libFolder = "/jre" + libFolder;
+        }
         File ftIn = new File(dest, libFolder + "/libfreetype.so.6");
         File ftOut = new File(dest, libFolder + "/libfreetype.so");
         if (ftIn.exists() && (!ftOut.exists() || ftIn.length() != ftOut.length())) {
             ftIn.renameTo(ftOut);
         }
-        File fileLib = new File(dest, "/" + libFolder + "/libawt_xawt.so");
+        ftIn = new File(dest, FCLauncher.getJavaLibDir(javaPath) + "/libfreetype.so");
+        if (FCLauncher.isJDK8(javaPath) && ftIn.exists()) {
+            ftIn.renameTo(ftOut);
+        }
+        File fileLib = new File(dest, libFolder + "/libawt_xawt.so");
         fileLib.delete();
         FileUtils.copyFile(new File(context.getApplicationInfo().nativeLibraryDir, "libawt_xawt.so"), fileLib);
     }
