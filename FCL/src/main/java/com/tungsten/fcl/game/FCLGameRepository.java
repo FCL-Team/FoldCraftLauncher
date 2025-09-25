@@ -23,6 +23,8 @@ import android.annotation.SuppressLint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import androidx.appcompat.content.res.AppCompatResources;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -72,6 +74,8 @@ public class FCLGameRepository extends DefaultGameRepository {
     private final Set<String> beingModpackVersions = new HashSet<>();
 
     public final EventManager<Event> onVersionIconChanged = new EventManager<>();
+
+    private Map<Integer,Drawable> drawableMap = new HashMap<>();
 
     public FCLGameRepository(Profile profile, File baseDirectory) {
         super(baseDirectory);
@@ -176,7 +180,6 @@ public class FCLGameRepository extends DefaultGameRepository {
         GameDirectoryType originalGameDirType = (oldVersionSetting.isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER);
         oldVersionSetting.setUsesGlobal(false);
         oldVersionSetting.setIsolateGameDir(true);
-        VersionSetting newVersionSetting = initLocalVersionSetting(dstId, oldVersionSetting);
         saveVersionSetting(dstId);
 
         File srcGameDir = getRunDirectory(srcId);
@@ -265,26 +268,34 @@ public class FCLGameRepository extends DefaultGameRepository {
     @SuppressLint("UseCompatLoadingForDrawables")
     public Drawable getVersionIconImage(String id) {
         if (id == null || !isLoaded())
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);
+            return getDrawable(R.drawable.img_grass);
 
         Version version = getVersion(id).resolve(this);
         File iconFile = getVersionIconFile(id);
         if (iconFile.exists())
             return BitmapDrawable.createFromPath(iconFile.getAbsolutePath());
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FORGE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_forge);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_neoforge);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.LITELOADER))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_chicken);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.OPTIFINE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_optifine);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FABRIC))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_fabric);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.QUILT))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_quilt);
-        else
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);
+        else {
+            LibraryAnalyzer analyze = LibraryAnalyzer.analyze(version, null);
+            if (analyze.has(LibraryAnalyzer.LibraryType.FORGE))
+                return getDrawable(R.drawable.img_forge);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+                return getDrawable(R.drawable.img_neoforge);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.LITELOADER))
+                return getDrawable(R.drawable.img_chicken);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.OPTIFINE))
+                return getDrawable(R.drawable.img_optifine);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.FABRIC))
+                return getDrawable(R.drawable.img_fabric);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.QUILT))
+                return getDrawable(R.drawable.img_quilt);
+            else
+                return getDrawable(R.drawable.img_grass);
+        }
+    }
+
+    private Drawable getDrawable(int id) {
+        if (!drawableMap.containsKey(id)) drawableMap.put(id, AppCompatResources.getDrawable(FCLPath.CONTEXT,id));
+        return drawableMap.get(id);
     }
 
     public boolean saveVersionSetting(String id) {

@@ -70,20 +70,20 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
             viewHolder.tag.text = versionListItem.tag
         }
         viewHolder.subtitle.text = versionListItem.libraries
-        viewHolder.radioButton.setOnClickListener(View.OnClickListener { v: View? ->
+        viewHolder.radioButton.setOnClickListener { v: View? ->
             versionListItem.profile.selectedVersion = versionListItem.version
-        })
-        viewHolder.delete.setOnClickListener(View.OnClickListener { view1: View? ->
+        }
+        viewHolder.delete.setOnClickListener { view1: View? ->
             Versions.deleteVersion(
                 context,
                 versionListItem.profile,
                 versionListItem.version
             )
-        })
+        }
         viewHolder.subtitle.tag = i
-        view.setOnClickListener(View.OnClickListener { v: View? ->
+        view.setOnClickListener { v: View? ->
             versionListItem.profile.selectedVersion = versionListItem.version
-        })
+        }
         if (!versionListItem.profile.getVersionSetting(versionListItem.version).isGlobal) {
             viewHolder.setting.visibility = View.VISIBLE
             viewHolder.setting.setOnClickListener {
