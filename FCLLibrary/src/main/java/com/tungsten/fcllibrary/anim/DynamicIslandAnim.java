@@ -116,8 +116,7 @@ public class DynamicIslandAnim {
                                                             hideAnimator.start();
                                                         });
                                                     }
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
+                                                } catch (InterruptedException ignore) {
                                                 }
                                             });
                                             thread.start();
