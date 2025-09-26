@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
@@ -89,8 +89,8 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                         data: Intent?
                     ) {
                         if (requestCode == RequestCodes.SELECT_JAVA_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                            val path = FileBrowser.getSelectedFiles(data).get(0)
-                            val uri = Uri.parse(path)
+                            val path = FileBrowser.getSelectedFiles(data)[0]
+                            val uri = path.toUri()
                             val fileName = if (AndroidUtils.isDocUri(uri)) {
                                 AndroidUtils.getFileName(context, uri)
                             } else {

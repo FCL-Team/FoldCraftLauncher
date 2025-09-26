@@ -17,7 +17,6 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton
 import com.tungsten.fcllibrary.component.view.FCLRadioButton
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
