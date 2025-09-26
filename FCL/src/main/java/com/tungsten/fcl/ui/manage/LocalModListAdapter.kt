@@ -161,10 +161,13 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
         viewHolder.icon.tag = i
         viewHolder.icon.setImageBitmap(null)
         viewHolder.name.text = modInfoObject.title
+        viewHolder.name.isSelected = true
         val tag = getTag(modInfoObject)
         viewHolder.tag.text = tag
+        viewHolder.tag.isSelected = true
         viewHolder.tag.visibility = if (tag == "") View.GONE else View.VISIBLE
         viewHolder.description.text = modInfoObject.subtitle
+        viewHolder.description.isSelected = true
         viewHolder.restore.visibility = if (modInfoObject.modInfo.mod.oldFiles
                 .isEmpty()
         ) View.GONE else View.VISIBLE
