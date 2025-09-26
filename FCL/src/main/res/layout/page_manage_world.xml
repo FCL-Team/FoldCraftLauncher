@@ -23,17 +23,12 @@
             android:orientation="horizontal">
 
             <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                android:id="@+id/show_all"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/show_all"/>
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:singleLine="true"
-                android:text="@string/world_show_all"/>
+                android:text="@string/world_show_all"
+                app:auto_hint_tint="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
