@@ -90,7 +90,8 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
                 val uiManager = MainActivity.getInstance().uiManager
                 MainActivity.getInstance().binding.manage.isSelected = true
                 uiManager.manageUI.checkPageManager {
-                    uiManager.manageUI.pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_SETTING)
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
                 }
             }
         } else {
