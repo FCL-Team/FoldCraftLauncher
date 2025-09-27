@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1255,
-    "versionName": "1.2.5.5",
-    "date": "2025.09.22",
+    "versionCode": 1256,
+    "versionName": "1.2.5.6",
+    "date": "2025.09.27",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed issues related to physical mouse control.  \n2. New feature: Long-press the update button in the dialog box to jump to GitHub.  \n3. New feature: Users can request microphone recording permissions in the launcher settings.  \n4. Fixed the issue where the perspective movement was very slow when using an external mouse with a high report rate."
+        "text": "(Translated from Chinese by AI)\n1. Added JDK8 support to fix the issue of being unable to use JDK8.  \n2. Optimized the loading speed of the version list.  \n3. Fixed the issue where the tab indicator incorrectly directed from management to the game settings tab.  \n4. Added a scrolling display feature for long text in the mod list."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复实体鼠标控制相关问题\n2.新增功能：长按更新对话框内的“更新”跳转Github\n3.新增功能：在启动器设置内可申请麦克风录音权限\n4.修复外接鼠标高回报率时视角移动很慢的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加JDK8支持修复无法使用JDK8的问题\n2.优化版本列表加载速度\n3.修复版本从管理跳转游戏设置Tab指示错误的问题\n4.增加模组列表长文字滚动显示功能"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/da0ac070afd9",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.5/FCL-release-1.2.5.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/738a9840d52d",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.6/FCL-release-1.2.5.6-all.apk"
   }
 ]
