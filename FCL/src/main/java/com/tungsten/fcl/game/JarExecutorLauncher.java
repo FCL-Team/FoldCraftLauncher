@@ -35,7 +35,7 @@ public class JarExecutorLauncher extends Launcher {
     private CommandBuilder generateCommandLine(String args) {
         CommandBuilder res = new CommandBuilder();
 
-        getCacioJavaArgs(res, javaVersion == 8, javaVersion == 11);
+        getCacioJavaArgs(res, javaVersion == 8);
 
         res.addDefault("-Xms", MemoryUtils.findBestRAMAllocation(context) + "m");
         res.addDefault("-Xmx", MemoryUtils.findBestRAMAllocation(context) + "m");
@@ -55,7 +55,7 @@ public class JarExecutorLauncher extends Launcher {
         return res;
     }
 
-    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8, boolean isJava11) {
+    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8) {
         res.addDefault("-Djava.awt.headless=", "false");
         res.addDefault("-Dcacio.managed.screensize=", FCLBridge.DEFAULT_WIDTH + "x" + FCLBridge.DEFAULT_HEIGHT);
         res.addDefault("-Dcacio.font.fontmanager=", "sun.awt.X11FontManager");
@@ -89,7 +89,7 @@ public class JarExecutorLauncher extends Launcher {
 
         StringBuilder cacioClasspath = new StringBuilder();
         cacioClasspath.append("-Xbootclasspath/").append(isJava8 ? "p" : "a");
-        File cacioDir = new File(isJava8 ? FCLPath.CACIOCAVALLO_8_DIR : isJava11 ? FCLPath.CACIOCAVALLO_11_DIR : FCLPath.CACIOCAVALLO_17_DIR);
+        File cacioDir = new File(isJava8 ? FCLPath.CACIOCAVALLO_8_DIR : FCLPath.CACIOCAVALLO_17_DIR);
         if (cacioDir.exists() && cacioDir.isDirectory()) {
             for (File file : Objects.requireNonNull(cacioDir.listFiles())) {
                 if (file.getName().endsWith(".jar")) {
