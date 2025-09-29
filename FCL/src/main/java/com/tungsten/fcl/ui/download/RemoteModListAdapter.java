@@ -13,6 +13,7 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -24,6 +25,7 @@ import com.tungsten.fcllibrary.util.LocaleUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class RemoteModListAdapter extends FCLAdapter {
@@ -44,6 +46,8 @@ public class RemoteModListAdapter extends FCLAdapter {
                 List<LocalModFile> modFiles = modManager.getMods().parallelStream().collect(Collectors.toList());
                 for (LocalModFile localModFile : modFiles) {
                     try {
+                        long size = localModFile.getFile().toFile().length();
+                        if (size > 104857600) continue;
                         Optional<RemoteMod.Version> remoteVersionOptional = downloadPage.getRepository().getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
                         remoteVersionOptional.ifPresent(localModFile::setRemoteVersion);
                         RemoteMod.Version remoteVersion = localModFile.getRemoteVersion();
@@ -51,7 +55,9 @@ public class RemoteModListAdapter extends FCLAdapter {
                             String modId = remoteVersion.getModid();
                             modIdList.add(modId);
                         }
-                    } catch (Throwable ignore) {
+                    } catch (Throwable e) {
+                        System.gc();
+                        Logging.LOG.log(Level.SEVERE, e.toString());
                     }
                 }
             }).start();
