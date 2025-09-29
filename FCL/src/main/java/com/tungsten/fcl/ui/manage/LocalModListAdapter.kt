@@ -20,6 +20,7 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
+import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.FCLAdapter
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLCheckBox
@@ -29,11 +30,14 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Optional
+import java.util.logging.Level
 
-class LocalModListAdapter(context: Context?, private val modListPage: ModListPage) :
+class LocalModListAdapter(context: Context, private val modListPage: ModListPage) :
     FCLAdapter(context) {
 
     val listProperty: ListProperty<ModInfoObject> = SimpleListProperty(
@@ -43,6 +47,9 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
         SimpleListProperty<ModInfoObject?>(
             FXCollections.observableArrayList<ModInfoObject?>()
         )
+
+    val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)!!
+    private val jobs = HashMap<Int, Job>()
 
     fun listProperty(): ListProperty<ModInfoObject> {
         return listProperty
@@ -83,6 +90,7 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
         lateinit var restore: FCLImageButton
         lateinit var info: FCLImageButton
         var booleanProperty: BooleanProperty? = null
+        var pos: Int = -1
     }
 
     override fun getCount(): Int {
@@ -108,10 +116,14 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
             viewHolder.description = binding.description
             viewHolder.restore = binding.restore
             viewHolder.info = binding.info
+            viewHolder.pos = i
             view.tag = viewHolder
         } else {
             viewHolder = view.tag as ViewHolder
         }
+        jobs[viewHolder.pos]?.cancel()
+        jobs.remove(viewHolder.pos)
+
         val modInfoObject = listProperty[i]
         viewHolder.parent.backgroundTintList = ColorStateList(
             arrayOf<IntArray?>(intArrayOf()),
@@ -159,7 +171,6 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
         viewHolder.checkBox.checkProperty()
             .bindBidirectional(modInfoObject.active.also { viewHolder.booleanProperty = it })
         viewHolder.icon.tag = i
-        viewHolder.icon.setImageBitmap(null)
         viewHolder.name.text = modInfoObject.title
         viewHolder.name.isSelected = true
         val tag = getTag(modInfoObject)
@@ -185,13 +196,13 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
             val dialog = ModInfoDialog(context, modInfoObject)
             dialog.show()
         }
-        val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)
-        if (drawable != null) {
-            drawable.setTint(ThemeEngine.getInstance().getTheme().color)
-            viewHolder.icon.setImageDrawable(drawable)
-        }
-        MainActivity.getInstance().lifecycleScope.launch {
+
+        drawable.setTint(ThemeEngine.getInstance().getTheme().color)
+        viewHolder.icon.setImageDrawable(drawable)
+        val runtime = Runtime.getRuntime()
+        val job = MainActivity.getInstance().lifecycleScope.launch {
             val mod = withContext(Dispatchers.IO) {
+                if (modInfoObject.modInfo.file.toFile().length() > 104857600) return@withContext null
                 for (type in RemoteMod.Type.entries.toTypedArray()) {
                     try {
                         if (modInfoObject.remoteMod == null) {
@@ -210,20 +221,23 @@ class LocalModListAdapter(context: Context?, private val modListPage: ModListPag
                             }
                         }
                         return@withContext modInfoObject.remoteMod
-                    } catch (_: Throwable) {
+                    } catch (e: Throwable) {
+                        System.gc()
+                        Logging.LOG.log(Level.SEVERE, e.toString())
                     }
                 }
                 null
             }
             mod?.let {
-                if (viewHolder.icon.tag as Int == i) {
+                if (isActive && viewHolder.icon.tag as Int == i) {
                     viewHolder.icon.visibility = View.VISIBLE
-                    Glide.with(viewHolder.icon).load(mod.iconUrl)
+                    Glide.with(viewHolder.icon).load(mod.iconUrl).error(drawable)
                         .into(viewHolder.icon)
                     viewHolder.name.text = mod.title
                 }
             }
         }
+        jobs[viewHolder.pos] = job
         return view
     }
 
