@@ -125,47 +125,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/splash_runtime_cacio11" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <com.tungsten.fcllibrary.component.view.FCLProgressBar
-                    android:id="@+id/cacio11_progress"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:visibility="gone" />
-
-                <com.tungsten.fcllibrary.component.view.FCLImageView
-                    android:id="@+id/cacio11_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:tint="@android:color/darker_gray"
-                    app:auto_src_tint="false" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:text="@string/splash_runtime_cacio17" />
 
                 <View
