@@ -27,7 +27,7 @@
     <string name="about">关于</string>
     <string name="about_sponsor">赞助</string>
     <string name="about_source">开源</string>
-    <string name="about_desc">Fold Craft Launcher 是一个 Android Minecraft 启动器，让用户能够在 Android 设备上启动 Minecraft: Java Edition。\n\nFold Craft Launcher 由 FCL-Team 开发。\n\nFold Craft Launcher 的主要功能是基于 HMCLCore 修改而成的。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
+    <string name="about_desc">你说得对，但是「FCL」是由FCL-Team基于HMCL的核心功能，结合PojavLauncher后端和Boat后端开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统，在这里，被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
 
     <string name="account_add_server">添加认证服务器</string>
     <string name="account_add_server_url">服务器地址</string>

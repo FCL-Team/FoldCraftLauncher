@@ -102,9 +102,6 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
                     pageManager.switchPage(SettingPageManager.PAGE_ID_SETTING_HELP);
                     break;
                 case 3:
-                    pageManager.switchPage(SettingPageManager.PAGE_ID_SETTING_COMMUNITY);
-                    break;
-                case 4:
                     pageManager.switchPage(SettingPageManager.PAGE_ID_SETTING_ABOUT);
                     break;
                 default:

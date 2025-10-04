@@ -36,11 +36,6 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/community"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
             android:text="@string/about"/>
 
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
