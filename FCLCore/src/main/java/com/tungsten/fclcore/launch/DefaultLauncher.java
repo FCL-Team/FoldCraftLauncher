@@ -65,6 +65,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -89,9 +90,6 @@ public class DefaultLauncher extends Launcher {
         if (options.getMinMemory() != null && options.getMinMemory() > 0
                 && (options.getMaxMemory() == null || options.getMinMemory() <= options.getMaxMemory()))
             res.addDefault("-Xms", options.getMinMemory() + "m");
-
-        if (options.getMetaspace() != null && options.getMetaspace() > 0)
-            res.addDefault("-XX:MetaspaceSize=", options.getMetaspace() + "m");
 
         res.addAllDefaultWithoutParsing(options.getJavaArguments());
 
@@ -423,12 +421,14 @@ public class DefaultLauncher extends Launcher {
     }
 
     protected Map<String, String> getConfigurations() {
+        String uuid = options.getUuid().replace("-","");
+        boolean customUuid = uuid.length() == 32;
         return mapOf(
                 // defined by Minecraft official launcher
                 pair("${auth_player_name}", authInfo.getUsername()),
                 pair("${auth_session}", authInfo.getAccessToken()),
                 pair("${auth_access_token}", authInfo.getAccessToken()),
-                pair("${auth_uuid}", UUIDTypeAdapter.fromUUID(authInfo.getUUID())),
+                pair("${auth_uuid}", customUuid ? options.getUuid() : UUIDTypeAdapter.fromUUID(authInfo.getUUID())),
                 pair("${version_name}", Optional.ofNullable(options.getVersionName()).orElse(version.getId())),
                 pair("${profile_name}", Optional.ofNullable(options.getProfileName()).orElse("Minecraft")),
                 pair("${version_type}", Optional.ofNullable(options.getVersionType()).orElse(version.getType().getId())),

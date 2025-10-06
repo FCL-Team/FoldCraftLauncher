@@ -76,7 +76,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLEditText txtJVMArgs;
     private FCLEditText txtGameArgs;
-    private FCLEditText txtMetaspace;
+    private FCLEditText txtUUID;
     private FCLEditText txtServerIP;
 
     private FCLCheckBox chkAutoAllocate;
@@ -129,7 +129,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         txtJVMArgs = findViewById(R.id.edit_jvm_args);
         txtGameArgs = findViewById(R.id.edit_minecraft_args);
-        txtMetaspace = findViewById(R.id.edit_permgen_space);
+        txtUUID = findViewById(R.id.edit_uuid);
         txtServerIP = findViewById(R.id.edit_server);
 
         chkAutoAllocate = findViewById(R.id.edit_auto_allocate);
@@ -283,7 +283,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             lastVersionSetting.getIsolateGameDirProperty().removeListener(listener);
             FXUtils.unbind(txtJVMArgs, lastVersionSetting.getJavaArgsProperty());
             FXUtils.unbind(txtGameArgs, lastVersionSetting.getMinecraftArgsProperty());
-            FXUtils.unbind(txtMetaspace, lastVersionSetting.getPermSizeProperty());
+            FXUtils.unbind(txtUUID, lastVersionSetting.getUuidProperty());
             FXUtils.unbind(txtServerIP, lastVersionSetting.getServerIpProperty());
             FXUtils.unbindBoolean(chkAutoAllocate, lastVersionSetting.getAutoMemoryProperty());
             FXUtils.unbindBoolean(isolateWorkingDirSwitch, lastVersionSetting.getIsolateGameDirProperty());
@@ -304,7 +304,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         }
         FXUtils.bindString(txtJVMArgs, versionSetting.getJavaArgsProperty());
         FXUtils.bindString(txtGameArgs, versionSetting.getMinecraftArgsProperty());
-        FXUtils.bindString(txtMetaspace, versionSetting.getPermSizeProperty());
+        FXUtils.bindString(txtUUID, versionSetting.getUuidProperty());
         FXUtils.bindString(txtServerIP, versionSetting.getServerIpProperty());
         FXUtils.bindBoolean(chkAutoAllocate, versionSetting.getAutoMemoryProperty());
         FXUtils.bindBoolean(isolateWorkingDirSwitch, versionSetting.getIsolateGameDirProperty());

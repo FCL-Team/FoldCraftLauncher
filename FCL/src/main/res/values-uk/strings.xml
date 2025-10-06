@@ -683,8 +683,6 @@
     <string name="settings_advanced_dont_check_jvm_validity">Не перевіряти сумісність із JVM</string>
     <string name="settings_advanced_game_dir_default">За замовчуванням (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Ізольовано в (.minecraft/versions/&lt;instance name&gt;/, крім ресурсів і бібліотек)</string>
-    <string name="settings_advanced_java_permanent_generation_space">Обсяг постійної пам’яті</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">у МБ</string>
     <string name="settings_advanced_jvm_args">Аргументи JVM</string>
     <string name="settings_advanced_minecraft_arguments">Аргументи лаунчера</string>
     <string name="settings_advanced_minecraft_arguments_prompt">За замовчуванням</string>

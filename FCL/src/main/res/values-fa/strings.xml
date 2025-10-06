@@ -728,8 +728,6 @@
     <string name="settings_advanced_dont_check_jvm_validity">سازگاری ماشین مجازی جاوا را بررسی نکنید</string>
     <string name="settings_advanced_game_dir_default">پیش فرض (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">جدا شده (minecraft/versions/&lt;نام نمونه&gt;/، به جز دارایی ها و کتابخانه ها)</string>
-    <string name="settings_advanced_java_permanent_generation_space">فضای PermGen</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">در مگابایت</string>
     <string name="settings_advanced_jvm_args">آرگومان های ماشین مجازی جاوا</string>
     <string name="settings_advanced_minecraft_arguments">اجرا با آرگومان ها</string>
     <string name="settings_advanced_minecraft_arguments_prompt">پیش فرض</string>

@@ -40,7 +40,6 @@ public class LaunchOptions implements Serializable {
     private final List<String> javaAgents = new ArrayList<>(0);
     private Integer minMemory;
     private Integer maxMemory;
-    private Integer metaspace;
     private Integer width;
     private Integer height;
     private String serverIp;
@@ -48,6 +47,7 @@ public class LaunchOptions implements Serializable {
     private boolean vulkanDriverSystem;
     private boolean pojavBigCore;
     private Renderer renderer;
+    private String uuid;
 
     /**
      * The game directory
@@ -130,15 +130,6 @@ public class LaunchOptions implements Serializable {
     }
 
     /**
-     * The maximum metaspace memory that the JVM can allocate.
-     * For Java 7 -XX:PermSize and Java 8 -XX:MetaspaceSize
-     * Containing class instances.
-     */
-    public Integer getMetaspace() {
-        return metaspace;
-    }
-
-    /**
      * The initial game window width
      */
     public Integer getWidth() {
@@ -182,6 +173,10 @@ public class LaunchOptions implements Serializable {
      */
     public Renderer getRenderer() {
         return renderer;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public static class Builder {
@@ -266,15 +261,6 @@ public class LaunchOptions implements Serializable {
          */
         public Integer getMaxMemory() {
             return options.maxMemory;
-        }
-
-        /**
-         * The maximum metaspace memory that the JVM can allocate.
-         * For Java 7 -XX:PermSize and Java 8 -XX:MetaspaceSize
-         * Containing class instances.
-         */
-        public Integer getMetaspace() {
-            return options.metaspace;
         }
 
         /**
@@ -378,11 +364,6 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setMetaspace(Integer metaspace) {
-            options.metaspace = metaspace;
-            return this;
-        }
-
         public Builder setWidth(Integer width) {
             options.width = width;
             return this;
@@ -415,6 +396,11 @@ public class LaunchOptions implements Serializable {
 
         public Builder setPojavBigCore(boolean pojavBigCore) {
             options.pojavBigCore = pojavBigCore;
+            return this;
+        }
+
+        public Builder setUUid(String uuid) {
+            options.uuid = uuid;
             return this;
         }
 

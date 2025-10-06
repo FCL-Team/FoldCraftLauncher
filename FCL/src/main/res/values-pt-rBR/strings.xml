@@ -728,8 +728,6 @@
     <string name="settings_advanced_dont_check_jvm_validity">Não verificar compatibilidade do Java</string>
     <string name="settings_advanced_game_dir_default">Padrão (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolado (.minecraft/versions/&#60;instance name>/, exceto por assets e bibliotecas)</string>
-    <string name="settings_advanced_java_permanent_generation_space">Espaço PermGen</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">em MB</string>
     <string name="settings_advanced_jvm_args">Argumentos Java VM</string>
     <string name="settings_advanced_minecraft_arguments">Argumentos de inicialização</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Padrão</string>

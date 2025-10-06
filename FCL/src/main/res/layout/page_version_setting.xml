@@ -646,17 +646,16 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
-                            android:text="@string/settings_advanced_java_permanent_generation_space"
+                            android:text="@string/settings_advanced_custom_uuid"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLEditText
-                            android:id="@+id/edit_permgen_space"
+                            android:id="@+id/edit_uuid"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginStart="20dp"
                             android:layout_weight="1"
-                            android:hint="@string/settings_advanced_java_permanent_generation_space_prompt"
                             android:singleLine="true"
                             android:textSize="14sp"
                             app:auto_edit_tint="true" />

@@ -826,13 +826,12 @@
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
-    <string name="settings_advanced_java_permanent_generation_space">PermGen Space</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">in MB</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
+    <string name="settings_advanced_custom_uuid">Custom UUID</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
