@@ -421,7 +421,7 @@ public class DefaultLauncher extends Launcher {
     }
 
     protected Map<String, String> getConfigurations() {
-        String uuid = options.getUuid().replace("-","");
+        String uuid = options.getUuid().replace("-", "");
         boolean customUuid = uuid.length() == 32;
         return mapOf(
                 // defined by Minecraft official launcher
