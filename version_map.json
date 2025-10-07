@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1257,
-    "versionName": "1.2.5.7",
-    "date": "2025.10.02",
+    "versionCode": 1258,
+    "versionName": "1.2.5.8",
+    "date": "2025.10.07",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue with the Kilt mod not working.  \n2. Removed Cacio17.  \n3. Optimized the mod download page's detection of installed mods and limited mod file size to prevent OOM.  \n4. Improved the local mod management page's function for retrieving mod information by limiting the number of simultaneous retrievals to prevent freezing after rapid scrolling.  \n5. Optimized the layout of the game settings page to reduce nesting.  \n6. Fixed an issue where launching the launcher on certain systems could trigger an array out-of-bounds error, causing a crash."
+        "text": "(Translated from Chinese by AI)\n1. Merge the Community and About pages  \n2. Remove the permanent memory retention area (this feature can be directly added via JVM parameters, so it is being removed)  \n3. Add custom UUID functionality  \n4. Add version 1.21.9 filter option to the download page  \n5. Standardize the bottom spacing for some interface buttons"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Kilt mod无法运行的问题\n2.移除Cacio17\n3.优化模组下载页面检测已安装模组功能，限制模组文件大小防止OOM\n4.优化本地模组管理页面获取模组信息功能，限制同时获取的数量，防止快速滑动后卡死\n5.优化游戏设置页面布局，减少嵌套\n6.修复某些系统上可能会进入启动器触发数组越界导致崩溃的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.合并社区与关于页面\n2.删除永久内存保留区域（该功能可直接通过JVM参数添加所以删除）\n3.增加自定义UUID功能\n4.下载页面添加1.21.9版本过滤条件\n5.统一部分界面按钮底部间距"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/ef1b37559c62",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.7/FCL-release-1.2.5.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/4f47eb2b41cb",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.8/FCL-release-1.2.5.8-all.apk"
   }
 ]
