@@ -464,6 +464,7 @@
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
+    <string name="launch_error_java_continue_disable">继续（禁用检查）</string>
     <string name="launch_failed">无法启动</string>
     <string name="launch_failed_download_library">未能下载游戏依赖 %s</string>
 

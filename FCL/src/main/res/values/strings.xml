@@ -495,6 +495,7 @@
     <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
+    <string name="launch_error_java_continue_disable">Continue(disable checks)</string>
     <string name="launch_failed">Unable to launch</string>
     <string name="launch_failed_download_library">Unable to download library %s.</string>
 
