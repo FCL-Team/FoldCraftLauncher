@@ -17,10 +17,12 @@
  */
 package com.tungsten.fcl.game;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fcl.util.AndroidUtils.getLocalizedText;
 import static com.tungsten.fcl.util.AndroidUtils.hasStringId;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +35,7 @@ import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
@@ -196,6 +199,11 @@ public final class LauncherHelper {
                             intent.putExtras(bundle);
                             LOG.log(Level.INFO, "Start JVMActivity!");
                             context.startActivity(intent);
+                            if (context.getSharedPreferences("launcher", MODE_PRIVATE).getBoolean("autoExitLauncher", false)) {
+                                Activity activity = FCLApplication.getCurrentActivity();
+                                if (activity != null)
+                                    activity.finish();
+                            }
                         }))
                         .withStage("launch.state.waiting_launching"))
                 .withStagesHint(Lang.immutableListOf(
