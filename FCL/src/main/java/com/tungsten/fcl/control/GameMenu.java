@@ -402,8 +402,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(autoShowLogSwitch, menuSetting.getAutoShowLogProperty());
 
         performanceModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            menuSetting.getPerformanceModeProperty().setValue(isChecked);
             activity.getWindow().setSustainedPerformanceMode(isChecked);
         });
+        performanceModeSwitch.setChecked(menuSetting.isPerformanceMode());
 
         menuSetting.getHideMenuViewViewProperty().addListener(i -> {
             menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);

@@ -84,6 +84,14 @@ class MenuSetting {
             autoShowLogProperty.set(v)
         }
 
+    val performanceModeProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "performanceMode", false)
+    var isPerformanceMode
+        get() = performanceModeProperty.get()
+        set(v) {
+            performanceModeProperty.set(v)
+        }
+
     val menuPositionXProperty: DoubleProperty =
         SimpleDoubleProperty(this, "menuPositionX", 0.5)
     var menuPositionX: Double
@@ -226,6 +234,7 @@ class MenuSetting {
         disableSoftKeyAdjustProperty.addListener(listener)
         showLogProperty.addListener(listener)
         autoShowLogProperty.addListener(listener)
+        performanceModeProperty.addListener(listener)
         menuPositionXProperty.addListener(listener)
         menuPositionYProperty.addListener(listener)
         disableGestureProperty.addListener(listener)
@@ -261,6 +270,7 @@ class MenuSetting {
                 addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust)
                 addProperty("showLog", src.isShowLog)
                 addProperty("autoShowLog", src.isAutoShowLog)
+                addProperty("performanceMode", src.isPerformanceMode)
                 addProperty("menuPositionX", src.menuPositionX)
                 addProperty("menuPositionY", src.menuPositionY)
                 addProperty("disableGesture", src.isDisableGesture)
@@ -297,6 +307,7 @@ class MenuSetting {
                 ms.isDisableSoftKeyAdjust = json["disableSoftKeyAdjust"]?.asBoolean ?: false
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
                 ms.isAutoShowLog = json["autoShowLog"]?.asBoolean ?: false
+                ms.isPerformanceMode = json["performanceMode"]?.asBoolean ?: false
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
                 ms.menuPositionY = json["menuPositionY"]?.asDouble ?: 0.5
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false
