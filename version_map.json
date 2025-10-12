@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1258,
-    "versionName": "1.2.5.8",
-    "date": "2025.10.07",
+    "versionCode": 1259,
+    "versionName": "1.2.5.9",
+    "date": "2025.10.12",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Merge the Community and About pages  \n2. Remove the permanent memory retention area (this feature can be directly added via JVM parameters, so it is being removed)  \n3. Add custom UUID functionality  \n4. Add version 1.21.9 filter option to the download page  \n5. Standardize the bottom spacing for some interface buttons"
+        "text": "(Translated from Chinese by AI)\n1. New feature: Quickly disable JVM compatibility check  \n2. Retain the toggle setting status of continuous performance mode  \n3. New feature: Close the launcher after starting the game (enable this in the launcher settings)  \n4. Add version 1.21.10 filter on the download page"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.合并社区与关于页面\n2.删除永久内存保留区域（该功能可直接通过JVM参数添加所以删除）\n3.增加自定义UUID功能\n4.下载页面添加1.21.9版本过滤条件\n5.统一部分界面按钮底部间距"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：快速禁用jvm兼容性检查\n2.保留持续性能模式的开关设置状态\n3.新增功能：启动游戏后关闭启动器（在启动器设置内开启）\n4.下载页面添加1.21.10版本过滤条件"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/4f47eb2b41cb",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.8/FCL-release-1.2.5.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/92135dab46a2",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.9/FCL-release-1.2.5.9-all.apk"
   }
 ]
