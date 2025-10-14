@@ -775,8 +775,6 @@
     <string name="settings_advanced_dont_check_jvm_validity">唔檢查 JVM 兼容性</string>
     <string name="settings_advanced_game_dir_default">默認 (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">各版本獨立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
-    <string name="settings_advanced_java_permanent_generation_space">內存永久保存區域</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">單位 MB</string>
     <string name="settings_advanced_jvm_args">Java 虛擬機參數</string>
     <string name="settings_advanced_minecraft_arguments">遊戲參數</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默認</string>

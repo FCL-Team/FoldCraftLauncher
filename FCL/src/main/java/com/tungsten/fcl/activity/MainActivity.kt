@@ -105,7 +105,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var profile: Profile
     private lateinit var theme: IntegerProperty
     var isVersionLoading = false
-    private lateinit var permissionResultLauncher: ActivityResultLauncher<String>
+    lateinit var permissionResultLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,7 +198,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiManager.registerDefaultBackEvent {
                     if (uiManager.currentUI === uiManager.mainUI) {
                         val i = Intent(Intent.ACTION_MAIN)
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         i.addCategory(Intent.CATEGORY_HOME)
                         startActivity(i)
                         exitProcess(0)
@@ -636,7 +636,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 "${application.packageName}.provider",
                 file
             )
-            intent.setType("text/plain")
+            intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_STREAM, uri)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivity(

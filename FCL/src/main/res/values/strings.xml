@@ -495,6 +495,7 @@
     <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
+    <string name="launch_error_java_continue_disable">Continue(disable checks)</string>
     <string name="launch_failed">Unable to launch</string>
     <string name="launch_failed_download_library">Unable to download library %s.</string>
 
@@ -826,13 +827,12 @@
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
-    <string name="settings_advanced_java_permanent_generation_space">PermGen Space</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">in MB</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
+    <string name="settings_advanced_custom_uuid">Custom UUID</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
@@ -861,7 +861,9 @@
     <string name="settings_icon">Icon</string>
 
     <string name="settings_launcher">Launcher Settings</string>
+    <string name="settings_launcher_request">Request</string>
     <string name="settings_launcher_debug">Debug</string>
+    <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>
@@ -896,6 +898,7 @@
     <string name="settings_launcher_animation_speed">Animation Speed</string>
     <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
     <string name="settings_disable_fullscreen_input">Disable fullscreen input (For TouchController mod)</string>
+    <string name="settings_launcher_exit_after_launching">Launcher exits after launching</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>

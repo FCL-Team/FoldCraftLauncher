@@ -37,6 +37,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
     public String preferredVersionName = null;
+    public FCLTabLayout tabLayout;
 
     public ManageUI(Context context, FCLUILayout parent, int id) {
         super(context, parent, id);
@@ -45,7 +46,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void onCreate() {
         super.onCreate();
-        FCLTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);

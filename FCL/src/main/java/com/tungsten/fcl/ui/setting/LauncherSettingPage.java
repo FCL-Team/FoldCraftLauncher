@@ -5,14 +5,18 @@ import static com.tungsten.fcl.setting.ConfigHolder.config;
 import static com.tungsten.fclcore.util.Lang.thread;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -20,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 
 import com.tungsten.fcl.R;
@@ -71,6 +77,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton checkUpdate;
     private FCLButton clearCache;
     private FCLButton exportLog;
+    private FCLButton requestAudioRecord;
+    private FCLSwitch autoExitLauncher;
     private FCLButton theme;
     private FCLButton theme2;
     private FCLButton ltBackground;
@@ -105,10 +113,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     @Override
     public void onCreate() {
         super.onCreate();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
         language = findViewById(R.id.language);
         checkUpdate = findViewById(R.id.check_update);
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
+        requestAudioRecord = findViewById(R.id.request_audio_record);
+        autoExitLauncher = findViewById(R.id.auto_exit_launcher);
         theme = findViewById(R.id.theme);
         theme2 = findViewById(R.id.theme2);
         ltBackground = findViewById(R.id.background_lt);
@@ -137,6 +148,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         checkUpdate.setOnClickListener(this);
         clearCache.setOnClickListener(this);
         exportLog.setOnClickListener(this);
+        requestAudioRecord.setOnClickListener(this);
         theme.setOnClickListener(this);
         theme2.setOnClickListener(this);
         ltBackground.setOnClickListener(this);
@@ -175,6 +187,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         language.setSelection(LocaleUtils.getLanguage(getContext()));
         language.setOnItemSelectedListener(this);
 
+        autoExitLauncher.setChecked(sharedPreferences.getBoolean("autoExitLauncher", false));
+        autoExitLauncher.setOnCheckedChangeListener(this);
+
         ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         ignoreNotch.setOnCheckedChangeListener(this);
 
@@ -186,7 +201,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         animationSpeed.progressProperty().bindBidirectional(ThemeEngine.getInstance().getTheme().animationSpeedProperty());
         ThemeEngine.getInstance().getTheme().animationSpeedProperty().addListener(observable -> Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme()));
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
         vibrationDuration.setProgress(sharedPreferences.getInt("vibrationDuration", 100));
         vibrationDuration.addProgressListener();
         vibrationDuration.progressProperty().addListener(observable -> {
@@ -310,6 +324,22 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     builder.create().show();
                 });
             });
+        }
+        if (v == requestAudioRecord) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.getInstance(), Manifest.permission.RECORD_AUDIO)) {
+                    MainActivity.getInstance().permissionResultLauncher.launch(Manifest.permission.RECORD_AUDIO);
+                } else {
+                    try {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                        intent.setData(uri);
+                        getContext().startActivity(intent);
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
         }
         if (v == theme) {
             FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor(), new FCLColorPickerDialog.Listener() {
@@ -504,6 +534,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
         if (buttonView == ignoreNotch) {
             ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), isChecked);
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
@@ -511,8 +542,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(isChecked);
             Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
         } else if (buttonView == disableFullscreenInput) {
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
             sharedPreferences.edit().putBoolean("disableFullscreenInput", isChecked).apply();
+        } else if (buttonView == autoExitLauncher) {
+            sharedPreferences.edit().putBoolean("autoExitLauncher", isChecked).apply();
         }
     }
 }

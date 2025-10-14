@@ -23,6 +23,7 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
     private ButtonListener positiveListener;
     private ButtonListener negativeListener;
+    private ButtonListener neutralListener;
 
     private View parent;
     private ImageFilterView icon;
@@ -31,6 +32,7 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     private FCLTextView message;
     private FCLButton positive;
     private FCLButton negative;
+    private FCLButton neutral;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public FCLAlertDialog(@NonNull Context context) {
@@ -46,14 +48,17 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         message = findViewById(R.id.text);
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
+        neutral = findViewById(R.id.neutral);
 
         checkHeight();
 
         positive.setVisibility(View.GONE);
         negative.setVisibility(View.GONE);
+        neutral.setVisibility(View.GONE);
 
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+        neutral.setOnClickListener(this);
 
         icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_info_24));
         title.setText(getContext().getString(R.string.dialog_info));
@@ -78,18 +83,15 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (view == positive) {
-            if (positiveListener != null) {
-                positiveListener.onClick();
-            }
-            dismiss();
+        ButtonListener listener = null;
+        if (view == positive) listener = positiveListener;
+        else if (view == negative) listener = negativeListener;
+        else if (view == neutral) listener = neutralListener;
+
+        if (listener != null) {
+            listener.onClick();
         }
-        if (view == negative) {
-            if (negativeListener != null) {
-                negativeListener.onClick();
-            }
-            dismiss();
-        }
+        dismiss();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -140,6 +142,12 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         negative.setVisibility(View.VISIBLE);
         negative.setText(text);
         negativeListener = listener;
+    }
+
+    public void setNeutralButton(String text, ButtonListener listener) {
+        neutral.setVisibility(View.VISIBLE);
+        neutral.setText(text);
+        neutralListener = listener;
     }
 
     public static class Builder {
@@ -198,6 +206,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         public Builder setNegativeButton(String text, ButtonListener listener) {
             dialog.setNegativeButton(text, listener);
+            return this;
+        }
+
+        public Builder setNeutralButton(String text, ButtonListener listener) {
+            dialog.setNeutralButton(text, listener);
             return this;
         }
     }

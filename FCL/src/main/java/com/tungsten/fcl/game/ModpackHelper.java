@@ -254,7 +254,6 @@ public final class ModpackHelper {
         vs.setIsolateGameDir(true);
 
         if (c.isOverrideMemory()) {
-            vs.setPermSize(Optional.ofNullable(c.getPermGen()).map(Object::toString).orElse(""));
             if (c.getMaxMemory() != null)
                 vs.setMaxMemory(c.getMaxMemory());
             vs.setMinMemory(c.getMinMemory());

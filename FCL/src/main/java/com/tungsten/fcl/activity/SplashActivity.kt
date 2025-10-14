@@ -26,14 +26,11 @@ import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
 import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.util.RuntimeUtils
-import com.tungsten.fclauncher.plugins.DriverPlugin
-import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.ButtonListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +51,6 @@ class SplashActivity : FCLActivity() {
     private lateinit var permissionResultLauncher: ActivityResultLauncher<Array<String>>
     var lwjgl: Boolean = false
     var cacio: Boolean = false
-    var cacio11: Boolean = false
     var cacio17: Boolean = false
     var java8: Boolean = false
     var java11: Boolean = false
@@ -121,7 +117,7 @@ class SplashActivity : FCLActivity() {
                 Logging.start(Paths.get(FCLPath.LOG_DIR))
                 initState()
             }.await()
-            if (lwjgl && cacio && cacio11 && cacio17 && java8 && java11 && java17 && java21 && jna) {
+            if (lwjgl && cacio && cacio17 && java8 && java11 && java17 && java21 && jna) {
                 enterLauncher()
             } else {
                 start()
@@ -220,10 +216,6 @@ class SplashActivity : FCLActivity() {
             cacio = RuntimeUtils.isLatest(
                 FCLPath.CACIOCAVALLO_8_DIR,
                 "/assets/app_runtime/caciocavallo"
-            )
-            cacio11 = RuntimeUtils.isLatest(
-                FCLPath.CACIOCAVALLO_11_DIR,
-                "/assets/app_runtime/caciocavallo11"
             )
             cacio17 = RuntimeUtils.isLatest(
                 FCLPath.CACIOCAVALLO_17_DIR,

@@ -27,7 +27,7 @@
     <string name="about">关于</string>
     <string name="about_sponsor">赞助</string>
     <string name="about_source">开源</string>
-    <string name="about_desc">Fold Craft Launcher 是一个 Android Minecraft 启动器，让用户能够在 Android 设备上启动 Minecraft: Java Edition。\n\nFold Craft Launcher 由 FCL-Team 开发。\n\nFold Craft Launcher 的主要功能是基于 HMCLCore 修改而成的。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
+    <string name="about_desc">你说得对，但是「FCL」是由FCL-Team基于HMCL的核心功能，结合PojavLauncher后端和Boat后端开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统，在这里，被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
 
     <string name="account_add_server">添加认证服务器</string>
     <string name="account_add_server_url">服务器地址</string>
@@ -464,6 +464,7 @@
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
+    <string name="launch_error_java_continue_disable">继续（禁用检查）</string>
     <string name="launch_failed">无法启动</string>
     <string name="launch_failed_download_library">未能下载游戏依赖 %s</string>
 
@@ -780,13 +781,12 @@
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
     <string name="settings_advanced_game_dir_default">默认 (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
-    <string name="settings_advanced_java_permanent_generation_space">内存永久保存区域</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">单位 MB</string>
     <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>
     <string name="settings_advanced_minecraft_arguments">游戏参数</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
+    <string name="settings_advanced_custom_uuid">自定义UUID</string>
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
@@ -809,7 +809,9 @@
     <string name="settings_icon">版本图标</string>
 
     <string name="settings_launcher">启动器设置</string>
+    <string name="settings_launcher_request">请求</string>
     <string name="settings_launcher_debug">调试</string>
+    <string name="settings_launcher_request_recording_permission">请求麦克风权限（用于语音聊天模组）</string>
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_check">检测</string>
     <string name="settings_launcher_cache">缓存文件夹</string>
@@ -836,6 +838,7 @@
     <string name="settings_launcher_animation_speed">动画速度</string>
     <string name="settings_launcher_vibrate_duration">震动时长（用于TouchController模组）</string>
     <string name="settings_disable_fullscreen_input">禁用全屏输入（用于TouchController模组）</string>
+    <string name="settings_launcher_exit_after_launching">启动器启动后自动关闭</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>

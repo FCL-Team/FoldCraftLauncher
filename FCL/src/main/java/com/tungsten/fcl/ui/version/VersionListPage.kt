@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Locale
-import java.util.concurrent.Callable
 import java.util.logging.Level
 import java.util.stream.Collectors
 
@@ -55,7 +54,7 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
             override fun afterTextChanged(s: Editable) {
                 val text = s.toString()
                 if (text.isEmpty()) {
-                    binding.versionList.setAdapter(adapter)
+                    binding.versionList.adapter = adapter
                 } else {
                     val newAdapter =
                         VersionListAdapter(context, children.filter {
@@ -63,7 +62,7 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                                 Locale.getDefault()
                             ).contains(text.lowercase(Locale.getDefault()))
                         } as ArrayList)
-                    binding.versionList.setAdapter(newAdapter)
+                    binding.versionList.adapter = newAdapter
                 }
             }
         }
@@ -75,14 +74,14 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
 
     fun refreshProfile() {
         val adapter = ProfileListAdapter(context, profiles)
-        binding.profileList.setAdapter(adapter)
+        binding.profileList.adapter = adapter
     }
 
     private fun loadVersions(profile: Profile) {
         MainActivity.getInstance().lifecycleScope.launch {
             binding.search.removeTextChangedListener(textWatcher)
             binding.search.setText("")
-            binding.refresh.setEnabled(false)
+            binding.refresh.isEnabled = false
             binding.versionList.visibility = View.GONE
             binding.progress.visibility = View.VISIBLE
         }
@@ -92,7 +91,7 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                 children = withContext(Dispatchers.IO) {
                     repository.displayVersions
                         .parallel()
-                        .map<VersionListItem> { version: Version ->
+                        .map { version: Version ->
                             val game = profile.repository.getGameVersion(version.id)
                             val libraries =
                                 StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
@@ -159,15 +158,15 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                         context,
                         children as ArrayList
                     )
-                    binding.versionList.setAdapter(adapter)
-                    binding.refresh.setEnabled(true)
+                    binding.versionList.adapter = adapter
+                    binding.refresh.isEnabled = true
                     binding.versionList.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
                     binding.search.addTextChangedListener(textWatcher)
                 }
                 children.forEach {
                     it.selectedProperty().bind(
-                        Bindings.createBooleanBinding(Callable {
+                        Bindings.createBooleanBinding({
                             profile.selectedVersionProperty().get() == it.version
                         }, profile.selectedVersionProperty())
                     )

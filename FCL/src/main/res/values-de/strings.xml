@@ -666,8 +666,6 @@
     <string name="settings_advanced_dont_check_jvm_validity">JVM-Kompatibilität nicht überprüfen</string>
     <string name="settings_advanced_game_dir_default">Standard (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isoliert in (.minecraft/versions/&lt;instance name&gt;/, außer Ressourcen und Bibliotheken)</string>
-    <string name="settings_advanced_java_permanent_generation_space">Permanenter Speicherplatz</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">in MB</string>
     <string name="settings_advanced_jvm_args">JVM-Argumente</string>
     <string name="settings_advanced_minecraft_arguments">Launcher-Argumente</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Standard</string>

@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1254,
-    "versionName": "1.2.5.4",
-    "date": "2025.09.17",
+    "versionCode": 1259,
+    "versionName": "1.2.5.9",
+    "date": "2025.10.12",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix crashes related to the mod management page  \n2. Remove the automatic replenishment feature for mods deleted from modpacks  \n3. Update mod and modpack data  \n4. Remove unnecessary System.gc() calls to reduce launcher page stuttering"
+        "text": "(Translated from Chinese by AI)\n1. New feature: Quickly disable JVM compatibility check  \n2. Retain the toggle setting status of continuous performance mode  \n3. New feature: Close the launcher after starting the game (enable this in the launcher settings)  \n4. Add version 1.21.10 filter on the download page"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复模组管理页面相关闪退问题\n2.取消整合包模组删除后自动补全的功能\n3.更新模组和整合包数据\n4.删除不必要的System.gc()调用减少启动器页面卡顿"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：快速禁用jvm兼容性检查\n2.保留持续性能模式的开关设置状态\n3.新增功能：启动游戏后关闭启动器（在启动器设置内开启）\n4.下载页面添加1.21.10版本过滤条件"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/9fbb54dbf8cc",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.4/FCL-release-1.2.5.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/92135dab46a2",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.5.9/FCL-release-1.2.5.9-all.apk"
   }
 ]
