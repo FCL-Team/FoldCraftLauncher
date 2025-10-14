@@ -158,15 +158,17 @@ public class FCLInput implements View.OnCapturedPointerListener {
             int deltaX;
             int deltaY;
             if (event != null) {
-                deltaX = (int) event.getX();
-                deltaY = (int) event.getY();
+                double tX = event.getX();
+                double tY = event.getY();
                 final int historySize = event.getHistorySize();
                 for (int i = 0; i < historySize; i++) {
-                    deltaX += (int) event.getHistoricalX(i);
-                    deltaY += (int) event.getHistoricalY(i);
+                    tX += event.getHistoricalX(i);
+                    tY += event.getHistoricalY(i);
                 }
-                deltaX *= (int) menu.getMenuSetting().getMouseSensitivity();
-                deltaY *= (int) menu.getMenuSetting().getMouseSensitivity();
+                tX *= menu.getMenuSetting().getMouseSensitivity();
+                tY *= menu.getMenuSetting().getMouseSensitivity();
+                deltaX = (int) tX;
+                deltaY = (int) tY;
             } else {
                 deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
                 deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
