@@ -277,7 +277,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 synchronized (ModListPage.this) {
                     setLoading(true);
                     modManager.refreshMods();
-                    return new ArrayList<>(modManager.getMods());
+                    return modManager.getMods().stream().map(it -> new ModInfoObject(getContext(), it)).collect(Collectors.toList());
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -286,10 +286,10 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             setLoading(false);
             if (exception == null)
                 try {
-                    itemsProperty.setAll(list.stream().map(it -> new ModInfoObject(getContext(), it)).filter(modInfoObject -> {
+                    itemsProperty.setAll(list.stream().filter(modInfoObject -> {
                         boolean active = modInfoObject.getModInfo().isActive();
                         return (enabled.isChecked() && active) || (disabled.isChecked() && !active);
-                    }).sorted().collect(Collectors.toList()));
+                    }).collect(Collectors.toList()));
                 } catch (Throwable e) {
                     LOG.log(Level.SEVERE, "Failed to load local mod list", e);
                 }
@@ -500,7 +500,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }
     }
 
-    public static class ModInfoObject implements Comparable<ModInfoObject> {
+    public static class ModInfoObject {
         private final BooleanProperty active;
         private final LocalModFile localModFile;
         private final String title;
@@ -545,11 +545,6 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
         public ModTranslations.Mod getMod() {
             return mod;
-        }
-
-        @Override
-        public int compareTo(@NotNull ModInfoObject o) {
-            return localModFile.getFileName().toLowerCase().compareTo(o.localModFile.getFileName().toLowerCase());
         }
 
         public RemoteMod getRemoteMod() {
