@@ -20,6 +20,8 @@ package com.tungsten.fclcore.mod.modinfo;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
@@ -119,11 +121,26 @@ public final class ForgeOldModMetadata {
         Path mcmod = fs.getPath("mcmod.info");
         if (Files.notExists(mcmod))
             throw new IOException("File " + modFile + " is not a Forge mod.");
-        List<ForgeOldModMetadata> modList = JsonUtils.GSON.fromJson(FileUtils.readText(mcmod),
-                new TypeToken<List<ForgeOldModMetadata>>() {
+        List<ForgeOldModMetadata> modList;
+
+        try (var reader = Files.newBufferedReader(mcmod);
+             var jsonReader = new JsonReader(reader)) {
+            JsonToken firstToken = jsonReader.peek();
+
+            if (firstToken == JsonToken.BEGIN_ARRAY)
+                modList = JsonUtils.GSON.fromJson(jsonReader, new TypeToken<List<ForgeOldModMetadata>>() {
                 }.getType());
+            else if (firstToken == JsonToken.BEGIN_OBJECT) {
+                ForgeOldModMetadataLst list = JsonUtils.GSON.fromJson(jsonReader, ForgeOldModMetadataLst.class);
+                if (list == null)
+                    throw new IOException("Mod " + modFile + " `mcmod.info` is malformed");
+                modList = list.getModList();
+            } else {
+                throw new JsonParseException("Unexpected first token: " + firstToken);
+            }
+        }
         if (modList == null || modList.isEmpty())
-            throw new IOException("Mod " + modFile + " `mcmod.info` is malformed..");
+            throw new IOException("Mod " + modFile + " `mcmod.info` is malformed");
         ForgeOldModMetadata metadata = modList.get(0);
         String authors = metadata.getAuthor();
         if (StringUtils.isBlank(authors) && metadata.getAuthors().length > 0)
