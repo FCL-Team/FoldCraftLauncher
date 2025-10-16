@@ -64,6 +64,7 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
+import com.tungsten.fclcore.mod.server.ServerModpackProvider;
 import com.tungsten.fclcore.task.DownloadException;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -143,6 +144,18 @@ public final class LauncherHelper {
                         return null;
                     return Task.allOf(
                             dependencyManager.checkGameCompletionAsync(version.get(), integrityCheck),
+                            Task.composeAsync(() -> {
+                                try {
+                                    ModpackConfiguration<?> configuration = ModpackHelper.readModpackConfiguration(repository.getModpackConfiguration(selectedVersion));
+                                    ModpackProvider provider = ModpackHelper.getProviderByType(configuration.getType());
+                                    if (provider == null)
+                                        return null;
+                                    else if (configuration.getType().equals(ServerModpackProvider.INSTANCE.getName()))
+                                        return provider.createCompletionTask(dependencyManager, selectedVersion);
+                                } catch (IOException ignore) {
+                                }
+                                return null;
+                            }),
                             Task.composeAsync(() -> null)
                     );
                 }).withStage("launch.state.dependencies")
