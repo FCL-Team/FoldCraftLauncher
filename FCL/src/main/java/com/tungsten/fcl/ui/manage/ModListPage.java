@@ -524,7 +524,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 message.append(", ").append(context.getString(R.string.archive_author)).append(": ").append(localModFile.getAuthors());
             this.message = message.toString();
 
-            this.mod = ModTranslations.MOD.getModById(localModFile.getId());
+            this.mod = ModTranslations.MOD.getMod(localModFile.getId(), localModFile.getName());
         }
 
         public BooleanProperty getActive() {
