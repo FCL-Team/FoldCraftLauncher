@@ -143,6 +143,11 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
+    public Path getModsDirectory(String id) {
+        return getRunDirectory(id).toPath().resolve("mods");
+    }
+
+    @Override
     public File getVersionRoot(String id) {
         return new File(getBaseDirectory(), "versions/" + id);
     }
@@ -214,7 +219,8 @@ public class DefaultGameRepository implements GameRepository {
                 }
             }
             return true;
-        } catch (IOException | JsonParseException | VersionNotFoundException | InvalidPathException e) {
+        } catch (IOException | JsonParseException | VersionNotFoundException |
+                 InvalidPathException e) {
             LOG.log(Level.WARNING, "Unable to rename version " + from + " to " + to, e);
             return false;
         }

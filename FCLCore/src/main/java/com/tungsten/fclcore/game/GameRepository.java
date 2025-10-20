@@ -147,6 +147,8 @@ public interface GameRepository extends VersionProvider {
         return getGameVersion(getVersion(versionId));
     }
 
+    Path getModsDirectory(String id);
+
     /**
      * Get minecraft jar
      *

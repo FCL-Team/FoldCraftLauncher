@@ -136,7 +136,7 @@ public final class CurseCompletionTask extends Task<Void> {
                         .collect(Collectors.toList()));
         FileUtils.writeText(new File(root, "manifest.json"), JsonUtils.GSON.toJson(newManifest));
 
-        File versionRoot = repository.getVersionRoot(modManager.getVersion());
+        File versionRoot = repository.getVersionRoot(modManager.getInstanceId());
         File resourcePacksRoot = new File(versionRoot, "resourcepacks"), shaderPacksRoot = new File(versionRoot, "shaderpacks");
         finished.set(0);
         dependencies = newManifest.getFiles()
