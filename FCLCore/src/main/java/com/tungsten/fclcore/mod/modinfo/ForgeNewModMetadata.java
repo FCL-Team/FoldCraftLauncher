@@ -210,12 +210,14 @@ public final class ForgeNewModMetadata {
                 metadata.validate();
 
                 embeddedModFiles = new ArrayList<>();
-                for (EmbeddedJarMetadata jar : metadata.getJars()) {
-                    Path path = fs.getPath(jar.getPath());
-                    if (Files.isRegularFile(path)) {
-                        embeddedModFiles.add(path);
-                    } else {
-                        LOG.warning("Missing embedded-dependencies-mod: " + path);
+                if (metadata.getJars() != null) {
+                    for (EmbeddedJarMetadata jar : metadata.getJars()) {
+                        Path path = fs.getPath(jar.getPath());
+                        if (Files.isRegularFile(path)) {
+                            embeddedModFiles.add(path);
+                        } else {
+                            LOG.warning("Missing embedded-dependencies-mod: " + path);
+                        }
                     }
                 }
             }
