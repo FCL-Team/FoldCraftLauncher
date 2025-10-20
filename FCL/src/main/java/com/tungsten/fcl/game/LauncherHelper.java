@@ -35,6 +35,7 @@ import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
+import com.mio.util.ParseUtil;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
@@ -194,7 +195,8 @@ public final class LauncherHelper {
                             return launcher;
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
                             return Task.supplyAsync(launcher::launch);
-                        }).thenComposeAsync(fclBridge -> {
+                        }).thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))
+                        .thenComposeAsync(fclBridge -> {
                             Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
                             fclBridge.setRenderer(renderer.getName());
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
@@ -308,6 +310,27 @@ public final class LauncherHelper {
         });
 
         executor.start();
+    }
+
+    private Task<FCLBridge> checkPathValid(FCLBridge bridge, FCLGameRepository repository) {
+        return Task.composeAsync(() -> {
+            try {
+                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                String path = repository.getVersionJar(selectedVersion).getAbsolutePath();
+                if (ParseUtil.isValidCharacters(path)) {
+                    return Task.completed(bridge);
+                } else {
+                    Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
+                            .setCancelable(false)
+                            .setMessage(context.getString(R.string.message_check_path_valid, path))
+                            .setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()))
+                            .setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge))).create().show());
+                    return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+                }
+            } catch (Throwable e) {
+                return Task.completed(bridge);
+            }
+        });
     }
 
     private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version) {
