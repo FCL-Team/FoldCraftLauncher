@@ -65,21 +65,22 @@ public final class ModManager {
         LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException;
     }
 
-    private static final Map<String, List<Pair<ModMetadataReader, Set<ModLoaderType>>>> READERS;
+    private static final Map<String, List<Pair<ModMetadataReader, ModLoaderType>>> READERS;
 
     static {
-        var map = new HashMap<String, List<Pair<ModMetadataReader, Set<ModLoaderType>>>>();
-        var zipReaders = List.<Pair<ModMetadataReader, Set<ModLoaderType>>>of(
-                pair(ForgeNewModMetadata::fromFile, EnumSet.of(ModLoaderType.FORGE, ModLoaderType.NEO_FORGED)),
-                pair(ForgeOldModMetadata::fromFile, EnumSet.of(ModLoaderType.FORGE)),
-                pair(FabricModMetadata::fromFile, EnumSet.of(ModLoaderType.FABRIC)),
-                pair(QuiltModMetadata::fromFile, EnumSet.of(ModLoaderType.QUILT)),
-                pair(PackMcMeta::fromFile, EnumSet.of(ModLoaderType.PACK))
+        var map = new HashMap<String, List<Pair<ModMetadataReader, ModLoaderType>>>();
+        var zipReaders = List.<Pair<ModMetadataReader, ModLoaderType>>of(
+                pair(ForgeNewModMetadata::fromForgeFile, ModLoaderType.FORGE),
+                pair(ForgeNewModMetadata::fromNeoForgeFile, ModLoaderType.NEO_FORGED),
+                pair(ForgeOldModMetadata::fromFile, ModLoaderType.FORGE),
+                pair(FabricModMetadata::fromFile, ModLoaderType.FABRIC),
+                pair(QuiltModMetadata::fromFile, ModLoaderType.QUILT),
+                pair(PackMcMeta::fromFile, ModLoaderType.PACK)
         );
 
         map.put("zip", zipReaders);
         map.put("jar", zipReaders);
-        map.put("litemod", List.of(pair(LiteModMetadata::fromFile, EnumSet.of(ModLoaderType.LITE_LOADER))));
+        map.put("litemod", List.of(pair(LiteModMetadata::fromFile, ModLoaderType.LITE_LOADER)));
 
         READERS = map;
     }
@@ -87,8 +88,9 @@ public final class ModManager {
     private final GameRepository repository;
     private final String id;
     private final TreeSet<LocalModFile> localModFiles = new TreeSet<>();
-    private final HashMap<LocalMod, LocalMod> localMods = new HashMap<>();
+    private final HashMap<Pair<String, ModLoaderType>, LocalMod> localMods = new HashMap<>();
     private LibraryAnalyzer analyzer;
+
     private boolean loaded = false;
 
     public ModManager(GameRepository repository, String id) {
@@ -108,15 +110,24 @@ public final class ModManager {
         return repository.getModsDirectory(id);
     }
 
-    public LocalMod getLocalMod(String id, ModLoaderType modLoaderType) {
-        return localMods.computeIfAbsent(new LocalMod(id, modLoaderType), x -> x);
+    public LibraryAnalyzer getLibraryAnalyzer() {
+        return analyzer;
+    }
+
+    public LocalMod getLocalMod(String modId, ModLoaderType modLoaderType) {
+        return localMods.computeIfAbsent(pair(modId, modLoaderType),
+                x -> new LocalMod(x.getKey(), x.getValue()));
+    }
+
+    public boolean hasMod(String modId, ModLoaderType modLoaderType) {
+        return localMods.containsKey(pair(modId, modLoaderType));
     }
 
     private void addModInfo(Path file) {
         String fileName = StringUtils.removeSuffix(FileUtils.getName(file), DISABLED_EXTENSION, OLD_EXTENSION);
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
 
-        List<Pair<ModMetadataReader, Set<ModLoaderType>>> readersMap = READERS.get(extension);
+        List<Pair<ModMetadataReader, ModLoaderType>> readersMap = READERS.get(extension);
         if (readersMap == null) {
             // Is not a mod file.
             return;
@@ -127,16 +138,8 @@ public final class ModManager {
         var supportedReaders = new ArrayList<ModMetadataReader>();
         var unsupportedReaders = new ArrayList<ModMetadataReader>();
 
-        for (Pair<ModMetadataReader, Set<ModLoaderType>> reader : readersMap) {
-            boolean supported = false;
-            for (ModLoaderType type : reader.getValue()) {
-                if (modLoaderTypes.contains(type)) {
-                    supported = true;
-                    break;
-                }
-            }
-
-            if (supported) {
+        for (Pair<ModMetadataReader, ModLoaderType> reader : readersMap) {
+            if (modLoaderTypes.contains(reader.getValue())) {
                 supportedReaders.add(reader.getKey());
             } else {
                 unsupportedReaders.add(reader.getKey());
@@ -145,12 +148,14 @@ public final class ModManager {
 
         LocalModFile modInfo = null;
 
+        List<Exception> exceptions = new ArrayList<>();
         try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(file)) {
             for (ModMetadataReader reader : supportedReaders) {
                 try {
                     modInfo = reader.fromFile(this, file, fs);
                     break;
-                } catch (Exception ignore) {
+                } catch (Exception e) {
+                    exceptions.add(e);
                 }
             }
 
@@ -159,7 +164,7 @@ public final class ModManager {
                     try {
                         modInfo = reader.fromFile(this, file, fs);
                         break;
-                    } catch (Exception ignore) {
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -168,6 +173,12 @@ public final class ModManager {
         }
 
         if (modInfo == null) {
+            Exception exception = new Exception("Failed to read mod metadata");
+            for (Exception e : exceptions) {
+                exception.addSuppressed(e);
+            }
+            LOG.warning("Failed to read mod metadata:\n" + exception);
+
             String fileNameWithoutExtension = FileUtils.getNameWithoutExtension(file);
 
             modInfo = new LocalModFile(this,
@@ -208,10 +219,10 @@ public final class ModManager {
         loaded = true;
     }
 
-    public Collection<LocalModFile> getMods() throws IOException {
+    public List<LocalModFile> getMods() throws IOException {
         if (!loaded)
             refreshMods();
-        return localModFiles;
+        return List.copyOf(localModFiles);
     }
 
     public void addMod(Path file) throws IOException {
@@ -414,10 +425,6 @@ public final class ModManager {
 
     public Path getSimpleModPath(String fileName) {
         return getModsDirectory().resolve(fileName);
-    }
-
-    public static String getMcbbsUrl(String mcbbsId) {
-        return String.format("https://www.mcbbs.net/thread-%s-1-1.html", mcbbsId);
     }
 
     public static final String DISABLED_EXTENSION = ".disabled";
