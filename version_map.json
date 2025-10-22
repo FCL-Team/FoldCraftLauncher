@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1260,
-    "versionName": "1.2.6.0",
-    "date": "2025.10.17",
+    "versionCode": 1261,
+    "versionName": "1.2.6.1",
+    "date": "2025.10.22",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where external mouse movement was unresponsive at low speeds on some devices.\n2. Fixed the mod sorting error.\n3. Fixed the version icon display error.\n4. Fixed the issue where some older versions of Forge mods could not be recognized.\n5. Fixed the issue where updates could not be detected when server modpacks failed to launch."
+        "text": "(Translated from Chinese by AI)\n1. New feature: Check for illegal characters in the path on startup  \n2. Fixed the issue where translations for some mods were not taking effect, added subname matching for mod translations  \n3. Optimized the mod loader detection mechanism  \n4. Fixed the issue where information from some mod files could not be read, added support for reading META-INF/jarjar/metadata.json"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备上外接鼠标低速移动时无效的问题\n2.修复模组排序错误的问题\n3.修复版本图标显示错误的问题\n4.修复无法识别部分低版本Forge模组的问题\n5.修复服务器整合包无法启动时无法检测更新的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：启动时检查路径非法字符\n2.修复部分模组翻译不生效的问题，增加 subname 匹配模组翻译\n3.优化模组加载器检测机制\n4.修复部分模组文件无法读取信息的问题，支持读取META-INF/jarjar/metadata.json"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7244d79ee19c",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.0/FCL-release-1.2.6.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/3f081a2fe629",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.1/FCL-release-1.2.6.1-all.apk"
   }
 ]
