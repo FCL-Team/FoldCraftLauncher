@@ -556,6 +556,9 @@ public class Keyboard {
 		return current_event.repeat;
 	}
 
+	public static void populateKeyLookupTables(){
+	}
+
 	private static final class KeyEvent {
 		/** The current keyboard character being examined */
 		private int character;
