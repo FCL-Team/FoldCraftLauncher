@@ -205,9 +205,13 @@ public class DefaultLauncher extends Launcher {
 
         Set<String> classpath = repository.getClasspath(version);
         classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
-        File jar = new File(repository.getVersionRoot(version.getId()), version.getId() + ".jar");
-//        if (!jar.exists() || !jar.isFile())
-//            throw new IOException("Minecraft jar does not exist");
+        File jar = repository.getVersionJar(version);
+        if (!jar.exists() || !jar.isFile()){
+            String inherits = version.getInheritsFrom();
+            if (!inherits.isEmpty()) {
+                jar = repository.getVersionJar(inherits);
+            }
+        }
         classpath.add(jar.getAbsolutePath());
 
         // Provided Minecraft arguments
