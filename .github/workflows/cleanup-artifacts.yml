@@ -9,7 +9,7 @@ jobs:
     permissions:
       actions: write
     steps:
-    - name: Remove old artifacts
-      uses: c-hive/gha-remove-artifacts@v1
-      with:
-        age: '2 days' # '<number> <unit>', e.g. 5 days, 2 years, 90 seconds, parsed by Moment.js
+      - name: Remove old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: "2 days" # '<number> <unit>', e.g. 5 days, 2 years, 90 seconds, parsed by Moment.js
