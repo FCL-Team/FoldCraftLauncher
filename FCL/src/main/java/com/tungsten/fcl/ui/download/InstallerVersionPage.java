@@ -71,6 +71,7 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
 
         listener = callback::onSelect;
 
+        findViewById(R.id.april_fools).setVisibility(View.GONE);
         refreshList();
     }
 
