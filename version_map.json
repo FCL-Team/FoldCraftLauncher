@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1262,
-    "versionName": "1.2.6.2",
-    "date": "2025.10.27",
+    "versionCode": 1263,
+    "versionName": "1.2.6.3",
+    "date": "2025.11.01",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Update JNA support library files\n2. Fix startup failure when JAR file is missing for versions installed via JAR execution\n3. Fix inability to start some versions of Cleanroom due to missing populateKeyLookupTables\n4. New feature: Ability to delete save files within world management\n5. Fix the issue where Cleanroom fails to start"
+        "text": "(Translated from Chinese by AI)\n1. Fixed the crash when clicking on Liteloader installation\n2. Fixed the issue where the April Fool's version category appeared in the mod loader interface\n3. Fixed the issue of being unable to launch 25w43a\n4. Removed the horizontal screen lock on the crash interface"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新JNA支持库文件\n2.修复通过执行jar安装的版本不存在jar文件时启动失败\n3.修复缺失populateKeyLookupTables无法启动部分版本的Cleanroom\n4.新增功能：在世界管理内可删除存档\n5.修复Cleanroom无法启动的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复点击Liteloader安装闪退的问题\n2.修复模组加载器界面出现愚人节版本分类的问题\n3.修复无法启动25w43a的问题\n4.取消崩溃界面的横屏横屏锁定"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/94ef44c1ce70",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.2/FCL-release-1.2.6.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/9734c9de7e6a",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.3/FCL-release-1.2.6.3-all.apk"
   }
 ]
