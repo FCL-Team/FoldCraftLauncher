@@ -69,6 +69,25 @@ public class FCLImageButton extends AppCompatImageButton {
         }
     };
 
+    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            refreshStyle();
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme2Dark";
+        }
+    };
+
     public void refreshStyle() {
         int[][] state = {
                 {
@@ -111,6 +130,7 @@ public class FCLImageButton extends AppCompatImageButton {
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -123,6 +143,7 @@ public class FCLImageButton extends AppCompatImageButton {
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -135,6 +156,7 @@ public class FCLImageButton extends AppCompatImageButton {
         init();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public void setAutoTint(boolean autoTint) {

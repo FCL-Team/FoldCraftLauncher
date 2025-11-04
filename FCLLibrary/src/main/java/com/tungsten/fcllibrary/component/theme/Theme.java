@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import androidx.core.graphics.ColorUtils;
 
 import com.mio.util.ImageUtil;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -25,6 +26,7 @@ public class Theme {
 
     private final IntegerProperty color = new SimpleIntegerProperty();
     private final IntegerProperty color2 = new SimpleIntegerProperty();
+    private final IntegerProperty color2Dark = new SimpleIntegerProperty();
     private final IntegerProperty ltColor = new SimpleIntegerProperty();
     private final IntegerProperty dkColor = new SimpleIntegerProperty();
     private final IntegerProperty autoTint = new SimpleIntegerProperty();
@@ -34,7 +36,7 @@ public class Theme {
     private final ObjectProperty<BitmapDrawable> backgroundLt = new SimpleObjectProperty<>();
     private final ObjectProperty<BitmapDrawable> backgroundDk = new SimpleObjectProperty<>();
 
-    public Theme(int color, int color2, boolean fullscreen, boolean closeSkinModel, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
+    public Theme(int color, int color2, int color2Dark, boolean fullscreen, boolean closeSkinModel, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
         ltHsv[1] -= (1 - ltHsv[1]) * 0.3f;
@@ -45,6 +47,7 @@ public class Theme {
         dkHsv[2] -= (1 - dkHsv[2]) * 0.3f;
         this.color.set(color);
         this.color2.set(color2);
+        this.color2Dark.set(color2Dark);
         this.ltColor.set(Color.HSVToColor(ltHsv));
         this.dkColor.set(Color.HSVToColor(dkHsv));
         this.fullscreen.set(fullscreen);
@@ -60,7 +63,12 @@ public class Theme {
     }
 
     public int getColor2() {
-        return color2.get();
+        boolean isNightMode = (FCLApplication.getCurrentActivity().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return isNightMode ? color2Dark.get() : color2.get();
+    }
+
+    public int getColor2Dark() {
+        return color2Dark.get();
     }
 
     public int getLtColor() {
@@ -105,6 +113,10 @@ public class Theme {
 
     public IntegerProperty color2Property() {
         return color2;
+    }
+
+    public IntegerProperty color2DarkProperty() {
+        return color2Dark;
     }
 
     public IntegerProperty ltColorProperty() {
@@ -163,6 +175,10 @@ public class Theme {
         this.color2.set(color);
     }
 
+    public void setColor2Dark(int color) {
+        this.color2Dark.set(color);
+    }
+
     public void setFullscreen(boolean fullscreen) {
         this.fullscreen.set(fullscreen);
     }
@@ -188,6 +204,7 @@ public class Theme {
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
         int color2 = sharedPreferences.getInt("theme_color2", Color.parseColor("#000000"));
+        int color2Dark = sharedPreferences.getInt("theme_color2_dark", Color.parseColor("#000000"));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
         boolean closeSkinModel = sharedPreferences.getBoolean("close_skin_model", false);
         int animationSpeed = sharedPreferences.getInt("animation_speed", 8);
@@ -195,7 +212,7 @@ public class Theme {
         BitmapDrawable backgroundLt = new BitmapDrawable(context.getResources(), lt);
         Bitmap dk = ImageUtil.load(context.getFilesDir().getAbsolutePath() + "/background/dk.png").orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark));
         BitmapDrawable backgroundDk = new BitmapDrawable(context.getResources(), dk);
-        return new Theme(color, color2, fullscreen, closeSkinModel, animationSpeed, backgroundLt, backgroundDk);
+        return new Theme(color, color2, color2Dark, fullscreen, closeSkinModel, animationSpeed, backgroundLt, backgroundDk);
     }
 
     public static void saveTheme(Context context, Theme theme) {
@@ -205,6 +222,7 @@ public class Theme {
         editor = sharedPreferences.edit();
         editor.putInt("theme_color", theme.getColor());
         editor.putInt("theme_color2", theme.getColor2());
+        editor.putInt("theme_color2_dark", theme.getColor2Dark());
         editor.putBoolean("fullscreen", theme.isFullscreen());
         editor.putInt("animation_speed", theme.getAnimationSpeed());
         editor.putBoolean("close_skin_model", theme.isCloseSkinModel());

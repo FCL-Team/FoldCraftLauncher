@@ -81,14 +81,17 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLSwitch autoExitLauncher;
     private FCLButton theme;
     private FCLButton theme2;
+    private FCLButton theme2Dark;
     private FCLButton ltBackground;
     private FCLButton dkBackground;
     private FCLButton cursor;
     private FCLButton menuIcon;
     private FCLButton resetTheme;
     private FCLButton resetTheme2;
+    private FCLButton resetTheme2Dark;
     private FCLButton fetchBackgroundColor;
     private FCLButton fetchBackgroundColor2;
+    private FCLButton fetchBackgroundColor2Dark;
     private FCLButton resetLtBackground;
     private FCLButton resetDkBackground;
     private FCLButton resetCursor;
@@ -122,14 +125,17 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         autoExitLauncher = findViewById(R.id.auto_exit_launcher);
         theme = findViewById(R.id.theme);
         theme2 = findViewById(R.id.theme2);
+        theme2Dark = findViewById(R.id.theme2_dark);
         ltBackground = findViewById(R.id.background_lt);
         dkBackground = findViewById(R.id.background_dk);
         cursor = findViewById(R.id.cursor);
         menuIcon = findViewById(R.id.menu_icon);
         resetTheme = findViewById(R.id.reset_theme);
         resetTheme2 = findViewById(R.id.reset_theme2);
+        resetTheme2Dark = findViewById(R.id.reset_theme2_dark);
         fetchBackgroundColor = findViewById(R.id.fetch_background_color);
         fetchBackgroundColor2 = findViewById(R.id.fetch_background_color2);
+        fetchBackgroundColor2Dark = findViewById(R.id.fetch_background_color2_dark);
         resetLtBackground = findViewById(R.id.reset_background_lt);
         resetDkBackground = findViewById(R.id.reset_background_dk);
         resetCursor = findViewById(R.id.reset_cursor);
@@ -151,6 +157,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         requestAudioRecord.setOnClickListener(this);
         theme.setOnClickListener(this);
         theme2.setOnClickListener(this);
+        theme2Dark.setOnClickListener(this);
         ltBackground.setOnClickListener(this);
         dkBackground.setOnClickListener(this);
         cursor.setOnClickListener(this);
@@ -166,10 +173,12 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         theme.setSelected(true);
         theme2.setSelected(true);
+        theme2Dark.setSelected(true);
         resetTheme.setSelected(true);
         resetTheme2.setSelected(true);
         fetchBackgroundColor.setSelected(true);
         fetchBackgroundColor2.setSelected(true);
+        fetchBackgroundColor2Dark.setSelected(true);
 
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add(getContext().getString(R.string.settings_launcher_language_system));
@@ -379,6 +388,25 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             });
             dialog.show();
         }
+        if (v == theme2Dark) {
+            FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor2Dark(), new FCLColorPickerDialog.Listener() {
+                @Override
+                public void onColorChanged(int color) {
+                    ThemeEngine.getInstance().applyColor2Dark(color);
+                }
+
+                @Override
+                public void onPositive(int destColor) {
+                    ThemeEngine.getInstance().applyAndSave2Dark(getContext(), destColor);
+                }
+
+                @Override
+                public void onNegative(int initColor) {
+                    ThemeEngine.getInstance().applyColor2Dark(initColor);
+                }
+            });
+            dialog.show();
+        }
         if (v == ltBackground || v == dkBackground) {
             FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
             builder.setLibMode(LibMode.FILE_CHOOSER);
@@ -460,7 +488,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         if (v == resetTheme2) {
             ThemeEngine.getInstance().applyAndSave2(getContext(), Color.parseColor("#000000"));
         }
-        if (v == fetchBackgroundColor || v == fetchBackgroundColor2) {
+        if (v == resetTheme2Dark) {
+            ThemeEngine.getInstance().applyAndSave2Dark(getContext(), Color.parseColor("#000000"));
+        }
+        if (v == fetchBackgroundColor || v == fetchBackgroundColor2 || v == fetchBackgroundColor2Dark) {
             boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
 
             Bitmap bitmap = (isDarkMode ?
@@ -477,8 +508,10 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                         color = palette.getLightVibrantColor(dominantColor);
                     }
                     ThemeEngine.getInstance().applyAndSave(getContext(), color);
-                } else {
+                } else if (v == fetchBackgroundColor2){
                     ThemeEngine.getInstance().applyAndSave2(getContext(), palette.getVibrantColor(dominantColor));
+                } else {
+                    ThemeEngine.getInstance().applyAndSave2Dark(getContext(), palette.getVibrantColor(dominantColor));
                 }
             }
         }

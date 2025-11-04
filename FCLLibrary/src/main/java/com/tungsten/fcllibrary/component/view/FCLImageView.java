@@ -80,10 +80,33 @@ public class FCLImageView extends AppCompatImageView {
         }
     };
 
+    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            if (useThemeColor && getBackground() != null) {
+                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme2Dark";
+        }
+    };
+
+
     public FCLImageView(@NonNull Context context) {
         super(context);
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -94,6 +117,7 @@ public class FCLImageView extends AppCompatImageView {
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -104,6 +128,7 @@ public class FCLImageView extends AppCompatImageView {
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public void setAutoTint(boolean autoTint) {
