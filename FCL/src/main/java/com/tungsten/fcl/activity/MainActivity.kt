@@ -104,6 +104,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
     private lateinit var theme: IntegerProperty
+    private lateinit var theme2: IntegerProperty
+    private lateinit var theme2Dark: IntegerProperty
     var isVersionLoading = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
 
@@ -516,40 +518,44 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
+    private fun updateColor() {
+        binding.apply {
+            backend.setSelectedBackground(ThemeEngine.getInstance().theme.ltColor)
+            backend.setDivider(
+                ThemeEngine.getInstance().theme.color2,
+                ConvertUtils.dip2px(this@MainActivity, 1f),
+                1,
+                1
+            )
+            backend.setBorder(
+                ConvertUtils.dip2px(this@MainActivity, 1f),
+                ThemeEngine.getInstance().theme.color2,
+                0,
+                0
+            )
+            backend.setRipple(ThemeEngine.getInstance().theme.color2)
+            pojav.textColor = ThemeEngine.getInstance().theme.color2
+            boat.textColor = ThemeEngine.getInstance().theme.color2
+            start.background = createBackground()
+            createBackground().apply {
+                version.background = this
+                jar.background = this
+            }
+            version.backgroundTintList =
+                ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
+                    version.backgroundTintList = this
+                    jar.backgroundTintList = this
+                }
+            version.setTextColor(ThemeEngine.getInstance().theme.color2)
+            jar.setTextColor(ThemeEngine.getInstance().theme.color2)
+        }
+
+    }
     private fun initBackground() {
         theme = object : IntegerPropertyBase() {
             override fun invalidated() {
                 get()
-                binding.apply {
-                    backend.setSelectedBackground(ThemeEngine.getInstance().theme.ltColor)
-                    backend.setDivider(
-                        ThemeEngine.getInstance().theme.color2,
-                        ConvertUtils.dip2px(this@MainActivity, 1f),
-                        1,
-                        1
-                    )
-                    backend.setBorder(
-                        ConvertUtils.dip2px(this@MainActivity, 1f),
-                        ThemeEngine.getInstance().theme.color2,
-                        0,
-                        0
-                    )
-                    backend.setRipple(ThemeEngine.getInstance().theme.color2)
-                    pojav.textColor = ThemeEngine.getInstance().theme.color2
-                    boat.textColor = ThemeEngine.getInstance().theme.color2
-                    start.background = createBackground()
-                    createBackground().apply {
-                        version.background = this
-                        jar.background = this
-                    }
-                    version.backgroundTintList =
-                        ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
-                            version.backgroundTintList = this
-                            jar.backgroundTintList = this
-                        }
-                    version.setTextColor(ThemeEngine.getInstance().theme.color2)
-                    jar.setTextColor(ThemeEngine.getInstance().theme.color2)
-                }
+                updateColor()
             }
 
             override fun getBean(): Any? {
@@ -560,8 +566,37 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 return "theme"
             }
         }
+        theme2 = object : IntegerPropertyBase() {
+            override fun invalidated() {
+                get()
+                updateColor()
+            }
+
+            override fun getBean(): Any? {
+                return this
+            }
+
+            override fun getName(): String? {
+                return "theme2"
+            }
+        }
+        theme2Dark = object : IntegerPropertyBase() {
+            override fun invalidated() {
+                get()
+                updateColor()
+            }
+
+            override fun getBean(): Any? {
+                return this
+            }
+
+            override fun getName(): String? {
+                return "theme2Dark"
+            }
+        }
         theme.bind(ThemeEngine.getInstance().theme.colorProperty())
-        theme.bind(ThemeEngine.getInstance().theme.color2Property())
+        theme2.bind(ThemeEngine.getInstance().theme.color2Property())
+        theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
         binding.backend.setOnApplyWindowInsetsListener { _, insets ->
             insets
         }
