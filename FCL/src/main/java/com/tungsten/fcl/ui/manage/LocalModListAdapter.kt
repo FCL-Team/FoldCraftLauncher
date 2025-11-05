@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.manage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.FCLAdapter
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLCheckBox
@@ -101,6 +103,7 @@ class LocalModListAdapter(context: Context, private val modListPage: ModListPage
         return listProperty[i]
     }
 
+    @SuppressLint("SetTextI18n")
     override fun getView(i: Int, view: View?, viewGroup: ViewGroup?): View {
         var view = view
         val viewHolder: ViewHolder
@@ -199,10 +202,11 @@ class LocalModListAdapter(context: Context, private val modListPage: ModListPage
 
         drawable.setTint(ThemeEngine.getInstance().getTheme().color)
         viewHolder.icon.setImageDrawable(drawable)
-        val runtime = Runtime.getRuntime()
         val job = MainActivity.getInstance().lifecycleScope.launch {
             val mod = withContext(Dispatchers.IO) {
-                if (modInfoObject.modInfo.file.toFile().length() > 104857600) return@withContext null
+                if (modInfoObject.modInfo.file.toFile()
+                        .length() > 104857600
+                ) return@withContext null
                 for (type in RemoteMod.Type.entries.toTypedArray()) {
                     try {
                         if (modInfoObject.remoteMod == null) {
@@ -234,6 +238,13 @@ class LocalModListAdapter(context: Context, private val modListPage: ModListPage
                     Glide.with(viewHolder.icon).load(mod.iconUrl).error(drawable)
                         .into(viewHolder.icon)
                     viewHolder.name.text = mod.title
+                    if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
+                        val name = modInfoObject.mod.name
+                        if (name.isNotEmpty() && StringUtils.containsChinese(name)) {
+                            viewHolder.name.text = "[${name}]${mod.title}"
+                        }
+                    }
+
                 }
             }
         }
