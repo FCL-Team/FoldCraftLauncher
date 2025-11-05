@@ -276,6 +276,8 @@ public class FCLGameRepository extends DefaultGameRepository {
             LibraryAnalyzer analyze = LibraryAnalyzer.analyze(version, null);
             if (analyze.has(LibraryAnalyzer.LibraryType.FORGE))
                 return getDrawable(R.drawable.img_forge);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.CLEANROOM))
+                return getDrawable(R.drawable.img_cleanroom);
             else if (analyze.has(LibraryAnalyzer.LibraryType.NEO_FORGE))
                 return getDrawable(R.drawable.img_neoforge);
             else if (analyze.has(LibraryAnalyzer.LibraryType.LITELOADER))

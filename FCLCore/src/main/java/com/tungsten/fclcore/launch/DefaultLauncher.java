@@ -484,6 +484,7 @@ public class DefaultLauncher extends Launcher {
         config.setPojavBigCore(options.isPojavBigCore());
         config.setInstalledModLoaders(new FCLConfig.InstalledModLoaders(
                 analyzer.has(LibraryAnalyzer.LibraryType.FORGE),
+                analyzer.has(LibraryAnalyzer.LibraryType.CLEANROOM),
                 analyzer.has(LibraryAnalyzer.LibraryType.NEO_FORGE),
                 analyzer.has(LibraryAnalyzer.LibraryType.OPTIFINE),
                 analyzer.has(LibraryAnalyzer.LibraryType.LITELOADER),

@@ -122,7 +122,7 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     /**
      * Remove library by library id
      *
-     * @param libraryId patch id or "forge"/"optifine"/"liteloader"/"fabric"/"quilt"/"neoforge"
+     * @param libraryId patch id or "forge"/"optifine"/"liteloader"/"fabric"/"quilt"/"neoforge"/"cleanroom"
      * @return this
      */
     public LibraryAnalyzer removeLibrary(String libraryId) {
@@ -172,6 +172,7 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
         String mainClass = resolvedVersion.getMainClass();
         return mainClass != null && (LAUNCH_WRAPPER_MAIN.equals(mainClass)
                 || mainClass.startsWith("net.minecraftforge")
+                || mainClass.startsWith("top.outlands") //Cleanroom
                 || mainClass.startsWith("net.fabricmc")
                 || mainClass.startsWith("org.quiltmc")
                 || mainClass.startsWith("cpw.mods"));
@@ -212,6 +213,7 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
                 return super.matchLibrary(library, libraries);
             }
         },
+        CLEANROOM(true, "cleanroom", Pattern.compile("com\\.cleanroommc"), Pattern.compile("cleanroom"), ModLoaderType.CLEANROOM),
         NEO_FORGE(true, "neoforge", Pattern.compile("net\\.neoforged\\.fancymodloader"), Pattern.compile("(core|loader)"), ModLoaderType.NEO_FORGED) {
             private final Pattern NEO_FORGE_VERSION_MATCHER = Pattern.compile("^([0-9.]+)-(?<forge>[0-9.]+)(-([0-9.]+))?$");
 
@@ -361,12 +363,12 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     ));
     public static final VersionRange<VersionNumber> FORGE_OPTIFINE_BROKEN_RANGE = VersionNumber.between("48.0.0", "49.0.50");
 
-    public static final String[] FORGE_TWEAKERS = new String[] {
+    public static final String[] FORGE_TWEAKERS = new String[]{
             "net.minecraftforge.legacy._1_5_2.LibraryFixerTweaker", // 1.5.2
             "cpw.mods.fml.common.launcher.FMLTweaker", // 1.6.1 ~ 1.7.10
             "net.minecraftforge.fml.common.launcher.FMLTweaker" // 1.8 ~ 1.12.2
     };
-    public static final String[] OPTIFINE_TWEAKERS = new String[] {
+    public static final String[] OPTIFINE_TWEAKERS = new String[]{
             "optifine.OptiFineTweaker",
             "optifine.OptiFineForgeTweaker"
     };

@@ -467,6 +467,7 @@
     <string name="install_installer_fabric" translatable="false">Fabric</string>
     <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">Warning: Fabric API is a mod, and will be installed into the mod directory of the game instance. Please do not change the working directory of the game, or the Fabric API will not work. If you do want to change these settings, you should reinstall it.</string>
+    <string name="install_installer_cleanroom" translatable="false">Cleanroom</string>
     <string name="install_installer_forge" translatable="false">Forge</string>
     <string name="install_installer_neoforge" translatable="false">NeoForge</string>
     <string name="install_installer_game" translatable="false">Minecraft</string>

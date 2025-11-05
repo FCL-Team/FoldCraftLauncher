@@ -228,6 +228,9 @@ public class FCLauncher {
         if (config.getInstalledModLoaders().isInstallForge()) {
             envMap.put("INST_FORGE", "1");
         }
+        if (config.getInstalledModLoaders().isInstallCleanroom()) {
+            envMap.put("INST_CLEANROOM", "1");
+        }
         if (config.getInstalledModLoaders().isInstallNeoForge()) {
             envMap.put("INST_NEOFORGE", "1");
         }

@@ -82,7 +82,8 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
         editText = findViewById(R.id.edit);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -93,7 +94,8 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         install = findViewById(R.id.install);
         editText.setText(gameVersion);
@@ -159,6 +161,8 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 return getContext().getString(R.string.install_installer_forge);
             case NEO_FORGE:
                 return getContext().getString(R.string.install_installer_neoforge);
+            case CLEANROOM:
+                return getContext().getString(R.string.install_installer_cleanroom);
             case FABRIC:
                 return getContext().getString(R.string.install_installer_fabric);
             case LITELOADER:

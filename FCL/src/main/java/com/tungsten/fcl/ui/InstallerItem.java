@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui;
 
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.CLEANROOM;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC_API;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
@@ -88,6 +89,8 @@ public class InstallerItem {
         switch (id) {
             case FORGE:
                 return context.getDrawable(R.drawable.img_forge);
+            case CLEANROOM:
+                return context.getDrawable(R.drawable.img_cleanroom);
             case NEO_FORGE:
                 return context.getDrawable(R.drawable.img_neoforge);
             case LITELOADER:
@@ -116,6 +119,7 @@ public class InstallerItem {
         public final InstallerItem fabric;
         public final InstallerItem fabricApi;
         public final InstallerItem forge;
+        public final InstallerItem cleanroom;
         public final InstallerItem neoForge;
         public final InstallerItem liteLoader;
         public final InstallerItem optiFine;
@@ -156,17 +160,18 @@ public class InstallerItem {
             fabric = new InstallerItem(context, FABRIC);
             fabricApi = new InstallerItem(context, FABRIC_API);
             forge = new InstallerItem(context, FORGE);
+            cleanroom = new InstallerItem(context, CLEANROOM);
             neoForge = new InstallerItem(context, NEO_FORGE);
             liteLoader = new InstallerItem(context, LITELOADER);
             optiFine = new InstallerItem(context, OPTIFINE);
             quilt = new InstallerItem(context, QUILT);
             quiltApi = new InstallerItem(context, QUILT_API);
 
-            mutualIncompatible(forge, fabric, quilt, neoForge);
-            addIncompatibles(optiFine, fabric, quilt, neoForge);
-            addIncompatibles(liteLoader, fabric, quilt, neoForge);
-            addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine);
-            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine);
+            mutualIncompatible(forge, fabric, quilt, neoForge, cleanroom);
+            addIncompatibles(optiFine, fabric, quilt, neoForge, cleanroom);
+            addIncompatibles(liteLoader, fabric, quilt, neoForge, cleanroom);
+            addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine, cleanroom);
+            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine, cleanroom);
 
             InvalidationListener listener = o -> {
                 for (Map.Entry<InstallerItem, Set<InstallerItem>> entry : incompatibleMap.entrySet()) {
@@ -198,7 +203,9 @@ public class InstallerItem {
             }, quilt.libraryVersion));
 
             if (gameVersion == null) {
-                this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi};
+                this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi, cleanroom};
+            } else if (gameVersion.equals("1.12.2")) {
+                this.libraries = new InstallerItem[]{forge, cleanroom, liteLoader, optiFine};
             } else if (VersionNumber.compare(gameVersion, "1.13") < 0) {
                 this.libraries = new InstallerItem[]{forge, liteLoader, optiFine};
             } else {
@@ -248,7 +255,7 @@ public class InstallerItem {
             remove = parent.findViewById(R.id.remove);
             select = parent.findViewById(R.id.select);
 
-            ColorStateList colorStateList = new ColorStateList(new int[][]{ { } }, new int[]{ ThemeEngine.getInstance().getTheme().getLtColor() });
+            ColorStateList colorStateList = new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()});
             ThemeEngine.getInstance().registerEvent(item, () -> item.setBackgroundTintList(colorStateList));
             icon.setBackground(installerItem.getIcon());
             name.setText(installerItem.getName());

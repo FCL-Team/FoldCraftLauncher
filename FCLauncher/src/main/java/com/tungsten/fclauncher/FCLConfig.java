@@ -10,14 +10,16 @@ public class FCLConfig implements Serializable {
 
     public static class InstalledModLoaders {
         private final boolean installForge;
+        private final boolean installCleanroom;
         private final boolean installNeoForge;
         private final boolean installOptiFine;
         private final boolean installLiteLoader;
         private final boolean installFabric;
         private final boolean installQuilt;
 
-        public InstalledModLoaders(boolean installForge, boolean installNeoForge, boolean installOptiFine, boolean installLiteLoader, boolean installFabric, boolean installQuilt) {
+        public InstalledModLoaders(boolean installForge,boolean installCleanroom, boolean installNeoForge, boolean installOptiFine, boolean installLiteLoader, boolean installFabric, boolean installQuilt) {
             this.installForge = installForge;
+            this.installCleanroom = installCleanroom;
             this.installNeoForge = installNeoForge;
             this.installOptiFine = installOptiFine;
             this.installLiteLoader = installLiteLoader;
@@ -27,6 +29,10 @@ public class FCLConfig implements Serializable {
 
         public boolean isInstallForge() {
             return installForge;
+        }
+
+        public boolean isInstallCleanroom() {
+            return installCleanroom;
         }
 
         public boolean isInstallNeoForge() {
