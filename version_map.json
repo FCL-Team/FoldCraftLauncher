@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1263,
-    "versionName": "1.2.6.3",
-    "date": "2025.11.01",
+    "versionCode": 1264,
+    "versionName": "1.2.6.4",
+    "date": "2025.11.06",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the crash when clicking on Liteloader installation\n2. Fixed the issue where the April Fool's version category appeared in the mod loader interface\n3. Fixed the issue of being unable to launch 25w43a\n4. Removed the horizontal screen lock on the crash interface"
+        "text": "(Translated from Chinese by AI)\n1. Add adjustment for secondary theme in dark mode  \n2. Fix the issue where some UI elements do not take effect when modifying theme colors  \n3. Optimize the display of mod titles on the Manage Mods page and add Chinese translation display  \n4. Add automatic installation feature for Cleanroom  \n5. Add feature to recognize Cleanroom"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复点击Liteloader安装闪退的问题\n2.修复模组加载器界面出现愚人节版本分类的问题\n3.修复无法启动25w43a的问题\n4.取消崩溃界面的横屏横屏锁定"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加暗色模式次要主题调节\n2.修复修改主题色时部分UI不生效的问题\n3.优化管理模组页面模组标题显示效果，增加中文翻译显示\n4.增加Cleanroom自动安装功能\n5.增加识别Cleanroom的功能"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/9734c9de7e6a",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.3/FCL-release-1.2.6.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7a2fed78db51",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.4/FCL-release-1.2.6.4-all.apk"
   }
 ]
