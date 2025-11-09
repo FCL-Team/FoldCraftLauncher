@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -134,6 +135,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private MenuView menuView;
 
     private TouchController touchController;
+
+    private boolean gamepadDisabled = false;
 
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
@@ -289,6 +292,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         return viewGroupProperty.get();
     }
 
+    public boolean isGamepadDisabled(){
+        return gamepadDisabled;
+    }
+
     private void initLeftMenu() {
         FCLSwitch editMode = findViewById(R.id.edit_mode);
         FCLSwitch showViewBoundaries = findViewById(R.id.show_boundary);
@@ -371,6 +378,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch showLogSwitch = findViewById(R.id.switch_show_log);
         FCLSwitch performanceModeSwitch = findViewById(R.id.switch_performance);
         FCLSwitch autoShowLogSwitch = findViewById(R.id.switch_auto_show_log);
+        FCLSwitch disableGamepadMapping = findViewById(R.id.switch_disable_gamepad_mapping);
 
         FCLSpinner<GestureMode> gestureModeSpinner = findViewById(R.id.gesture_mode_spinner);
         FCLSpinner<MouseMoveMode> mouseMoveModeSpinner = findViewById(R.id.mouse_mode_spinner);
@@ -389,6 +397,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
         gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
+
+        disableGamepadMapping.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            gamepadDisabled = isChecked;
+        });
 
         FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
         FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());

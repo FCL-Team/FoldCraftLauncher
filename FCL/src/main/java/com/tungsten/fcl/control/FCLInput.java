@@ -50,6 +50,10 @@ public class FCLInput implements View.OnCapturedPointerListener {
     @NonNull
     private final GameMenu menu;
 
+    public GameMenu getMenu() {
+        return menu;
+    }
+
     private String pointerId;
 
     public void setPointerId(String pointerId) {
@@ -234,8 +238,9 @@ public class FCLInput implements View.OnCapturedPointerListener {
             }
             return true;
         }
+
         //gamepad
-        if (Gamepad.isGamepadEvent(event)) {
+        if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
             checkGamepad();
             return gamepad.handleKeyEvent(event);
         }
@@ -250,7 +255,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
     }
 
     public boolean handleGenericMotionEvent(MotionEvent event) {
-        if (Gamepad.isGamepadEvent(event)) {
+        if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
             checkGamepad();
             if (choreographer == null) {
                 choreographer = Choreographer.getInstance();

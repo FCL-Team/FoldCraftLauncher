@@ -417,6 +417,16 @@
                 android:background="@android:color/darker_gray"
                 app:layout_constraintTop_toBottomOf="@id/text_gamepad" />
 
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/switch_disable_gamepad_mapping"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/menu_settings_gamepad_disable_mapping"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_gamepad" />
+
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -439,7 +449,7 @@
                 android:text="@string/menu_settings_gamepad_reset"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider_gamepad" />
+                app:layout_constraintTop_toBottomOf="@id/switch_disable_gamepad_mapping" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"

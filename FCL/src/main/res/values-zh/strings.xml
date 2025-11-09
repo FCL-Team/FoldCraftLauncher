@@ -539,6 +539,7 @@
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_gamepad">手柄</string>
+    <string name="menu_settings_gamepad_disable_mapping">禁用手柄映射</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
     <string name="menu_settings_gamepad_reset">重置</string>
     <string name="menu_settings_gamepad_deadzone">调整死区</string>
