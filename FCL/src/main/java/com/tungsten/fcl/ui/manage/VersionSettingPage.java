@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -415,11 +416,15 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             onDeleteIcon();
         }
         if (view == controllerButton) {
-            SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
-                lastVersionSetting.setController(controller.getId());
-                controllerText.setText(controller.getName());
-            });
-            dialog.show();
+            if (Controllers.isInitialized()) {
+                SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
+                    lastVersionSetting.setController(controller.getId());
+                    controllerText.setText(controller.getName());
+                });
+                dialog.show();
+            } else {
+                Toast.makeText(getContext(), getContext().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+            }
         }
         if (view == controllerInstallButton) {
             UIManager uiManager = MainActivity.getInstance().getUiManager();
