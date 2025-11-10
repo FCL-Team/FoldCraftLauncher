@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fclcore.download.cleanroom.CleanroomInstallTask;
 import com.tungsten.fclcore.download.forge.ForgeInstallTask;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameDownloadTask;
@@ -178,6 +179,11 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
 
         return Task
                 .composeAsync(() -> {
+                    try {
+                        return CleanroomInstallTask.install(this, oldVersion, installer);
+                    } catch (IOException ignore) {
+                    }
+
                     try {
                         return NeoForgeInstallTask.install(this, oldVersion, installer);
                     } catch (IOException ignore) {
