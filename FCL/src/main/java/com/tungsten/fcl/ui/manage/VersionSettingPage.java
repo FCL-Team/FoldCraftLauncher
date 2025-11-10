@@ -93,6 +93,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch pojavBigCoreSwitch;
     private FCLSwitch noGameCheckSwitch;
     private FCLSwitch noJVMCheckSwitch;
+    private FCLSwitch noModCheckSwitch;
 
     private FCLImageButton javaButton;
     private FCLImageButton javaInstallButton;
@@ -148,6 +149,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         pojavBigCoreSwitch = findViewById(R.id.pojav_big_core);
         noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
         noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
+        noModCheckSwitch = findViewById(R.id.not_check_mod);
 
         isolateWorkingDirSwitch.disableProperty().bind(modpack);
         scaleFactorSeekbar.addProgressListener();
@@ -291,6 +293,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(pojavBigCoreSwitch, lastVersionSetting.getPojavBigCoreProperty());
             FXUtils.unbindBoolean(noGameCheckSwitch, lastVersionSetting.getNotCheckGameProperty());
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.getNotCheckJVMProperty());
+            FXUtils.unbindBoolean(noModCheckSwitch, lastVersionSetting.getNotCheckModProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
             scaleFactorSeekbar.progressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
@@ -312,6 +315,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(pojavBigCoreSwitch, versionSetting.getPojavBigCoreProperty());
         FXUtils.bindBoolean(noGameCheckSwitch, versionSetting.getNotCheckGameProperty());
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.getNotCheckJVMProperty());
+        FXUtils.bindBoolean(noModCheckSwitch, versionSetting.getNotCheckModProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
         scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());

@@ -29,7 +29,6 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.mio.JavaManager
 import com.mio.data.Renderer
-import com.mio.manager.RendererManager
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
@@ -232,6 +231,14 @@ class VersionSetting : Cloneable {
             pojavBigCoreProperty.set(pojavBigCore)
         }
 
+    val notCheckModProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "notCheckMod", false)
+    var isNotCheckMod: Boolean
+        get() = notCheckModProperty.get()
+        set(value) {
+            notCheckModProperty.set(value)
+        }
+
     fun checkController() {
         Controllers.addCallback {
             Controllers.checkControllers()
@@ -263,6 +270,7 @@ class VersionSetting : Cloneable {
         driverProperty.addListener(listener)
         pojavBigCoreProperty.addListener(listener)
         uuidProperty.addListener(listener)
+        notCheckModProperty.addListener(listener)
     }
 
     public override fun clone(): VersionSetting {
@@ -286,6 +294,7 @@ class VersionSetting : Cloneable {
             it.driver = driver
             it.isPojavBigCore = isPojavBigCore
             it.uuid = uuid
+            it.isNotCheckMod = isNotCheckMod
         }
     }
 
@@ -319,6 +328,7 @@ class VersionSetting : Cloneable {
                 addProperty("isolateGameDir", src.isIsolateGameDir)
                 addProperty("pojavBigCore", src.isPojavBigCore)
                 addProperty("uuid", src.uuid)
+                addProperty("notCheckMod", src.isNotCheckMod)
             }
         }
 
@@ -358,6 +368,7 @@ class VersionSetting : Cloneable {
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
                 vs.uuid = json["uuid"]?.asString ?: ""
+                vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
             }
         }
 

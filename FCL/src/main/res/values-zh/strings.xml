@@ -780,6 +780,7 @@
 
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
+    <string name="settings_advanced_dont_check_mod">不检查模组兼容性</string>
     <string name="settings_advanced_game_dir_default">默认 (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
     <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>

@@ -561,8 +561,19 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"
-                        tools:ignore="TooManyViews" />
+                        android:background="@android:color/darker_gray" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLSwitch
+                        android:id="@+id/not_check_mod"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/settings_advanced_dont_check_mod" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"

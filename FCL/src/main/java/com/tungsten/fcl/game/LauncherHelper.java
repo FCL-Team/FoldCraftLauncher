@@ -200,7 +200,12 @@ public final class LauncherHelper {
                             Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
                             fclBridge.setRenderer(renderer.getName());
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
-                        }).thenComposeAsync(fclBridge -> checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse("")))
+                        }).thenComposeAsync(fclBridge -> {
+                            if (repository.getVersionSetting(selectedVersion).isNotCheckMod()) {
+                                return Task.completed(fclBridge);
+                            }
+                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""));
+                        })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
