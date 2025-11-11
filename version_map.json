@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1264,
-    "versionName": "1.2.6.4",
-    "date": "2025.11.06",
+    "versionCode": 1265,
+    "versionName": "1.2.6.5",
+    "date": "2025.11.11",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add adjustment for secondary theme in dark mode  \n2. Fix the issue where some UI elements do not take effect when modifying theme colors  \n3. Optimize the display of mod titles on the Manage Mods page and add Chinese translation display  \n4. Add automatic installation feature for Cleanroom  \n5. Add feature to recognize Cleanroom"
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue of freezing caused by modifying key layout before it is fully loaded  \n2. Allow disabling controller mapping in the in-game side menu  \n3. Fix issues related to local installation and updates of Cleanroom  \n4. Allow enabling the option to disable mod compatibility checks in settings"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加暗色模式次要主题调节\n2.修复修改主题色时部分UI不生效的问题\n3.优化管理模组页面模组标题显示效果，增加中文翻译显示\n4.增加Cleanroom自动安装功能\n5.增加识别Cleanroom的功能"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复键位布局未加载完成时修改造成卡死的问题\n2.允许在游戏右侧菜单内禁用手柄映射\n3.修复本地安装升级 Cleanroom 相关问题\n4.允许在设置内启用不检查模组兼容性"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7a2fed78db51",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.4/FCL-release-1.2.6.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/9084514b9a52",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.5/FCL-release-1.2.6.5-all.apk"
   }
 ]
