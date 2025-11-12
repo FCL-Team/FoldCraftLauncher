@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.tungsten.fclauncher"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
@@ -51,6 +51,7 @@ dependencies {
     implementation("com.jaredrummler:android-device-names:2.1.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
+    implementation(project(":MobileGlues"))
+    implementation(project(":GLXShim"))
 //    implementation(project(":MobileGlues"))
-    implementation(project(":MobileGL"))
 }

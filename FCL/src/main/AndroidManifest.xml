@@ -102,6 +102,9 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="fcl" />
+            <meta-data
+                android:name="com.android.graphics.injectLayers.enable"
+                android:value="true"/>
         </activity>
         <activity
             android:process=":crash"

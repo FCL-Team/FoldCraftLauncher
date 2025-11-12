@@ -105,6 +105,7 @@ android {
         jniLibs {
             useLegacyPackaging = true
             pickFirsts += listOf("**/libbytehook.so")
+            keepDebugSymbols.add("**/*.so")
         }
     }
 

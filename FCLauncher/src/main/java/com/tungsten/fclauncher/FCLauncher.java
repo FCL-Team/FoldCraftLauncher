@@ -332,6 +332,13 @@ public class FCLauncher {
                 } else {
                     envMap.put("POJAV_RENDERER", "vulkan_zink");
                 }
+            } else if (renderer == FCLConfig.Renderer.RENDERER_ZINK_KOPPER) {
+                if (FCLBridge.BACKEND_IS_BOAT) {
+                    envMap.put("GALLIUM_DRIVER", "zink");
+                } else {
+                    envMap.put("POJAV_RENDERER", "opengles3_desktopgl_zink_kopper");
+                    envMap.put("POJAVEXEC_EGL", renderer.getEglLibName());
+                }
             } else if (renderer == FCLConfig.Renderer.RENDERER_FREEDRENO) {
                 if (FCLBridge.BACKEND_IS_BOAT) {
                     envMap.put("GALLIUM_DRIVER", "freedreno");

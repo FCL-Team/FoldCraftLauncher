@@ -17,6 +17,7 @@ public class FCLConfig implements Serializable {
         RENDERER_GL4ESPLUS("GL4ES+:libgl4es_plus.so:libEGL.so"),
         RENDERER_MOBILEGLUES("MobileGluesDev:libmobileglues.so:libEGL.so"),
         RENDERER_MOBILEGL("MobileGLDev:libMobileGL.so:libMobileGL.so"),
+        RENDERER_ZINK_KOPPER("ZinkKopper:libglxshim.so:libEGL_mesa.so"),
         RENDERER_CUSTOM("Custom:libCustom.so:libEGL.so");
 
         private final String glInfo;

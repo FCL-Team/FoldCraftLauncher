@@ -78,10 +78,12 @@ gl_render_window_t* gl_init_context(gl_render_window_t *share) {
     eglChooseConfig_p(g_EglDisplay, egl_attributes, &bundle->config, 1, &num_configs);
     eglGetConfigAttrib_p(g_EglDisplay, bundle->config, EGL_NATIVE_VISUAL_ID, &bundle->format);
 
+    bool desktopGL = false;
     {
         EGLBoolean bindResult;
         if (strncmp(getenv("POJAV_RENDERER"), "opengles3_desktopgl", 19) == 0) {
             printf("EGLBridge: Binding to desktop OpenGL\n");
+            desktopGL = true;
             bindResult = eglBindAPI_p(EGL_OPENGL_API);
         } else {
             printf("EGLBridge: Binding to OpenGL ES\n");
@@ -90,9 +92,16 @@ gl_render_window_t* gl_init_context(gl_render_window_t *share) {
         if (!bindResult) printf("EGLBridge: bind failed: %p\n", eglGetError_p());
     }
 
-    int libgl_es = strtol(getenv("LIBGL_ES"), NULL, 0);
-    if(libgl_es < 0 || libgl_es > INT16_MAX) libgl_es = 2;
-    const EGLint egl_context_attributes[] = { EGL_CONTEXT_CLIENT_VERSION, libgl_es, EGL_NONE };
+    int libgl_ver = 2;
+    if (!desktopGL) {
+        char* gl_str = getenv("LIBGL_ES");
+        if (gl_str)
+        libgl_ver = strtol(gl_str, NULL, 0);
+        if (libgl_ver < 0 || libgl_ver > INT16_MAX) libgl_ver = 2;
+    } else {
+        libgl_ver = 4;
+    }
+    const EGLint egl_context_attributes[] = {EGL_CONTEXT_CLIENT_VERSION, libgl_ver, EGL_NONE};
     bundle->context = eglCreateContext_p(g_EglDisplay, bundle->config, share == NULL ? EGL_NO_CONTEXT : share->context, egl_context_attributes);
 
     if (bundle->context == EGL_NO_CONTEXT) {
