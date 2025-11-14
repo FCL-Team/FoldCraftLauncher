@@ -17,6 +17,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
+import com.tungsten.fclauncher.utils.FCLPath;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -159,6 +160,9 @@ public class FCLauncher {
 
                 ((pluginLibPath != null) ? pluginLibPath + split : "") +
 
+                FCLPath.MOD_RUNTIME_DIR +
+                split +
+
                 nativeDir;
     }
 
@@ -180,6 +184,9 @@ public class FCLauncher {
                 split +
 
                 ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
+
+                FCLPath.MOD_RUNTIME_DIR +
+                split +
 
                 nativeDir;
     }
@@ -208,6 +215,10 @@ public class FCLauncher {
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath()));
         envMap.put("FORCE_VSYNC", "false");
+
+        // Native mod env var
+        envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR);
+
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));

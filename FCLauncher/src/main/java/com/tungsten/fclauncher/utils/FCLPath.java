@@ -15,6 +15,7 @@ public class FCLPath {
     public static String CACHE_DIR;
 
     public static String RUNTIME_DIR;
+    public static String MOD_RUNTIME_DIR;
     public static String JAVA_8_PATH;
     public static String JAVA_11_PATH;
     public static String JAVA_17_PATH;
@@ -58,6 +59,8 @@ public class FCLPath {
         CACIOCAVALLO_8_DIR = RUNTIME_DIR + "/caciocavallo";
         CACIOCAVALLO_17_DIR = RUNTIME_DIR + "/caciocavallo17";
 
+        MOD_RUNTIME_DIR = context.getDir("runtime_mod", 0).getAbsolutePath();
+
         FILES_DIR = context.getFilesDir().getAbsolutePath();
         PLUGIN_DIR = FILES_DIR + "/plugins";
         BACKGROUND_DIR = FILES_DIR + "/background";
@@ -74,6 +77,7 @@ public class FCLPath {
         init(LOG_DIR);
         init(CACHE_DIR);
         init(RUNTIME_DIR);
+        init(MOD_RUNTIME_DIR);
         init(JAVA_8_PATH);
         init(JAVA_11_PATH);
         init(JAVA_17_PATH);
