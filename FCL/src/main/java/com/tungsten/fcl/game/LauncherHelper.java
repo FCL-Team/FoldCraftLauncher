@@ -201,10 +201,8 @@ public final class LauncherHelper {
                             fclBridge.setRenderer(renderer.getName());
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
                         }).thenComposeAsync(fclBridge -> {
-                            if (repository.getVersionSetting(selectedVersion).isNotCheckMod()) {
-                                return Task.completed(fclBridge);
-                            }
-                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""));
+                            boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
+                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
                         })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
@@ -372,7 +370,7 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkMod(FCLBridge bridge, String version) {
+    private Task<FCLBridge> checkMod(FCLBridge bridge, String version, boolean skip) {
         return Task.composeAsync(() -> {
             try {
                 StringBuilder modCheckerInfo = new StringBuilder();
@@ -399,7 +397,7 @@ public final class LauncherHelper {
                     }
                 }
                 bridge.setModSummary(modSummary.toString());
-                if (!modCheckerInfo.toString().trim().isEmpty()) {
+                if (!skip && !modCheckerInfo.toString().trim().isEmpty()) {
                     CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                     Schedulers.androidUIThread().execute(() -> {
                         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
