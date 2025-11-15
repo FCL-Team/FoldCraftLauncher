@@ -580,12 +580,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
         for (int keycode : event.outputKeycodesList()) {
             keycodeOutputting = press;
             menu.getInput().sendKeyEvent(keycode, press);
-            if (!FCLBridge.BACKEND_IS_BOAT) {
-                int code = LwjglKeycodeMap.convertKeycode(keycode);
-                if (code >= 0) {
-                    CallbackBridge.setModifiers(code, press);
-                }
-            }
         }
     }
 
