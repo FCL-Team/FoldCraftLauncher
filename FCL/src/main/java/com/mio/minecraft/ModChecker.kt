@@ -127,6 +127,15 @@ class ModChecker(val context: Context, val version: String) {
                         )
                     }
                 }
+
+                "flashback" -> {
+                    throw ModCheckException(
+                        context.getString(
+                            R.string.mod_check_flashback,
+                            mod.file.toFile().name
+                        )
+                    )
+                }
             }
         }.exceptionOrNull()
         if (exception != null) {
