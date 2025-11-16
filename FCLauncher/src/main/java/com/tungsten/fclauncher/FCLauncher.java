@@ -217,7 +217,7 @@ public class FCLauncher {
         envMap.put("FORCE_VSYNC", "false");
 
         // Native mod env var
-        envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR);
+        envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR == null ? "" : FCLPath.MOD_RUNTIME_DIR);
 
         FFmpegPlugin.discover(config.getContext());
         if (FFmpegPlugin.isAvailable) {
