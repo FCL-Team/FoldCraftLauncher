@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1266,
-    "versionName": "1.2.6.6",
+    "versionCode": 1267,
+    "versionName": "1.2.6.7",
     "date": "2025.11.16",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Update mod/modpack translation data  \n2. Update the Krypton Wrapper renderer  \n3. Add the MOD_ANDROID_RUNTIME environment variable, allowing mods to read it as the storage path for native libraries  \n4. Fix the issue where TouchController cannot be used after disabling mod compatibility checks  \n5. Fix physical keyboard-related issues in Pojav backend version 1.21.9+  \n6. Add compatibility check for the Flashback mod (which is unusable)"
+        "text": "(Translated from Chinese by AI)\n0. Fixed the issue where version 1.2.6.6 could not install the game properly.\n1. Update mod/modpack translation data  \n2. Update the Krypton Wrapper renderer  \n3. Add the MOD_ANDROID_RUNTIME environment variable, allowing mods to read it as the storage path for native libraries  \n4. Fix the issue where TouchController cannot be used after disabling mod compatibility checks  \n5. Fix physical keyboard-related issues in Pojav backend version 1.21.9+  \n6. Add compatibility check for the Flashback mod (which is unusable)"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新模组/整合包翻译数据\n2.更新Krypton Wrapper渲染器\n3.增加MOD_ANDROID_RUNTIME环境变量，允许模组读取作为native库存放路径\n4.修复开启不检查模组兼容性后无法使用TouchController的问题\n5.修复Pojav后端1.21.9+物理键盘相关问题\n6.增加对Flashback模组的兼容性检查（该模组无法使用）"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.修复1.2.6.6无法正常安装游戏的问题\n1.更新模组/整合包翻译数据\n2.更新Krypton Wrapper渲染器\n3.增加MOD_ANDROID_RUNTIME环境变量，允许模组读取作为native库存放路径\n4.修复开启不检查模组兼容性后无法使用TouchController的问题\n5.修复Pojav后端1.21.9+物理键盘相关问题\n6.增加对Flashback模组的兼容性检查（该模组无法使用）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7ad3a538ce9b",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.6/FCL-release-1.2.6.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/fba302e84d37",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.7/FCL-release-1.2.6.7-all.apk"
   }
 ]
