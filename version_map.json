@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1265,
-    "versionName": "1.2.6.5",
-    "date": "2025.11.11",
+    "versionCode": 1266,
+    "versionName": "1.2.6.6",
+    "date": "2025.11.16",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue of freezing caused by modifying key layout before it is fully loaded  \n2. Allow disabling controller mapping in the in-game side menu  \n3. Fix issues related to local installation and updates of Cleanroom  \n4. Allow enabling the option to disable mod compatibility checks in settings"
+        "text": "(Translated from Chinese by AI)\n1. Update mod/modpack translation data  \n2. Update the Krypton Wrapper renderer  \n3. Add the MOD_ANDROID_RUNTIME environment variable, allowing mods to read it as the storage path for native libraries  \n4. Fix the issue where TouchController cannot be used after disabling mod compatibility checks  \n5. Fix physical keyboard-related issues in Pojav backend version 1.21.9+  \n6. Add compatibility check for the Flashback mod (which is unusable)"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复键位布局未加载完成时修改造成卡死的问题\n2.允许在游戏右侧菜单内禁用手柄映射\n3.修复本地安装升级 Cleanroom 相关问题\n4.允许在设置内启用不检查模组兼容性"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新模组/整合包翻译数据\n2.更新Krypton Wrapper渲染器\n3.增加MOD_ANDROID_RUNTIME环境变量，允许模组读取作为native库存放路径\n4.修复开启不检查模组兼容性后无法使用TouchController的问题\n5.修复Pojav后端1.21.9+物理键盘相关问题\n6.增加对Flashback模组的兼容性检查（该模组无法使用）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/9084514b9a52",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.5/FCL-release-1.2.6.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/7ad3a538ce9b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.6/FCL-release-1.2.6.6-all.apk"
   }
 ]
