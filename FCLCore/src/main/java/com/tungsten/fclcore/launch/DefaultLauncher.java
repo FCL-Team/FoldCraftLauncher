@@ -82,10 +82,11 @@ public class DefaultLauncher extends Launcher {
 
         getCacioJavaArgs(res, version, options);
 
-        res.addAllWithoutParsing(options.getOverrideJavaArguments());
+        res.addAllWithoutParsing(options.getOverrideJavaArguments().stream().filter(arg -> !arg.equals("noXmx")).collect(Collectors.toList()));
 
-        if (options.getMaxMemory() != null && options.getMaxMemory() > 0)
-            res.addDefault("-Xmx", options.getMaxMemory() + "m");
+        if (options.getMaxMemory() != null && options.getMaxMemory() > 0 && !options.getOverrideJavaArguments().contains("noXmx"))
+            if (options.getOverrideJavaArguments().stream().noneMatch(arg -> arg.contains("-Xmx")))
+                res.addDefault("-Xmx", options.getMaxMemory() + "m");
 
         if (options.getMinMemory() != null && options.getMinMemory() > 0
                 && (options.getMaxMemory() == null || options.getMinMemory() <= options.getMaxMemory()))
@@ -206,7 +207,7 @@ public class DefaultLauncher extends Launcher {
         Set<String> classpath = repository.getClasspath(version);
         classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
         File jar = repository.getVersionJar(version);
-        if (!jar.exists() || !jar.isFile()){
+        if (!jar.exists() || !jar.isFile()) {
             String inherits = version.getInheritsFrom();
             if (!inherits.isEmpty()) {
                 jar = repository.getVersionJar(inherits);
