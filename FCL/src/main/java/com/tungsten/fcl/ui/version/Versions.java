@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
 
+import com.mio.util.ParseUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.LauncherHelper;
@@ -117,7 +118,7 @@ public class Versions {
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {
         RenameVersionDialog dialog = new RenameVersionDialog(context, version, (newName, resolve, reject) -> {
-            if (!OperatingSystem.isNameValid(newName)) {
+            if (!OperatingSystem.isNameValid(newName) || !ParseUtil.isValidCharacters(newName)) {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
                 return;
             }
@@ -151,6 +152,10 @@ public class Versions {
     public static void duplicateVersion(Context context, Profile profile, String version) {
         DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, (res, resolve, reject) -> {
             String newVersionName = (String) res.get(0);
+            if (!OperatingSystem.isNameValid(newVersionName) || !ParseUtil.isValidCharacters(newVersionName)) {
+                reject.accept(context.getString(R.string.install_new_game_malformed));
+                return;
+            }
             boolean copySaves = (boolean) res.get(1);
             ProgressDialog progress = new ProgressDialog(context);
             Task.runAsync(() -> profile.getRepository().duplicateVersion(version, newVersionName, copySaves))
