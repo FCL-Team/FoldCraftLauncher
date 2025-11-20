@@ -39,6 +39,7 @@ public class FCLPath {
     public static String MIO_LAUNCH_WRAPPER;
     public static String LT_BACKGROUND_PATH;
     public static String DK_BACKGROUND_PATH;
+    public static String LIVE_BACKGROUND_PATH;
 
     public static void loadPaths(Context context) {
         CONTEXT = context;
@@ -73,6 +74,7 @@ public class FCLPath {
         MIO_LAUNCH_WRAPPER = PLUGIN_DIR + "/MioLaunchWrapper.jar";
         LT_BACKGROUND_PATH = BACKGROUND_DIR + "/lt.png";
         DK_BACKGROUND_PATH = BACKGROUND_DIR + "/dk.png";
+        LIVE_BACKGROUND_PATH = BACKGROUND_DIR + "/live.mp4";
 
         init(LOG_DIR);
         init(CACHE_DIR);
