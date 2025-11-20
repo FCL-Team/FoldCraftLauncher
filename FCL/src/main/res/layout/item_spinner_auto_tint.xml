@@ -11,5 +11,5 @@
     android:singleLine="true"
     android:textAlignment="inherit"
     android:background="@android:color/transparent"
-    app:auto_text_tint="true"
+    app:use_theme_color="true"
     android:textSize="14sp"/>
