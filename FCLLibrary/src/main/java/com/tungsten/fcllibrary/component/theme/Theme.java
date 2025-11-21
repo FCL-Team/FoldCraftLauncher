@@ -204,7 +204,7 @@ public class Theme {
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         int color = sharedPreferences.getInt("theme_color", Color.parseColor("#7797CF"));
         int color2 = sharedPreferences.getInt("theme_color2", Color.parseColor("#000000"));
-        int color2Dark = sharedPreferences.getInt("theme_color2_dark", Color.parseColor("#000000"));
+        int color2Dark = sharedPreferences.getInt("theme_color2_dark", Color.parseColor("#FFFFFF"));
         boolean fullscreen = sharedPreferences.getBoolean("fullscreen", false);
         boolean closeSkinModel = sharedPreferences.getBoolean("close_skin_model", false);
         int animationSpeed = sharedPreferences.getInt("animation_speed", 8);
