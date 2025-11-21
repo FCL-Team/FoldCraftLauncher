@@ -391,9 +391,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }.getOrNull() ?: DriverPlugin.driverList[0]
                 DisplayUtil.refreshDisplayMetrics(this@MainActivity)
                 Versions.launch(this@MainActivity, selectedProfile)
-                if (shouldPlayVideo()) {
-                    binding.videoView.stopPlayback()
-                }
             }
         }
     }
@@ -737,7 +734,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    private fun shouldPlayVideo(): Boolean {
+    fun shouldPlayVideo(): Boolean {
         return File(FCLPath.LIVE_BACKGROUND_PATH).exists()
     }
 
