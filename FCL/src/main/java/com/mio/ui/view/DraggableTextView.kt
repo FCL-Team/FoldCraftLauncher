@@ -16,16 +16,7 @@ class DraggableTextView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     var sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("launcher", Context.MODE_PRIVATE).apply {
-            val xx = getFloat("fpsX", -1f)
-            val yy = getFloat("fpsY", -1f)
-            if (xx != -1f && yy != -1f) {
-                post {
-                    x = xx
-                    y = yy
-                }
-            }
-        }
+        context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
 
     init {
         setTextColor(ThemeEngine.getInstance().theme.color2)
@@ -73,5 +64,18 @@ class DraggableTextView @JvmOverloads constructor(
         val activity = FCLApplication.getCurrentActivity()
         x = (AndroidUtils.getScreenWidth(activity) - width) / 2f
         y = (AndroidUtils.getScreenHeight(activity) - height) / 2f
+    }
+
+    fun initPosition() {
+        post {
+            val xx = sharedPreferences.getFloat("fpsX", -1f)
+            val yy = sharedPreferences.getFloat("fpsY", -1f)
+            if (xx != -1f && yy != -1f) {
+                post {
+                    x = xx
+                    y = yy
+                }
+            }
+        }
     }
 }

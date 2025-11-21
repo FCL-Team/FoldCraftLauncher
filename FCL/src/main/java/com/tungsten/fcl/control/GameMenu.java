@@ -110,7 +110,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private TouchPad touchPad;
     private GameItemBar gameItemBar;
     private LogWindow logWindow;
-    private DraggableTextView fpsText;
+    public DraggableTextView fpsText;
     private TouchCharInput touchCharInput;
     private TouchControllerInputView touchControllerInputView;
     private FCLProgressBar launchProgress;
