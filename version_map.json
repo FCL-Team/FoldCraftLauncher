@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1268,
-    "versionName": "1.2.6.8",
-    "date": "2025.11.21",
+    "versionCode": 1269,
+    "versionName": "1.2.6.9",
+    "date": "2025.11.26",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Allow custom -Xmx to override the launcher's default parameters\n2. Allow adding the noXmx parameter to cancel automatic -Xmx addition\n3. Add name validity checks when renaming versions and copying game instances\n4. Fix the incorrect language color issue in the upload layout dialog\n5. Allow using video as the launcher background"
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue where XaeroPlus cannot correctly load SQLite  \n2. Adjust compatibility detection for the YSM mod \n3. Adjust the default secondary theme color (dark) to white  \n4. Remove transparency when using theme colors for RadioButton to prevent visibility issues in some interfaces  \n5. Fix the issue where the FPS display position may shift on some devices  \n6. Fix the issue where the video background stops after clicking start"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.允许自定义的-Xmx覆盖启动器默认参数\n2.允许添加noXmx参数取消自动添加-Xmx\n3.添加对重命名版本和复制游戏实例时的名称合法性检查\n4.修复上传布局对话框内语言颜色错误的问题\n5.允许使用视频作为启动器背景"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复XaeroPlus无法正确加载sqlite的问题\n2.调整对YSM模组的兼容性检测\n3.调整默认次要主题色（暗色）为白色\n4.去除RadioButton使用主题色时的透明度，防止部分界面内无法看清\n5.修复FPS显示位置在部分设备上可能偏移的问题\n6.修复视频背景在点击启动后停止的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/7953bc75aadf",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.8/FCL-release-1.2.6.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/21dcffc4f731",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.6.9/FCL-release-1.2.6.9-all.apk"
   }
 ]
