@@ -17,6 +17,7 @@ class DraggableTextView @JvmOverloads constructor(
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
     var sharedPreferences: SharedPreferences =
         context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+    var isMoving = false
 
     init {
         setTextColor(ThemeEngine.getInstance().theme.color2)
@@ -32,20 +33,26 @@ class DraggableTextView @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_MOVE -> {
+                isMoving = true
                 val deltaX = event.rawX - lastX
                 val deltaY = event.rawY - lastY
                 x += deltaX
                 y += deltaY
                 lastX = event.rawX
                 lastY = event.rawY
+                sharedPreferences.edit {
+                    putFloat("fpsX", x)
+                    putFloat("fpsY", y)
+                }
             }
 
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 performClick()
                 sharedPreferences.edit {
                     putFloat("fpsX", x)
                     putFloat("fpsY", y)
                 }
+                isMoving = false
             }
         }
         return true
@@ -81,6 +88,7 @@ class DraggableTextView @JvmOverloads constructor(
 
     override fun setText(text: CharSequence?, type: BufferType?) {
         super.setText(text, type)
-        initPosition()
+        if (!isMoving)
+            initPosition()
     }
 }
