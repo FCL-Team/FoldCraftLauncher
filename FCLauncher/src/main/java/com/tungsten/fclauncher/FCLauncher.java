@@ -158,7 +158,7 @@ public class FCLauncher {
                 context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
                 split +
 
-                ((pluginLibPath != null) ? pluginLibPath + split : "") +
+                ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
 
                 FCLPath.MOD_RUNTIME_DIR +
                 split +
