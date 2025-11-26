@@ -78,4 +78,9 @@ class DraggableTextView @JvmOverloads constructor(
             }
         }
     }
+
+    override fun setText(text: CharSequence?, type: BufferType?) {
+        super.setText(text, type)
+        initPosition()
+    }
 }
