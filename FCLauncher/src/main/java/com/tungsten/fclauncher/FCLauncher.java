@@ -264,7 +264,7 @@ public class FCLauncher {
         if (!renderer.getPath().isEmpty()) {
             String eglName = renderer.getEglName();
             if (eglName.startsWith("/")) {
-                eglName = renderer.getPath() + "/" + eglName;
+                eglName = renderer.getPath() + eglName;
             }
             List<String> envList;
             if (FCLBridge.BACKEND_IS_BOAT) {
