@@ -30,6 +30,7 @@ import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -49,6 +50,8 @@ import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
 
 /**
  * Custom game control button.
@@ -684,8 +687,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     menu.getInput().sendChar(event.getOutputText().charAt(i));
                 }
             } else {
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
+                GameOption gameOption = menu.getGameOption();
+                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, true);
+                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, false);
                 new Handler().postDelayed(() -> {
                     for (int i = 0; i < event.getOutputText().length(); i++) {
                         menu.getInput().sendChar(event.getOutputText().charAt(i));

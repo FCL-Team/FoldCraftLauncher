@@ -117,6 +117,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLImageView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
+    private GameOption gameOption;
 
     private FCLButton manageViewGroups;
     private FCLButton addButton;
@@ -593,7 +594,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!isSimulated()) {
             ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
-            touchPad.post(() -> gameItemBar.setup(this));
+            assert getBridge() != null;
+            gameOption = new GameOption(getBridge().getGameDir());
+            touchPad.post(() -> gameItemBar.setup(this, gameOption));
         }
         touchPad.init(this);
         touchCharInput.setCharacterSender(this, new LwjglCharSender(this));
@@ -675,6 +678,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public FCLImageView getCursor() {
         return cursorView;
+    }
+
+    public GameOption getGameOption() {
+        return gameOption;
     }
 
     @Override
