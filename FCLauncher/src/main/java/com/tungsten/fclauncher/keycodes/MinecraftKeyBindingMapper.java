@@ -2,7 +2,41 @@ package com.tungsten.fclauncher.keycodes;
 
 import androidx.annotation.Nullable;
 
-public class MinecraftKeyBindingMapper {
+public final class MinecraftKeyBindingMapper {
+    private MinecraftKeyBindingMapper() {}
+
+    public static final String BINDING_HOTBAR_1 = "key_key.hotbar.1";
+    public static final String BINDING_HOTBAR_2 = "key_key.hotbar.2";
+    public static final String BINDING_HOTBAR_3 = "key_key.hotbar.3";
+    public static final String BINDING_HOTBAR_4 = "key_key.hotbar.4";
+    public static final String BINDING_HOTBAR_5 = "key_key.hotbar.5";
+    public static final String BINDING_HOTBAR_6 = "key_key.hotbar.6";
+    public static final String BINDING_HOTBAR_7 = "key_key.hotbar.7";
+    public static final String BINDING_HOTBAR_8 = "key_key.hotbar.8";
+    public static final String BINDING_HOTBAR_9 = "key_key.hotbar.9";
+
+    public static final String BINDING_CHAT = "key_key.chat";
+
+    public static int mapBindingToKeycode(@Nullable String key, int defaultKeycode) {
+        if (key == null) return defaultKeycode;
+
+        if (key.startsWith("key.")) {
+            //新版MC键绑定映射
+            Short glfwKeycode = MinecraftKeyBindingMapper.getGlfwKeycode(key);
+            if (glfwKeycode == null) return defaultKeycode;
+            return (int) glfwKeycode;
+        } else {
+            int lwjgl2Keycode;
+            try {
+                //MC旧版本直接存了LWJGL2的键值
+                lwjgl2Keycode = Integer.parseInt(key);
+            } catch (NumberFormatException e) {
+                return defaultKeycode;
+            }
+            return lwjgl2Keycode;
+        }
+    }
+
     /**
      * Minecraft 绑定按键映射表
      *
