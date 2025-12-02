@@ -43,4 +43,8 @@ public class RequestCodes {
     public static final int SELECT_CONTROLLER_SCREENSHOT_CODE = 950;
 
     public static final int SELECT_JAVA_CODE = 1000;
+
+    public static final int VPN_PERMISSION_CODE = 1050;
+
+    public static final int VPN_REPOST_CODE = 1100;
 }

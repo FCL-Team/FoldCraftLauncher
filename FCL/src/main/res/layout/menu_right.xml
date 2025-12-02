@@ -82,6 +82,30 @@
                 app:layout_constraintTop_toBottomOf="@id/switch_hide_view" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/open_multiplayer_menu_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:text="@string/terracotta_menu"
+                android:textSize="12sp"
+                app:auto_text_tint="true"
+                app:layout_constraintBottom_toBottomOf="@id/open_multiplayer_menu"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/open_multiplayer_menu" />
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/open_multiplayer_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:text="@string/terracotta_menu_open"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_show_fps" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -98,11 +122,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:singleLine="true"
                 android:text="@string/menu_settings_quick_input_button"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_show_fps" />
+                app:layout_constraintTop_toBottomOf="@id/open_multiplayer_menu" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"

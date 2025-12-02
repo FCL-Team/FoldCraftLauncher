@@ -24,6 +24,7 @@ import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fcl.terracotta.Terracotta;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
@@ -237,5 +238,11 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (textureView != null && textureView.getSurfaceTexture() != null) {
             textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Terracotta.setWaiting(this, true);
+        super.onDestroy();
     }
 }

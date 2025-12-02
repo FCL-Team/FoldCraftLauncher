@@ -3,6 +3,7 @@ package com.tungsten.fcl.control;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -78,6 +78,7 @@ import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
+import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;
@@ -124,11 +125,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLButton manageButtonStyle;
     private FCLButton manageDirectionStyle;
 
+    private FCLButton openMultiplayerButton;
     private FCLButton manageQuickInput;
     private FCLButton sendKeycode;
     private FCLButton gamepadResetMapper;
     private FCLButton gamepadButtonBinding;
     private FCLButton forceExit;
+
+    private MultiplayerDialog multiplayerDialog;
 
     private long time = 0;
 
@@ -392,11 +396,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLNumberSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
         FCLNumberSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
+        FCLTextView openMultiplayer = findViewById(R.id.open_multiplayer_menu_text);
+        openMultiplayerButton = findViewById(R.id.open_multiplayer_menu);
         manageQuickInput = findViewById(R.id.open_quick_input);
         sendKeycode = findViewById(R.id.open_send_key);
         gamepadResetMapper = findViewById(R.id.gamepad_reset_mapper);
         gamepadButtonBinding = findViewById(R.id.gamepad_reset_button_binding);
         forceExit = findViewById(R.id.force_exit);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("third_party", Context.MODE_PRIVATE);
+        boolean multiplayerEnabled = sharedPreferences.getBoolean("terracotta", false);
+        openMultiplayer.setVisibility((isSimulated() || !multiplayerEnabled) ? View.GONE : View.VISIBLE);
+        openMultiplayerButton.setVisibility((isSimulated() || !multiplayerEnabled) ? View.GONE : View.VISIBLE);
 
         disableGamepadMapping.setOnCheckedChangeListener((buttonView, isChecked) -> {
             gamepadDisabled = isChecked;
@@ -517,6 +528,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         initSeekbar(gamepadDeadzoneSeekbar, (int) (menuSetting.getGamepadDeadzone() * 100), observable -> menuSetting.setGamepadDeadzone(gamepadDeadzoneSeekbar.progressProperty().get() / 100d));
         initSeekbar(gyroSensitivitySeekbar, menuSetting.getGyroscopeSensitivityProperty().get(), observable -> menuSetting.setGyroscopeSensitivity(gyroSensitivitySeekbar.progressProperty().get()));
 
+        openMultiplayerButton.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
         sendKeycode.setOnClickListener(this);
         gamepadResetMapper.setOnClickListener(this);
@@ -821,6 +833,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (v == manageDirectionStyle) {
             DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
             dialog.show();
+        }
+        if (v == openMultiplayerButton) {
+            if (multiplayerDialog == null) {
+                int width = (int) (AndroidUtils.getScreenWidth(getActivity()) * 0.7);
+                int height = (int) (AndroidUtils.getScreenHeight(getActivity()) * 0.9);
+                multiplayerDialog = new MultiplayerDialog(getActivity(), getActivity(), width, height);
+            }
+            multiplayerDialog.show();
         }
         if (v == manageQuickInput) {
             openQuickInput();

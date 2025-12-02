@@ -215,6 +215,7 @@ public final class LauncherHelper {
                             JVMActivity.setFCLBridge(fclBridge, MenuType.GAME);
                             Bundle bundle = new Bundle();
                             bundle.putString("controller", repository.getVersionSetting(selectedVersion).getController());
+                            bundle.putString("TERRACOTTA_PLAYER", account.getUsername());
                             intent.putExtras(bundle);
                             LOG.log(Level.INFO, "Start JVMActivity!");
                             context.startActivity(intent);

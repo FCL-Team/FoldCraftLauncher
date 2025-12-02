@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/left"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:singleLine="true"
+            android:text="@string/terracotta"
+            android:textSize="11sp"
+            app:use_theme_color="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/darker_gray" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/about_terracotta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_tune_24"
+                app:use_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/terracotta_terracotta"
+                app:use_theme_color="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/host_tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_host_24"
+                app:use_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/terracotta_tutorial_host_btn"
+                app:use_theme_color="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/guest_tutorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_guest_24"
+                app:use_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/terracotta_tutorial_guest_btn"
+                app:use_theme_color="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/terracotta_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_feedback_24"
+                app:use_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/terracotta_feedback_title"
+                app:use_theme_color="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/about_easytier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_transparent_clickable"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:stateListAnimator="@xml/anim_scale">
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_baseline_easytier_24"
+                app:use_theme_color="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:singleLine="true"
+                android:text="@string/terracotta_easytier"
+                app:use_theme_color="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:id="@+id/multiplayer_layout_settings"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/left" >
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/terracotta_warning_region"
+                android:background="@drawable/bg_container_white"
+                app:auto_text_tint="true"
+                app:auto_text_background_tint="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_container_white"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:orientation="vertical"
+                app:auto_linear_background_tint="true">
+
+                <com.tungsten.fcllibrary.component.view.FCLSwitch
+                    android:id="@+id/enable_multiplayer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/terracotta_enable" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/extra_layout"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp">
+
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:singleLine="true"
+                            android:text="@string/terracotta_export_log_share"
+                            app:auto_text_tint="true" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <com.tungsten.fcllibrary.component.view.FCLButton
+                            android:id="@+id/export_log"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/action_share"
+                            app:ripple="true" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:text="@string/terracotta_confirm"
+                android:background="@drawable/bg_container_white"
+                app:auto_text_tint="true"
+                app:auto_text_background_tint="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/tutorial_text_host"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/left" >
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/terracotta_tutorial_host"
+            android:background="@drawable/bg_container_white"
+            app:auto_text_tint="true"
+            app:auto_text_background_tint="true" />
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/tutorial_text_guest"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/left" >
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/terracotta_tutorial_guest"
+            android:background="@drawable/bg_container_white"
+            app:auto_text_tint="true"
+            app:auto_text_background_tint="true" />
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
