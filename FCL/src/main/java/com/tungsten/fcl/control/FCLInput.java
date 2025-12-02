@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.control.gamepad.Gamepad;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
@@ -20,6 +21,8 @@ import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.HashMap;
+
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.mapBindingToKeycode;
 
 public class FCLInput implements View.OnCapturedPointerListener {
 
@@ -116,6 +119,12 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 }
             }
         }
+    }
+
+    public void sendBoundKeyEvent(GameOption option, String binding, int defaultKeycode, boolean press) {
+        String key = binding == null ? null : option.get(binding);
+        int keycode = mapBindingToKeycode(key, defaultKeycode);
+        sendKeyEvent(keycode, press);
     }
 
     public void sendChar(char keyChar) {

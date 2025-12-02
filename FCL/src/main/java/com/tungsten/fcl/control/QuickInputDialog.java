@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.QuickInputTexts;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.util.StringUtils;
@@ -18,6 +19,8 @@ import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.Objects;
+
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
 
 public class QuickInputDialog extends FCLDialog implements View.OnClickListener {
 
@@ -52,8 +55,9 @@ public class QuickInputDialog extends FCLDialog implements View.OnClickListener 
                         menu.getInput().sendChar(string.charAt(i));
                     }
                 } else {
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
+                    GameOption gameOption = menu.getGameOption();
+                    menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, true);
+                    menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, false);
                     new Handler().postDelayed(() -> {
                         for (int i = 0; i < string.length(); i++) {
                             menu.getInput().sendChar(string.charAt(i));

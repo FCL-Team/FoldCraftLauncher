@@ -433,9 +433,12 @@
 
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/renderer"
-                            android:layout_width="wrap_content"
+                            android:layout_width="150dp"
                             android:layout_height="wrap_content"
+                            android:singleLine="true"
                             android:layout_gravity="center"
+                            android:ellipsize="marquee"
+                            android:marqueeRepeatLimit="marquee_forever"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton

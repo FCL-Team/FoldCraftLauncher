@@ -6,26 +6,23 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
 import androidx.annotation.Nullable;
-
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper;
 import com.tungsten.fclcore.task.Schedulers;
 
-public class GameItemBar extends RelativeLayout {
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_1;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_2;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_3;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_4;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_5;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_6;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_7;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_8;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_9;
 
-    private static final String BINDING_HOTBAR_1 = "key_key.hotbar.1";
-    private static final String BINDING_HOTBAR_2 = "key_key.hotbar.2";
-    private static final String BINDING_HOTBAR_3 = "key_key.hotbar.3";
-    private static final String BINDING_HOTBAR_4 = "key_key.hotbar.4";
-    private static final String BINDING_HOTBAR_5 = "key_key.hotbar.5";
-    private static final String BINDING_HOTBAR_6 = "key_key.hotbar.6";
-    private static final String BINDING_HOTBAR_7 = "key_key.hotbar.7";
-    private static final String BINDING_HOTBAR_8 = "key_key.hotbar.8";
-    private static final String BINDING_HOTBAR_9 = "key_key.hotbar.9";
+public class GameItemBar extends RelativeLayout {
 
     public GameItemBar(Context context) {
         super(context);
@@ -60,10 +57,9 @@ public class GameItemBar extends RelativeLayout {
     private GameOption.GameOptionListener optionListener;
     private int position = 0;
 
-    public void setup(GameMenu gameMenu) {
+    public void setup(GameMenu gameMenu, GameOption gameOption) {
         this.gameMenu = gameMenu;
-        assert gameMenu.getBridge() != null;
-        gameOption = new GameOption(gameMenu.getBridge().getGameDir());
+        this.gameOption = gameOption;
         int width = (int) (gameMenu.getTouchPad().getWidth() * gameMenu.getBridge().getScaleFactor());
         int height = (int) (gameMenu.getTouchPad().getHeight() * gameMenu.getBridge().getScaleFactor());
         notifySize(gameOption.getGuiScale(width, height, gameMenu.getMenuSetting().getItemBarScale()) * 20);
@@ -148,32 +144,8 @@ public class GameItemBar extends RelativeLayout {
         return true;
     }
 
-    private void sendKeycode(String key, int defaultKeycode, boolean press) {
-        int keycode = mapBindingToKeycode(key, defaultKeycode);
-        gameMenu.getInput().sendKeyEvent(keycode, press);
-    }
-
-    private int mapBindingToKeycode(String key, int defaultKeycode) {
-        if (key == null) return defaultKeycode;
-
-        String binding = gameOption.get(key);
-        if (binding == null) return defaultKeycode;
-
-        if (binding.startsWith("key.")) {
-            //新版MC键绑定映射
-            Short glfwKeycode = MinecraftKeyBindingMapper.getGlfwKeycode(binding);
-            if (glfwKeycode == null) return defaultKeycode;
-            return (int) glfwKeycode;
-        } else {
-            int lwjgl2Keycode;
-            try {
-                //MC旧版本直接存了LWJGL2的键值
-                lwjgl2Keycode = Integer.parseInt(binding);
-            } catch (NumberFormatException e) {
-                return defaultKeycode;
-            }
-            return lwjgl2Keycode;
-        }
+    private void sendKeycode(String binding, int defaultKeycode, boolean press) {
+        gameMenu.getInput().sendBoundKeyEvent(gameOption, binding, defaultKeycode, press);
     }
 
     public GameOption.GameOptionListener getOptionListener() {

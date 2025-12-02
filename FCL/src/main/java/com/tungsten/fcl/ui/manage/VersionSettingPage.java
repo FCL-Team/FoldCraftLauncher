@@ -326,6 +326,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
         });
         Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
+        rendererText.setSelected(true);
         rendererText.setText(renderer.getDes());
         if (!versionSetting.getDriver().equals("Turnip")) {
             boolean isSelected = false;
