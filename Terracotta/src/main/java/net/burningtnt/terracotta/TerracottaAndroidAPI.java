@@ -99,7 +99,7 @@ public final class TerracottaAndroidAPI {
 
         private final String easyTierVersion;
 
-        private Metadata(String terracottaVersion, long terracottaCompileTime, String easyTierVersion) {
+        public Metadata(String terracottaVersion, long terracottaCompileTime, String easyTierVersion) {
             this.terracottaVersion = terracottaVersion;
             this.terracottaCompileTime = terracottaCompileTime;
             this.easyTierVersion = easyTierVersion;
