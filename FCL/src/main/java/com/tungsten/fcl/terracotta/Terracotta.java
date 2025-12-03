@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.VpnService;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.profile.ProfileKind;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -194,6 +196,8 @@ public class Terracotta {
                         ContextCompat.startForegroundService(context, vpnIntent);
                     } else {
                         TerracottaAndroidAPI.getPendingVpnServiceRequest().reject();
+                        setWaiting(context, true);
+                        Toast.makeText(context, context.getString(R.string.terracotta_permission_vpn), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
