@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
@@ -36,7 +37,6 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -53,10 +53,8 @@ import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
@@ -79,6 +77,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton exportLog;
     private FCLButton requestAudioRecord;
     private FCLSwitch autoExitLauncher;
+    private FCLSpinner<String> themeMode;
     private FCLButton theme;
     private FCLButton theme2;
     private FCLButton theme2Dark;
@@ -110,6 +109,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLNumberSeekBar threads;
 
     private boolean isFirst = true;
+    private SharedPreferences sharedPreferences;
 
     public LauncherSettingPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
@@ -118,13 +118,14 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     @Override
     public void onCreate() {
         super.onCreate();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
         language = findViewById(R.id.language);
         checkUpdate = findViewById(R.id.check_update);
         clearCache = findViewById(R.id.clear_cache);
         exportLog = findViewById(R.id.export_log);
         requestAudioRecord = findViewById(R.id.request_audio_record);
         autoExitLauncher = findViewById(R.id.auto_exit_launcher);
+        themeMode = findViewById(R.id.theme_mode);
         theme = findViewById(R.id.theme);
         theme2 = findViewById(R.id.theme2);
         theme2Dark = findViewById(R.id.theme2_dark);
@@ -201,6 +202,16 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         language.setAdapter(languageAdapter);
         language.setSelection(LocaleUtils.getLanguage(getContext()));
         language.setOnItemSelectedListener(this);
+
+        ArrayList<String> themeModeList = new ArrayList<>();
+        themeModeList.add(getContext().getString(R.string.settings_launcher_theme_mode_follow));
+        themeModeList.add(getContext().getString(R.string.settings_launcher_theme_mode_light));
+        themeModeList.add(getContext().getString(R.string.settings_launcher_theme_mode_dark));
+        ArrayAdapter<String> themeModeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, themeModeList);
+        themeModeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        themeMode.setAdapter(themeModeAdapter);
+        themeMode.setSelection(sharedPreferences.getInt("themeMode", 0));
+        themeMode.setOnItemSelectedListener(this);
 
         autoExitLauncher.setChecked(sharedPreferences.getBoolean("autoExitLauncher", false));
         autoExitLauncher.setOnCheckedChangeListener(this);
@@ -593,6 +604,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             } else {
                 isFirst = false;
             }
+        } else if (parent == themeMode) {
+            sharedPreferences.edit().putInt("themeMode", position).apply();
+            int mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+            if (position != 0) {
+                mode = position == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+            }
+            AppCompatDelegate.setDefaultNightMode(mode);
         }
     }
 

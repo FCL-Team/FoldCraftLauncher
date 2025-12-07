@@ -828,6 +828,10 @@
     <string name="settings_launcher_launcher_log_export">导出启动器日志</string>
     <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
+    <string name="settings_launcher_theme_mode">主题模式</string>
+    <string name="settings_launcher_theme_mode_follow">跟随系统</string>
+    <string name="settings_launcher_theme_mode_light">亮色模式</string>
+    <string name="settings_launcher_theme_mode_dark">暗色模式</string>
     <string name="settings_launcher_theme">主要主题色</string>
     <string name="settings_launcher_theme2">次要主题色（亮色模式）</string>
     <string name="settings_launcher_theme2_dark">次要主题色（暗色模式）</string>
