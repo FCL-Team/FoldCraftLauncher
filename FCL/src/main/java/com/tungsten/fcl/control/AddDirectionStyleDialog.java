@@ -62,7 +62,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         setContentView(R.layout.dialog_add_direction_style);
         setCancelable(false);
         this.callback = callback;
-        this.style = beforeStyle == null ? new ControlDirectionStyle("") : beforeStyle;
+        this.style = beforeStyle == null ? new ControlDirectionStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
 
         positive = findViewById(R.id.positive);
