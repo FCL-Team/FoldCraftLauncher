@@ -1099,6 +1099,7 @@
     <string name="mod_check_axiom">当前使用的Axiom模组（%s）未经修补，启动后将会崩溃。</string>
     <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
     <string name="mod_check_flashback">Flashback模组（%s）无法在安卓上运行。</string>
+    <string name="mod_check_ixeris">Ixeris模组（%s）无法在FCL上正常运行。</string>
 
     <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>

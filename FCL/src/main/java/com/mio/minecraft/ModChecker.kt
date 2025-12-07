@@ -140,6 +140,15 @@ class ModChecker(val context: Context, val version: String) {
                         )
                     )
                 }
+
+                "ixeris" -> {
+                    throw ModCheckException(
+                        context.getString(
+                            R.string.mod_check_ixeris,
+                            mod.file.toFile().name
+                        )
+                    )
+                }
             }
         }.exceptionOrNull()
         if (exception != null) {
