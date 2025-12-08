@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -67,7 +68,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
     public static final long ONE_DAY = 1000 * 60 * 60 * 24;
 
@@ -99,6 +100,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLButton resetMenuIcon;
     private FCLSwitch ignoreNotch;
     private FCLSwitch closeSkinModel;
+    private FCLNumberSeekBar videoBackgroundVolume;
     private FCLNumberSeekBar animationSpeed;
     private FCLNumberSeekBar vibrationDuration;
     private FCLSwitch disableFullscreenInput;
@@ -147,6 +149,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         resetMenuIcon = findViewById(R.id.reset_menu_icon);
         ignoreNotch = findViewById(R.id.ignore_notch);
         closeSkinModel = findViewById(R.id.close_skin_model);
+        videoBackgroundVolume = findViewById(R.id.video_background_volume);
         animationSpeed = findViewById(R.id.animation_speed);
         vibrationDuration = findViewById(R.id.vibration_duration);
         disableFullscreenInput = findViewById(R.id.disable_fullscreen_input);
@@ -221,6 +224,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         closeSkinModel.setChecked(ThemeEngine.getInstance().getTheme().isCloseSkinModel());
         closeSkinModel.setOnCheckedChangeListener(this);
+
+        videoBackgroundVolume.setProgress(sharedPreferences.getInt("videoBackgroundVolume", 100));
+        videoBackgroundVolume.setOnSeekBarChangeListener(this);
 
         animationSpeed.setProgress(ThemeEngine.getInstance().getTheme().getAnimationSpeed());
         animationSpeed.addProgressListener();
@@ -633,5 +639,23 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         } else if (buttonView == autoExitLauncher) {
             sharedPreferences.edit().putBoolean("autoExitLauncher", isChecked).apply();
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (seekBar == videoBackgroundVolume) {
+            sharedPreferences.edit().putInt("videoBackgroundVolume", progress).apply();
+            MainActivity.getInstance().setLiveBackgroundVolume();
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

@@ -839,6 +839,7 @@
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_background_video">启动器背景(视频 .mp4)</string>
+    <string name="settings_launcher_background_video_volume">视频背景音量</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
     <string name="settings_launcher_menu_icon">菜单键图标</string>
     <string name="settings_launcher_ignore_notch">忽略刘海屏(全屏)</string>

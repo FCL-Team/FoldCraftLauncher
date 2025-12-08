@@ -900,6 +900,7 @@
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_video">Launcher Background (Video .mp4)</string>
+    <string name="settings_launcher_background_video_volume">Video Background Volume</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
     <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>

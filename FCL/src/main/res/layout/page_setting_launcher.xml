@@ -211,13 +211,13 @@
 
                 <com.tungsten.fcllibrary.component.view.FCLSwitch
                     android:id="@+id/auto_exit_launcher"
-                    android:text="@string/settings_launcher_exit_after_launching"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:paddingStart="12dp"
                     android:paddingTop="8dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:text="@string/settings_launcher_exit_after_launching" />
 
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
@@ -644,6 +644,43 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:text="@string/settings_launcher_background_video_volume"
+                        app:auto_text_tint="true" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
+                        android:id="@+id/video_background_volume"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:max="100"
+                        android:min="0"
+                        app:suffix="%" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="8dp">
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:singleLine="true"
                         android:text="@string/settings_launcher_cursor"
                         app:auto_text_tint="true" />
 
@@ -820,9 +857,9 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        app:suffix="00"
                         android:max="20"
-                        android:min="1" />
+                        android:min="1"
+                        app:suffix="00" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -851,9 +888,9 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        app:suffix="MS"
                         android:max="500"
-                        android:min="20" />
+                        android:min="20"
+                        app:suffix="MS" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
