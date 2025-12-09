@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1271,
-    "versionName": "1.2.7.1",
-    "date": "2025.12.04",
+    "versionCode": 1272,
+    "versionName": "1.2.7.2",
+    "date": "2025.12.09",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n0.Added online multiplayer feature (Beta). Enable it in the launcher first, then open it from the right side of the in-game menu.\n1. Fixed the subtle offset caused by FPS text changes\n2. Fixed the issue where empty renderer paths were incorrectly added to LD_LIBRARY_PATH\n3. Fixed the issue where render plugins couldn't use custom EGL\n4. New feature: The send button in the chat bar now follows changes in options.txt\n5. Fixed the issue where renderer strings that were too long prevented renderer modification"
+        "text": "(Translated from Chinese by AI)\n1. New Feature: Allows switching between light/dark theme modes within the launcher.\n2. New Feature: Allows setting the volume of the video background.\n3. Fixed an issue where cancelling edits to the directional control key style would still take effect.\n4. Added compatibility detection for the Ixeris mod."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.新增联机功能（测试），在启动器内开启功能后再进入游戏在菜单右侧打开\n1.修复fps文本变化导致细微偏移的问题\n2.修复渲染器path为空时被错误添加进LD_LIBRARY_PATH的问题\n3.修复渲染插件无法使用自定义egl的问题\n4.新增功能：打开聊天栏发送键跟随options.txt变化\n5.修复渲染器字符串长度过长导致无法修改渲染器的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：允许启动器内切换亮色/暗色主题模式\n2.新增功能：允许设置视频背景的音量\n3.修复编辑方向控制键样式时取消后依然生效的问题\n4.增加对Ixeris模组的兼容性检测"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/3cba1267006f",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.1/FCL-release-1.2.7.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f827976924bb",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.2/FCL-release-1.2.7.2-all.apk"
   }
 ]
