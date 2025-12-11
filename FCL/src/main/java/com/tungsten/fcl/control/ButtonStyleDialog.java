@@ -2,6 +2,8 @@ package com.tungsten.fcl.control;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +25,7 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     private FCLButton editStyle;
     private FCLButton positive;
 
-    private HorizontalListView listView;
+    private ListView listView;
 
     public interface Callback {
         void onStyleSelect(ControlButtonStyle style);
@@ -34,6 +36,9 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         this.select = select;
         this.initStyle = initStyle;
         this.callback = callback;
+        if (getWindow() != null) {
+            getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
         setContentView(R.layout.dialog_manage_button_style);
         setCancelable(false);
 
