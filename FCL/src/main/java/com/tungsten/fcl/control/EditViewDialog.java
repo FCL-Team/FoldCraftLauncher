@@ -289,6 +289,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 style.setOnClickListener(v -> {
                     ControlButtonStyle targetStyle = ButtonStyles.findStyleByName(data.getStyle().getName());
                     ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, targetStyle, data::setStyle);
+                    dialog.setGameMenu(menu);
                     dialog.show();
                 });
 
