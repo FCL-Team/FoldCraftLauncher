@@ -14,7 +14,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
+import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
@@ -285,7 +287,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
-                    ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, data.getStyle(), data::setStyle);
+                    ControlButtonStyle targetStyle = ButtonStyles.findStyleByName(data.getStyle().getName());
+                    ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, targetStyle, data::setStyle);
                     dialog.show();
                 });
 
