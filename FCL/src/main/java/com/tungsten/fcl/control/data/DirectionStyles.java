@@ -26,7 +26,7 @@ public class DirectionStyles {
     private DirectionStyles() {
     }
 
-    private static final ObservableList<ControlDirectionStyle> styles = observableArrayList(style -> new Observable[] { style });
+    private static final ObservableList<ControlDirectionStyle> styles = observableArrayList(style -> new Observable[]{style});
     private static final ReadOnlyListWrapper<ControlDirectionStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
 
     public static void checkStyles() {
@@ -65,7 +65,7 @@ public class DirectionStyles {
         if (initialized)
             return;
 
-        getStylesFromDisk().forEach(DirectionStyles::addStyle);
+        styles.addAll(getStylesFromDisk());
         checkStyles();
 
         initialized = true;
@@ -76,7 +76,8 @@ public class DirectionStyles {
         try {
             String json = FileUtils.readText(new File(FCLPath.CONTROLLER_DIR + "/styles/direction_styles.json"));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            ArrayList<ControlDirectionStyle> styles =  gson.fromJson(json, new TypeToken<ArrayList<ControlDirectionStyle>>(){}.getType());
+            ArrayList<ControlDirectionStyle> styles = gson.fromJson(json, new TypeToken<ArrayList<ControlDirectionStyle>>() {
+            }.getType());
             if (Objects.isNull(styles)) {
                 new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
             } else {

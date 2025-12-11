@@ -65,7 +65,7 @@ public class ButtonStyles {
         if (initialized)
             return;
 
-        getStylesFromDisk().forEach(ButtonStyles::addStyle);
+        styles.addAll(getStylesFromDisk());
         checkStyles();
 
         initialized = true;
