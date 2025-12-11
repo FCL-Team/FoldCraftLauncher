@@ -75,9 +75,11 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         }
         if (v == editStyle) {
             AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                int i = ButtonStyles.getStyles().indexOf(adapter.getSelectedStyle());
                 ButtonStyles.removeStyles(adapter.getSelectedStyle());
-                ButtonStyles.addStyle(style);
+                ButtonStyles.addStyle(style, i);
                 refreshList();
+                adapter.setSelectedStyle(style);
             });
             dialog.show();
         }
