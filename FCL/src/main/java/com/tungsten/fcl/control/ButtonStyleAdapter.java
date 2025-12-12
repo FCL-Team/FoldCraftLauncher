@@ -123,6 +123,7 @@ public class ButtonStyleAdapter extends FCLAdapter {
             return true;
         });
         viewHolder.name.setText(style.getName());
+        viewHolder.name.setSelected(true);
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
         } else {
