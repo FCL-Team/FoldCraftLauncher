@@ -29,14 +29,15 @@
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:singleLine="true"
         android:ellipsize="marquee"
+        android:gravity="center"
         android:marqueeRepeatLimit="marquee_forever"
-        app:layout_constraintWidth_percent="0.5"
+        android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button"
         app:layout_constraintEnd_toStartOf="@id/delete"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/delete"
