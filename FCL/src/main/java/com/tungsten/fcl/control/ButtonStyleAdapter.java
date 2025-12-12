@@ -125,10 +125,8 @@ public class ButtonStyleAdapter extends FCLAdapter {
         viewHolder.name.setText(style.getName());
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
-            viewHolder.delete.setVisibility(View.GONE);
         } else {
             viewHolder.radioButton.setVisibility(View.GONE);
-            viewHolder.delete.setVisibility(View.VISIBLE);
         }
         viewHolder.radioButton.checkProperty().unbind();
         viewHolder.radioButton.checkProperty().bind(Bindings.createBooleanBinding(() -> selectedStyle.get() == style, selectedStyle));
