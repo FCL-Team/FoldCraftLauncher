@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1272,
-    "versionName": "1.2.7.2",
-    "date": "2025.12.09",
+    "versionCode": 1273,
+    "versionName": "1.2.7.3",
+    "date": "2025.12.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. New Feature: Allows switching between light/dark theme modes within the launcher.\n2. New Feature: Allows setting the volume of the video background.\n3. Fixed an issue where cancelling edits to the directional control key style would still take effect.\n4. Added compatibility detection for the Ixeris mod."
+        "text": "(Translated from Chinese by AI)\n1.Refactor the button style dialog to optimize the display effect.\n2.Fix the issue where the current style could not be auto-selected when setting button styles.\n3.Fix the issue where the button position changed incorrectly after editing a style.\n4.Fix the issue where style edits did not take effect immediately.\n5.Fix the issue where unused styles were incorrectly deleted after a restart.\n6.Allow the deletion of styles directly within the button style selection dialog.\n7.Implement scrolling display for button style names that are too long."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增功能：允许启动器内切换亮色/暗色主题模式\n2.新增功能：允许设置视频背景的音量\n3.修复编辑方向控制键样式时取消后依然生效的问题\n4.增加对Ixeris模组的兼容性检测"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.重构按键样式对话框优化显示效果\n2.修复设置按键样式无法自动选择当前样式的问题\n3.修复按键样式编辑后位置错误变化的问题\n4.修复按键样式编辑后无法立刻生效的问题\n5.修复未使用的样式重启后被错误删除的问题\n6.允许在按键样式选择对话框内删除样式\n7.按键样式名称过长时滚动显示"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f827976924bb",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.2/FCL-release-1.2.7.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/988ed43e578b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.3/FCL-release-1.2.7.3-all.apk"
   }
 ]
