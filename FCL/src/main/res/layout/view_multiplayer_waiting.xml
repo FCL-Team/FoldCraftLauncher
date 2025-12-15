@@ -4,154 +4,104 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_host"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="5dp"
-        android:clickable="true"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/waiting_host"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardUseCompatPadding="true"
+        android:clickable="true"
+        android:padding="10dp"
+        android:background="@drawable/bg_container_transparent_clickable"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/card_guest">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_host_24"
+            android:layout_gravity="center"
+            app:use_theme_color="true" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/host_guideline_25"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/host_guideline_50"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/host_guideline_75"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.75"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.tungsten.fcllibrary.component.view.FCLImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_baseline_host_24"
-                app:use_theme_color="true"
-                app:layout_constraintTop_toTopOf="@id/host_guideline_25"
-                app:layout_constraintBottom_toBottomOf="@id/host_guideline_25"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/host_title"
-                android:layout_width="wrap_content"
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/terracotta_status_waiting_host_title"
                 android:textSize="16sp"
-                app:layout_constraintTop_toTopOf="@id/host_guideline_50"
-                app:layout_constraintBottom_toBottomOf="@id/host_guideline_50"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <TextView
-                android:id="@+id/host_subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/terracotta_status_waiting_host_desc"
-                android:textSize="12sp"
-                android:textAlignment="center"
-                app:layout_constraintTop_toTopOf="@id/host_guideline_75"
-                app:layout_constraintBottom_toBottomOf="@id/host_guideline_75"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_guest"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="5dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintStart_toEndOf="@id/card_host"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guest_guideline_25"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guest_guideline_50"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guest_guideline_75"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.75"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.tungsten.fcllibrary.component.view.FCLImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_baseline_guest_24"
-                app:use_theme_color="true"
-                app:layout_constraintTop_toTopOf="@id/guest_guideline_25"
-                app:layout_constraintBottom_toBottomOf="@id/guest_guideline_25"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:singleLine="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/guest_title"
-                android:layout_width="wrap_content"
+                android:id="@+id/host_sub_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="@string/terracotta_status_waiting_host_desc"
+                android:textSize="12sp"
+                android:singleLine="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/waiting_guest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:clickable="true"
+        android:padding="10dp"
+        android:background="@drawable/bg_container_transparent_clickable"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/waiting_host">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_guest_24"
+            android:layout_gravity="center"
+            app:use_theme_color="true" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/terracotta_status_waiting_guest_title"
                 android:textSize="16sp"
-                app:layout_constraintTop_toTopOf="@id/guest_guideline_50"
-                app:layout_constraintBottom_toBottomOf="@id/guest_guideline_50"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:singleLine="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/guest_subtitle"
-                android:layout_width="wrap_content"
+                android:id="@+id/guest_sub_text"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:text="@string/terracotta_status_waiting_guest_desc"
                 android:textSize="12sp"
-                android:textAlignment="center"
-                app:layout_constraintTop_toTopOf="@id/guest_guideline_75"
-                app:layout_constraintBottom_toBottomOf="@id/guest_guideline_75"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:singleLine="true" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

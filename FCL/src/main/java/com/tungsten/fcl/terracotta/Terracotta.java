@@ -137,6 +137,10 @@ public class Terracotta {
         return AndroidUtils.getLocalizedText(context, "terracotta_player_kind_" + kind.name().toLowerCase(Locale.ROOT));
     }
 
+    public static String parseDifficulty(Context context, TerracottaState.GuestStarting.Difficulty difficulty) {
+        return AndroidUtils.getLocalizedText(context, "terracotta_difficulty_" + difficulty.name().toLowerCase(Locale.ROOT));
+    }
+
     @Nullable
     public static TerracottaAndroidAPI.RoomType parseRoomCode(String room) {
         if (!initialized || room == null)

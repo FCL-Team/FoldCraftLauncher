@@ -959,7 +959,15 @@
     <string name="terracotta_back">Exit</string>
     <string name="terracotta_enable">Enable Multiplayer</string>
     <string name="terracotta_feedback_title">Fill Out Feedback Form</string>
+    <string name="terracotta_difficulty_easiest">Excellent network: almost connected!</string>
+    <string name="terracotta_difficulty_simple">Good network: connection may take some time</string>
+    <string name="terracotta_difficulty_medium">Average network: enabling fallback routes, though connection may fail</string>
+    <string name="terracotta_difficulty_tough">Poor network: enabling fallback routes, though connection may fail</string>
+    <string name="terracotta_difficulty_estimate_only">Success rate is an estimate based on host and client NAT types, for reference only!</string>
     <string name="terracotta_export_log">Exports the Multiplayer Core log</string>
+    <string name="terracotta_export_log_btn">Log</string>
+    <string name="terracotta_export_log_dialog_title">Multiplayer Core log</string>
+    <string name="terracotta_export_log_dialog_export">Export</string>
     <string name="terracotta_export_log_desc">Gathering more information for analysis</string>
     <string name="terracotta_export_log_done">Multiplayer Core log successfully exported to log directory</string>
     <string name="terracotta_export_log_failed">Export log failed</string>
@@ -992,6 +1000,7 @@
     <string name="terracotta_status_host_ok_code_desc">Please remind your friends to select Guest mode in FCL - Multiplayer or HMCL/PCL CE and enter this invitation code.</string>
     <string name="terracotta_status_host_ok_back">This will also close the room, other guests will leave and cannot rejoin.</string>
     <string name="terracotta_status_guest_starting">Joining room</string>
+    <string name="terracotta_status_guest_connecting">Joining room</string>
     <string name="terracotta_status_guest_starting_back">This will not stop other guests from joining the room.</string>
     <string name="terracotta_status_guest_ok">Room Joined</string>
     <string name="terracotta_status_guest_ok_back">This will not stop other guests from joining the room.</string>

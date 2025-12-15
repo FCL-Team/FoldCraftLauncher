@@ -15,9 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
-import com.google.android.material.card.MaterialCardView;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.tungsten.fcl.terracotta.TerracottaState;
@@ -26,9 +26,12 @@ import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
+import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -37,6 +40,8 @@ import net.burningtnt.terracotta.TerracottaAndroidAPI;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -47,9 +52,11 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
 
     private final RelativeLayout stateUIContainer;
     private final FCLProgressBar progressBar;
+    private final FCLButton logBtn;
     private final FCLButton negative;
 
     private final ArrayList<StateBindingUI> allUI;
+    private final FCLAlertDialog logDialog;
 
     public MultiplayerDialog(@NonNull Context context, Activity activity, int width, int height) {
         super(context);
@@ -61,8 +68,10 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         stateUIContainer = findViewById(R.id.state_ui_container);
         progressBar = findViewById(R.id.loading);
         FCLTextView metadataText = findViewById(R.id.metadata_text);
+        logBtn = findViewById(R.id.log_btn);
         negative = findViewById(R.id.cancel);
         Objects.requireNonNull(progressBar).setVisibility(View.VISIBLE);
+        Objects.requireNonNull(logBtn).setOnClickListener(this);
         Objects.requireNonNull(negative).setOnClickListener(this);
 
         WaitingUI waitingUI = new WaitingUI(context, this, R.layout.view_multiplayer_waiting);
@@ -81,6 +90,12 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         allUI.add(guestStartingUI);
         allUI.add(guestOkUI);
         allUI.add(exceptionUI);
+
+        logDialog = new FCLAlertDialog.Builder(context).setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                .setTitle(context.getString(R.string.terracotta_export_log_dialog_title))
+                .setPositiveButton(context.getString(R.string.terracotta_export_log_dialog_export), () -> ExceptionUI.exportLogs(getContext()))
+                .setNegativeButton(null)
+                .create();
 
         Terracotta.initialize(activity);
         Terracotta.setWaiting(context, true);
@@ -106,6 +121,10 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
+        if (v == logBtn) {
+            logDialog.setMessage(Terracotta.collectLogs());
+            logDialog.show();
+        }
         if (v == negative) {
             dismiss();
         }
@@ -115,7 +134,7 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         String stateString = state.toString();
         stateUIContainer.removeAllViews();
         for (StateBindingUI ui : allUI) {
-            if (ui.getBindingState().equals(stateString)) {
+            if (ui.getBindingState().contains(stateString)) {
                 stateUIContainer.addView(ui.getLayout(), ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 ui.show();
                 break;
@@ -155,20 +174,20 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
 
         public abstract void show();
 
-        public abstract String getBindingState();
+        public abstract List<String> getBindingState();
     }
 
     private static final class WaitingUI extends StateBindingUI {
 
         private final InviteCodeInputDialog inviteCodeInputDialog;
 
-        private final MaterialCardView hostCard;
-        private final MaterialCardView guestCard;
+        private final LinearLayoutCompat host;
+        private final LinearLayoutCompat guest;
 
         public WaitingUI(Context context, MultiplayerDialog parent, int resId) {
             super(context, parent, resId);
-            hostCard = findViewById(R.id.card_host);
-            guestCard = findViewById(R.id.card_guest);
+            host = findViewById(R.id.waiting_host);
+            guest = findViewById(R.id.waiting_guest);
 
             String player = getParent().activity.getIntent().getStringExtra("TERRACOTTA_PLAYER");
             if (player == null)
@@ -181,39 +200,42 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                     if (!success) {
                         Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
                     } else {
-                        guestCard.setEnabled(false);
+                        guest.setEnabled(false);
                         Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
                     }
                 } catch (Exception e) {
                     Logging.LOG.log(Level.SEVERE, e.getMessage());
-                    guestCard.setEnabled(true);
+                    guest.setEnabled(true);
                     Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
                 }
             });
 
-            hostCard.setOnClickListener(v -> {
+            host.setOnClickListener(v -> {
                 try {
                     Terracotta.setScanning(null, finalPlayer);
-                    hostCard.setEnabled(false);
+                    host.setEnabled(false);
                     Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     Logging.LOG.log(Level.SEVERE, e.getMessage());
-                    hostCard.setEnabled(true);
+                    host.setEnabled(true);
                     Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
                 }
             });
-            guestCard.setOnClickListener(v -> inviteCodeInputDialog.show());
+            guest.setOnClickListener(v -> inviteCodeInputDialog.show());
+
+            findViewById(R.id.host_sub_text).setSelected(true);
+            findViewById(R.id.guest_sub_text).setSelected(true);
         }
 
         @Override
         public void show() {
-            hostCard.setEnabled(true);
-            guestCard.setEnabled(true);
+            host.setEnabled(true);
+            guest.setEnabled(true);
         }
 
         @Override
-        public String getBindingState() {
-            return "waiting";
+        public List<String> getBindingState() {
+            return Collections.singletonList("waiting");
         }
 
         private static class InviteCodeInputDialog extends FCLDialog {
@@ -314,8 +336,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "host_scanning";
+        public List<String> getBindingState() {
+            return Collections.singletonList("host_scanning");
         }
     }
 
@@ -342,8 +364,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "host_starting";
+        public List<String> getBindingState() {
+            return Collections.singletonList("host_starting");
         }
     }
 
@@ -395,8 +417,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "host_ok";
+        public List<String> getBindingState() {
+            return Collections.singletonList("host_ok");
         }
 
         public void refresh() {
@@ -430,8 +452,31 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                 startingBack.setEnabled(false);
                 Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
             });
+            ((FCLLinearLayout) findViewById(R.id.difficulty_layout)).visibilityProperty().bind(Bindings.createBooleanBinding(() ->
+                    Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
+                            ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != null &&
+                            ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN,
+                    Terracotta.stateProperty()));
+            ((FCLImageView) findViewById(R.id.difficulty_icon)).imageProperty().bind(Bindings.createObjectBinding(() -> {
+                if (Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
+                        ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != null &&
+                        ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN)
+                    if (((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() == TerracottaState.GuestStarting.Difficulty.EASIEST ||
+                            ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() == TerracottaState.GuestStarting.Difficulty.SIMPLE)
+                        return AppCompatResources.getDrawable(context, com.tungsten.fcllibrary.R.drawable.ic_baseline_info_24);
+                return AppCompatResources.getDrawable(context, com.tungsten.fcllibrary.R.drawable.ic_baseline_warning_24);
+            }, Terracotta.stateProperty()));
+            ((FCLTextView) findViewById(R.id.difficulty_text)).stringProperty().bind(Bindings.createStringBinding(() -> {
+                if (Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
+                        ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != null &&
+                        ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN)
+                    return Terracotta.parseDifficulty(context, ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty());
+                return "";
+            }, Terracotta.stateProperty()));
             ((FCLTextView) findViewById(R.id.starting_text)).setText(getContext().getString(R.string.terracotta_status_guest_starting));
             ((FCLTextView) findViewById(R.id.exit_text)).setText(getContext().getString(R.string.terracotta_status_guest_starting_back));
+            findViewById(R.id.difficulty_text).setSelected(true);
+            findViewById(R.id.difficulty_sub_text).setSelected(true);
             findViewById(R.id.exit_text).setSelected(true);
         }
 
@@ -441,8 +486,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "guest_starting";
+        public List<String> getBindingState() {
+            return Arrays.asList("guest_connecting", "guest_starting");
         }
     }
 
@@ -492,8 +537,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "guest_ok";
+        public List<String> getBindingState() {
+            return Collections.singletonList("guest_ok");
         }
 
         public void refresh() {
@@ -530,15 +575,7 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                 export.setEnabled(false);
                 Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
             });
-            export.setOnClickListener(v -> {
-                String logString = Terracotta.collectLogs();
-                try {
-                    FileUtils.writeText(new File(FCLPath.LOG_DIR, "terracotta.log"), logString);
-                    Toast.makeText(getContext(), getContext().getString(R.string.terracotta_export_log_done), Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), getContext().getString(R.string.terracotta_export_log_failed), Toast.LENGTH_SHORT).show();
-                }
-            });
+            export.setOnClickListener(v -> exportLogs(getContext()));
             ((FCLTextView) findViewById(R.id.exception_text)).stringProperty().bind(Bindings.createStringBinding(() -> Terracotta.stateProperty().get() instanceof TerracottaState.Exception ? Terracotta.parseException(getContext(), (TerracottaState.Exception) Terracotta.stateProperty().get()) : "Unknown Error", Terracotta.stateProperty()));
             findViewById(R.id.export_text_sub).setSelected(true);
             findViewById(R.id.back_text_sub).setSelected(true);
@@ -551,8 +588,18 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
         }
 
         @Override
-        public String getBindingState() {
-            return "exception";
+        public List<String> getBindingState() {
+            return Collections.singletonList("exception");
+        }
+
+        public static void exportLogs(Context context) {
+            String logString = Terracotta.collectLogs();
+            try {
+                FileUtils.writeText(new File(FCLPath.LOG_DIR, "terracotta.log"), logString);
+                Toast.makeText(context, context.getString(R.string.terracotta_export_log_done), Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(context, context.getString(R.string.terracotta_export_log_failed), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

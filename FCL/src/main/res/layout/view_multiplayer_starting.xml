@@ -22,6 +22,59 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         app:layout_constraintTop_toBottomOf="@+id/starting_text" />
 
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/difficulty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/difficulty_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:use_theme_color="true" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/difficulty_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:textSize="16sp"
+                android:singleLine="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/difficulty_sub_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:text="@string/terracotta_difficulty_estimate_only"
+                android:textSize="12sp"
+                android:singleLine="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/starting_back"
         android:layout_width="match_parent"

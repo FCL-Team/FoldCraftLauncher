@@ -45,7 +45,7 @@ public abstract class TerracottaState {
                     @JsonSubtype(clazz = HostScanning.class, name = "host-scanning"),
                     @JsonSubtype(clazz = HostStarting.class, name = "host-starting"),
                     @JsonSubtype(clazz = HostOK.class, name = "host-ok"),
-                    @JsonSubtype(clazz = GuestStarting.class, name = "guest-connecting"),
+                    @JsonSubtype(clazz = GuestConnecting.class, name = "guest-connecting"),
                     @JsonSubtype(clazz = GuestStarting.class, name = "guest-starting"),
                     @JsonSubtype(clazz = GuestOK.class, name = "guest-ok"),
                     @JsonSubtype(clazz = Exception.class, name = "exception"),
@@ -135,9 +135,32 @@ public abstract class TerracottaState {
         }
     }
 
-    public static final class GuestStarting extends Ready {
-        GuestStarting(int index, String state) {
+    public static final class GuestConnecting extends Ready {
+        GuestConnecting(int index, String state) {
             super(index, state);
+        }
+    }
+
+    public static final class GuestStarting extends Ready {
+        public enum Difficulty {
+            UNKNOWN,
+            EASIEST,
+            SIMPLE,
+            MEDIUM,
+            TOUGH
+        }
+
+        @SerializedName("difficulty")
+        private final Difficulty difficulty;
+
+        GuestStarting(int index, String state, Difficulty difficulty) {
+            super(index, state);
+            this.difficulty = difficulty;
+
+        }
+
+        public Difficulty getDifficulty() {
+            return difficulty;
         }
     }
 

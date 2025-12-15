@@ -897,7 +897,15 @@
     <string name="terracotta_back">退出</string>
     <string name="terracotta_enable">启用多人联机</string>
     <string name="terracotta_feedback_title">填写反馈表</string>
+    <string name="terracotta_difficulty_easiest">当前网络状态极好：稍等一下就成功！</string>
+    <string name="terracotta_difficulty_simple">当前网络状态较好：建立连接需要一段时间……</string>
+    <string name="terracotta_difficulty_medium">当前网络状态中等：已启用抗干扰备用线路，连接可能失败</string>
+    <string name="terracotta_difficulty_tough">当前网络状态极差：已启用抗干扰备用线路，连接可能失败</string>
+    <string name="terracotta_difficulty_estimate_only">连接成功率由房主和房客的 NAT 类型推算得到，仅供参考。</string>
     <string name="terracotta_export_log">导出联机核心日志</string>
+    <string name="terracotta_export_log_btn">日志</string>
+    <string name="terracotta_export_log_dialog_title">联机核心日志</string>
+    <string name="terracotta_export_log_dialog_export">导出</string>
     <string name="terracotta_export_log_desc">为分析错误提供更多信息</string>
     <string name="terracotta_export_log_done">联机核心日志成功导出至日志文件夹</string>
     <string name="terracotta_export_log_failed">无法导出日志</string>
@@ -930,6 +938,7 @@
     <string name="terracotta_status_host_ok_code_desc">请提醒您的朋友在 FCL 或 HMCL 或 PCL CE 多人联机功能中选择房客模式，并输入该邀请码。</string>
     <string name="terracotta_status_host_ok_back">这将同时彻底关闭房间，其他房客将退出并不再能重新加入该房间。</string>
     <string name="terracotta_status_guest_starting">正在加入房间</string>
+    <string name="terracotta_status_guest_connecting">正在加入房间</string>
     <string name="terracotta_status_guest_starting_back">这不会影响其他房客加入当前房间。</string>
     <string name="terracotta_status_guest_ok">已加入房间</string>
     <string name="terracotta_status_guest_ok_back">这不会影响其他房客加入当前房间。</string>

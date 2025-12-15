@@ -45,6 +45,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/log_btn"
+        android:text="@string/terracotta_export_log_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/cancel"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/cancel"
         android:text="@string/dialog_positive"
         android:layout_width="wrap_content"
