@@ -56,7 +56,13 @@ public class ObservableHelper implements Observable, InvalidationListener {
     }
 
     public void invalidate() {
-        listeners.forEach(it -> it.invalidated(source));
+        listeners.forEach(it -> {
+            if (it == null) {
+                listeners.remove(null);
+                return;
+            }
+            it.invalidated(source);
+        });
     }
 
     @Override
