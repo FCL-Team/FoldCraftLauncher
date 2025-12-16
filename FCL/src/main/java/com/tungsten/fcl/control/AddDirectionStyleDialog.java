@@ -93,6 +93,8 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         style.nameProperty().bind(editName.stringProperty());
         changeDirectionStyle();
         style.addListener(observable -> changeDirectionStyle());
+        style.getButtonStyle().addListener(observable -> changeDirectionStyle());
+        style.getRockerStyle().addListener(observable -> changeDirectionStyle());
         {
             FCLPreciseSeekBar interval = buttonStyleLayout.findViewById(R.id.interval);
 
