@@ -63,6 +63,7 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     public void refreshList() {
         adapter = new ButtonStyleAdapter(getContext(), ButtonStyles.getStyles(), select, initStyle);
         listView.setAdapter(adapter);
+        listView.setSelection(ButtonStyles.findStyleIndexByName(initStyle.getName()));
     }
 
     @Override
