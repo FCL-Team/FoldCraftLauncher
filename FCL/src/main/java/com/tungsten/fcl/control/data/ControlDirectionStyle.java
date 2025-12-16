@@ -121,7 +121,7 @@ public class ControlDirectionStyle implements Cloneable, Observable {
         rockerStyleProperty.addListener(listener);
     }
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
+    private final ObservableHelper observableHelper = new ObservableHelper(this);
 
     @Override
     public void addListener(InvalidationListener listener) {
