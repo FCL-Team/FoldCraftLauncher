@@ -117,8 +117,8 @@ public class ControlDirectionStyle implements Cloneable, Observable {
     public void addPropertyChangedListener(InvalidationListener listener) {
         nameProperty.addListener(listener);
         styleTypeProperty.addListener(listener);
-        buttonStyleProperty.addListener(listener);
-        rockerStyleProperty.addListener(listener);
+        getButtonStyle().addListener(listener);
+        getRockerStyle().addListener(listener);
     }
 
     private final ObservableHelper observableHelper = new ObservableHelper(this);
