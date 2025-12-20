@@ -457,7 +457,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                                 url = "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
                                 break;
                             case 1:
-                                url = "https://pan.quark.cn/s/d1c9894545f9";
+                                url = "https://pan.quark.cn/s/31211db80975";
                                 break;
                         }
                         if (url != null) {
