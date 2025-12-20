@@ -500,6 +500,12 @@ public class ControlButton extends AppCompatButton implements CustomView {
         cancelTickEvent(getData().getEvent().getClickEvent());
         cancelTickEvent(getData().getEvent().getDoubleClickEvent());
         setNormalStyle();
+        pressEvent = false;
+        longPress = false;
+        longPressEvent = false;
+        clickEvent = false;
+        clickCount = 0;
+        doubleClickEvent = false;
     }
 
     private void handleMoveEvent(MotionEvent event) {
