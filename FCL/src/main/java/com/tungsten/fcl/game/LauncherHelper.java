@@ -438,7 +438,7 @@ public final class LauncherHelper {
             return task.withStage("launch.state.java");
         }
 
-        return task.thenComposeAsync(javaVersion -> Task.allOf(Task.completed(javaVersion), Task.supplyAsync(() -> JavaVersion.getSuitableJavaVersion(version))))
+        return task.thenComposeAsync(javaVersion -> Task.allOf(Task.completed(javaVersion), Task.supplyAsync(() -> JavaManager.getSuitableJavaVersion(version))))
                 .thenComposeAsync(Schedulers.androidUIThread(), javaVersions -> {
                     JavaVersion javaVersion = (JavaVersion) javaVersions.get(0);
                     JavaVersion suggestedJavaVersion;
@@ -447,8 +447,10 @@ public final class LauncherHelper {
                     else {
                         suggestedJavaVersion = (JavaVersion) javaVersions.get(1);
                     }
-                    if (setting.getJava().equals("Auto") || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
-                        return Task.completed(setting.getJava().equals("Auto") ? suggestedJavaVersion : javaVersion);
+                    if (suggestedJavaVersion.getVersion() != -1) {
+                        if (setting.getJava().equals("Auto") || javaVersion.getVersion() == suggestedJavaVersion.getVersion()) {
+                            return Task.completed(setting.getJava().equals("Auto") ? suggestedJavaVersion : javaVersion);
+                        }
                     }
 
                     CompletableFuture<JavaVersion> future = new CompletableFuture<>();
