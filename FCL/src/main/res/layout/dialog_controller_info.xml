@@ -1,68 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="400dp"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:padding="10dp">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
-        android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintBottom_toTopOf="@+id/positive">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/more_info"
+        app:layout_constraintTop_toBottomOf="@id/title">
 
-        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/control_info_name" />
+
+        <com.tungsten.fcllibrary.component.view.FCLEditText
+            android:id="@+id/name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/input_hint_not_empty"
+            android:singleLine="true"
+            android:textSize="14sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.tungsten.fcllibrary.component.view.FCLCheckBox
+        android:id="@+id/more_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/control_info_more"
+        app:layout_constraintBottom_toTopOf="@id/scroll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line" />
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/positive"
+        app:layout_constraintTop_toBottomOf="@+id/more_info">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/control_info_name"
-                    android:layout_gravity="center"/>
-
-                <com.tungsten.fcllibrary.component.view.FCLEditText
-                    android:singleLine="true"
-                    android:textSize="14sp"
-                    android:hint="@string/input_hint_not_empty"
-                    android:id="@+id/name"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <com.tungsten.fcllibrary.component.view.FCLCheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/control_info_more"
-                android:id="@+id/more_info"/>
-
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:id="@+id/more_info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/more_info_layout">
+                android:orientation="vertical">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
@@ -70,120 +77,122 @@
                     android:orientation="horizontal">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_weight="1"
-                        android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/control_info_version"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="@string/control_info_version" />
 
                     <com.tungsten.fcllibrary.component.view.FCLEditText
-                        android:singleLine="true"
-                        android:textSize="14sp"
-                        android:hint="@string/input_hint_optional"
                         android:id="@+id/version"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:hint="@string/input_hint_optional"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_weight="1"
-                        android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/control_info_version_code"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="@string/control_info_version_code" />
 
                     <com.tungsten.fcllibrary.component.view.FCLEditText
-                        android:singleLine="true"
-                        android:textSize="14sp"
-                        android:inputType="number"
-                        android:hint="@string/input_hint_not_empty"
                         android:id="@+id/version_code"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:hint="@string/input_hint_not_empty"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_weight="1"
-                        android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/control_info_author"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="@string/control_info_author" />
 
                     <com.tungsten.fcllibrary.component.view.FCLEditText
-                        android:singleLine="true"
-                        android:textSize="14sp"
-                        android:hint="@string/input_hint_optional"
                         android:id="@+id/author"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        android:hint="@string/input_hint_optional"
+                        android:singleLine="true"
+                        android:textSize="14sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_weight="1"
-                        android:singleLine="true"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/control_info_description"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="top"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="@string/control_info_description" />
 
                     <com.tungsten.fcllibrary.component.view.FCLEditText
-                        android:singleLine="true"
-                        android:textSize="14sp"
-                        android:hint="@string/input_hint_optional"
                         android:id="@+id/description"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="top"
+                        android:gravity="start|top"
+                        android:hint="@string/input_hint_optional"
+                        android:textSize="14sp" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+        </LinearLayout>
 
     </ScrollView>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
-        android:text="@string/dialog_positive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/dialog_positive"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/scroll" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/negative"
-        android:text="@string/dialog_negative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/dialog_negative"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/scroll" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
