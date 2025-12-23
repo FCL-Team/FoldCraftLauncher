@@ -40,6 +40,7 @@ class ManageJavaItemAdapter(
             binding.delete.visibility = View.INVISIBLE
             binding.javaName.text = "${data.name} (${context.getString(R.string.internal)})"
         } else {
+            binding.delete.visibility = View.VISIBLE
             binding.delete.setOnClickListener {
                 action.invoke(data, true)
             }
