@@ -43,7 +43,6 @@
         android:id="@+id/delete"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_gravity="center"
         android:src="@drawable/ic_baseline_delete_24"
         android:tint="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
