@@ -45,9 +45,9 @@ public class DirectionStyleAdapter extends FCLAdapter {
         this.list = list;
         this.select = select;
 
-        if (DirectionStyles.getStyles().stream().anyMatch(it -> it == initStyle)) {
+        if (initStyle != null && DirectionStyles.getStyles().stream().anyMatch(it -> it.getName().equals(initStyle.getName()))) {
             selectedStyle.set(initStyle);
-        } else  {
+        } else {
             selectedStyle.set(list.get(0));
         }
     }

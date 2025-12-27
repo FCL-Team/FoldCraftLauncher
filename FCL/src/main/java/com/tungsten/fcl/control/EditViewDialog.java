@@ -18,9 +18,11 @@ import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
+import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
+import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -567,7 +569,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
-                    DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, data.getStyle(), data::setStyle);
+                    ControlDirectionStyle target = DirectionStyles.findStyleByName(data.getStyle().getName());
+                    DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, target, data::setStyle);
                     dialog.show();
                 });
 
