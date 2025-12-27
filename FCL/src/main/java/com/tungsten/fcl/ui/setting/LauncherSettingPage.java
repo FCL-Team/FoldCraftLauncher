@@ -393,7 +393,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             dialog.show();
         }
         if (v == theme2) {
-            FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor2(), new FCLColorPickerDialog.Listener() {
+            FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme()._getColor2(), new FCLColorPickerDialog.Listener() {
                 @Override
                 public void onColorChanged(int color) {
                     ThemeEngine.getInstance().applyColor2(color);

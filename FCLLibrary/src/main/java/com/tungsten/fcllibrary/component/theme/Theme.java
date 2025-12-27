@@ -67,6 +67,9 @@ public class Theme {
         return isNightMode ? color2Dark.get() : color2.get();
     }
 
+    public int _getColor2() {
+        return color2.get();
+    }
     public int getColor2Dark() {
         return color2Dark.get();
     }
@@ -221,7 +224,7 @@ public class Theme {
         sharedPreferences = context.getSharedPreferences("theme", MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putInt("theme_color", theme.getColor());
-        editor.putInt("theme_color2", theme.getColor2());
+        editor.putInt("theme_color2", theme._getColor2());
         editor.putInt("theme_color2_dark", theme.getColor2Dark());
         editor.putBoolean("fullscreen", theme.isFullscreen());
         editor.putInt("animation_speed", theme.getAnimationSpeed());
