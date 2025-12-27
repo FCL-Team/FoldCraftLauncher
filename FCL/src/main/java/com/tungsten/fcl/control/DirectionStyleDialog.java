@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -62,6 +63,8 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     public void refreshList() {
         adapter = new DirectionStyleAdapter(getContext(), DirectionStyles.getStyles(), select, initStyle);
         listView.setAdapter(adapter);
+        if (initStyle != null)
+            listView.setSelection(DirectionStyles.findStyleIndexByName(initStyle.getName()));
     }
 
     @Override

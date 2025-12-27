@@ -129,4 +129,8 @@ public class DirectionStyles {
         return styles.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(styles.get(0));
     }
 
+    public static int findStyleIndexByName(String name) {
+        checkStyles();
+        return styles.indexOf(findStyleByName(name));
+    }
 }
