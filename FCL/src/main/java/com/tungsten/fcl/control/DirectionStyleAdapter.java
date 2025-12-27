@@ -95,6 +95,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
         viewHolder.direction.getData().getBaseInfo().setAbsoluteWidth(60);
         viewHolder.direction.getData().getBaseInfo().setAbsoluteHeight(60);
         viewHolder.name.setText(style.getName());
+        viewHolder.name.setSelected(true);
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
             viewHolder.delete.setVisibility(View.GONE);
