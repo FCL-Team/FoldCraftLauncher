@@ -17,13 +17,19 @@
  */
 package com.tungsten.fclcore.download.game;
 
+import static com.tungsten.fclcore.util.Logging.LOG;
+
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.HttpRequest;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public final class GameVersionList extends VersionList<GameRemoteVersion> {
     private final DownloadProvider downloadProvider;
@@ -46,9 +52,27 @@ public final class GameVersionList extends VersionList<GameRemoteVersion> {
     public CompletableFuture<?> refreshAsync() {
         return HttpRequest.GET(downloadProvider.getVersionListURL()).getJsonAsync(GameRemoteVersions.class)
                 .thenAcceptAsync(root -> {
+                    GameRemoteVersions unlistedVersions = null;
+                    try (Reader input = new InputStreamReader(
+                            GameVersionList.class.getResourceAsStream("/assets/game/unlisted-versions.json"))) {
+                        unlistedVersions = JsonUtils.GSON.fromJson(input, GameRemoteVersions.class);
+                    } catch (Throwable e) {
+                        LOG.log(Level.WARNING, "Failed to load unlisted versions", e);
+                    }
+
                     lock.writeLock().lock();
                     try {
                         versions.clear();
+
+                        if (unlistedVersions != null) {
+                            for (GameRemoteVersionInfo unlistedVersion : unlistedVersions.getVersions()) {
+                                versions.put(unlistedVersion.getGameVersion(), new GameRemoteVersion(
+                                        unlistedVersion.getGameVersion(),
+                                        unlistedVersion.getGameVersion(),
+                                        Collections.singletonList(unlistedVersion.getUrl()),
+                                        unlistedVersion.getType(), unlistedVersion.getReleaseTime()));
+                            }
+                        }
 
                         for (GameRemoteVersionInfo remoteVersion : root.getVersions()) {
                             versions.put(remoteVersion.getGameVersion(), new GameRemoteVersion(
