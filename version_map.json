@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1275,
-    "versionName": "1.2.7.5",
-    "date": "2025.12.24",
+    "versionCode": 1276,
+    "versionName": "1.2.7.6",
+    "date": "2025.12.29",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue of crashing due to button style when entering management from the left menu  \n2. Fix the issue where 26.1-snapshot was incorrectly categorized  \n3. Fix related issues caused by using key hold functionality  \n4. Fix the NullPointerException when a suitable Java version cannot be found  \n5. Hide the search box on the NeoForge/Optifine download interface  \n6. Fix issues related to the layout edit/create dialog  \n7. Fix the issue where Java cannot be deleted in the Java management dialog  \n8. Add version 1.21.11 filtering on the download page"
+        "text": "(Translated from Chinese by AI)\n1. Fix issues related to the secondary theme color (Dark Mode)  \n2. Refactor the direction key style dialog to optimize the display effect  \n3. Scroll display when the direction key style name is too long  \n4. Fix the issue where setting the direction key style fails to automatically select the current style  \n5. Automatically scroll the direction key style list to the selected style  \n6. Fix the issue where io.netty.util.internal.PlatformDependent cannot correctly identify the Android platform"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复从左侧菜单进入管理按键样式闪退的问题\n2.修复26.1-snapshot被错误分类的问题\n3.修复使用按键保持后产生的相关问题\n4.修复找不到合适的Java版本时报空指针的问题\n5.在NeoForge/Optifine下载界面隐藏搜索框\n6.修复布局编辑/创建对话框相关问题\n7.修复java管理对话框无法删除java的问题\n8.在下载页面增加1.21.11版本过滤"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复次要主题色（暗色模式）相关问题\n2.重构方向键样式对话框优化显示效果\n3.方向键样式名称过长时滚动显示\n4.修复设置方向键样式无法自动选择当前样式\n5.自动滑动方向键样式列表到已选择的样式\n6.修复io.netty.util.internal.PlatformDependent无法正确识别安卓平台的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/73deb2be8bc8",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.5/FCL-release-1.2.7.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/23b62c2b4810",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.6/FCL-release-1.2.7.6-all.apk"
   }
 ]
