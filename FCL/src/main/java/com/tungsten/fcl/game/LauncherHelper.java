@@ -344,12 +344,16 @@ public final class LauncherHelper {
     }
 
     private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version) {
+        if (version.startsWith("2.0")) {
+            version = "1.5.1";
+        }
+        String finalVersion = version;
         return Task.composeAsync(() -> {
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
-                if (!version.isEmpty()) {
+                if (!finalVersion.isEmpty()) {
                     if (!renderer.getMinMCver().isEmpty()) {
-                        if (VersionNumber.compare(version, renderer.getMinMCver()) < 0) {
+                        if (VersionNumber.compare(finalVersion, renderer.getMinMCver()) < 0) {
                             Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                                     .setCancelable(false)
                                     .setMessage(context.getString(R.string.message_check_renderer, renderer.getName()))
@@ -359,7 +363,7 @@ public final class LauncherHelper {
                         }
                     }
                     if (!renderer.getMaxMCver().isEmpty()) {
-                        if (VersionNumber.compare(version, renderer.getMaxMCver()) > 0) {
+                        if (VersionNumber.compare(finalVersion, renderer.getMaxMCver()) > 0) {
                             Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                                     .setCancelable(false)
                                     .setMessage(context.getString(R.string.message_check_renderer, renderer.getName()))
