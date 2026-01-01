@@ -25,6 +25,7 @@ import com.tungsten.fclcore.download.neoforge.NeoForgeRemoteVersion;
 import com.tungsten.fclcore.download.optifine.OptiFineRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltAPIRemoteVersion;
 import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -137,7 +138,12 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             switch (remoteVersion.getVersionType()) {
                 case RELEASE:
                     return getContext().getDrawable(R.drawable.img_grass);
+                case PENDING:
+                case UNOBFUSCATED:
                 case SNAPSHOT:
+                    if (GameVersionNumber.asGameVersion(remoteVersion.getGameVersion()).isAprilFools()) {
+                        return getContext().getDrawable(R.drawable.april_fools);
+                    }
                     return getContext().getDrawable(R.drawable.img_command);
                 default:
                     return getContext().getDrawable(R.drawable.img_craft_table);
@@ -152,6 +158,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
             switch (remoteVersion.getVersionType()) {
                 case RELEASE:
                     return getContext().getString(R.string.version_game_release);
+                case UNOBFUSCATED:
                 case SNAPSHOT:
                     return getContext().getString(R.string.version_game_snapshot);
                 default:
