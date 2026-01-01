@@ -159,6 +159,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
                 case RELEASE:
                     return getContext().getString(R.string.version_game_release);
                 case UNOBFUSCATED:
+                case PENDING:
                 case SNAPSHOT:
                     return getContext().getString(R.string.version_game_snapshot);
                 default:
