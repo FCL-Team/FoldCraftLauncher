@@ -104,7 +104,7 @@ public abstract class GameVersionNumber implements Comparable<GameVersionNumber>
     }
 
     public boolean isAprilFools() {
-        if (this instanceof Special) {
+        if (this instanceof Special && !value.endsWith("_unobfuscated")) {
             String normalizedVersion = this.toNormalizedString();
             return !normalizedVersion.startsWith("1.") && !normalizedVersion.equals("13w12~")
                     || normalizedVersion.equals("1.RV-Pre1");

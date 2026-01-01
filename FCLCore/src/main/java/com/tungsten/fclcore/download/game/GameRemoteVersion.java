@@ -63,6 +63,10 @@ public final class GameRemoteVersion extends RemoteVersion {
                 return Type.SNAPSHOT;
             case UNKNOWN:
                 return Type.UNCATEGORIZED;
+            case PENDING:
+                return Type.PENDING;
+            case UNOBFUSCATED:
+                return Type.UNOBFUSCATED;
             default:
                 return Type.OLD;
         }
