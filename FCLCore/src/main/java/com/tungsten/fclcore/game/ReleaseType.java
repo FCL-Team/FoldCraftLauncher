@@ -23,6 +23,8 @@ public enum ReleaseType {
     MODIFIED("modified"),
     OLD_BETA("old-beta"),
     OLD_ALPHA("old-alpha"),
+    PENDING("pending"),
+    UNOBFUSCATED("unobfuscated"),
     UNKNOWN("unknown");
 
     private final String id;

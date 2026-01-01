@@ -101,5 +101,5 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
                 });
     }
 
-    public static final String FORGE_LIST = "https://hmcl-dev.github.io/metadata/forge/";
+    public static final String FORGE_LIST = "https://hmcl.glavo.site/metadata/forge/";
 }

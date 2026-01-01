@@ -84,6 +84,8 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
                     switch (it.getVersionType()) {
                         case RELEASE:
                             return checkRelease.isChecked();
+                        case PENDING:
+                        case UNOBFUSCATED:
                         case SNAPSHOT:
                             if (checkSnapShot.isChecked()) return true;
                             else if (checkAprilFools.isChecked())
