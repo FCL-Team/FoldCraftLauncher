@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1276,
-    "versionName": "1.2.7.6",
-    "date": "2025.12.29",
+    "versionCode": 1277,
+    "versionName": "1.2.7.7",
+    "date": "2026.01.03",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix issues related to the secondary theme color (Dark Mode)  \n2. Refactor the direction key style dialog to optimize the display effect  \n3. Scroll display when the direction key style name is too long  \n4. Fix the issue where setting the direction key style fails to automatically select the current style  \n5. Automatically scroll the direction key style list to the selected style  \n6. Fix the issue where io.netty.util.internal.PlatformDependent cannot correctly identify the Android platform"
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where launching the 2013 April Fools' 2.0 version incorrectly flagged \"holy\" as incompatible with that game version.  \n2. Added download support for the April Fools' 2.0 version.  \n3. Added download access for unlisted Minecraft versions.  \n4. Modified some metadata download links.  \n5. Added exclusive icons for April Fools' versions."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复次要主题色（暗色模式）相关问题\n2.重构方向键样式对话框优化显示效果\n3.方向键样式名称过长时滚动显示\n4.修复设置方向键样式无法自动选择当前样式\n5.自动滑动方向键样式列表到已选择的样式\n6.修复io.netty.util.internal.PlatformDependent无法正确识别安卓平台的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复启动13年愚人节2.0版本时认为holy不适于与该游戏版本的问题\n2.添加愚人节2.0版本下载\n3.添加未列出的Minecraft版本下载途径\n4.修改部分元数据下载链接\n5.为愚人节版本添加专属图标"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/23b62c2b4810",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.6/FCL-release-1.2.7.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f15c3f87b4fd",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.7/FCL-release-1.2.7.7-all.apk"
   }
 ]
