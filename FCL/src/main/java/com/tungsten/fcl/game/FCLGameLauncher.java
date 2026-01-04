@@ -23,9 +23,8 @@ import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.RuntimeUtils;
-import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.game.LaunchOptions;
@@ -33,6 +32,7 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.launch.DefaultLauncher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
@@ -76,6 +76,10 @@ public final class FCLGameLauncher extends DefaultLauncher {
             modifyOptions(optionsFile, false);
             return;
         }
+        String v = repository.getGameVersion(version).orElse("");
+        if (v.startsWith("2.0")) v = "1.5.1";
+        if (GameVersionNumber.compare(v, "1.5.2") <= 0)
+            return;
         try {
             RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
         } catch (IOException e) {

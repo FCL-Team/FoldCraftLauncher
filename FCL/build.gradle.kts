@@ -21,6 +21,8 @@ android {
     val pwd = System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
     val curseApiKey = System.getenv("CURSE_API_KEY") ?: localProperty?.getProperty("curse.api.key")
     val oauthApiKey = System.getenv("OAUTH_API_KEY") ?: localProperty?.getProperty("oauth.api.key")
+    if (localProperty != null && localProperty.getProperty("arch", "all") == "arm64")
+        System.setProperty("arch", "arm64")
 
     signingConfigs {
         create("FCLKey") {
