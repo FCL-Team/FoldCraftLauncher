@@ -30,7 +30,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -206,7 +206,7 @@ public class InstallerItem {
                 this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi, cleanroom};
             } else if (gameVersion.equals("1.12.2")) {
                 this.libraries = new InstallerItem[]{forge, cleanroom, liteLoader, optiFine};
-            } else if (VersionNumber.compare(gameVersion, "1.13") < 0) {
+            } else if (GameVersionNumber.compare(gameVersion, "1.13") < 0) {
                 this.libraries = new InstallerItem[]{forge, liteLoader, optiFine};
             } else {
                 this.libraries = new InstallerItem[]{forge, neoForge, optiFine, fabric, fabricApi, quilt, quiltApi};

@@ -9,6 +9,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.FFmpegPlugin
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
+import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fclcore.util.versioning.VersionNumber
 import kotlin.jvm.Throws
 
@@ -118,7 +119,7 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "sodium", "embeddium" -> {
-                    if (version.isNotEmpty() && bridge.renderer == RendererManager.RENDERER_GL4ES.name && VersionNumber.compare(
+                    if (version.isNotEmpty() && bridge.renderer == RendererManager.RENDERER_GL4ES.name && GameVersionNumber.compare(
                             version,
                             "1.17"
                         ) >= 0
