@@ -33,7 +33,6 @@ import com.tungsten.fclcore.launch.DefaultLauncher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.BufferedReader;
@@ -73,37 +72,34 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
 
         if (optionsFile.exists()) {
-            modifyOptions(optionsFile, false);
+            fixOptions(optionsFile);
             return;
         }
-        String v = repository.getGameVersion(version).orElse("");
-        if (v.startsWith("2.0")) v = "1.5.1";
-        if (GameVersionNumber.compare(v, "1.5.2") <= 0)
-            return;
         try {
             RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
         }
 
-        modifyOptions(optionsFile, true);
+        modifyOptions(optionsFile);
     }
 
-    private void modifyOptions(File optionsFile, boolean overwrite) {
+    private void modifyOptions(File optionsFile) {
         StringBuilder str = new StringBuilder();
         String lang;
-        VersionNumber gameVersion = VersionNumber.asVersion(repository.getGameVersion(version).orElse("0.0"));
+        boolean isChinese = LocaleUtils.isChinese(context);
+        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
         if (gameVersion.compareTo("1.1") < 0) {
             lang = null;
         } else if (gameVersion.compareTo("1.11") < 0) {
-            lang = "zh_CN";
+            lang = isChinese ? "zh_CN" : "en_US";
         } else {
-            lang = "zh_cn";
+            lang = isChinese ? "zh_cn" : "en_us";
         }
         try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                if (line.contains("lang:") && LocaleUtils.isChinese(context) && overwrite && lang != null) {
+                if (line.contains("lang:") && lang != null) {
                     str.append("lang:").append(lang).append("\n");
                 } else {
                     str.append(line).append("\n");
@@ -112,7 +108,39 @@ public final class FCLGameLauncher extends DefaultLauncher {
         } catch (Exception e) {
             Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
         }
-        if (!"".equals(str.toString())) {
+        if (!str.toString().isEmpty()) {
+            try (FileWriter fw = new FileWriter(optionsFile)) {
+                fw.write(str.toString());
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
+            }
+        }
+    }
+
+    private void fixOptions(File optionsFile) {
+        StringBuilder str = new StringBuilder();
+        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
+        if (gameVersion.compareTo("1.1") < 0) {
+            return;
+        }
+        boolean toUpper = gameVersion.compareTo("1.11") < 0;
+        try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.contains("lang:")) {
+                    String lang;
+                    lang = line.replace("lang:", "");
+                    String[] parts = lang.split("_", 2);
+                    lang = parts[0] + "_" + (toUpper ? parts[1].toUpperCase() : parts[1].toLowerCase());
+                    str.append("lang:").append(lang).append("\n");
+                } else {
+                    str.append(line).append("\n");
+                }
+            }
+        } catch (Exception e) {
+            Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
+        }
+        if (!str.toString().isEmpty()) {
             try (FileWriter fw = new FileWriter(optionsFile)) {
                 fw.write(str.toString());
             } catch (IOException e) {
