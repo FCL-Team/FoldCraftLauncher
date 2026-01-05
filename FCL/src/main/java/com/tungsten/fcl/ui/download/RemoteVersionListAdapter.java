@@ -96,7 +96,7 @@ public class RemoteVersionListAdapter extends FCLAdapter {
         viewHolder.tag.setText(getTag(remoteVersion));
         viewHolder.date.setVisibility(remoteVersion.getReleaseDate() == null ? View.GONE : View.VISIBLE);
         viewHolder.date.setText(remoteVersion.getReleaseDate() == null ? "" : formatDateTime(getContext(), remoteVersion.getReleaseDate()));
-        if (remoteVersion instanceof GameRemoteVersion && (remoteVersion.getVersionType() == RemoteVersion.Type.RELEASE || remoteVersion.getVersionType() == RemoteVersion.Type.SNAPSHOT)) {
+        if (remoteVersion instanceof GameRemoteVersion && (remoteVersion.getVersionType() == RemoteVersion.Type.RELEASE || remoteVersion.getVersionType() == RemoteVersion.Type.SNAPSHOT || remoteVersion.getVersionType() == RemoteVersion.Type.UNOBFUSCATED)) {
             viewHolder.wiki.setVisibility(View.VISIBLE);
             String wikiUrlSuffix = getWikiUrlSuffix(getContext(), remoteVersion.getGameVersion());
             viewHolder.wiki.setOnClickListener(v -> AndroidUtils.openLink(getContext(), getContext().getString(R.string.wiki_game, wikiUrlSuffix)));
