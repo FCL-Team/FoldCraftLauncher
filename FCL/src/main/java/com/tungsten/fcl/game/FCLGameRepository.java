@@ -360,7 +360,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setPojavBigCore(vs.isPojavBigCore())
-                .setRenderer(RendererManager.getRenderer(vs.getRenderer()));
+                .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
+                .setDebugLog(vs.isDebugLog());
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {

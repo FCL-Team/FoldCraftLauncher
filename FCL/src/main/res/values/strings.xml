@@ -828,6 +828,7 @@
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
     <string name="settings_advanced_dont_check_mod">Do not check Mod compatibility</string>
+    <string name="settings_advanced_debug_log">Output debug log</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>

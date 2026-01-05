@@ -239,6 +239,13 @@ class VersionSetting : Cloneable {
             notCheckModProperty.set(value)
         }
 
+    var debugLogProperty: BooleanProperty = SimpleBooleanProperty(this, "debugLog", false)
+    var isDebugLog: Boolean
+        get() = debugLogProperty.get()
+        set(value) {
+            debugLogProperty.set(value)
+        }
+
     fun checkController() {
         Controllers.addCallback {
             Controllers.checkControllers()
@@ -271,6 +278,7 @@ class VersionSetting : Cloneable {
         pojavBigCoreProperty.addListener(listener)
         uuidProperty.addListener(listener)
         notCheckModProperty.addListener(listener)
+        debugLogProperty.addListener(listener)
     }
 
     public override fun clone(): VersionSetting {
@@ -295,6 +303,7 @@ class VersionSetting : Cloneable {
             it.isPojavBigCore = isPojavBigCore
             it.uuid = uuid
             it.isNotCheckMod = isNotCheckMod
+            it.isDebugLog = isDebugLog
         }
     }
 
@@ -329,6 +338,7 @@ class VersionSetting : Cloneable {
                 addProperty("pojavBigCore", src.isPojavBigCore)
                 addProperty("uuid", src.uuid)
                 addProperty("notCheckMod", src.isNotCheckMod)
+                addProperty("debugLog", src.isDebugLog)
             }
         }
 
@@ -369,6 +379,7 @@ class VersionSetting : Cloneable {
                 vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
                 vs.uuid = json["uuid"]?.asString ?: ""
                 vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
+                vs.isDebugLog = json["debugLog"]?.asBoolean ?: false
             }
         }
 
