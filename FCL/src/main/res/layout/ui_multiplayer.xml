@@ -199,19 +199,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/terracotta_warning_region"
-                android:background="@drawable/bg_container_white"
-                app:auto_text_tint="true"
-                app:auto_text_background_tint="true" />
-
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_container_white"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
