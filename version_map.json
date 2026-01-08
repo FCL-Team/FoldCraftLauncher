@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1277,
-    "versionName": "1.2.7.7",
-    "date": "2026.01.03",
+    "versionCode": 1278,
+    "versionName": "1.2.7.8",
+    "date": "2026.01.08",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where launching the 2013 April Fools' 2.0 version incorrectly flagged \"holy\" as incompatible with that game version.  \n2. Added download support for the April Fools' 2.0 version.  \n3. Added download access for unlisted Minecraft versions.  \n4. Modified some metadata download links.  \n5. Added exclusive icons for April Fools' versions."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where versions 1.5.2 and earlier might fail to start due to errors in options.txt  \n2. Improved the game version detection in the launcher for more accurate version comparison  \n3. Fixed the missing wiki button in unobfuscated versions  \n4. Added an option to enable debug logging for more detailed log output  \n5. Fixed the issue where some mod configuration files could not be automatically repaired when using the KW renderer  \n6. Updated Terracotta to version 0.4.1\n7.Remove Terracotta region unavailable message"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复启动13年愚人节2.0版本时认为holy不适于与该游戏版本的问题\n2.添加愚人节2.0版本下载\n3.添加未列出的Minecraft版本下载途径\n4.修改部分元数据下载链接\n5.为愚人节版本添加专属图标"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复1.5.2以及之前的版本可能由于options.txt错误导致无法启动的问题\n2.修复启动器内的游戏版本判断，使启动器可以更精准地判断版本大小\n3.修复未混淆版本跳转wiki按钮不显示的问题\n4.增加允许输出调试日志的选项，允许输出更为详细的日志\n5.修复使用KW渲染器时无法自动修复部分模组配置文件的问题\n6.更新Terracotta至0.4.1\n7.删除Terracotta地区警告信息"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f15c3f87b4fd",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.7/FCL-release-1.2.7.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/990f64930acd",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.8/FCL-release-1.2.7.8-all.apk"
   }
 ]
