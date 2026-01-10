@@ -120,7 +120,7 @@ int fclPollEvent(FCLEvent* event) {
     return ret;
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(JNIEnv* env, jclass clazz, jlong time, jint type, jint p1, jint p2) {
+JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(JNIEnv* env, jclass clazz, jlong time, jint type, jint p1, jint p2, jint modifiers) {
     if (!fcl->has_event_pipe) {
         return;
     }
@@ -135,7 +135,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_pushEvent(J
     }
     event->time = time;
     event->type = type;
-    event->state = 0;
+    event->state = modifiers;
     switch (type) {
         case KeyChar:
             event->keychar = p2;

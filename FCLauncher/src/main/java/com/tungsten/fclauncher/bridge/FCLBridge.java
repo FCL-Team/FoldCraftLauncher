@@ -126,7 +126,7 @@ public class FCLBridge implements Serializable {
 
     public native void setEventPipe();
 
-    public native void pushEvent(long time, int type, int keycode, int keyChar);
+    public native void pushEvent(long time, int type, int keycode, int keyChar, int modifiers);
 
     public static native int nativeGetFps();
 
@@ -185,7 +185,7 @@ public class FCLBridge implements Serializable {
             } else if (button == Button3) {
                 button = Button2;
             }
-            pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button + 1, 0);
+            pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button + 1, 0, CallbackBridge.getCurrentMods());
         } else {
             switch (button) {
                 case Button4:
@@ -206,7 +206,7 @@ public class FCLBridge implements Serializable {
 
     public void pushEventPointer(int x, int y) {
         if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), MotionNotify, x, y);
+            pushEvent(System.nanoTime(), MotionNotify, x, y, CallbackBridge.getCurrentMods());
         } else {
             CallbackBridge.sendCursorPos(x, y);
         }
@@ -222,7 +222,7 @@ public class FCLBridge implements Serializable {
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
         if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
+            pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar, CallbackBridge.getCurrentMods());
         } else {
             CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, CallbackBridge.getCurrentMods(), press);
         }
@@ -230,7 +230,7 @@ public class FCLBridge implements Serializable {
 
     public void pushEventChar(char keyChar) {
         if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar);
+            pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar, CallbackBridge.getCurrentMods());
         } else {
             CallbackBridge.sendChar(keyChar, 0);
         }
@@ -238,14 +238,14 @@ public class FCLBridge implements Serializable {
 
     public void pushEventWindow(int width, int height) {
         if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), ConfigureNotify, width, height);
+            pushEvent(System.nanoTime(), ConfigureNotify, width, height, 0);
         } else {
             CallbackBridge.sendUpdateWindowSize(width, height);
         }
     }
 
     public void pushEventMessage(int msg) {
-        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
+        pushEvent(System.nanoTime(), FCLMessage, msg, 0, 0);
     }
 
     // FCLBridge callbacks

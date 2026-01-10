@@ -20,22 +20,22 @@
 //
 static int translateState(int state)
 {
-    int mods = 0;
+//    int mods = 0;
+//
+//    if (state & ShiftMask)
+//        mods |= GLFW_MOD_SHIFT;
+//    if (state & ControlMask)
+//        mods |= GLFW_MOD_CONTROL;
+//    if (state & Mod1Mask)
+//        mods |= GLFW_MOD_ALT;
+//    if (state & Mod4Mask)
+//        mods |= GLFW_MOD_SUPER;
+//    if (state & LockMask)
+//        mods |= GLFW_MOD_CAPS_LOCK;
+//    if (state & Mod2Mask)
+//        mods |= GLFW_MOD_NUM_LOCK;
 
-    if (state & ShiftMask)
-        mods |= GLFW_MOD_SHIFT;
-    if (state & ControlMask)
-        mods |= GLFW_MOD_CONTROL;
-    if (state & Mod1Mask)
-        mods |= GLFW_MOD_ALT;
-    if (state & Mod4Mask)
-        mods |= GLFW_MOD_SUPER;
-    if (state & LockMask)
-        mods |= GLFW_MOD_CAPS_LOCK;
-    if (state & Mod2Mask)
-        mods |= GLFW_MOD_NUM_LOCK;
-
-    return mods;
+    return state;
 }
 
 // Translates an FCL key code to a GLFW key token
