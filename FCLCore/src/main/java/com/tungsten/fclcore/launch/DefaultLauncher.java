@@ -209,7 +209,7 @@ public class DefaultLauncher extends Launcher {
         File jar = repository.getVersionJar(version);
         if (!jar.exists() || !jar.isFile()) {
             String inherits = version.getInheritsFrom();
-            if (!inherits.isEmpty()) {
+            if (inherits != null && !inherits.isEmpty()) {
                 jar = repository.getVersionJar(inherits);
             }
         }
