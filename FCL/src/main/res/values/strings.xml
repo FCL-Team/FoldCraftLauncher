@@ -1201,5 +1201,6 @@
     <string name="disabled">Disabled</string>
     <string name="message_warn_restart_after_change">The changes will take effect after restarting.</string>
     <string name="message_check_path_valid">The currently selected game file path (%s) may contain illegal characters, which could cause the game to crash upon launching. It is recommended to check the game directory or rename the version. Do you want to continue launching?</string>
+    <string name="message_check_has_modloader">It has been detected that the currently launched game version has mods installed, but the corresponding mod loader does not seem to be installed. The mods may not function properly after launching. Do you want to continue launching?</string>
     <string name="message_data_is_loading">The data is still loading and cannot be modified.</string>
 </resources>

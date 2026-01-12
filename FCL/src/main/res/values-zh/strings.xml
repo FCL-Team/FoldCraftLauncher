@@ -1136,5 +1136,6 @@
     <string name="disabled">已禁用</string>
     <string name="message_warn_restart_after_change">改动的内容将在重启后生效。</string>
     <string name="message_check_path_valid">当前选择的游戏文件路径（%s）可能包含非法字符，启动后可能会闪退，建议检查游戏目录或是重命名版本，是否继续启动？</string>
+    <string name="message_check_has_modloader">检测到当前启动的游戏版本已安装模组但是似乎未安装相应的模组加载器，启动后模组可能无法运行，是否继续启动？</string>
     <string name="message_data_is_loading">数据还未加载完成，无法修改。</string>
 </resources>

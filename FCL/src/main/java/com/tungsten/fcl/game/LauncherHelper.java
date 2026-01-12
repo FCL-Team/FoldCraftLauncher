@@ -204,6 +204,10 @@ public final class LauncherHelper {
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
                         }).thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
+                            if (skip) return Task.supplyAsync(() -> fclBridge);
+                            return checkModLoader(fclBridge, repository);
+                        }).thenComposeAsync(fclBridge -> {
+                            boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
                             return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
                         })
                         .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
@@ -372,6 +376,28 @@ public final class LauncherHelper {
                 return Task.completed(bridge);
             } catch (Throwable e) {
                 LOG.log(Level.WARNING, "checkRenderer() failed", e);
+                return Task.completed(bridge);
+            }
+        });
+    }
+
+    private Task<FCLBridge> checkModLoader(FCLBridge bridge, FCLGameRepository repository) {
+        return Task.composeAsync(() -> {
+            try {
+                CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
+                boolean modded = LibraryAnalyzer.isModded(repository, repository.getVersion(selectedVersion));
+                List<LocalModFile> mods = repository.getModManager(selectedVersion).getMods();
+                if (!mods.isEmpty() && !modded) {
+                    Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
+                            .setCancelable(false)
+                            .setMessage(context.getString(R.string.message_check_has_modloader))
+                            .setPositiveButton(context.getString(R.string.button_cancel), () -> future.completeExceptionally(new CancellationException()))
+                            .setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge))).create().show());
+                    return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+                } else {
+                    return Task.completed(bridge);
+                }
+            } catch (Throwable e) {
                 return Task.completed(bridge);
             }
         });
