@@ -35,9 +35,7 @@ public class LaunchOptions implements Serializable {
     private String versionType;
     private String profileName;
     private final List<String> gameArguments = new ArrayList<>();
-    private final List<String> overrideJavaArguments = new ArrayList<>();
     private final List<String> javaArguments = new ArrayList<>();
-    private final List<String> javaAgents = new ArrayList<>(0);
     private Integer minMemory;
     private Integer maxMemory;
     private Integer width;
@@ -96,24 +94,11 @@ public class LaunchOptions implements Serializable {
     }
 
     /**
-     * The highest priority JVM arguments (overrides the version setting)
-     */
-    @NotNull
-    public List<String> getOverrideJavaArguments() {
-        return Collections.unmodifiableList(overrideJavaArguments);
-    }
-
-    /**
      * User custom additional java virtual machine command line arguments.
      */
     @NotNull
     public List<String> getJavaArguments() {
         return Collections.unmodifiableList(javaArguments);
-    }
-
-    @NotNull
-    public List<String> getJavaAgents() {
-        return Collections.unmodifiableList(javaAgents);
     }
 
     /**
@@ -238,21 +223,9 @@ public class LaunchOptions implements Serializable {
             return this;
         }
 
-        public Builder setOverrideJavaArguments(List<String> overrideJavaArguments) {
-            options.overrideJavaArguments.clear();
-            options.overrideJavaArguments.addAll(overrideJavaArguments);
-            return this;
-        }
-
         public Builder setJavaArguments(List<String> javaArguments) {
             options.javaArguments.clear();
             options.javaArguments.addAll(javaArguments);
-            return this;
-        }
-
-        public Builder setJavaAgents(List<String> javaAgents) {
-            options.javaAgents.clear();
-            options.javaAgents.addAll(javaAgents);
             return this;
         }
 
