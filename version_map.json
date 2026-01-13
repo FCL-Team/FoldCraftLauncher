@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1278,
-    "versionName": "1.2.7.8",
-    "date": "2026.01.08",
+    "versionCode": 1279,
+    "versionName": "1.2.7.9",
+    "date": "2026.01.13",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where versions 1.5.2 and earlier might fail to start due to errors in options.txt  \n2. Improved the game version detection in the launcher for more accurate version comparison  \n3. Fixed the missing wiki button in unobfuscated versions  \n4. Added an option to enable debug logging for more detailed log output  \n5. Fixed the issue where some mod configuration files could not be automatically repaired when using the KW renderer  \n6. Updated Terracotta to version 0.4.1\n7.Remove Terracotta region unavailable message"
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where the Shift/Ctrl/Alt shortcuts could not be used with the Boat backend version 1.21.9 or later.  \n2. Fixed an error in the launcher that occurred when attempting to launch a version without a corresponding version jar file in the version folder and no InheritsFrom property specified.  \n3. Fixed the issue where the launcher could not disable automatic memory allocation when the JVM arguments included -Xmx.  \n4. Added functionality: the launcher now detects whether the current version contains mods and if a mod loader is installed upon launch.  \n5. Corrected inaccurate descriptions in the multiplayer tutorial."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复1.5.2以及之前的版本可能由于options.txt错误导致无法启动的问题\n2.修复启动器内的游戏版本判断，使启动器可以更精准地判断版本大小\n3.修复未混淆版本跳转wiki按钮不显示的问题\n4.增加允许输出调试日志的选项，允许输出更为详细的日志\n5.修复使用KW渲染器时无法自动修复部分模组配置文件的问题\n6.更新Terracotta至0.4.1\n7.删除Terracotta地区警告信息"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Boat后端1.21.9+无法使用Shift/Ctrl/Alt快捷键的问题\n2.修复版本文件夹内不存在对应的版本jar文件且InheritsFrom不存在时尝试启动后启动器报错的问题\n3.修复JVM虚拟机参数内包含-Xmx时启动器无法取消自动内存分配的问题\n4.新增功能：启动时检测当前版本是否包含模组且已安装模组加载器\n5.修正多人联机教程内的错误描述"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/990f64930acd",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.8/FCL-release-1.2.7.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/5c487caa8f71",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.9/FCL-release-1.2.7.9-all.apk"
   }
 ]
