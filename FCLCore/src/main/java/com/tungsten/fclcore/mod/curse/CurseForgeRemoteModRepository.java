@@ -113,16 +113,19 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     public SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
         if (category != null) categoryId = ((CurseAddon.Category) category.getSelf()).getId();
-        Response<List<CurseAddon>> response = withApiKey(HttpRequest.GET(downloadProvider.injectURL(NetworkUtils.withQuery(PREFIX + "/v1/mods/search", mapOf(
-                pair("gameId", "432"),
-                pair("classId", Integer.toString(section)),
-                pair("categoryId", Integer.toString(categoryId)),
-                pair("gameVersion", gameVersion),
-                pair("searchFilter", searchFilter),
-                pair("sortField", Integer.toString(toModsSearchSortField(sortType))),
-                pair("sortOrder", toSortOrder(sortOrder)),
-                pair("index", Integer.toString(pageOffset * pageSize)),
-                pair("pageSize", Integer.toString(pageSize)))))))
+        var query = new LinkedHashMap<String, String>();
+        query.put("gameId", "432");
+        query.put("classId", Integer.toString(section));
+        if (categoryId != 0)
+            query.put("categoryId", Integer.toString(categoryId));
+        query.put("gameVersion", gameVersion);
+        query.put("searchFilter", searchFilter);
+        query.put("sortField", Integer.toString(toModsSearchSortField(sortType)));
+        query.put("sortOrder", toSortOrder(sortOrder));
+        query.put("index", Integer.toString(pageOffset * pageSize));
+        query.put("pageSize", Integer.toString(pageSize));
+
+        Response<List<CurseAddon>> response = withApiKey(HttpRequest.GET(downloadProvider.injectURL(NetworkUtils.withQuery(PREFIX + "/v1/mods/search", query))))
                 .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                 }.getType());
         if (searchFilter.isEmpty()) {
