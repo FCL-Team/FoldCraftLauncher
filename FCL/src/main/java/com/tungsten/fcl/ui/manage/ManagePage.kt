@@ -12,6 +12,8 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
 import com.tungsten.fcllibrary.util.LocaleUtils
 import com.tungsten.fcl.ui.UIManager.Companion.instance
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.HttpRequest

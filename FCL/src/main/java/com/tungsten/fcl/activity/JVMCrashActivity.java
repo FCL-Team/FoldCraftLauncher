@@ -326,9 +326,8 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                         }
                         // Show success dialog
                         new com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.Builder(this)
-                                .setMessage(getString(R.string.upload_success, url))
-                                .setPositiveButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), (dialog, which) -> {
-                                    // Open in browser
+                                .setMessage(getString(com.tungsten.fcllibrary.R.string.upload_success, url))
+                                .setPositiveButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     startActivity(intent);
                                 })
@@ -341,7 +340,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 LOG.log(Level.WARNING, "Failed to upload log", e);
                 Schedulers.androidUIThread().execute(() -> {
                     setLoading(false);
-                    Toast.makeText(this, getString(R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(com.tungsten.fcllibrary.R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
                 });
             }
         });

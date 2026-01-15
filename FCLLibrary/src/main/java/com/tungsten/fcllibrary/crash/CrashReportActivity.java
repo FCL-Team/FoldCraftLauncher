@@ -136,7 +136,7 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                         // Show success dialog
                         new com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.Builder(this)
                                 .setMessage(getString(R.string.upload_success, url))
-                                .setPositiveButton(getString(R.string.dialog_positive), (dialog, which) -> {
+                                .setPositiveButton(getString(R.string.dialog_positive), () -> {
                                     // Open in browser
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     startActivity(intent);
