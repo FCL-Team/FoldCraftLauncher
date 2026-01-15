@@ -16,6 +16,7 @@ import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.io.HttpRequest;
@@ -114,7 +115,8 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
         CompletableFuture.runAsync(() -> {
             try {
                 String logContent = error.getText().toString();
-                String response = HttpRequest.POST("https://api.mclogs.lemwood.icu/1/log")
+                String apiUrl = LocaleUtils.getLogUploadApiUrl(this);
+                String response = HttpRequest.POST(apiUrl)
                         .form(pair("content", logContent))
                         .getString();
 
@@ -125,16 +127,21 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                     String url = matcher.group(1).replace("\\/", "/");
                     Schedulers.androidUIThread().execute(() -> {
                         setLoading(false);
-                        // Open in browser
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                        startActivity(intent);
                         // Copy to clipboard
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                         if (clipboard != null) {
                             ClipData clip = ClipData.newPlainText(null, url);
                             clipboard.setPrimaryClip(clip);
-                            Toast.makeText(this, url, Toast.LENGTH_LONG).show();
                         }
+                        // Show success dialog
+                        new com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.Builder(this)
+                                .setMessage(getString(R.string.upload_success, url))
+                                .setPositiveButton(getString(R.string.dialog_positive), (dialog, which) -> {
+                                    // Open in browser
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    startActivity(intent);
+                                })
+                                .create().show();
                     });
                 } else {
                     throw new IOException("Failed to parse response: " + response);
@@ -143,7 +150,7 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                 e.printStackTrace();
                 Schedulers.androidUIThread().execute(() -> {
                     setLoading(false);
-                    Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
                 });
             }
         });

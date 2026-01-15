@@ -26,6 +26,8 @@
     <string name="crash_reporter_copy">复制日志</string>
     <string name="crash_reporter_share">分享日志</string>
     <string name="crash_reporter_upload">上传日志</string>
+    <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
+    <string name="upload_failed">上传失败：%s</string>
     <string name="crash_reporter_toast">复制成功！</string>
 
     <string name="color_picker_title">选择颜色</string>

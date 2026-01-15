@@ -10,7 +10,13 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageManageVersionBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
+import com.tungsten.fcllibrary.util.LocaleUtils
 import com.tungsten.fcl.ui.UIManager.Companion.instance
+import android.widget.Toast
+import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.io.HttpRequest
+import androidx.core.util.Pair
+import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
 import com.tungsten.fcl.ui.manage.item.ManageItem
@@ -67,6 +73,9 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                         FCLPath.LOG_DIR
                     )
                 })
+                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_fcl_log) {
+                    uploadFCLLog()
+                })
                 add(ManageItem(R.drawable.ic_baseline_videogame_asset_24, R.string.folder_game) {
                     onBrowse("")
                 })
@@ -90,6 +99,9 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                 })
                 add(ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_log) {
                     onBrowse("logs")
+                })
+                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
+                    uploadGameLog()
                 })
             })
             right.layoutManager = LinearLayoutManager(context)
@@ -218,6 +230,65 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
 
     private fun duplicate() {
         Versions.duplicateVersion(context, profile, version)
+    }
+
+    private fun uploadFCLLog() {
+        val logs = Logging.getLogs()
+        if (logs.isEmpty()) {
+            Toast.makeText(context, "No logs found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        uploadLog(logs)
+    }
+
+    private fun uploadGameLog() {
+        val runDir = profile.repository.getRunDirectory(version)
+        val logFile = File(runDir, "logs/latest.log")
+        if (!logFile.exists()) {
+            Toast.makeText(context, "No game logs found", Toast.LENGTH_SHORT).show()
+            return
+        }
+        try {
+            val logs = FileUtils.readText(logFile)
+            uploadLog(logs)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Failed to read log: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun uploadLog(content: String) {
+        val progress = ProgressDialog(context)
+        val url = LocaleUtils.getLogUploadApiUrl(context)
+        Task.runAsync {
+            HttpRequest.POST(url)
+                .form(Pair("content", content))
+                .execute()
+                .asString()
+        }.whenComplete(Schedulers.androidUIThread()) { result: String?, e: Exception? ->
+            progress.dismiss()
+            if (e != null) {
+                Toast.makeText(context, context.getString(R.string.upload_failed, e.message), Toast.LENGTH_LONG).show()
+            } else if (result != null) {
+                try {
+                    val response = com.google.gson.JsonParser.parseString(result).asJsonObject
+                    if (response.get("success").asBoolean) {
+                        val url = response.get("url").asString
+                        AndroidUtils.copyToClipboard(context, url)
+                        FCLAlertDialog.Builder(context)
+                            .setMessage(context.getString(R.string.upload_success, url))
+                            .setPositiveButton(context.getString(R.string.dialog_positive)) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            }
+                            .create().show()
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.upload_failed, response.get("error").asString), Toast.LENGTH_LONG).show()
+                    }
+                } catch (ex: Exception) {
+                    Toast.makeText(context, context.getString(R.string.upload_failed, ex.message), Toast.LENGTH_LONG).show()
+                }
+            }
+        }.start()
     }
 
     val profile: Profile

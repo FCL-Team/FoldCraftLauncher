@@ -6,13 +6,8 @@
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:padding="10dp"
+        style="@style/FCLCrashTitle"
         android:text="@string/crash_reporter_title"
-        app:auto_text_background_tint="true"
-        app:auto_text_tint="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,28 +26,20 @@
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp" />
+            style="@style/FCLCrashErrorText" />
 
     </ScrollView>
 
     <View
         android:id="@+id/split"
-        android:layout_width="1dp"
-        android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
+        style="@style/FCLCrashSplitLine"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/hint"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        style="@style/FCLCrashSidebarTitle"
         android:text="@string/crash_reporter_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/split"
@@ -60,12 +47,7 @@
 
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        style="@style/FCLCrashProgressBar"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/restart"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,66 +56,43 @@
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/restart"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        style="@style/FCLCrashButton"
         android:text="@string/crash_reporter_restart"
         app:layout_constraintBottom_toTopOf="@+id/close"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:ripple="true" />
+        app:layout_constraintStart_toEndOf="@+id/split" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/close"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        style="@style/FCLCrashButton"
         android:text="@string/crash_reporter_close"
         app:layout_constraintBottom_toTopOf="@+id/copy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:ripple="true" />
+        app:layout_constraintStart_toEndOf="@+id/split" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/copy"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        style="@style/FCLCrashButton"
         android:text="@string/crash_reporter_copy"
         app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:ripple="true" />
+        app:layout_constraintStart_toEndOf="@+id/split" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/upload"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        style="@style/FCLCrashButton"
         android:text="@string/crash_reporter_upload"
         app:layout_constraintBottom_toTopOf="@+id/share"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:ripple="true" />
+        app:layout_constraintStart_toEndOf="@+id/split" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/share"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        style="@style/FCLCrashButton"
+        android:layout_marginBottom="0dp"
         android:text="@string/crash_reporter_share"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:ripple="true" />
+        app:layout_constraintStart_toEndOf="@+id/split" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

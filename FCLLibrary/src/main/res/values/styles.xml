@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FCLCrashButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="ripple">true</item>
+    </style>
+
+    <style name="FCLCrashTitle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:padding">10dp</item>
+        <item name="auto_text_background_tint">true</item>
+        <item name="auto_text_tint">true</item>
+    </style>
+
+    <style name="FCLCrashErrorText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="FCLCrashSplitLine">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="FCLCrashSidebarTitle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="FCLCrashSidebarHint">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FCLCrashProgressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+</resources>
