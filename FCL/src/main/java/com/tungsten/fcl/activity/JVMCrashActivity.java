@@ -35,6 +35,7 @@ import com.tungsten.fcllibrary.crash.CrashReporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,8 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.tungsten.fclcore.util.io.HttpRequest;
 
 public class JVMCrashActivity extends FCLActivity implements View.OnClickListener {
 
@@ -57,6 +60,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     private FCLButton restart;
     private FCLButton close;
     private FCLButton copy;
+    private FCLButton upload;
     private FCLButton share;
 
     private FCLTextView title;
@@ -75,11 +79,13 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         restart = findViewById(R.id.restart);
         close = findViewById(R.id.close);
         copy = findViewById(R.id.copy);
+        upload = findViewById(R.id.upload);
         share = findViewById(R.id.share);
 
         restart.setOnClickListener(this);
         close.setOnClickListener(this);
         copy.setOnClickListener(this);
+        upload.setOnClickListener(this);
         share.setOnClickListener(this);
 
         title = findViewById(R.id.title);
@@ -274,6 +280,9 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 Toast.makeText(this, com.tungsten.fcllibrary.R.string.crash_reporter_toast, Toast.LENGTH_SHORT).show();
             }
         }
+        if (v == upload) {
+            uploadLog();
+        }
         if (v == share) {
             try {
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -289,6 +298,46 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 LOG.log(Level.INFO, "Share error: " + e);
             }
         }
+    }
+
+    private void uploadLog() {
+        setLoading(true);
+        CompletableFuture.runAsync(() -> {
+            try {
+                String logContent = error.getText().toString();
+                String response = HttpRequest.POST("https://api.mclogs.lemwood.icu/1/log")
+                        .form(pair("content", logContent))
+                        .getString();
+
+                // Response format: {"success":true,"url":"https://mclo.gs/XXXXX"}
+                Pattern pattern = Pattern.compile("\"url\":\"(.*?)\"");
+                Matcher matcher = pattern.matcher(response);
+                if (matcher.find()) {
+                    String url = matcher.group(1).replace("\\/", "/");
+                    Schedulers.androidUIThread().execute(() -> {
+                        setLoading(false);
+                        // Open in browser
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                        // Copy to clipboard
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            ClipData clip = ClipData.newPlainText(null, url);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(this, url, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } else {
+                    throw new IOException("Failed to parse response: " + response);
+                }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to upload log", e);
+                Schedulers.androidUIThread().execute(() -> {
+                    setLoading(false);
+                    Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     public static void startCrashActivity(boolean game, Context context, int exitCode, String logPath, String renderer, String java) {

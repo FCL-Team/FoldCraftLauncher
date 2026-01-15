@@ -27,6 +27,7 @@
     <string name="crash_reporter_close">Exit</string>
     <string name="crash_reporter_copy">Copy</string>
     <string name="crash_reporter_share">Share</string>
+    <string name="crash_reporter_upload">Upload Log</string>
     <string name="crash_reporter_toast">Copy successfully!</string>
 
     <string name="color_picker_title">Color Picker</string>

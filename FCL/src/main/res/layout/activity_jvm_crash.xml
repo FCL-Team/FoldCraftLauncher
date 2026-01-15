@@ -133,6 +133,19 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:text="@string/crash_reporter_copy"
+        app:layout_constraintBottom_toTopOf="@id/upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/split"
+        app:ripple="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/upload"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/crash_reporter_upload"
         app:layout_constraintBottom_toTopOf="@id/share"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/split"

@@ -25,6 +25,7 @@
     <string name="crash_reporter_close">退出软件</string>
     <string name="crash_reporter_copy">复制日志</string>
     <string name="crash_reporter_share">分享日志</string>
+    <string name="crash_reporter_upload">上传日志</string>
     <string name="crash_reporter_toast">复制成功！</string>
 
     <string name="color_picker_title">选择颜色</string>
