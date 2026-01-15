@@ -45,8 +45,9 @@ static void terminate(void)
     while (_glfw.windowListHead)
         glfwDestroyWindow((GLFWwindow*) _glfw.windowListHead);
 
-    while (_glfw.cursorListHead)
-        glfwDestroyCursor((GLFWcursor*) _glfw.cursorListHead);
+//不是哥们儿，我找你找得好苦啊。未实现（所以为啥以前能跑？）
+//    while (_glfw.cursorListHead)
+//        glfwDestroyCursor((GLFWcursor*) _glfw.cursorListHead);
 
     for (i = 0;  i < _glfw.monitorCount;  i++)
     {

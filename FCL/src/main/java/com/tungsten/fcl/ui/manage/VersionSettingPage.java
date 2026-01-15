@@ -325,6 +325,8 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
+        chkAutoAllocate.setChecked(versionSetting.isAutoMemory());
+
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
         Controllers.addCallback(() -> {
             controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());

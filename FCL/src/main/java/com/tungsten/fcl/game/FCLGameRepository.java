@@ -62,7 +62,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -348,10 +355,10 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
                 .setMaxMemory((int) (getAllocatedMemory(
                         vs.getMaxMemory() * 1024L * 1024L,
-                        MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT),
+                        MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT) * 1024L * 1024L,
                         vs.isAutoMemory()
                 ) / 1024 / 1024))
-                .setMinMemory(vs.getMinMemory())
+                .setMinMemory(vs.getMaxMemory())
                 .setUUid(vs.getUuid())
                 .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
                 .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
@@ -374,8 +381,12 @@ public class FCLGameRepository extends DefaultGameRepository {
             }
         }
 
-        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx")))
+        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx"))) {
             builder.setMaxMemory(null);
+            builder.setMinMemory(null);
+        }
+        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xms")))
+            builder.setMinMemory(null);
 
         return builder.create();
     }
