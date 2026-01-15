@@ -17,7 +17,7 @@ import android.net.Uri
 import android.widget.Toast
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.HttpRequest
-import androidx.core.util.Pair
+import com.tungsten.fclcore.util.Pair.pair
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
@@ -99,9 +99,6 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                 add(ManageItem(R.drawable.ic_baseline_earth_24, R.string.folder_saves) {
                     onBrowse("saves")
                 })
-                add(ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_log) {
-                    onBrowse("logs")
-                })
                 add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
                     uploadGameLog()
                 })
@@ -150,17 +147,18 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
         }
     }
 
-    private fun onBrowse(dir: String) {
-        val builder = FileBrowser.Builder(context)
-        builder.setLibMode(LibMode.FILE_BROWSER)
-        builder.setInitDir(
-            if (dir.startsWith("/")) dir else File(
-                profile.repository.getRunDirectory(
-                    version
-                ), dir
-            ).absolutePath
+    private fun onBrowse(path: String) {
+        val root = if (path.startsWith("/")) File(path) else if (path.isEmpty()) profile.repository.getRunDirectory(version) else File(
+            profile.repository.getRunDirectory(version), path
         )
-        builder.create().browse(activity, RequestCodes.BROWSE_DIR_CODE, null)
+        if (!root.exists()) {
+            root.mkdirs()
+        }
+        FileBrowser.Builder(context)
+            .setInitDir(root.absolutePath)
+            .setLibMode(LibMode.FILE_BROWSER)
+            .create()
+            .browse(activity, RequestCodes.BROWSE_DIR_CODE, null)
     }
 
     private fun redownloadAssetIndex() {
@@ -235,12 +233,16 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     }
 
     private fun uploadFCLLog() {
-        val logs = Logging.getLogs()
-        if (logs.isEmpty()) {
-            Toast.makeText(context, "No logs found", Toast.LENGTH_SHORT).show()
-            return
+        try {
+            val logs = Logging.getLogs()
+            if (logs.isNullOrEmpty()) {
+                Toast.makeText(context, "No FCL logs found", Toast.LENGTH_SHORT).show()
+                return
+            }
+            uploadLog(logs)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Failed to get FCL logs: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        uploadLog(logs)
     }
 
     private fun uploadGameLog() {
@@ -261,33 +263,32 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     private fun uploadLog(content: String) {
         val progress = ProgressDialog(context)
         val url = LocaleUtils.getLogUploadApiUrl(context)
-        Task.runAsync {
+        Task.supplyAsync {
             HttpRequest.POST(url)
-                .form(Pair("content", content))
-                .execute()
-                .asString()
+                .form(pair("content", content))
+                .getString()
         }.whenComplete(Schedulers.androidUIThread()) { result: String?, e: Exception? ->
             progress.dismiss()
             if (e != null) {
-                Toast.makeText(context, context.getString(R.string.upload_failed, e.message), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, e.message), Toast.LENGTH_LONG).show()
             } else if (result != null) {
                 try {
                     val response = com.google.gson.JsonParser.parseString(result).asJsonObject
                     if (response.get("success").asBoolean) {
-                        val url = response.get("url").asString
-                        AndroidUtils.copyToClipboard(context, url)
+                        val logUrl = response.get("url").asString
+                        AndroidUtils.copyText(context, logUrl)
                         FCLAlertDialog.Builder(context)
-                            .setMessage(context.getString(R.string.upload_success, url))
-                            .setPositiveButton(context.getString(R.string.dialog_positive)) {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            .setMessage(context.getString(com.tungsten.fcllibrary.R.string.upload_success, logUrl))
+                            .setPositiveButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(logUrl))
                                 context.startActivity(intent)
                             }
                             .create().show()
                     } else {
-                        Toast.makeText(context, context.getString(R.string.upload_failed, response.get("error").asString), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, response.get("error").asString), Toast.LENGTH_LONG).show()
                     }
                 } catch (ex: Exception) {
-                    Toast.makeText(context, context.getString(R.string.upload_failed, ex.message), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, ex.message), Toast.LENGTH_LONG).show()
                 }
             }
         }.start()
