@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1279,
-    "versionName": "1.2.7.9",
-    "date": "2026.01.13",
+    "versionCode": 1280,
+    "versionName": "1.2.8.0",
+    "date": "2026.01.17",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where the Shift/Ctrl/Alt shortcuts could not be used with the Boat backend version 1.21.9 or later.  \n2. Fixed an error in the launcher that occurred when attempting to launch a version without a corresponding version jar file in the version folder and no InheritsFrom property specified.  \n3. Fixed the issue where the launcher could not disable automatic memory allocation when the JVM arguments included -Xmx.  \n4. Added functionality: the launcher now detects whether the current version contains mods and if a mod loader is installed upon launch.  \n5. Corrected inaccurate descriptions in the multiplayer tutorial."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where content could not be searched from the CurseForge source.  \n2. Fixed the freezing issue when exiting the game using the Boat backend version 1.21.9+.  \n3. Fixed the incorrect UI display of the automatic memory allocation option on the game settings page.  \n4. Fixed the issue where automatic memory allocation did not take effect."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Boat后端1.21.9+无法使用Shift/Ctrl/Alt快捷键的问题\n2.修复版本文件夹内不存在对应的版本jar文件且InheritsFrom不存在时尝试启动后启动器报错的问题\n3.修复JVM虚拟机参数内包含-Xmx时启动器无法取消自动内存分配的问题\n4.新增功能：启动时检测当前版本是否包含模组且已安装模组加载器\n5.修正多人联机教程内的错误描述"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复CurseForge源无法搜索到内容的问题\n2.修复Boat后端1.21.9+点击退出游戏后卡死的问题\n3.修复游戏设置页面自动内存分配UI显示错误的问题\n4.修复自动内存分配不生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/5c487caa8f71",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.7.9/FCL-release-1.2.7.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c810b127885a",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.0/FCL-release-1.2.8.0-all.apk"
   }
 ]
