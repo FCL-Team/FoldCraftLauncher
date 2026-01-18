@@ -70,6 +70,9 @@ import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+
 public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     protected RemoteModRepository repository;
@@ -436,5 +439,13 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     FXUtils.bindSelection(categorySpinner, category);
                     if (search) search();
                 }).start();
+    }
+
+    void showTranslationDialog() {
+        new TranslationDialog(getContext(), repository, s -> {
+            nameEditText.setText(s);
+            search();
+            return null;
+        }).show();
     }
 }

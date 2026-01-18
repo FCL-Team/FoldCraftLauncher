@@ -15,7 +15,9 @@ import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,18 @@ public class ModDownloadPage extends DownloadPage {
         downloadSource.set(context.getString(R.string.mods_modrinth));
 
         create();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (LocaleUtils.isChinese(getContext())) {
+            FCLImageView translate = findViewById(R.id.translate);
+            translate.setVisibility(View.VISIBLE);
+            translate.setOnClickListener(v -> {
+                showTranslationDialog();
+            });
+        }
     }
 
     @Override

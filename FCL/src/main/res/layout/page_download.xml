@@ -136,10 +136,10 @@
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/search"
-            android:layout_marginBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
             android:singleLine="true"
             android:text="@string/search"
             app:ripple="true" />
@@ -155,6 +155,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/left"
         app:layout_constraintTop_toTopOf="parent">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/translate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/ic_translation"
+            android:visibility="gone"
+            app:use_theme_color="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/page"
@@ -224,8 +234,10 @@
         android:dividerHeight="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/left"
-        app:layout_constraintTop_toBottomOf="@id/list_layout" />
+        app:layout_constraintTop_toBottomOf="@id/list_layout"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/progress"
