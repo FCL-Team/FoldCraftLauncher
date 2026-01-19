@@ -7,144 +7,141 @@
     android:paddingTop="10dp"
     android:paddingEnd="10dp">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/left"
+    <ScrollView
+        android:id="@+id/search_layout"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_container_white"
+        app:layout_constraintBottom_toTopOf="@id/install_modpack"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.3">
 
-        <ScrollView
-            android:id="@+id/search_layout"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_container_white">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/mods_name"
+                app:auto_text_tint="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLEditText
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:textSize="13sp"
+                app:auto_edit_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="@string/mods_name"
-                    app:auto_text_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/download_source_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/settings_launcher_download_source"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLEditText
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:textSize="13sp"
-                    app:auto_edit_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/download_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:id="@+id/download_source_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:text="@string/settings_launcher_download_source"
-                    app:auto_text_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/world_game_version"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLSpinner
-                    android:id="@+id/download_source"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/game_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:text="@string/world_game_version"
-                    app:auto_text_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/modloaderText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/modloader"
+                android:visibility="gone"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLSpinner
-                    android:id="@+id/game_version"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/modloader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:id="@+id/modloaderText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:text="@string/modloader"
-                    android:visibility="gone"
-                    app:auto_text_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/mods_category"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLSpinner
-                    android:id="@+id/modloader"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:text="@string/mods_category"
-                    app:auto_text_tint="true" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/search_sort"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLSpinner
-                    android:id="@+id/category"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/sort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-                <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:singleLine="true"
-                    android:text="@string/search_sort"
-                    app:auto_text_tint="true" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <com.tungsten.fcllibrary.component.view.FCLSpinner
-                    android:id="@+id/sort"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp" />
+    </ScrollView>
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/install_modpack"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:singleLine="true"
+        android:text="@string/install_modpack"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
 
-        </ScrollView>
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/install_modpack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:singleLine="true"
-            android:text="@string/install_modpack"
-            android:visibility="gone"
-            app:ripple="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/search"
-            android:layout_marginBottom="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:singleLine="true"
-            android:text="@string/search"
-            app:ripple="true" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:singleLine="true"
+        android:text="@string/search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/list_layout"
@@ -153,8 +150,18 @@
         android:layout_marginStart="10dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/left"
+        app:layout_constraintStart_toEndOf="@+id/search_layout"
         app:layout_constraintTop_toTopOf="parent">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/translate"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/ic_translation"
+            android:visibility="gone"
+            app:use_theme_color="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/page"
@@ -224,24 +231,24 @@
         android:dividerHeight="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/left"
-        app:layout_constraintTop_toBottomOf="@id/list_layout" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/search_layout"
+        app:layout_constraintTop_toBottomOf="@id/list_layout"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:layout_constraintBottom_toBottomOf="@id/list"
-        app:layout_constraintEnd_toEndOf="@id/list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/list"
-        app:layout_constraintTop_toTopOf="@id/list" />
+        app:layout_constraintTop_toBottomOf="@id/list_layout" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:src="@drawable/ic_baseline_refresh_24"
         app:layout_constraintBottom_toBottomOf="@id/list"
         app:layout_constraintEnd_toEndOf="@id/list"

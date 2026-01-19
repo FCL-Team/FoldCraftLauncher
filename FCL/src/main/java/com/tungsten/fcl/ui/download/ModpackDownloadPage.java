@@ -11,11 +11,14 @@ import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 public class ModpackDownloadPage extends DownloadPage {
 
     private FCLButton installModpack;
+    private FCLImageView translate;
 
     public ModpackDownloadPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId, null);
@@ -73,8 +76,15 @@ public class ModpackDownloadPage extends DownloadPage {
     public void onCreate() {
         super.onCreate();
         installModpack = findViewById(R.id.install_modpack);
+        translate = findViewById(R.id.translate);
         installModpack.setVisibility(View.VISIBLE);
+        if (LocaleUtils.isChinese(getContext())) {
+            translate.setVisibility(View.VISIBLE);
+        } else {
+            translate.setVisibility(View.GONE);
+        }
         installModpack.setOnClickListener(this);
+        translate.setOnClickListener(this);
     }
 
     @Override
@@ -82,6 +92,9 @@ public class ModpackDownloadPage extends DownloadPage {
         super.onClick(v);
         if (v == installModpack) {
             Versions.importModpack(getContext(), getParent());
+        }
+        if (v == translate) {
+            showTranslationDialog();
         }
     }
 }
