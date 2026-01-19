@@ -32,7 +32,7 @@ public class LocaleUtils {
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || lang == 8 || (lang == 0 && getSystemLocale().getLanguage().equals("zh"));
+        return lang == 2 || lang == 8 || (lang == 0 && getSystemLocale().getLanguage().startsWith("zh"));
     }
 
     public static String getLogUploadApiUrl(Context context) {
