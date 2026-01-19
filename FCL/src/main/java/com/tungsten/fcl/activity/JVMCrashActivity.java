@@ -329,7 +329,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                         // Show success dialog
                         new FCLAlertDialog.Builder(this)
                                 .setMessage(getString(com.tungsten.fcllibrary.R.string.upload_success, url))
-                                .setPositiveButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                                .setNegativeButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     startActivity(intent);
                                 })

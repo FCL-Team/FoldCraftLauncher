@@ -1,8 +1,12 @@
 package com.tungsten.fcl.ui.manage
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -10,33 +14,35 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageManageVersionBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
-import com.tungsten.fcllibrary.util.LocaleUtils
 import com.tungsten.fcl.ui.UIManager.Companion.instance
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-import com.tungsten.fclcore.util.Logging
-import com.tungsten.fclcore.util.io.HttpRequest
-import com.tungsten.fclcore.util.Pair.pair
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
 import com.tungsten.fcl.ui.manage.item.ManageItem
 import com.tungsten.fcl.ui.version.Versions
+import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
+import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.Pair.pair
 import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.io.HttpRequest
 import com.tungsten.fcllibrary.browser.FileBrowser
 import com.tungsten.fcllibrary.browser.options.LibMode
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
+import com.tungsten.fcllibrary.util.LocaleUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.File
+import java.util.logging.Level
 
 class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     FCLCommonPage(context, id, parent, resId), VersionLoadable {
@@ -70,6 +76,9 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
             }
             left.layoutManager = LinearLayoutManager(context)
             left.adapter = ManageItemAdapter(context, mutableListOf<ManageItem>().apply {
+                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
+                    uploadGameLog()
+                })
                 add(ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_fcl_log) {
                     onBrowse(
                         FCLPath.LOG_DIR
@@ -98,9 +107,6 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                 })
                 add(ManageItem(R.drawable.ic_baseline_earth_24, R.string.folder_saves) {
                     onBrowse("saves")
-                })
-                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
-                    uploadGameLog()
                 })
             })
             right.layoutManager = LinearLayoutManager(context)
@@ -148,9 +154,12 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     }
 
     private fun onBrowse(path: String) {
-        val root = if (path.startsWith("/")) File(path) else if (path.isEmpty()) profile.repository.getRunDirectory(version) else File(
-            profile.repository.getRunDirectory(version), path
-        )
+        val root =
+            if (path.startsWith("/")) File(path) else if (path.isEmpty()) profile.repository.getRunDirectory(
+                version
+            ) else File(
+                profile.repository.getRunDirectory(version), path
+            )
         if (!root.exists()) {
             root.mkdirs()
         }
@@ -241,18 +250,21 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
             }
             uploadLog(logs)
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed to get FCL logs: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Failed to get FCL logs: ${e.message}", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
     private fun uploadGameLog() {
-        val runDir = profile.repository.getRunDirectory(version)
-        val logFile = File(runDir, "logs/latest.log")
+        val logFile = File(FCLPath.LOG_DIR, "latest_game.log")
         if (!logFile.exists()) {
             Toast.makeText(context, "No game logs found", Toast.LENGTH_SHORT).show()
             return
         }
         try {
+            if (logFile.length() > 5 * 1024 * 1024) {
+                throw Exception("Log file is too large")
+            }
             val logs = FileUtils.readText(logFile)
             uploadLog(logs)
         } catch (e: Exception) {
@@ -263,35 +275,72 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     private fun uploadLog(content: String) {
         val progress = ProgressDialog(context)
         val url = LocaleUtils.getLogUploadApiUrl(context)
-        Task.supplyAsync {
-            HttpRequest.POST(url)
-                .form(pair("content", content))
-                .getString()
-        }.whenComplete(Schedulers.androidUIThread()) { result: String?, e: Exception? ->
-            progress.dismiss()
-            if (e != null) {
-                Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, e.message), Toast.LENGTH_LONG).show()
-            } else if (result != null) {
-                try {
-                    val response = com.google.gson.JsonParser.parseString(result).asJsonObject
-                    if (response.get("success").asBoolean) {
-                        val logUrl = response.get("url").asString
-                        AndroidUtils.copyText(context, logUrl)
-                        FCLAlertDialog.Builder(context)
-                            .setMessage(context.getString(com.tungsten.fcllibrary.R.string.upload_success, logUrl))
-                            .setPositiveButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(logUrl))
-                                context.startActivity(intent)
-                            }
-                            .create().show()
-                    } else {
-                        Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, response.get("error").asString), Toast.LENGTH_LONG).show()
+        activity.lifecycleScope.launch(Dispatchers.Default) {
+            val result = runCatching {
+                HttpRequest.POST(url)
+                    .form(pair("content", content))
+                    .string
+            }
+            withContext(Dispatchers.Main) {
+                result.onSuccess {
+                    progress.dismiss()
+                    try {
+                        val response = JSONObject(it)
+                        if (response.getBoolean("success")) {
+                            val logUrl = response.getString("url")
+                            AndroidUtils.copyText(context, logUrl)
+                            FCLAlertDialog.Builder(context)
+                                .setMessage(
+                                    context.getString(
+                                        com.tungsten.fcllibrary.R.string.upload_success,
+                                        logUrl
+                                    )
+                                )
+                                .setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
+                                    val intent = Intent(Intent.ACTION_VIEW, logUrl.toUri())
+                                    context.startActivity(intent)
+                                }
+                                .create().show()
+                        } else {
+                            Logging.LOG.log(
+                                Level.SEVERE,
+                                "Failed to upload log",
+                                response.getString("error")
+                            )
+                            Toast.makeText(
+                                context,
+                                context.getString(
+                                    com.tungsten.fcllibrary.R.string.upload_failed,
+                                    response.getString("error")
+                                ),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    } catch (ex: Exception) {
+                        Logging.LOG.log(Level.SEVERE, "Failed to upload log", ex)
+                        Toast.makeText(
+                            context,
+                            context.getString(
+                                com.tungsten.fcllibrary.R.string.upload_failed,
+                                ex.toString()
+                            ),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                } catch (ex: Exception) {
-                    Toast.makeText(context, context.getString(com.tungsten.fcllibrary.R.string.upload_failed, ex.message), Toast.LENGTH_LONG).show()
+                }.onFailure {
+                    progress.dismiss()
+                    Logging.LOG.log(Level.SEVERE, "Failed to upload log", it)
+                    Toast.makeText(
+                        context,
+                        context.getString(
+                            com.tungsten.fcllibrary.R.string.upload_failed,
+                            it.toString()
+                        ),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
-        }.start()
+        }
     }
 
     val profile: Profile
