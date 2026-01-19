@@ -24,10 +24,12 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.game.CrashReportAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -101,7 +103,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         renderer = getIntent().getExtras().getString("renderer");
         java = getIntent().getExtras().getString("java");
 
-        title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add): getString(R.string.jar_executor_crash_title));
+        title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add) : getString(R.string.jar_executor_crash_title));
         setLoading(true);
         try {
             init();
@@ -325,7 +327,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                             clipboard.setPrimaryClip(clip);
                         }
                         // Show success dialog
-                        new com.tungsten.fcllibrary.component.dialog.FCLAlertDialog.Builder(this)
+                        new FCLAlertDialog.Builder(this)
                                 .setMessage(getString(com.tungsten.fcllibrary.R.string.upload_success, url))
                                 .setPositiveButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
