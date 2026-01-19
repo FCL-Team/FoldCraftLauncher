@@ -243,17 +243,15 @@
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:layout_constraintBottom_toBottomOf="@id/list"
-        app:layout_constraintEnd_toEndOf="@id/list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/list"
-        app:layout_constraintTop_toTopOf="@id/list" />
+        app:layout_constraintTop_toBottomOf="@id/list_layout" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:src="@drawable/ic_baseline_refresh_24"
         app:layout_constraintBottom_toBottomOf="@id/list"
         app:layout_constraintEnd_toEndOf="@id/list"
