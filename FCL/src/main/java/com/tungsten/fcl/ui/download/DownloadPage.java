@@ -302,14 +302,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         sortSpinner.setAdapter(sortAdapter);
         sortSpinner.setSelection(0);
         FXUtils.bindSelection(sortSpinner, sortType);
-
-        pageOffset.addListener(observable -> page.setText(AndroidUtils.getLocalizedText(
-                getContext(), "search_page_n", pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()
-        )));
-        pageCount.addListener(observable -> page.setText(AndroidUtils.getLocalizedText(
-                getContext(), "search_page_n", pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()
-        )));
-
+        pageOffset.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
+        pageCount.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
         refreshCategory(false);
         search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
     }
