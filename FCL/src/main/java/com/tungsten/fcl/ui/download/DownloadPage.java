@@ -186,10 +186,6 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 }).executor(true);
     }
 
-    protected String getLocalizedCategory(String category) {
-        return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
-    }
-
     protected String getLocalizedCategoryIndent(CategoryIndented category) {
         return StringUtils.repeats(' ', category.getIndent() * 4) +
                 (category.getCategory() == null
@@ -441,5 +437,335 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             search();
             return null;
         }).show();
+    }
+
+    protected String getLocalizedCategory(String category) {
+        int id;
+        switch (category) {
+            case "curse_category_0":
+                id = R.string.curse_category_0;
+                break;
+            case "curse_category_4474":
+                id = R.string.curse_category_4474;
+                break;
+            case "curse_category_4481":
+                id = R.string.curse_category_4481;
+                break;
+            case "curse_category_4483":
+                id = R.string.curse_category_4483;
+                break;
+            case "curse_category_4477":
+                id = R.string.curse_category_4477;
+                break;
+            case "curse_category_4478":
+                id = R.string.curse_category_4478;
+                break;
+            case "curse_category_4484":
+                id = R.string.curse_category_4484;
+                break;
+            case "curse_category_4476":
+                id = R.string.curse_category_4476;
+                break;
+            case "curse_category_4736":
+                id = R.string.curse_category_4736;
+                break;
+            case "curse_category_4475":
+                id = R.string.curse_category_4475;
+                break;
+            case "curse_category_4487":
+                id = R.string.curse_category_4487;
+                break;
+            case "curse_category_4480":
+                id = R.string.curse_category_4480;
+                break;
+            case "curse_category_4479":
+                id = R.string.curse_category_4479;
+                break;
+            case "curse_category_4482":
+                id = R.string.curse_category_4482;
+                break;
+            case "curse_category_4472":
+                id = R.string.curse_category_4472;
+                break;
+            case "curse_category_4473":
+                id = R.string.curse_category_4473;
+                break;
+            case "curse_category_5128":
+                id = R.string.curse_category_5128;
+                break;
+            case "curse_category_5299":
+                id = R.string.curse_category_5299;
+                break;
+            case "curse_category_5232":
+                id = R.string.curse_category_5232;
+                break;
+            case "curse_category_5129":
+                id = R.string.curse_category_5129;
+                break;
+            case "curse_category_5189":
+                id = R.string.curse_category_5189;
+                break;
+            case "curse_category_6814":
+                id = R.string.curse_category_6814;
+                break;
+            case "curse_category_6954":
+                id = R.string.curse_category_6954;
+                break;
+            case "curse_category_6484":
+                id = R.string.curse_category_6484;
+                break;
+            case "curse_category_6821":
+                id = R.string.curse_category_6821;
+                break;
+            case "curse_category_6145":
+                id = R.string.curse_category_6145;
+                break;
+            case "curse_category_5190":
+                id = R.string.curse_category_5190;
+                break;
+            case "curse_category_5191":
+                id = R.string.curse_category_5191;
+                break;
+            case "curse_category_5192":
+                id = R.string.curse_category_5192;
+                break;
+            case "curse_category_423":
+                id = R.string.curse_category_423;
+                break;
+            case "curse_category_426":
+                id = R.string.curse_category_426;
+                break;
+            case "curse_category_434":
+                id = R.string.curse_category_434;
+                break;
+            case "curse_category_409":
+                id = R.string.curse_category_409;
+                break;
+            case "curse_category_4485":
+                id = R.string.curse_category_4485;
+                break;
+            case "curse_category_420":
+                id = R.string.curse_category_420;
+                break;
+            case "curse_category_429":
+                id = R.string.curse_category_429;
+                break;
+            case "curse_category_419":
+                id = R.string.curse_category_419;
+                break;
+            case "curse_category_412":
+                id = R.string.curse_category_412;
+                break;
+            case "curse_category_4557":
+                id = R.string.curse_category_4557;
+                break;
+            case "curse_category_428":
+                id = R.string.curse_category_428;
+                break;
+            case "curse_category_414":
+                id = R.string.curse_category_414;
+                break;
+            case "curse_category_4486":
+                id = R.string.curse_category_4486;
+                break;
+            case "curse_category_432":
+                id = R.string.curse_category_432;
+                break;
+            case "curse_category_418":
+                id = R.string.curse_category_418;
+                break;
+            case "curse_category_4671":
+                id = R.string.curse_category_4671;
+                break;
+            case "curse_category_5314":
+                id = R.string.curse_category_5314;
+                break;
+            case "curse_category_408":
+                id = R.string.curse_category_408;
+                break;
+            case "curse_category_4773":
+                id = R.string.curse_category_4773;
+                break;
+            case "curse_category_430":
+                id = R.string.curse_category_430;
+                break;
+            case "curse_category_422":
+                id = R.string.curse_category_422;
+                break;
+            case "curse_category_413":
+                id = R.string.curse_category_413;
+                break;
+            case "curse_category_417":
+                id = R.string.curse_category_417;
+                break;
+            case "curse_category_415":
+                id = R.string.curse_category_415;
+                break;
+            case "curse_category_433":
+                id = R.string.curse_category_433;
+                break;
+            case "curse_category_425":
+                id = R.string.curse_category_425;
+                break;
+            case "curse_category_4545":
+                id = R.string.curse_category_4545;
+                break;
+            case "curse_category_416":
+                id = R.string.curse_category_416;
+                break;
+            case "curse_category_421":
+                id = R.string.curse_category_421;
+                break;
+            case "curse_category_4780":
+                id = R.string.curse_category_4780;
+                break;
+            case "curse_category_424":
+                id = R.string.curse_category_424;
+                break;
+            case "curse_category_406":
+                id = R.string.curse_category_406;
+                break;
+            case "curse_category_435":
+                id = R.string.curse_category_435;
+                break;
+            case "curse_category_411":
+                id = R.string.curse_category_411;
+                break;
+            case "curse_category_407":
+                id = R.string.curse_category_407;
+                break;
+            case "curse_category_427":
+                id = R.string.curse_category_427;
+                break;
+            case "curse_category_410":
+                id = R.string.curse_category_410;
+                break;
+            case "curse_category_436":
+                id = R.string.curse_category_436;
+                break;
+            case "curse_category_4558":
+                id = R.string.curse_category_4558;
+                break;
+            case "curse_category_4843":
+                id = R.string.curse_category_4843;
+                break;
+            case "curse_category_4906":
+                id = R.string.curse_category_4906;
+                break;
+            case "curse_category_5244":
+                id = R.string.curse_category_5244;
+                break;
+            case "curse_category_5193":
+                id = R.string.curse_category_5193;
+                break;
+            case "curse_category_399":
+                id = R.string.curse_category_399;
+                break;
+            case "curse_category_396":
+                id = R.string.curse_category_396;
+                break;
+            case "curse_category_398":
+                id = R.string.curse_category_398;
+                break;
+            case "curse_category_397":
+                id = R.string.curse_category_397;
+                break;
+            case "curse_category_405":
+                id = R.string.curse_category_405;
+                break;
+            case "curse_category_395":
+                id = R.string.curse_category_395;
+                break;
+            case "curse_category_400":
+                id = R.string.curse_category_400;
+                break;
+            case "curse_category_393":
+                id = R.string.curse_category_393;
+                break;
+            case "curse_category_403":
+                id = R.string.curse_category_403;
+                break;
+            case "curse_category_394":
+                id = R.string.curse_category_394;
+                break;
+            case "curse_category_404":
+                id = R.string.curse_category_404;
+                break;
+            case "curse_category_4465":
+                id = R.string.curse_category_4465;
+                break;
+            case "curse_category_402":
+                id = R.string.curse_category_402;
+                break;
+            case "curse_category_401":
+                id = R.string.curse_category_401;
+                break;
+            case "curse_category_4464":
+                id = R.string.curse_category_4464;
+                break;
+            case "curse_category_250":
+                id = R.string.curse_category_250;
+                break;
+            case "curse_category_249":
+                id = R.string.curse_category_249;
+                break;
+            case "curse_category_251":
+                id = R.string.curse_category_251;
+                break;
+            case "curse_category_253":
+                id = R.string.curse_category_253;
+                break;
+            case "curse_category_248":
+                id = R.string.curse_category_248;
+                break;
+            case "curse_category_252":
+                id = R.string.curse_category_252;
+                break;
+            case "curse_category_4551":
+                id = R.string.curse_category_4551;
+                break;
+            case "curse_category_4548":
+                id = R.string.curse_category_4548;
+                break;
+            case "curse_category_4556":
+                id = R.string.curse_category_4556;
+                break;
+            case "curse_category_4752":
+                id = R.string.curse_category_4752;
+                break;
+            case "curse_category_4553":
+                id = R.string.curse_category_4553;
+                break;
+            case "curse_category_4554":
+                id = R.string.curse_category_4554;
+                break;
+            case "curse_category_4549":
+                id = R.string.curse_category_4549;
+                break;
+            case "curse_category_4547":
+                id = R.string.curse_category_4547;
+                break;
+            case "curse_category_4550":
+                id = R.string.curse_category_4550;
+                break;
+            case "curse_category_4555":
+                id = R.string.curse_category_4555;
+                break;
+            case "curse_category_4552":
+                id = R.string.curse_category_4552;
+                break;
+            case "curse_category_6555":
+                id = R.string.curse_category_6555;
+                break;
+            case "curse_category_6554":
+                id = R.string.curse_category_6554;
+                break;
+            case "curse_category_6553":
+                id = R.string.curse_category_6553;
+                break;
+            default:
+                return category;
+        }
+        return getContext().getString(id);
     }
 }
