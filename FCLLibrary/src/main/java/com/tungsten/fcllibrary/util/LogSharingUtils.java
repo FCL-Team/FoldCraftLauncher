@@ -16,15 +16,9 @@ public class LogSharingUtils {
         new FCLAlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.log_upload_success_title))
                 .setMessage(url)
-                .setPositiveButton(context.getString(R.string.log_upload_copy), () -> {
-                    copyToClipboard(context, url);
-                })
-                .setNeutralButton(context.getString(R.string.log_upload_open), () -> {
-                    openInBrowser(context, url);
-                })
-                .setExtraButton(context.getString(R.string.log_upload_share), () -> {
-                    shareLog(context, url);
-                })
+                .setPositiveButton(context.getString(R.string.log_upload_copy), () -> copyToClipboard(context, url))
+                .setNeutralButton(context.getString(R.string.log_upload_open), () -> openInBrowser(context, url))
+                .setExtraButton(context.getString(R.string.log_upload_share), () -> shareLog(context, url))
                 .setNegativeButton(context.getString(R.string.dialog_negative), null)
                 .create().show();
     }

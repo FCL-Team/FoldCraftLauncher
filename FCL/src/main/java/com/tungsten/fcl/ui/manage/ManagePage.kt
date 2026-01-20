@@ -1,11 +1,8 @@
 package com.tungsten.fcl.ui.manage
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.animation.OvershootInterpolator
-import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.util.AnimUtil
@@ -14,21 +11,17 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageManageVersionBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
-import com.tungsten.fcllibrary.util.LocaleUtils
-import com.tungsten.fcllibrary.util.LogSharingUtils
 import com.tungsten.fcl.ui.UIManager.Companion.instance
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
 import com.tungsten.fcl.ui.manage.item.ManageItem
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
-import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.Pair.pair
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.io.HttpRequest
@@ -38,16 +31,21 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
+import com.tungsten.fcllibrary.util.LocaleUtils
+import com.tungsten.fcllibrary.util.LogSharingUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
-import java.util.logging.Level
 
 class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     FCLCommonPage(context, id, parent, resId), VersionLoadable {
     private val currentVersionUpgradable: BooleanProperty = SimpleBooleanProperty()
+    val profile: Profile
+        get() = instance.manageUI.profile
+    val version: String
+        get() = instance.manageUI.version
 
     private lateinit var binding: PageManageVersionBinding
 
@@ -246,21 +244,20 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     }
 
     private fun uploadLatestLog() {
-        val gameDir = profile.repository.getRunDirectory(version)
-        val logFile = File(gameDir, "logs/latest.log")
+        val logFile = File(FCLPath.LOG_DIR, "latest_game.log")
         if (!logFile.exists()) {
-            Toast.makeText(context, context.getString(R.string.log_not_found), Toast.LENGTH_SHORT).show()
+            showErrorDialog(R.string.log_not_found)
             return
         }
         try {
             if (logFile.length() > 5 * 1024 * 1024) {
-                Toast.makeText(context, context.getString(R.string.log_too_large), Toast.LENGTH_SHORT).show()
+                showErrorDialog(R.string.log_too_large)
                 return
             }
             val logs = FileUtils.readText(logFile)
             uploadLog(logs)
         } catch (e: Exception) {
-            Toast.makeText(context, "Failed to read log: ${e.message}", Toast.LENGTH_SHORT).show()
+            showErrorDialog("Failed to read log: ${e.message}")
         }
     }
 
@@ -282,52 +279,39 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                             val logUrl = response.getString("url")
                             LogSharingUtils.showLogUploadSuccessDialog(context, logUrl)
                         } else {
-                            Logging.LOG.log(
-                                Level.SEVERE,
-                                "Failed to upload log",
+                            showErrorDialog(
+                                com.tungsten.fcllibrary.R.string.upload_failed,
                                 response.getString("error")
                             )
-                            Toast.makeText(
-                                context,
-                                context.getString(
-                                    com.tungsten.fcllibrary.R.string.upload_failed,
-                                    response.getString("error")
-                                ),
-                                Toast.LENGTH_LONG
-                            ).show()
                         }
                     } catch (ex: Exception) {
-                        Logging.LOG.log(Level.SEVERE, "Failed to upload log", ex)
-                        Toast.makeText(
-                            context,
-                            context.getString(
-                                com.tungsten.fcllibrary.R.string.upload_failed,
-                                ex.toString()
-                            ),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-                result.onFailure { ex ->
-                    progress.dismiss()
-                    Logging.LOG.log(Level.SEVERE, "Failed to upload log", ex)
-                    Toast.makeText(
-                        context,
-                        context.getString(
+                        showErrorDialog(
                             com.tungsten.fcllibrary.R.string.upload_failed,
                             ex.toString()
-                        ),
-                        Toast.LENGTH_LONG
-                    ).show()
+                        )
+                    }
+                }.onFailure {
+                    progress.dismiss()
+                    showErrorDialog(
+                        com.tungsten.fcllibrary.R.string.upload_failed,
+                        it.toString()
+                    )
                 }
             }
         }
     }
 
-    val profile: Profile
-        get() = instance.manageUI.profile
+    private fun showErrorDialog(message: Int, vararg args: String) {
+        showErrorDialog(context.getString(message, *args))
+    }
 
-    val version: String
-        get() = instance.manageUI.version
+    private fun showErrorDialog(message: String) {
+        FCLAlertDialog.Builder(context)
+            .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+            .setMessage(message)
+            .setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) { }
+            .create()
+            .show()
+    }
 
 }
