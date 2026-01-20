@@ -74,82 +74,88 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                     arrayOf(intArrayOf()), intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)
                 )
             }
+
             left.layoutManager = LinearLayoutManager(context)
-            left.adapter = ManageItemAdapter(context, mutableListOf<ManageItem>().apply {
-                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
-                    uploadGameLog()
-                })
-                add(ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_fcl_log) {
-                    onBrowse(
-                        FCLPath.LOG_DIR
-                    )
-                })
-                add(ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_fcl_log) {
-                    uploadFCLLog()
-                })
-                add(ManageItem(R.drawable.ic_baseline_videogame_asset_24, R.string.folder_game) {
-                    onBrowse("")
-                })
-                add(ManageItem(R.drawable.ic_outline_extension_24, R.string.folder_mod) {
-                    onBrowse("mods")
-                })
-                add(ManageItem(R.drawable.ic_baseline_settings_24, R.string.folder_config) {
-                    onBrowse("config")
-                })
-                add(ManageItem(R.drawable.ic_baseline_texture_24, R.string.folder_resourcepacks) {
-                    onBrowse("resourcepacks")
-                })
-                add(ManageItem(R.drawable.ic_baseline_application_24, R.string.folder_shaderpacks) {
-                    onBrowse("shaderpacks")
-                })
-                add(ManageItem(R.drawable.ic_baseline_screenshot_24, R.string.folder_screenshots) {
-                    onBrowse("screenshots")
-                })
-                add(ManageItem(R.drawable.ic_baseline_earth_24, R.string.folder_saves) {
-                    onBrowse("saves")
-                })
-            })
-            right.layoutManager = LinearLayoutManager(context)
-            right.adapter = ManageItemAdapter(context, mutableListOf<ManageItem>().apply {
-                add(ManageItem(R.drawable.ic_baseline_update_24, R.string.version_update) {
-                    if (!currentVersionUpgradable.get()) {
-                        AnimUtil.playTranslationX(it, 500, 0f, 50f, -50f, 0f)
-                            .interpolator(OvershootInterpolator()).start()
-                    } else {
-                        updateGame()
+            left.adapter = ManageItemAdapter(
+                context,
+                listOf(
+                    ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
+                        uploadGameLog()
+                    },
+                    ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_fcl_log) {
+                        uploadFCLLog()
+                    },
+                    ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_fcl_log) {
+                        onBrowse(
+                            FCLPath.LOG_DIR
+                        )
+                    },
+                    ManageItem(R.drawable.ic_baseline_videogame_asset_24, R.string.folder_game) {
+                        onBrowse("")
+                    },
+                    ManageItem(R.drawable.ic_outline_extension_24, R.string.folder_mod) {
+                        onBrowse("mods")
+                    },
+                    ManageItem(R.drawable.ic_baseline_settings_24, R.string.folder_config) {
+                        onBrowse("config")
+                    },
+                    ManageItem(R.drawable.ic_baseline_texture_24, R.string.folder_resourcepacks) {
+                        onBrowse("resourcepacks")
+                    },
+                    ManageItem(R.drawable.ic_baseline_application_24, R.string.folder_shaderpacks) {
+                        onBrowse("shaderpacks")
+                    },
+                    ManageItem(R.drawable.ic_baseline_screenshot_24, R.string.folder_screenshots) {
+                        onBrowse("screenshots")
+                    },
+                    ManageItem(R.drawable.ic_baseline_earth_24, R.string.folder_saves) {
+                        onBrowse("saves")
                     }
-                })
-                add(ManageItem(R.drawable.ic_baseline_edit_24, R.string.version_manage_rename) {
-                    rename()
-                })
-                add(
+
+                ))
+            right.layoutManager = LinearLayoutManager(context)
+            right.adapter = ManageItemAdapter(
+                context,
+                listOf(
+                    ManageItem(R.drawable.ic_baseline_update_24, R.string.version_update) {
+                        if (!currentVersionUpgradable.get()) {
+                            AnimUtil.playTranslationX(it, 500, 0f, 50f, -50f, 0f)
+                                .interpolator(OvershootInterpolator()).start()
+                        } else {
+                            updateGame()
+                        }
+                    },
+                    ManageItem(R.drawable.ic_baseline_edit_24, R.string.version_manage_rename) {
+                        rename()
+                    },
                     ManageItem(
                         R.drawable.ic_baseline_content_copy_24,
                         R.string.version_manage_duplicate
                     ) {
                         duplicate()
-                    })
-                add(ManageItem(R.drawable.ic_baseline_output_24, R.string.modpack_export) {
-                    export()
-                })
-                add(
+                    },
+                    ManageItem(R.drawable.ic_baseline_output_24, R.string.modpack_export) {
+                        export()
+                    },
                     ManageItem(
                         R.drawable.ic_baseline_list_24,
                         R.string.version_manage_redownload_assets_index
                     ) {
                         redownloadAssetIndex()
-                    })
-                add(
+                    },
                     ManageItem(
                         R.drawable.ic_baseline_delete_24,
                         R.string.version_manage_remove_libraries
                     ) {
                         clearLibraries()
-                    })
-                add(ManageItem(R.drawable.ic_baseline_delete_24, R.string.version_manage_clean) {
-                    clearJunkFiles()
-                })
-            })
+                    },
+                    ManageItem(
+                        R.drawable.ic_baseline_delete_24,
+                        R.string.version_manage_clean
+                    ) {
+                        clearJunkFiles()
+                    }
+                ))
         }
     }
 
@@ -297,8 +303,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                                     )
                                 )
                                 .setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
-                                    val intent = Intent(Intent.ACTION_VIEW, logUrl.toUri())
-                                    context.startActivity(intent)
+                                    AndroidUtils.openLink(context, logUrl)
                                 }
                                 .create().show()
                         } else {

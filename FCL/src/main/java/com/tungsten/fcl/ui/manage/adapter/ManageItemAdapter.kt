@@ -11,7 +11,7 @@ import com.tungsten.fcl.databinding.ItemManageBinding
 import com.tungsten.fcl.ui.manage.item.ManageItem
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 
-class ManageItemAdapter(val context: Context, private val itemList: MutableList<ManageItem>) :
+class ManageItemAdapter(val context: Context, private val itemList: List<ManageItem>) :
     RecyclerView.Adapter<ManageItemAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
