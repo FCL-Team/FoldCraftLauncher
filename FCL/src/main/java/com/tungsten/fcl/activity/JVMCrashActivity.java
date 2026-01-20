@@ -35,6 +35,7 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.crash.CrashReporter;
 import com.tungsten.fcllibrary.util.LocaleUtils;
+import com.tungsten.fcllibrary.util.LogSharingUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -320,20 +321,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                     String url = matcher.group(1).replace("\\/", "/");
                     Schedulers.androidUIThread().execute(() -> {
                         setLoading(false);
-                        // Copy to clipboard
-                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        if (clipboard != null) {
-                            ClipData clip = ClipData.newPlainText(null, url);
-                            clipboard.setPrimaryClip(clip);
-                        }
-                        // Show success dialog
-                        new FCLAlertDialog.Builder(this)
-                                .setMessage(getString(com.tungsten.fcllibrary.R.string.upload_success, url))
-                                .setNegativeButton(getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                    startActivity(intent);
-                                })
-                                .create().show();
+                        LogSharingUtils.showLogUploadSuccessDialog(this, url);
                     });
                 } else {
                     throw new IOException("Failed to parse response: " + response);

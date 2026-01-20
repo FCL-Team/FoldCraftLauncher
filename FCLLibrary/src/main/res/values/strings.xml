@@ -41,4 +41,9 @@
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">Cancel</string>
     <string name="edit">Edit</string>
+    <string name="log_upload_success_title">Log upload successful</string>
+    <string name="log_upload_copy">Copy Link</string>
+    <string name="log_upload_open">Open Link</string>
+    <string name="log_upload_share">Share Link</string>
+    <string name="log_upload_share_template">I encountered a problem in the launcher, here is the log link:\n%s</string>
 </resources>

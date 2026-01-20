@@ -39,4 +39,9 @@
     <string name="dialog_negative">取消</string>
     <string name="file_browser_select_external">使用外部应用选择</string>
     <string name="edit">编辑</string>
+    <string name="log_upload_success_title">日志上传成功</string>
+    <string name="log_upload_copy">复制</string>
+    <string name="log_upload_open">打开</string>
+    <string name="log_upload_share">分享</string>
+    <string name="log_upload_share_template">我在启动器里遇到问题了，以下是日志链接：\n%s</string>
 </resources>

@@ -14,6 +14,8 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageManageVersionBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.ProgressDialog
+import com.tungsten.fcllibrary.util.LocaleUtils
+import com.tungsten.fcllibrary.util.LogSharingUtils
 import com.tungsten.fcl.ui.UIManager.Companion.instance
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
@@ -36,7 +38,6 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
-import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,11 +80,8 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
             left.adapter = ManageItemAdapter(
                 context,
                 listOf(
-                    ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_game_log) {
-                        uploadGameLog()
-                    },
-                    ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_fcl_log) {
-                        uploadFCLLog()
+                    ManageItem(R.drawable.ic_baseline_cloud_upload_24, R.string.upload_log) {
+                        uploadLatestLog()
                     },
                     ManageItem(R.drawable.ic_baseline_script_24, R.string.folder_fcl_log) {
                         onBrowse(
@@ -247,29 +245,17 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
         Versions.duplicateVersion(context, profile, version)
     }
 
-    private fun uploadFCLLog() {
-        try {
-            val logs = Logging.getLogs()
-            if (logs.isNullOrEmpty()) {
-                Toast.makeText(context, "No FCL logs found", Toast.LENGTH_SHORT).show()
-                return
-            }
-            uploadLog(logs)
-        } catch (e: Exception) {
-            Toast.makeText(context, "Failed to get FCL logs: ${e.message}", Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
-    private fun uploadGameLog() {
-        val logFile = File(FCLPath.LOG_DIR, "latest_game.log")
+    private fun uploadLatestLog() {
+        val gameDir = profile.repository.getRunDirectory(version)
+        val logFile = File(gameDir, "logs/latest.log")
         if (!logFile.exists()) {
-            Toast.makeText(context, "No game logs found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.log_not_found), Toast.LENGTH_SHORT).show()
             return
         }
         try {
             if (logFile.length() > 5 * 1024 * 1024) {
-                throw Exception("Log file is too large")
+                Toast.makeText(context, context.getString(R.string.log_too_large), Toast.LENGTH_SHORT).show()
+                return
             }
             val logs = FileUtils.readText(logFile)
             uploadLog(logs)
@@ -294,18 +280,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                         val response = JSONObject(it)
                         if (response.getBoolean("success")) {
                             val logUrl = response.getString("url")
-                            AndroidUtils.copyText(context, logUrl)
-                            FCLAlertDialog.Builder(context)
-                                .setMessage(
-                                    context.getString(
-                                        com.tungsten.fcllibrary.R.string.upload_success,
-                                        logUrl
-                                    )
-                                )
-                                .setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
-                                    AndroidUtils.openLink(context, logUrl)
-                                }
-                                .create().show()
+                            LogSharingUtils.showLogUploadSuccessDialog(context, logUrl)
                         } else {
                             Logging.LOG.log(
                                 Level.SEVERE,
@@ -332,14 +307,15 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                }.onFailure {
+                }
+                result.onFailure { ex ->
                     progress.dismiss()
-                    Logging.LOG.log(Level.SEVERE, "Failed to upload log", it)
+                    Logging.LOG.log(Level.SEVERE, "Failed to upload log", ex)
                     Toast.makeText(
                         context,
                         context.getString(
                             com.tungsten.fcllibrary.R.string.upload_failed,
-                            it.toString()
+                            ex.toString()
                         ),
                         Toast.LENGTH_LONG
                     ).show()

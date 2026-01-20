@@ -376,6 +376,9 @@
     <string name="folder_game">Browse game directory</string>
     <string name="folder_log">Browse log directory</string>
     <string name="folder_fcl_log">Browse FCL logs</string>
+    <string name="upload_log">Upload Log</string>
+     <string name="log_not_found">Log file not found</string>
+     <string name="log_too_large">Log file is too large</string>
     <string name="upload_fcl_log">Upload FCL log</string>
     <string name="upload_game_log">Upload game log</string>
     <string name="upload_success">Upload success! URL copied to clipboard: %s</string>

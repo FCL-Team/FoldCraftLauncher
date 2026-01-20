@@ -354,6 +354,9 @@
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
     <string name="folder_fcl_log">浏览FCL日志文件夹</string>
+    <string name="upload_log">上传日志</string>
+     <string name="log_not_found">未找到日志文件</string>
+     <string name="log_too_large">日志文件过大</string>
     <string name="upload_fcl_log">上传FCL日志</string>
     <string name="upload_game_log">上传游戏日志</string>
     <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
