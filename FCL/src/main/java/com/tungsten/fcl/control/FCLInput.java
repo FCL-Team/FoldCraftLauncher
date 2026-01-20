@@ -1,6 +1,7 @@
 package com.tungsten.fcl.control;
 
-import android.util.Log;
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.mapBindingToKeycode;
+
 import android.view.Choreographer;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -21,8 +22,6 @@ import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.HashMap;
-
-import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.mapBindingToKeycode;
 
 public class FCLInput implements View.OnCapturedPointerListener {
 
@@ -266,7 +265,6 @@ public class FCLInput implements View.OnCapturedPointerListener {
         //keyboard
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
-        Log.e("测试", event.getKeyCode() + " " + fclKeycode);
         sendKeyEvent(fclKeycode, event.getAction() == KeyEvent.ACTION_DOWN);
         if (event.getAction() == KeyEvent.ACTION_DOWN && menu.getCursorMode() == FCLBridge.CursorEnabled) {
             sendChar((char) (event.getUnicodeChar() != 0 ? event.getUnicodeChar() : '\u0000'));
