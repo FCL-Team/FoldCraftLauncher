@@ -91,6 +91,7 @@
     <string name="action_refresh">刷新</string>
     <string name="action_retry">重试</string>
     <string name="action_share">分享</string>
+    <string name="action_upload">上传日志</string>
     <string name="action_skip">跳过</string>
 
     <string name="announcement">公告：%s</string>
@@ -353,6 +354,13 @@
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
     <string name="folder_fcl_log">浏览FCL日志文件夹</string>
+    <string name="upload_log">上传日志</string>
+     <string name="log_not_found">未找到日志文件</string>
+     <string name="log_too_large">日志文件过大</string>
+    <string name="upload_fcl_log">上传FCL日志</string>
+    <string name="upload_game_log">上传游戏日志</string>
+    <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
+    <string name="upload_failed">上传失败：%s</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>

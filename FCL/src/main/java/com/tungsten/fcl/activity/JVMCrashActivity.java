@@ -24,17 +24,22 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.game.CrashReportAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.crash.CrashReporter;
+import com.tungsten.fcllibrary.util.LocaleUtils;
+import com.tungsten.fcllibrary.util.LogSharingUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +50,8 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.tungsten.fclcore.util.io.HttpRequest;
 
 public class JVMCrashActivity extends FCLActivity implements View.OnClickListener {
 
@@ -57,6 +64,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     private FCLButton restart;
     private FCLButton close;
     private FCLButton copy;
+    private FCLButton upload;
     private FCLButton share;
 
     private FCLTextView title;
@@ -75,11 +83,13 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         restart = findViewById(R.id.restart);
         close = findViewById(R.id.close);
         copy = findViewById(R.id.copy);
+        upload = findViewById(R.id.upload);
         share = findViewById(R.id.share);
 
         restart.setOnClickListener(this);
         close.setOnClickListener(this);
         copy.setOnClickListener(this);
+        upload.setOnClickListener(this);
         share.setOnClickListener(this);
 
         title = findViewById(R.id.title);
@@ -94,7 +104,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         renderer = getIntent().getExtras().getString("renderer");
         java = getIntent().getExtras().getString("java");
 
-        title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add): getString(R.string.jar_executor_crash_title));
+        title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add) : getString(R.string.jar_executor_crash_title));
         setLoading(true);
         try {
             init();
@@ -274,6 +284,9 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 Toast.makeText(this, com.tungsten.fcllibrary.R.string.crash_reporter_toast, Toast.LENGTH_SHORT).show();
             }
         }
+        if (v == upload) {
+            uploadLog();
+        }
         if (v == share) {
             try {
                 Intent intent = new Intent(Intent.ACTION_SEND);
@@ -289,6 +302,38 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 LOG.log(Level.INFO, "Share error: " + e);
             }
         }
+    }
+
+    private void uploadLog() {
+        setLoading(true);
+        CompletableFuture.runAsync(() -> {
+            try {
+                String logContent = error.getText().toString();
+                String apiUrl = LocaleUtils.getLogUploadApiUrl(this);
+                String response = HttpRequest.POST(apiUrl)
+                        .form(pair("content", logContent))
+                        .getString();
+
+                // Response format: {"success":true,"url":"https://mclo.gs/XXXXX"}
+                Pattern pattern = Pattern.compile("\"url\":\"(.*?)\"");
+                Matcher matcher = pattern.matcher(response);
+                if (matcher.find()) {
+                    String url = matcher.group(1).replace("\\/", "/");
+                    Schedulers.androidUIThread().execute(() -> {
+                        setLoading(false);
+                        LogSharingUtils.showLogUploadSuccessDialog(this, url);
+                    });
+                } else {
+                    throw new IOException("Failed to parse response: " + response);
+                }
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Failed to upload log", e);
+                Schedulers.androidUIThread().execute(() -> {
+                    setLoading(false);
+                    Toast.makeText(this, getString(com.tungsten.fcllibrary.R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     public static void startCrashActivity(boolean game, Context context, int exitCode, String logPath, String renderer, String java) {

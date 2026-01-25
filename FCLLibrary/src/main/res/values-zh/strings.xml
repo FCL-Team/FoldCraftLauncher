@@ -25,6 +25,9 @@
     <string name="crash_reporter_close">退出软件</string>
     <string name="crash_reporter_copy">复制日志</string>
     <string name="crash_reporter_share">分享日志</string>
+    <string name="crash_reporter_upload">上传日志</string>
+    <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
+    <string name="upload_failed">上传失败：%s</string>
     <string name="crash_reporter_toast">复制成功！</string>
 
     <string name="color_picker_title">选择颜色</string>
@@ -36,4 +39,9 @@
     <string name="dialog_negative">取消</string>
     <string name="file_browser_select_external">使用外部应用选择</string>
     <string name="edit">编辑</string>
+    <string name="log_upload_success_title">日志上传成功</string>
+    <string name="log_upload_copy">复制</string>
+    <string name="log_upload_open">打开</string>
+    <string name="log_upload_share">分享</string>
+    <string name="log_upload_share_template">我在启动器里遇到问题了，以下是日志链接：\n%s</string>
 </resources>

@@ -15,21 +15,32 @@ import androidx.core.content.FileProvider;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.component.view.FCLProgressBar;
+import com.tungsten.fcllibrary.util.LocaleUtils;
+import com.tungsten.fcllibrary.util.LogSharingUtils;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.io.HttpRequest;
+import static com.tungsten.fclcore.util.Pair.pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CrashReportActivity extends FCLActivity implements View.OnClickListener {
 
     private FCLButton restart;
     private FCLButton close;
     private FCLButton copy;
+    private FCLButton upload;
     private FCLButton share;
 
     private FCLTextView error;
+    private FCLProgressBar progressBar;
 
     private CrashReporterConfig config;
 
@@ -49,14 +60,17 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
         restart = findViewById(R.id.restart);
         close = findViewById(R.id.close);
         copy = findViewById(R.id.copy);
+        upload = findViewById(R.id.upload);
         share = findViewById(R.id.share);
 
         restart.setOnClickListener(this);
         close.setOnClickListener(this);
         copy.setOnClickListener(this);
+        upload.setOnClickListener(this);
         share.setOnClickListener(this);
 
         error = findViewById(R.id.error);
+        progressBar = findViewById(R.id.progress);
         error.setText(CrashReporter.getAllErrorDetailsFromIntent(this, getIntent()));
     }
 
@@ -70,6 +84,9 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
         }
         if (view == copy) {
             copyErrorToClipboard();
+        }
+        if (view == upload) {
+            uploadLog();
         }
         if (view == share) {
             try {
@@ -86,6 +103,44 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+    }
+
+    private void setLoading(boolean loading) {
+        Schedulers.androidUIThread().execute(() -> {
+            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        });
+    }
+
+    private void uploadLog() {
+        setLoading(true);
+        CompletableFuture.runAsync(() -> {
+            try {
+                String logContent = error.getText().toString();
+                String apiUrl = LocaleUtils.getLogUploadApiUrl(this);
+                String response = HttpRequest.POST(apiUrl)
+                        .form(pair("content", logContent))
+                        .getString();
+
+                // Response format: {"success":true,"url":"https://mclo.gs/XXXXX"}
+                Pattern pattern = Pattern.compile("\"url\":\"(.*?)\"");
+                Matcher matcher = pattern.matcher(response);
+                if (matcher.find()) {
+                    String url = matcher.group(1).replace("\\/", "/");
+                    Schedulers.androidUIThread().execute(() -> {
+                        setLoading(false);
+                        LogSharingUtils.showLogUploadSuccessDialog(this, url);
+                    });
+                } else {
+                    throw new IOException("Failed to parse response: " + response);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Schedulers.androidUIThread().execute(() -> {
+                    setLoading(false);
+                    Toast.makeText(this, getString(R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     private void copyErrorToClipboard() {

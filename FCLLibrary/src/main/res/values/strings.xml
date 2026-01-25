@@ -27,6 +27,9 @@
     <string name="crash_reporter_close">Exit</string>
     <string name="crash_reporter_copy">Copy</string>
     <string name="crash_reporter_share">Share</string>
+    <string name="crash_reporter_upload">Upload Log</string>
+    <string name="upload_success">Upload success! URL copied to clipboard: %s</string>
+    <string name="upload_failed">Upload failed: %s</string>
     <string name="crash_reporter_toast">Copy successfully!</string>
 
     <string name="color_picker_title">Color Picker</string>
@@ -38,4 +41,9 @@
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">Cancel</string>
     <string name="edit">Edit</string>
+    <string name="log_upload_success_title">Log upload successful</string>
+    <string name="log_upload_copy">Copy Link</string>
+    <string name="log_upload_open">Open Link</string>
+    <string name="log_upload_share">Share Link</string>
+    <string name="log_upload_share_template">I encountered a problem in the launcher, here is the log link:\n%s</string>
 </resources>

@@ -24,6 +24,7 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     private ButtonListener positiveListener;
     private ButtonListener negativeListener;
     private ButtonListener neutralListener;
+    private ButtonListener extraListener;
 
     private View parent;
     private ImageFilterView icon;
@@ -33,6 +34,7 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
     private FCLButton positive;
     private FCLButton negative;
     private FCLButton neutral;
+    private FCLButton extra;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public FCLAlertDialog(@NonNull Context context) {
@@ -49,16 +51,19 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
         neutral = findViewById(R.id.neutral);
+        extra = findViewById(R.id.extra);
 
         checkHeight();
 
         positive.setVisibility(View.GONE);
         negative.setVisibility(View.GONE);
         neutral.setVisibility(View.GONE);
+        extra.setVisibility(View.GONE);
 
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
         neutral.setOnClickListener(this);
+        extra.setOnClickListener(this);
 
         icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_info_24));
         title.setText(getContext().getString(R.string.dialog_info));
@@ -87,6 +92,7 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         if (view == positive) listener = positiveListener;
         else if (view == negative) listener = negativeListener;
         else if (view == neutral) listener = neutralListener;
+        else if (view == extra) listener = extraListener;
 
         if (listener != null) {
             listener.onClick();
@@ -150,6 +156,12 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         neutralListener = listener;
     }
 
+    public void setExtraButton(String text, ButtonListener listener) {
+        extra.setVisibility(View.VISIBLE);
+        extra.setText(text);
+        extraListener = listener;
+    }
+
     public static class Builder {
 
         private Context context;
@@ -211,6 +223,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         public Builder setNeutralButton(String text, ButtonListener listener) {
             dialog.setNeutralButton(text, listener);
+            return this;
+        }
+
+        public Builder setExtraButton(String text, ButtonListener listener) {
+            dialog.setExtraButton(text, listener);
             return this;
         }
     }
