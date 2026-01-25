@@ -28,8 +28,8 @@
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
             </filters>
-            <AppenderRef ref="SysOut" level="info"/>
-            <AppenderRef ref="ServerGuiConsole" level="info"/>
+            <AppenderRef ref="SysOut" level="all"/>
+            <AppenderRef ref="ServerGuiConsole" level="all"/>
             <AppenderRef ref="File" level="info"/>
             <AppenderRef ref="DebugFile" level="all"/>
         </Root>
