@@ -3,7 +3,6 @@ package com.tungsten.fcl.ui.manage;
 import static com.tungsten.fcl.ui.download.InstallersPage.alertFailureMessage;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -44,7 +43,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -185,7 +183,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     } else {
                         if (executor.getException() == null)
                             return;
-                        alertFailureMessage(getContext(), executor.getException(), () -> {});
+                        alertFailureMessage(getContext(), executor.getException(), () -> {
+                        });
                     }
                     loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                 });
@@ -260,7 +259,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                         } else {
                             if (executor.getException() == null)
                                 return;
-                            alertFailureMessage(getContext(), executor.getException(), () -> {});
+                            alertFailureMessage(getContext(), executor.getException(), () -> {
+                            });
                         }
                         loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                     });

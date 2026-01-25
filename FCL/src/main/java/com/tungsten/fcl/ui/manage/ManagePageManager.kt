@@ -57,6 +57,9 @@ class ManagePageManager(
         )
     }
 
+    private var versionLoaded = false
+    private lateinit var runnable: () -> Unit
+
     init {
         instance = this
     }
@@ -76,6 +79,14 @@ class ManagePageManager(
         return ArrayList<FCLCommonPage>().apply {
             add(versionSettingPage)
         }
+    }
+
+    override fun switchPage(id: Int) {
+        runnable = {
+            super.switchPage(id)
+        }
+        if (versionLoaded)
+            runnable()
     }
 
     override fun createPageById(id: Int): FCLCommonPage? {
@@ -98,6 +109,10 @@ class ManagePageManager(
         this.version = version
         allPages.forEach {
             (it as VersionLoadable).loadVersion(profile, version)
+        }
+        if (!versionLoaded) {
+            versionLoaded = true
+            runnable()
         }
     }
 
