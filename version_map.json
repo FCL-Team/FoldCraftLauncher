@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1281,
-    "versionName": "1.2.8.1",
-    "date": "2026.01.22",
+    "versionCode": 1282,
+    "versionName": "1.2.8.2",
+    "date": "2026.01.27",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add mod/modpack translation query function (Chinese and English only)  \n2. Fix the issue where the DELETE key cannot be used in the Pojav backend  \n3. Refactor the download page layout structure and localize categories to optimize loading speed  \n4. Fix download page pagination-related error issues  \n5. Fix potential Out-of-Memory (OOM) errors when checking for updates on local mod files, which may occur due to excessively large mod files"
+        "text": "(Translated from Chinese by AI)\n1. Add a log upload feature that allows users to directly upload logs and generate shareable links.  \n2. Fix the issue where the style name is too long when editing direction keys, preventing modification of styles.  \n3. Fix layout spacing issues on the download page.  \n4. Add a quick jump feature to the installation page in the mod loader detection dialog.  \n5. When debug logging is enabled, allow the launcher to directly retrieve and output debug logs instead of only generating debug.log."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加模组/整合包翻译查询功能（仅中英文）\n2.修复Pojav后端无法使用DELETE键的问题\n3.重构下载页面布局结构和本地化分类，优化加载速度\n4.修复下载页面页码相关报错问题\n5.修复本地模组文件检查更新可能会因模组文件过大OOM的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加日志上传功能，允许直接上传日志生成分享链接\n2.修复方向键编辑方向键时样式名称过长导致无法修改样式的问题\n3.修复下载页面布局间距问题\n4.为模组加载器检测对话框添加快捷跳转至安装页面的功能\n5.当开启输出调试日志时允许启动器直接获取并输出调试日志而不是只生成debug.log"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/ded35ae0f7fc",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.1/FCL-release-1.2.8.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/623854bf1702",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.2/FCL-release-1.2.8.2-all.apk"
   }
 ]
