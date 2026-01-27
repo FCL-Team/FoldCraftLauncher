@@ -24,22 +24,18 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.game.CrashReportAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fcllibrary.component.FCLActivity;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.crash.CrashReporter;
-import com.tungsten.fcllibrary.util.LocaleUtils;
 import com.tungsten.fcllibrary.util.LogSharingUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -50,8 +46,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.tungsten.fclcore.util.io.HttpRequest;
 
 public class JVMCrashActivity extends FCLActivity implements View.OnClickListener {
 
@@ -309,7 +303,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         CompletableFuture.runAsync(() -> {
             try {
                 String logContent = error.getText().toString();
-                String apiUrl = LocaleUtils.getLogUploadApiUrl(this);
+                String apiUrl = LogSharingUtils.getLogUploadApiUrl(this);
                 String response = HttpRequest.POST(apiUrl)
                         .form(pair("content", logContent))
                         .getString();

@@ -23,6 +23,14 @@ public class LogSharingUtils {
                 .create().show();
     }
 
+    public static String getLogUploadApiUrl(Context context) {
+        if (LocaleUtils.isChinese(context)) {
+            return "https://api.mclogs.lemwood.icu/1/log";
+        } else {
+            return "https://api.mclo.gs/1/log";
+        }
+    }
+
     private static void copyToClipboard(Context context, String text) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {

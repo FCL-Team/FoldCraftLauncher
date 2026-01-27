@@ -31,7 +31,6 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
-import com.tungsten.fcllibrary.util.LocaleUtils
 import com.tungsten.fcllibrary.util.LogSharingUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -263,7 +262,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
 
     private fun uploadLog(content: String) {
         val progress = ProgressDialog(context)
-        val url = LocaleUtils.getLogUploadApiUrl(context)
+        val url = LogSharingUtils.getLogUploadApiUrl(context)
         activity.lifecycleScope.launch(Dispatchers.Default) {
             val result = runCatching {
                 HttpRequest.POST(url)

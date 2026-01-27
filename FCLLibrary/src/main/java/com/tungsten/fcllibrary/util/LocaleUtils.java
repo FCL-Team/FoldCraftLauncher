@@ -35,14 +35,6 @@ public class LocaleUtils {
         return lang == 2 || lang == 8 || (lang == 0 && getSystemLocale().getLanguage().startsWith("zh"));
     }
 
-    public static String getLogUploadApiUrl(Context context) {
-        if (isChinese(context)) {
-            return "https://api.mclogs.lemwood.icu/1/log";
-        } else {
-            return "https://api.mclo.gs/1/log";
-        }
-    }
-
     public static int getLanguage(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("lang", 0);

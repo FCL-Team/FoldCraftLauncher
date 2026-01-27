@@ -1,5 +1,7 @@
 package com.tungsten.fcllibrary.crash;
 
+import static com.tungsten.fclcore.util.Pair.pair;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -12,16 +14,14 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.util.LocaleUtils;
-import com.tungsten.fcllibrary.util.LogSharingUtils;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.util.io.HttpRequest;
-import static com.tungsten.fclcore.util.Pair.pair;
+import com.tungsten.fcllibrary.util.LogSharingUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,7 +116,7 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
         CompletableFuture.runAsync(() -> {
             try {
                 String logContent = error.getText().toString();
-                String apiUrl = LocaleUtils.getLogUploadApiUrl(this);
+                String apiUrl = LogSharingUtils.getLogUploadApiUrl(this);
                 String response = HttpRequest.POST(apiUrl)
                         .form(pair("content", logContent))
                         .getString();
