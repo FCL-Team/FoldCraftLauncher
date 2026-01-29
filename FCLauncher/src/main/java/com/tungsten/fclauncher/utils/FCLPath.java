@@ -66,8 +66,8 @@ public class FCLPath {
         PLUGIN_DIR = FILES_DIR + "/plugins";
         BACKGROUND_DIR = FILES_DIR + "/background";
         CONTROLLER_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/control";
-
-        PRIVATE_COMMON_DIR = context.getExternalFilesDir(".minecraft").getAbsolutePath();
+        
+        PRIVATE_COMMON_DIR = new File(context.getExternalFilesDir(null), ".minecraft").getAbsolutePath();
 
         AUTHLIB_INJECTOR_PATH = PLUGIN_DIR + "/authlib-injector.jar";
         LIB_PATCHER_PATH = PLUGIN_DIR + "/MioLibPatcher.jar";
