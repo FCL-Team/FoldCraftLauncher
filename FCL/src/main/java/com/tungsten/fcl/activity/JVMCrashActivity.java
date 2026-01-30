@@ -119,7 +119,13 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
 
     private void init() throws IOException {
         String summarize = "Exit Normally, exit code = " + exitCode;
-        List<String> errorLines = Arrays.stream(FileUtils.readText(new File(logPath)).split("\n")).collect(Collectors.toList());
+        String log;
+        if (new File(logPath).length() < 8 * 1024 * 1024) {
+            log = FileUtils.readText(new File(logPath));
+        } else {
+            log = "Log file is too large, please check the log file manually.\n";
+        }
+        List<String> errorLines = Arrays.stream(log.split("\n")).collect(Collectors.toList());
         if (exitCode != 0 && StringUtils.containsOne(errorLines,
                 "Could not create the Java Virtual Machine.",
                 "Error occurred during initialization of VM",
@@ -141,7 +147,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         errorLines.forEach(it -> error.append(it + "\n"));
 
         if (game) {
-            analyzeCrashReport(FileUtils.readText(new File(logPath)));
+            analyzeCrashReport(log);
         } else {
             setLoading(false);
             hint.setText(getString(R.string.jar_executor_crash_reason));
