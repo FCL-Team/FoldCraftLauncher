@@ -8,6 +8,7 @@ import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -254,6 +255,13 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         last.setOnClickListener(this);
         retry.setOnClickListener(this);
 
+        nameEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                search();
+                return true;
+            }
+            return false;
+        });
         nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
 
         sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);

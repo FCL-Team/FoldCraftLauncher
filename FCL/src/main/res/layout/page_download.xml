@@ -38,6 +38,7 @@
                 android:layout_marginTop="10dp"
                 android:singleLine="true"
                 android:textSize="13sp"
+                android:imeOptions="actionSearch"
                 app:auto_edit_tint="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
