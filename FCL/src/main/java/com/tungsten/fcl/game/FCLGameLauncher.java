@@ -22,6 +22,7 @@ import android.content.Context;
 import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -70,83 +71,38 @@ public final class FCLGameLauncher extends DefaultLauncher {
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
         }
-
-        if (optionsFile.exists()) {
-            fixOptions(optionsFile);
-            return;
-        }
-        try {
-            RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
-        } catch (IOException e) {
-            Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
-        }
-
-        modifyOptions(optionsFile);
-    }
-
-    private void modifyOptions(File optionsFile) {
-        StringBuilder str = new StringBuilder();
-        String lang;
-        boolean isChinese = LocaleUtils.isChinese(context);
-        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
-        if (gameVersion.compareTo("1.1") < 0) {
-            lang = null;
-        } else if (gameVersion.compareTo("1.11") < 0) {
-            lang = isChinese ? "zh_CN" : "en_US";
-        } else {
-            lang = isChinese ? "zh_cn" : "en_us";
-        }
-        try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains("lang:") && lang != null) {
-                    str.append("lang:").append(lang).append("\n");
-                } else {
-                    str.append(line).append("\n");
-                }
-            }
-        } catch (Exception e) {
-            Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
-        }
-        if (!str.toString().isEmpty()) {
-            try (FileWriter fw = new FileWriter(optionsFile)) {
-                fw.write(str.toString());
+        GameOption gameOption = null;
+        if (!optionsFile.exists()) {
+            try {
+                RuntimeUtils.copyAssets(context, "options.txt", optionsFile.getAbsolutePath());
+                gameOption = new GameOption(optionsFile.getParent());
+                gameOption.set("lang", LocaleUtils.isChinese(context) ? "zh_cn" : "en_us");
             } catch (IOException e) {
-                Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
+                Logging.LOG.log(Level.WARNING, "Unable to generate options.txt", e);
             }
         }
+        if (gameOption == null)
+            gameOption = new GameOption(optionsFile.getParent());
+        fixLang(gameOption);
+        fixOptions(gameOption);
+        gameOption.save();
     }
 
-    private void fixOptions(File optionsFile) {
-        StringBuilder str = new StringBuilder();
+    private void fixOptions(GameOption gameOption) {
+        gameOption.set("touchscreen", "false");
+    }
+
+    private void fixLang(GameOption gameOption) {
         GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
         if (gameVersion.compareTo("1.1") < 0) {
             return;
         }
         boolean toUpper = gameVersion.compareTo("1.11") < 0;
-        try (BufferedReader bfr = new BufferedReader(new FileReader(optionsFile))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains("lang:")) {
-                    String lang;
-                    lang = line.replace("lang:", "");
-                    String[] parts = lang.split("_", 2);
-                    lang = parts[0] + "_" + (toUpper ? parts[1].toUpperCase() : parts[1].toLowerCase());
-                    str.append("lang:").append(lang).append("\n");
-                } else {
-                    str.append(line).append("\n");
-                }
-            }
-        } catch (Exception e) {
-            Logging.LOG.log(Level.WARNING, "Unable to read options.txt.", e);
-        }
-        if (!str.toString().isEmpty()) {
-            try (FileWriter fw = new FileWriter(optionsFile)) {
-                fw.write(str.toString());
-            } catch (IOException e) {
-                Logging.LOG.log(Level.WARNING, "Unable to write options.txt.", e);
-            }
-        }
+        String lang;
+        lang = gameOption.get("lang");
+        String[] parts = lang.split("_", 2);
+        lang = parts[0] + "_" + (toUpper ? parts[1].toUpperCase() : parts[1].toLowerCase());
+        gameOption.set("lang", lang);
     }
 
     private void modifyIfConfigDetected(String config, String option, String replacement, boolean overwrite, Renderer... renderers) {
