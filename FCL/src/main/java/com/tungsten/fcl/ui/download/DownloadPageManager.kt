@@ -5,6 +5,9 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
+import com.tungsten.fcl.ui.download.common.DownloadPage
+import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage
+import com.tungsten.fcl.ui.download.version.VersionInstallPage
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
@@ -29,7 +32,7 @@ class DownloadPageManager(
 
     var profile: Profile? = null
     var version: String? = null
-    private lateinit var installVersionPage: InstallVersionPage
+    private lateinit var versionInstallPage: VersionInstallPage
     private val downloadModpackPage: ModpackDownloadPage by lazy {
         ModpackDownloadPage(context, PAGE_ID_DOWNLOAD_MODPACK, parent, R.layout.page_download)
     }
@@ -67,7 +70,7 @@ class DownloadPageManager(
     }
 
     override fun init(listener: UIListener?) {
-        installVersionPage = InstallVersionPage(
+        versionInstallPage = VersionInstallPage(
             context,
             PAGE_ID_DOWNLOAD_GAME,
             parent,
@@ -78,7 +81,7 @@ class DownloadPageManager(
 
     override fun getAllPages(): ArrayList<FCLCommonPage> {
         return ArrayList<FCLCommonPage>().apply {
-            add(installVersionPage)
+            add(versionInstallPage)
         }
     }
 

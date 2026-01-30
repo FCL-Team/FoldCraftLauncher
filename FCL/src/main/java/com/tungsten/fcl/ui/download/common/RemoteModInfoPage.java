@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -14,6 +14,9 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
+import com.tungsten.fcl.ui.download.ModDownloadPage;
+import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;

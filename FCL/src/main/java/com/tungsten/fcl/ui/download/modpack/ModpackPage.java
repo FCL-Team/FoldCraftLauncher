@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 import android.content.res.ColorStateList;

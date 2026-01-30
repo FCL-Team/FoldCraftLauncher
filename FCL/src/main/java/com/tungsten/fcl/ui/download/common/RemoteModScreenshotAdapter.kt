@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download
+package com.tungsten.fcl.ui.download.common
 
 import android.content.Context
 import android.graphics.drawable.Drawable

@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 import android.text.Html;
@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;

@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -13,6 +13,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;

@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.RemoteMod;

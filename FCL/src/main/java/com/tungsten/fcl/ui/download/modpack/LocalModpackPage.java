@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
@@ -13,6 +13,7 @@ import com.tungsten.fcl.game.ManuallyCreatedModpackException;
 import com.tungsten.fcl.game.ModpackHelper;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;

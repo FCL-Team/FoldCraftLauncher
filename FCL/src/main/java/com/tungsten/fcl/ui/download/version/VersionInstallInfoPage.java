@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.version;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -19,6 +19,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
@@ -54,7 +55,7 @@ import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.zip.ZipException;
 
-public class InstallersPage extends FCLTempPage implements View.OnClickListener {
+public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickListener {
 
     private final String gameVersion;
     private InstallerItem.InstallerItemGroup group;
@@ -66,7 +67,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
     private FCLImageButton install;
     private boolean nameManuallyModified = false;
 
-    public InstallersPage(Context context, int id, FCLUILayout parent, int resId, final String gameVersion) {
+    public VersionInstallInfoPage(Context context, int id, FCLUILayout parent, int resId, final String gameVersion) {
         super(context, id, parent, resId);
         this.gameVersion = gameVersion;
         onCreate(gameVersion);
@@ -122,7 +123,7 @@ public class InstallersPage extends FCLTempPage implements View.OnClickListener 
                 }
 
                 if (library.incompatibleLibraryName.get() == null) {
-                    InstallerVersionPage page = new InstallerVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    InstallerListPage page = new InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
                         refreshVersionName();
                         DownloadPageManager.getInstance().dismissCurrentTempPage();

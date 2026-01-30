@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;

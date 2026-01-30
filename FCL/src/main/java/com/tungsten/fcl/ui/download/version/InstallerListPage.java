@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.version;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class InstallerVersionPage extends FCLTempPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class InstallerListPage extends FCLTempPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private final String gameVersion;
     private final String libraryId;
@@ -41,7 +41,7 @@ public class InstallerVersionPage extends FCLTempPage implements View.OnClickLis
     private FCLProgressBar progressBar;
     private ListView listView;
 
-    public InstallerVersionPage(Context context, int id, FCLUILayout parent, int resId, String gameVersion, String libraryId, Callback callback) {
+    public InstallerListPage(Context context, int id, FCLUILayout parent, int resId, String gameVersion, String libraryId, Callback callback) {
         super(context, id, parent, resId);
         this.gameVersion = gameVersion;
         this.libraryId = libraryId;

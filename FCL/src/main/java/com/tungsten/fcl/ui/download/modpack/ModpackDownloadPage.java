@@ -1,10 +1,11 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 import android.view.View;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.LocalizedRemoteModRepository;
+import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.version.Versions;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.mod.RemoteModRepository;

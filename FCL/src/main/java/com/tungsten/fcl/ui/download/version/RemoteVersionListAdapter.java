@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.version;
 
 import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 

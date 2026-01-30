@@ -1,16 +1,16 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.version;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.Schedulers;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class InstallVersionPage extends FCLCommonPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class VersionInstallPage extends FCLCommonPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private FCLCheckBox checkRelease;
     private FCLCheckBox checkSnapShot;
@@ -42,7 +42,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
 
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
 
-    public InstallVersionPage(Context context, int id, FCLUILayout parent, int resId) {
+    public VersionInstallPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
     }
 
@@ -69,7 +69,7 @@ public class InstallVersionPage extends FCLCommonPage implements View.OnClickLis
         failedRefresh.setOnClickListener(this);
 
         listener = remoteVersion -> {
-            InstallersPage page = new InstallersPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_installer, remoteVersion.getGameVersion());
+            VersionInstallInfoPage page = new VersionInstallInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_installer, remoteVersion.getGameVersion());
             DownloadPageManager.getInstance().showTempPage(page);
         };
 

@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

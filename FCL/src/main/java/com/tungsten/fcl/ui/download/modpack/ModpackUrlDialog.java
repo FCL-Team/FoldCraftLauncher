@@ -1,18 +1,17 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fclcore.util.platform.OperatingSystem;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 
-public class DownloadAddonDialog extends FCLDialog implements View.OnClickListener {
+public class ModpackUrlDialog extends FCLDialog implements View.OnClickListener {
 
     private final Callback callback;
 
@@ -20,14 +19,13 @@ public class DownloadAddonDialog extends FCLDialog implements View.OnClickListen
     private FCLButton positive;
     private FCLButton negative;
 
-    public DownloadAddonDialog(@NonNull Context context, String name, Callback callback) {
+    public ModpackUrlDialog(@NonNull Context context, Callback callback) {
         super(context);
         this.callback = callback;
         setCancelable(false);
-        setContentView(R.layout.dialog_download_addon);
+        setContentView(R.layout.dialog_modpack_url);
 
-        editText = findViewById(R.id.name);
-        editText.setText(name);
+        editText = findViewById(R.id.url);
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
@@ -38,9 +36,7 @@ public class DownloadAddonDialog extends FCLDialog implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (!OperatingSystem.isNameValid(editText.getText().toString())) {
-                Toast.makeText(getContext(), getContext().getString(R.string.install_new_game_malformed), Toast.LENGTH_SHORT).show();
-            } else {
+            if (StringUtils.isNotBlank(editText.getText().toString())) {
                 callback.onPositive(editText.getText().toString());
                 dismiss();
             }
@@ -51,6 +47,6 @@ public class DownloadAddonDialog extends FCLDialog implements View.OnClickListen
     }
 
     public interface Callback {
-        void onPositive(String name);
+        void onPositive(String urlString);
     }
 }

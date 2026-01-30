@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.ui.download.ModDownloadPage;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;

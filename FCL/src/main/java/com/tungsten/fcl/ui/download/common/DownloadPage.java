@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
 import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
@@ -23,9 +23,11 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
+import com.tungsten.fcl.ui.download.ModDownloadPage;
+import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.version.Versions;
-import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
@@ -71,9 +73,6 @@ import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-
 public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     protected RemoteModRepository repository;
@@ -112,8 +111,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
-    PageDownloadBinding binding;
-    ModLoaderType selectedModLoader;
+    protected PageDownloadBinding binding;
+    protected ModLoaderType selectedModLoader;
     private final DownloadProvider downloadProvider;
 
     public void setLoading(boolean loading) {
@@ -439,7 +438,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 }).start();
     }
 
-    void showTranslationDialog() {
+    protected void showTranslationDialog() {
         new TranslationDialog(getContext(), repository, s -> {
             nameEditText.setText(s);
             search();

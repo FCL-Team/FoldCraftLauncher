@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.common;
 
 import android.animation.AnimatorInflater;
 import android.annotation.SuppressLint;

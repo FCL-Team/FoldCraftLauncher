@@ -1,4 +1,4 @@
-package com.tungsten.fcl.ui.download;
+package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 
@@ -9,6 +9,8 @@ import com.tungsten.fcl.game.ManuallyCreatedModpackException;
 import com.tungsten.fcl.game.ModpackHelper;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadPageManager;
+import com.tungsten.fcl.ui.download.version.VersionInstallInfoPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.MismatchedModpackTypeException;
@@ -83,7 +85,7 @@ public class ModpackInstaller {
                                     builder1.create().show();
                                 }
                             } else {
-                                InstallersPage.alertFailureMessage(context, executor.getException(), () -> {});
+                                VersionInstallInfoPage.alertFailureMessage(context, executor.getException(), () -> {});
                             }
                         }
 

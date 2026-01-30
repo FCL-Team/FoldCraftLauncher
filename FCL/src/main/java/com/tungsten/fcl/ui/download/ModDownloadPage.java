@@ -9,6 +9,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.LocalizedRemoteModRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
