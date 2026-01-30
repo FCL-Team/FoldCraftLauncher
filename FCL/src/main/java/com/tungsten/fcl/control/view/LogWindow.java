@@ -14,13 +14,15 @@ import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LogWindow extends ScrollView {
 
-    private boolean autoTint;
-    private BooleanProperty visibilityProperty;
+    private final boolean autoTint;
     private FCLTextView textView;
     private int lineCount;
-
+    private final List<Long> timeList = new ArrayList<>();
     public LogWindow(Context context) {
         super(context);
         autoTint = false;
@@ -29,25 +31,17 @@ public class LogWindow extends ScrollView {
 
     public LogWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
-        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
-        typedArray.recycle();
+        try(TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
+            autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
+        }
         init(context);
     }
 
     public LogWindow(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
-        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
-        typedArray.recycle();
-        init(context);
-    }
-
-    public LogWindow(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow);
-        autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
-        typedArray.recycle();
+        try(TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
+            autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
+        }
         init(context);
     }
 
@@ -62,46 +56,14 @@ public class LogWindow extends ScrollView {
         textView.setEllipsize(null);
     }
 
-    public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
-    }
-
-    public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
-    }
-
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                @Override
-                public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
-                        if (!visible) {
-                            cleanLog();
-                        }
-                    });
-                }
-
-                @Override
-                public Object getBean() {
-                    return this;
-                }
-
-                @Override
-                public String getName() {
-                    return "visibility";
-                }
-            };
-        }
-
-        return visibilityProperty;
+    public final void setVisibility(boolean visibility) {
+        setVisibility(visibility ? VISIBLE : GONE);
+        if (!visibility)
+            cleanLog();
     }
 
     public void appendLog(String str) {
-        if (!getVisibilityValue()) {
+        if (getVisibility() != VISIBLE) {
             return;
         }
         lineCount++;
@@ -115,6 +77,12 @@ public class LogWindow extends ScrollView {
                 fullScroll(View.FOCUS_DOWN);
             }
         });
+        long now = System.currentTimeMillis();
+        timeList.removeIf(time -> now - time > 200);
+        timeList.add(now);
+        if (timeList.size() > 200) {
+            setVisibility(false);
+        }
     }
 
     public void cleanLog() {

@@ -463,13 +463,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             return true;
         }));
 
-        logWindow.visibilityProperty().setValue(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
+        logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
         menuSetting.getShowLogProperty().addListener(observable -> {
-            logWindow.visibilityProperty().setValue(menuSetting.isShowLog());
+            logWindow.setVisibility(menuSetting.isShowLog());
         });
         menuSetting.getAutoShowLogProperty().addListener(observable -> {
             if (baseLayout.getBackground() != null) {
-                logWindow.visibilityProperty().setValue(menuSetting.isAutoShowLog());
+                logWindow.setVisibility(menuSetting.isAutoShowLog());
             }
         });
 
@@ -717,7 +717,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         baseLayout.setBackground(null);
         baseLayout.removeView(launchProgress);
         if (!menuSetting.isShowLog() && menuSetting.isAutoShowLog()) {
-            logWindow.visibilityProperty().setValue(false);
+            logWindow.setVisibility(false);
         }
         refreshWindowsSize(menuSetting.getWindowScale());
     }

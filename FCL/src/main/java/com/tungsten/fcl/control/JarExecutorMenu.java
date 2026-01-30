@@ -73,7 +73,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
         cursorView = findViewById(R.id.cursor);
         touchCharInput = findViewById(R.id.input_scanner);
         touchPad.setOnTouchListener(this);
-        logWindow.setVisibilityValue(true);
+        logWindow.setVisibility(true);
         touchCharInput.setCharacterSender(null, new AwtCharSender(awtInput));
 
         forceExit = findViewById(R.id.force_exit);
@@ -202,7 +202,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
             builder.create().show();
         }
         if (view == showLog) {
-            logWindow.setVisibilityValue(!logWindow.getVisibilityValue());
+            logWindow.setVisibility(!(logWindow.getVisibility() == View.VISIBLE));
         }
         if (view == mouseMode) {
             clickMode = !clickMode;
