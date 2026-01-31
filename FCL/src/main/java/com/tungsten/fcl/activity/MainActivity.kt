@@ -818,7 +818,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     null,
                     file
                 )
-                DownloadPageManager.getInstance().showTempPage(page)
+                DownloadPageManager.instance?.showTempPage(page)
             }
         }
     }
