@@ -147,12 +147,58 @@ class SplashActivity : FCLActivity() {
                     Logging.LOG.log(Level.WARNING, it.message)
                 }
             }
+            val intent = Intent(this@SplashActivity, MainActivity::class.java)
+            handleExternalFileIntent(intent)
             startActivity(
-                Intent(this@SplashActivity, MainActivity::class.java),
+                intent,
                 ActivityOptionsCompat.makeCustomAnimation(this@SplashActivity, 0, 0).toBundle()
             )
             finish()
         }
+    }
+
+    private fun handleExternalFileIntent(targetIntent: Intent) {
+        val intent = intent
+        val action = intent.action
+        val data = intent.data
+
+        if (Intent.ACTION_VIEW == action && data != null) {
+            try {
+                val fileName = getFileName(data) ?: "external_modpack"
+                val cacheFile = File(externalCacheDir, fileName)
+                contentResolver.openInputStream(data)?.use { input ->
+                    cacheFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                targetIntent.putExtra("external_file_path", cacheFile.absolutePath)
+            } catch (e: Exception) {
+                Logging.LOG.log(Level.WARNING, "Failed to handle external file intent: ${e.message}")
+            }
+        }
+    }
+
+    private fun getFileName(uri: android.net.Uri): String? {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val index = it.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                    if (index != -1) {
+                        result = it.getString(index)
+                    }
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/') ?: -1
+            if (cut != -1) {
+                result = result?.substring(cut + 1)
+            }
+        }
+        return result
     }
 
     private fun requestPermission() {

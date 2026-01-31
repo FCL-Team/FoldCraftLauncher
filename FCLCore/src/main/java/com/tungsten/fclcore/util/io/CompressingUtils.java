@@ -21,11 +21,15 @@ import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -289,6 +293,78 @@ public final class CompressingUtils {
             return Optional.of(readTextZipEntry(file, name, encoding));
         } catch (IOException | NullPointerException e) {
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Extract a compressed file (zip or 7z) to destination directory.
+     *
+     * @param archive the compressed file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extract(File archive, File destination) throws IOException {
+        String name = archive.getName().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".zip") || name.endsWith(".jar") || name.endsWith(".mrpack")) {
+            extractZip(archive, destination);
+        } else if (name.endsWith(".7z")) {
+            extract7z(archive, destination);
+        } else {
+            throw new IOException("Unsupported archive format: " + archive.getName());
+        }
+    }
+
+    /**
+     * Extract a zip file to destination directory.
+     *
+     * @param zipFile the zip file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extractZip(File zipFile, File destination) throws IOException {
+        try (ZipFile zf = new ZipFile(zipFile)) {
+            Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                File out = new File(destination, entry.getName());
+                if (entry.isDirectory()) {
+                    out.mkdirs();
+                } else {
+                    out.getParentFile().mkdirs();
+                    try (InputStream is = zf.getInputStream(entry);
+                         FileOutputStream os = new FileOutputStream(out)) {
+                        IOUtils.copyTo(is, os);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Extract a 7z file to destination directory.
+     *
+     * @param sevenZFile the 7z file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extract7z(File sevenZFile, File destination) throws IOException {
+        try (SevenZFile zf = new SevenZFile(sevenZFile)) {
+            SevenZArchiveEntry entry;
+            while ((entry = zf.getNextEntry()) != null) {
+                File out = new File(destination, entry.getName());
+                if (entry.isDirectory()) {
+                    out.mkdirs();
+                } else {
+                    out.getParentFile().mkdirs();
+                    try (FileOutputStream os = new FileOutputStream(out)) {
+                        byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+                        int len;
+                        while ((len = zf.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
+                        }
+                    }
+                }
+            }
         }
     }
 }

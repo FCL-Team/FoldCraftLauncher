@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import android.view.KeyEvent
 import android.view.View
 import android.view.animation.BounceInterpolator
@@ -46,7 +47,10 @@ import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
+import com.tungsten.fcl.ui.download.DownloadPageManager
+import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
@@ -123,6 +127,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.background,
             ThemeEngine.getInstance().getTheme().getBackground(this)
         )
+
+        handleExternalFileIntent(intent)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -779,6 +785,51 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         mediaPlayer?.let {
             val volume = sharedPreferences.getInt("videoBackgroundVolume", 100) / 100f
             it.setVolume(volume, volume)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleExternalFileIntent(intent)
+    }
+
+    private fun handleExternalFileIntent(intent: Intent) {
+        val externalFilePath = intent.getStringExtra("external_file_path") ?: return
+        val file = File(externalFilePath)
+        if (!file.exists()) return
+
+        binding.root.post {
+            if (_uiManager == null) {
+                binding.root.postDelayed(500) { handleExternalFileIntent(intent) }
+                return@post
+            }
+
+            onSelect(binding.download)
+
+            binding.root.post {
+                val downloadUI = uiManager.downloadUI
+                val profile = Profiles.getSelectedProfile()
+
+                Toast.makeText(
+                    this,
+                    getString(R.string.modpack_external_detected, file.name),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                downloadUI.checkPageManager {
+                    val page = LocalModpackPage(
+                        this,
+                        PageManager.PAGE_ID_TEMP,
+                        downloadUI.container,
+                        R.layout.page_modpack,
+                        profile,
+                        null,
+                        file
+                    )
+                    downloadUI.pageManager.showTempPage(page)
+                }
+            }
         }
     }
 }
