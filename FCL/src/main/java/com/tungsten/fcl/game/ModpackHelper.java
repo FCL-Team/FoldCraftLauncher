@@ -89,10 +89,14 @@ public final class ModpackHelper {
 
     public static boolean isFileModpackByExtension(File file) {
         String ext = FileUtils.getExtension(file);
-        return "zip".equals(ext) || "mrpack".equals(ext);
+        return "zip".equals(ext) || "mrpack".equals(ext) || "7z".equals(ext);
     }
 
     public static Modpack readModpackManifest(Path file, Charset charset) throws UnsupportedModpackException, ManuallyCreatedModpackException {
+        if (file.getFileName().toString().toLowerCase().endsWith(".7z")) {
+            throw new ManuallyCreatedModpackException(file);
+        }
+
         try (ZipFile zipFile = CompressingUtils.openZipFile(file, charset)) {
             // Order for trying detecting manifest is necessary here.
             // Do not change to iterating providers.
