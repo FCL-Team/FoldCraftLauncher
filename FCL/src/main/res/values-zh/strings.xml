@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_import">安装整合包</string>
     <string name="splash_agreement">FCL需要储存权限以管理/读取游戏文件，FCL在GitHub上完全开源，请不用担心您的数据安全。权限仅用于正常运行游戏，无任何安全问题。</string>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
     <string name="splash_permission_grant">授予</string>
@@ -585,6 +586,7 @@
     <string name="modpack_download">下载整合包</string>
     <string name="modpack_enter_name">给游戏起个你喜欢的名字</string>
     <string name="modpack_export">导出整合包</string>
+    <string name="modpack_external_detected">检测到外部整合包：%s</string>
     <string name="modpack_export_as">请选择整合包类型 (若无法决定，请选择我的世界中文论坛整合包标准)</string>
     <string name="modpack_file_api">整合包下载链接前缀</string>
     <string name="modpack_files_blueprints">BuildCraft 蓝图</string>

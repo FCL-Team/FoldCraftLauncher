@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import android.view.KeyEvent
 import android.view.View
 import android.view.animation.BounceInterpolator
@@ -809,16 +810,25 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.root.post {
                 val downloadUI = uiManager.downloadUI
                 val profile = Profiles.getSelectedProfile()
-                val page = LocalModpackPage(
+
+                Toast.makeText(
                     this,
-                    PageManager.PAGE_ID_TEMP,
-                    downloadUI.container,
-                    R.layout.page_modpack,
-                    profile,
-                    null,
-                    file
-                )
-                DownloadPageManager.instance?.showTempPage(page)
+                    getString(R.string.modpack_external_detected, file.name),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                downloadUI.checkPageManager {
+                    val page = LocalModpackPage(
+                        this,
+                        PageManager.PAGE_ID_TEMP,
+                        downloadUI.container,
+                        R.layout.page_modpack,
+                        profile,
+                        null,
+                        file
+                    )
+                    downloadUI.pageManager.showTempPage(page)
+                }
             }
         }
     }

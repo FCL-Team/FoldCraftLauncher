@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name_import">Install Modpack</string>
 
     <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
@@ -619,6 +620,7 @@
     <string name="modpack_download">Download Modpack</string>
     <string name="modpack_enter_name">Enter a name for this modpack.</string>
     <string name="modpack_export">Export Modpack</string>
+    <string name="modpack_external_detected">External modpack detected: %s</string>
     <string name="modpack_export_as">Export Modpack As…</string>
     <string name="modpack_file_api">Modpack URL Prefix</string>
     <string name="modpack_files_blueprints">BuildCraft Blueprints</string>
