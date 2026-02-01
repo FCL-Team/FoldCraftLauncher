@@ -9,8 +9,6 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -21,8 +19,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.BaseInfoData;
@@ -40,7 +36,6 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.UUID;
@@ -122,8 +117,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         setWillNotDraw(false);
 
@@ -185,8 +180,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(this::notifyData);
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {

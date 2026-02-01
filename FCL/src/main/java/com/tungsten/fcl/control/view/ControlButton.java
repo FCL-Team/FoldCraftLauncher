@@ -19,7 +19,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
@@ -34,7 +33,6 @@ import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -45,8 +43,6 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.util.ConvertUtils;
-
-import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -114,8 +110,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
