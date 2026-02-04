@@ -178,7 +178,11 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                 arch = "x86_64";
                 break;
         }
-        url = url.replace("-all", "-" + arch);
+        if (url.endsWith("-all.apk")) {
+            url = url.replace("-all.apk", "-" + arch + ".apk");
+        } else {
+            url = url.replace("-all", "-" + arch);
+        }
         return url;
     }
 }
