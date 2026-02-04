@@ -295,12 +295,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        handleModpack(intent)
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("modpack_handled", modpackHandled)
@@ -734,7 +728,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    public fun checkNotificationPermission(): Boolean {
+    fun checkNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             true
         } else {
@@ -745,7 +739,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    public fun requestNotificationPermission() {
+    fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || !ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -806,7 +800,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun handleModpack(intent: Intent) {
         val path = intent.getStringExtra("modpack_cache_path") ?: return
-        intent.removeExtra("modpack_cache_path")
         modpackHandled = true
         val file = File(path)
         if (!file.exists()) return
