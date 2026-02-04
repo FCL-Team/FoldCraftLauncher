@@ -69,8 +69,8 @@ class DraggableTextView @JvmOverloads constructor(
             putFloat("fpsY", -1f)
         }
         val activity = FCLApplication.getCurrentActivity()
-        x = (AndroidUtils.getScreenWidth(activity) - width) / 2f
-        y = (AndroidUtils.getScreenHeight(activity) - height) / 2f
+        x = (AndroidUtils.getScreenWidth() - width) / 2f
+        y = (AndroidUtils.getScreenHeight() - height) / 2f
     }
 
     fun initPosition() {

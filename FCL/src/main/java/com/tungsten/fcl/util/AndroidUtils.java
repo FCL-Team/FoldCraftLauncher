@@ -1,8 +1,6 @@
 package com.tungsten.fcl.util;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
-import static android.os.Build.VERSION.SDK_INT;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,10 +10,7 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.opengl.EGL14;
@@ -23,20 +18,14 @@ import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
 import android.opengl.EGLDisplay;
 import android.opengl.GLES20;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.DisplayCutout;
-import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.mio.util.DisplayUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.WebActivity;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
@@ -105,11 +94,15 @@ public class AndroidUtils {
     }
 
 
-    public static int getScreenHeight(Context context) {
+    public static int getScreenHeight() {
+        if(DisplayUtil.screenHeight != -1)
+            return DisplayUtil.screenHeight;
         return DisplayUtil.currentDisplayMetrics.heightPixels;
     }
 
-    public static int getScreenWidth(Activity context) {
+    public static int getScreenWidth() {
+        if(DisplayUtil.screenWidth != -1)
+            return DisplayUtil.screenWidth;
         return DisplayUtil.currentDisplayMetrics.widthPixels;
     }
 
