@@ -799,6 +799,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val file = File(externalFilePath)
         if (!file.exists()) return
 
+        // 消费此 Intent 数据，防止重复处理
+        intent.removeExtra("external_file_path")
+
         binding.root.post {
             if (_uiManager == null) {
                 binding.root.postDelayed(500) { handleExternalFileIntent(intent) }
