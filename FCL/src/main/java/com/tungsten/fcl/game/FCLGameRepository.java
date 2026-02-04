@@ -29,7 +29,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.mio.manager.RendererManager;
-import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -360,8 +359,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMaxMemory())
                 .setUUid(vs.getUuid())
-                .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
-                .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor() / 100.0))
+                .setWidth((int) (AndroidUtils.getScreenWidth() * vs.getScaleFactor() / 100.0))
+                .setHeight((int) (AndroidUtils.getScreenHeight() * vs.getScaleFactor() / 100.0))
                 .setServerIp(vs.getServerIp())
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
