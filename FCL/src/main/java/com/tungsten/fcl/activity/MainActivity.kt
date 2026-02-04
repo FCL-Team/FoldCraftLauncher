@@ -114,12 +114,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var theme2: IntegerProperty
     private lateinit var theme2Dark: IntegerProperty
     var isVersionLoading = false
+    private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
     private lateinit var sharedPreferences: SharedPreferences
     var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        modpackHandled = savedInstanceState?.getBoolean("modpack_handled") ?: false
         instance = WeakReference(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
@@ -253,7 +255,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                             .create()
                             .show()
                     }
-                    handleModpack(intent)
+                    if (!modpackHandled) {
+                        handleModpack(intent)
+                    }
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
                     backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
@@ -284,11 +288,22 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (event?.keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             _uiManager?.onBackPressed()
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleModpack(intent)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("modpack_handled", modpackHandled)
     }
 
     override fun onPause() {
@@ -792,6 +807,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun handleModpack(intent: Intent) {
         val path = intent.getStringExtra("modpack_cache_path") ?: return
         intent.removeExtra("modpack_cache_path")
+        modpackHandled = true
         val file = File(path)
         if (!file.exists()) return
         Toast.makeText(
@@ -815,20 +831,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-<<<<<<< HEAD
-    private fun handleExternalFileIntent(intent: Intent) {
-        val externalFilePath = intent.getStringExtra("external_file_path") ?: return
-        val file = File(externalFilePath)
-        if (!file.exists()) return
-
-        // 消费此 Intent 数据，防止重复处理
-        intent.removeExtra("external_file_path")
-
-        binding.root.post {
-            if (_uiManager == null) {
-                binding.root.postDelayed(500) { handleExternalFileIntent(intent) }
-                return@post
-=======
     private fun refreshScreenSize() {
         binding.textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
@@ -838,7 +840,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             ) {
                 DisplayUtil.screenWidth = width
                 DisplayUtil.screenHeight = height
->>>>>>> 87aa56b23b6b9adaff6781632f54016e08ab8601
             }
 
             override fun onSurfaceTextureSizeChanged(
