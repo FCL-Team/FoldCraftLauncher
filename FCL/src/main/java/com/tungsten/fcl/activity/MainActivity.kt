@@ -14,12 +14,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import android.view.KeyEvent
 import android.view.TextureView
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -51,7 +51,6 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
@@ -129,8 +128,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.background,
             ThemeEngine.getInstance().getTheme().getBackground(this)
         )
-
-        handleExternalFileIntent(intent)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -256,6 +253,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                             .create()
                             .show()
                     }
+                    handleModpack(intent)
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
                     backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
@@ -791,51 +789,32 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        handleExternalFileIntent(intent)
-    }
-
-    private fun handleExternalFileIntent(intent: Intent) {
-        val externalFilePath = intent.getStringExtra("external_file_path") ?: return
-        val file = File(externalFilePath)
+    private fun handleModpack(intent: Intent) {
+        val path = intent.getStringExtra("modpack_cache_path") ?: return
+        intent.removeExtra("modpack_cache_path")
+        val file = File(path)
         if (!file.exists()) return
-
-        binding.root.post {
-            if (_uiManager == null) {
-                binding.root.postDelayed(500) { handleExternalFileIntent(intent) }
-                return@post
-            }
-
-            onSelect(binding.download)
-
-            binding.root.post {
-                val downloadUI = uiManager.downloadUI
-                val profile = Profiles.getSelectedProfile()
-
-                Toast.makeText(
-                    this,
-                    getString(R.string.modpack_external_detected, file.name),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                downloadUI.checkPageManager {
-                    val page = LocalModpackPage(
-                        this,
-                        PageManager.PAGE_ID_TEMP,
-                        downloadUI.container,
-                        R.layout.page_modpack,
-                        profile,
-                        null,
-                        file
-                    )
-                    downloadUI.pageManager.showTempPage(page)
-                }
-            }
+        Toast.makeText(
+            this,
+            getString(R.string.modpack_external_detected, file.name),
+            Toast.LENGTH_SHORT
+        ).show()
+        binding.download.isSelected = true
+        val downloadUI = uiManager.downloadUI
+        downloadUI.checkPageManager {
+            val page = LocalModpackPage(
+                this,
+                PageManager.PAGE_ID_TEMP,
+                downloadUI.container,
+                R.layout.page_modpack,
+                profile,
+                null,
+                file
+            )
+            downloadUI.pageManager.showTempPage(page)
         }
     }
-    
+
     private fun refreshScreenSize() {
         binding.textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(
