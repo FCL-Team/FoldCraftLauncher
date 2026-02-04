@@ -8,6 +8,11 @@ import android.util.DisplayMetrics
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 
 object DisplayUtil {
+    @JvmField
+    var screenWidth = -1
+    @JvmField
+    var screenHeight = -1
+
     lateinit var currentDisplayMetrics: DisplayMetrics
 
     @JvmField

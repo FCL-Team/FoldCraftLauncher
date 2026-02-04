@@ -29,7 +29,6 @@ import com.mio.ui.dialog.GamepadMapDialog;
 import com.mio.ui.view.DraggableTextView;
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.BuildConfig;
-import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.data.ButtonStyles;
@@ -512,8 +511,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         initSeekbar(cursorOffsetSeekbar, (int) (menuSetting.getCursorOffset()), observable -> {
             menuSetting.setCursorOffset(cursorOffsetSeekbar.progressProperty().get());
-            int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-            int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+            int screenWidth = AndroidUtils.getScreenWidth();
+            int screenHeight = AndroidUtils.getScreenHeight();
             if (fclBridge != null) {
                 double scaleFactor = fclBridge.getScaleFactor();
                 int width = (int) ((screenWidth + cursorOffsetSeekbar.progressProperty().get()) * scaleFactor);
@@ -641,11 +640,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         if (getBridge() != null && getBridge().hasTouchController()) {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
-            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()), (int) sharedPreferences.getInt("vibrationDuration", 100));
+            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(), AndroidUtils.getScreenHeight(), (int) sharedPreferences.getInt("vibrationDuration", 100));
 
             touchControllerInputView.setClient(touchController.getClient());
             touchControllerInputView.setFclInput(fclInput);
-            touchControllerInputView.setSize(AndroidUtils.getScreenWidth(getActivity()), AndroidUtils.getScreenHeight(getActivity()));
+            touchControllerInputView.setSize(AndroidUtils.getScreenWidth(), AndroidUtils.getScreenHeight());
             touchControllerInputView.setDisableFullScreenInput(sharedPreferences.getBoolean("disableFullscreenInput", true));
         }
 
@@ -729,7 +728,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
-                getInput().setPointer(AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) / 2, AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) / 2, "Gyro");
+                getInput().setPointer(AndroidUtils.getScreenWidth() / 2, AndroidUtils.getScreenHeight() / 2, "Gyro");
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().releasePointerCapture();
                     getInput().getFocusableView().clearFocus();
@@ -843,8 +842,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == openMultiplayerButton) {
             if (multiplayerDialog == null) {
-                int width = (int) (AndroidUtils.getScreenWidth(getActivity()) * 0.7);
-                int height = (int) (AndroidUtils.getScreenHeight(getActivity()) * 0.9);
+                int width = (int) (AndroidUtils.getScreenWidth() * 0.7);
+                int height = (int) (AndroidUtils.getScreenHeight() * 0.9);
                 multiplayerDialog = new MultiplayerDialog(getActivity(), getActivity(), width, height);
             }
             multiplayerDialog.show();
@@ -888,8 +887,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void refreshWindowsSize(double factor) {
-        int screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        int screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        int screenWidth = AndroidUtils.getScreenWidth();
+        int screenHeight = AndroidUtils.getScreenHeight();
         if (fclBridge != null) {
             fclBridge.setScaleFactor(factor);
             int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * factor);

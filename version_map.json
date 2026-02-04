@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1282,
-    "versionName": "1.2.8.2",
-    "date": "2026.01.27",
+    "versionCode": 1283,
+    "versionName": "1.2.8.3",
+    "date": "2026.02.01",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add a log upload feature that allows users to directly upload logs and generate shareable links.  \n2. Fix the issue where the style name is too long when editing direction keys, preventing modification of styles.  \n3. Fix layout spacing issues on the download page.  \n4. Add a quick jump feature to the installation page in the mod loader detection dialog.  \n5. When debug logging is enabled, allow the launcher to directly retrieve and output debug logs instead of only generating debug.log."
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue where some devices cannot access external storage folder paths, causing the launcher to crash.\n2. Add the functionality for the download interface search box to support \"Enter\" key search in the input method.\n3. Optimize the JVM crash log reading logic to prevent the launcher from freezing when log files are excessively large.\n4. Add log output detection to prevent the launcher from freezing when a large volume of logs is generated rapidly.\n5. Implement automatic modification of the touchscreen function to prevent touchscreen unresponsiveness caused by accidental touch activation."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加日志上传功能，允许直接上传日志生成分享链接\n2.修复方向键编辑方向键时样式名称过长导致无法修改样式的问题\n3.修复下载页面布局间距问题\n4.为模组加载器检测对话框添加快捷跳转至安装页面的功能\n5.当开启输出调试日志时允许启动器直接获取并输出调试日志而不是只生成debug.log"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备无法获取外部文件夹目录导致启动器崩溃的问题\n2.添加下载界面搜索框输入法回车搜索的功能\n3.优化jvm崩溃日志读取逻辑，防止日志文件过大造成启动器卡死的问题\n4.增加日志输出检测，防止大量日志快速输出时造成启动器卡死的问题\n5.增加自动修改touchscreen功能防止误触开启导致的触控失灵问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/623854bf1702",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.2/FCL-release-1.2.8.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/76b861361fa9",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.3/FCL-release-1.2.8.3-all.apk"
   }
 ]

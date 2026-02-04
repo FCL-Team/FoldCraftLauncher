@@ -7,17 +7,19 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.SurfaceTexture
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import android.view.KeyEvent
+import android.view.TextureView
 import android.view.View
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -49,7 +51,6 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
@@ -127,8 +128,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.background,
             ThemeEngine.getInstance().getTheme().getBackground(this)
         )
-
-        handleExternalFileIntent(intent)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -254,6 +253,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                             .create()
                             .show()
                     }
+                    handleModpack(intent)
                 }
                 getSharedPreferences("launcher", MODE_PRIVATE).apply {
                     backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
@@ -280,6 +280,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
         setupLiveBackground()
+        refreshScreenSize()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -788,12 +789,33 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        handleExternalFileIntent(intent)
+    private fun handleModpack(intent: Intent) {
+        val path = intent.getStringExtra("modpack_cache_path") ?: return
+        intent.removeExtra("modpack_cache_path")
+        val file = File(path)
+        if (!file.exists()) return
+        Toast.makeText(
+            this,
+            getString(R.string.modpack_external_detected, file.name),
+            Toast.LENGTH_SHORT
+        ).show()
+        binding.download.isSelected = true
+        val downloadUI = uiManager.downloadUI
+        downloadUI.checkPageManager {
+            val page = LocalModpackPage(
+                this,
+                PageManager.PAGE_ID_TEMP,
+                downloadUI.container,
+                R.layout.page_modpack,
+                profile,
+                null,
+                file
+            )
+            downloadUI.pageManager.showTempPage(page)
+        }
     }
 
+<<<<<<< HEAD
     private fun handleExternalFileIntent(intent: Intent) {
         val externalFilePath = intent.getStringExtra("external_file_path") ?: return
         val file = File(externalFilePath)
@@ -806,32 +828,33 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             if (_uiManager == null) {
                 binding.root.postDelayed(500) { handleExternalFileIntent(intent) }
                 return@post
+=======
+    private fun refreshScreenSize() {
+        binding.textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+            override fun onSurfaceTextureAvailable(
+                surface: SurfaceTexture,
+                width: Int,
+                height: Int
+            ) {
+                DisplayUtil.screenWidth = width
+                DisplayUtil.screenHeight = height
+>>>>>>> 87aa56b23b6b9adaff6781632f54016e08ab8601
             }
 
-            onSelect(binding.download)
+            override fun onSurfaceTextureSizeChanged(
+                surface: SurfaceTexture,
+                width: Int,
+                height: Int
+            ) {
+                DisplayUtil.screenWidth = width
+                DisplayUtil.screenHeight = height
+            }
 
-            binding.root.post {
-                val downloadUI = uiManager.downloadUI
-                val profile = Profiles.getSelectedProfile()
+            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                return true
+            }
 
-                Toast.makeText(
-                    this,
-                    getString(R.string.modpack_external_detected, file.name),
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                downloadUI.checkPageManager {
-                    val page = LocalModpackPage(
-                        this,
-                        PageManager.PAGE_ID_TEMP,
-                        downloadUI.container,
-                        R.layout.page_modpack,
-                        profile,
-                        null,
-                        file
-                    )
-                    downloadUI.pageManager.showTempPage(page)
-                }
+            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
             }
         }
     }

@@ -23,6 +23,7 @@ public class LogWindow extends ScrollView {
     private FCLTextView textView;
     private int lineCount;
     private final List<Long> timeList = new ArrayList<>();
+
     public LogWindow(Context context) {
         super(context);
         autoTint = false;
@@ -31,7 +32,7 @@ public class LogWindow extends ScrollView {
 
     public LogWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        try(TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
+        try (TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
             autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
         }
         init(context);
@@ -39,7 +40,7 @@ public class LogWindow extends ScrollView {
 
     public LogWindow(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        try(TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
+        try (TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LogWindow)) {
             autoTint = typedArray.getBoolean(R.styleable.LogWindow_auto_log_tint, false);
         }
         init(context);
@@ -78,10 +79,12 @@ public class LogWindow extends ScrollView {
             }
         });
         long now = System.currentTimeMillis();
-        timeList.removeIf(time -> now - time > 200);
-        timeList.add(now);
-        if (timeList.size() > 200) {
-            setVisibility(false);
+        synchronized (timeList) {
+            timeList.removeIf(time -> now - time > 200);
+            timeList.add(now);
+            if (timeList.size() > 200) {
+                setVisibility(false);
+            }
         }
     }
 

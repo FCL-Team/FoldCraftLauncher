@@ -56,7 +56,6 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jvm);
-
         if (menuType == null || fclBridge == null) {
             Logging.LOG.log(Level.WARNING, "Failed to get ControllerType or FCLBridge, task canceled.");
             return;
