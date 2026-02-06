@@ -100,7 +100,9 @@ public final class FCLGameLauncher extends DefaultLauncher {
         boolean toUpper = gameVersion.compareTo("1.11") < 0;
         String lang;
         lang = gameOption.get("lang");
+        if (lang == null) return;
         String[] parts = lang.split("_", 2);
+        if (parts.length != 2) return;
         lang = parts[0] + "_" + (toUpper ? parts[1].toUpperCase() : parts[1].toLowerCase());
         gameOption.set("lang", lang);
     }

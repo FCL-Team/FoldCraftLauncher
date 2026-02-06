@@ -100,6 +100,7 @@ public class GameOption {
         parameterMap.put(key, values.toString());
     }
 
+    @Nullable
     public String get(String key) {
         return parameterMap.get(key);
     }
