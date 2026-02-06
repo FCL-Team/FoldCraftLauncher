@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1283,
-    "versionName": "1.2.8.3",
-    "date": "2026.02.01",
+    "versionCode": 1284,
+    "versionName": "1.2.8.4",
+    "date": "2026.02.06",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue where some devices cannot access external storage folder paths, causing the launcher to crash.\n2. Add the functionality for the download interface search box to support \"Enter\" key search in the input method.\n3. Optimize the JVM crash log reading logic to prevent the launcher from freezing when log files are excessively large.\n4. Add log output detection to prevent the launcher from freezing when a large volume of logs is generated rapidly.\n5. Implement automatic modification of the touchscreen function to prevent touchscreen unresponsiveness caused by accidental touch activation."
+        "text": "(Translated from Chinese by AI)\n1. Fixed a potential crash issue when launching with log output enabled.\n2. Fixed an issue where some device models could not obtain the correct screen resolution.\n3. Added a new feature that allows launching the installer to install modpacks from external software.\n4. Fixed a crash issue when `options.txt` does not contain a `lang` entry.\n5. Fixed a launcher crash issue when the `lang` format does not conform to `xx_xx`."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备无法获取外部文件夹目录导致启动器崩溃的问题\n2.添加下载界面搜索框输入法回车搜索的功能\n3.优化jvm崩溃日志读取逻辑，防止日志文件过大造成启动器卡死的问题\n4.增加日志输出检测，防止大量日志快速输出时造成启动器卡死的问题\n5.增加自动修改touchscreen功能防止误触开启导致的触控失灵问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复开启日志输出后启动有概率崩溃的问题\n2.修复部分机型无法获取正确屏幕分辨率的问题\n3.新增功能允许从外部软件调用启动器安装整合包\n4.修复options.txt不存在lang时崩溃的问题\n5.修复lang不符合xx_xx格式时启动器崩溃的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/76b861361fa9",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.3/FCL-release-1.2.8.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/dda72110378a",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.4/FCL-release-1.2.8.4-all.apk"
   }
 ]
