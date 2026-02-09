@@ -246,6 +246,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
                 menu.getTouchCharInput().switchKeyboardState();
+                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_RIGHTSHIFT, false);
             }
             return true;
         }
