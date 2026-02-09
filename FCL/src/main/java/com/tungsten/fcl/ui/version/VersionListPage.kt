@@ -163,6 +163,10 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                     binding.versionList.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
                     binding.search.addTextChangedListener(textWatcher)
+                    val selected = children.find { it.selectedProperty().get() }
+                    if (selected != null) {
+                        binding.versionList.setSelection(children.indexOf(selected))
+                    }
                 }
                 children.forEach {
                     it.selectedProperty().bind(
