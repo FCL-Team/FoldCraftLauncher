@@ -14,6 +14,7 @@ import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.FCLFragment
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -170,7 +171,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                                 "app_runtime/java/jre8"
                             )
                             java8 = true
-                        }
+                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
                     }
                     java8State.visibility = View.VISIBLE
                     java8Progress.visibility = View.GONE
@@ -190,7 +191,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                                 "app_runtime/java/jre11"
                             )
                             java11 = true
-                        }
+                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
                     }
                     java11State.visibility = View.VISIBLE
                     java11Progress.visibility = View.GONE
@@ -210,7 +211,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                                 "app_runtime/java/jre17"
                             )
                             java17 = true
-                        }
+                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
                     }
                     java17State.visibility = View.VISIBLE
                     java17Progress.visibility = View.GONE
@@ -223,14 +224,14 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 java21Progress.visibility = View.VISIBLE
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        runCatching {
+                       runCatching {
                             RuntimeUtils.installJava(
                                 context,
                                 FCLPath.JAVA_21_PATH,
                                 "app_runtime/java/jre21"
                             )
                             java21 = true
-                        }
+                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
                     }
                     java21State.visibility = View.VISIBLE
                     java21Progress.visibility = View.GONE
@@ -264,6 +265,18 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
     override fun onClick(view: View) {
         if (view === bind.install) {
             install()
+        }
+    }
+
+    private fun showErrorDialog(message: String) {
+        installing = false
+        lifecycleScope.launch(Dispatchers.Main){
+            FCLAlertDialog.Builder(requireContext())
+                .setMessage(message)
+                .setPositiveButton{
+                }
+                .create()
+                .show()
         }
     }
 }
