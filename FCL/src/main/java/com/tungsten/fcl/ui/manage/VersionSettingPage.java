@@ -49,6 +49,7 @@ import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.dialog.FullEditDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -251,6 +252,16 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                 builder.create().show();
             }
         });
+        View.OnLongClickListener listener = view -> {
+            FullEditDialog dialog = new FullEditDialog(getContext(), str -> {
+                ((FCLEditText) view).setText(str);
+            });
+            dialog.getEditText().setText(((FCLEditText) view).getText());
+            dialog.show();
+            return true;
+        };
+        txtJVMArgs.setOnLongClickListener(listener);
+        txtGameArgs.setOnLongClickListener(listener);
     }
 
     @Override
