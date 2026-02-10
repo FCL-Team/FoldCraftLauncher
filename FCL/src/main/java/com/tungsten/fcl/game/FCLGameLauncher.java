@@ -132,7 +132,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
                         str.append(line).append("\n");
                     }
                 }
-                if (!overwrite && !str.toString().contains(replacement)) {
+                if (!overwrite && !str.toString().contains(replacement.replace("false", "").replace("true", ""))) {
                     str.append(replacement);
                 }
             } catch (Exception e) {
@@ -166,7 +166,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
     public FCLBridge launch() throws IOException, InterruptedException {
         generateOptionsTxt();
         // Sodium
-        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU, RendererManager.RENDERER_NGGL4ES);
+        modifyIfConfigDetected("sodium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // Rubidium
         modifyIfConfigDetected("rubidium-mixins.properties", "", "mixin.features.chunk_rendering=false", false, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU);
         // DraconicEvolution
