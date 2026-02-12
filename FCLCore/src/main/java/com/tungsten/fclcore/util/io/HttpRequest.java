@@ -24,6 +24,7 @@ import static com.tungsten.fclcore.util.io.NetworkUtils.createHttpConnection;
 import static com.tungsten.fclcore.util.io.NetworkUtils.resolveConnection;
 
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.function.ExceptionalBiConsumer;
@@ -105,6 +106,10 @@ public abstract class HttpRequest {
 
     public <T> T getJson(Class<T> typeOfT) throws IOException, JsonParseException {
         return JsonUtils.fromNonNullJson(getString(), typeOfT);
+    }
+
+    public <T> T getJson(TypeToken<T> type) throws IOException, JsonParseException {
+        return JsonUtils.fromNonNullJson(getString(), type);
     }
 
     public <T> T getJson(Type type) throws IOException, JsonParseException {

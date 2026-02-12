@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.LocaleList;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -28,6 +30,20 @@ public class LocaleUtils {
     public static Locale HK = new Locale("zh", "HK");
 
     private static DateTimeFormatter dateTimeFormatter;
+
+    public static final boolean IS_CHINA_MAINLAND = isChinaMainland();
+
+    private static boolean isChinaMainland() {
+        if ("Asia/Shanghai".equals(ZoneId.systemDefault().getId()))
+            return true;
+
+        // Check if the time zone is UTC+8
+        if (ZonedDateTime.now().getOffset().getTotalSeconds() == Duration.ofHours(8).toSeconds()) {
+            return "CN".equals(Locale.getDefault().getCountry());
+        }
+
+        return false;
+    }
 
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);

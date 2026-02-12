@@ -20,10 +20,13 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.Terracotta;
+import com.tungsten.fcl.terracotta.TerracottaNodeList;
 import com.tungsten.fcl.terracotta.TerracottaState;
 import com.tungsten.fcl.terracotta.profile.TerracottaProfile;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -39,6 +42,7 @@ import net.burningtnt.terracotta.TerracottaAndroidAPI;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -194,33 +198,58 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                 player = getContext().getString(R.string.terracotta_player_anonymous);
             final String finalPlayer = player;
 
-            inviteCodeInputDialog = new InviteCodeInputDialog(getContext(), code -> {
-                try {
-                    boolean success = Terracotta.setGuesting(code, finalPlayer);
-                    if (!success) {
-                        Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
-                    } else {
-                        guest.setEnabled(false);
-                        Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
-                    }
-                } catch (Exception e) {
-                    Logging.LOG.log(Level.SEVERE, e.getMessage());
-                    guest.setEnabled(true);
-                    Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
-                }
-            });
+            inviteCodeInputDialog = new InviteCodeInputDialog(getContext(), code -> Task.supplyAsync(Schedulers.io(), () -> {
+                        Schedulers.androidUIThread().execute(() -> {
+                            host.setEnabled(false);
+                            guest.setEnabled(false);
+                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
+                        });
+                        return TerracottaNodeList.fetch();
+                    })
+                    .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
+                        ArrayList<String> nodeList = new ArrayList<>();
+                        for (URI node : nodes) {
+                            nodeList.add(node.toString());
+                        }
+                        try {
+                            boolean success = Terracotta.setGuesting(code, finalPlayer);
+                            if (success)
+                                return;
 
-            host.setOnClickListener(v -> {
-                try {
-                    Terracotta.setScanning(null, finalPlayer);
-                    host.setEnabled(false);
-                    Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
-                } catch (Exception e) {
-                    Logging.LOG.log(Level.SEVERE, e.getMessage());
-                    host.setEnabled(true);
-                    Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
-                }
-            });
+                            host.setEnabled(true);
+                            guest.setEnabled(true);
+                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                            Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Logging.LOG.log(Level.SEVERE, e.getMessage());
+                            host.setEnabled(true);
+                            guest.setEnabled(true);
+                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                        }
+                    }).start());
+
+            host.setOnClickListener(v -> Task.supplyAsync(Schedulers.io(), () -> {
+                        Schedulers.androidUIThread().execute(() -> {
+                            host.setEnabled(false);
+                            guest.setEnabled(false);
+                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
+                        });
+                        return TerracottaNodeList.fetch();
+                    })
+                    .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
+                        ArrayList<String> nodeList = new ArrayList<>();
+                        for (URI node : nodes) {
+                            nodeList.add(node.toString());
+                        }
+                        try {
+                            Terracotta.setScanning(null, finalPlayer);
+                        } catch (Exception e) {
+                            Logging.LOG.log(Level.SEVERE, e.getMessage());
+                            host.setEnabled(true);
+                            guest.setEnabled(true);
+                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                        }
+                    }).start());
             guest.setOnClickListener(v -> inviteCodeInputDialog.show());
 
             findViewById(R.id.host_sub_text).setSelected(true);

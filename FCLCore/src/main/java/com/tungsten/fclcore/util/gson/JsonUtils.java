@@ -32,7 +32,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class JsonUtils {
@@ -46,6 +47,22 @@ public final class JsonUtils {
             .create();
 
     private JsonUtils() {
+    }
+
+    public static <T> TypeToken<List<T>> listTypeOf(Class<T> elementType) {
+        return (TypeToken<List<T>>) TypeToken.getParameterized(List.class, elementType);
+    }
+
+    public static <T> TypeToken<List<T>> listTypeOf(TypeToken<T> elementType) {
+        return (TypeToken<List<T>>) TypeToken.getParameterized(List.class, elementType.getType());
+    }
+
+    public static <K, V> TypeToken<Map<K, V>> mapTypeOf(Class<K> keyType, Class<V> valueType) {
+        return (TypeToken<Map<K, V>>) TypeToken.getParameterized(Map.class, keyType, valueType);
+    }
+
+    public static <K, V> TypeToken<Map<K, V>> mapTypeOf(Class<K> keyType, TypeToken<V> valueType) {
+        return (TypeToken<Map<K, V>>) TypeToken.getParameterized(Map.class, keyType, valueType.getType());
     }
 
     public static <T> T fromJsonFully(InputStream json, Class<T> classOfT) throws IOException, JsonParseException {
@@ -62,6 +79,13 @@ public final class JsonUtils {
 
     public static <T> T fromNonNullJson(String json, Class<T> classOfT) throws JsonParseException {
         T parsed = GSON.fromJson(json, classOfT);
+        if (parsed == null)
+            throw new JsonParseException("Json object cannot be null.");
+        return parsed;
+    }
+
+    public static <T> T fromNonNullJson(String json, TypeToken<T> type) throws JsonParseException {
+        T parsed = GSON.fromJson(json, type);
         if (parsed == null)
             throw new JsonParseException("Json object cannot be null.");
         return parsed;
