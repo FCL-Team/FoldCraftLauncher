@@ -38,5 +38,5 @@ android {
 }
 
 tasks.register("buildNGG") {
-    dependsOn("assemble")
+    dependsOn("assembleRelease")
 }
