@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.util.ShellUtil;
+import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.theme.Theme;
@@ -33,10 +34,19 @@ public class ShellActivity extends FCLActivity {
         setContentView(R.layout.activity_shell);
         logWindow = findViewById(R.id.shell_log_window);
         editText = findViewById(R.id.shell_input);
-        appendLog("Welcome to use Fold Craft Launcher!\n");
-        appendLog("Here is the shell command line!\n");
-        shellUtil = new ShellUtil(new File(FCLPath.FILES_DIR).getParent(), output -> runOnUiThread(() -> appendLog("\t" + output + "\n")));
+        String shellHome = new File(FCLPath.FILES_DIR).getParent();
+        if ( !(new File(shellHome, ".bashrc").exists()) ) {
+            try {
+                RuntimeUtils.copyAssets(this, "fcl_shell", shellHome);
+            } catch (Exception e) {
+                logWindow.append(e.toString() + "\n");
+            }
+        }
+        shellUtil = new ShellUtil(shellHome, output -> runOnUiThread(() -> {
+            appendLog("\t" + output + "\n");
+        }));
         shellUtil.start();
+        shellUtil.append(". \"./.bashrc\"\n");
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -54,7 +64,7 @@ public class ShellActivity extends FCLActivity {
                 if (cmd.endsWith("\n")) {
                     appendLog("->" + cmd);
                     editText.setText("");
-                    if (cmd.contains("clear")) {
+                    if (cmd.equals("clear\n")) {
                         logWindow.setText("");
                         return;
                     }
