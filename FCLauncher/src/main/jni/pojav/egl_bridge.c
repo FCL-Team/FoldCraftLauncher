@@ -52,7 +52,7 @@ void bigcore_set_affinity();
 #define RENDERER_VK_ZINK 2
 #define RENDERER_VULKAN 4
 
-static int fps = 0;
+static uint16_t fps = 0;
 
 EXTERNAL_API void pojavTerminate() {
     printf("EGLBridge: Terminating\n");
@@ -174,7 +174,6 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 }
 
 EXTERNAL_API void pojavSwapBuffers() {
-    if (fps >= INT_MAX - 1) fps = 0;
     fps++;
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapBuffers();
@@ -228,7 +227,7 @@ EXTERNAL_API void pojavSetHitResultType(int type) {
 
 JNIEXPORT jint JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_getFps(JNIEnv *env, jclass clazz) {
-    int f = fps;
+    uint16_t f = fps;
     fps = 0;
     return f;
 }

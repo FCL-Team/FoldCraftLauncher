@@ -134,8 +134,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private MultiplayerDialog multiplayerDialog;
 
-    private long time = 0;
-
     private MenuView menuView;
 
     private TouchController touchController;
