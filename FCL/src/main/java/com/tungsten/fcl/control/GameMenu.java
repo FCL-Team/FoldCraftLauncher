@@ -139,6 +139,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private TouchController touchController;
 
     private boolean gamepadDisabled = false;
+    private Thread fpsThread;
 
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
@@ -441,9 +442,9 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 return;
             }
             if (isChecked) {
-                Schedulers.io().execute(() -> {
+                fpsThread = new Thread(() -> {
                     FCLBridge.getFps();
-                    while (showFps.isChecked()) {
+                    while (showFps.isChecked() && !Thread.currentThread().isInterrupted()) {
                         Schedulers.androidUIThread().execute(() -> fpsText.setText("FPS:" + FCLBridge.getFps()));
                         try {
                             Thread.sleep(1000);
@@ -451,7 +452,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                         }
                     }
                 });
+                fpsThread.setName("FCL FPS Thread");
+                fpsThread.start();
             } else {
+                if (fpsThread != null) {
+                    fpsThread.interrupt();
+                    fpsThread = null;
+                }
                 fpsText.setText("");
             }
         });
