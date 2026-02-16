@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1285,
-    "versionName": "1.2.8.5",
-    "date": "2026.02.11",
+    "versionCode": 1286,
+    "versionName": "1.2.8.6",
+    "date": "2026.02.16",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where invoking the input method with Right Shift + Enter might cause the Shift key to get stuck.  \n2. Optimized the version list by automatically scrolling to the currently selected version.  \n3. Added a dialog prompt for Java runtime installation errors.  \n4. Introduced a full-screen editing dialog for JVM and game parameters.  \n5. Fixed the issue where auto-modification of configuration caused the KW renderer to be incompatible with Sodium."
+        "text": "(Translated from Chinese by AI)\n1. Update Terracotta to 0.4.2, fixing the issue where multiplayer was not working.  \n2. Fix the issue where the launcher unexpectedly crashed after exporting the world.  \n3. Update ANGLE.  \n4. Update the KW renderer.  \n5. Optimize the launcher's FPS display update mechanism to resolve abnormal CPU usage."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复右Shift+回车呼出输入法可能会卡Shift的问题\n2.优化版本列表，版本列表自动滑动到当前选择的版本\n3.增加Java运行时安装错误提示对话框\n4.添加JVM和游戏参数全屏编辑对话框功能\n5.修复自动修改配置导致的KW渲染器无法使用sodium的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新Terracotta至0.4.2，修复无法联机的问题\n2.修复导出世界完成后启动器意外崩溃的问题\n3.更新ANGLE\n4.更新KW渲染器\n5.优化启动器的FPS显示更新机制，修复CPU异常占用"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/2ebee834e909",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.5/FCL-release-1.2.8.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/480e818fcd66",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.6/FCL-release-1.2.8.6-all.apk"
   }
 ]
