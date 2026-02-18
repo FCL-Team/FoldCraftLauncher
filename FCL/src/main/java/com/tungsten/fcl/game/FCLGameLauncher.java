@@ -180,9 +180,6 @@ public final class FCLGameLauncher extends DefaultLauncher {
         modifyIfConfigDetected("pixelmon/config.yml", "use-discord-rich-presence:", "use-discord-rich-presence: false", true);
         // ImmersiveEngineering
         modifyIfConfigDetected("immersiveengineering-client.toml", "stencilBufferEnabled", "stencilBufferEnabled = false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_VGPU, RendererManager.RENDERER_NGGL4ES);
-        // Create
-        modifyIfConfigDetected("flywheel-client.toml", "enabled", "enabled = false", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_NGGL4ES);
-        modifyIfConfigDetected("flywheel-client.toml", "backend =", "backend = \"OFF\"", true, RendererManager.RENDERER_GL4ES, RendererManager.RENDERER_NGGL4ES);
         return super.launch();
     }
 }
