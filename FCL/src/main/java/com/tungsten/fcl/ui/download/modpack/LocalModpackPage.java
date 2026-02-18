@@ -165,7 +165,8 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                 task = ModpackInstaller.getModpackInstallTask(getContext(), profile, updateVersion, modpackFile, manifest, name);
             }
         }
-        ModpackInstaller.installModpack(getContext(), task, updateVersion != null);
+        if (task != null)
+            ModpackInstaller.installModpack(getContext(), task, updateVersion != null);
     }
 
     @Override
