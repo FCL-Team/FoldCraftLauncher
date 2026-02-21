@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1286,
-    "versionName": "1.2.8.6",
-    "date": "2026.02.16",
+    "versionCode": 1287,
+    "versionName": "1.2.8.7",
+    "date": "2026.02.21",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Update Terracotta to 0.4.2, fixing the issue where multiplayer was not working.  \n2. Fix the issue where the launcher unexpectedly crashed after exporting the world.  \n3. Update ANGLE.  \n4. Update the KW renderer.  \n5. Optimize the launcher's FPS display update mechanism to resolve abnormal CPU usage."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue of duplicate threads caused by quickly toggling the FPS display.\n2. Fixed the abnormal crash issue when the local modpack installation task is empty.\n3. Reverted the ANGLE update (due to some devices not meeting the runtime requirements).\n4. Removed the automatic Flywheel disabling feature.\n5. Adjusted the Vulkan driver loading logic; it is no longer forcibly loaded and is now actively loaded based on the renderer."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.更新Terracotta至0.4.2，修复无法联机的问题\n2.修复导出世界完成后启动器意外崩溃的问题\n3.更新ANGLE\n4.更新KW渲染器\n5.优化启动器的FPS显示更新机制，修复CPU异常占用"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复快速开关FPS显示导致的重复线程问题\n2.修复本地模组包安装任务为空时的异常崩溃问题\n3.回退ANGLE更新（因为部分设备无法满足运行要求）\n4.删除自动关闭Flywheel功能\n5.调整vulkan驱动加载逻辑，不再强制加载，根据渲染器主动加载vulkan"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/480e818fcd66",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.6/FCL-release-1.2.8.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/e55013db473b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.8.7/FCL-release-1.2.8.7-all.apk"
   }
 ]
