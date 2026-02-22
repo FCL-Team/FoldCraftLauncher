@@ -243,6 +243,10 @@ public class FCLauncher {
             }
         }
 
+        if (renderer == FCLConfig.Renderer.RENDERER_MOBILEGL) {
+            envMap.put("MOBILEGL_BACKEND_TYPE", "DirectVulkan");
+        }
+
         if (renderer == FCLConfig.Renderer.RENDERER_CUSTOM) {
             String eglName = RendererPlugin.getSelected().getEglName();
             if (eglName.startsWith("/")) {
