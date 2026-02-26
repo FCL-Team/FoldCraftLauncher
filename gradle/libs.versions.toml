@@ -4,7 +4,54 @@ minSdk = "26"
 targetSdk = "34"
 agp = "8.7.2"
 kotlin = "2.0.21"
+taptargetview = "1.14.0"
+nanohttpd = "2.3.1"
+commonsCompress = "1.26.0"
+xz = "1.9"
+opennbt = "1.5"
+gson = "2.10.1"
+appcompat = "1.7.0"
+coreSplashscreen = "1.0.1"
+material = "1.12.0"
+constraintlayout = "2.2.0"
+glide = "4.16.0"
+touchcontroller = "0.0.5"
+paletteKtx = "1.0.0"
+gamepadRemapper = "2.0.3"
+segmentedButton = "3.1.9"
+commonsIo = "2.15.1"
+commonsLang3 = "3.14.0"
+toml4j = "0.7.2"
+constantPoolScanner = "1.2"
+jsoup = "1.18.3"
+asyncLayoutInflater = "1.0.0"
+jelf = "0.9.0"
+bytehook = "1.0.10"
+
 [libraries]
+taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }
+nanohttpd = { group = "org.nanohttpd", name = "nanohttpd", version.ref = "nanohttpd" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commonsCompress" }
+xz = { group = "org.tukaani", name = "xz", version.ref = "xz" }
+opennbt = { group = "com.github.steveice10", name = "opennbt", version.ref = "opennbt" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+touchcontroller = { group = "top.fifthlight.touchcontroller", name = "proxy-client-android", version.ref = "touchcontroller" }
+palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "paletteKtx" }
+gamepad-remapper = { group = "com.github.Mathias-Boulay", name = "android_gamepad_remapper", version.ref = "gamepadRemapper" }
+segmented-button = { group = "com.github.addisonElliott", name = "SegmentedButton", version.ref = "segmentedButton" }
+commons-io = { group = "commons-io", name = "commons-io", version.ref = "commonsIo" }
+commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang3" }
+toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml4j" }
+constant-pool-scanner = { group = "org.jenkins-ci", name = "constant-pool-scanner", version.ref = "constantPoolScanner" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+async-layout-inflater = { group = "androidx.asynclayoutinflater", name = "asynclayoutinflater", version.ref = "asyncLayoutInflater" }
+jelf = { group = "net.fornwall", name = "jelf", version.ref = "jelf" }
+bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
