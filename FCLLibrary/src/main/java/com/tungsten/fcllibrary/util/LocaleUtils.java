@@ -37,8 +37,10 @@ public class LocaleUtils {
         if ("Asia/Shanghai".equals(ZoneId.systemDefault().getId()))
             return true;
 
-        // Check if the time zone is UTC+8
-        if (ZonedDateTime.now().getOffset().getTotalSeconds() == Duration.ofHours(8).toSeconds()) {
+        // 手动计算 8 小时对应的秒数（兼容 API 26）
+        long offsetSeconds = ZonedDateTime.now().getOffset().getTotalSeconds();
+        long eightHoursInSeconds = 8 * 3600; // 8 小时 = 8 * 3600 秒
+        if (offsetSeconds == eightHoursInSeconds) {
             return "CN".equals(Locale.getDefault().getCountry());
         }
 
