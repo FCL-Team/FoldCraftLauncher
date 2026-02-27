@@ -2,16 +2,13 @@ package com.mio.minecraft
 
 import android.content.Context
 import com.mio.manager.RendererManager
-import com.mio.util.AndroidUtil
+import com.mio.util.getElfArchFromZip
 import com.tungsten.fcl.R
-import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.FFmpegPlugin
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
-import com.tungsten.fclcore.util.versioning.VersionNumber
-import kotlin.jvm.Throws
 
 class ModChecker(val context: Context, val version: String) {
     @Throws(ModCheckException::class)
@@ -19,11 +16,11 @@ class ModChecker(val context: Context, val version: String) {
         val exception = runCatching {
             when (mod.id) {
                 "touchcontroller" -> {
-                    bridge.setHasTouchController(true);
+                    bridge.setHasTouchController(true)
                 }
 
                 "physicsmod" -> {
-                    val arch = AndroidUtil.getElfArchFromZip(
+                    val arch = getElfArchFromZip(
                         mod.file.toFile(),
                         "de/fabmax/physxjni/linux/libPhysXJniBindings_64.so"
                     )
@@ -55,11 +52,11 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "yes_steve_model" -> {
-                    val arch = AndroidUtil.getElfArchFromZip(
+                    val arch = getElfArchFromZip(
                         mod.file.toFile(),
                         "META-INF/native/libysm-core.so"
                     )
-                    val androidLib = AndroidUtil.getElfArchFromZip(
+                    val androidLib = getElfArchFromZip(
                         mod.file.toFile(),
                         "META-INF/native/libysm-core-android.so"
                     )
@@ -105,7 +102,7 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "axiom" -> {
-                    val arch = AndroidUtil.getElfArchFromZip(
+                    val arch = getElfArchFromZip(
                         mod.file.toFile(),
                         "io/imgui/java/native-bin/libimgui-javaarm64.so"
                     )

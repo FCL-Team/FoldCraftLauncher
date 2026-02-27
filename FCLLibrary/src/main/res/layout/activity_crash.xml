@@ -45,15 +45,6 @@
         app:layout_constraintStart_toEndOf="@+id/split"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tungsten.fcllibrary.component.view.FCLProgressBar
-        android:id="@+id/progress"
-        style="@style/FCLCrashProgressBar"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/restart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:layout_constraintTop_toBottomOf="@+id/hint" />
-
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/restart"
         style="@style/FCLCrashButton"

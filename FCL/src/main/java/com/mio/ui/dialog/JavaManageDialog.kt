@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
-import com.mio.util.AndroidUtil
+import com.mio.util.checkElfIsAndroid
 import com.tungsten.fcl.FCLApplication
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
@@ -155,7 +155,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
             return@supplyAsync true
         }.thenApplyAsync {
             if (it) {
-                return@thenApplyAsync AndroidUtil.checkElfIsAndroid(
+                return@thenApplyAsync checkElfIsAndroid(
                     File(
                         FCLPath.JAVA_PATH,
                         fileName

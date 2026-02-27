@@ -45,14 +45,6 @@
         app:layout_constraintStart_toEndOf="@+id/split"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tungsten.fcllibrary.component.view.FCLProgressBar
-        android:id="@+id/progress"
-        style="@style/FCLCrashProgressBar"
-        app:layout_constraintBottom_toTopOf="@id/restart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:layout_constraintTop_toBottomOf="@+id/reason_title" />
-
     <ScrollView
         android:id="@+id/hint_layout"
         android:layout_width="0dp"

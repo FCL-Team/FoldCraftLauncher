@@ -27,12 +27,10 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.util.LogSharingUtils;
+import com.tungsten.fcllibrary.util.LogSharingUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +63,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     private FCLTextView error;
     private FCLTextView hint;
     private ScrollView hintLayout;
-    private FCLProgressBar progressBar;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -90,7 +87,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         error = findViewById(R.id.error);
         hint = findViewById(R.id.hint);
         hintLayout = findViewById(R.id.hint_layout);
-        progressBar = findViewById(R.id.progress);
 
         game = getIntent().getExtras().getBoolean("isGame");
         exitCode = getIntent().getExtras().getInt("exitCode");
@@ -111,10 +107,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
     }
 
     private void setLoading(boolean loading) {
-        Schedulers.androidUIThread().execute(() -> {
-            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-            hintLayout.setVisibility(loading ? View.GONE : View.VISIBLE);
-        });
+        Schedulers.androidUIThread().execute(() -> hintLayout.setVisibility(loading ? View.GONE : View.VISIBLE));
     }
 
     private void init() throws IOException {
@@ -285,7 +278,8 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
             }
         }
         if (v == upload) {
-            uploadLog();
+            String logContent = error.getText().toString();
+            LogSharingUtilsKt.uploadLog(this, logContent);
         }
         if (v == share) {
             try {
@@ -302,38 +296,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
                 LOG.log(Level.INFO, "Share error: " + e);
             }
         }
-    }
-
-    private void uploadLog() {
-        setLoading(true);
-        CompletableFuture.runAsync(() -> {
-            try {
-                String logContent = error.getText().toString();
-                String apiUrl = LogSharingUtils.getLogUploadApiUrl(this);
-                String response = HttpRequest.POST(apiUrl)
-                        .form(pair("content", logContent))
-                        .getString();
-
-                // Response format: {"success":true,"url":"https://mclo.gs/XXXXX"}
-                Pattern pattern = Pattern.compile("\"url\":\"(.*?)\"");
-                Matcher matcher = pattern.matcher(response);
-                if (matcher.find()) {
-                    String url = matcher.group(1).replace("\\/", "/");
-                    Schedulers.androidUIThread().execute(() -> {
-                        setLoading(false);
-                        LogSharingUtils.showLogUploadSuccessDialog(this, url);
-                    });
-                } else {
-                    throw new IOException("Failed to parse response: " + response);
-                }
-            } catch (Exception e) {
-                LOG.log(Level.WARNING, "Failed to upload log", e);
-                Schedulers.androidUIThread().execute(() -> {
-                    setLoading(false);
-                    Toast.makeText(this, getString(com.tungsten.fcllibrary.R.string.upload_failed, e.getMessage()), Toast.LENGTH_LONG).show();
-                });
-            }
-        });
     }
 
     public static void startCrashActivity(boolean game, Context context, int exitCode, String logPath, String renderer, String java) {
