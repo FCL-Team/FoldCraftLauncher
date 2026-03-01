@@ -133,7 +133,7 @@
                 android:layout_weight="0.5"
                 android:background="@drawable/bg_container_white"
                 android:orientation="vertical"
-                app:auto_constraint_background_tint="true"
+                app:auto_tint="true"
                 android:paddingHorizontal="8dp">
 
                 <com.tungsten.fcllibrary.component.view.FCLEditText

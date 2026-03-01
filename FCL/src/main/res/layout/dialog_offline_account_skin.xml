@@ -48,35 +48,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/account_skin_type_default"
-                app:text_with_theme_color="true" />
+                app:text_use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLRadioButton
                 android:id="@+id/steve"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/account_skin_type_steve"
-                app:text_with_theme_color="true" />
+                app:text_use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLRadioButton
                 android:id="@+id/alex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/account_skin_type_alex"
-                app:text_with_theme_color="true" />
+                app:text_use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLRadioButton
                 android:id="@+id/local"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/account_skin_type_local_file"
-                app:text_with_theme_color="true" />
+                app:text_use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLRadioButton
                 android:id="@+id/csl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/account_skin_type_csl_api"
-                app:text_with_theme_color="true" />
+                app:text_use_theme_color="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
                 android:id="@+id/local_layout"

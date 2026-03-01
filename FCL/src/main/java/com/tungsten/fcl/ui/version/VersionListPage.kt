@@ -57,14 +57,64 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                 if (text.isEmpty()) {
                     binding.versionList.adapter = adapter
                 } else {
-                    val newAdapter =
-                        VersionListAdapter(context, children.filter {
-                            it.version.lowercase(
-                                Locale.getDefault()
-                            ).contains(text.lowercase(Locale.getDefault()))
-                        } as ArrayList)
-                    binding.versionList.adapter = newAdapter
+                    binding.versionList.adapter = VersionListAdapter(context, children.filter {
+                        it.version.lowercase(
+                            Locale.getDefault()
+                        ).contains(text.lowercase(Locale.getDefault()))
+                    } as ArrayList)
                 }
+            }
+        }
+        binding.category.setOnCheckedChangeListener { _, i ->
+            when (i) {
+                R.id.all -> {
+                    binding.versionList.adapter = adapter
+                }
+
+                R.id.fabric -> {
+                    binding.versionList.adapter = VersionListAdapter(
+                        context,
+                        children.filter {
+                            it.libraries.split(",").find { lib ->
+                                lib.contains(":") && lib.contains("Fabric")
+                            } != null
+                        } as ArrayList
+                    )
+                }
+
+                R.id.forge -> {
+                    binding.versionList.adapter = VersionListAdapter(
+                        context,
+                        children.filter {
+                            it.libraries.split(",").find { lib ->
+                                lib.contains(":") && lib.contains("Forge") && !lib.contains("NeoForge")
+                            } != null
+                        } as ArrayList
+                    )
+                }
+
+                R.id.neoforge -> {
+                    binding.versionList.adapter = VersionListAdapter(
+                        context,
+                        children.filter {
+                            it.libraries.split(",").find { lib ->
+                                lib.contains(":") && lib.contains("NeoForge")
+                            } != null
+                        } as ArrayList
+                    )
+                }
+
+                R.id.other -> {
+                    binding.versionList.adapter = VersionListAdapter(
+                        context,
+                        children.filter {
+                            it.libraries.split(",").none { lib ->
+                                lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
+                            }
+                        } as ArrayList
+                    )
+                }
+
             }
         }
     }
@@ -80,10 +130,11 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
 
     private fun loadVersions(profile: Profile) {
         MainActivity.getInstance().lifecycleScope.launch {
+            binding.category.check(R.id.all)
             binding.search.removeTextChangedListener(textWatcher)
             binding.search.setText("")
             binding.refresh.isEnabled = false
-            binding.versionList.visibility = View.GONE
+            binding.layout.visibility = View.GONE
             binding.progress.visibility = View.VISIBLE
         }
         val repository = profile.repository
@@ -162,7 +213,9 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                     binding.versionList.adapter = adapter
                     binding.versionList.layoutManager = LinearLayoutManager(context)
                     binding.refresh.isEnabled = true
-                    binding.versionList.visibility = View.VISIBLE
+                    if (children.isNotEmpty()) {
+                        binding.layout.visibility = View.VISIBLE
+                    }
                     binding.progress.visibility = View.GONE
                     binding.search.addTextChangedListener(textWatcher)
                     val selected = children.find { it.selectedProperty().get() }

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="10dp"
     android:paddingTop="10dp"
-    android:paddingEnd="10dp">
+    android:paddingEnd="10dp"
+    tools:ignore="HardcodedText">
 
     <com.tungsten.fcllibrary.component.view.FCLEditText
         android:id="@+id/search"
@@ -55,22 +57,93 @@
         app:layout_constraintWidth_percent="0.3"
         app:ripple="true" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/version_list"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/profile_list" />
+        app:layout_constraintStart_toEndOf="@id/profile_list">
+
+        <com.mio.ui.widget.FCLAppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_white"
+            app:auto_tint="true">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <RadioGroup
+                    android:id="@+id/category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/curse_category_0"
+                        app:text_use_theme_color="true" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/fabric"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="Fabric" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/forge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="Forge" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/neoforge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="NeoForge" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="@string/control_download_device_other" />
+
+                </RadioGroup>
+
+            </HorizontalScrollView>
+
+        </com.mio.ui.widget.FCLAppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/version_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profile_list" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/version_list"
-        app:layout_constraintStart_toStartOf="@id/version_list"
+        app:layout_constraintEnd_toEndOf="@id/layout"
+        app:layout_constraintStart_toStartOf="@id/layout"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

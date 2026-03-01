@@ -12,7 +12,7 @@
         android:focusable="true"
         android:padding="5dp"
         android:stateListAnimator="@xml/anim_scale"
-        app:auto_constraint_background_tint="true"
+        app:auto_tint="true"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.tungsten.fcllibrary.component.view.FCLRadioButton
