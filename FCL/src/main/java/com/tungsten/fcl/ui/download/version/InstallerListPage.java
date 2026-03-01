@@ -5,8 +5,10 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.content.Context;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.DownloadProviders;
@@ -39,7 +41,7 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
     private FCLImageButton refresh;
     private FCLImageButton failedRefresh;
     private FCLProgressBar progressBar;
-    private ListView listView;
+    private RecyclerView recyclerView;
 
     public InstallerListPage(Context context, int id, FCLUILayout parent, int resId, String gameVersion, String libraryId, Callback callback) {
         super(context, id, parent, resId);
@@ -59,7 +61,7 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
         refresh = findViewById(R.id.refresh);
         failedRefresh = findViewById(R.id.failed_refresh);
         progressBar = findViewById(R.id.progress);
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
 
         checkRelease.setChecked(true);
 
@@ -73,6 +75,7 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
 
         findViewById(R.id.april_fools).setVisibility(View.INVISIBLE);
         findViewById(R.id.search).setVisibility(View.INVISIBLE);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         refreshList();
     }
 
@@ -96,11 +99,11 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
     public void refreshDisplayVersions() {
         List<RemoteVersion> items = loadVersions();
         RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-        listView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
     }
 
     public void refreshList() {
-        listView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         failedRefresh.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         refresh.setEnabled(false);
@@ -113,7 +116,7 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
                     Schedulers.androidUIThread().execute(() -> {
                         if (currentVersionList.getVersions(gameVersion).isEmpty()) {
                             Toast.makeText(getContext(), getContext().getString(R.string.download_failed_empty), Toast.LENGTH_SHORT).show();
-                            listView.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.GONE);
                             failedRefresh.setVisibility(View.VISIBLE);
                         } else {
                             if (items.isEmpty()) {
@@ -122,9 +125,9 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
                                 checkOld.setChecked(true);
                             } else {
                                 RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-                                listView.setAdapter(adapter);
+                                recyclerView.setAdapter(adapter);
                             }
-                            listView.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.VISIBLE);
                             failedRefresh.setVisibility(View.GONE);
                         }
                         progressBar.setVisibility(View.GONE);
@@ -133,7 +136,7 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
                 } else {
                     LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
                     Schedulers.androidUIThread().execute(() -> {
-                        listView.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.GONE);
                         failedRefresh.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                         refresh.setEnabled(true);

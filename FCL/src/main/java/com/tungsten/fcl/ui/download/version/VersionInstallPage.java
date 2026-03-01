@@ -5,7 +5,9 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.content.Context;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ListView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.DownloadProviders;
@@ -37,7 +39,7 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
     private FCLImageButton refresh;
     private FCLImageButton failedRefresh;
     private FCLProgressBar progressBar;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private FCLEditText search;
 
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
@@ -56,7 +58,7 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
         refresh = findViewById(R.id.refresh);
         failedRefresh = findViewById(R.id.failed_refresh);
         progressBar = findViewById(R.id.progress);
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         search = findViewById(R.id.search);
 
         checkRelease.setChecked(true);
@@ -75,30 +77,28 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
 
         search.stringProperty().addListener(observable -> refreshDisplayVersions());
 
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         refreshList();
     }
 
     private List<RemoteVersion> loadVersions() {
         return DownloadProviders.getDownloadProvider().getVersionListById("game").getVersions("").stream()
-                .filter(it -> {
-                    switch (it.getVersionType()) {
-                        case RELEASE:
-                            return checkRelease.isChecked();
-                        case PENDING:
-                        case UNOBFUSCATED:
-                        case SNAPSHOT:
-                            if (checkSnapShot.isChecked()) return true;
-                            else if (checkAprilFools.isChecked())
-                                return GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
-                            return false;
-                        case OLD:
-                            if (checkOld.isChecked()) return true;
-                            else if (checkAprilFools.isChecked())
-                                return GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
-                            return false;
-                        default:
-                            return true;
+                .filter(it -> switch (it.getVersionType()) {
+                    case RELEASE -> checkRelease.isChecked();
+                    case PENDING, UNOBFUSCATED, SNAPSHOT -> {
+                        if (checkSnapShot.isChecked()) yield true;
+                        else if (checkAprilFools.isChecked())
+                            yield GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
+                        yield false;
                     }
+                    case OLD -> {
+                        if (checkOld.isChecked()) yield true;
+                        else if (checkAprilFools.isChecked())
+                            yield GameVersionNumber.asGameVersion(it.getGameVersion()).isAprilFools();
+                        yield false;
+                    }
+                    default -> true;
                 })
                 .filter(it -> it.getGameVersion().contains(search.getStringValue()))
                 .sorted().collect(Collectors.toList());
@@ -107,11 +107,11 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
     public void refreshDisplayVersions() {
         List<RemoteVersion> items = loadVersions();
         RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-        listView.setAdapter(adapter);
+        recyclerView.setAdapter(adapter);
     }
 
     public void refreshList() {
-        listView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
         failedRefresh.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         refresh.setEnabled(false);
@@ -128,9 +128,9 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
                         checkOld.setChecked(true);
                     } else {
                         RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-                        listView.setAdapter(adapter);
+                        recyclerView.setAdapter(adapter);
                     }
-                    listView.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     failedRefresh.setVisibility(View.GONE);
                     progressBar.setVisibility(View.GONE);
                     refresh.setEnabled(true);
@@ -138,7 +138,7 @@ public class VersionInstallPage extends FCLCommonPage implements View.OnClickLis
             } else {
                 LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
                 Schedulers.androidUIThread().execute(() -> {
-                    listView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.GONE);
                     failedRefresh.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                     refresh.setEnabled(true);
