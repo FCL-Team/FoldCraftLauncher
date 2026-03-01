@@ -921,6 +921,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             fclBridge.setScaleFactor(factor);
             int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * factor);
             int height = (int) (screenHeight * factor);
+            if (FCLBridge.FORCE_RESOLUTION) {
+                width = FCLBridge.FORCE_RESOLUTION_WIDTH;
+                height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            }
             fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
             fclBridge.pushEventWindow(width, height);
         }

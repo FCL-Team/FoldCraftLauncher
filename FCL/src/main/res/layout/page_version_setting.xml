@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -435,10 +434,10 @@
                             android:id="@+id/renderer"
                             android:layout_width="150dp"
                             android:layout_height="wrap_content"
-                            android:singleLine="true"
                             android:layout_gravity="center"
                             android:ellipsize="marquee"
                             android:marqueeRepeatLimit="marquee_forever"
+                            android:singleLine="true"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton
@@ -687,6 +686,18 @@
                             app:auto_edit_tint="true" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLSwitch
+                        android:id="@+id/force_resolution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/settings_advanced_force_resolution" />
 
                 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

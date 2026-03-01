@@ -847,6 +847,7 @@
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
     <string name="settings_advanced_custom_uuid">Custom UUID</string>
+    <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>

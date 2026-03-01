@@ -25,6 +25,7 @@ import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
@@ -65,6 +66,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         menu.setup(this, fclBridge);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
+        if (FCLBridge.FORCE_RESOLUTION) {
+            ViewGroup.LayoutParams params = textureView.getLayoutParams();
+            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtils.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
+            params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtils.getScreenWidth() - params.width) / 2;
+            textureView.setLayoutParams(params);
+            textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
+        }
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -103,6 +113,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         fclBridge.setSurfaceDestroyed(false);
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
+        if (FCLBridge.FORCE_RESOLUTION) {
+            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
+            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
+        }
         if (menuType == MenuType.GAME) {
             menu.getInput().initExternalController(textureView);
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
@@ -121,6 +135,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
+        if (FCLBridge.FORCE_RESOLUTION) {
+            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
+            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
+        }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.pushEventWindow(width, height);
     }

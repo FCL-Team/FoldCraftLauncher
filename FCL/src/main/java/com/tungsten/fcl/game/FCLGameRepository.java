@@ -20,6 +20,8 @@ package com.tungsten.fcl.game;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -29,10 +31,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.mio.manager.RendererManager;
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.event.Event;
@@ -68,6 +72,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
@@ -367,6 +372,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setPojavBigCore(vs.isPojavBigCore())
                 .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
                 .setDebugLog(vs.isDebugLog());
+        initForceResolution(vs);
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {
@@ -457,6 +463,23 @@ public class FCLGameRepository extends DefaultGameRepository {
             return Math.max(minimum, suggested);
         } else {
             return minimum;
+        }
+    }
+
+    private void initForceResolution(VersionSetting vs) {
+        FCLBridge.FORCE_RESOLUTION = vs.isForceResolution();
+        if (FCLBridge.FORCE_RESOLUTION) {
+            try {
+                SharedPreferences preferences = Objects.requireNonNull(FCLApplication.getCurrentActivity()).getSharedPreferences("launcher", Context.MODE_PRIVATE);
+                String[] split = preferences.getString("force_resolution", "1920x1080").toLowerCase().split("x");
+                if (split.length == 2) {
+                    int w = Integer.parseInt(split[0]);
+                    int h = Integer.parseInt(split[1]);
+                    FCLBridge.FORCE_RESOLUTION_WIDTH = w;
+                    FCLBridge.FORCE_RESOLUTION_HEIGHT = h;
+                }
+            } catch (Exception ignore) {
+            }
         }
     }
 }

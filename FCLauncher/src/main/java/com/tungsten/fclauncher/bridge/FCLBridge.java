@@ -28,6 +28,11 @@ import java.io.File;
 import java.io.Serializable;
 
 public class FCLBridge implements Serializable {
+    public static boolean FORCE_RESOLUTION = false;
+    public static float FORCE_RESOLUTION_SCALE = -1;
+    public static int FORCE_RESOLUTION_WIDTH = 1920;
+    public static int FORCE_RESOLUTION_HEIGHT = 1080;
+    public static int FORCE_RESOLUTION_START_SIZE = -1;
 
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
@@ -205,6 +210,10 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventPointer(int x, int y) {
+        if (FORCE_RESOLUTION) {
+            x = (int) ((x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE);
+            y = (int) (y / FORCE_RESOLUTION_SCALE);
+        }
         if (BACKEND_IS_BOAT) {
             pushEvent(System.nanoTime(), MotionNotify, x, y, CallbackBridge.getCurrentMods());
         } else {
