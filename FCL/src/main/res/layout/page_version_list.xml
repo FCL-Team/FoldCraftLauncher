@@ -55,13 +55,11 @@
         app:layout_constraintWidth_percent="0.3"
         app:ripple="true" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/version_list"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/profile_list" />
 

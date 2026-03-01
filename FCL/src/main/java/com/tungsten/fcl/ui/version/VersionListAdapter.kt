@@ -5,87 +5,66 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemVersionBinding
-import com.tungsten.fcl.ui.manage.ManagePageManager
-import com.tungsten.fcllibrary.component.FCLAdapter
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import com.tungsten.fcllibrary.component.view.FCLImageButton
-import com.tungsten.fcllibrary.component.view.FCLRadioButton
-import com.tungsten.fcllibrary.component.view.FCLTextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class VersionListAdapter(context: Context?, private val list: ArrayList<VersionListItem>) :
-    FCLAdapter(context) {
-    internal class ViewHolder {
-        lateinit var radioButton: FCLRadioButton
-        lateinit var icon: AppCompatImageView
-        lateinit var title: FCLTextView
-        lateinit var tag: FCLTextView
-        lateinit var subtitle: FCLTextView
-        lateinit var setting: FCLImageButton
-        lateinit var delete: FCLImageButton
-    }
+class VersionListAdapter(val context: Context, private val list: ArrayList<VersionListItem>) :
+    RecyclerView.Adapter<VersionListAdapter.ViewHolder>() {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    override fun getCount(): Int {
-        return list.size
-    }
-
-    override fun getItem(i: Int): Any? {
-        return list[i]
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(
+            ItemVersionBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ).root
+        )
     }
 
     @SuppressLint("DefaultLocale")
-    override fun getView(i: Int, view: View?, viewGroup: ViewGroup?): View {
-        var view = view
-        val viewHolder: ViewHolder
-        if (view == null) {
-            viewHolder = ViewHolder()
-            val binding = ItemVersionBinding.inflate(LayoutInflater.from(context))
-            view = binding.root
-            viewHolder.radioButton = binding.radio
-            viewHolder.icon = binding.icon
-            viewHolder.title = binding.title
-            viewHolder.tag = binding.tag
-            viewHolder.subtitle = binding.subtitle
-            viewHolder.setting = binding.setting
-            viewHolder.delete = binding.delete
-            view.tag = viewHolder
-        } else {
-            viewHolder = view.tag as ViewHolder
-        }
-        val versionListItem = list[i]
-        viewHolder.radioButton.checkProperty().unbind()
-        viewHolder.radioButton.checkProperty().bind(versionListItem.selectedProperty())
-        viewHolder.icon.background = versionListItem.drawable
-        viewHolder.title.text = versionListItem.version
-        viewHolder.tag.visibility = if (versionListItem.tag == null) View.GONE else View.VISIBLE
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val versionListItem = list[position]
+        val binding = ItemVersionBinding.bind(holder.itemView)
+        binding.radioButton.checkProperty().unbind()
+        binding.radioButton.checkProperty().bind(versionListItem.selectedProperty())
+        binding.icon.background = versionListItem.drawable
+        binding.title.text = versionListItem.version
+        binding.tag.visibility = if (versionListItem.tag == null) View.GONE else View.VISIBLE
         if (versionListItem.tag != null) {
-            viewHolder.tag.text = versionListItem.tag
+            binding.tag.text = versionListItem.tag
         }
-        viewHolder.subtitle.text = versionListItem.libraries
-        viewHolder.radioButton.setOnClickListener { v: View? ->
+        binding.subtitle.text = versionListItem.libraries
+        binding.radioButton.setOnClickListener {
             versionListItem.profile.selectedVersion = versionListItem.version
         }
-        viewHolder.delete.setOnClickListener { view1: View? ->
+        binding.delete.setOnClickListener {
             Versions.deleteVersion(
                 context,
                 versionListItem.profile,
                 versionListItem.version
             )
         }
-        viewHolder.subtitle.tag = i
-        view.setOnClickListener { v: View? ->
+        binding.subtitle.tag = position
+        binding.root.setOnClickListener {
             versionListItem.profile.selectedVersion = versionListItem.version
         }
         if (!versionListItem.profile.getVersionSetting(versionListItem.version).isGlobal) {
-            viewHolder.setting.visibility = View.VISIBLE
-            viewHolder.setting.setOnClickListener {
+            binding.setting.visibility = View.VISIBLE
+            binding.setting.setOnClickListener {
                 versionListItem.profile.selectedVersion = versionListItem.version
                 val uiManager = MainActivity.getInstance().uiManager
                 MainActivity.getInstance().binding.manage.isSelected = true
@@ -95,7 +74,7 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
                 }
             }
         } else {
-            viewHolder.setting.visibility = View.GONE
+            binding.setting.visibility = View.GONE
         }
         MainActivity.getInstance().lifecycleScope.launch {
             var modCount = 0
@@ -105,20 +84,23 @@ class VersionListAdapter(context: Context?, private val list: ArrayList<VersionL
                         .getMods().size
                 }
             }
-            if ((viewHolder.subtitle.tag as Int) == i) {
-                viewHolder.subtitle.text = String.format(
+            if ((binding.subtitle.tag as Int) == position) {
+                binding.subtitle.text = String.format(
                     "%s  Mods:%d",
-                    viewHolder.subtitle.getText(),
+                    binding.subtitle.getText(),
                     modCount
                 )
             }
         }
         playTranslationX(
-            view,
+            binding.root,
             ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
             -100f,
             0f
         ).start()
-        return view
+    }
+
+    override fun getItemCount(): Int {
+        return list.size
     }
 }

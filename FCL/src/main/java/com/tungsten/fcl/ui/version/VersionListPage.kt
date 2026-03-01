@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.JsonParseException
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
@@ -159,13 +160,14 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                         children as ArrayList
                     )
                     binding.versionList.adapter = adapter
+                    binding.versionList.layoutManager = LinearLayoutManager(context)
                     binding.refresh.isEnabled = true
                     binding.versionList.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
                     binding.search.addTextChangedListener(textWatcher)
                     val selected = children.find { it.selectedProperty().get() }
                     if (selected != null) {
-                        binding.versionList.setSelection(children.indexOf(selected))
+                        binding.versionList.scrollToPosition(children.indexOf(selected))
                     }
                 }
                 children.forEach {
