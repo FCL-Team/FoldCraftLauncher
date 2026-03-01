@@ -1,17 +1,5 @@
 package com.tungsten.fcl.control.view;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import androidx.annotation.Nullable;
-import com.tungsten.fcl.control.GameMenu;
-import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclcore.task.Schedulers;
-
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_1;
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_2;
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_3;
@@ -21,6 +9,20 @@ import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_7;
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_8;
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_HOTBAR_9;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+
+import androidx.annotation.Nullable;
+
+import com.tungsten.fcl.control.GameMenu;
+import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclcore.task.Schedulers;
 
 public class GameItemBar extends RelativeLayout {
 
@@ -57,13 +59,30 @@ public class GameItemBar extends RelativeLayout {
     private GameOption.GameOptionListener optionListener;
     private int position = 0;
 
+    private Runnable restoreBackgroundRunnable;
+
     public void setup(GameMenu gameMenu, GameOption gameOption) {
         this.gameMenu = gameMenu;
         this.gameOption = gameOption;
         int width = (int) (gameMenu.getTouchPad().getWidth() * gameMenu.getBridge().getScaleFactor());
         int height = (int) (gameMenu.getTouchPad().getHeight() * gameMenu.getBridge().getScaleFactor());
-        notifySize(gameOption.getGuiScale(width, height, gameMenu.getMenuSetting().getItemBarScale()) * 20);
-        optionListener = () -> notifySize(gameOption.getGuiScale(width, height, gameMenu.getMenuSetting().getItemBarScale()) * 20);
+        optionListener = () -> {
+            if (gameMenu.getMenuSetting().getItemBarScale() == 0) {
+                notifySize(gameOption.getGuiScale(width, height, 0) * 20);
+            } else {
+                notifySize(gameMenu.getMenuSetting().getItemBarScale());
+            }
+            if (restoreBackgroundRunnable != null) {
+                removeCallbacks(restoreBackgroundRunnable);
+            }
+            setBackgroundColor(0x80FF0000);
+            restoreBackgroundRunnable = () -> {
+                setBackgroundColor(0x00000000);
+                restoreBackgroundRunnable = null;
+            };
+            postDelayed(restoreBackgroundRunnable, 1500);
+        };
+        optionListener.onOptionChanged();
         gameOption.addGameOptionListener(optionListener);
     }
 
