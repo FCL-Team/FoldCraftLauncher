@@ -19,7 +19,6 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
@@ -66,7 +65,7 @@ public class RemoteModListAdapter extends FCLAdapter {
     }
 
     private static class ViewHolder {
-        FCLLinearLayout parent;
+        View parent;
         FCLImageView icon;
         FCLTextView name;
         FCLTextView tag;
