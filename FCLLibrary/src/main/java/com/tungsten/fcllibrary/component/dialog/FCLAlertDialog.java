@@ -67,6 +67,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         icon.setImageDrawable(getContext().getDrawable(R.drawable.ic_baseline_info_24));
         title.setText(getContext().getString(R.string.dialog_info));
+
+        positive.setSelected(true);
+        negative.setSelected(true);
+        neutral.setSelected(true);
+        extra.setSelected(true);
     }
 
     private void checkHeight() {

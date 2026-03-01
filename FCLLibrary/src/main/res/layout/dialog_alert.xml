@@ -59,6 +59,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
             android:text="@string/dialog_positive" />
 
         <com.tungsten.fcllibrary.component.view.FCLButton
@@ -66,6 +68,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
             android:text="@string/dialog_positive" />
 
         <com.tungsten.fcllibrary.component.view.FCLButton
@@ -74,6 +78,8 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
             android:text="@string/dialog_positive" />
 
         <com.tungsten.fcllibrary.component.view.FCLButton
@@ -81,6 +87,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
             android:text="@string/dialog_negative" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
