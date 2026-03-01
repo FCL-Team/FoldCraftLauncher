@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,100 +8,121 @@
     android:paddingTop="10dp"
     android:paddingEnd="10dp">
 
-    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-        android:id="@+id/bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/bg_container_white"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingTop="2dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="2dp"
-        app:auto_linear_background_tint="true">
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/release"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/version_game_release"
-            app:auto_hint_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/snapshot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:text="@string/version_game_snapshot"
-            app:auto_hint_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/old"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:text="@string/version_game_old"
-            app:auto_hint_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLCheckBox
-            android:id="@+id/april_fools"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:text="@string/version_game_april_fools"
-            app:auto_hint_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLEditText
-            android:id="@+id/search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:hint="@string/search"
-            android:imeOptions="flagNoFullscreen"
-            android:singleLine="true"
-            app:auto_edit_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_baseline_refresh_24"
-            app:auto_tint="true" />
-
-    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
-
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <com.mio.ui.widget.FCLAppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_white"
+            app:auto_tint="true">
+
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:id="@+id/bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_container_white"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="2dp"
+                app:auto_linear_background_tint="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                    android:id="@+id/release"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/version_game_release"
+                    app:auto_hint_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                    android:id="@+id/snapshot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/version_game_snapshot"
+                    app:auto_hint_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                    android:id="@+id/old"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/version_game_old"
+                    app:auto_hint_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                    android:id="@+id/april_fools"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/version_game_april_fools"
+                    app:auto_hint_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLEditText
+                    android:id="@+id/search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:hint="@string/search"
+                    android:imeOptions="flagNoFullscreen"
+                    android:singleLine="true"
+                    app:auto_edit_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLImageButton
+                    android:id="@+id/refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_refresh_24"
+                    app:auto_tint="true" />
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+        </com.mio.ui.widget.FCLAppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bar" />
 
-        <com.tungsten.fcllibrary.component.view.FCLProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
 
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/failed_refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_baseline_refresh_24"
-            android:visibility="gone" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    </RelativeLayout>
+    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/layout"
+        app:layout_constraintEnd_toEndOf="@id/layout"
+        app:layout_constraintStart_toStartOf="@id/layout"
+        app:layout_constraintTop_toTopOf="@id/layout" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/failed_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_refresh_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/layout"
+        app:layout_constraintEnd_toEndOf="@id/layout"
+        app:layout_constraintStart_toStartOf="@id/layout"
+        app:layout_constraintTop_toTopOf="@id/layout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
