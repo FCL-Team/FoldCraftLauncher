@@ -78,7 +78,6 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLMenuView;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -523,14 +522,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         initSeekbar(cursorOffsetSeekbar, (int) (menuSetting.getCursorOffset()), observable -> {
             menuSetting.setCursorOffset(cursorOffsetSeekbar.progressProperty().get());
-            int screenWidth = AndroidUtils.getScreenWidth();
-            int screenHeight = AndroidUtils.getScreenHeight();
             if (fclBridge != null) {
-                double scaleFactor = fclBridge.getScaleFactor();
-                int width = (int) ((screenWidth + cursorOffsetSeekbar.progressProperty().get()) * scaleFactor);
-                int height = (int) (screenHeight * scaleFactor);
-                fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
-                fclBridge.pushEventWindow(width, height);
+                refreshWindowsSize(menuSetting.getWindowScale());
             }
         });
 
