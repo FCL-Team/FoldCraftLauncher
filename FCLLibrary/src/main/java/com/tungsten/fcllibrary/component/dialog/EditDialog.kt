@@ -9,7 +9,7 @@ import com.tungsten.fcllibrary.databinding.DialogEditBinding
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
 
-class EditDialog(context: Context, private val callback: Consumer<String?>) : FCLDialog(context),
+class EditDialog(context: Context, private val callback: Consumer<String>) : FCLDialog(context),
     View.OnClickListener {
     var binding: DialogEditBinding
 

@@ -9,7 +9,7 @@ import com.tungsten.fcllibrary.databinding.DialogFullEditBinding
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
 
-class FullEditDialog(context: Context, private val callback: Consumer<String?>) : FCLDialog(context),
+class FullEditDialog(context: Context, private val callback: Consumer<String>) : FCLDialog(context),
     View.OnClickListener {
     var binding: DialogFullEditBinding
 

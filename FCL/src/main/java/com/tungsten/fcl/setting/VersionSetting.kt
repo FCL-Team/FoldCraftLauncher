@@ -246,6 +246,14 @@ class VersionSetting : Cloneable {
             debugLogProperty.set(value)
         }
 
+    var forceResolutionProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "forceResolution", false)
+    var isForceResolution: Boolean
+        get() = forceResolutionProperty.get()
+        set(value) {
+            forceResolutionProperty.set(value)
+        }
+
     fun checkController() {
         Controllers.addCallback {
             Controllers.checkControllers()
@@ -279,6 +287,7 @@ class VersionSetting : Cloneable {
         uuidProperty.addListener(listener)
         notCheckModProperty.addListener(listener)
         debugLogProperty.addListener(listener)
+        forceResolutionProperty.addListener(listener)
     }
 
     public override fun clone(): VersionSetting {
@@ -304,6 +313,7 @@ class VersionSetting : Cloneable {
             it.uuid = uuid
             it.isNotCheckMod = isNotCheckMod
             it.isDebugLog = isDebugLog
+            it.isForceResolution = isForceResolution
         }
     }
 
@@ -339,6 +349,7 @@ class VersionSetting : Cloneable {
                 addProperty("uuid", src.uuid)
                 addProperty("notCheckMod", src.isNotCheckMod)
                 addProperty("debugLog", src.isDebugLog)
+                addProperty("forceResolution", src.isForceResolution)
             }
         }
 
@@ -380,6 +391,7 @@ class VersionSetting : Cloneable {
                 vs.uuid = json["uuid"]?.asString ?: ""
                 vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
                 vs.isDebugLog = json["debugLog"]?.asBoolean ?: false
+                vs.isForceResolution = json["forceResolution"]?.asBoolean ?: false
             }
         }
 

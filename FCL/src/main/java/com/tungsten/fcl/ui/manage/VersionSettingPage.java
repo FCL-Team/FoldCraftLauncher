@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.mio.manager.RendererManager;
 import com.mio.ui.dialog.DriverSelectDialog;
 import com.mio.ui.dialog.JavaManageDialog;
 import com.mio.ui.dialog.RendererSelectDialog;
+import com.mio.util.DialogUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.control.SelectControllerDialog;
@@ -48,6 +50,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
@@ -66,6 +69,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
+
+import kotlin.Unit;
 
 public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -96,6 +101,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLSwitch noJVMCheckSwitch;
     private FCLSwitch noModCheckSwitch;
     private FCLSwitch debugLogSwitch;
+    private FCLSwitch forceResolutionSwitch;
 
     private FCLImageButton javaButton;
     private FCLImageButton javaInstallButton;
@@ -153,6 +159,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
         noModCheckSwitch = findViewById(R.id.not_check_mod);
         debugLogSwitch = findViewById(R.id.debug_log);
+        forceResolutionSwitch = findViewById(R.id.force_resolution);
 
         isolateWorkingDirSwitch.disableProperty().bind(modpack);
         scaleFactorSeekbar.addProgressListener();
@@ -253,15 +260,38 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             }
         });
         View.OnLongClickListener listener = view -> {
-            FullEditDialog dialog = new FullEditDialog(getContext(), str -> {
-                ((FCLEditText) view).setText(str);
-            });
+            FullEditDialog dialog = new FullEditDialog(getContext(), str -> ((FCLEditText) view).setText(str));
             dialog.getEditText().setText(((FCLEditText) view).getText());
             dialog.show();
             return true;
         };
         txtJVMArgs.setOnLongClickListener(listener);
         txtGameArgs.setOnLongClickListener(listener);
+        forceResolutionSwitch.setOnClickListener(v -> editForceResolution());
+        forceResolutionSwitch.setOnLongClickListener(view -> {
+            editForceResolution();
+            return true;
+        });
+    }
+
+    private void editForceResolution() {
+        if (forceResolutionSwitch.checkProperty().get()) {
+            SharedPreferences preferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
+            EditDialog dialog = new EditDialog(getContext(), str -> {
+                try {
+                    String[] split = str.toLowerCase().split("x");
+                    if (split.length == 2) {
+                        int w = Integer.parseInt(split[0]);
+                        int h = Integer.parseInt(split[1]);
+                        preferences.edit().putString("force_resolution", w + "x" + h).apply();
+                    }
+                } catch (Exception e) {
+                    DialogUtilKt.showErrorDialog(getContext(), e.toString());
+                }
+            });
+            dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"));
+            dialog.show();
+        }
     }
 
     @Override
@@ -308,6 +338,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.getNotCheckJVMProperty());
             FXUtils.unbindBoolean(noModCheckSwitch, lastVersionSetting.getNotCheckModProperty());
             FXUtils.unbindBoolean(debugLogSwitch, lastVersionSetting.getDebugLogProperty());
+            FXUtils.unbindBoolean(forceResolutionSwitch, lastVersionSetting.getForceResolutionProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
             scaleFactorSeekbar.progressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
@@ -331,6 +362,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.getNotCheckJVMProperty());
         FXUtils.bindBoolean(noModCheckSwitch, versionSetting.getNotCheckModProperty());
         FXUtils.bindBoolean(debugLogSwitch, versionSetting.getDebugLogProperty());
+        FXUtils.bindBoolean(forceResolutionSwitch, versionSetting.getForceResolutionProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
         scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
@@ -339,9 +371,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         chkAutoAllocate.setChecked(versionSetting.isAutoMemory());
 
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
-        Controllers.addCallback(() -> {
-            controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName());
-        });
+        Controllers.addCallback(() -> controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName()));
         Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
         rendererText.setSelected(true);
         rendererText.setText(renderer.getDes());
@@ -382,7 +412,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         builder.setSuffix(suffix);
         builder.create().browse(getActivity(), RequestCodes.SELECT_VERSION_ICON_CODE, (requestCode, resultCode, data) -> {
             if (requestCode == RequestCodes.SELECT_VERSION_ICON_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                if (FileBrowser.getSelectedFiles(data).size() == 0)
+                if (FileBrowser.getSelectedFiles(data).isEmpty())
                     return;
 
                 String path = FileBrowser.getSelectedFiles(data).get(0);
@@ -461,22 +491,19 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                 } else {
                     javaText.setText(java);
                 }
-                return null;
+                return Unit.INSTANCE;
             }).show();
         }
         if (view == javaInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_java)
                     .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
-                        String url = null;
-                        switch (w) {
-                            case 0:
-                                url = "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
-                                break;
-                            case 1:
-                                url = "https://pan.quark.cn/s/e2624206d0b9";
-                                break;
-                        }
+                        String url = switch (w) {
+                            case 0 ->
+                                    "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
+                            case 1 -> "https://pan.quark.cn/s/1a25ca305bda";
+                            default -> null;
+                        };
                         if (url != null) {
                             AndroidUtils.openLink(getContext(), url);
                         }
@@ -504,15 +531,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
                     .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
-                        String url = null;
-                        switch (w) {
-                            case 0:
-                                url = "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
-                                break;
-                            case 1:
-                                url = "https://pan.quark.cn/s/a9f6e9d860d9";
-                                break;
-                        }
+                        String url = switch (w) {
+                            case 0 ->
+                                    "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
+                            case 1 -> "https://pan.quark.cn/s/a9f6e9d860d9";
+                            default -> null;
+                        };
                         if (url != null) {
                             AndroidUtils.openLink(getContext(), url);
                         }
@@ -525,15 +549,12 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
                     .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
-                        String url = null;
-                        switch (w) {
-                            case 0:
-                                url = "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
-                                break;
-                            case 1:
-                                url = "https://pan.quark.cn/s/d87c59695250";
-                                break;
-                        }
+                        String url = switch (w) {
+                            case 0 ->
+                                    "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
+                            case 1 -> "https://pan.quark.cn/s/d87c59695250";
+                            default -> null;
+                        };
                         if (url != null) {
                             AndroidUtils.openLink(getContext(), url);
                         }

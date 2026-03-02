@@ -800,6 +800,7 @@
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
     <string name="settings_advanced_custom_uuid">自定义UUID</string>
+    <string name="settings_advanced_force_resolution">强制设置分辨率（实验性选项，谨慎使用）</string>
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
