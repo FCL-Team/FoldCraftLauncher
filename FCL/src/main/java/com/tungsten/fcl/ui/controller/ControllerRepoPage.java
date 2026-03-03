@@ -7,12 +7,13 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -79,7 +80,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
     private FCLButton check;
     private FCLButton search;
 
-    private ListView listView;
+    private RecyclerView recyclerView;
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
@@ -96,7 +97,8 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
             categorySpinner.setEnabled(!loading);
             deviceSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-            listView.setVisibility(!loading ? View.VISIBLE : View.GONE);
+            recyclerView.setVisibility(!loading ? View.VISIBLE : View.GONE);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             if (loading) {
                 retry.setVisibility(View.GONE);
             }
@@ -107,7 +109,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         Schedulers.androidUIThread().execute(() -> {
             retry.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         });
     }
 
@@ -124,8 +126,10 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
             String indexStr = NetworkUtils.doGet(NetworkUtils.toURL(indexUrl));
             String categoryStr = NetworkUtils.doGet(NetworkUtils.toURL(categoryUrl));
             ArrayList<ControllerIndex> indexes = new ArrayList<>();
-            ArrayList<ControllerIndex> allIndexes = JsonUtils.GSON.fromJson(indexStr, new TypeToken<ArrayList<ControllerIndex>>(){}.getType());
-            ArrayList<ControllerCategory> categories = JsonUtils.GSON.fromJson(categoryStr, new TypeToken<ArrayList<ControllerCategory>>(){}.getType());
+            ArrayList<ControllerIndex> allIndexes = JsonUtils.GSON.fromJson(indexStr, new TypeToken<ArrayList<ControllerIndex>>() {
+            }.getType());
+            ArrayList<ControllerCategory> categories = JsonUtils.GSON.fromJson(categoryStr, new TypeToken<ArrayList<ControllerCategory>>() {
+            }.getType());
             categories.add(0, new ControllerCategory(0, null));
             allIndexes.forEach(i -> {
                 if ((i.getLang().equals("all") || lang == 0 || LocaleUtils.getLocale(LocaleUtils.getLanguage(getContext())).toString().contains(i.getLang())) &&
@@ -134,7 +138,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
                     indexes.add(i);
                 }
             });
-            return new Object[] { searchControl(name, indexes), categories };
+            return new Object[]{searchControl(name, indexes), categories};
         }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<Object[], Exception>) s -> {
             ArrayList<ControllerIndex> indexes = (ArrayList<ControllerIndex>) s[0];
             ArrayList<ControllerCategory> categories = (ArrayList<ControllerCategory>) s[1];
@@ -143,7 +147,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
                 ControllerDownloadPage page = new ControllerDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
                 ControllerPageManager.getInstance().showTempPage(page);
             });
-            listView.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);
         }).whenComplete(Schedulers.androidUIThread(), exception -> {
             setLoading(false);
             if (exception != null) {
@@ -204,14 +208,15 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         Task.supplyAsync(() -> {
             ArrayList<String[]> data = new ArrayList<>();
             String indexStr = NetworkUtils.doGet(NetworkUtils.toURL(indexUrl));
-            ArrayList<ControllerIndex> indexes = JsonUtils.GSON.fromJson(indexStr, new TypeToken<ArrayList<ControllerIndex>>(){}.getType());
+            ArrayList<ControllerIndex> indexes = JsonUtils.GSON.fromJson(indexStr, new TypeToken<ArrayList<ControllerIndex>>() {
+            }.getType());
             for (Controller controller : Controllers.getControllers()) {
                 ControllerIndex index = indexes.stream().filter(i -> i.getId().equals(controller.getId())).findFirst().orElse(null);
                 if (index != null) {
                     String versionStr = NetworkUtils.doGet(NetworkUtils.toURL(head + "repo_json/" + index.getId() + "/version.json"));
                     ControllerVersion version = JsonUtils.GSON.fromJson(versionStr, ControllerVersion.class);
                     if (version.getLatest().getVersionCode() > controller.getVersionCode()) {
-                        String[] d = new String[] {
+                        String[] d = new String[]{
                                 controller.getId(),
                                 controller.getName(),
                                 controller.getVersion(),
@@ -301,7 +306,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
     public void onCreate() {
         super.onCreate();
         searchLayout = findViewById(R.id.search_layout);
-        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         check = findViewById(R.id.check);
         search = findViewById(R.id.search);
@@ -340,7 +345,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         deviceSpinner.setAdapter(deviceAdapter);
         deviceSpinner.setSelection(0);
 
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         retry.setOnClickListener(this);

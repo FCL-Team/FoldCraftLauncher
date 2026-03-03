@@ -1,90 +1,79 @@
-package com.tungsten.fcl.ui.controller;
+package com.tungsten.fcl.ui.controller
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.mio.util.AnimUtil.Companion.playTranslationX
+import com.tungsten.fcl.R
+import com.tungsten.fcl.control.download.ControllerCategory
+import com.tungsten.fcl.control.download.ControllerIndex
+import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
+import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import java.util.function.Consumer
 
-import com.bumptech.glide.Glide;
-import com.mio.util.AnimUtil;
-import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.download.ControllerCategory;
-import com.tungsten.fcl.control.download.ControllerIndex;
-import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
+class ControllerListAdapter(
+    private val context: Context,
+    source: Int,
+    private val categories: ArrayList<ControllerCategory>,
+    private val list: ArrayList<ControllerIndex>,
+    private val callback: Callback
+) : RecyclerView.Adapter<ControllerListAdapter.ViewHolder>() {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-import java.util.ArrayList;
-import java.util.List;
+    private val repoUrl: String =
+        if (source == 0) ControllerRepoPage.CONTROLLER_GITHUB else ControllerRepoPage.CONTROLLER_GIT_CN
 
-public class ControllerListAdapter extends FCLAdapter {
-
-    private final String repoUrl;
-    private final ArrayList<ControllerCategory> categories;
-    private final ArrayList<ControllerIndex> list;
-    private final Callback callback;
-
-    public ControllerListAdapter(Context context, int source, ArrayList<ControllerCategory> categories, ArrayList<ControllerIndex> list, Callback callback) {
-        super(context);
-        this.repoUrl = source == 0 ? ControllerRepoPage.CONTROLLER_GITHUB : ControllerRepoPage.CONTROLLER_GIT_CN;
-        this.categories = categories;
-        this.list = list;
-        this.callback = callback;
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_remote_version, parent, false)
+        )
     }
 
-    private static class ViewHolder {
-        FCLLinearLayout parent;
-        FCLImageView icon;
-        FCLTextView name;
-        FCLTextView tag;
-        FCLTextView description;
-    }
-
-    @Override
-    public int getCount() {
-        return list.size();
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return list.get(i);
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        final ViewHolder viewHolder;
-        if (view == null) {
-            viewHolder = new ViewHolder();
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_remote_version, null);
-            viewHolder.parent = view.findViewById(R.id.parent);
-            viewHolder.icon = view.findViewById(R.id.icon);
-            viewHolder.name = view.findViewById(R.id.version);
-            viewHolder.tag = view.findViewById(R.id.tag);
-            viewHolder.description = view.findViewById(R.id.date);
-            view.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) view.getTag();
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val index = list[position]
+        val binding = ItemRemoteVersionBinding.bind(holder.itemView)
+        binding.parent.setOnClickListener {
+            callback.onItemSelect(
+                index
+            )
         }
-        ControllerIndex index = list.get(i);
-        viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(index));
-        viewHolder.icon.setImageDrawable(null);
-        String iconUrl = repoUrl + "repo_json/" + index.getId() + "/icon.png";
-        Glide.with(getContext()).load(iconUrl).into(viewHolder.icon);
-        viewHolder.name.setText(index.getName());
-        List<String> categories = ControllerCategory.getLocaledCategories(getContext(), this.categories, index.getCategories());
-        StringBuilder stringBuilder = new StringBuilder();
-        categories.forEach(it -> stringBuilder.append(it).append("   "));
-        String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
-        viewHolder.tag.setText(tag);
-        viewHolder.description.setText(index.getIntroduction());
-        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
-        return view;
+        binding.icon.setImageDrawable(null)
+        val iconUrl = repoUrl + "repo_json/" + index.id + "/icon.png"
+        Glide.with(context).load(iconUrl).into(binding.icon)
+        binding.version.text = index.name
+        val categories: MutableList<String?> = ControllerCategory.getLocaledCategories(
+            context,
+            this.categories,
+            index.categories
+        )
+        val stringBuilder = StringBuilder()
+        categories.forEach(Consumer { it: String? -> stringBuilder.append(it).append("   ") })
+        val tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ")
+        binding.tag.text = tag
+        binding.date.text = index.introduction
+        playTranslationX(
+            binding.root,
+            ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+            -100f,
+            0f
+        ).start()
     }
 
-    public interface Callback {
-        void onItemSelect(ControllerIndex mod);
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
+    interface Callback {
+        fun onItemSelect(mod: ControllerIndex?)
     }
 }
