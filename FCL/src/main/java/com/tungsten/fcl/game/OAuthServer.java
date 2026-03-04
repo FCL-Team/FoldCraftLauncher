@@ -21,7 +21,6 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Lang.thread;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.OAuth;
@@ -32,8 +31,6 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
-import fi.iki.elonen.NanoHTTPD;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,6 +38,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+
+import fi.iki.elonen.NanoHTTPD;
 
 public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
     private final int port;
@@ -154,8 +153,6 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
         @Override
         public void openBrowser(String url) {
             lastlyOpenedURL = url;
-            AndroidUtils.openLinkWithBuiltinWebView(FCLPath.CONTEXT, url);
-
             onOpenBrowser.fireEvent(new OpenBrowserEvent(this, url));
         }
 
