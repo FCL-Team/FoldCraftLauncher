@@ -1197,6 +1197,10 @@
     <string name="import_java_error_not_valid">It is detected that the currently imported Java file structure is invalid and cannot be used!</string>
     <string name="import_java_overwrite_wrong">This version of Java has already been imported. Overwrite the current version?</string>
 
+    <string name="ingame_folder_browse">Browse Directory</string>
+    <string name="ingame_folder_import">Import</string>
+    <string name="ingame_folder_import_failed">An error occurred while importing the file %1$s!\n%2$s</string>
+
     <string name="manage_version">Manage Versions</string>
     <string name="select_renderer">Select Renderer</string>
     <string name="open_link_failed">Failed to automatically redirect to the browser. The link has been copied automatically. Please manually open the browser and paste it in.</string>
@@ -1210,6 +1214,7 @@
     <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="close">Close</string>
     <string name="message_warn_restart_after_change">The changes will take effect after restarting.</string>
     <string name="message_check_path_valid">The currently selected game file path (%s) may contain illegal characters, which could cause the game to crash upon launching. It is recommended to check the game directory or rename the version. Do you want to continue launching?</string>
     <string name="message_check_has_modloader">It has been detected that the currently launched game version has mods installed, but the corresponding mod loader does not seem to be installed. The mods may not function properly after launching. Do you want to continue launching?</string>

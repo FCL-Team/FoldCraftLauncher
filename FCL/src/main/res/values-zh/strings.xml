@@ -1133,6 +1133,10 @@
     <string name="import_java_error_not_valid">检测到当前导入的Java文件结构无效，无法使用！</string>
     <string name="import_java_overwrite_wrong">该版本的Java已经导入过了，是否覆盖当前版本？</string>
 
+    <string name="ingame_folder_browse">浏览目录</string>
+    <string name="ingame_folder_import">导入</string>
+    <string name="ingame_folder_import_failed">导入文件 %1$s 时遇到问题！\n%2$s</string>
+
     <string name="manage_version">管理版本</string>
     <string name="select_renderer">选择渲染器</string>
     <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
@@ -1145,6 +1149,7 @@
     <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
     <string name="enabled">已启用</string>
     <string name="disabled">已禁用</string>
+    <string name="close">关闭</string>
     <string name="message_warn_restart_after_change">改动的内容将在重启后生效。</string>
     <string name="message_check_path_valid">当前选择的游戏文件路径（%s）可能包含非法字符，启动后可能会闪退，建议检查游戏目录或是重命名版本，是否继续启动？</string>
     <string name="message_check_has_modloader">检测到当前启动的游戏版本已安装模组但是似乎未安装相应的模组加载器，启动后模组可能无法运行，是否继续启动？</string>
