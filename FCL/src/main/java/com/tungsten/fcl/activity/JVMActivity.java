@@ -102,9 +102,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onBrowse(String path) {
-        int width = (int) (AndroidUtils.getScreenWidth() * 0.7);
-        int height = (int) (AndroidUtils.getScreenHeight() * 0.9);
-        OpenFolderDialog dialog = new OpenFolderDialog(this, width, height, path);
+        OpenFolderDialog dialog = new OpenFolderDialog(this, path);
         dialog.show();
     }
 

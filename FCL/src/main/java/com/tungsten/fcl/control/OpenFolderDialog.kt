@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import androidx.core.net.toUri
@@ -27,8 +28,6 @@ import java.nio.file.Paths
 
 class OpenFolderDialog(
     val activity: Activity,
-    width: Int,
-    height: Int,
     val initialPath: String
 ) : FCLDialog(activity), View.OnClickListener {
     private var internalPath: String = initialPath
@@ -36,6 +35,8 @@ class OpenFolderDialog(
     private var job: Job? = null
 
     init {
+        val width = (AndroidUtils.getScreenWidth() * 0.7).toInt()
+        val height = (AndroidUtils.getScreenHeight() * 0.9).toInt()
         window!!.setLayout(width, height)
         binding = DialogOpenFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -66,6 +67,7 @@ class OpenFolderDialog(
                     internalPath = path
                     refreshFiles()
                 }
+
                 override fun onSelect(adapter: FileBrowserAdapter, path: String) {}
             }
         )
@@ -94,6 +96,7 @@ class OpenFolderDialog(
                         }
                     }
             }
+
             binding.backButton -> {
                 val root = Paths.get(initialPath).normalize().toAbsolutePath()
                 val current = Paths.get(internalPath).normalize().toAbsolutePath()
@@ -104,6 +107,7 @@ class OpenFolderDialog(
                     refreshFiles()
                 }
             }
+
             binding.cancelProgress -> {
                 job?.cancel()
                 job = null
@@ -113,6 +117,7 @@ class OpenFolderDialog(
     }
 
 
+    @SuppressLint("Recycle")
     private fun importFiles(
         paths: List<String>,
         targetDir: String
@@ -130,16 +135,17 @@ class OpenFolderDialog(
                     ensureActive()
                     val uri = path.toUri()
                     val (inputStream, name) = if (AndroidUtils.isDocUri(uri)) {
-                        val name = AndroidUtils.getFileName(context, uri)
-                        context.contentResolver.openInputStream(uri) to name
+                        context.contentResolver.openInputStream(uri) to AndroidUtils.getFileName(
+                            context,
+                            uri
+                        )
                     } else {
-                        val name = File(path).name
-                        Files.newInputStream(Paths.get(path)) to name
+                        Files.newInputStream(Paths.get(path)) to File(path).name
                     }
 
                     runCatching {
                         inputStream?.use { stream ->
-                            val outPath = File(targetDir, name).toPath()
+                            val outPath = Paths.get(targetDir, name)
                             Files.newOutputStream(outPath).use { out ->
                                 stream.copyTo(out)
                             }
@@ -152,7 +158,11 @@ class OpenFolderDialog(
                         withContext(Dispatchers.Main) {
                             FCLAlertDialog.Builder(activity)
                                 .setMessage(
-                                    activity.getString(R.string.ingame_folder_import_failed, name, e.stackTraceToString())
+                                    activity.getString(
+                                        R.string.ingame_folder_import_failed,
+                                        name,
+                                        e.stackTraceToString()
+                                    )
                                 )
                                 .setPositiveButton(
                                     activity.getString(R.string.close)
@@ -161,9 +171,7 @@ class OpenFolderDialog(
                     }
                 }
             } catch (_: CancellationException) {
-                //Ignore
-            } catch (e: Exception) {
-                //Ingore
+            } catch (_: Exception) {
             }
 
             withContext(Dispatchers.Main) {
