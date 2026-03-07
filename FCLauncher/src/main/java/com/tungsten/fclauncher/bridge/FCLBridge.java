@@ -292,17 +292,25 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
+    private static OpenFolderCallback folderCallback = null;
+
+    public static void setOpenFolderCallback(OpenFolderCallback callback) {
+        folderCallback = callback;
+    }
+
     public static void openLink(final String link) {
         Context context = FCLPath.CONTEXT;
         ((Activity) context).runOnUiThread(() -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
                 String targetLink = link;
-                if (targetLink.startsWith("file://")) {
-                    targetLink = targetLink.replace("file://", "");
-                } else if (targetLink.startsWith("file:")) {
-                    targetLink = targetLink.replace("file:", "");
+                if (link.startsWith("file:")) {
+                    targetLink = link.replaceFirst("^file:/+", "/");
+                    if (targetLink.endsWith("/")) {
+                        folderCallback.onBrowse(targetLink);
+                        return;
+                    }
                 }
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 Uri uri;
                 if (targetLink.startsWith("http")) {
                     uri = Uri.parse(targetLink);
