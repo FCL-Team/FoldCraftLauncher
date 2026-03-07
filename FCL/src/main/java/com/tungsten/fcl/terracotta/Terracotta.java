@@ -29,6 +29,7 @@ import net.burningtnt.terracotta.TerracottaAndroidAPI;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
@@ -109,24 +110,24 @@ public class Terracotta {
         TerracottaAndroidAPI.setWaiting();
     }
 
-    public static void setScanning(@Nullable String room, @Nullable String player) throws Exception {
+    public static void setScanning(@Nullable String room, @Nullable String player, @Nullable List<String> extraNodes) throws Exception {
         if (!initialized)
             throw new Exception("initialize Terracotta first!");
         if (!(stateProperty().get() instanceof TerracottaState.Waiting))
             throw new Exception("reset state to waiting first!");
 
         mode = TerracottaMode.HOST;
-        TerracottaAndroidAPI.setScanning(room, player);
+        TerracottaAndroidAPI.setScanning(room, player, extraNodes);
     }
 
-    public static boolean setGuesting(String room, @Nullable String player) throws Exception {
+    public static boolean setGuesting(String room, @Nullable String player, @Nullable List<String> extraNodes) throws Exception {
         if (!initialized)
             throw new Exception("initialize Terracotta first!");
         if (!(stateProperty().get() instanceof TerracottaState.Waiting))
             throw new Exception("reset state to waiting first!");
 
         mode = TerracottaMode.GUEST;
-        return TerracottaAndroidAPI.setGuesting(room, player);
+        return TerracottaAndroidAPI.setGuesting(room, player, extraNodes);
     }
 
     public static String parseException(Context context, TerracottaState.Exception e) {

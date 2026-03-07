@@ -207,12 +207,12 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                         return TerracottaNodeList.fetch();
                     })
                     .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
-                        ArrayList<String> nodeList = new ArrayList<>();
+                        List<String> nodeList = new ArrayList<>();
                         for (URI node : nodes) {
                             nodeList.add(node.toString());
                         }
                         try {
-                            boolean success = Terracotta.setGuesting(code, finalPlayer);
+                            boolean success = Terracotta.setGuesting(code, finalPlayer, nodeList);
                             if (success)
                                 return;
 
@@ -237,12 +237,12 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                         return TerracottaNodeList.fetch();
                     })
                     .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
-                        ArrayList<String> nodeList = new ArrayList<>();
+                        List<String> nodeList = new ArrayList<>();
                         for (URI node : nodes) {
                             nodeList.add(node.toString());
                         }
                         try {
-                            Terracotta.setScanning(null, finalPlayer);
+                            Terracotta.setScanning(null, finalPlayer, nodeList);
                         } catch (Exception e) {
                             Logging.LOG.log(Level.SEVERE, e.getMessage());
                             host.setEnabled(true);

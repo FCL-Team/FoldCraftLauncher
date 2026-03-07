@@ -18,6 +18,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -234,32 +235,35 @@ public final class TerracottaAndroidAPI {
     /**
      * <p>Set Terracotta Android into 'host-scanning' state.</p>
      *
-     * @param player the player's name. A default value will be taken if it's null.
+     * @param room       the room code, which may be used if it's valid.
+     * @param player     the player's name. A default value will be taken if it's null.
+     * @param extraNodes extra public server nodes for EasyTier.
      * @throws IllegalStateException if Terracotta Android hasn't been initialized.
      * @implNote Usually, this method doesn't take a long time to fetch states.
      * However, when initializing the EasyTier, state fetching may block for ~1 seconds.
      */
-    public static void setScanning(@Nullable String room, @Nullable String player) {
+    public static void setScanning(@Nullable String room, @Nullable String player, @Nullable List<String> extraNodes) {
         assertStarted();
-        setScanning0(room, player);
+        setScanning0(room, player, extraNodes == null ? null : String.join("\0", extraNodes));
     }
 
     /**
      * <p>Set Terracotta Android into 'guest-connecting' state.</p>
      *
-     * @param room   the room code. False will be returned if it's invalid.
-     * @param player the player's name. A default value will be taken if it's null.
+     * @param room       the room code. False will be returned if it's invalid.
+     * @param player     the player's name. A default value will be taken if it's null.
+     * @param extraNodes extra public server nodes for EasyTier.
      * @return True if room code is valid, false otherwise.
      * @throws IllegalStateException if Terracotta Android hasn't been initialized.
      * @throws NullPointerException  if room is null.
      * @implNote Usually, this method doesn't take a long time to fetch states.
      * However, when initializing the EasyTier, state fetching may block for ~1 seconds.
      */
-    public static boolean setGuesting(String room, @Nullable String player) {
+    public static boolean setGuesting(String room, @Nullable String player, @Nullable List<String> extraNodes) {
         Objects.requireNonNull(room, "room");
 
         assertStarted();
-        return setGuesting0(room, player);
+        return setGuesting0(room, player, extraNodes == null ? null : String.join("\0", extraNodes));
     }
 
     /**
@@ -381,7 +385,7 @@ public final class TerracottaAndroidAPI {
 
     private static final long FD_PENDING = ((long) Integer.MAX_VALUE) + 1;
     private static final long FD_REJECT = FD_PENDING + 1;
-    ;
+
     @SuppressWarnings("unused") // Native callback
     private static int onVpnServiceStateChanged(byte ip1, byte ip2, byte ip3, byte ip4, short network_length, String cidr) throws UnknownHostException {
         if (pendingRequest != null) {
@@ -460,9 +464,9 @@ public final class TerracottaAndroidAPI {
 
     private static native void setWaiting0();
 
-    private static native void setScanning0(String room, String player);
+    private static native void setScanning0(String room, String player, String extraNodes);
 
-    private static native boolean setGuesting0(String room, String player);
+    private static native boolean setGuesting0(String room, String player, String extraNodes);
 
     private static native int verifyRoomCode0(String room);
 
