@@ -22,11 +22,13 @@ import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.control.OpenFolderDialog;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.bridge.OpenFolderCallback;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclcore.util.Logging;
@@ -37,7 +39,7 @@ import org.lwjgl.glfw.CallbackBridge;
 import java.util.Objects;
 import java.util.logging.Level;
 
-public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener {
+public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener, OpenFolderCallback {
 
     private TextureView textureView;
 
@@ -56,6 +58,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FCLBridge.setOpenFolderCallback(this);
+
         setContentView(R.layout.activity_jvm);
         if (menuType == null || fclBridge == null) {
             Logging.LOG.log(Level.WARNING, "Failed to get ControllerType or FCLBridge, task canceled.");
@@ -94,6 +98,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                 textureView.setTranslationY(0);
             }
         });
+    }
+
+    @Override
+    public void onBrowse(String path) {
+        OpenFolderDialog dialog = new OpenFolderDialog(this, path);
+        dialog.show();
     }
 
     @Override

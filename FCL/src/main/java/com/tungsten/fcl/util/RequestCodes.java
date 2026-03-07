@@ -47,4 +47,6 @@ public class RequestCodes {
     public static final int VPN_PERMISSION_CODE = 1050;
 
     public static final int VPN_REPOST_CODE = 1100;
+
+    public static final int SELECT_IMGAME_IMPORT = 1150;
 }
