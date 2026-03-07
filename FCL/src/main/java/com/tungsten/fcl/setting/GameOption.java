@@ -54,7 +54,7 @@ public class GameOption {
     }
 
     public interface GameOptionListener {
-        void onOptionChanged();
+        void onOptionChanged(boolean manually);
     }
 
     private void load(@NonNull String path) {
@@ -191,7 +191,7 @@ public class GameOption {
         for (WeakReference<GameOptionListener> optionListener : optionListeners) {
             if(optionListener.get() == null) continue;
 
-            optionListener.get().onOptionChanged();
+            optionListener.get().onOptionChanged(false);
         }
     }
 

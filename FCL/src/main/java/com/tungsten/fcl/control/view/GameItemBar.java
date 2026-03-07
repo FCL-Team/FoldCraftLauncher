@@ -66,23 +66,25 @@ public class GameItemBar extends RelativeLayout {
         this.gameOption = gameOption;
         int width = (int) (gameMenu.getTouchPad().getWidth() * gameMenu.getBridge().getScaleFactor());
         int height = (int) (gameMenu.getTouchPad().getHeight() * gameMenu.getBridge().getScaleFactor());
-        optionListener = () -> {
+        optionListener = (manually) -> {
             if (gameMenu.getMenuSetting().getItemBarScale() == 0) {
                 notifySize(gameOption.getGuiScale(width, height, 0) * 20);
             } else {
                 notifySize(gameMenu.getMenuSetting().getItemBarScale());
             }
-            if (restoreBackgroundRunnable != null) {
-                removeCallbacks(restoreBackgroundRunnable);
+            if (manually) {
+                if (restoreBackgroundRunnable != null) {
+                    removeCallbacks(restoreBackgroundRunnable);
+                }
+                setBackgroundColor(0x80FF0000);
+                restoreBackgroundRunnable = () -> {
+                    setBackgroundColor(0x00000000);
+                    restoreBackgroundRunnable = null;
+                };
+                postDelayed(restoreBackgroundRunnable, 1500);
             }
-            setBackgroundColor(0x80FF0000);
-            restoreBackgroundRunnable = () -> {
-                setBackgroundColor(0x00000000);
-                restoreBackgroundRunnable = null;
-            };
-            postDelayed(restoreBackgroundRunnable, 1500);
         };
-        optionListener.onOptionChanged();
+        optionListener.onOptionChanged(false);
         gameOption.addGameOptionListener(optionListener);
     }
 
