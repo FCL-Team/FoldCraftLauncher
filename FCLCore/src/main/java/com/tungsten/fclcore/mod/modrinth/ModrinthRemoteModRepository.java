@@ -18,6 +18,7 @@
 package com.tungsten.fclcore.mod.modrinth;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.annotations.SerializedName;
@@ -39,6 +40,7 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
@@ -98,10 +100,29 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                 pair("limit", Integer.toString(pageSize)),
                 pair("index", convertSortType(sort))
         );
-        Response<ProjectSearchResult> response = HttpRequest.GET(downloadProvider.injectURL(NetworkUtils.withQuery(PREFIX + "/v2/search", query)))
-                .getJson(new TypeToken<Response<ProjectSearchResult>>() {
-                }.getType());
-        return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int) Math.ceil((double) response.totalHits / pageSize));
+        List<URL> candidates = downloadProvider.injectURLWithCandidates(NetworkUtils.withQuery(PREFIX + "/v2/search", query));
+        IOException exception = null;
+        for (URL candidate : candidates) {
+            try {
+                LOG.info("Fetching " + candidate);
+                Response<ProjectSearchResult> response = HttpRequest.GET(candidate.toString())
+                        .getJson(new TypeToken<Response<ProjectSearchResult>>() {
+                        }.getType());
+                return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int) Math.ceil((double) response.totalHits / pageSize));
+            } catch (IOException e) {
+                LOG.warning("Failed to search addons: " + candidate + "\n" + e);
+                if (candidates.size() == 1) {
+                    exception = e;
+                } else {
+                    if (exception == null) {
+                        exception = new IOException("Failed to search addons");
+                    }
+                    exception.addSuppressed(e);
+                }
+            }
+        }
+
+        throw exception != null ? exception : new IOException("No candidates found");
     }
 
     @Override

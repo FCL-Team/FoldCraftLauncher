@@ -18,6 +18,7 @@
 package com.tungsten.fclcore.mod.curse;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.reflect.TypeToken;
@@ -28,8 +29,8 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.MurmurHash2;
-import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.Pair;
+import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
@@ -38,9 +39,18 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public final class CurseForgeRemoteModRepository implements RemoteModRepository {
@@ -125,17 +135,41 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         query.put("index", Integer.toString(pageOffset * pageSize));
         query.put("pageSize", Integer.toString(pageSize));
 
-        Response<List<CurseAddon>> response = withApiKey(HttpRequest.GET(downloadProvider.injectURL(NetworkUtils.withQuery(PREFIX + "/v1/mods/search", query))))
-                .getJson(new TypeToken<Response<List<CurseAddon>>>() {
-                }.getType());
-        if (searchFilter.isEmpty()) {
-            return new SearchResult(response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+        Response<List<CurseAddon>> response = null;
+
+        IOException exception = null;
+        List<URL> candidates = downloadProvider.injectURLWithCandidates(NetworkUtils.withQuery(PREFIX + "/v1/mods/search", query));
+        for (URL candidate : candidates) {
+            LOG.info("Fetching " + candidate);
+            try {
+                response = withApiKey(HttpRequest.GET(candidate.toString()))
+                        .getJson(new TypeToken<Response<List<CurseAddon>>>() {
+                        }.getType());
+                if (searchFilter.isEmpty()) {
+                    return new SearchResult(response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+                }
+                break;
+            } catch (IOException e) {
+                LOG.warning("Failed to search addons: " + candidate + "\n" + e);
+                if (candidates.size() == 1) {
+                    exception = e;
+                } else {
+                    if (exception == null) {
+                        exception = new IOException("Failed to search addons");
+                    }
+                    exception.addSuppressed(e);
+                }
+            }
+        }
+
+        if (response == null) {
+            throw exception != null ? exception : new IOException("No candidates found");
         }
 
         String lowerCaseSearchFilter = searchFilter.toLowerCase(Locale.ROOT);
         Map<String, Integer> searchFilterWords = new HashMap<>();
         for (String s : StringUtils.tokenize(lowerCaseSearchFilter)) {
-            searchFilterWords.put(s, searchFilterWords.getOrDefault(s, 0) + 1);
+            searchFilterWords.merge(s, 1, Integer::sum);
         }
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
