@@ -31,7 +31,11 @@ import com.tungsten.fclcore.util.io.Zipper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -230,21 +234,24 @@ public class World {
         }
     }
 
-    public static Stream<World> getWorlds(Path savesDir) {
+    public static List<World> getWorlds(Path savesDir) {
         try {
             if (Files.exists(savesDir)) {
-                return Files.list(savesDir).flatMap(world -> {
-                    try {
-                        return Stream.of(new World(world));
-                    } catch (IOException e) {
-                        Logging.LOG.log(Level.WARNING, "Failed to read world " + world, e);
-                        return Stream.empty();
-                    }
-                });
+                try (Stream<Path> stream = Files.list(savesDir)) {
+                    return stream.filter(Files::isDirectory)
+                            .flatMap(world -> {
+                                try {
+                                    return Stream.of(new World(world));
+                                } catch (IOException e) {
+                                    Logging.LOG.log(Level.WARNING, "Failed to read world " + world, e);
+                                    return Stream.empty();
+                                }
+                            }).collect(Collectors.toList());
+                }
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Failed to read saves", e);
         }
-        return Stream.empty();
+        return List.of();
     }
 }

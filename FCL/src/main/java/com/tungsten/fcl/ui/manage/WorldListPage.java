@@ -120,11 +120,7 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
         setLoading(true);
         return CompletableFuture
                 .runAsync(() -> gameVersion = profile.getRepository().getGameVersion(id).orElse(null))
-                .thenApplyAsync(unused -> {
-                    try (Stream<World> stream = World.getWorlds(savesDir)) {
-                        return stream.parallel().collect(Collectors.toList());
-                    }
-                })
+                .thenApplyAsync(unused -> World.getWorlds(savesDir))
                 .whenCompleteAsync((result, exception) -> {
                     worlds = result;
                     setLoading(false);
