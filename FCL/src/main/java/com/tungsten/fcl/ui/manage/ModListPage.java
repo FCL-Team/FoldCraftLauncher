@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -402,6 +403,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                     .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
                         checkUpdateAllButton.setFocusable(true);
                         checkUpdateButton.setFocusable(true);
+                        if (exception instanceof CancellationException) return;
                         if (exception != null || result == null) {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                             builder.setCancelable(false);
