@@ -340,7 +340,6 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
     assert(dalvikEnv != NULL);
     assert(pojav_environ->bridgeClazz != NULL);
 
-    FCL_INTERNAL_LOG("Clipboard: Converting string\n");
     char *copySrcC;
     jstring copyDst = NULL;
     if (copySrc) {
@@ -348,7 +347,6 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
         copyDst = (*dalvikEnv)->NewStringUTF(dalvikEnv, copySrcC);
     }
 
-    FCL_INTERNAL_LOG("Clipboard: Calling 2nd\n");
     jstring pasteDst = convertStringJVM(dalvikEnv, env, (jstring) (*dalvikEnv)->CallStaticObjectMethod(dalvikEnv, pojav_environ->bridgeClazz, pojav_environ->method_accessAndroidClipboard, action, copyDst));
 
     if (copySrc) {

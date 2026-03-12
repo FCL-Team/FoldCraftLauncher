@@ -145,6 +145,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private boolean gamepadDisabled = false;
     private Thread fpsThread;
+    private int lastCursorMode = FCLBridge.CursorEnabled;
 
     public void setMenuView(MenuView menuView) {
         this.menuView = menuView;
@@ -744,8 +745,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     @Override
     public void onCursorModeChange(int mode) {
-        this.cursorModeProperty.set(mode);
         activity.runOnUiThread(() -> {
+            if (lastCursorMode == mode)
+                return;
+            lastCursorMode = mode;
+            this.cursorModeProperty.set(mode);
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
