@@ -14,6 +14,7 @@ public final class MinecraftKeyBindingMapper {
     public static final String BINDING_HOTBAR_7 = "key_key.hotbar.7";
     public static final String BINDING_HOTBAR_8 = "key_key.hotbar.8";
     public static final String BINDING_HOTBAR_9 = "key_key.hotbar.9";
+    public static final String BINDING_SWAP_HANDS = "key_key.swapHands";
 
     public static final String BINDING_CHAT = "key_key.chat";
 
