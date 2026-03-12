@@ -3,6 +3,7 @@ package com.tungsten.fcl.control.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.tungsten.fcl.control.GameMenu
@@ -20,23 +21,34 @@ class GameItemBar @JvmOverloads constructor(
     private lateinit var gameOption: GameOption
     var optionListener: GameOptionListener? = null
         private set
-    private var position = 0
-    private var lastClickTime = 0L
-    private var lastClickPosition = 0
-
     private var restoreBackgroundRunnable: Runnable? = null
+    private val gestureDetector: GestureDetector
 
     init {
         isClickable = true
         isFocusable = true
+        gestureDetector =
+            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    runIfInPosition(e) {
+                        sendHotbarKey(it, true)
+                        sendHotbarKey(it, false)
+                    }
+                    return true
+                }
+
+                override fun onDoubleTap(e: MotionEvent): Boolean {
+                    runIfInPosition(e) {
+                        swapHands()
+                    }
+                    return true
+                }
+            })
     }
 
-    fun notifySize(size: Int) {
-        post {
-            val params = layoutParams
-            params.width = size * 9
-            params.height = size
-            setLayoutParams(params)
+    fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
+        if (e.x >= 0 && e.x <= 9 * height) {
+            func(((e.x / height).toInt() + 1).coerceIn(1, 9))
         }
     }
 
@@ -71,35 +83,18 @@ class GameItemBar @JvmOverloads constructor(
         gameOption.addGameOptionListener(optionListener)
     }
 
+    fun notifySize(size: Int) {
+        post {
+            val params = layoutParams
+            params.width = size * 9
+            params.height = size
+            setLayoutParams(params)
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                val height = height
-                if (event.x >= 0 && event.x <= 9 * height) {
-                    position = ((event.x / height).toInt() + 1).coerceIn(1, 9)
-                    sendHotbarKey(position, true)
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTime < 200 && position == lastClickPosition) {
-                        swapHands()
-                        lastClickTime = 0
-                        lastClickPosition = 0
-                    } else {
-                        lastClickTime = currentTime
-                        lastClickPosition = position
-                    }
-                }
-            }
-
-            MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
-                if (position in 1..9) {
-                    sendHotbarKey(position, false)
-                }
-                position = 0
-            }
-
-            else -> {}
-        }
+        gestureDetector.onTouchEvent(event)
         return true
     }
 
