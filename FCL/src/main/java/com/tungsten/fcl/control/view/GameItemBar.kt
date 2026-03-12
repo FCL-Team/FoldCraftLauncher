@@ -3,7 +3,6 @@ package com.tungsten.fcl.control.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.tungsten.fcl.control.GameMenu
@@ -21,35 +20,14 @@ class GameItemBar @JvmOverloads constructor(
     private lateinit var gameOption: GameOption
     var optionListener: GameOptionListener? = null
         private set
-    private var restoreBackgroundRunnable: Runnable? = null
-    private val gestureDetector: GestureDetector
+    private var restore: Runnable? = null
+    private var lastMovePosition = 0
+    private var lastClickTime = 0L
+    private var lastClickPosition = 0
 
     init {
         isClickable = true
         isFocusable = true
-        gestureDetector =
-            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onSingleTapUp(e: MotionEvent): Boolean {
-                    runIfInPosition(e) {
-                        sendHotbarKey(it, true)
-                        sendHotbarKey(it, false)
-                    }
-                    return true
-                }
-
-                override fun onDoubleTap(e: MotionEvent): Boolean {
-                    runIfInPosition(e) {
-                        swapHands()
-                    }
-                    return true
-                }
-            })
-    }
-
-    fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
-        if (e.x >= 0 && e.x <= 9 * height) {
-            func(((e.x / height).toInt() + 1).coerceIn(1, 9))
-        }
     }
 
     fun setup(gameMenu: GameMenu, gameOption: GameOption) {
@@ -68,15 +46,15 @@ class GameItemBar @JvmOverloads constructor(
                 ) * 20 else gameMenu.menuSetting.itemBarScale
             )
             if (manually) {
-                restoreBackgroundRunnable?.let {
+                restore?.let {
                     removeCallbacks(it)
                 }
                 setBackgroundColor(-0x7f010000)
-                restoreBackgroundRunnable = Runnable {
+                restore = Runnable {
                     setBackgroundColor(0x00000000)
-                    restoreBackgroundRunnable = null
+                    restore = null
                 }
-                postDelayed(restoreBackgroundRunnable, 1500)
+                postDelayed(restore, 1500)
             }
         }
         optionListener!!.onOptionChanged(false)
@@ -94,8 +72,38 @@ class GameItemBar @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        gestureDetector.onTouchEvent(event)
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                runIfInPosition(event) {
+                    sendHotbarKey(it)
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastClickTime < 100 && it == lastClickPosition) {
+                        swapHands()
+                        lastClickTime = 0
+                        lastClickPosition = 0
+                    } else {
+                        lastClickTime = currentTime
+                        lastClickPosition = it
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                runIfInPosition(event) {
+                    if (lastMovePosition != it) {
+                        sendHotbarKey(it)
+                    }
+                    lastMovePosition = it
+                }
+            }
+        }
         return true
+    }
+
+    fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
+        if (e.x >= 0 && e.x <= 9 * height) {
+            func(((e.x / height).toInt() + 1).coerceIn(1, 9))
+        }
     }
 
     private fun swapHands() {
@@ -113,7 +121,7 @@ class GameItemBar @JvmOverloads constructor(
         )
     }
 
-    private fun sendHotbarKey(position: Int, press: Boolean) {
+    private fun sendHotbarKey(position: Int) {
         val bindings = arrayOf(
             MinecraftKeyBindingMapper.BINDING_HOTBAR_1 to FCLKeycodes.KEY_1,
             MinecraftKeyBindingMapper.BINDING_HOTBAR_2 to FCLKeycodes.KEY_2,
@@ -127,6 +135,22 @@ class GameItemBar @JvmOverloads constructor(
         )
 
         val (binding, keycode) = bindings[position - 1]
-        gameMenu.input.sendBoundKeyEvent(gameOption, binding, keycode, press)
+        gameMenu.input.sendBoundKeyEvent(gameOption, binding, keycode, true)
+        gameMenu.input.sendBoundKeyEvent(gameOption, binding, keycode, false)
+    }
+
+    fun dropItem() {
+        gameMenu.input.sendBoundKeyEvent(
+            gameOption,
+            MinecraftKeyBindingMapper.BINDING_DROP,
+            FCLKeycodes.KEY_Q,
+            true
+        )
+        gameMenu.input.sendBoundKeyEvent(
+            gameOption,
+            MinecraftKeyBindingMapper.BINDING_DROP,
+            FCLKeycodes.KEY_Q,
+            false
+        )
     }
 }
