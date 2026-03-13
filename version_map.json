@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1290,
-    "versionName": "1.2.9.0",
-    "date": "2026.03.08",
+    "versionCode": 1291,
+    "versionName": "1.2.9.1",
+    "date": "2026.03.13",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed a crash when entering the download layout page.  \n2. Fixed an issue where the background image could not be adjusted in the launcher settings on some devices.  \n3. Added support for Microsoft account login via external browser (long-press the login button in the Microsoft login dialog to open in external browser).  \n4. Added background video playback position memory so that the video does not restart from the beginning when returning from the background.  \n5. Added support for browsing directories and importing files in-game.  \n6. Fixed an issue where the inventory would unexpectedly turn red."
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where .zip files were displayed in worlds/data packs.  \n2. Fixed an issue where manually canceling a mod update check would pop up an operation failure message.  \n3. Re-enabled MCIM acceleration.  \n4. Fixed an issue where some Modrinth modpacks could not be imported.  \n5. Refactored and optimized the inventory, added double-click to swap items to the off-hand.  \n6. Fixed an issue where the cursor was locked to the center of the screen in some mod UI interfaces."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复进入下载布局页面崩溃的问题\n2.修复部分设备启动器设置内无法调整背景图片的问题\n3.添加微软账户外部浏览器登录支持（在微软登录的对话框内长按登录跳转外部浏览器）\n4.添加背景视频播放位置记忆功能，从后台再次进入后不再从头开始播放\n5.支持在游戏内浏览目录、导入文件\n6.修复物品栏意外变成红色的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复世界/数据包中显示.zip文件的问题\n2.修复手动取消模组更新检查会弹窗操作失败的问题\n3.重新启用MCIM加速\n4.修复无法导入部分Modrinth整合包的问题\n5.重构优化物品栏，添加双击交换副手的功能\n6.修复部分模组UI界面中光标被锁定在屏幕中心的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/9e09a396271e",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.0/FCL-release-1.2.9.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/10bc788194a8",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.1/FCL-release-1.2.9.1-all.apk"
   }
 ]
