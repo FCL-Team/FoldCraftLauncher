@@ -77,7 +77,7 @@ class GameItemBar @JvmOverloads constructor(
                 runIfInPosition(event) {
                     sendHotbarKey(it)
                     val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTime < 100 && it == lastClickPosition) {
+                    if (currentTime - lastClickTime < 200 && it == lastClickPosition) {
                         swapHands()
                         lastClickTime = 0
                         lastClickPosition = 0
