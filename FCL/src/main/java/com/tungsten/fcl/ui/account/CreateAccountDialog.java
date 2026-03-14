@@ -6,8 +6,6 @@ import static com.tungsten.fcl.setting.Accounts.FACTORY_OFFLINE;
 import static com.tungsten.fcl.setting.ConfigHolder.config;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +30,7 @@ import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.CharacterSelector;
 import com.tungsten.fclcore.auth.NoSelectedCharacterException;
+import com.tungsten.fclcore.auth.OAuth;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccountFactory;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.auth.authlibinjector.BoundAuthlibInjectorAccountFactory;
@@ -57,6 +56,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
 
@@ -66,11 +66,11 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
     private static final Pattern USERNAME_CHECKER_PATTERN = Pattern.compile("^[A-Za-z0-9_]+$");
 
-    private FCLTextView title;
-    private FCLTabLayout tabLayout;
-    private RelativeLayout detailsContainer;
-    private FCLButton login;
-    private FCLButton cancel;
+    private final FCLTextView title;
+    private final FCLTabLayout tabLayout;
+    private final RelativeLayout detailsContainer;
+    private final FCLButton login;
+    private final FCLButton cancel;
 
     private boolean showMethodSwitcher;
     private AccountFactory<?> factory;
@@ -160,7 +160,8 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
     private void login() {
         login.setEnabled(false);
-        cancel.setEnabled(false);
+        if (!(factory instanceof MicrosoftAccountFactory))
+            cancel.setEnabled(false);
 
         String username;
         String password;
@@ -200,7 +201,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                         UIManager.getInstance().getAccountUI().refresh().start();
                         dismiss();
                     }, exception -> {
-                        if (exception instanceof NoSelectedCharacterException) {
+                        if (exception instanceof NoSelectedCharacterException || exception instanceof CancellationException) {
                             dismiss();
                         } else {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
@@ -234,6 +235,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
     private void onCancel() {
         if (loginTask != null) {
+            OAuth.IS_CANCELED = true;
             loginTask.cancel();
         }
         dismiss();
@@ -276,8 +278,11 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
     // details panel
     private interface Details {
         String getUsername();
+
         String getPassword();
+
         Object getAdditionalData();
+
         View getView();
     }
 
@@ -374,14 +379,14 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
 
     private static class ExternalDetails implements Details {
 
-        private static final String[] ALLOWED_LINKS = { "homepage", "register" };
+        private static final String[] ALLOWED_LINKS = {"homepage", "register"};
 
         private final Context context;
         private final View view;
 
-        private FCLTextView serverName;
-        private FCLImageButton home;
-        private FCLImageButton register;
+        private final FCLTextView serverName;
+        private final FCLImageButton home;
+        private final FCLImageButton register;
         private final FCLEditText username;
         private final FCLEditText password;
 
@@ -411,8 +416,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                 serverName.setText(context.getString(R.string.account_create_server_not_select));
                 home.setVisibility(View.GONE);
                 register.setVisibility(View.GONE);
-            }
-            else {
+            } else {
                 serverName.setText(authlibInjectorServer.getName());
                 Map<String, String> links = authlibInjectorServer.getLinks();
                 if (links.get("homepage") != null) {

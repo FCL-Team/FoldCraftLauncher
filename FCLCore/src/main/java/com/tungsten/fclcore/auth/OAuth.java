@@ -28,6 +28,7 @@ import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,7 @@ public class OAuth {
     private final String accessTokenURL;
     private final String deviceCodeURL;
     private final String tokenURL;
+    public static boolean IS_CANCELED = false;
 
     public OAuth(String authorizationURL, String accessTokenURL, String deviceCodeURL, String tokenURL) {
         this.authorizationURL = authorizationURL;
@@ -110,8 +112,11 @@ public class OAuth {
 
         long startTime = System.nanoTime();
         long interval = TimeUnit.MILLISECONDS.convert(deviceTokenResponse.interval, TimeUnit.SECONDS);
-
+        IS_CANCELED = false;
         while (true) {
+            if (IS_CANCELED) {
+                throw new CancellationException();
+            }
             Thread.sleep(Math.max(interval, 1));
 
             // We stop waiting if user does not respond our authentication request in 15 minutes.
@@ -253,22 +258,7 @@ public class OAuth {
         DEVICE,
     }
 
-    public static final class Result {
-        private final String accessToken;
-        private final String refreshToken;
-
-        public Result(String accessToken, String refreshToken) {
-            this.accessToken = accessToken;
-            this.refreshToken = refreshToken;
-        }
-
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
+    public record Result(String accessToken, String refreshToken) {
     }
 
     private static class DeviceTokenResponse extends ErrorResponse {
