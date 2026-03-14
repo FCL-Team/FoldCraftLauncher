@@ -3,7 +3,7 @@
 //
 #include <malloc.h>
 #include <string.h>
-#include "pojav/environ/environ.h"
+#include "environ/environ.h"
 #include <android/log.h>
 #include "osm_bridge.h"
 

@@ -5,9 +5,9 @@
 #ifndef POJAVLAUNCHER_BRIDGE_TBL_H
 #define POJAVLAUNCHER_BRIDGE_TBL_H
 
-#include "pojav/ctxbridges/common.h"
-#include "pojav/ctxbridges/gl_bridge.h"
-#include "pojav/ctxbridges/osm_bridge.h"
+#include "common.h"
+#include "gl_bridge.h"
+#include "osm_bridge.h"
 
 typedef basic_render_window_t* (*br_init_context_t)(basic_render_window_t* share);
 typedef void (*br_make_current_t)(basic_render_window_t* bundle);

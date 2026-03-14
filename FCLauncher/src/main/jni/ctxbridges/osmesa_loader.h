@@ -5,7 +5,7 @@
 #ifndef POJAVLAUNCHER_OSMESA_LOADER_H
 #define POJAVLAUNCHER_OSMESA_LOADER_H
 
-#include "pojav/GL/osmesa.h"
+#include "GL/osmesa.h"
 #include <stdbool.h>
 
 extern GLboolean (*OSMesaMakeCurrent_p) (OSMesaContext ctx, void *buffer, GLenum type,

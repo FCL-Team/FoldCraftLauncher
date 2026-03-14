@@ -5,7 +5,7 @@
 #ifndef POJAVLAUNCHER_ENVIRON_H
 #define POJAVLAUNCHER_ENVIRON_H
 
-#include "pojav/ctxbridges/common.h"
+#include "ctxbridges/common.h"
 #include <stdatomic.h>
 #include <jni.h>
 

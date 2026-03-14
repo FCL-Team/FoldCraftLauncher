@@ -55,7 +55,7 @@ extern "C" {
 #endif
 
 
-#include "pojav/GL/gl.h"
+#include "gl.h"
 
 
 #define OSMESA_MAJOR_VERSION 11

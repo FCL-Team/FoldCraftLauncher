@@ -1,4 +1,4 @@
-#include "pojav/egl_bridge.h"
+#include "egl_bridge.h"
 #include <jni.h>
 #include <assert.h>
 #include <dlfcn.h>
@@ -12,10 +12,10 @@
 #include <unistd.h>
 
 #include <EGL/egl.h>
-#include "pojav/GL/osmesa.h"
+#include "GL/osmesa.h"
 #include "ctxbridges/osmesa_loader.h"
 #include "ctxbridges/egl_loader.h"
-#include "pojav/virgl/virgl.h"
+#include "virgl/virgl.h"
 #include "fcl/include/fcl_bridge.h"
 
 #ifdef GLES_TEST
@@ -26,7 +26,7 @@
 #include <android/native_window_jni.h>
 #include <android/rect.h>
 #include <string.h>
-#include "pojav/environ/environ.h"
+#include "environ/environ.h"
 #include <android/dlext.h>
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"

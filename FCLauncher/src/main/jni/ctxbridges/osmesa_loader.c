@@ -6,8 +6,8 @@
 #include <dlfcn.h>
 #include "loader_dlopen.h"
 #include "osmesa_loader.h"
-#include "pojav/environ/environ.h"
-#include "pojav/virgl/virgl.h"
+#include "environ/environ.h"
+#include "virgl/virgl.h"
 
 GLboolean (*OSMesaMakeCurrent_p) (OSMesaContext ctx, void *buffer, GLenum type,
                                          GLsizei width, GLsizei height);

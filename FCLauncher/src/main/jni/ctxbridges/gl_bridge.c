@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 #include <stdbool.h>
-#include <environ/environ.h>
+#include "environ/environ.h"
 #include "gl_bridge.h"
 #include "egl_loader.h"
 
