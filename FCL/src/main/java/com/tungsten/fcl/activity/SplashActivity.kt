@@ -16,15 +16,18 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.mio.JavaManager
+import com.mio.manager.RendererManager
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
 import com.tungsten.fcl.setting.ConfigHolder
+import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
@@ -42,9 +45,6 @@ import java.io.IOException
 import java.nio.file.Paths
 import java.util.Locale
 import java.util.logging.Level
-import androidx.core.content.edit
-import com.mio.manager.RendererManager
-import com.tungsten.fcl.util.AndroidUtils
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
@@ -235,9 +235,6 @@ class SplashActivity : FCLActivity() {
             lwjgl = RuntimeUtils.isLatest(
                 FCLPath.LWJGL_DIR,
                 "/assets/app_runtime/lwjgl"
-            ) && RuntimeUtils.isLatest(
-                FCLPath.LWJGL_DIR + "-boat",
-                "/assets/app_runtime/lwjgl-boat"
             )
             cacio = RuntimeUtils.isLatest(
                 FCLPath.CACIOCAVALLO_8_DIR,

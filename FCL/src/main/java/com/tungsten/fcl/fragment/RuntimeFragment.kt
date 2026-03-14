@@ -12,14 +12,11 @@ import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fcl.databinding.FragmentRuntimeBinding
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.FCLFragment
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class RuntimeFragment : FCLFragment(), View.OnClickListener {
     private lateinit var bind: FragmentRuntimeBinding
@@ -105,11 +102,6 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                     withContext(Dispatchers.IO) {
                         runCatching {
                             RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
-                            RuntimeUtils.install(
-                                context,
-                                FCLPath.LWJGL_DIR + "-boat",
-                                "app_runtime/lwjgl-boat"
-                            )
                             lwjgl = true
                         }
                     }
