@@ -30,7 +30,6 @@
 #include <android/dlext.h>
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
-#include "fcl/include/utils.h"
 #include "driver_helper/driver_helper.h"
 
 #define GLFW_CLIENT_API 0x22001

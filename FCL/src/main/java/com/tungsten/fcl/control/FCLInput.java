@@ -108,8 +108,6 @@ public class FCLInput implements View.OnCapturedPointerListener {
             if (MOUSE_MAP.containsKey(keycode) && MOUSE_MAP.get(keycode) != null) {
                 menu.getBridge().pushEventMouseButton(MOUSE_MAP.get(keycode), press);
             } else {
-                if (!FCLBridge.BACKEND_IS_BOAT) {
-                }
                 int code = LwjglKeycodeMap.convertKeycode(keycode);
                 if (code >= 0) {
                     CallbackBridge.setModifiers(code, press);

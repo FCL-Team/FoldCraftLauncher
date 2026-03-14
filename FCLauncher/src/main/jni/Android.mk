@@ -5,38 +5,9 @@ LOCAL_MODULE            := fcl
 LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
-                           fcl/fcl_loader.c \
-                           fcl/utils.c
+                           fcl/fcl_loader.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE            := glfw
-LOCAL_SHARED_LIBRARIES  := fcl driver_helper
-LOCAL_SRC_FILES         := glfw/context.c \
-                           glfw/init.c \
-                           glfw/input.c \
-                           glfw/monitor.c \
-                           glfw/vulkan.c \
-                           glfw/window.c \
-                           glfw/fcl_init.c \
-                           glfw/fcl_monitor.c \
-                           glfw/fcl_window.c \
-                           glfw/egl_context.c \
-                           glfw/osmesa_context.c \
-                           glfw/platform.c \
-                           glfw/posix_thread.c \
-                           glfw/posix_time.c \
-                           glfw/lwjgl_dlopen_hook.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
-                           $(LOCAL_PATH)/glfw/include
-LOCAL_CFLAGS            := -Wall
-LOCAL_LDLIBS            := -llog -ldl -landroid
-ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
-LOCAL_CFLAGS            += -DADRENO_POSSIBLE
-LOCAL_LDLIBS            += -lEGL -lGLESv2
-endif
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)

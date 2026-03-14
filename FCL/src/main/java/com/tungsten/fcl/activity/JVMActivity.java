@@ -110,11 +110,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
-            if (FCLBridge.BACKEND_IS_BOAT) {
-                fclBridge.setFCLNativeWindow(new Surface(surfaceTexture));
-            } else {
-                CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
-            }
+            CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
             menu.onGraphicOutput();
             return;
         }

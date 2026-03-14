@@ -13,7 +13,7 @@
 #include <android/dlext.h>
 #include "driver_helper.h"
 #include "nsbypass.h"
-#include "glfw/include/gl.h"
+#include "pojav/GL/gl.h"
 
 //#define ADRENO_POSSIBLE
 #ifdef ADRENO_POSSIBLE
