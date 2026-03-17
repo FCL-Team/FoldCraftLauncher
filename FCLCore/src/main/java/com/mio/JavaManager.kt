@@ -8,7 +8,9 @@ import java.io.File
 
 object JavaManager {
     private var isInit = false
-    private var NO_JAVA_FOUND = JavaVersion(false, "-1", "None")
+
+    @JvmField
+    val NO_JAVA_FOUND = JavaVersion(false, "-1", "None")
 
     @JvmStatic
     val javaList: MutableList<JavaVersion> = mutableListOf()
@@ -60,6 +62,11 @@ object JavaManager {
     @JvmStatic
     fun getSuitableJavaVersion(version: Version?): JavaVersion {
         return findExactOrNextGreater(version?.javaVersion?.majorVersion)
+    }
+
+    @JvmStatic
+    fun getSuitableJavaVersion(version: Int): JavaVersion {
+        return findExactOrNextGreater(version)
     }
 
     private fun findExactOrNextGreater(version: Int?): JavaVersion {
