@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1291,
-    "versionName": "1.2.9.1",
-    "date": "2026.03.13",
+    "versionCode": 1292,
+    "versionName": "1.2.9.2",
+    "date": "2026.03.18",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where .zip files were displayed in worlds/data packs.  \n2. Fixed an issue where manually canceling a mod update check would pop up an operation failure message.  \n3. Re-enabled MCIM acceleration.  \n4. Fixed an issue where some Modrinth modpacks could not be imported.  \n5. Refactored and optimized the inventory, added double-click to swap items to the off-hand.  \n6. Fixed an issue where the cursor was locked to the center of the screen in some mod UI interfaces."
+        "text": "(Translated from Chinese by AI)\n1. Optimized the double-click to swap items to the off-hand feature, increasing the double-click detection time in the inventory.  \n2. Fixed an issue where some mods could not run due to the missing `getPixelScaleFactor` function.  \n3. Fixed an issue where Microsoft login could not be canceled.  \n4. Fixed an issue where Cleanroom 0.5.0-alpha+ could not automatically select the correct Java version.  \n5. Updated mod and modpack translation data."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复世界/数据包中显示.zip文件的问题\n2.修复手动取消模组更新检查会弹窗操作失败的问题\n3.重新启用MCIM加速\n4.修复无法导入部分Modrinth整合包的问题\n5.重构优化物品栏，添加双击交换副手的功能\n6.修复部分模组UI界面中光标被锁定在屏幕中心的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.优化物品栏双击切换副手功能，增加物品栏双击检测时间\n2.修复缺少getPixelScaleFactor函数导致部分模组无法运行的问题\n3.修复微软登录时无法取消的问题\n4.修复Cleanroom 0.5.0-alpha+ 无法自动选择正确java版本的问题\n5.更新模组和整合包翻译数据"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/10bc788194a8",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.1/FCL-release-1.2.9.1-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/b293733c4bea",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.2/FCL-release-1.2.9.2-all.apk"
   }
 ]
