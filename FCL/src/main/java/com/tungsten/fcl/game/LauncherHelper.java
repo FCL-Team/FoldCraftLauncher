@@ -299,12 +299,10 @@ public final class LauncherHelper {
                                 message = getLocalizedText(context, "exception_access_denied", ((AccessDeniedException) ex).getFile());
                             } else if (ex instanceof ModCheckException) {
                                 message = ((ModCheckException) ex).getReason();
+                            } else if (ex instanceof IllegalArgumentException) {
+                                message = getLocalizedText(context, "exception_no_suitable_java");
                             } else {
-                                if (ex == null) {
-                                    message = "Task failed without exception!";
-                                } else {
-                                    message = StringUtils.getStackTrace(ex);
-                                }
+                                message = StringUtils.getStackTrace(ex);
                             }
 
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
