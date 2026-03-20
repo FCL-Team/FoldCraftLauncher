@@ -1,5 +1,6 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.tasks.MergeSourceSetFolders
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
@@ -7,6 +8,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 }
 
 android {
@@ -110,10 +112,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -135,6 +133,11 @@ android {
         }
     }
 
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 }
 
 dependencies {
@@ -158,6 +161,8 @@ dependencies {
     implementation(libs.palette.ktx)
     implementation(libs.gamepad.remapper)
     implementation(libs.segmented.button)
+    implementation(libs.datastore)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 tasks.register("updateMap") {

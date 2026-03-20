@@ -5,11 +5,16 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
+import com.mio.datastore.GameItemBarSetting
+import com.mio.datastore.gameItemBarDataStore
+import com.tungsten.fcl.control.GameItemBarSettingDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.setting.GameOption
 import com.tungsten.fcl.setting.GameOption.GameOptionListener
 import com.tungsten.fclauncher.keycodes.FCLKeycodes
 import com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper
+import kotlinx.coroutines.launch
 
 class GameItemBar @JvmOverloads constructor(
     context: Context,
@@ -24,6 +29,11 @@ class GameItemBar @JvmOverloads constructor(
     private var lastMovePosition = 0
     private var lastClickTime = 0L
     private var lastClickPosition = 0
+    private var isTwoFingerGestureActive = false
+    private var twoFingerStartY = 0f
+    private val swipeDistanceThreshold = 200f
+
+    private var setting: GameItemBarSetting? = null
 
     init {
         isClickable = true
@@ -59,6 +69,11 @@ class GameItemBar @JvmOverloads constructor(
         }
         optionListener!!.onOptionChanged(false)
         gameOption.addGameOptionListener(optionListener)
+        gameMenu.activity.lifecycleScope.launch {
+            context.gameItemBarDataStore.data.collect {
+                setting = it
+            }
+        }
     }
 
     fun notifySize(size: Int) {
@@ -74,30 +89,79 @@ class GameItemBar @JvmOverloads constructor(
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                runIfInPosition(event) {
-                    sendHotbarKey(it)
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTime < 200 && it == lastClickPosition) {
-                        swapHands()
-                        lastClickTime = 0
-                        lastClickPosition = 0
-                    } else {
-                        lastClickTime = currentTime
-                        lastClickPosition = it
+                if (event.pointerCount == 1) {
+                    runIfInPosition(event) {
+                        sendHotbarKey(it)
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastClickTime < 200 && it == lastClickPosition) {
+                            if (setting?.doubleTapSwapHands == true)
+                                swapHands()
+                            lastClickTime = 0
+                            lastClickPosition = 0
+                        } else {
+                            lastClickTime = currentTime
+                            lastClickPosition = it
+                        }
                     }
                 }
             }
 
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                if (event.pointerCount == 2) {
+                    isTwoFingerGestureActive = true
+                    twoFingerStartY = event.getY(0)
+                }
+            }
+
             MotionEvent.ACTION_MOVE -> {
-                runIfInPosition(event) {
-                    if (lastMovePosition != it) {
-                        sendHotbarKey(it)
+                if (event.pointerCount == 1) {
+                    if (setting?.slideSelection == true)
+                        runIfInPosition(event) {
+                            if (lastMovePosition != it) {
+                                sendHotbarKey(it)
+                            }
+                            lastMovePosition = it
+                        }
+                } else if (event.pointerCount >= 2 && isTwoFingerGestureActive) {
+                    val currentY = event.getY(0)
+                    val deltaY = twoFingerStartY - currentY
+
+                    if (deltaY > swipeDistanceThreshold) {
+                        showSettingDialog()
+                        isTwoFingerGestureActive = false
                     }
-                    lastMovePosition = it
+                }
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                if (event.pointerCount <= 1) {
+                    isTwoFingerGestureActive = false
+                }
+            }
+
+            MotionEvent.ACTION_POINTER_UP -> {
+                if (event.pointerCount < 2) {
+                    isTwoFingerGestureActive = false
                 }
             }
         }
         return true
+    }
+
+    private fun showSettingDialog() {
+        if (!::gameMenu.isInitialized) return
+        setting?.let {
+            GameItemBarSettingDialog(context, setting!!) { result ->
+                gameMenu.activity.lifecycleScope.launch {
+                    context.gameItemBarDataStore.updateData {
+                        it.copy(
+                            slideSelection = result.slideSelection,
+                            doubleTapSwapHands = result.doubleTapSwapHands
+                        )
+                    }
+                }
+            }.show()
+        }
     }
 
     fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
