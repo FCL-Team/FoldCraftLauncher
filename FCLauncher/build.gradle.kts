@@ -50,4 +50,6 @@ dependencies {
     implementation(libs.bytehook)
     implementation(libs.appcompat)
     implementation(libs.material)
+    
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 }
