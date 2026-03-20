@@ -119,7 +119,7 @@ public class JarExecutorLauncher extends Launcher {
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,
-                javaVersion == 8 ? FCLPath.JAVA_8_PATH : javaVersion == 11 ? FCLPath.JAVA_11_PATH : javaVersion == 17 ? FCLPath.JAVA_17_PATH : FCLPath.JAVA_21_PATH,
+                javaVersion == 8 ? FCLPath.JAVA_8_PATH : javaVersion == 11 ? FCLPath.JAVA_25_PATH : javaVersion == 17 ? FCLPath.JAVA_17_PATH : FCLPath.JAVA_21_PATH,
                 Profiles.getSelectedProfile().getGameDir().getAbsolutePath(),
                 RendererManager.RENDERER_GL4ES,
                 finalArgs
