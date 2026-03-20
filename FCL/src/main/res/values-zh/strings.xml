@@ -1155,4 +1155,7 @@
     <string name="message_check_has_modloader">检测到当前启动的游戏版本已安装模组但是似乎未安装相应的模组加载器，启动后模组可能无法运行，是否继续启动？</string>
     <string name="message_data_is_loading">数据还未加载完成，无法修改。</string>
     <string name="exception_no_suitable_java">未能找到合适的Java！</string>
+    <string name="slide_selection">滑动选择</string>
+    <string name="swap_hands">双击切换副手</string>
+
 </resources>
