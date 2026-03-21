@@ -260,15 +260,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         handleModpack(intent)
                     }
                 }
-                getSharedPreferences("launcher", MODE_PRIVATE).apply {
-                    backend.setPosition(if (getBoolean("backend", false)) 1 else 0, true)
-                    backend.setOnPositionChangedListener {
-                        edit().apply {
-                            putBoolean("backend", it == 1)
-                            apply()
-                        }
-                    }
-                }
                 setupAccountDisplay()
                 setupVersionDisplay()
                 playAnim()
@@ -413,7 +404,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .interpolator(OvershootInterpolator()).start()
                     return
                 }
-                FCLBridge.BACKEND_IS_BOAT = binding.backend.position == 1
                 val selectedProfile = Profiles.getSelectedProfile()
                 DriverPlugin.selected = runCatching {
                     DriverPlugin.driverList.find {
@@ -565,22 +555,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun updateColor() {
         binding.apply {
-            backend.setSelectedBackground(ThemeEngine.getInstance().theme.ltColor)
-            backend.setDivider(
-                ThemeEngine.getInstance().theme.color2,
-                ConvertUtils.dip2px(this@MainActivity, 1f),
-                1,
-                1
-            )
-            backend.setBorder(
-                ConvertUtils.dip2px(this@MainActivity, 1f),
-                ThemeEngine.getInstance().theme.color2,
-                0,
-                0
-            )
-            backend.setRipple(ThemeEngine.getInstance().theme.color2)
-            pojav.textColor = ThemeEngine.getInstance().theme.color2
-            boat.textColor = ThemeEngine.getInstance().theme.color2
             start.background = createBackground()
             createBackground().apply {
                 version.background = this
@@ -643,9 +617,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         theme.bind(ThemeEngine.getInstance().theme.colorProperty())
         theme2.bind(ThemeEngine.getInstance().theme.color2Property())
         theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
-        binding.backend.setOnApplyWindowInsetsListener { _, insets ->
-            insets
-        }
     }
 
     private fun createBackground(): GradientDrawable {

@@ -12,14 +12,11 @@ import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fcl.databinding.FragmentRuntimeBinding
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.FCLFragment
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 
 class RuntimeFragment : FCLFragment(), View.OnClickListener {
     private lateinit var bind: FragmentRuntimeBinding
@@ -27,7 +24,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
     var cacio = false
     var cacio17 = false
     var java8 = false
-    var java11 = false
+    var java25 = false
     var java17 = false
     var java21 = false
     var jna = false
@@ -53,9 +50,9 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
         cacio = (activity as SplashActivity).cacio
         cacio17 = (activity as SplashActivity).cacio17
         java8 = (activity as SplashActivity).java8
-        java11 = (activity as SplashActivity).java11
         java17 = (activity as SplashActivity).java17
         java21 = (activity as SplashActivity).java21
+        java25 = (activity as SplashActivity).java25
         jna = (activity as SplashActivity).jna
     }
 
@@ -74,16 +71,16 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 cacioState.setBackgroundDrawable(if (cacio) stateDone else stateUpdate)
                 cacio17State.setBackgroundDrawable(if (cacio17) stateDone else stateUpdate)
                 java8State.setBackgroundDrawable(if (java8) stateDone else stateUpdate)
-                java11State.setBackgroundDrawable(if (java11) stateDone else stateUpdate)
                 java17State.setBackgroundDrawable(if (java17) stateDone else stateUpdate)
                 java21State.setBackgroundDrawable(if (java21) stateDone else stateUpdate)
+                java25State.setBackgroundDrawable(if (java25) stateDone else stateUpdate)
                 jnaState.setBackgroundDrawable(if (jna) stateDone else stateUpdate)
             }
         }
     }
 
     private val isLatest: Boolean
-        get() = lwjgl && cacio && cacio17 && java8 && java11 && java17 && java21 && jna
+        get() = lwjgl && cacio && cacio17 && java8 && java25 && java17 && java21 && jna
 
     private fun check() {
         if (isLatest) {
@@ -105,11 +102,6 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                     withContext(Dispatchers.IO) {
                         runCatching {
                             RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
-                            RuntimeUtils.install(
-                                context,
-                                FCLPath.LWJGL_DIR + "-boat",
-                                "app_runtime/lwjgl-boat"
-                            )
                             lwjgl = true
                         }
                     }
@@ -179,26 +171,6 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                     check()
                 }
             }
-            if (!java11) {
-                java11State.visibility = View.GONE
-                java11Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJava(
-                                context,
-                                FCLPath.JAVA_11_PATH,
-                                "app_runtime/java/jre11"
-                            )
-                            java11 = true
-                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
-                    }
-                    java11State.visibility = View.VISIBLE
-                    java11Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
             if (!java17) {
                 java17State.visibility = View.GONE
                 java17Progress.visibility = View.VISIBLE
@@ -235,6 +207,26 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                     }
                     java21State.visibility = View.VISIBLE
                     java21Progress.visibility = View.GONE
+                    refreshDrawables()
+                    check()
+                }
+            }
+            if (!java25) {
+                java25State.visibility = View.GONE
+                java25Progress.visibility = View.VISIBLE
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        runCatching {
+                            RuntimeUtils.installJava(
+                                context,
+                                FCLPath.JAVA_25_PATH,
+                                "app_runtime/java/jre25"
+                            )
+                            java25 = true
+                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
+                    }
+                    java25State.visibility = View.VISIBLE
+                    java25Progress.visibility = View.GONE
                     refreshDrawables()
                     check()
                 }

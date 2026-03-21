@@ -82,13 +82,6 @@ Java_net_java_openjdk_cacio_ctc_CTCDesktopPeer_openUri(JNIEnv *env, jclass clazz
     if (detachable) (*dalvikJavaVMPtr)->DetachCurrentThread(dalvikJavaVMPtr);
 }
 
-JNIEXPORT void JNICALL
-Java_sun_awt_peer_cacio_FCLClipboard_clipboardCopy(JNIEnv *env, jclass clazz, jstring str) {
-    const char *stringChars = (*env)->GetStringUTFChars(env, str, NULL);
-    fclSetPrimaryClipString(stringChars);
-    (*env)->ReleaseStringUTFChars(env, str, stringChars);
-}
-
 JNIEXPORT void JNICALL Java_net_java_openjdk_cacio_ctc_CTCClipboard_nQuerySystemClipboard(JNIEnv *env, jclass clazz) {
     JNIEnv *dalvikEnv;char detachable = 0;
     if((*dalvikJavaVMPtr)->GetEnv(dalvikJavaVMPtr, (void **) &dalvikEnv, JNI_VERSION_1_6) == JNI_EDETACHED) {

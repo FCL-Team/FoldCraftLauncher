@@ -267,15 +267,8 @@ public class FCLauncher {
                 eglName = renderer.getPath() + eglName;
             }
             List<String> envList;
-            if (FCLBridge.BACKEND_IS_BOAT) {
-                envMap.put("LIBGL_STRING", renderer.getName());
-                envMap.put("LIBGL_NAME", renderer.getGlName());
-                envMap.put("LIBEGL_NAME", eglName);
-                envList = renderer.getBoatEnv();
-            } else {
-                envMap.put("POJAVEXEC_EGL", eglName);
-                envList = renderer.getPojavEnv();
-            }
+            envMap.put("POJAVEXEC_EGL", eglName);
+            envList = renderer.getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
                     String[] split = env.split("=");
@@ -293,23 +286,16 @@ public class FCLauncher {
             }
             return;
         }
-        if (FCLBridge.BACKEND_IS_BOAT) {
-            envMap.put("LIBGL_STRING", renderer.getName());
-            envMap.put("LIBGL_NAME", renderer.getGlName());
-            envMap.put("LIBEGL_NAME", renderer.getEglName());
-        }
         if (renderer.isEqual(Renderer.ID_GL4ES) || renderer.isEqual(Renderer.ID_VGPU)) {
             envMap.put("LIBGL_ES", "2");
             envMap.put("LIBGL_MIPMAP", "3");
             envMap.put("LIBGL_NORMALIZE", "1");
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
-            if (!FCLBridge.BACKEND_IS_BOAT) {
-                if (renderer.getId().equals(Renderer.ID_GL4ES)) {
-                    envMap.put("POJAV_RENDERER", "opengles2");
-                } else {
-                    envMap.put("POJAV_RENDERER", "opengles2_vgpu");
-                }
+            if (renderer.getId().equals(Renderer.ID_GL4ES)) {
+                envMap.put("POJAV_RENDERER", "opengles2");
+            } else {
+                envMap.put("POJAV_RENDERER", "opengles2_vgpu");
             }
         } else if (renderer.isEqual(Renderer.ID_NGGL4ES)) {
             envMap.put("LIBGL_USE_MC_COLOR", "1");
@@ -320,10 +306,8 @@ public class FCLauncher {
             envMap.put("LIBGL_NOINTOVLHACK", "1");
             envMap.put("LIBGL_NOERROR", "1");
             // TODO: set NGG_DIR_PATH to custom path
-            if (!FCLBridge.BACKEND_IS_BOAT) {
-                envMap.put("POJAV_RENDERER", "opengles3");
-                envMap.put("POJAVEXEC_EGL", "libEGL.so");
-            }
+            envMap.put("POJAV_RENDERER", "opengles3");
+            envMap.put("POJAVEXEC_EGL", "libEGL.so");
         } else {
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
             envMap.put("MESA_GL_VERSION_OVERRIDE", renderer.isEqual(Renderer.ID_VIRGL) ? "4.3" : "4.6");
@@ -334,25 +318,12 @@ public class FCLauncher {
             envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
             if (renderer.isEqual(Renderer.ID_VIRGL)) {
-                if (FCLBridge.BACKEND_IS_BOAT) {
-                    envMap.put("GALLIUM_DRIVER", "virpipe");
-                } else {
-                    envMap.put("POJAV_RENDERER", "gallium_virgl");
-                }
+                envMap.put("POJAV_RENDERER", "gallium_virgl");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer.isEqual(Renderer.ID_ZINK)) {
-                if (FCLBridge.BACKEND_IS_BOAT) {
-                    envMap.put("GALLIUM_DRIVER", "zink");
-                } else {
-                    envMap.put("POJAV_RENDERER", "vulkan_zink");
-                }
+                envMap.put("POJAV_RENDERER", "vulkan_zink");
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
-                if (FCLBridge.BACKEND_IS_BOAT) {
-                    envMap.put("GALLIUM_DRIVER", "freedreno");
-                    envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "kgsl");
-                } else {
-                    envMap.put("POJAV_RENDERER", "gallium_freedreno");
-                }
+                envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
         }
     }
@@ -414,12 +385,7 @@ public class FCLauncher {
 
         bridge.dlopen(nativeDir + "/libopenal.so");
         if (!config.getRenderer().getPath().isEmpty()) {
-            List<String> envList;
-            if (FCLBridge.BACKEND_IS_BOAT) {
-                envList = config.getRenderer().getBoatEnv();
-            } else {
-                envList = config.getRenderer().getPojavEnv();
-            }
+            List<String> envList = config.getRenderer().getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
                     String[] split = env.split("=");

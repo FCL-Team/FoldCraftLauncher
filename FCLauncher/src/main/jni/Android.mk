@@ -5,38 +5,9 @@ LOCAL_MODULE            := fcl
 LOCAL_SHARED_LIBRARIES  := bytehook
 LOCAL_SRC_FILES         := fcl/fcl_bridge.c \
                            fcl/fcl_event.c \
-                           fcl/fcl_loader.c \
-                           fcl/utils.c
+                           fcl/fcl_loader.c
 LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include
 LOCAL_LDLIBS            := -llog -ldl -landroid
-include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE            := glfw
-LOCAL_SHARED_LIBRARIES  := fcl driver_helper
-LOCAL_SRC_FILES         := glfw/context.c \
-                           glfw/init.c \
-                           glfw/input.c \
-                           glfw/monitor.c \
-                           glfw/vulkan.c \
-                           glfw/window.c \
-                           glfw/fcl_init.c \
-                           glfw/fcl_monitor.c \
-                           glfw/fcl_window.c \
-                           glfw/egl_context.c \
-                           glfw/osmesa_context.c \
-                           glfw/platform.c \
-                           glfw/posix_thread.c \
-                           glfw/posix_time.c \
-                           glfw/lwjgl_dlopen_hook.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/fcl/include \
-                           $(LOCAL_PATH)/glfw/include
-LOCAL_CFLAGS            := -Wall
-LOCAL_LDLIBS            := -llog -ldl -landroid
-ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
-LOCAL_CFLAGS            += -DADRENO_POSSIBLE
-LOCAL_LDLIBS            += -lEGL -lGLESv2
-endif
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -86,20 +57,20 @@ LOCAL_SHARED_LIBRARIES  := fcl driver_helper
 # LOCAL_CFLAGS += -DDEBUG
 # -DGLES_TEST
 LOCAL_SRC_FILES := \
-    pojav/bigcoreaffinity.c \
-    pojav/egl_bridge.c \
-    pojav/ctxbridges/loader_dlopen.c \
-    pojav/ctxbridges/gl_bridge.c \
-    pojav/ctxbridges/osm_bridge.c \
-    pojav/ctxbridges/egl_loader.c \
-    pojav/ctxbridges/osmesa_loader.c \
-    pojav/ctxbridges/swap_interval_no_egl.c \
-    pojav/environ/environ.c \
-    pojav/input_bridge_v3.c \
-    pojav/virgl/virgl.c \
-    pojav/jre_launcher.c \
-    pojav/lwjgl_dlopen_hook.c
-LOCAL_C_INCLUDES        := $(LOCAL_PATH)/pojav
+    bigcoreaffinity.c \
+    egl_bridge.c \
+    ctxbridges/loader_dlopen.c \
+    ctxbridges/gl_bridge.c \
+    ctxbridges/osm_bridge.c \
+    ctxbridges/egl_loader.c \
+    ctxbridges/osmesa_loader.c \
+    ctxbridges/swap_interval_no_egl.c \
+    environ/environ.c \
+    input_bridge_v3.c \
+    virgl/virgl.c \
+    jre_launcher.c \
+    lwjgl_dlopen_hook.c
+LOCAL_C_INCLUDES        := $(LOCAL_PATH)/
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_CFLAGS += -DADRENO_POSSIBLE
 LOCAL_LDLIBS += -lEGL -lGLESv2
