@@ -17,14 +17,16 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-            )
         }
 
         create("fordebug") {
             initWith(getByName("debug"))
+        }
+    }
+
+    libraryVariants.all {
+        packageLibraryProvider.get().let {
+            it.destinationDirectory.set(file("${rootDir}/FCL/libs"))
         }
     }
 
