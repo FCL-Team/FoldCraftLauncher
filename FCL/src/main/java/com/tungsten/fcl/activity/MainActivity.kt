@@ -53,7 +53,6 @@ import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
@@ -238,7 +237,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         startActivity(Intent(this@MainActivity, ShellActivity::class.java))
                         true
                     }
-                    UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
+//                    UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
                     if (!checkNotificationPermission() && getSharedPreferences(
                             "launcher",
                             MODE_PRIVATE

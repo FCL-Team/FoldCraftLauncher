@@ -44,13 +44,14 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1292
-        versionName = "1.2.9.2"
+        versionName = "1.2.9.2-last-version-with-boat"
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("FCLKey")
+            applicationIdSuffix = ".boat"
         }
         create("fordebug") {
             initWith(getByName("debug"))
