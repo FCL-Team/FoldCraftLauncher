@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1292,
-    "versionName": "1.2.9.2",
-    "date": "2026.03.18",
+    "versionCode": 1293,
+    "versionName": "1.2.9.3",
+    "date": "2026.03.23",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Optimized the double-click to swap items to the off-hand feature, increasing the double-click detection time in the inventory.  \n2. Fixed an issue where some mods could not run due to the missing `getPixelScaleFactor` function.  \n3. Fixed an issue where Microsoft login could not be canceled.  \n4. Fixed an issue where Cleanroom 0.5.0-alpha+ could not automatically select the correct Java version.  \n5. Updated mod and modpack translation data."
+        "text": "(Translated from Chinese by AI)\n1. Added Java 25 runtime  \n2. Upgraded LWJGL to 3.3.6  \n3. Fixed the issue where versions after 26.1 snapshot 8 could not run  \n4. Added inventory feature switch (swipe up with two fingers on the inventory to open settings)  \n5. Removed the Boat backend (due to the upgrade to LWJGL 3.3.6, it cannot coexist with the Pojav backend. If you need to use the Boat backend, you can download the coexistable installation package from GitHub Releases.)  \n6. Removed Java 11"
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.优化物品栏双击切换副手功能，增加物品栏双击检测时间\n2.修复缺少getPixelScaleFactor函数导致部分模组无法运行的问题\n3.修复微软登录时无法取消的问题\n4.修复Cleanroom 0.5.0-alpha+ 无法自动选择正确java版本的问题\n5.更新模组和整合包翻译数据"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加Java25运行时\n2.升级LWJGL到3.3.6\n3.修复无法运行26.1 snapshot 8以后到版本的问题\n4.增加物品栏功能开关（双指触摸物品栏后向上滑动开启设置）\n5.移除Boat后端（由于LWJGL升级为3.3.6，无法与Pojav后端同时存在。如需使用Boat后端，可以在Github Releases内下载共存版安装包。）\n6.移除Java11"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/b293733c4bea",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.2/FCL-release-1.2.9.2-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f6d5cc2caa9b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.3/FCL-release-1.2.9.3-all.apk"
   }
 ]
