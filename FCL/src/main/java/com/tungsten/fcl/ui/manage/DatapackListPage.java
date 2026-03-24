@@ -151,8 +151,6 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
                         first = false;
                     }
                     setLoading(false);
-
-                    System.gc();
                 })
                 .start();
     }

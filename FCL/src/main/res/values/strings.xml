@@ -1,12 +1,15 @@
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name_import">Install Modpack</string>
 
+    <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
     <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
     <string name="splash_permission_grant">Grant</string>
     <string name="splash_permission_title">Permission to store needed</string>
     <string name="splash_permission_close">Close the app</string>
     <string name="splash_permission_settings">Settings</string>
     <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
+    <string name="notification_permission">FCL requires permission to post notifications to prevent issues with normal game installation or startup.</string>
 
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
@@ -17,9 +20,9 @@
     <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
     <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
     <string name="splash_runtime_java8" translatable="false">JRE 8</string>
-    <string name="splash_runtime_java11" translatable="false">JRE 11</string>
     <string name="splash_runtime_java17" translatable="false">JRE 17</string>
     <string name="splash_runtime_java21" translatable="false">JRE 21</string>
+    <string name="splash_runtime_java25" translatable="false">JRE 25</string>
     <string name="splash_runtime_jna" translatable="false">JNA</string>
     <string name="splash_runtime_install">Install / Update</string>
 
@@ -80,6 +83,7 @@
     <string name="account_methods_microsoft_error_add_family">Since you are not yet 18 years old, an adult must add you to a family in order for you to play Minecraft.</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live is not available in your current country/region.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">Your Microsoft account does not have a linked Xbox account yet. Please create one before continuing.</string>
+    <string name="account_methods_microsoft_error_banned">Your account may have been banned by Xbox Live.\nYou can click on "Ban Query" above for more details.</string>
     <string name="account_methods_microsoft_error_unknown">Failed to log in</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Please log in using your account(like phone number) and password on the Microsoft account login page. Please do not use a verification code to log in.</string>
     <string name="account_methods_microsoft_error_no_character">Your account does not own the Minecraft Java Edition.\nThe game profile may not have been created.</string>
@@ -104,6 +108,7 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_retry">Retry</string>
     <string name="action_share">Share</string>
+    <string name="action_upload">Upload log</string>
     <string name="action_skip">Skip</string>
 
     <string name="announcement">Announcement: %s</string>
@@ -137,6 +142,7 @@
     <string name="button_select_all">Select All</string>
     <string name="button_set">Set</string>
     <string name="button_reset">Reset</string>
+    <string name="button_overwrite">Overwrite</string>
     <string name="button_up" translatable="false">▲</string>
     <string name="button_down" translatable="false">▼</string>
     <string name="button_left" translatable="false">◀</string>
@@ -295,6 +301,9 @@
     <string name="curse_category_4550">Quests</string>
     <string name="curse_category_4555">World Gen</string>
     <string name="curse_category_4552">Scripts</string>
+    <string name="curse_category_6555">Vanilla</string>
+    <string name="curse_category_6554">Fantasy</string>
+    <string name="curse_category_6553">Realistic</string>
 
     <string name="curse_sort_author">Author</string>
     <string name="curse_sort_date_created">Date Created</string>
@@ -367,7 +376,14 @@
     <string name="folder_config">Browse configs</string>
     <string name="folder_game">Browse game directory</string>
     <string name="folder_log">Browse log directory</string>
-    <string name="folder_fcl_log">Browse FCL log directory</string>
+    <string name="folder_fcl_log">Browse FCL logs</string>
+    <string name="upload_log">Upload Log</string>
+     <string name="log_not_found">Log file not found</string>
+     <string name="log_too_large">Log file is too large</string>
+    <string name="upload_fcl_log">Upload FCL log</string>
+    <string name="upload_game_log">Upload game log</string>
+    <string name="upload_success">Upload success! URL copied to clipboard: %s</string>
+    <string name="upload_failed">Upload failed: %s</string>
     <string name="folder_mod">Browse mods</string>
     <string name="folder_resourcepacks">Browse resource packs</string>
     <string name="folder_saves">Browse saves</string>
@@ -460,6 +476,7 @@
     <string name="install_installer_fabric" translatable="false">Fabric</string>
     <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
     <string name="install_installer_fabric_api_warning">Warning: Fabric API is a mod, and will be installed into the mod directory of the game instance. Please do not change the working directory of the game, or the Fabric API will not work. If you do want to change these settings, you should reinstall it.</string>
+    <string name="install_installer_cleanroom" translatable="false">Cleanroom</string>
     <string name="install_installer_forge" translatable="false">Forge</string>
     <string name="install_installer_neoforge" translatable="false">NeoForge</string>
     <string name="install_installer_game" translatable="false">Minecraft</string>
@@ -483,11 +500,12 @@
     <string name="jar_executor_crash_title">Jar Executor Crashed</string>
     <string name="jar_executor_crash_reason">Jar Executor crash reason analyse is not supported now.</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">You are using a deprecated Java version, are you sure you want to continue?</string>
     <string name="launch_error_java_auto">Auto select</string>
     <string name="launch_error_java_continue">Continue</string>
+    <string name="launch_error_java_continue_disable">Continue(disable checks)</string>
     <string name="launch_failed">Unable to launch</string>
     <string name="launch_failed_download_library">Unable to download library %s.</string>
 
@@ -538,6 +556,7 @@
     <string name="menu_settings_debug">Debug</string>
     <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
     <string name="menu_settings_disable_gesture">Disable Gesture</string>
+    <string name="menu_settings_disable_left_touch">Disable left half screen touch</string>
     <string name="menu_settings_force_exit">Force Exit</string>
     <string name="menu_settings_force_exit_button">Exit</string>
     <string name="menu_settings_force_exit_msg">Are you sure to force exit?</string>
@@ -557,8 +576,11 @@
     <string name="menu_settings_mouse_mode_click">Click</string>
     <string name="menu_settings_mouse_mode_slide">Slide</string>
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">Mouse Sensitivity(When the cursor is displayed)</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
     <string name="menu_settings_gamepad">GamePad</string>
+    <string name="menu_settings_gamepad_disable_mapping">Disable Gamepad Mapping</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
     <string name="menu_settings_gamepad_button_binding">Button binding</string>
     <string name="menu_settings_gamepad_open_button">Open</string>
@@ -573,6 +595,8 @@
     <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
     <string name="menu_settings_item_bar_scale">ItemBarScale</string>
     <string name="menu_settings_show_log">Show Log</string>
+    <string name="menu_settings_show_log_auto">Show Log Automatically</string>
+    <string name="menu_settings_performance_mode">Sustained Performance Mode</string>
 
     <string name="message_cancelled">Operation was cancelled</string>
     <string name="message_copy">Copy successfully!</string>
@@ -596,6 +620,7 @@
     <string name="modpack_download">Download Modpack</string>
     <string name="modpack_enter_name">Enter a name for this modpack.</string>
     <string name="modpack_export">Export Modpack</string>
+    <string name="modpack_external_detected">External modpack detected: %s</string>
     <string name="modpack_export_as">Export Modpack As…</string>
     <string name="modpack_file_api">Modpack URL Prefix</string>
     <string name="modpack_files_blueprints">BuildCraft Blueprints</string>
@@ -696,6 +721,48 @@
     <string name="modrinth_category_worldgen">Worldgen</string>
     <string name="modrinth_category_datapack">Datapack</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">Atmosphere</string>
+    <string name="modrinth_category_bloom">Bloom</string>
+    <string name="modrinth_category_cartoon">Cartoon</string>
+    <string name="modrinth_category_colored_lighting">Colored-Lighting</string>
+    <string name="modrinth_category_fantasy">Fantasy</string>
+    <string name="modrinth_category_foliage">Foliage</string>
+    <string name="modrinth_category_high">High</string>
+    <string name="modrinth_category_low">Low</string>
+    <string name="modrinth_category_medium">Medium</string>
+    <string name="modrinth_category_path_tracing">Path-Tracing</string>
+    <string name="modrinth_category_pbr" translatable="false">PBR</string>
+    <string name="modrinth_category_potato">Potato</string>
+    <string name="modrinth_category_realistic">Realistic</string>
+    <string name="modrinth_category_reflections">Reflections</string>
+    <string name="modrinth_category_screenshot">Screenshot</string>
+    <string name="modrinth_category_semi_realistic">Semi-Realistic</string>
+    <string name="modrinth_category_shadows">Shadows</string>
+    <string name="modrinth_category_vanilla_like">Vanilla-Like</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_128x" translatable="false">128x</string>
+    <string name="modrinth_category_16x" translatable="false">16x</string>
+    <string name="modrinth_category_256x" translatable="false">256x</string>
+    <string name="modrinth_category_32x" translatable="false">32x</string>
+    <string name="modrinth_category_48x" translatable="false">48x</string>
+    <string name="modrinth_category_512x" translatable="false">512x+</string>
+    <string name="modrinth_category_64x" translatable="false">64x</string>
+    <string name="modrinth_category_8x_" translatable="false">8x</string>
+    <string name="modrinth_category_gui" translatable="false">GUI</string>
+    <string name="modrinth_category_audio">Audio</string>
+    <string name="modrinth_category_blocks">Blocks</string>
+    <string name="modrinth_category_core_shaders">Core-shaders</string>
+    <string name="modrinth_category_entities">Entities</string>
+    <string name="modrinth_category_environment">Environment</string>
+    <string name="modrinth_category_fonts">Fonts</string>
+    <string name="modrinth_category_items">Items</string>
+    <string name="modrinth_category_locale">Locale</string>
+    <string name="modrinth_category_modded">Modded</string>
+    <string name="modrinth_category_models">Models</string>
+    <string name="modrinth_category_simplistic">Simplistic</string>
+    <string name="modrinth_category_themed">Themed</string>
+    <string name="modrinth_category_tweaks">Tweaks</string>
 
     <string name="mods">Mods</string>
     <string name="mods_add">Add Mods</string>
@@ -712,6 +779,7 @@
     <string name="mods_check_updates_source">Source</string>
     <string name="mods_check_updates_target_version">Target Version</string>
     <string name="mods_check_updates_update">Update</string>
+    <string name="mods_check_updates_update_without">Update(without retaining old versions)</string>
     <string name="mods_choose_mod">Choose a mod</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Dependency</string>
@@ -750,6 +818,7 @@
     <string name="quick_input_title">Quick Input</string>
     <string name="quick_input_add">Add New Text</string>
     <string name="quick_input_text">Quick Input Text</string>
+    <string name="quick_input_remarks">Remarks (optional)</string>
     <string name="quick_input_exist">The text already exist!</string>
     <string name="quick_input_empty">Fill the text first!</string>
 
@@ -768,27 +837,30 @@
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
+    <string name="settings_advanced_dont_check_mod">Do not check Mod compatibility</string>
+    <string name="settings_advanced_debug_log">Output debug log</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
-    <string name="settings_advanced_java_permanent_generation_space">PermGen Space</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">in MB</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
+    <string name="settings_advanced_custom_uuid">Custom UUID</string>
+    <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="settings_fcl_vulkan_driver_system">Allow zink to use System Vulkan driver</string>
     <string name="settings_fcl_renderer">Renderer</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core(Pojav backend)</string>
-    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
     <string name="settings_fcl_renderer_gl4esp" translatable="false">GL4ES+ (unstable)(OpenGL 2.1)</string>
+    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, built-in)</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
 
@@ -804,7 +876,9 @@
     <string name="settings_icon">Icon</string>
 
     <string name="settings_launcher">Launcher Settings</string>
+    <string name="settings_launcher_request">Request</string>
     <string name="settings_launcher_debug">Debug</string>
+    <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>
@@ -821,18 +895,32 @@
     <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
     <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
     <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
+    <string name="settings_launcher_language_ukrainian" translatable="false">Українська Мова</string>
+    <string name="settings_launcher_language_german" translatable="false">Deutsch</string>
+    <string name="settings_launcher_language_traditional_chinese_hk" translatable="false">繁體中文（香港）</string>
     <string name="settings_launcher_launcher_log_export">Export launcher logs</string>
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
-    <string name="settings_launcher_theme">Theme</string>
-    <string name="settings_launcher_theme2">Theme2</string>
+    <string name="settings_launcher_theme_mode">Theme Mode</string>
+    <string name="settings_launcher_theme_mode_follow">Follow the system</string>
+    <string name="settings_launcher_theme_mode_light">Light Mode</string>
+    <string name="settings_launcher_theme_mode_dark">Dark Mode</string>
+    <string name="settings_launcher_theme">Main Theme Color</string>
+    <string name="settings_launcher_theme2">Secondary Theme Color(Light Mode)</string>
+    <string name="settings_launcher_theme2_dark">Secondary Theme Color(Dark Mode)</string>
+    <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
+    <string name="settings_launcher_background_video">Launcher Background (Video .mp4)</string>
+    <string name="settings_launcher_background_video_volume">Video Background Volume</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
     <string name="settings_launcher_menu_icon">Menu View Icon</string>
     <string name="settings_launcher_ignore_notch">Ignore Notch</string>
     <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
+    <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
+    <string name="settings_disable_fullscreen_input">Disable fullscreen input (For TouchController mod)</string>
+    <string name="settings_launcher_exit_after_launching">Launcher exits after launching</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
@@ -875,6 +963,82 @@
     <string name="style_rocker_corner_radius">Rocker Corner Radius</string>
     <string name="style_rocker_fill_color">Rocker Fill Color</string>
 
+    <string name="terracotta">MultiPlayer</string>
+    <string name="terracotta_metadata">Terracotta Version: %s\nEasyTier Version: %s</string>
+    <string name="terracotta_code_hint" translatable="false">U/XXXX-XXXX-XXXX-XXXX</string>
+    <string name="terracotta_easytier">About EasyTier</string>
+    <string name="terracotta_terracotta">Terracotta | Multiplayer</string>
+    <string name="terracotta_back">Exit</string>
+    <string name="terracotta_enable">Enable Multiplayer</string>
+    <string name="terracotta_feedback_title">Fill Out Feedback Form</string>
+    <string name="terracotta_difficulty_easiest">Excellent network: almost connected!</string>
+    <string name="terracotta_difficulty_simple">Good network: connection may take some time</string>
+    <string name="terracotta_difficulty_medium">Average network: enabling fallback routes, though connection may fail</string>
+    <string name="terracotta_difficulty_tough">Poor network: enabling fallback routes, though connection may fail</string>
+    <string name="terracotta_difficulty_estimate_only">Success rate is an estimate based on host and client NAT types, for reference only!</string>
+    <string name="terracotta_export_log">Exports the Multiplayer Core log</string>
+    <string name="terracotta_export_log_btn">Log</string>
+    <string name="terracotta_export_log_dialog_title">Multiplayer Core log</string>
+    <string name="terracotta_export_log_dialog_export">Export</string>
+    <string name="terracotta_export_log_desc">Gathering more information for analysis</string>
+    <string name="terracotta_export_log_done">Multiplayer Core log successfully exported to log directory</string>
+    <string name="terracotta_export_log_failed">Export log failed</string>
+    <string name="terracotta_export_log_share">Share Multiplayer Core log</string>
+    <string name="terracotta_export_log_share_null">No log found, please export the Multiplayer Core log first</string>
+    <string name="terracotta_status_uninitialized_desc">You legally promise to strictly abide by all laws and regulations of your country or region during the multiplayer process.</string>
+    <string name="terracotta_confirm">User Notice\n\nTerracotta is a third-party open source free software. Please provide feedback on any issues you encounter through the relevant channels during use.\nTerracotta uses P2P technology. After a successful connection, users in the room will connect directly to each other, and no third-party server will relay your traffic. The final multiplayer experience largely depends on the network conditions of the participants.\nDuring the entire multiplayer process, you must strictly comply with all laws and regulations of your country and region.</string>
+    <string name="terracotta_menu">Multiplayer Menu</string>
+    <string name="terracotta_menu_open">Open</string>
+    <string name="terracotta_notification_title">Terracotta is running</string>
+    <string name="terracotta_notification_desc">Identity: %s, State: %s</string>
+    <string name="terracotta_status_waiting_host_title">I want to host a session</string>
+    <string name="terracotta_status_waiting_host_desc">Create a room and generate an invite code to play with friends</string>
+    <string name="terracotta_status_waiting_guest_title">I want to join a session</string>
+    <string name="terracotta_status_waiting_guest_desc">Enter the invite code from the host player to join the game world</string>
+    <string name="terracotta_status_waiting_guest_prompt_title">Please enter the invite code from the host</string>
+    <string name="terracotta_status_waiting_guest_prompt_invalid">Invalid invite code</string>
+    <string name="terracotta_status_waiting_guest_prompt_terracotta_legacy">Legacy Terracotta Invite Code</string>
+    <string name="terracotta_status_waiting_guest_prompt_pcl2ce">Legacy PCL CE Invite Code</string>
+    <string name="terracotta_status_waiting_guest_prompt_scaffolding">Scaffolding Invite Code</string>
+    <string name="terracotta_status_host_scanning">Scanning LAN worlds</string>
+    <string name="terracotta_status_host_scanning_desc">Please open a world, press ESC, select "Open to LAN", then select "Start LAN World".</string>
+    <string name="terracotta_status_host_scanning_back">This will also stop scanning LAN worlds.</string>
+    <string name="terracotta_status_host_starting">Room Creating</string>
+    <string name="terracotta_status_host_starting_back">This will stop creating the room.</string>
+    <string name="terracotta_status_host_ok">Room created</string>
+    <string name="terracotta_status_host_ok_code">Invitation code (Copied): </string>
+    <string name="terracotta_status_host_ok_code_copy">Copy invitation code</string>
+    <string name="terracotta_status_host_ok_code_copy_toast">Invitation code has been copied to clipboard</string>
+    <string name="terracotta_status_host_ok_code_desc">Please remind your friends to select Guest mode in FCL - Multiplayer or HMCL/PCL CE and enter this invitation code.</string>
+    <string name="terracotta_status_host_ok_back">This will also close the room, other guests will leave and cannot rejoin.</string>
+    <string name="terracotta_status_guest_starting">Joining room</string>
+    <string name="terracotta_status_guest_connecting">Joining room</string>
+    <string name="terracotta_status_guest_starting_back">This will not stop other guests from joining the room.</string>
+    <string name="terracotta_status_guest_ok">Room Joined</string>
+    <string name="terracotta_status_guest_ok_back">This will not stop other guests from joining the room.</string>
+    <string name="terracotta_status_guest_ok_address">Please launch the game, select Multiplayer, and double-click Terracotta Lobby. Backup address: </string>
+    <string name="terracotta_status_guest_ok_address_copy">Copy Backup address</string>
+    <string name="terracotta_status_guest_ok_address_copy_toast">Backup address has been copied to clipboard</string>
+    <string name="terracotta_status_guest_ok_address_desc">Please do not use this address unless necessary.</string>
+    <string name="terracotta_status_exception">Connection lost</string>
+    <string name="terracotta_status_exception_back">Please try again</string>
+    <string name="terracotta_status_exception_desc_ping_host_fail">Failed to join room: Room is closed or network unstable</string>
+    <string name="terracotta_status_exception_desc_ping_host_rst">Room connection lost: Room is closed or network unstable</string>
+    <string name="terracotta_status_exception_desc_guest_et_crash">Failed to join room: EasyTier crashed, please report this issue to developers</string>
+    <string name="terracotta_status_exception_desc_host_et_crash">Failed to create room: EasyTier crashed, please report this issue to developers</string>
+    <string name="terracotta_status_exception_desc_ping_server_rst">Room closed: You exited the game world, room closed automatically</string>
+    <string name="terracotta_status_exception_desc_scaffolding_invalid_response">Invalid Protocol: Host has sent invalid response, please report this issue to developers</string>
+    <string name="terracotta_permission_vpn">Please grant the application VPN permission first.</string>
+    <string name="terracotta_player_list">Player List</string>
+    <string name="terracotta_player_anonymous">Anonymous Player</string>
+    <string name="terracotta_player_kind_host">Host</string>
+    <string name="terracotta_player_kind_local">Yourself</string>
+    <string name="terracotta_player_kind_guest">Guest</string>
+    <string name="terracotta_tutorial_host_btn">Host Tutorial</string>
+    <string name="terracotta_tutorial_host">Host Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game FCL menu, and open it.\n - Click &quot;I want to host a session&quot;, to scan the game port.\n - Open the game and turn on the &quot;Open to LAN&quot; option in the game settings.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - Wait for a moment and the invite code will be automatically copied. If it is not automatically copied, you can also copy it manually in the multiplayer menu.\n - Send the invite code to your friends\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.</string>
+    <string name="terracotta_tutorial_guest_btn">Guest Tutorial</string>
+    <string name="terracotta_tutorial_guest">Guest Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game FCL menu, and open it.\n - Click &quot;I want to join a session&quot;, enter the invitation code provided by the host in the input box, and wait patiently.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - After it shows that you have joined the room, select Multiplayer, and double-click Terracotta Lobby.\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.\n - When joining the game using the backup server address, offline accounts are not supported. Please solve this problem yourself.</string>
+
     <string name="update">Update</string>
     <string name="update_netdisk">Netdisk</string>
     <string name="update_check">Check for Updates</string>
@@ -894,6 +1058,7 @@
 
     <string name="version_game">Games</string>
     <string name="version_game_old">Historical</string>
+    <string name="version_game_april_fools">April Fools</string>
     <string name="version_game_release">Release</string>
     <string name="version_game_releases">Releases</string>
     <string name="version_game_snapshot">Snapshot</string>
@@ -991,8 +1156,8 @@
     <string name="edit">Edit</string>
     <string name="modpack_download_warn_title">Notice</string>
     <string name="modpack_download_warn_msg">Before installation, you should understand that most modpacks are designed for PC, so there is a high probability that you will encounter crashes or other issues when trying to launch. This is often not a problem that can be solved at the launcher level. Therefore, you need to understand the relevant knowledge and try to solve the problem yourself or seek help from others (do not ask the launcher developer!).</string>
-    <string name="view_incompatible">View incompatible mods</string>
-    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Theme 2\"</string>
+    <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Secondary Theme Color\"</string>
+    <string name="guide_share_log">Long press here to share the game log (latest_game.log).</string>
     <string name="joystick_l">Left joystick</string>
     <string name="gamepad_dpad">DPAD</string>
     <string name="gamepad_button_binding">Gamepad button binding</string>
@@ -1003,11 +1168,58 @@
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
     </string>
-    <string name="wiki_release">https://minecraft.wiki/w/Java_Edition_%s</string>
-    <string name="wiki_snapshot">https://minecraft.wiki/w/Java_Edition_%s</string>
+    <string name="wiki_game">https://es.minecraft.wiki/w/Special:Search?search=%s</string>
+    <string name="wiki_game_search">Java_Edition_%s</string>
     <string name="installed">Installed</string>
     <string name="message_install_plugin">You can get plugins through the following ways.</string>
+    <string name="message_install_java">You can get Java through the following ways.</string>
 
     <string name="shaderpack">ShaderPack</string>
     <string name="recommend_version">Recommend version</string>
+
+    <string name="mod_check_continue">Continue</string>
+    <string name="mod_check_physics">Physics mod (%s) currently in use has not been patched(replace libPhysXJniBindings_64.so form Linux x86_64 to Android arm64/x86_64), it will cause crash.</string>
+    <string name="mod_check_mcef">MCEF mod (%s) cannot work on Android. It is usually used as a dependency of WebDisplays/In-game Browser.</string>
+    <string name="mod_check_valkyrienskies">Valkyrien Skies/Valkyrien Warfare mod (%s) cannot work directly in single player mode. You must use a server, otherwise it will crash the game.</string>
+    <string name="mod_check_yes_steve_model">Yes Steve Model mod (%s) 2.2.2+ cannot work on Android.</string>
+    <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_replay">FFmpeg plugin is needed for Replay (%s). It seems that you haven\'t installed it yet. You can download from Google Play Store or here( %s or %s ) (Long press to copy).</string>
+    <string name="mod_check_borderlesswindow">BorderlessWindow (%s) is not for Android. It must make the game crash.</string>
+    <string name="mod_check_axiom">Axiom (%s) currently in use has not been patched, it will cause crash.</string>
+    <string name="mod_check_sodium">The currently used GL4ES renderer may not support the mods Sodium/Embeddium (%s). Continuing to launch could cause the game to crash. It is recommended to download and use the MobileGlues renderer instead (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
+    <string name="mod_check_flashback">Flashback mod (%s) cannot work on Android.</string>
+    <string name="mod_check_ixeris">Ixeris mod (%s) cannot work properly on FCL.</string>
+
+    <string name="internal">Internal</string>
+    <string name="import_java">Import Java</string>
+    <string name="import_java_wrong_file">Only supports importing the tar.xz file.</string>
+    <string name="import_java_error">It has been detected that the Java you imported may not be intended for use on the current device. Launching with it may cause the program to crash. Do you wish to continue with the import?</string>
+    <string name="import_java_error_not_valid">It is detected that the currently imported Java file structure is invalid and cannot be used!</string>
+    <string name="import_java_overwrite_wrong">This version of Java has already been imported. Overwrite the current version?</string>
+
+    <string name="ingame_folder_browse">Browse Directory</string>
+    <string name="ingame_folder_import">Import</string>
+    <string name="ingame_folder_import_failed">An error occurred while importing the file %1$s!\n%2$s</string>
+
+    <string name="manage_version">Manage Versions</string>
+    <string name="select_renderer">Select Renderer</string>
+    <string name="open_link_failed">Failed to automatically redirect to the browser. The link has been copied automatically. Please manually open the browser and paste it in.</string>
+
+    <string name="launch">Launch</string>
+    <string name="tip_hide_menu_view">The menu view is hidden. Press the volume key to open the menu.</string>
+    <string name="modloader">ModLoader</string>
+    <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
+    <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
+    <string name="supported_mc_version">Supported MC version:</string>
+    <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+    <string name="close">Close</string>
+    <string name="message_warn_restart_after_change">The changes will take effect after restarting.</string>
+    <string name="message_check_path_valid">The currently selected game file path (%s) may contain illegal characters, which could cause the game to crash upon launching. It is recommended to check the game directory or rename the version. Do you want to continue launching?</string>
+    <string name="message_check_has_modloader">It has been detected that the currently launched game version has mods installed, but the corresponding mod loader does not seem to be installed. The mods may not function properly after launching. Do you want to continue launching?</string>
+    <string name="message_data_is_loading">The data is still loading and cannot be modified.</string>
+    <string name="exception_no_suitable_java">Failed to find a suitable Java!</string>
+    <string name="slide_selection">Slide Selection</string>
+    <string name="swap_hands">Double Tap Swap Hands</string>
 </resources>

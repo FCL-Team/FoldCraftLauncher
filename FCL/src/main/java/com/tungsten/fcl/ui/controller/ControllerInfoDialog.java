@@ -3,6 +3,8 @@ package com.tungsten.fcl.ui.controller;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class ControllerInfoDialog extends FCLDialog implements View.OnClickListener {
 
@@ -40,6 +43,10 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
         this.create = create;
         this.controller = controller;
         this.callback = callback;
+        Window window = getWindow();
+        if (window != null) {
+            window.setLayout(ConvertUtils.dip2px(getContext(), 400), LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
         setContentView(R.layout.dialog_controller_info);
         setCancelable(false);
 
@@ -63,9 +70,18 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
         editDescription.setText(controller.getDescription());
 
         FCLCheckBox moreInfo = findViewById(R.id.more_info);
-        moreInfo.addCheckedChangeListener();
-
-        moreInfoLayout.visibilityProperty().bind(moreInfo.checkProperty());
+        assert moreInfo != null;
+        assert moreInfoLayout != null;
+        moreInfoLayout.setVisibility(View.GONE);
+        moreInfo.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                getWindow().setLayout(ConvertUtils.dip2px(getContext(), 400), LinearLayout.LayoutParams.MATCH_PARENT);
+                moreInfoLayout.setVisibility(View.VISIBLE);
+            } else {
+                getWindow().setLayout(ConvertUtils.dip2px(getContext(), 400), ConvertUtils.dip2px(getContext(), 200));
+                moreInfoLayout.setVisibility(View.GONE);
+            }
+        });
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);

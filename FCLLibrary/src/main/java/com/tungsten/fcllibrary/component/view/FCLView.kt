@@ -31,10 +31,28 @@ class FCLView @JvmOverloads constructor(
         }
     }
 
+    private val themeDark: IntegerProperty = object : IntegerPropertyBase() {
+        override fun invalidated() {
+            get()
+            if (useThemeColor) {
+                setBackgroundColor(ThemeEngine.getInstance().getTheme().color2)
+            }
+        }
+
+        override fun getBean(): Any {
+            return this
+        }
+
+        override fun getName(): String {
+            return "themeDark"
+        }
+    }
+
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLView)
         useThemeColor = typedArray.getBoolean(R.styleable.FCLView_use_theme_color, false)
         typedArray.recycle()
         theme.bind(ThemeEngine.getInstance().getTheme().color2Property())
+        themeDark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty())
     }
 }

@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.mod.mcbbs;
 
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.CLEANROOM;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOADER;
@@ -97,6 +98,8 @@ public class McbbsModpackExportTask extends Task<Void> {
             addons.add(new McbbsModpackManifest.Addon(MINECRAFT.getPatchId(), gameVersion));
             analyzer.getVersion(FORGE).ifPresent(forgeVersion ->
                     addons.add(new McbbsModpackManifest.Addon(FORGE.getPatchId(), forgeVersion)));
+            analyzer.getVersion(CLEANROOM).ifPresent(cleanroomVersion ->
+                    addons.add(new McbbsModpackManifest.Addon(CLEANROOM.getPatchId(), cleanroomVersion)));
             analyzer.getVersion(NEO_FORGE).ifPresent(neoForgeVersion ->
                     addons.add(new McbbsModpackManifest.Addon(NEO_FORGE.getPatchId(), neoForgeVersion)));
             analyzer.getVersion(LITELOADER).ifPresent(liteLoaderVersion ->

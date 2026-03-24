@@ -79,7 +79,7 @@ public class MicrosoftService {
     public MicrosoftSession authenticate() throws AuthenticationException {
         try {
             OAuth.Result result = OAuth.MICROSOFT.authenticate(OAuth.GrantFlow.DEVICE, new OAuth.Options(SCOPE, callback));
-            return authenticateViaLiveAccessToken(result.getAccessToken(), result.getRefreshToken());
+            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken());
         } catch (IOException e) {
             throw new ServerDisconnectException(e);
         } catch (JsonParseException e) {
@@ -90,7 +90,7 @@ public class MicrosoftService {
     public MicrosoftSession refresh(MicrosoftSession oldSession) throws AuthenticationException {
         try {
             OAuth.Result result = OAuth.MICROSOFT.refresh(oldSession.getRefreshToken(), new OAuth.Options(SCOPE, callback));
-            return authenticateViaLiveAccessToken(result.getAccessToken(), result.getRefreshToken());
+            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken());
         } catch (IOException e) {
             throw new ServerDisconnectException(e);
         } catch (JsonParseException e) {
@@ -302,6 +302,7 @@ public class MicrosoftService {
             return redirect;
         }
 
+        public static final long BANNED = 2148916227L;
         public static final long MISSING_XBOX_ACCOUNT = 2148916233L;
         public static final long COUNTRY_UNAVAILABLE = 2148916235L;
         public static final long ADD_FAMILY = 2148916238L;

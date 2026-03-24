@@ -69,6 +69,7 @@ public class DocCategoryAdapter extends FCLAdapter {
             viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
             viewHolder.parent.addView(viewHolder.name, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             viewHolder.name.setSingleLine(true);
+            viewHolder.name.setUseThemeColor(true);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();

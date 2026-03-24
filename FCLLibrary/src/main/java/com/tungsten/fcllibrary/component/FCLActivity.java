@@ -12,9 +12,11 @@ import android.os.Environment;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.mio.util.DisplayUtil;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -24,7 +26,11 @@ public class FCLActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        ThemeEngine.getInstance().setupThemeEngine(this);
+        ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
         super.onCreate(savedInstanceState);
+        applySavedNightMode();
+        DisplayUtil.updateWindowSize(this);
         boolean hasPermission;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             hasPermission = Environment.isExternalStorageManager();
@@ -34,7 +40,16 @@ public class FCLActivity extends AppCompatActivity {
         if (hasPermission) {
             FCLPath.loadPaths(this);
         }
-        ThemeEngine.getInstance().setupThemeEngine(this);
+    }
+
+    protected void applySavedNightMode() {
+        int themeMode = getSharedPreferences("launcher", MODE_PRIVATE).getInt("themeMode", 0);
+        int mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+        if (themeMode != 0) {
+            mode = themeMode == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+        }
+        AppCompatDelegate.setDefaultNightMode(mode);
+
     }
 
     @Override
@@ -54,6 +69,7 @@ public class FCLActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         LocaleUtils.setLanguage(this);
+        DisplayUtil.refreshDisplayMetrics(this);
     }
 
     @Override

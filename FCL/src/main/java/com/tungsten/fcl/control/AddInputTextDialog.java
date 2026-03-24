@@ -22,6 +22,7 @@ public class AddInputTextDialog extends FCLDialog implements View.OnClickListene
     private FCLButton positive;
     private FCLButton negative;
     private FCLEditText editText;
+    private FCLEditText remarks;
 
     public interface Callback {
         void onTextAdd();
@@ -39,6 +40,7 @@ public class AddInputTextDialog extends FCLDialog implements View.OnClickListene
         negative.setOnClickListener(this);
 
         editText = findViewById(R.id.text);
+        remarks = findViewById(R.id.remarks);
     }
 
     @Override
@@ -49,7 +51,8 @@ public class AddInputTextDialog extends FCLDialog implements View.OnClickListene
             } else if (QuickInputTexts.getInputTexts().contains(editText.getText().toString())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.quick_input_exist), Toast.LENGTH_SHORT).show();
             } else {
-                QuickInputTexts.addInputText(editText.getText().toString());
+                String remarksText = Objects.requireNonNull(remarks.getText()).toString();
+                QuickInputTexts.addInputText(StringUtils.isNotBlank(remarksText) ? remarksText + "&*&" + editText.getText().toString() : editText.getText().toString());
                 callback.onTextAdd();
                 dismiss();
             }

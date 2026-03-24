@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:id="@+id/parent"
-        android:layout_marginBottom="10dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:background="@drawable/bg_container_white_clickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_container_white_clickable"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp">
 
         <com.tungsten.fcllibrary.component.view.FCLCheckBox
+            android:id="@+id/check"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/check"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/icon"
@@ -29,11 +29,11 @@
             android:layout_gravity="center" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
             android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -42,55 +42,61 @@
                 android:orientation="horizontal">
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:id="@+id/name"
                     android:layout_gravity="center"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
-                    app:auto_text_tint="true"/>
+                    android:textSize="14sp"
+                    app:auto_text_tint="true" />
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:paddingTop="2dp"
-                    android:paddingBottom="2dp"
-                    android:layout_marginStart="10dp"
+                    android:id="@+id/tag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="11sp"
-                    android:id="@+id/tag"
                     android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:paddingStart="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="2dp"
                     android:singleLine="true"
-                    app:auto_text_tint="true"/>
+                    android:textSize="11sp"
+                    app:auto_text_tint="true" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:id="@+id/description"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                app:auto_text_tint="true"/>
+                android:textSize="12sp"
+                app:auto_text_tint="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/restore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_restore_24"
-            android:id="@+id/restore"
             android:layout_gravity="center"
-            app:auto_tint="true"/>
+            android:src="@drawable/ic_baseline_restore_24"
+            app:auto_tint="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_outline_info_24"
-            android:id="@+id/info"
             android:layout_gravity="center"
-            app:auto_tint="true"/>
+            android:src="@drawable/ic_outline_info_24"
+            app:auto_tint="true" />
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

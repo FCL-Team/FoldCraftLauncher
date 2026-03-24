@@ -18,10 +18,12 @@
 package com.tungsten.fclcore.mod.modrinth;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -38,6 +40,7 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
@@ -81,7 +84,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     }
 
     @Override
-    public SearchResult search(String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sort, SortOrder sortOrder) throws IOException {
+    public SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sort, SortOrder sortOrder) throws IOException {
         List<List<String>> facets = new ArrayList<>();
         facets.add(Collections.singletonList("project_type:" + projectType));
         if (StringUtils.isNotBlank(gameVersion)) {
@@ -97,10 +100,29 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                 pair("limit", Integer.toString(pageSize)),
                 pair("index", convertSortType(sort))
         );
-        Response<ProjectSearchResult> response = HttpRequest.GET(NetworkUtils.withQuery(PREFIX + "/v2/search", query))
-                .getJson(new TypeToken<Response<ProjectSearchResult>>() {
-                }.getType());
-        return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int)Math.ceil((double)response.totalHits / pageSize));
+        List<URL> candidates = downloadProvider.injectURLWithCandidates(NetworkUtils.withQuery(PREFIX + "/v2/search", query));
+        IOException exception = null;
+        for (URL candidate : candidates) {
+            try {
+                LOG.info("Fetching " + candidate);
+                Response<ProjectSearchResult> response = HttpRequest.GET(candidate.toString())
+                        .getJson(new TypeToken<Response<ProjectSearchResult>>() {
+                        }.getType());
+                return new SearchResult(response.getHits().stream().map(ProjectSearchResult::toMod), (int) Math.ceil((double) response.totalHits / pageSize));
+            } catch (IOException e) {
+                LOG.warning("Failed to search addons: " + candidate + "\n" + e);
+                if (candidates.size() == 1) {
+                    exception = e;
+                } else {
+                    if (exception == null) {
+                        exception = new IOException("Failed to search addons");
+                    }
+                    exception.addSuppressed(e);
+                }
+            }
+        }
+
+        throw exception != null ? exception : new IOException("No candidates found");
     }
 
     @Override
@@ -143,7 +165,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     }
 
     public List<Category> getCategoriesImpl() throws IOException {
-        List<Category> categories = HttpRequest.GET(PREFIX + "/v2/tag/category").getJson(new TypeToken<List<Category>>() {}.getType());
+        List<Category> categories = HttpRequest.GET(PREFIX + "/v2/tag/category").getJson(new TypeToken<List<Category>>() {
+        }.getType());
         return categories.stream().filter(category -> category.getProjectType().equals(projectType)).collect(Collectors.toList());
     }
 
@@ -161,7 +184,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         private final String projectType;
 
         public Category() {
-            this("","","");
+            this("", "", "");
         }
 
         public Category(String icon, String name, String projectType) {
@@ -534,11 +557,16 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     }).filter(Objects::nonNull).collect(Collectors.toList()),
                     gameVersions,
                     loaders.stream().flatMap(loader -> {
-                        if ("fabric".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FABRIC);
-                        else if ("forge".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.FORGE);
-                        else if ("neoforge".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.NEO_FORGED);
-                        else if ("quilt".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.QUILT);
-                        else if ("liteloader".equalsIgnoreCase(loader)) return Stream.of(ModLoaderType.LITE_LOADER);
+                        if ("fabric".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FABRIC);
+                        else if ("forge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FORGE);
+                        else if ("neoforge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.NEO_FORGED);
+                        else if ("quilt".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.QUILT);
+                        else if ("liteloader".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.LITE_LOADER);
                         else return Stream.empty();
                     }).collect(Collectors.toList())
             ));

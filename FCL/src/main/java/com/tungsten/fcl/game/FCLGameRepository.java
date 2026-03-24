@@ -20,17 +20,23 @@ package com.tungsten.fcl.game;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.event.Event;
@@ -59,7 +65,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -127,8 +141,6 @@ public class FCLGameRepository extends DefaultGameRepository {
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Unable to create launcher_profiles.json, Forge/LiteLoader installer will not work.", ex);
         }
-
-        System.gc();
     }
 
     public void changeDirectory(File newDirectory) {
@@ -152,36 +164,35 @@ public class FCLGameRepository extends DefaultGameRepository {
 
         Version fromVersion = getVersion(srcId);
 
-        if (Files.exists(dstDir)) throw new IOException("Version exists");
-        FileUtils.copyDirectory(srcDir, dstDir);
-
-        Path fromJson = dstDir.resolve(srcId + ".json");
-        Path fromJar = dstDir.resolve(srcId + ".jar");
-        Path toJson = dstDir.resolve(dstId + ".json");
-        Path toJar = dstDir.resolve(dstId + ".jar");
-
-        if (Files.exists(fromJar)) {
-            Files.move(fromJar, toJar);
-        }
-        Files.move(fromJson, toJson);
-
-        FileUtils.writeText(toJson.toFile(), JsonUtils.GSON.toJson(fromVersion.setId(dstId)));
-        
-        VersionSetting oldVersionSetting = getVersionSetting(srcId).clone();
-        GameDirectoryType originalGameDirType = (oldVersionSetting.isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER);
-        oldVersionSetting.setUsesGlobal(false);
-        oldVersionSetting.setIsolateGameDir(true);
-        VersionSetting newVersionSetting = initLocalVersionSetting(dstId, oldVersionSetting);
-        saveVersionSetting(dstId);
-
-        File srcGameDir = getRunDirectory(srcId);
-        File dstGameDir = getRunDirectory(dstId);
-
         List<String> blackList = new ArrayList<>(ModAdviser.MODPACK_BLACK_LIST);
         blackList.add(srcId + ".jar");
         blackList.add(srcId + ".json");
         if (!copySaves)
             blackList.add("saves");
+
+        if (Files.exists(dstDir)) throw new IOException("Version exists");
+        FileUtils.copyDirectory(srcDir, dstDir, path -> Modpack.acceptFile(path, blackList, null));
+
+        Path fromJson = srcDir.resolve(srcId + ".json");
+        Path fromJar = srcDir.resolve(srcId + ".jar");
+        Path toJson = dstDir.resolve(dstId + ".json");
+        Path toJar = dstDir.resolve(dstId + ".jar");
+
+        if (Files.exists(fromJar)) {
+            Files.copy(fromJar, toJar);
+        }
+        Files.copy(fromJson, toJson);
+
+        FileUtils.writeText(toJson.toFile(), JsonUtils.GSON.toJson(fromVersion.setId(dstId)));
+
+        VersionSetting oldVersionSetting = getVersionSetting(srcId).clone();
+        GameDirectoryType originalGameDirType = (oldVersionSetting.isIsolateGameDir() ? GameDirectoryType.VERSION_FOLDER : GameDirectoryType.ROOT_FOLDER);
+        oldVersionSetting.setUsesGlobal(false);
+        oldVersionSetting.setIsolateGameDir(true);
+        saveVersionSetting(dstId);
+
+        File srcGameDir = getRunDirectory(srcId);
+        File dstGameDir = getRunDirectory(dstId);
 
         if (originalGameDirType != GameDirectoryType.VERSION_FOLDER)
             FileUtils.copyDirectory(srcGameDir.toPath(), dstGameDir.toPath(), path -> Modpack.acceptFile(path, blackList, null));
@@ -205,6 +216,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     /**
      * Create new version setting if version id has no version setting.
+     *
      * @param id the version id.
      * @return new version setting, null if given version does not exist.
      */
@@ -227,7 +239,6 @@ public class FCLGameRepository extends DefaultGameRepository {
      * Get the version setting for version id.
      *
      * @param id version id
-     *
      * @return corresponding version setting, null if the version has no its own version setting.
      */
     @Nullable
@@ -266,26 +277,35 @@ public class FCLGameRepository extends DefaultGameRepository {
     @SuppressLint("UseCompatLoadingForDrawables")
     public Drawable getVersionIconImage(String id) {
         if (id == null || !isLoaded())
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);
+            return getDrawable(R.drawable.img_grass);
 
         Version version = getVersion(id).resolve(this);
         File iconFile = getVersionIconFile(id);
         if (iconFile.exists())
             return BitmapDrawable.createFromPath(iconFile.getAbsolutePath());
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FORGE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_forge);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.NEO_FORGE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_neoforge);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.LITELOADER))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_chicken);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.OPTIFINE))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_optifine);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.FABRIC))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_fabric);
-        else if (LibraryAnalyzer.analyze(version, null).has(LibraryAnalyzer.LibraryType.QUILT))
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_quilt);
-        else
-            return FCLPath.CONTEXT.getDrawable(R.drawable.img_grass);
+        else {
+            LibraryAnalyzer analyze = LibraryAnalyzer.analyze(version, null);
+            if (analyze.has(LibraryAnalyzer.LibraryType.FORGE))
+                return getDrawable(R.drawable.img_forge);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.CLEANROOM))
+                return getDrawable(R.drawable.img_cleanroom);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.NEO_FORGE))
+                return getDrawable(R.drawable.img_neoforge);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.LITELOADER))
+                return getDrawable(R.drawable.img_chicken);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.OPTIFINE))
+                return getDrawable(R.drawable.img_optifine);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.FABRIC))
+                return getDrawable(R.drawable.img_fabric);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.QUILT))
+                return getDrawable(R.drawable.img_quilt);
+            else
+                return getDrawable(R.drawable.img_grass);
+        }
+    }
+
+    private Drawable getDrawable(int id) {
+        return AppCompatResources.getDrawable(FCLPath.CONTEXT, id);
     }
 
     public boolean saveVersionSetting(String id) {
@@ -306,6 +326,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     /**
      * Make version use self version settings instead of the global one.
+     *
      * @param id the version id.
      * @return specialized version setting, null if given version does not exist.
      */
@@ -325,7 +346,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             vs.setUsesGlobal(true);
     }
 
-    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, List<String> javaAgents) {
+    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir) {
         VersionSetting vs = getVersionSetting(version);
 
         LaunchOptions.Builder builder = new LaunchOptions.Builder()
@@ -335,22 +356,23 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setVersionName(version)
                 .setProfileName(FCLPath.CONTEXT.getString(R.string.app_name))
                 .setGameArguments(StringUtils.tokenize(vs.getMinecraftArgs()))
-                .setOverrideJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
+                .setJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
                 .setMaxMemory((int) (getAllocatedMemory(
                         vs.getMaxMemory() * 1024L * 1024L,
-                        MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT),
+                        MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT) * 1024L * 1024L,
                         vs.isAutoMemory()
                 ) / 1024 / 1024))
-                .setMinMemory(vs.getMinMemory())
-                .setMetaspace(Lang.toIntOrNull(vs.getPermSize()))
-                .setWidth((int) (AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
-                .setHeight((int) (AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity()) * vs.getScaleFactor()))
+                .setMinMemory(vs.getMaxMemory())
+                .setUUid(vs.getUuid())
+                .setWidth((int) (AndroidUtils.getScreenWidth() * vs.getScaleFactor() / 100.0))
+                .setHeight((int) (AndroidUtils.getScreenHeight() * vs.getScaleFactor() / 100.0))
                 .setServerIp(vs.getServerIp())
-                .setJavaAgents(javaAgents)
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setPojavBigCore(vs.isPojavBigCore())
-                .setRenderer(vs.getRenderer());
+                .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
+                .setDebugLog(vs.isDebugLog());
+        initForceResolution(vs);
 
         File json = getModpackConfiguration(version);
         if (json.exists()) {
@@ -364,8 +386,12 @@ public class FCLGameRepository extends DefaultGameRepository {
             }
         }
 
-        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx")))
+        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx"))) {
             builder.setMaxMemory(null);
+            builder.setMinMemory(null);
+        }
+        if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xms")))
+            builder.setMinMemory(null);
 
         return builder.create();
     }
@@ -437,6 +463,23 @@ public class FCLGameRepository extends DefaultGameRepository {
             return Math.max(minimum, suggested);
         } else {
             return minimum;
+        }
+    }
+
+    private void initForceResolution(VersionSetting vs) {
+        FCLBridge.FORCE_RESOLUTION = vs.isForceResolution();
+        if (FCLBridge.FORCE_RESOLUTION) {
+            try {
+                SharedPreferences preferences = Objects.requireNonNull(FCLApplication.getCurrentActivity()).getSharedPreferences("launcher", Context.MODE_PRIVATE);
+                String[] split = preferences.getString("force_resolution", "1920x1080").toLowerCase().split("x");
+                if (split.length == 2) {
+                    int w = Integer.parseInt(split[0]);
+                    int h = Integer.parseInt(split[1]);
+                    FCLBridge.FORCE_RESOLUTION_WIDTH = w;
+                    FCLBridge.FORCE_RESOLUTION_HEIGHT = h;
+                }
+            } catch (Exception ignore) {
+            }
         }
     }
 }

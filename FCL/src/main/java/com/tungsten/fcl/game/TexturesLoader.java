@@ -169,7 +169,7 @@ public final class TexturesLoader {
                     return loadedSkin.getSkin() == null ? null : loadedSkin.getCape().getImage();
                 }
             }
-            return getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+            return null;
         }
 
         Path file = getTexturePath(texture);

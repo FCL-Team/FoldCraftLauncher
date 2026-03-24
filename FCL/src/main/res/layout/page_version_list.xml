@@ -1,69 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/ui_bg_color"
-    android:paddingTop="10dp"
-    android:paddingStart="10dp"
-    android:paddingEnd="10dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingStart="10dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="10dp"
+    tools:ignore="HardcodedText">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/left"
-        android:orientation="vertical"
+    <com.tungsten.fcllibrary.component.view.FCLEditText
+        android:id="@+id/search"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:hint="@string/search"
+        android:imeOptions="flagNoFullscreen"
+        android:singleLine="true"
+        app:auto_edit_tint="true"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintWidth_percent="0.3">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3" />
 
-        <ListView
-            android:id="@+id/profile_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp"/>
+    <ListView
+        android:id="@+id/profile_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        app:layout_constraintBottom_toTopOf="@id/refresh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search"
+        app:layout_constraintWidth_percent="0.3" />
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            app:ripple="true"
-            android:id="@+id/refresh"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/action_refresh"/>
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/refresh"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/action_refresh"
+        app:layout_constraintBottom_toTopOf="@id/new_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            app:ripple="true"
-            android:id="@+id/new_profile"
-            android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/version_new_profile"/>
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/new_profile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/version_new_profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@+id/left"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/profile_list">
 
-        <ListView
+        <com.mio.ui.widget.FCLAppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_white"
+            app:auto_tint="true">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <RadioGroup
+                    android:id="@+id/category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/curse_category_0"
+                        app:text_use_theme_color="true" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/fabric"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="Fabric" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/forge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="Forge" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/neoforge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="NeoForge" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                        android:id="@+id/other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:text_use_theme_color="true"
+                        android:text="@string/control_download_device_other" />
+
+                </RadioGroup>
+
+            </HorizontalScrollView>
+
+        </com.mio.ui.widget.FCLAppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/version_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0dp" />
+            android:layout_marginTop="3dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profile_list" />
 
-        <com.tungsten.fcllibrary.component.view.FCLProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:id="@+id/progress"/>
 
-    </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/layout"
+        app:layout_constraintStart_toStartOf="@id/layout"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
-import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.utils.FCLPath;
 
@@ -28,6 +27,11 @@ import java.io.File;
 import java.io.Serializable;
 
 public class FCLBridge implements Serializable {
+    public static boolean FORCE_RESOLUTION = false;
+    public static float FORCE_RESOLUTION_SCALE = -1;
+    public static int FORCE_RESOLUTION_WIDTH = 1920;
+    public static int FORCE_RESOLUTION_HEIGHT = 1080;
+    public static int FORCE_RESOLUTION_START_SIZE = -1;
 
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
@@ -59,19 +63,6 @@ public class FCLBridge implements Serializable {
 
     public static final int CursorEnabled = 1;
     public static final int CursorDisabled = 0;
-
-    public static final int ShiftMask = 1 << 0;
-    public static final int LockMask = 1 << 1;
-    public static final int ControlMask = 1 << 2;
-    public static final int Mod1Mask = 1 << 3;
-    public static final int Mod2Mask = 1 << 4;
-    public static final int Mod3Mask = 1 << 5;
-    public static final int Mod4Mask = 1 << 6;
-    public static final int Mod5Mask = 1 << 7;
-
-    public static final int CloseRequest = 0;
-
-    public static boolean BACKEND_IS_BOAT = false;
 
     private FCLBridgeCallback callback;
 
@@ -121,16 +112,6 @@ public class FCLBridge implements Serializable {
 
     public native void setFCLBridge(FCLBridge fclBridge);
 
-    //boat backend
-    public native void setFCLNativeWindow(Surface surface);
-
-    public native void setEventPipe();
-
-    public native void pushEvent(long time, int type, int keycode, int keyChar);
-
-    public static native int nativeGetFps();
-
-
     public void setThread(Thread thread) {
         this.thread = thread;
     }
@@ -168,9 +149,6 @@ public class FCLBridge implements Serializable {
             handleWindow();
         }
         receiveLog("invoke setEventPipe" + "\n");
-        if (BACKEND_IS_BOAT) {
-            setEventPipe();
-        }
 
         // start
         if (thread != null) {
@@ -179,73 +157,44 @@ public class FCLBridge implements Serializable {
     }
 
     public void pushEventMouseButton(int button, boolean press) {
-        if (BACKEND_IS_BOAT) {
-            if (button == Button2) {
-                button = Button3;
-            } else if (button == Button3) {
-                button = Button2;
-            }
-            pushEvent(System.nanoTime(), press ? ButtonPress : ButtonRelease, button + 1, 0);
-        } else {
-            switch (button) {
-                case Button4:
-                    if (press) {
-                        CallbackBridge.sendScroll(0, 1d);
-                    }
-                    break;
-                case Button5:
-                    if (press) {
-                        CallbackBridge.sendScroll(0, -1d);
-                    }
-                    break;
-                default:
-                    CallbackBridge.sendMouseButton(button, press);
-            }
+        switch (button) {
+            case Button4:
+                if (press) {
+                    CallbackBridge.sendScroll(0, 1d);
+                }
+                break;
+            case Button5:
+                if (press) {
+                    CallbackBridge.sendScroll(0, -1d);
+                }
+                break;
+            default:
+                CallbackBridge.sendMouseButton(button, press);
         }
     }
 
     public void pushEventPointer(int x, int y) {
-        if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), MotionNotify, x, y);
-        } else {
-            CallbackBridge.sendCursorPos(x, y);
+        if (FORCE_RESOLUTION) {
+            x = (int) ((x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE);
+            y = (int) (y / FORCE_RESOLUTION_SCALE);
         }
+        CallbackBridge.sendCursorPos(x, y);
     }
 
     public void pushEventPointer(float x, float y) {
-        if (BACKEND_IS_BOAT) {
-            pushEventPointer((int) x, (int) y);
-        } else {
-            CallbackBridge.sendCursorPos(x, y);
-        }
+        CallbackBridge.sendCursorPos(x, y);
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {
-        if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), press ? KeyPress : KeyRelease, keyCode, keyChar);
-        } else {
-            CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, 0, press);
-        }
+        CallbackBridge.sendKeycode(keyCode, (char) keyChar, 0, CallbackBridge.getCurrentMods(), press);
     }
 
     public void pushEventChar(char keyChar) {
-        if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), KeyChar, FCLKeycodes.KEY_RESERVED, keyChar);
-        } else {
-            CallbackBridge.sendChar(keyChar, 0);
-        }
+        CallbackBridge.sendChar(keyChar, 0);
     }
 
     public void pushEventWindow(int width, int height) {
-        if (BACKEND_IS_BOAT) {
-            pushEvent(System.nanoTime(), ConfigureNotify, width, height);
-        } else {
-            CallbackBridge.sendUpdateWindowSize(width, height);
-        }
-    }
-
-    public void pushEventMessage(int msg) {
-        pushEvent(System.nanoTime(), FCLMessage, msg, 0);
+        CallbackBridge.sendUpdateWindowSize(width, height);
     }
 
     // FCLBridge callbacks
@@ -283,26 +232,33 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
+    private static OpenFolderCallback folderCallback = null;
+
+    public static void setOpenFolderCallback(OpenFolderCallback callback) {
+        folderCallback = callback;
+    }
+
     public static void openLink(final String link) {
         Context context = FCLPath.CONTEXT;
         ((Activity) context).runOnUiThread(() -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
                 String targetLink = link;
-                if (targetLink.startsWith("file://")) {
-                    targetLink = targetLink.replace("file://", "");
-                } else if (targetLink.startsWith("file:")) {
-                    targetLink = targetLink.replace("file:", "");
+                if (link.startsWith("file:")) {
+                    targetLink = link.replaceFirst("^file:/+", "/");
+                    if (targetLink.endsWith("/")) {
+                        folderCallback.onBrowse(targetLink);
+                        return;
+                    }
                 }
+                Intent intent = new Intent(Intent.ACTION_VIEW);
                 Uri uri;
                 if (targetLink.startsWith("http")) {
                     uri = Uri.parse(targetLink);
                 } else {
-                    //can`t get authority by R.string.file_browser_provider
-                    uri = FileProvider.getUriForFile(context, "com.tungsten.fcl.provider", new File(targetLink));
+                    uri = FileProvider.getUriForFile(context, ((Activity) context).getApplication().getPackageName() + ".provider", new File(targetLink));
                 }
                 intent.setDataAndType(uri, "*/*");
-                context.startActivity(intent);
+                context.startActivity(Intent.createChooser(intent, ""));
             } catch (Exception e) {
                 Log.e("openLink error", "link:" + link + " err:" + e.toString());
             }
@@ -331,8 +287,8 @@ public class FCLBridge implements Serializable {
 
     public static void putClipboardData(String data, String mimeType) {
         Context context = FCLPath.CONTEXT;
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
         ((Activity) context).runOnUiThread(() -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = null;
             switch (mimeType) {
                 case "text/plain":
@@ -411,14 +367,10 @@ public class FCLBridge implements Serializable {
 
     private void handleWindow() {
         if (gameDir != null) {
-            receiveLog("invoke setFCLNativeWindow" + "\n");
-            if (BACKEND_IS_BOAT) {
-                setFCLNativeWindow(surface);
-            } else {
-                CallbackBridge.setupBridgeWindow(surface);
-            }
+            receiveLog("invoke setFCLNativeWindow\n");
+            CallbackBridge.setupBridgeWindow(surface);
         } else {
-            receiveLog("start Android AWT Renderer thread" + "\n");
+            receiveLog("start Android AWT Renderer thread\n");
             Thread canvasThread = new Thread(() -> {
                 Canvas canvas;
                 Bitmap rgbArrayBitmap = Bitmap.createBitmap(DEFAULT_WIDTH, DEFAULT_HEIGHT, Bitmap.Config.ARGB_8888);
@@ -447,11 +399,7 @@ public class FCLBridge implements Serializable {
     }
 
     public static int getFps() {
-        if (BACKEND_IS_BOAT) {
-            return nativeGetFps();
-        } else {
-            return CallbackBridge.getFps();
-        }
+        return CallbackBridge.getFps();
     }
 
     public String getModSummary() {

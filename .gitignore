@@ -15,13 +15,17 @@ captures/
 release
 *.apk
 output.json
+android-ndk-r26d/
 
 # IntelliJ
 *.iml
 .idea/
+.trae/
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
 
 # Android Profiling
 *.hprof
+FCL/src/main/java/com/mio/Main.kt
+.DS_Store

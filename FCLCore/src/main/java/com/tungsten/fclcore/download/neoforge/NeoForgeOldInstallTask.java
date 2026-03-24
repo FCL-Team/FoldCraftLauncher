@@ -20,11 +20,13 @@ package com.tungsten.fclcore.download.neoforge;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
@@ -180,10 +182,11 @@ public class NeoForgeOldInstallTask extends Task<Version> {
 
     private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
         LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
+        Activity context = FCLApplication.getCurrentActivity();
         int exitCode;
         boolean listen = true;
         while (listen) {
-            if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
+            if (((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
                 listen = false;
             }
         }
@@ -193,12 +196,12 @@ public class NeoForgeOldInstallTask extends Task<Version> {
             server1.stop();
             latch.countDown();
         });
-        Intent service = new Intent(FCLPath.CONTEXT, ProcessService.class);
+        Intent service = new Intent(context, ProcessService.class);
         Bundle bundle = new Bundle();
         bundle.putStringArray("command", command.toArray(new String[0]));
         bundle.putInt("java", java);
         service.putExtras(bundle);
-        FCLPath.CONTEXT.startService(service);
+        context.startForegroundService(service);
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());

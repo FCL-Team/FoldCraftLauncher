@@ -8,12 +8,12 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.Choreographer;
+import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.control.FCLInput;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
@@ -45,8 +45,8 @@ public class TouchPad extends View {
 
     public TouchPad(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        this.screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        this.screenWidth = AndroidUtils.getScreenWidth();
+        this.screenHeight = AndroidUtils.getScreenHeight();
         init();
     }
 
@@ -163,21 +163,24 @@ public class TouchPad extends View {
             gameMenu.getTouchController().handleTouchEvent(event);
         }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
+            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    gameMenu.getInput().setPointer((int) event.getRawX(), (int) event.getRawY());
+                }
+                //防止被外接鼠标触发
+                return true;
+            }
             if (gameMenu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK) {
                 gameMenu.getInput().setPointerId(POINTER_ID);
                 gameMenu.getInput().setPointer((int) event.getX(), (int) event.getY(), POINTER_ID);
                 gameMenu.getInput().setPointerId(null);
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
-                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true);
-                        }, 33);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true), 33);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP:
-                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> {
-                            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
-                        }, 33);
+                        Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false), 33);
                         break;
                     default:
                         break;
@@ -192,8 +195,8 @@ public class TouchPad extends View {
                         initialY = gameMenu.getCursorY();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivity());
-                        int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivity());
+                        int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
+                        int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
                         int targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
                         int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                         gameMenu.getInput().setPointerId(POINTER_ID);
@@ -216,8 +219,12 @@ public class TouchPad extends View {
                 }
             }
         } else {
+            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
             initialX = gameMenu.getPointerX();
             initialY = gameMenu.getPointerY();
+            if (gameMenu.getMenuSetting().isDisableLeftTouch() && event.getX() <= (float) screenWidth / 2) {
+                return true;
+            }
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     currentPointerID = event.getPointerId(0);

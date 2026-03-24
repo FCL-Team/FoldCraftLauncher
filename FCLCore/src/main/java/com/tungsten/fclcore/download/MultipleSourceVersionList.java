@@ -35,9 +35,12 @@ public class MultipleSourceVersionList extends VersionList<RemoteVersion> {
 
     @Override
     public boolean hasType() {
-        boolean hasType = backends[0].hasType();
-        assert (Arrays.stream(backends).allMatch(versionList -> versionList.hasType() == hasType));
-        return hasType;
+        for (VersionList<?> backend : backends) {
+            if (!backend.hasType()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

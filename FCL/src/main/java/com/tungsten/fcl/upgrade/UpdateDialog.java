@@ -15,8 +15,10 @@ import androidx.core.content.FileProvider;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
@@ -84,6 +86,11 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
         negative.setOnClickListener(this);
         netdisk.setOnClickListener(this);
 
+        positive.setOnLongClickListener(view -> {
+            AndroidUtils.openLink(getContext(),"https://github.com/FCL-Team/FoldCraftLauncher/releases/latest");
+            return true;
+        });
+
         checkHeight();
     }
 
@@ -115,7 +122,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
             dialog.setTitle(getContext().getString(R.string.update_launcher));
             Schedulers.androidUIThread().execute(() -> {
                 TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(version.getUrl()), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
+                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(getTargetArchUrl()), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
                     task.setName("FoldCraftLauncher");
                     return task.whenComplete(Schedulers.androidUIThread(), exception -> {
                         if (exception == null) {
@@ -131,6 +138,9 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                             builder.setMessage(getContext().getString(R.string.update_failed) + "\n" + exception.getMessage());
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setPositiveButton(getContext().getString(R.string.update_netdisk), ()->{
+                                AndroidUtils.openLink(getContext(), version.getNetdiskUrl());
+                            });
                             builder.create().show();
                         }
                     });
@@ -145,8 +155,30 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
             dismiss();
         }
         if (v == netdisk) {
-            FCLBridge.openLink(version.getNetdiskUrl());
+            AndroidUtils.openLink(getContext(), version.getNetdiskUrl());
             dismiss();
         }
+    }
+
+    @NonNull
+    private String getTargetArchUrl() {
+        String url = version.getUrl();
+        String arch = "all";
+        switch (Architecture.getDeviceArchitecture()) {
+            case Architecture.ARCH_ARM:
+                arch = "armeabi-v7a";
+                break;
+            case Architecture.ARCH_ARM64:
+                arch = "arm64-v8a";
+                break;
+            case Architecture.ARCH_X86:
+                arch = "x86";
+                break;
+            case Architecture.ARCH_X86_64:
+                arch = "x86_64";
+                break;
+        }
+        url = url.replace("-all", "-" + arch);
+        return url;
     }
 }

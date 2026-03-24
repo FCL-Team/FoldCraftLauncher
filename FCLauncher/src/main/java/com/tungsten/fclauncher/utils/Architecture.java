@@ -7,11 +7,11 @@ import android.os.Build;
  */
 public class Architecture {
 
-	public static int UNSUPPORTED_ARCH = -1;
-	public static int ARCH_ARM64 = 0x1;
-	public static int ARCH_ARM = 0x2;
-	public static int ARCH_X86 = 0x4;
-	public static int ARCH_X86_64 = 0x8;
+	public static final int UNSUPPORTED_ARCH = -1;
+	public static final int ARCH_ARM64 = 0x1;
+	public static final int ARCH_ARM = 0x2;
+	public static final int ARCH_X86 = 0x4;
+	public static final int ARCH_X86_64 = 0x8;
 
 	/**
 	 * Tell us if the device supports 64 bits architecture

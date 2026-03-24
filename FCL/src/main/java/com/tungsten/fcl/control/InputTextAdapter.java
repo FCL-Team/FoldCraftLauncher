@@ -65,8 +65,9 @@ public class InputTextAdapter extends FCLAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
         String inputText = list.get(i);
-        viewHolder.textView.setText(inputText);
-        viewHolder.parent.setOnClickListener(v -> callback.onTextInput(inputText));
+        String[] split = inputText.split("&\\*&");
+        viewHolder.textView.setText(split[0]);
+        viewHolder.parent.setOnClickListener(v -> callback.onTextInput(split.length == 2 ? split[1] : split[0]));
         viewHolder.delete.setOnClickListener(v -> {
             QuickInputTexts.removeInputText(inputText);
             notifyDataSetChanged();

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name_import">安装整合包</string>
+    <string name="splash_agreement">FCL需要储存权限以管理/读取游戏文件，FCL在GitHub上完全开源，请不用担心您的数据安全。权限仅用于正常运行游戏，无任何安全问题。</string>
     <string name="splash_permission_msg">没有存储权限，请授予 Fold Craft Launcher 权限。</string>
     <string name="splash_permission_grant">授予</string>
     <string name="splash_permission_title">需要存储权限</string>
     <string name="splash_permission_close">关闭应用</string>
     <string name="splash_permission_settings">去设置</string>
     <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
+    <string name="notification_permission">FCL需要发布通知的权限，防止无法正常安装/启动游戏 。</string>
 
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
@@ -25,7 +28,7 @@
     <string name="about">关于</string>
     <string name="about_sponsor">赞助</string>
     <string name="about_source">开源</string>
-    <string name="about_desc">Fold Craft Launcher 是一个 Android Minecraft 启动器，让用户能够在 Android 设备上启动 Minecraft: Java Edition。\n\nFold Craft Launcher 由 FCL-Team 开发。\n\nFold Craft Launcher 的主要功能是基于 HMCLCore 修改而成的。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
+    <string name="about_desc">你说得对，但是「FCL」是由FCL-Team基于HMCL的核心功能，结合PojavLauncher后端和Boat后端开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统，在这里，被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
 
     <string name="account_add_server">添加认证服务器</string>
     <string name="account_add_server_url">服务器地址</string>
@@ -67,6 +70,7 @@
     <string name="account_methods_microsoft_error_add_family">你尚未满 18 岁，需要一位成年将你加入至家庭中。</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
+    <string name="account_methods_microsoft_error_banned">你的账户可能被 Xbox Live 封禁。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
     <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
@@ -88,6 +92,7 @@
     <string name="action_refresh">刷新</string>
     <string name="action_retry">重试</string>
     <string name="action_share">分享</string>
+    <string name="action_upload">上传日志</string>
     <string name="action_skip">跳过</string>
 
     <string name="announcement">公告：%s</string>
@@ -121,6 +126,7 @@
     <string name="button_select_all">全选</string>
     <string name="button_set">设置</string>
     <string name="button_reset">重置</string>
+    <string name="button_overwrite">覆盖</string>
 
     <string name="community">社区</string>
     <string name="community_hint">加入社区以获取最新版本，反馈 bug 等。如果你要加入社区，请遵守社区规定。\n注：由于 QQ 群聊人数有限，加入 QQ 群需先赞助10元或以上金额，赞助方式见关于页面。</string>
@@ -273,6 +279,9 @@
     <string name="curse_category_4550">任务</string>
     <string name="curse_category_4555">世界生成</string>
     <string name="curse_category_4552">脚本</string>
+    <string name="curse_category_6555">原版风格</string>
+    <string name="curse_category_6554">幻想</string>
+    <string name="curse_category_6553">写实</string>
 
     <string name="curse_sort_author">作者</string>
     <string name="curse_sort_date_created">创建日期</string>
@@ -346,6 +355,13 @@
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
     <string name="folder_fcl_log">浏览FCL日志文件夹</string>
+    <string name="upload_log">上传日志</string>
+     <string name="log_not_found">未找到日志文件</string>
+     <string name="log_too_large">日志文件过大</string>
+    <string name="upload_fcl_log">上传FCL日志</string>
+    <string name="upload_game_log">上传游戏日志</string>
+    <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
+    <string name="upload_failed">上传失败：%s</string>
     <string name="folder_mod">浏览模组文件夹</string>
     <string name="folder_resourcepacks">浏览资源包文件夹</string>
     <string name="folder_saves">浏览存档文件夹</string>
@@ -447,16 +463,17 @@
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
 
-    <string name="jar_execute">执行 Jar 文件</string>
+    <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
 
-    <string name="launch">Pojav</string>
+    <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
     <string name="launch_error_java_auto">自动选择</string>
     <string name="launch_error_java_continue">继续</string>
+    <string name="launch_error_java_continue_disable">继续（禁用检查）</string>
     <string name="launch_failed">无法启动</string>
     <string name="launch_failed_download_library">未能下载游戏依赖 %s</string>
 
@@ -507,6 +524,7 @@
     <string name="menu_settings_debug">调试</string>
     <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
     <string name="menu_settings_disable_gesture">禁用手势</string>
+    <string name="menu_settings_disable_left_touch">禁用左半屏触控</string>
     <string name="menu_settings_force_exit">强制退出</string>
     <string name="menu_settings_force_exit_button">退出</string>
     <string name="menu_settings_force_exit_msg">你确定要强制退出吗？</string>
@@ -526,8 +544,11 @@
     <string name="menu_settings_mouse_mode_click">点击</string>
     <string name="menu_settings_mouse_mode_slide">拖动</string>
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">鼠标灵敏度（当指针可见时）</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_gamepad">手柄</string>
+    <string name="menu_settings_gamepad_disable_mapping">禁用手柄映射</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
     <string name="menu_settings_gamepad_reset">重置</string>
     <string name="menu_settings_gamepad_deadzone">调整死区</string>
@@ -540,6 +561,8 @@
     <string name="menu_settings_soft_keyboard_adjust">禁用软键盘自适应</string>
     <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_show_log">显示日志</string>
+    <string name="menu_settings_show_log_auto">自动显示日志</string>
+    <string name="menu_settings_performance_mode">持续性能模式</string>
 
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>
@@ -563,6 +586,7 @@
     <string name="modpack_download">下载整合包</string>
     <string name="modpack_enter_name">给游戏起个你喜欢的名字</string>
     <string name="modpack_export">导出整合包</string>
+    <string name="modpack_external_detected">检测到外部整合包：%s</string>
     <string name="modpack_export_as">请选择整合包类型 (若无法决定，请选择我的世界中文论坛整合包标准)</string>
     <string name="modpack_file_api">整合包下载链接前缀</string>
     <string name="modpack_files_blueprints">BuildCraft 蓝图</string>
@@ -663,6 +687,38 @@
     <string name="modrinth_category_worldgen">世界生成</string>
     <string name="modrinth_category_datapack">数据包</string>
     <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">氛围</string>
+    <string name="modrinth_category_bloom">泛光</string>
+    <string name="modrinth_category_cartoon">卡通</string>
+    <string name="modrinth_category_colored_lighting">彩色光照</string>
+    <string name="modrinth_category_fantasy">幻想</string>
+    <string name="modrinth_category_foliage">植被</string>
+    <string name="modrinth_category_high">高</string>
+    <string name="modrinth_category_low">低</string>
+    <string name="modrinth_category_medium">中</string>
+    <string name="modrinth_category_path_tracing">路径追踪</string>
+    <string name="modrinth_category_potato">极低</string>
+    <string name="modrinth_category_realistic">写实</string>
+    <string name="modrinth_category_reflections">反射</string>
+    <string name="modrinth_category_screenshot">极高</string>
+    <string name="modrinth_category_semi_realistic">半写实</string>
+    <string name="modrinth_category_shadows">阴影</string>
+    <string name="modrinth_category_vanilla_like">原版风格</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_audio">声音</string>
+    <string name="modrinth_category_blocks">方块</string>
+    <string name="modrinth_category_core_shaders">核心着色器</string>
+    <string name="modrinth_category_entities">实体</string>
+    <string name="modrinth_category_environment">环境</string>
+    <string name="modrinth_category_fonts">字体</string>
+    <string name="modrinth_category_items">物品</string>
+    <string name="modrinth_category_locale">本地化</string>
+    <string name="modrinth_category_modded">修改</string>
+    <string name="modrinth_category_models">模型</string>
+    <string name="modrinth_category_simplistic">简约</string>
+    <string name="modrinth_category_themed">主题</string>
+    <string name="modrinth_category_tweaks">优化</string>
 
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
@@ -679,6 +735,7 @@
     <string name="mods_check_updates_source">下载源</string>
     <string name="mods_check_updates_target_version">目标版本</string>
     <string name="mods_check_updates_update">更新</string>
+    <string name="mods_check_updates_update_without">更新（不保留旧版本）</string>
     <string name="mods_choose_mod">选择模组</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">依赖</string>
@@ -717,6 +774,7 @@
     <string name="quick_input_title">快捷输入</string>
     <string name="quick_input_add">添加新文本</string>
     <string name="quick_input_text">快捷输入文本</string>
+    <string name="quick_input_remarks">备注（可空）</string>
     <string name="quick_input_exist">该文本已存在！</string>
     <string name="quick_input_empty">请先填写文本！</string>
 
@@ -732,15 +790,17 @@
 
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
+    <string name="settings_advanced_dont_check_mod">不检查模组兼容性</string>
+    <string name="settings_advanced_debug_log">输出调试日志</string>
     <string name="settings_advanced_game_dir_default">默认 (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
-    <string name="settings_advanced_java_permanent_generation_space">内存永久保存区域</string>
-    <string name="settings_advanced_java_permanent_generation_space_prompt">单位 MB</string>
     <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>
     <string name="settings_advanced_minecraft_arguments">游戏参数</string>
     <string name="settings_advanced_minecraft_arguments_prompt">默认</string>
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
+    <string name="settings_advanced_custom_uuid">自定义UUID</string>
+    <string name="settings_advanced_force_resolution">强制设置分辨率（实验性选项，谨慎使用）</string>
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_injector">基岩版触控手势</string>
@@ -749,6 +809,7 @@
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行(Pojav后端)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
 
+    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, 内置的)</string>
     <string name="settings_fcl_driver">Vulkan驱动</string>
 
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
@@ -762,7 +823,9 @@
     <string name="settings_icon">版本图标</string>
 
     <string name="settings_launcher">启动器设置</string>
+    <string name="settings_launcher_request">请求</string>
     <string name="settings_launcher_debug">调试</string>
+    <string name="settings_launcher_request_recording_permission">请求麦克风权限（用于语音聊天模组）</string>
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_check">检测</string>
     <string name="settings_launcher_cache">缓存文件夹</string>
@@ -777,15 +840,26 @@
     <string name="settings_launcher_launcher_log_export">导出启动器日志</string>
     <string name="settings_launcher_launcher_log_export_failed">无法导出日志</string>
     <string name="settings_launcher_launcher_log_export_success">日志已被导出至 %s</string>
-    <string name="settings_launcher_theme">主题</string>
-    <string name="settings_launcher_theme2">主题2</string>
+    <string name="settings_launcher_theme_mode">主题模式</string>
+    <string name="settings_launcher_theme_mode_follow">跟随系统</string>
+    <string name="settings_launcher_theme_mode_light">亮色模式</string>
+    <string name="settings_launcher_theme_mode_dark">暗色模式</string>
+    <string name="settings_launcher_theme">主要主题色</string>
+    <string name="settings_launcher_theme2">次要主题色（亮色模式）</string>
+    <string name="settings_launcher_theme2_dark">次要主题色（暗色模式）</string>
+    <string name="settings_launcher_theme_fetch_background">从背景图片提取</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片(最大分辨率5120x5120)</string>
     <string name="settings_launcher_background_dk">暗色模式启动器背景图片(最大分辨率5120x5120)</string>
+    <string name="settings_launcher_background_video">启动器背景(视频 .mp4)</string>
+    <string name="settings_launcher_background_video_volume">视频背景音量</string>
     <string name="settings_launcher_cursor">鼠标图片</string>
     <string name="settings_launcher_menu_icon">菜单键图标</string>
     <string name="settings_launcher_ignore_notch">忽略刘海屏(全屏)</string>
     <string name="settings_launcher_close_skin_view">关闭皮肤模型阅览</string>
     <string name="settings_launcher_animation_speed">动画速度</string>
+    <string name="settings_launcher_vibrate_duration">震动时长（用于TouchController模组）</string>
+    <string name="settings_disable_fullscreen_input">禁用全屏输入（用于TouchController模组）</string>
+    <string name="settings_launcher_exit_after_launching">启动器启动后自动关闭</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>
@@ -828,15 +902,90 @@
     <string name="style_rocker_corner_radius">摇杆圆角半径</string>
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
 
+    <string name="terracotta">多人联机</string>
+    <string name="terracotta_metadata">陶瓦版本：%s\nEasyTier 版本：%s</string>
+    <string name="terracotta_easytier">关于 EasyTier</string>
+    <string name="terracotta_terracotta">Terracotta | 陶瓦联机</string>
+    <string name="terracotta_back">退出</string>
+    <string name="terracotta_enable">启用多人联机</string>
+    <string name="terracotta_feedback_title">填写反馈表</string>
+    <string name="terracotta_difficulty_easiest">当前网络状态极好：稍等一下就成功！</string>
+    <string name="terracotta_difficulty_simple">当前网络状态较好：建立连接需要一段时间……</string>
+    <string name="terracotta_difficulty_medium">当前网络状态中等：已启用抗干扰备用线路，连接可能失败</string>
+    <string name="terracotta_difficulty_tough">当前网络状态极差：已启用抗干扰备用线路，连接可能失败</string>
+    <string name="terracotta_difficulty_estimate_only">连接成功率由房主和房客的 NAT 类型推算得到，仅供参考。</string>
+    <string name="terracotta_export_log">导出联机核心日志</string>
+    <string name="terracotta_export_log_btn">日志</string>
+    <string name="terracotta_export_log_dialog_title">联机核心日志</string>
+    <string name="terracotta_export_log_dialog_export">导出</string>
+    <string name="terracotta_export_log_desc">为分析错误提供更多信息</string>
+    <string name="terracotta_export_log_done">联机核心日志成功导出至日志文件夹</string>
+    <string name="terracotta_export_log_failed">无法导出日志</string>
+    <string name="terracotta_export_log_share">分享联机核心日志</string>
+    <string name="terracotta_export_log_share_null">未找到联机核心日志，请先在游戏内联机菜单导出日志</string>
+    <string name="terracotta_status_uninitialized_desc">您承诺，在多人联机全过程中，您将严格遵守您所在国家或地区的全部法律法规。</string>
+    <string name="terracotta_confirm">用户须知\n\n陶瓦联机是第三方开源自由软件，您在使用过程中所遇到的问题请通过相关渠道进行反馈。\n陶瓦联机使用 P2P 技术，联机成功后房间内用户之间将直接连接，不会使用第三方服务器对您的流量进行转发。最终联机体验和参与联机者的网络情况有较大关系。\n在多人联机全过程中，您必须严格遵守您所在国家与地区的全部法律法规。</string>
+    <string name="terracotta_menu">联机菜单</string>
+    <string name="terracotta_menu_open">打开</string>
+    <string name="terracotta_notification_title">Terracotta | 陶瓦联机 正在运行</string>
+    <string name="terracotta_notification_desc">身份：%s，状态：%s</string>
+    <string name="terracotta_status_waiting_host_title">我想当房主</string>
+    <string name="terracotta_status_waiting_host_desc">创建房间并生成邀请码，与好友一起畅玩</string>
+    <string name="terracotta_status_waiting_guest_title">我想当房客</string>
+    <string name="terracotta_status_waiting_guest_desc">输入房主提供的邀请码加入游戏世界</string>
+    <string name="terracotta_status_waiting_guest_prompt_title">请输入房主提供的邀请码</string>
+    <string name="terracotta_status_waiting_guest_prompt_invalid">邀请码错误</string>
+    <string name="terracotta_status_waiting_guest_prompt_terracotta_legacy">旧版本 Terracotta 邀请码</string>
+    <string name="terracotta_status_waiting_guest_prompt_pcl2ce">旧版本 PCL CE 邀请码</string>
+    <string name="terracotta_status_waiting_guest_prompt_scaffolding">Scaffolding 邀请码</string>
+    <string name="terracotta_status_host_scanning">正在扫描局域网世界</string>
+    <string name="terracotta_status_host_scanning_desc">请进入单人存档，按下 ESC 键，选择对局域网开放，点击创建局域网世界。</string>
+    <string name="terracotta_status_host_scanning_back">这将同时停止扫描局域网世界。</string>
+    <string name="terracotta_status_host_starting">正在启动房间</string>
+    <string name="terracotta_status_host_starting_back">这将会取消创建房间。</string>
+    <string name="terracotta_status_host_ok">已启动房间</string>
+    <string name="terracotta_status_host_ok_code">邀请码 (已自动复制到剪贴板)：</string>
+    <string name="terracotta_status_host_ok_code_copy">复制邀请码</string>
+    <string name="terracotta_status_host_ok_code_copy_toast">已将邀请码复制到剪贴板</string>
+    <string name="terracotta_status_host_ok_code_desc">请提醒您的朋友在 FCL 或 HMCL 或 PCL CE 多人联机功能中选择房客模式，并输入该邀请码。</string>
+    <string name="terracotta_status_host_ok_back">这将同时彻底关闭房间，其他房客将退出并不再能重新加入该房间。</string>
+    <string name="terracotta_status_guest_starting">正在加入房间</string>
+    <string name="terracotta_status_guest_connecting">正在加入房间</string>
+    <string name="terracotta_status_guest_starting_back">这不会影响其他房客加入当前房间。</string>
+    <string name="terracotta_status_guest_ok">已加入房间</string>
+    <string name="terracotta_status_guest_ok_back">这不会影响其他房客加入当前房间。</string>
+    <string name="terracotta_status_guest_ok_address">请前往游戏主界面，选择多人游戏，双击进入陶瓦联机大厅。备用联机地址：</string>
+    <string name="terracotta_status_guest_ok_address_copy">复制备用联机地址</string>
+    <string name="terracotta_status_guest_ok_address_copy_toast">已将备用联机地址复制到剪贴板</string>
+    <string name="terracotta_status_guest_ok_address_desc">如非必要请勿使用此地址。</string>
+    <string name="terracotta_status_exception">连接断开</string>
+    <string name="terracotta_status_exception_back">可再试一次</string>
+    <string name="terracotta_status_exception_desc_ping_host_fail">加入房间失败：房间已关闭或网络不稳定</string>
+    <string name="terracotta_status_exception_desc_ping_host_rst">房间连接断开：房间已关闭或网络不稳定</string>
+    <string name="terracotta_status_exception_desc_guest_et_crash">加入房间失败：EasyTier 已崩溃，请向开发者反馈该问题</string>
+    <string name="terracotta_status_exception_desc_host_et_crash">创建房间失败：EasyTier 已崩溃，请向开发者反馈该问题</string>
+    <string name="terracotta_status_exception_desc_ping_server_rst">房间已关闭：您已退出游戏存档，房间已自动关闭</string>
+    <string name="terracotta_status_exception_desc_scaffolding_invalid_response">协议错误：房主发送了错误的响应数据，请向开发者反馈该问题</string>
+    <string name="terracotta_permission_vpn">请先授予应用 VPN 权限</string>
+    <string name="terracotta_player_list">玩家列表</string>
+    <string name="terracotta_player_anonymous">匿名玩家</string>
+    <string name="terracotta_player_kind_host">房主</string>
+    <string name="terracotta_player_kind_local">你</string>
+    <string name="terracotta_player_kind_guest">房客</string>
+    <string name="terracotta_tutorial_host_btn">房主教程</string>
+    <string name="terracotta_tutorial_host">房主使用方法：\n\n - 在启动器多人联机主页阅读用户须知后启用联机功能\n - 启动游戏，在游戏内的 FCL 菜单中找到联机菜单并打开\n - 点击“我想当房主”，扫描游戏端口\n - 进入存档，在游戏暂停菜单中打开“对局域网开放”选项\n - 若弹出提示要求申请 VPN 权限，请授予，否则无法正常使用\n - 稍等片刻将自动复制邀请码，若没有自动复制，也可以前往联机菜单复制\n - 将邀请码发送给你的伙伴\n\n注意事项：\n\n - 该软件支持离线账户\n - 该软件支持与 HMCL 和 PCL CE 等支持 Scaffolding 协议的软件互联</string>
+    <string name="terracotta_tutorial_guest_btn">房客教程</string>
+    <string name="terracotta_tutorial_guest">房客使用方法：\n\n - 在启动器多人联机主页阅读用户须知后启用联机功能\n - 启动游戏，在游戏内的 FCL 菜单中找到联机菜单并打开\n - 点击“我想当房客”，在输入框内输入房主提供的邀请码，并耐心等待\n - 若弹出提示要求申请 VPN 权限，请授予，否则无法正常使用\n - 显示已加入房间后，在游戏主界面选择多人游戏并刷新，双击进入陶瓦联机大厅\n\n注意事项：\n\n - 该软件支持离线账户\n - 该软件支持与 HMCL 和 PCL CE 等支持 Scaffolding 协议的软件互联\n - 使用备用服务器地址加入游戏时，不支持离线账户，自行解决</string>
+
     <string name="update">更新</string>
-    <string name="update_netdisk">网盘</string>
+    <string name="update_netdisk">更新（网盘）</string>
     <string name="update_check">检查更新</string>
     <string name="update_checking">正在检查更新</string>
     <string name="update_check_failed">无法检测更新</string>
     <string name="update_date">日期：%s</string>
     <string name="update_description">描述：\n%s</string>
     <string name="update_exist">检测到可更新的版本</string>
-    <string name="update_failed">无法下载最新版，请重试或从官网下载。</string>
+    <string name="update_failed">无法下载最新版，请重试或从网盘下载。</string>
     <string name="update_ignore">忽略此版本</string>
     <string name="update_launcher">更新启动器</string>
     <string name="update_not_exist">没有可更新的版本</string>
@@ -847,6 +996,7 @@
 
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
+    <string name="version_game_april_fools">愚人节</string>
     <string name="version_game_release">正式版</string>
     <string name="version_game_releases">正式版</string>
     <string name="version_game_snapshot">测试版</string>
@@ -943,8 +1093,8 @@
     <string name="install_apk">安装apk文件</string>
     <string name="modpack_download_warn_title">注意</string>
     <string name="modpack_download_warn_msg">在安装前，你需要明白，绝大多数整合包都是给电脑端制作的，所以当你尝试启动时会有极大概率出现崩溃或是其他问题，这往往不是在启动器层面上能解决的问题。所以你需要自己了解相关知识后尝试自己解决，或是寻求其他人帮忙（不要询问启动器开发者！）。</string>
-    <string name="view_incompatible">查看不兼容的模组</string>
-    <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“主题2”即可</string>
+    <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“次要主题色”即可</string>
+    <string name="guide_share_log">长按这里分享游戏日志（latest_game.log）。</string>
     <string name="menu_settings_gamepad_button_binding">按键绑定</string>
     <string name="menu_settings_gamepad_open_button">打开</string>
     <string name="joystick_l">左摇杆</string>
@@ -954,11 +1104,58 @@
     <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
 
-    <string name="wiki_release">https://zh.minecraft.wiki/w/Java版%s?variant=zh-cn</string>
-    <string name="wiki_snapshot">https://zh.minecraft.wiki/w/%s?variant=zh-cn</string>
+    <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>
+    <string name="wiki_game_search">Java版%s</string>
     <string name="installed">已安装</string>
     <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
+    <string name="message_install_java">你可以通过以下方式获取Java。</string>
 
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>
+
+    <string name="mod_check_continue">无视风险!</string>
+    <string name="mod_check_physics">当前使用的物理模组（%s）未经修补（将libPhysXJniBindings_64.so从Linux x86_64架构替换到安卓arm64/x86_64），启动后将会崩溃。</string>
+    <string name="mod_check_mcef">MCEF（%s）无法在安卓上运行。它通常被用来作为WebDisplays/In-game Browser（浏览器）的前置依赖。</string>
+    <string name="mod_check_valkyrienskies">瓦尔基里天空/瓦尔基里战争（%s）无法直接在单人模式下运行。你必须使用服务器运行（可以使用Termux），否则游戏会崩溃。</string>
+    <string name="mod_check_yes_steve_model">是，史蒂夫模型（%s）2.2.2+无法在安卓系统上运行。</string>
+    <string name="mod_check_imblocker">输入法冲突修复/游戏内输入法 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
+    <string name="mod_check_replay">Replay (%s)需要FFmpeg插件，似乎你并没有安装。你可以从谷歌商店下载或者这里下载（ %s 或者 %s ）（长按复制）</string>
+    <string name="mod_check_borderlesswindow">无边框全屏 (%s) 不适用于安卓。它会使游戏在启动阶段崩溃。</string>
+    <string name="mod_check_axiom">当前使用的Axiom模组（%s）未经修补，启动后将会崩溃。</string>
+    <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
+    <string name="mod_check_flashback">Flashback模组（%s）无法在安卓上运行。</string>
+    <string name="mod_check_ixeris">Ixeris模组（%s）无法在FCL上正常运行。</string>
+
+    <string name="internal">内置的</string>
+    <string name="import_java">导入Java</string>
+    <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
+    <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
+    <string name="import_java_error_not_valid">检测到当前导入的Java文件结构无效，无法使用！</string>
+    <string name="import_java_overwrite_wrong">该版本的Java已经导入过了，是否覆盖当前版本？</string>
+
+    <string name="ingame_folder_browse">浏览目录</string>
+    <string name="ingame_folder_import">导入</string>
+    <string name="ingame_folder_import_failed">导入文件 %1$s 时遇到问题！\n%2$s</string>
+
+    <string name="manage_version">管理版本</string>
+    <string name="select_renderer">选择渲染器</string>
+    <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
+    <string name="launch">启动</string>
+    <string name="tip_hide_menu_view">菜单按键已隐藏，按下音量键打开菜单。</string>
+    <string name="modloader">模组加载器</string>
+    <string name="message_warn_renderer_global_setting">你当前选择的版本已启用游戏特定设置，所以在此处修改的渲染器无法应用于当前版本。建议长按“启动”按钮选择渲染器。</string>
+    <string name="message_select_url">请选择一个链接进行下载（将会跳转至浏览器）</string>
+    <string name="supported_mc_version">支持的MC版本：</string>
+    <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
+    <string name="enabled">已启用</string>
+    <string name="disabled">已禁用</string>
+    <string name="close">关闭</string>
+    <string name="message_warn_restart_after_change">改动的内容将在重启后生效。</string>
+    <string name="message_check_path_valid">当前选择的游戏文件路径（%s）可能包含非法字符，启动后可能会闪退，建议检查游戏目录或是重命名版本，是否继续启动？</string>
+    <string name="message_check_has_modloader">检测到当前启动的游戏版本已安装模组但是似乎未安装相应的模组加载器，启动后模组可能无法运行，是否继续启动？</string>
+    <string name="message_data_is_loading">数据还未加载完成，无法修改。</string>
+    <string name="exception_no_suitable_java">未能找到合适的Java！</string>
+    <string name="slide_selection">滑动选择</string>
+    <string name="swap_hands">双击切换副手</string>
+
 </resources>

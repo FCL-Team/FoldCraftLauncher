@@ -21,7 +21,6 @@ class SettingPageManager(
         const val PAGE_ID_SETTING_GAME: Int = 15030
         const val PAGE_ID_SETTING_LAUNCHER: Int = 15031
         const val PAGE_ID_SETTING_HELP: Int = 15032
-        const val PAGE_ID_SETTING_COMMUNITY: Int = 15033
         const val PAGE_ID_SETTING_ABOUT: Int = 15034
     }
 
@@ -35,17 +34,14 @@ class SettingPageManager(
             context,
             PAGE_ID_SETTING_LAUNCHER,
             parent,
-            R.layout.page_launcher_setting
+            R.layout.page_setting_launcher
         )
     }
     private val helpPage: HelpPage by lazy {
-        HelpPage(context, PAGE_ID_SETTING_HELP, parent, R.layout.page_help)
-    }
-    private val communityPage: CommunityPage by lazy {
-        CommunityPage(context, PAGE_ID_SETTING_COMMUNITY, parent, R.layout.page_community)
+        HelpPage(context, PAGE_ID_SETTING_HELP, parent, R.layout.page_setting_help)
     }
     private val aboutPage: AboutPage by lazy {
-        AboutPage(context, PAGE_ID_SETTING_ABOUT, parent, R.layout.page_about)
+        AboutPage(context, PAGE_ID_SETTING_ABOUT, parent, R.layout.page_setting_about)
     }
 
 
@@ -71,7 +67,6 @@ class SettingPageManager(
         val page: FCLCommonPage? = when (id) {
             PAGE_ID_SETTING_LAUNCHER -> launcherSettingPage
             PAGE_ID_SETTING_HELP -> helpPage
-            PAGE_ID_SETTING_COMMUNITY -> communityPage
             PAGE_ID_SETTING_ABOUT -> aboutPage
             else -> null
         }

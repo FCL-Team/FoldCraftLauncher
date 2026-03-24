@@ -22,7 +22,7 @@ import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.CompressingUtils;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,12 +64,12 @@ public final class GameVerificationFixTask extends Task<Void> {
         File jar = dependencyManager.getGameRepository().getVersionJar(version);
         LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(version, gameVersion);
 
-        if (jar.exists() && VersionNumber.compare(gameVersion, "1.6") < 0 && analyzer.has(LibraryAnalyzer.LibraryType.FORGE)) {
+        if (jar.exists() && GameVersionNumber.compare(gameVersion, "1.6") < 0 && analyzer.has(LibraryAnalyzer.LibraryType.FORGE)) {
             try (FileSystem fs = CompressingUtils.createWritableZipFileSystem(jar.toPath(), StandardCharsets.UTF_8)) {
                 Files.deleteIfExists(fs.getPath("META-INF/MOJANG_C.DSA"));
                 Files.deleteIfExists(fs.getPath("META-INF/MOJANG_C.SF"));
             }
         }
     }
-    
+
 }

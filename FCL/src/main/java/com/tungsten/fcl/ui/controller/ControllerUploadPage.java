@@ -11,7 +11,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
 import com.tungsten.fcl.setting.Controller;
-import com.tungsten.fcl.ui.ProgressDialog;
+import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;

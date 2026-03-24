@@ -2,6 +2,8 @@ package com.tungsten.fcl.game;
 
 import android.content.Context;
 
+import com.mio.JavaManager;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
@@ -34,7 +36,7 @@ public class JarExecutorLauncher extends Launcher {
     private CommandBuilder generateCommandLine(String args) {
         CommandBuilder res = new CommandBuilder();
 
-        getCacioJavaArgs(res, javaVersion == 8, javaVersion == 11);
+        getCacioJavaArgs(res, javaVersion == 8);
 
         res.addDefault("-Xms", MemoryUtils.findBestRAMAllocation(context) + "m");
         res.addDefault("-Xmx", MemoryUtils.findBestRAMAllocation(context) + "m");
@@ -54,7 +56,7 @@ public class JarExecutorLauncher extends Launcher {
         return res;
     }
 
-    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8, boolean isJava11) {
+    public static void getCacioJavaArgs(CommandBuilder res, boolean isJava8) {
         res.addDefault("-Djava.awt.headless=", "false");
         res.addDefault("-Dcacio.managed.screensize=", FCLBridge.DEFAULT_WIDTH + "x" + FCLBridge.DEFAULT_HEIGHT);
         res.addDefault("-Dcacio.font.fontmanager=", "sun.awt.X11FontManager");
@@ -88,7 +90,7 @@ public class JarExecutorLauncher extends Launcher {
 
         StringBuilder cacioClasspath = new StringBuilder();
         cacioClasspath.append("-Xbootclasspath/").append(isJava8 ? "p" : "a");
-        File cacioDir = new File(isJava8 ? FCLPath.CACIOCAVALLO_8_DIR : isJava11 ? FCLPath.CACIOCAVALLO_11_DIR : FCLPath.CACIOCAVALLO_17_DIR);
+        File cacioDir = new File(isJava8 ? FCLPath.CACIOCAVALLO_8_DIR : FCLPath.CACIOCAVALLO_17_DIR);
         if (cacioDir.exists() && cacioDir.isDirectory()) {
             for (File file : Objects.requireNonNull(cacioDir.listFiles())) {
                 if (file.getName().endsWith(".jar")) {
@@ -118,9 +120,9 @@ public class JarExecutorLauncher extends Launcher {
         FCLConfig config = new FCLConfig(
                 context,
                 FCLPath.LOG_DIR,
-                javaVersion == 8 ? FCLPath.JAVA_8_PATH : javaVersion == 11 ? FCLPath.JAVA_11_PATH : javaVersion == 17 ? FCLPath.JAVA_17_PATH : FCLPath.JAVA_21_PATH,
+                JavaManager.getSuitableJavaVersion(javaVersion).getJavaPath(null),
                 Profiles.getSelectedProfile().getGameDir().getAbsolutePath(),
-                FCLConfig.Renderer.RENDERER_GL4ES,
+                RendererManager.RENDERER_GL4ES,
                 finalArgs
         );
         return FCLauncher.launchJarExecutor(config);

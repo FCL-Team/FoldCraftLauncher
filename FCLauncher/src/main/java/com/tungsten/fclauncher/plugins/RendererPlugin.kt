@@ -4,19 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.os.Bundle
+import com.mio.data.Renderer
 import com.tungsten.fclauncher.utils.FCLPath
 
 object RendererPlugin {
-    data class Renderer(
-        val name: String,
-        val des: String,
-        val glName: String,
-        val eglName: String,
-        val path: String,
-        val boatEnv: List<String>,
-        val pojavEnv: List<String>
-    )
-
     private var isInit = false;
     private const val PACKAGE_FLAGS =
         PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
@@ -31,13 +23,13 @@ object RendererPlugin {
         }
 
     @JvmStatic
-    var selected: Renderer? = null
-
-    @JvmStatic
     fun init(context: Context) {
         isInit = true
         val queryIntentActivities =
-            context.packageManager.queryIntentActivities(Intent("android.intent.action.MAIN"), PACKAGE_FLAGS)
+            context.packageManager.queryIntentActivities(
+                Intent("android.intent.action.MAIN"),
+                PACKAGE_FLAGS
+            )
         queryIntentActivities.forEach {
             parse(it.activityInfo.applicationInfo)
         }
@@ -46,6 +38,13 @@ object RendererPlugin {
     @JvmStatic
     fun isAvailable(): Boolean {
         return rendererList.isNotEmpty()
+    }
+
+    @JvmStatic
+    fun refresh(context: Context) {
+        rendererList.clear()
+        isInit = false
+        init(context)
     }
 
     private fun parse(info: ApplicationInfo) {
@@ -60,7 +59,9 @@ object RendererPlugin {
                 val renderer = rendererString.split(":")
                 val boatEnv = boatEnvString.split(":")
                 val pojavEnv = pojavEnvString.split(":")
-                rendererList.add(
+                val minMCVer = metaData.safeGetString("minMCVer") ?: ""
+                val maxMCVer = metaData.safeGetString("maxMCVer") ?: ""
+                addRenderer(
                     Renderer(
                         renderer[0],
                         des,
@@ -68,10 +69,25 @@ object RendererPlugin {
                         renderer[2],
                         nativeLibraryDir,
                         boatEnv,
-                        pojavEnv
+                        pojavEnv,
+                        info.packageName,
+                        minMCVer,
+                        maxMCVer
                     )
                 )
             }
         }
+    }
+
+    private fun addRenderer(renderer: Renderer) {
+        rendererList.removeIf { it.id == renderer.id }
+        rendererList.add(renderer)
+    }
+
+    private fun Bundle.safeGetString(key: String): String? {
+        return if (containsKey(key)) {
+            return runCatching { getString(key) }.getOrNull()
+                ?: runCatching { getFloat(key).toString() }.getOrNull()
+        } else null
     }
 }

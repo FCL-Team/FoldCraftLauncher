@@ -40,9 +40,7 @@ public class FCLButton extends AppCompatButton {
         @Override
         protected void invalidated() {
             get();
-            drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
             drawableNormal.setColor(Color.TRANSPARENT);
-            drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), ThemeEngine.getInstance().getTheme().getColor());
             drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             if (!ripple) {
                 if (isDown) {
@@ -90,11 +88,9 @@ public class FCLButton extends AppCompatButton {
         drawablePress = new GradientDrawable();
         drawableNormal.setShape(shape);
         drawableNormal.setCornerRadius(ConvertUtils.dip2px(getContext(), 8));
-        drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawableNormal.setColor(Color.TRANSPARENT);
         drawablePress.setShape(shape);
         drawablePress.setCornerRadius(ConvertUtils.dip2px(getContext(), 8));
-        drawablePress.setStroke(ConvertUtils.dip2px(getContext(), 1.5f), Color.GRAY);
         drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
         setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.xml.anim_scale));
     }

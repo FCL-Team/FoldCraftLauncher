@@ -8,18 +8,22 @@ import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.game.World;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import java.io.IOException;
 import java.time.Instant;
 
 public class WorldListItem {
@@ -83,10 +87,26 @@ public class WorldListItem {
 
     public void showInfo() {
         try {
-            WorldInfoPage page = new WorldInfoPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_world_info, world);
+            WorldInfoPage page = new WorldInfoPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_manage_world_info, world);
             ManagePageManager.getInstance().showTempPage(page);
         } catch (Exception e) {
             // TODO
         }
+    }
+
+    public void delete() {
+        new FCLAlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.version_manage_remove_confirm, world.getWorldName()))
+                .setPositiveButton(() -> {
+                    try {
+                        FileUtils.forceDelete(world.getFile().toFile());
+                    } catch (Exception ignore) {
+                    }
+                    WorldListPage page = (WorldListPage) ManagePageManager.getInstance().getPageById(ManagePageManager.PAGE_ID_MANAGE_WORLD);
+                    page.refresh();
+                })
+                .setNegativeButton(null)
+                .create()
+                .show();
     }
 }

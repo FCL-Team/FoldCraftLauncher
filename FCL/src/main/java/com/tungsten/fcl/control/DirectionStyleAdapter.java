@@ -45,9 +45,9 @@ public class DirectionStyleAdapter extends FCLAdapter {
         this.list = list;
         this.select = select;
 
-        if (DirectionStyles.getStyles().stream().anyMatch(it -> it == initStyle)) {
+        if (initStyle != null && DirectionStyles.getStyles().stream().anyMatch(it -> it.getName().equals(initStyle.getName()))) {
             selectedStyle.set(initStyle);
-        } else  {
+        } else {
             selectedStyle.set(list.get(0));
         }
     }
@@ -95,6 +95,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
         viewHolder.direction.getData().getBaseInfo().setAbsoluteWidth(60);
         viewHolder.direction.getData().getBaseInfo().setAbsoluteHeight(60);
         viewHolder.name.setText(style.getName());
+        viewHolder.name.setSelected(true);
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
             viewHolder.delete.setVisibility(View.GONE);

@@ -3,6 +3,8 @@
     <color name="default_theme_color">#7797CF</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="ui_bg_color">#4DBCBCBC</color>
+    <color name="ui_bg_color">#40F4F4F4</color>
+    <color name="right_menu_color">#80F4F4F4</color>
     <color name="icon_background_color">#FFFFFF</color>
+    <color name="primary_text">#0E0E0E</color>
 </resources>

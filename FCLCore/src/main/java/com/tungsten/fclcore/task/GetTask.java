@@ -68,9 +68,10 @@ public final class GetTask extends FetchTask<String> {
 
     @Override
     protected Context getContext(URLConnection conn, boolean checkETag) {
+        int length = conn.getContentLength();
+        final var baos = new ByteArrayOutputStream(length <= 0 ? 8192 : length);
+        
         return new Context() {
-            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             @Override
             public void write(byte[] buffer, int offset, int len) {
                 baos.write(buffer, offset, len);

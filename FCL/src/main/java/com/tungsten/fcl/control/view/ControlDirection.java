@@ -9,8 +9,6 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -21,8 +19,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.BaseInfoData;
@@ -40,7 +36,6 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.UUID;
@@ -122,8 +117,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         setWillNotDraw(false);
 
@@ -185,8 +180,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(this::notifyData);
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
@@ -194,7 +189,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             getData().addListener(notifyListener);
         });
         boundaryListener = null;
-        visibilityListener = observable -> {};
+        visibilityListener = observable -> {
+        };
         alphaListener = null;
 
         post(() -> {
@@ -279,7 +275,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private final AppCompatButton downLeftBtn = new AppCompatButton(getContext());
     private final AppCompatButton downRightBtn = new AppCompatButton(getContext());
 
-    private final AppCompatButton[] buttons = new AppCompatButton[] {
+    private final AppCompatButton[] buttons = new AppCompatButton[]{
             centerBtn,
             upBtn,
             downBtn,
@@ -794,10 +790,18 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     private void handleMoveEvent(boolean up, boolean down, boolean left, boolean right) {
         if (menu != null) {
-            menu.getInput().sendKeyEvent(getData().getEvent().getUpKeycode(), up);
-            menu.getInput().sendKeyEvent(getData().getEvent().getDownKeycode(), down);
-            menu.getInput().sendKeyEvent(getData().getEvent().getLeftKeycode(), left);
-            menu.getInput().sendKeyEvent(getData().getEvent().getRightKeycode(), right);
+            for (Integer code : getData().getEvent().upKeycodeList()) {
+                menu.getInput().sendKeyEvent(code, up);
+            }
+            for (Integer code : getData().getEvent().downKeycodeList()) {
+                menu.getInput().sendKeyEvent(code, down);
+            }
+            for (Integer code : getData().getEvent().leftKeycodeList()) {
+                menu.getInput().sendKeyEvent(code, left);
+            }
+            for (Integer code : getData().getEvent().rightKeycodeList()) {
+                menu.getInput().sendKeyEvent(code, right);
+            }
         }
         if (getData().getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
             if (up && !down && !left && !right) {
@@ -869,10 +873,18 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 tempDirection = Direction.DIRECTION_CENTER;
             }
             if (menu != null) {
-                menu.getInput().sendKeyEvent(getData().getEvent().getUpKeycode(), false);
-                menu.getInput().sendKeyEvent(getData().getEvent().getDownKeycode(), false);
-                menu.getInput().sendKeyEvent(getData().getEvent().getLeftKeycode(), false);
-                menu.getInput().sendKeyEvent(getData().getEvent().getRightKeycode(), false);
+                for (Integer code : getData().getEvent().upKeycodeList()) {
+                    menu.getInput().sendKeyEvent(code, false);
+                }
+                for (Integer code : getData().getEvent().downKeycodeList()) {
+                    menu.getInput().sendKeyEvent(code, false);
+                }
+                for (Integer code : getData().getEvent().leftKeycodeList()) {
+                    menu.getInput().sendKeyEvent(code, false);
+                }
+                for (Integer code : getData().getEvent().rightKeycodeList()) {
+                    menu.getInput().sendKeyEvent(code, false);
+                }
             }
         });
     }

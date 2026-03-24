@@ -143,6 +143,11 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     @Override
+    public Path getModsDirectory(String id) {
+        return getRunDirectory(id).toPath().resolve("mods");
+    }
+
+    @Override
     public File getVersionRoot(String id) {
         return new File(getBaseDirectory(), "versions/" + id);
     }
@@ -214,7 +219,8 @@ public class DefaultGameRepository implements GameRepository {
                 }
             }
             return true;
-        } catch (IOException | JsonParseException | VersionNotFoundException | InvalidPathException e) {
+        } catch (IOException | JsonParseException | VersionNotFoundException |
+                 InvalidPathException e) {
             LOG.log(Level.WARNING, "Unable to rename version " + from + " to " + to, e);
             return false;
         }
@@ -310,33 +316,7 @@ public class DefaultGameRepository implements GameRepository {
                 }
 
                 if (!id.equals(version.getId())) {
-                    try {
-                        String from = id;
-                        String to = version.getId();
-                        Path fromDir = getVersionRoot(from).toPath();
-                        Path toDir = getVersionRoot(to).toPath();
-                        Files.move(fromDir, toDir);
-
-                        Path fromJson = toDir.resolve(from + ".json");
-                        Path fromJar = toDir.resolve(from + ".jar");
-                        Path toJson = toDir.resolve(to + ".json");
-                        Path toJar = toDir.resolve(to + ".jar");
-
-                        try {
-                            Files.move(fromJson, toJson);
-                            if (Files.exists(fromJar))
-                                Files.move(fromJar, toJar);
-                        } catch (IOException e) {
-                            // recovery
-                            Lang.ignoringException(() -> Files.move(toJson, fromJson));
-                            Lang.ignoringException(() -> Files.move(toJar, fromJar));
-                            Lang.ignoringException(() -> Files.move(toDir, fromDir));
-                            throw e;
-                        }
-                    } catch (IOException e) {
-                        LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because version id does not match folder name " + id + ", and we cannot correct it.", e);
-                        return Stream.empty();
-                    }
+                    version._setId(id);
                 }
 
                 return Stream.of(version);
@@ -346,8 +326,7 @@ public class DefaultGameRepository implements GameRepository {
             try {
                 Version resolved = version.resolve(provider);
 
-                if (resolved.appliesToCurrentEnvironment() &&
-                        EventBus.EVENT_BUS.fireEvent(new LoadedOneVersionEvent(this, resolved)) != Event.Result.DENY)
+                if (resolved.appliesToCurrentEnvironment())
                     versions.put(version.getId(), version);
             } catch (VersionNotFoundException e) {
                 LOG.log(Level.WARNING, "Ignoring version " + version.getId() + " because it inherits from a nonexistent version.");
@@ -360,9 +339,6 @@ public class DefaultGameRepository implements GameRepository {
 
     @Override
     public void refreshVersions() {
-        if (EventBus.EVENT_BUS.fireEvent(new RefreshingVersionsEvent(this)) == Event.Result.DENY)
-            return;
-
         refreshVersionsImpl();
         EventBus.EVENT_BUS.fireEvent(new RefreshedVersionsEvent(this));
     }

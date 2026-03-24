@@ -26,7 +26,7 @@ public class ButtonStyles {
     private ButtonStyles() {
     }
 
-    private static final ObservableList<ControlButtonStyle> styles = observableArrayList(style -> new Observable[] { style });
+    private static final ObservableList<ControlButtonStyle> styles = observableArrayList(style -> new Observable[]{style});
     private static final ReadOnlyListWrapper<ControlButtonStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
 
     public static void checkStyles() {
@@ -65,7 +65,7 @@ public class ButtonStyles {
         if (initialized)
             return;
 
-        getStylesFromDisk().forEach(ButtonStyles::addStyle);
+        styles.addAll(getStylesFromDisk());
         checkStyles();
 
         initialized = true;
@@ -119,6 +119,16 @@ public class ButtonStyles {
             styles.add(style);
     }
 
+    public static void addStyle(ControlButtonStyle style, int index) {
+        if (!initialized) return;
+        boolean add = true;
+        for (ControlButtonStyle buttonStyle : getStyles())
+            if (buttonStyle.getName().equals(style.getName()))
+                add = false;
+        if (add)
+            styles.add(index, style);
+    }
+
     public static void removeStyles(ControlButtonStyle style) {
         if (!initialized) return;
         styles.remove(style);
@@ -127,6 +137,11 @@ public class ButtonStyles {
     public static ControlButtonStyle findStyleByName(String name) {
         checkStyles();
         return styles.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(styles.get(0));
+    }
+
+    public static int findStyleIndexByName(String name) {
+        checkStyles();
+        return styles.indexOf(findStyleByName(name));
     }
 
 }

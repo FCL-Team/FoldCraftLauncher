@@ -68,6 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            app:use_theme_color="true"
             android:src="@drawable/ic_baseline_edit_24"
             android:id="@+id/edit"/>
 

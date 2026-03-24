@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableAr
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
@@ -62,12 +63,14 @@ public class QuickInputTexts {
             File file = new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json");
             if (file.exists()) {
                 String json = FileUtils.readText(file);
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
                 return gson.fromJson(json, new TypeToken<ArrayList<String>>() {
                 }.getType());
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get quick input text", e);
+        } catch (JsonSyntaxException e) {
+            new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json").delete();
         }
         return new ArrayList<>();
     }
@@ -81,7 +84,7 @@ public class QuickInputTexts {
     }
 
     public static void saveInputTexts() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
         String json = gson.toJson(new ArrayList<>(inputTexts));
         try {
             FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json"), json);

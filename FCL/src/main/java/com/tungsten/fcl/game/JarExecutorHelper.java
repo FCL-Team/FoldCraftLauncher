@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.mio.JavaManager;
+import com.mio.manager.RendererManager;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
@@ -71,7 +73,7 @@ public class JarExecutorHelper {
             fclBridge.setScaleFactor(1f);
             fclBridge.setController(null);
             fclBridge.setGameDir(null);
-            fclBridge.setRenderer(FCLConfig.Renderer.RENDERER_GL4ES.toString());
+            fclBridge.setRenderer(RendererManager.RENDERER_GL4ES.getName());
             fclBridge.setJava(javaVersion + "");
             JVMActivity.setFCLBridge(fclBridge, MenuType.JAR_EXECUTOR);
             LOG.log(Level.INFO, "Start JVMActivity!");
@@ -90,21 +92,23 @@ public class JarExecutorHelper {
         Profile profile = Profiles.getSelectedProfile();
         if (profile != null) {
             String java = profile.getGlobal().getJava();
-            if (!java.equals(JavaVersion.JAVA_AUTO.getVersionName())) {
-                javaVersion = JavaVersion.getJavaFromVersionName(java).getVersion();
+            if (!java.equals(JavaVersion.JAVA_AUTO.getName())) {
+                javaVersion = JavaManager.getJavaFromVersionName(java).getVersion();
             }
         }
         return javaVersion;
     }
 
     private static int getNearestJavaVersion(int majorVersion) {
-        if (majorVersion > JavaVersion.JAVA_VERSION_17)
+        if (majorVersion > JavaVersion.JAVA_VERSION_21) {
+            return JavaVersion.JAVA_VERSION_25;
+        } else if (majorVersion > JavaVersion.JAVA_VERSION_17) {
             return JavaVersion.JAVA_VERSION_21;
-        if (majorVersion > JavaVersion.JAVA_VERSION_11)
+        } else if (majorVersion > JavaVersion.JAVA_VERSION_8) {
             return JavaVersion.JAVA_VERSION_17;
-        if (majorVersion > JavaVersion.JAVA_VERSION_8)
-            return JavaVersion.JAVA_VERSION_11;
-        return JavaVersion.JAVA_VERSION_8;
+        } else {
+            return JavaVersion.JAVA_VERSION_8;
+        }
     }
 
     private static int getJavaVersion(File file) {

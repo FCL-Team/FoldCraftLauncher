@@ -8,8 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +19,6 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
@@ -32,6 +29,7 @@ import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -44,11 +42,12 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
 
 /**
  * Custom game control button.
@@ -111,8 +110,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth(FCLApplication.getCurrentActivity());
-        screenHeight = AndroidUtils.getScreenHeight(FCLApplication.getCurrentActivity());
+        screenWidth = AndroidUtils.getScreenWidth();
+        screenHeight = AndroidUtils.getScreenHeight();
 
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
@@ -134,9 +133,6 @@ public class ControlButton extends AppCompatButton implements CustomView {
         });
         alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             setAlpha(menu.isHideAllViews() ? 0 : 1);
-            if (!menu.getMenuSetting().isHideMenuView()) {
-                ((DrawerLayout) gameMenu.getLayout()).setDrawerLockMode(menu.isHideAllViews() ? DrawerLayout.LOCK_MODE_UNLOCKED : DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            }
         });
 
         post(() -> {
@@ -277,6 +273,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
+
     private void deleteView() {
         if (menu != null) {
             menu.getViewManager().removeView(getData());
@@ -345,6 +342,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     break;
             }
         } else {
+            if (menu.getTouchController() != null && getData().getEvent().isPointerFollow()) {
+                menu.getTouchController().moveView(event);
+            }
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     setPressedStyle();
@@ -496,6 +496,12 @@ public class ControlButton extends AppCompatButton implements CustomView {
         cancelTickEvent(getData().getEvent().getClickEvent());
         cancelTickEvent(getData().getEvent().getDoubleClickEvent());
         setNormalStyle();
+        pressEvent = false;
+        longPress = false;
+        longPressEvent = false;
+        clickEvent = false;
+        clickCount = 0;
+        doubleClickEvent = false;
     }
 
     private void handleMoveEvent(MotionEvent event) {
@@ -571,6 +577,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private void handleKeyEvent(ButtonEventData.Event event, boolean press) {
         if (!press && !keycodeOutputting) {
+            return;
+        }
+        if (event.outputKeycodesList().isEmpty()) {
             return;
         }
         for (int keycode : event.outputKeycodesList()) {
@@ -680,15 +689,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     menu.getInput().sendChar(event.getOutputText().charAt(i));
                 }
             } else {
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, true);
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_T, false);
+                GameOption gameOption = menu.getGameOption();
+                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, true);
+                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, false);
                 new Handler().postDelayed(() -> {
                     for (int i = 0; i < event.getOutputText().length(); i++) {
                         menu.getInput().sendChar(event.getOutputText().charAt(i));
                     }
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
-                }, 50);
+                }, 150);
             }
         }
         for (String id : event.bindViewGroupList()) {

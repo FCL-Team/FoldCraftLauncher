@@ -17,6 +17,8 @@
  */
 package com.tungsten.fclcore.mod;
 
+import com.tungsten.fclcore.download.DownloadProvider;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -84,7 +86,7 @@ public interface RemoteModRepository {
         }
     }
 
-    SearchResult search(String gameVersion, @Nullable Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder)
+    SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder)
             throws IOException;
 
     Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException;
@@ -121,9 +123,9 @@ public interface RemoteModRepository {
         }
     }
 
-    String[] DEFAULT_GAME_VERSIONS = new String[] {
+    String[] DEFAULT_GAME_VERSIONS = new String[]{
             "",
-            "1.21.4", "1.21.3", "1.21.2", "1.21.1", "1.21",
+            "1.21.11", "1.21.10", "1.21.9", "1.21.8", "1.21.7", "1.21.6", "1.21.5", "1.21.4", "1.21.3", "1.21.2", "1.21.1", "1.21",
             "1.20.6", "1.20.5", "1.20.4", "1.20.3", "1.20.2", "1.20.1", "1.20",
             "1.19.4", "1.19.3", "1.19.2", "1.19.1", "1.19",
             "1.18.2", "1.18.1", "1.18",

@@ -8,13 +8,14 @@
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:padding="2dp"
         android:background="@drawable/bg_item_clickable"
         android:orientation="horizontal"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp">
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_marginStart="5dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

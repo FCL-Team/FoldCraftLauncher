@@ -12,11 +12,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.FCLAdapter;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -66,11 +68,19 @@ public class ServerListAdapter extends FCLAdapter {
         AuthlibInjectorServer server = list.get(i);
         viewHolder.name.setText(server.getName());
         viewHolder.url.setText(server.getUrl());
+        viewHolder.url.setSelected(true);
         viewHolder.parent.setOnClickListener(v -> {
             CreateAccountDialog dialog = new CreateAccountDialog(getContext(), server);
             dialog.show();
         });
-        viewHolder.delete.setOnClickListener(v -> config().getAuthlibInjectorServers().remove(server));
+        viewHolder.delete.setOnClickListener(v -> {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), server.getName()));
+            builder.setPositiveButton(() -> config().getAuthlibInjectorServers().remove(server));
+            builder.setNegativeButton(null);
+            builder.create().show();
+        });
         return view;
     }
 }

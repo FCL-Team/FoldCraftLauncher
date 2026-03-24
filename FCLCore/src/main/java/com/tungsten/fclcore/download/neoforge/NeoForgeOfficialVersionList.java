@@ -1,6 +1,7 @@
 package com.tungsten.fclcore.download.neoforge;
 
 import static com.tungsten.fclcore.util.Lang.wrap;
+import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.VersionList;
@@ -21,7 +22,7 @@ public final class NeoForgeOfficialVersionList extends VersionList<NeoForgeRemot
 
     @Override
     public boolean hasType() {
-        return false;
+        return true;
     }
 
     private static final String OLD_URL = "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/forge";
@@ -57,8 +58,20 @@ public final class NeoForgeOfficialVersionList extends VersionList<NeoForgeRemot
                 }
 
                 for (String version : results[1].versions) {
-                    int si1 = version.indexOf('.'), si2 = version.indexOf('.', version.indexOf('.') + 1);
-                    String mcVersion = "1." + version.substring(0, Integer.parseInt(version.substring(si1 + 1, si2)) == 0 ? si1 : si2);
+                    String mcVersion;
+
+                    try {
+                        int si1 = version.indexOf('.'), si2 = version.indexOf('.', version.indexOf('.') + 1);
+                        int majorVersion = Integer.parseInt(version.substring(0, si1));
+                        if (majorVersion == 0) { // Snapshot version.
+                            mcVersion = version.substring(si1 + 1, si2);
+                        } else {
+                            mcVersion = "1." + version.substring(0, Integer.parseInt(version.substring(si1 + 1, si2)) == 0 ? si1 : si2);
+                        }
+                    } catch (RuntimeException e) {
+                        LOG.warning(String.format("Cannot parse NeoForge version %s for cracking its mc version. ", version) + e);
+                        continue;
+                    }
                     versions.put(mcVersion, new NeoForgeRemoteVersion(
                             mcVersion, NeoForgeRemoteVersion.normalize(version),
                             Lang.immutableListOf(

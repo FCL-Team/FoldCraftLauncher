@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +29,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public final class JsonUtils {
 
     public static final Gson GSON = defaultGsonBuilder().create();
+    public static final Gson GSON_SIMPLE = new GsonBuilder().setPrettyPrinting().create();
 
     public static final Gson UGLY_GSON = new GsonBuilder()
             .registerTypeAdapterFactory(JsonTypeAdapterFactory.INSTANCE)
@@ -43,6 +48,22 @@ public final class JsonUtils {
             .create();
 
     private JsonUtils() {
+    }
+
+    public static <T> TypeToken<List<T>> listTypeOf(Class<T> elementType) {
+        return (TypeToken<List<T>>) TypeToken.getParameterized(List.class, elementType);
+    }
+
+    public static <T> TypeToken<List<T>> listTypeOf(TypeToken<T> elementType) {
+        return (TypeToken<List<T>>) TypeToken.getParameterized(List.class, elementType.getType());
+    }
+
+    public static <K, V> TypeToken<Map<K, V>> mapTypeOf(Class<K> keyType, Class<V> valueType) {
+        return (TypeToken<Map<K, V>>) TypeToken.getParameterized(Map.class, keyType, valueType);
+    }
+
+    public static <K, V> TypeToken<Map<K, V>> mapTypeOf(Class<K> keyType, TypeToken<V> valueType) {
+        return (TypeToken<Map<K, V>>) TypeToken.getParameterized(Map.class, keyType, valueType.getType());
     }
 
     public static <T> T fromJsonFully(InputStream json, Class<T> classOfT) throws IOException, JsonParseException {
@@ -59,6 +80,13 @@ public final class JsonUtils {
 
     public static <T> T fromNonNullJson(String json, Class<T> classOfT) throws JsonParseException {
         T parsed = GSON.fromJson(json, classOfT);
+        if (parsed == null)
+            throw new JsonParseException("Json object cannot be null.");
+        return parsed;
+    }
+
+    public static <T> T fromNonNullJson(String json, TypeToken<T> type) throws JsonParseException {
+        T parsed = GSON.fromJson(json, type);
         if (parsed == null)
             throw new JsonParseException("Json object cannot be null.");
         return parsed;
@@ -102,6 +130,16 @@ public final class JsonUtils {
             return GSON.fromJson(json, type);
         } catch (JsonSyntaxException e) {
             return null;
+        }
+    }
+
+    public static <T> T fromJsonFile(Path file, Class<T> classOfT) throws IOException {
+        return fromJsonFile(file, TypeToken.get(classOfT));
+    }
+
+    public static <T> T fromJsonFile(Path file, TypeToken<T> type) throws IOException {
+        try (var reader = Files.newBufferedReader(file)) {
+            return GSON.fromJson(reader, type.getType());
         }
     }
 

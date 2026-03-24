@@ -18,18 +18,13 @@
 package com.tungsten.fclcore.download.liteloader;
 
 import com.tungsten.fclcore.download.BMCLAPIDownloadProvider;
+import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.io.HttpRequest;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fclcore.util.io.NetworkUtils;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public final class LiteLoaderBMCLVersionList extends VersionList<LiteLoaderRemoteVersion> {
@@ -44,66 +39,44 @@ public final class LiteLoaderBMCLVersionList extends VersionList<LiteLoaderRemot
         return false;
     }
 
-    private void doBranch(String key, String gameVersion, LiteLoaderRepository repository, LiteLoaderBranch branch, boolean snapshot) {
-        if (branch == null || repository == null)
-            return;
+    private static final class LiteLoaderBMCLVersion {
 
-        for (Map.Entry<String, LiteLoaderVersion> entry : branch.getLiteLoader().entrySet()) {
-            String branchName = entry.getKey();
-            LiteLoaderVersion v = entry.getValue();
-            if ("latest".equals(branchName))
-                continue;
+        private final LiteLoaderVersion build;
+        private final String version;
 
-            String version = v.getVersion();
-            String url = "https://bmclapi2.bangbang93.com/liteloader/download?version=" + version;
-            if (snapshot) {
-                try {
-                    version = version.replace("SNAPSHOT", getLatestSnapshotVersion(repository.getUrl() + "com/mumfrey/liteloader/" + v.getVersion() + "/"));
-                    url = repository.getUrl() + "com/mumfrey/liteloader/" + v.getVersion() + "/liteloader-" + version + "-release.jar";
-                } catch (Exception ignore) {
-                }
-            }
-
-            versions.put(key, new LiteLoaderRemoteVersion(gameVersion,
-                    version, Collections.singletonList(url),
-                    v.getTweakClass(), v.getLibraries()
-            ));
+        public LiteLoaderBMCLVersion(LiteLoaderVersion build, String version) {
+            this.build = build;
+            this.version = version;
         }
     }
 
     @Override
     public CompletableFuture<?> refreshAsync() {
-        return HttpRequest.GET(downloadProvider.injectURL(LITELOADER_LIST)).getJsonAsync(LiteLoaderVersionsRoot.class)
-                .thenAcceptAsync(root -> {
-                    lock.writeLock().lock();
+        throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public CompletableFuture<?> refreshAsync(String gameVersion) {
+        return HttpRequest.GET(
+                        downloadProvider.injectURL("https://bmclapi2.bangbang93.com/liteloader/list"), Pair.pair("mcversion", gameVersion)
+                )
+                .getJsonAsync(LiteLoaderBMCLVersion.class)
+                .thenAccept(v -> {
+                    lock.writeLock().lock();
                     try {
                         versions.clear();
 
-                        for (Map.Entry<String, LiteLoaderGameVersions> entry : root.getVersions().entrySet()) {
-                            String gameVersion = entry.getKey();
-                            LiteLoaderGameVersions liteLoader = entry.getValue();
-
-                            String gg = VersionNumber.normalize(gameVersion);
-                            doBranch(gg, gameVersion, liteLoader.getRepoitory(), liteLoader.getArtifacts(), false);
-                            doBranch(gg, gameVersion, liteLoader.getRepoitory(), liteLoader.getSnapshots(), true);
-                        }
+                        versions.put(gameVersion, new LiteLoaderRemoteVersion(
+                                gameVersion, v.version, RemoteVersion.Type.UNCATEGORIZED,
+                                Collections.singletonList(NetworkUtils.withQuery(
+                                        downloadProvider.injectURL("https://bmclapi2.bangbang93.com/liteloader/download"),
+                                        Collections.singletonMap("version", v.version)
+                                )),
+                                v.build.getTweakClass(), v.build.getLibraries()
+                        ));
                     } finally {
                         lock.writeLock().unlock();
                     }
                 });
-    }
-
-    public static final String LITELOADER_LIST = "http://dl.liteloader.com/versions/versions.json";
-
-    private static String getLatestSnapshotVersion(String repo) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(repo + "maven-metadata.xml");
-        Element r = doc.getDocumentElement();
-        Element snapshot = (Element) r.getElementsByTagName("snapshot").item(0);
-        Node timestamp = snapshot.getElementsByTagName("timestamp").item(0);
-        Node buildNumber = snapshot.getElementsByTagName("buildNumber").item(0);
-        return timestamp.getTextContent() + "-" + buildNumber.getTextContent();
     }
 }

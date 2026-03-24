@@ -81,7 +81,7 @@ public class FCLEditText extends AppCompatEditText {
             };
             int[] color = {
                     ThemeEngine.getInstance().getTheme().getColor(),
-                    Color.GRAY
+                    ThemeEngine.getInstance().getTheme().getDkColor()
             };
             setBackgroundTintList(new ColorStateList(state, color));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

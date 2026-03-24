@@ -6,79 +6,70 @@
 
 <div align="center">
 
-![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-[![Discord](https://img.shields.io/badge/Discord-4903FC?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/ffhvuXTwyV)
-[![QQ](https://img.shields.io/badge/QQ-4903FC?style=for-the-badge&logoColor=white)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=LwxydGEvBZJnn09sXOjkQo9tuuLcYwx5&authKey=seyY5pPUCIHMWS5FqVryq926T0G2GarSXetpxxV9DJxBVt%2FPcg1vxN%2F%2FXpsCowyk&noverify=0&group_code=762054349)
-![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?color=green&style=for-the-badge)
+[![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml)
+![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
+![Release](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
 
-[![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://afdian.com/@tungs)
+[![Discord](https://img.shields.io/badge/Discord-red?logo=discord&logoColor=white)](https://discord.gg/ffhvuXTwyV)
+[![QQ](https://img.shields.io/badge/QQ-green)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=LwxydGEvBZJnn09sXOjkQo9tuuLcYwx5&authKey=seyY5pPUCIHMWS5FqVryq926T0G2GarSXetpxxV9DJxBVt%2FPcg1vxN%2F%2FXpsCowyk&noverify=0&group_code=762054349)
+[![Sponsor](https://img.shields.io/badge/sponsor-blue?logo=GitHub-Sponsors)](https://afdian.com/@tungs)
 
 </div>
 
-- [Fold Craft Launcher](https://fcl-team.github.io/):
-  The software attempts to launch Minecraft: Java Edition on Android devices, allowing players to manage Games, Mods, Controls and More.
+🌍 **语言**  
+简体中文 | [English](./README_EN.md) | [Русский язык](./README_RU.md)
 
-- **Run Minecraft: Java Edition directly on your Android device**, with mod support and all versions of the Game.
+> 你说得对，但是「FCL」是由FCL-Team基于[HMCL](https://github.com/HMCL-dev/HMCL)的核心功能，结合[PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)后端和[Boat](https://github.com/AOF-Dev/Boat)后端开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统，在这里，被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。
 
-<h1 align="center">Features</h1>
+> ✨ **项目简介**  
+> 「Fold Craft Launcher」是由FCL团队开发的Android平台Minecraft: Java Edition启动器。基于[HMCL](https://github.com/HMCL-dev/HMCL)的核心功能，结合[PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher)后端和[Boat](https://github.com/AOF-Dev/Boat)后端，让您能在移动设备上畅玩Java版MC，支持模组加载与全版本运行。
 
-- [x] Run Minecraft on all versions
-- [x] Run Forge, NeoForge, LiteLoader, OptiFine, Fabric, Quilt and others
-- [x] Java 8, Java 11, Java 17 and Java 21
-- [x] Mouse Virtual
-- [x] Download Mods, ModPacks, ResourcePacks and Worlds
-- [x] Using Shaders (with VirGL/Zink)
-- [x] Create custom controllers
-- [x] Customizable launcher themes and colors
-- [x] And much more!
+---
 
-<h1 align="center">Screenshots</h1>
+## 🚀 核心特性
 
-![GameScreen1](/.github/images/ui_main_light.jpg)
-![GameScreen2](/.github/images/ui_main_dark.jpg)
-![GameScreen3](/.github/images/game.jpg)
+✅ **全版本支持**  
+- 原生支持 Minecraft 全版本（包括最新快照）
+- 模组加载器支持：Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
 
-<h1 align="center">Compilation</h1>
+⚙️ **功能亮点**  
+- 内置多版本 Java 运行时（Java 8/11/17/21）同时支持导入Java
+- 虚拟鼠标与自定义按键映射
+- 光影支持（需VirGL/Zink/MG渲染器）
+- 动态资源管理（模组/整合包/材质/光影/存档）
+- 个性化主题定制（背景/颜色方案）
+- 支持[渲染器插件化](https://github.com/ShirosakiMio/FCLRendererPlugin)
 
-You can compile the software using **Android Studio**, with the **Android SDK & NDK** packages.
-Clone the remote repository from the following URL:
-```
-https://github.com/FCL-Team/FoldCraftLauncher.git
-```
-After that, use Android Studio to compile the code.
+---
 
-<h1 align="center">License</h1>
-
-The software is distributed under [GPL-v3](https://www.gnu.org/licenses/gpl-3.0.html).
-```
-Fold Craft Launcher is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Fold Craft Launcher is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Fold Craft Launcher.  If not, see <https://www.gnu.org/licenses/>.
-```
-
-<h1 align="center">Third Party Components</h1>
-
-- [HMCL](https://github.com/HMCL-dev/HMCL)
-
-- [Boat and related projects](https://github.com/AOF-Dev/Boat)
-
-- [PojavLauncher and related projects](https://github.com/PojavLauncherTeam/PojavLauncher)
-
-- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
-
-<h1 align="center">Sponsor</h1>
+## 🎮 使用截图
 
 <div align="center">
-
-[![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#EA4AAA)](https://afdian.com/@tungs)
-
+  <img src="/.github/images/ui_main_light.jpg" width="30%" alt="浅色界面">
+  <img src="/.github/images/ui_main_dark.jpg" width="30%" alt="深色界面">
+  <img src="/.github/images/game.jpg" width="30%" alt="游戏画面">
 </div>
+
+---
+
+## 📜 开源协议
+
+本项目采用 **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html)** 授权
+
+---
+
+## 🤝 贡献与致谢
+### 贡献者墙
+<a href="https://github.com/FCL-Team/FoldCraftLauncher/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FCL-Team/FoldCraftLauncher" />
+</a>
+
+### 相关项目
+- [HMCL](https://github.com/HMCL-dev/HMCL)
+- [Boat 及其相关项目](https://github.com/AOF-Dev/Boat)
+- [PojavLauncher 及其相关项目](https://github.com/PojavLauncherTeam/PojavLauncher)
+- [authlib-injector](https://github.com/yushijinhun/authlib-injector)
+
+### 第三方组件
+- [NG-GL4ES (Krypton Wrapper)](https://github.com/BZLZHH/NG-GL4ES)
+- [mesa](https://gitlab.freedesktop.org/mesa/mesa)

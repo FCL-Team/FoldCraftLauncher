@@ -80,12 +80,34 @@ public class FCLTextView extends AppCompatTextView {
         }
     };
 
+    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
+
+        @Override
+        protected void invalidated() {
+            get();
+            if (useThemeColor) {
+                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+            }
+        }
+
+        @Override
+        public Object getBean() {
+            return this;
+        }
+
+        @Override
+        public String getName() {
+            return "theme2Dark";
+        }
+    };
+
     public FCLTextView(@NonNull Context context) {
         super(context);
         autoTint = false;
         autoBackgroundTint = false;
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -97,6 +119,7 @@ public class FCLTextView extends AppCompatTextView {
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -108,6 +131,7 @@ public class FCLTextView extends AppCompatTextView {
         typedArray.recycle();
         theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
         theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
+        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public void alert() {
@@ -132,6 +156,7 @@ public class FCLTextView extends AppCompatTextView {
 
     public void setUseThemeColor(boolean useThemeColor) {
         this.useThemeColor = useThemeColor;
+        setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
     }
 
     public boolean isUseThemeColor() {

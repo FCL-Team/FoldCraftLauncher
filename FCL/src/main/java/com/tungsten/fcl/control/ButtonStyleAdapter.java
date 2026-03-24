@@ -49,9 +49,9 @@ public class ButtonStyleAdapter extends FCLAdapter {
         this.list = list;
         this.select = select;
 
-        if (ButtonStyles.getStyles().stream().anyMatch(it -> it == initStyle)) {
+        if (initStyle != null && ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(initStyle.getName()))) {
             selectedStyle.set(initStyle);
-        } else  {
+        } else {
             selectedStyle.set(list.get(0));
         }
     }
@@ -123,12 +123,11 @@ public class ButtonStyleAdapter extends FCLAdapter {
             return true;
         });
         viewHolder.name.setText(style.getName());
+        viewHolder.name.setSelected(true);
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
-            viewHolder.delete.setVisibility(View.GONE);
         } else {
             viewHolder.radioButton.setVisibility(View.GONE);
-            viewHolder.delete.setVisibility(View.VISIBLE);
         }
         viewHolder.radioButton.checkProperty().unbind();
         viewHolder.radioButton.checkProperty().bind(Bindings.createBooleanBinding(() -> selectedStyle.get() == style, selectedStyle));

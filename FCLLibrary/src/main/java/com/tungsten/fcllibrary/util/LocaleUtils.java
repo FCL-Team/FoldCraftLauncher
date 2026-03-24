@@ -6,8 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.LocaleList;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -21,15 +23,34 @@ public class LocaleUtils {
      * 4: Vietnamese
      */
     public static Locale RUSSIAN = new Locale("ru");
-    public static Locale BRAZILIAN_PORTUGUESE = new Locale("pt","BR");
+    public static Locale BRAZILIAN_PORTUGUESE = new Locale("pt", "BR");
     public static Locale PERSIAN = new Locale("fa");
+    public static Locale UKRAINIAN = new Locale("uk");
+    public static Locale GERMAN = new Locale("de");
+    public static Locale HK = new Locale("zh", "HK");
 
     private static DateTimeFormatter dateTimeFormatter;
+
+    public static final boolean IS_CHINA_MAINLAND = isChinaMainland();
+
+    private static boolean isChinaMainland() {
+        if ("Asia/Shanghai".equals(ZoneId.systemDefault().getId()))
+            return true;
+
+        // 手动计算 8 小时对应的秒数（兼容 API 26）
+        long offsetSeconds = ZonedDateTime.now().getOffset().getTotalSeconds();
+        long eightHoursInSeconds = 8 * 3600; // 8 小时 = 8 * 3600 秒
+        if (offsetSeconds == eightHoursInSeconds) {
+            return "CN".equals(Locale.getDefault().getCountry());
+        }
+
+        return false;
+    }
 
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || (lang == 0 && getSystemLocale().toString().contains(Locale.CHINA.toString()));
+        return lang == 2 || lang == 8 || (lang == 0 && getSystemLocale().getLanguage().startsWith("zh"));
     }
 
     public static int getLanguage(Context context) {
@@ -69,6 +90,12 @@ public class LocaleUtils {
                 return BRAZILIAN_PORTUGUESE;
             case 5:
                 return PERSIAN;
+            case 6:
+                return UKRAINIAN;
+            case 7:
+                return GERMAN;
+            case 8:
+                return HK;
             default:
                 return getSystemLocale();
         }

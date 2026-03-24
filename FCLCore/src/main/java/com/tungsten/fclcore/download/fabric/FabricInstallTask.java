@@ -32,6 +32,7 @@ import com.tungsten.fclcore.task.GetTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -81,8 +82,12 @@ public final class FabricInstallTask extends Task<Version> {
     }
 
     @Override
-    public void execute() {
-        setResult(getPatch(JsonUtils.GSON.fromJson(launchMetaTask.getResult(), FabricInfo.class), remote.getGameVersion(), remote.getSelfVersion()));
+    public void execute() throws IOException {
+        FabricInfo fabricInfo = JsonUtils.GSON.fromJson(launchMetaTask.getResult(), FabricInfo.class);
+        if (fabricInfo == null)
+            throw new IOException("Fabric metadata is invalid");
+
+        setResult(getPatch(fabricInfo, remote.getGameVersion(), remote.getSelfVersion()));
 
         dependencies.add(dependencyManager.checkLibraryCompletionAsync(getResult(), true));
     }

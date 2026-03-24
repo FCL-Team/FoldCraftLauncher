@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/tab_layout"
-        android:background="@color/ui_bg_color"/>
-
     <com.tungsten.fcllibrary.component.view.FCLTabLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,11 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/help"/>
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/community"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"

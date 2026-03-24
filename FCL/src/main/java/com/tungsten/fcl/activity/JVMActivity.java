@@ -8,18 +8,27 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.control.OpenFolderDialog;
+import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fcl.terracotta.Terracotta;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.bridge.OpenFolderCallback;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclcore.util.Logging;
@@ -30,7 +39,7 @@ import org.lwjgl.glfw.CallbackBridge;
 import java.util.Objects;
 import java.util.logging.Level;
 
-public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener {
+public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener, OpenFolderCallback {
 
     private TextureView textureView;
 
@@ -39,6 +48,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
     private static boolean isRunning = false;
+    private long volumeDownTime = 0;
 
     public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -48,8 +58,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_jvm);
+        FCLBridge.setOpenFolderCallback(this);
 
+        setContentView(R.layout.activity_jvm);
         if (menuType == null || fclBridge == null) {
             Logging.LOG.log(Level.WARNING, "Failed to get ControllerType or FCLBridge, task canceled.");
             return;
@@ -59,12 +70,19 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         menu.setup(this, fclBridge);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
-        if (menuType == MenuType.GAME) {
-            menu.getInput().initExternalController(textureView);
+        if (FCLBridge.FORCE_RESOLUTION) {
+            ViewGroup.LayoutParams params = textureView.getLayoutParams();
+            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtils.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
+            params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtils.getScreenWidth() - params.width) / 2;
+            textureView.setLayoutParams(params);
+            textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
         }
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if (menuType == MenuType.GAME && ((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
                 return;
@@ -83,14 +101,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     }
 
     @Override
+    public void onBrowse(String path) {
+        OpenFolderDialog dialog = new OpenFolderDialog(this, path);
+        dialog.show();
+    }
+
+    @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
-            if (FCLBridge.BACKEND_IS_BOAT) {
-                fclBridge.setFCLNativeWindow(new Surface(surfaceTexture));
-            } else {
-                CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
-            }
+            CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
             menu.onGraphicOutput();
             return;
         }
@@ -99,7 +119,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         fclBridge.setSurfaceDestroyed(false);
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
+        if (FCLBridge.FORCE_RESOLUTION) {
+            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
+            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
+        }
         if (menuType == MenuType.GAME) {
+            menu.getInput().initExternalController(textureView);
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
             gameOption.set("fullscreen", "false");
             gameOption.set("overrideWidth", String.valueOf(width));
@@ -116,6 +141,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
         int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
+        if (FCLBridge.FORCE_RESOLUTION) {
+            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
+            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
+        }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.pushEventWindow(width, height);
     }
@@ -180,6 +209,28 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, true);
                     menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ESC, false);
                     return true;
+                } else if ((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)) {
+                    MenuView menuView = ((GameMenu) menu).getMenuView();
+                    if (menuView.getAlpha() == 0 || menuView.getVisibility() == View.INVISIBLE) {
+                        DrawerLayout drawerLayout = (DrawerLayout) menu.getLayout();
+                        if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                            if (event.getAction() == KeyEvent.ACTION_UP) {
+                                drawerLayout.closeDrawers();
+                                volumeDownTime = System.currentTimeMillis();
+                            }
+                        } else {
+                            if (System.currentTimeMillis() - volumeDownTime > 800) {
+                                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                                    return true;
+                                } else {
+                                    drawerLayout.openDrawer(GravityCompat.START, true);
+                                    drawerLayout.openDrawer(GravityCompat.END, true);
+                                }
+                            } else {
+                                volumeDownTime = System.currentTimeMillis();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -188,11 +239,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public boolean dispatchGenericMotionEvent(MotionEvent event) {
-        boolean handleEvent = true;
         if (menu != null && menuType == MenuType.GAME) {
-            handleEvent = menu.getInput().handleGenericMotionEvent(event);
+            if (menu.getInput().handleGenericMotionEvent(event)) {
+                return true;
+            }
         }
-        return handleEvent;
+        return super.dispatchGenericMotionEvent(event);
     }
 
     @Override
@@ -209,5 +261,11 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (textureView != null && textureView.getSurfaceTexture() != null) {
             textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Terracotta.setWaiting(this, true);
+        super.onDestroy();
     }
 }

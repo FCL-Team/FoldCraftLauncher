@@ -1,5 +1,6 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.tasks.MergeSourceSetFolders
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.io.File
 import java.nio.file.Files
@@ -24,6 +25,7 @@ fun copyAssetsFile(source: File, target: File) {
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 }
 
 android {
@@ -38,6 +40,8 @@ android {
     val pwd = System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
     val curseApiKey = System.getenv("CURSE_API_KEY") ?: localProperty?.getProperty("curse.api.key")
     val oauthApiKey = System.getenv("OAUTH_API_KEY") ?: localProperty?.getProperty("oauth.api.key")
+    if (localProperty != null && localProperty.getProperty("arch", "all") == "arm64")
+        System.setProperty("arch", "arm64")
 
     signingConfigs {
         create("FCLKey") {
@@ -58,8 +62,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1208
-        versionName = "1.2.0.8"
+        versionCode = 1293
+        versionName = "1.2.9.3"
     }
 
     buildTypes {
@@ -73,7 +77,7 @@ android {
             signingConfig = signingConfigs.getByName("FCLDebugKey")
         }
         configureEach {
-            resValue("string", "app_version", android.defaultConfig.versionName.toString())
+            resValue("string", "app_version", defaultConfig.versionName.toString())
             resValue("string", "curse_api_key", curseApiKey.toString())
             resValue("string", "oauth_api_key", oauthApiKey.toString())
         }
@@ -96,7 +100,7 @@ android {
                             val arch = System.getProperty("arch", "all")
                             val assetsDir = task.outputDir.get().asFile
                             copyAssetsFile(File("${project.projectDir}/src/main/assets/fcl_shell/.bashrc"), File(assetsDir, "fcl_shell/.bashrc"))
-                            val jreList = listOf("jre8", "jre11", "jre17", "jre21")
+                            val jreList = listOf("jre8", "jre17", "jre21", "jre25")
                             println("arch:$arch")
                             jreList.forEach { jre ->
                                 val runtimeDir = "$assetsDir/app_runtime/java/$jre"
@@ -115,8 +119,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {
@@ -126,12 +130,8 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
     }
 
@@ -151,25 +151,36 @@ android {
         }
     }
 
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation(project(":FCLCore"))
     implementation(project(":FCLLibrary"))
     implementation(project(":FCLauncher"))
-    implementation("com.getkeepsafe.taptargetview:taptargetview:1.14.0")
-    implementation("org.nanohttpd:nanohttpd:2.3.1")
-    implementation("org.apache.commons:commons-compress:1.26.0")
-    implementation("org.tukaani:xz:1.9")
-    implementation("com.github.steveice10:opennbt:1.5")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    implementation("com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("top.fifthlight.touchcontroller:proxy-client-android:0.0.2")
+    implementation(project(":Terracotta"))
+    implementation(libs.taptargetview)
+    implementation(libs.nanohttpd)
+    implementation(libs.commons.compress)
+    implementation(libs.xz)
+    implementation(libs.opennbt)
+    implementation(libs.gson)
+    implementation(libs.appcompat)
+    implementation(libs.core.splashscreen)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.glide)
+    implementation(libs.touchcontroller)
+    implementation(libs.palette.ktx)
+    implementation(libs.gamepad.remapper)
+    implementation(libs.segmented.button)
+    implementation(libs.datastore)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 tasks.register("updateMap") {

@@ -52,6 +52,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textSize="11sp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 app:use_theme_color="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

@@ -14,11 +14,15 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ButtonEventData;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
+import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
+import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
+import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -42,6 +46,8 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import kotlin.Unit;
+
 public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
     private final CustomControl customControl;
@@ -60,8 +66,11 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
     public interface Callback {
         void onPositive(CustomControl view);
+
         void onClone(CustomControl view);
-        default void onDelete(){}
+
+        default void onDelete() {
+        }
     }
 
     public EditViewDialog(@NonNull Context context, CustomControl cloneView, GameMenu menu, Callback callback, boolean cloneable) {
@@ -71,7 +80,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
         setCancelable(false);
         Window dialogWindow = getWindow();
         if (dialogWindow != null) {
-            dialogWindow.setLayout(ConvertUtils.dip2px(context,500), ViewGroup.LayoutParams.MATCH_PARENT);
+            dialogWindow.setLayout(ConvertUtils.dip2px(context, 500), ViewGroup.LayoutParams.MATCH_PARENT);
         }
         setContentView(R.layout.dialog_edit_view);
 
@@ -129,6 +138,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
     private interface Details {
         CustomControl getView();
+
         void onLayoutChange(int position);
     }
 
@@ -165,8 +175,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 ArrayAdapter<String> visibilityTypeAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, visibilityTypeString);
                 visibilityTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
                 visibilityTypeSpinner.setAdapter(visibilityTypeAdapter);
-                visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ? 
-                        0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ? 
+                visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ?
+                        0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ?
                         1 : 2));
                 FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
 
@@ -200,7 +210,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 sizeTypeSpinner.setAdapter(sizeTypeAdapter);
                 sizeTypeSpinner.setSelection(data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? 0 : 1);
                 FXUtils.bindSelection(sizeTypeSpinner, data.getBaseInfo().sizeTypeProperty());
-                
+
                 FCLLinearLayout widthReferenceLayout = findInfoView(R.id.width_reference_layout);
                 FCLLinearLayout heightReferenceLayout = findInfoView(R.id.height_reference_layout);
                 widthReferenceLayout.visibilityProperty().bind(Bindings.createBooleanBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE, data.getBaseInfo().sizeTypeProperty()));
@@ -212,7 +222,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 ArrayList<String> referenceString = new ArrayList<>();
                 referenceString.add(context.getString(R.string.view_info_reference_width));
                 referenceString.add(context.getString(R.string.view_info_reference_height));
-                
+
                 FCLSpinner<BaseInfoData.PercentageSize.Reference> widthReferenceSpinner = findInfoView(R.id.width_reference);
                 widthReferenceSpinner.setDataList(references);
                 ArrayAdapter<String> widthReferenceAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, referenceString);
@@ -248,8 +258,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(width.progressProperty());
                     data.getBaseInfo().getPercentageHeight().sizeProperty().bindBidirectional(height.progressProperty());
                 } else {
-                    width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth(menu.getActivity())));
-                    height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight(menu.getActivity())));
+                    width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth()));
+                    height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
                     data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(width.progressProperty());
                     data.getBaseInfo().getPercentageHeight().sizeProperty().unbindBidirectional(height.progressProperty());
                     width.setProgress(data.getBaseInfo().getAbsoluteWidth());
@@ -269,8 +279,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(width.progressProperty());
                         data.getBaseInfo().getPercentageHeight().sizeProperty().bindBidirectional(height.progressProperty());
                     } else {
-                        width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth(menu.getActivity())));
-                        height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight(menu.getActivity())));
+                        width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth()));
+                        height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
                         data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(width.progressProperty());
                         data.getBaseInfo().getPercentageHeight().sizeProperty().unbindBidirectional(height.progressProperty());
                         width.setProgress(data.getBaseInfo().getAbsoluteWidth());
@@ -285,7 +295,9 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
-                    ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, data.getStyle(), data::setStyle);
+                    ControlButtonStyle targetStyle = ButtonStyles.findStyleByName(data.getStyle().getName());
+                    ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, targetStyle, data::setStyle);
+                    dialog.setGameMenu(menu);
                     dialog.show();
                 });
 
@@ -308,7 +320,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLLinearLayout clickLayout = (FCLLinearLayout) LayoutInflater.from(context).inflate(R.layout.view_edit_button_event_child, null);
                 FCLLinearLayout doubleClickLayout = (FCLLinearLayout) LayoutInflater.from(context).inflate(R.layout.view_edit_button_event_child, null);
 
-                FCLLinearLayout[] eventLayouts = new FCLLinearLayout[] {
+                FCLLinearLayout[] eventLayouts = new FCLLinearLayout[]{
                         pressLayout,
                         longPressLayout,
                         clickLayout,
@@ -530,7 +542,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     size.setProgress(data.getBaseInfo().getPercentageWidth().getSize());
                     data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(size.progressProperty());
                 } else {
-                    size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight(menu.getActivity())));
+                    size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
                     data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(size.progressProperty());
                     size.setProgress(data.getBaseInfo().getAbsoluteWidth());
                     data.getBaseInfo().absoluteWidthProperty().bindBidirectional(size.progressProperty());
@@ -543,7 +555,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         size.setProgress(data.getBaseInfo().getPercentageWidth().getSize());
                         data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(size.progressProperty());
                     } else {
-                        size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight(menu.getActivity())));
+                        size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
                         data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(size.progressProperty());
                         size.setProgress(data.getBaseInfo().getAbsoluteWidth());
                         data.getBaseInfo().absoluteWidthProperty().bindBidirectional(size.progressProperty());
@@ -563,7 +575,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
 
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
-                    DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, data.getStyle(), data::setStyle);
+                    ControlDirectionStyle target = DirectionStyles.findStyleByName(data.getStyle().getName());
+                    DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, target, data::setStyle);
                     dialog.show();
                 });
 
@@ -578,31 +591,39 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLButton right = findEventView(R.id.right);
                 FCLButton sneak = findEventView(R.id.sneak_keycode);
                 up.setOnClickListener(v -> {
-                    ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-                    list.add(data.getEvent().getUpKeycode());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
-                    data.getEvent().upKeycodeProperty().bind(dialog.selectionProperty());
+                    ObservableList<Integer> list = FXCollections.observableArrayList();
+                    list.addAll(data.getEvent().upKeycodeList());
+                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                        data.getEvent().upKeycodeList().setAll(list);
+                        return Unit.INSTANCE;
+                    });
                     dialog.show();
                 });
                 down.setOnClickListener(v -> {
-                    ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-                    list.add(data.getEvent().getDownKeycode());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
-                    data.getEvent().downKeycodeProperty().bind(dialog.selectionProperty());
+                    ObservableList<Integer> list = FXCollections.observableArrayList();
+                    list.addAll(data.getEvent().downKeycodeList());
+                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                        data.getEvent().downKeycodeList().setAll(list);
+                        return Unit.INSTANCE;
+                    });
                     dialog.show();
                 });
                 left.setOnClickListener(v -> {
-                    ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-                    list.add(data.getEvent().getLeftKeycode());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
-                    data.getEvent().leftKeycodeProperty().bind(dialog.selectionProperty());
+                    ObservableList<Integer> list = FXCollections.observableArrayList();
+                    list.addAll(data.getEvent().leftKeycodeList());
+                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                        data.getEvent().leftKeycodeList().setAll(list);
+                        return Unit.INSTANCE;
+                    });
                     dialog.show();
                 });
                 right.setOnClickListener(v -> {
-                    ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-                    list.add(data.getEvent().getRightKeycode());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
-                    data.getEvent().rightKeycodeProperty().bind(dialog.selectionProperty());
+                    ObservableList<Integer> list = FXCollections.observableArrayList();
+                    list.addAll(data.getEvent().rightKeycodeList());
+                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                        data.getEvent().rightKeycodeList().setAll(list);
+                        return Unit.INSTANCE;
+                    });
                     dialog.show();
                 });
                 sneak.setOnClickListener(v -> {

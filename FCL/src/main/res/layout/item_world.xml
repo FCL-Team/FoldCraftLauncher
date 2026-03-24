@@ -58,6 +58,14 @@
             android:layout_gravity="center"
             app:auto_tint="true"/>
 
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_delete_24"
+            android:id="@+id/delete"
+            android:layout_gravity="center"
+            app:auto_tint="true"/>
+
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

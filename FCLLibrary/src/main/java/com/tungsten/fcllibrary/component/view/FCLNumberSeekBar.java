@@ -79,7 +79,6 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 fromUserOrSystem = true;
                 progressProperty().set(i);
-                percentProgressProperty().set((double) i / (double) getMax());
                 fromUserOrSystem = false;
             }
 
@@ -125,22 +124,6 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
         textPaint.setTextAlign(Paint.Align.CENTER);
         gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onDoubleTap(@NonNull MotionEvent e) {
-                EditDialog dialog = new EditDialog(getContext(), s -> {
-                    try {
-                        int i = Integer.parseInt(s);
-                        if (i >= getMin() && i <= getMax()) {
-                            setProgress(i);
-                        }
-                    } catch (Throwable ignore) {
-                    }
-                });
-                dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
-                dialog.show();
-                return true;
-            }
-
-            @Override
             public boolean onSingleTapUp(@NonNull MotionEvent e) {
                 if (e.getX() >= computeThumbX() - textBounds.width() / 2f && e.getX() <= computeThumbX() + textBounds.width() / 2f) {
                     EditDialog dialog = new EditDialog(getContext(), s -> {
@@ -152,6 +135,7 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
                         } catch (Throwable ignore) {
                         }
                     });
+                    dialog.appendTitle("(" + getMin() +" ~ " + getMax() + ")");
                     dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
                     dialog.show();
                     return true;
@@ -223,40 +207,6 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
         }
 
         return disableProperty;
-    }
-
-    public final void setPercentProgressValue(double percentProgressValue) {
-        percentProgressProperty().set(percentProgressValue);
-    }
-
-    public final double getPercentProgressValue() {
-        return percentProgressProperty == null ? -1 : percentProgressProperty.get();
-    }
-
-    public final DoubleProperty percentProgressProperty() {
-        if (percentProgressProperty == null) {
-            percentProgressProperty = new DoublePropertyBase() {
-
-                public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            double progress = get();
-                            setProgress((int) (progress * getMax()));
-                        }
-                    });
-                }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "percentProgress";
-                }
-            };
-        }
-
-        return percentProgressProperty;
     }
 
     public final void setProgressValue(int progressValue) {

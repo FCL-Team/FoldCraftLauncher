@@ -2,6 +2,11 @@ package com.mio.util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
+import android.view.View
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.transition.Transition
 import java.io.File
 import java.util.Optional
 
@@ -27,6 +32,27 @@ class ImageUtil {
                 return Optional.empty<Bitmap>()
             }
             return Optional.ofNullable(BitmapFactory.decodeFile(path))
+        }
+
+        @JvmStatic
+        fun loadInto(view: View, drawable: Drawable) {
+            Glide.with(view).load(drawable).centerCrop()
+                .into(object : CustomViewTarget<View, Drawable>(view) {
+                    override fun onResourceCleared(placeholder: Drawable?) {
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        view.background = resource
+                    }
+
+                })
+
         }
     }
 }

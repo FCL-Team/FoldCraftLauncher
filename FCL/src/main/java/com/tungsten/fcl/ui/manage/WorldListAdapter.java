@@ -37,6 +37,7 @@ public class WorldListAdapter extends FCLAdapter {
         FCLTextView description;
         FCLImageButton datapack;
         FCLImageButton export;
+        FCLImageButton delete;
     }
 
     @Override
@@ -60,6 +61,7 @@ public class WorldListAdapter extends FCLAdapter {
             viewHolder.description = view.findViewById(R.id.description);
             viewHolder.datapack = view.findViewById(R.id.datapack);
             viewHolder.export = view.findViewById(R.id.export);
+            viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -70,6 +72,7 @@ public class WorldListAdapter extends FCLAdapter {
         viewHolder.description.stringProperty().bind(worldListItem.subtitleProperty());
         viewHolder.datapack.setOnClickListener(v -> worldListItem.manageDatapacks());
         viewHolder.export.setOnClickListener(v -> worldListItem.export());
+        viewHolder.delete.setOnClickListener(v -> worldListItem.delete());
         return view;
     }
 }

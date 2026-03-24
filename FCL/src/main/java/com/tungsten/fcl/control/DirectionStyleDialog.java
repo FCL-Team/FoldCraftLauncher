@@ -2,11 +2,14 @@ package com.tungsten.fcl.control;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -23,7 +26,7 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     private FCLButton editStyle;
     private FCLButton positive;
 
-    private HorizontalListView listView;
+    private ListView listView;
 
     public interface Callback {
         void onStyleSelect(ControlDirectionStyle style);
@@ -34,6 +37,9 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
         this.select = select;
         this.initStyle = initStyle;
         this.callback = callback;
+        if (getWindow() != null) {
+            getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        }
         setContentView(R.layout.dialog_manage_direction_style);
         setCancelable(false);
 
@@ -57,6 +63,8 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     public void refreshList() {
         adapter = new DirectionStyleAdapter(getContext(), DirectionStyles.getStyles(), select, initStyle);
         listView.setAdapter(adapter);
+        if (initStyle != null)
+            listView.setSelection(DirectionStyles.findStyleIndexByName(initStyle.getName()));
     }
 
     @Override

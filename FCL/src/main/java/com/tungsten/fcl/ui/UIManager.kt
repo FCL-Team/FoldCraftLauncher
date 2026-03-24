@@ -29,13 +29,7 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     val manageUI: ManageUI by lazy { ManageUI(context, parent, R.layout.ui_manage) }
     val downloadUI: DownloadUI by lazy { DownloadUI(context, parent, R.layout.ui_download) }
     val controllerUI: ControllerUI by lazy { ControllerUI(context, parent, R.layout.ui_controller) }
-    val multiplayerUI: MultiplayerUI by lazy {
-        MultiplayerUI(
-            context,
-            parent,
-            R.layout.ui_multiplayer
-        )
-    }
+    val multiplayerUI: MultiplayerUI by lazy { MultiplayerUI(context, parent, R.layout.ui_multiplayer) }
     val settingUI: SettingUI by lazy { SettingUI(context, parent, R.layout.ui_setting) }
 
     private val allUIList = mutableListOf<FCLBaseUI>()

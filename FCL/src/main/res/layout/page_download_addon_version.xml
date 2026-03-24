@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/ui_bg_color"
     android:paddingTop="10dp"
     android:paddingStart="10dp"
     android:paddingEnd="10dp"

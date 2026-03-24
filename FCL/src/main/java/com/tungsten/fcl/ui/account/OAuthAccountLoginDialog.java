@@ -28,8 +28,8 @@ import java.util.logging.Level;
 
 public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickListener {
 
-    private FCLButton positive;
-    private FCLButton negative;
+    private final FCLButton positive;
+    private final FCLButton negative;
 
     private final OAuthAccount account;
     private final Consumer<AuthInfo> success;
@@ -37,6 +37,7 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
     private final ObjectProperty<OAuthServer.GrantDeviceCodeEvent> deviceCode = new SimpleObjectProperty<>();
 
     private final WeakListenerHolder holder = new WeakListenerHolder();
+    private boolean useExternalBrowser = false;
 
     public OAuthAccountLoginDialog(@NonNull Context context, OAuthAccount account, Consumer<AuthInfo> success, Runnable failed) {
         super(context);
@@ -53,12 +54,25 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
             }
         }));
         holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(deviceCode::set));
+        holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak(event -> {
+            if (useExternalBrowser) {
+                AndroidUtils.openLink(context, event.getUrl());
+            } else {
+                AndroidUtils.openLinkWithBuiltinWebView(context, event.getUrl());
+            }
+        }));
 
         positive = findViewById(R.id.login);
         negative = findViewById(R.id.cancel);
 
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+
+        positive.setOnLongClickListener(view -> {
+            useExternalBrowser = true;
+            onClick(positive);
+            return true;
+        });
     }
 
     @Override

@@ -1,9 +1,8 @@
 package com.tungsten.fcl.ui.manage;
 
-import static com.tungsten.fcl.ui.download.InstallersPage.alertFailureMessage;
+import static com.tungsten.fcl.ui.download.version.VersionInstallInfoPage.alertFailureMessage;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.InstallerVersionPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -44,7 +42,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -101,7 +98,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
 
             InstallerItem.InstallerItemGroup group = new InstallerItem.InstallerItemGroup(getContext(), gameVersion);
 
-            // Conventional libraries: game, fabric, quilt, forge, neoforge, liteloader, optifine
+            // Conventional libraries: game, fabric, quilt, forge, neoforge, liteloader, optifine, cleanroom
             for (InstallerItem installerItem : group.getLibraries()) {
                 String libraryId = installerItem.getLibraryId();
                 String libraryVersion = analyzer.getVersion(libraryId).orElse(null);
@@ -116,7 +113,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                 installerItem.upgradable.set(libraryConfigurable);
                 installerItem.installable.set(true);
                 installerItem.action.set(() -> {
-                    InstallerVersionPage page = new InstallerVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
                         } else {
@@ -185,7 +182,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     } else {
                         if (executor.getException() == null)
                             return;
-                        alertFailureMessage(getContext(), executor.getException(), () -> {});
+                        alertFailureMessage(getContext(), executor.getException(), () -> {
+                        });
                     }
                     loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                 });
@@ -260,7 +258,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                         } else {
                             if (executor.getException() == null)
                                 return;
-                            alertFailureMessage(getContext(), executor.getException(), () -> {});
+                            alertFailureMessage(getContext(), executor.getException(), () -> {
+                            });
                         }
                         loadVersion(InstallerListPage.this.profile, InstallerListPage.this.versionId);
                     });
