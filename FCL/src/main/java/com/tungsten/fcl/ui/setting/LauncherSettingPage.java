@@ -105,6 +105,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLNumberSeekBar animationSpeed;
     private FCLNumberSeekBar vibrationDuration;
     private FCLSwitch disableFullscreenInput;
+    private FCLSwitch enableCopyLog;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
     private FCLSpinner<String> downloadType;
@@ -154,6 +155,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         animationSpeed = findViewById(R.id.animation_speed);
         vibrationDuration = findViewById(R.id.vibration_duration);
         disableFullscreenInput = findViewById(R.id.disable_fullscreen_input);
+        enableCopyLog = findViewById(R.id.enable_copy_log);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
         downloadType = findViewById(R.id.source);
@@ -241,6 +243,9 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         });
         disableFullscreenInput.setChecked(sharedPreferences.getBoolean("disableFullscreenInput", true));
         disableFullscreenInput.setOnCheckedChangeListener(this);
+
+        enableCopyLog.setChecked(sharedPreferences.getBoolean("enableCopyLog", false));
+        enableCopyLog.setOnCheckedChangeListener(this);
 
         autoSource.setChecked(config().autoChooseDownloadTypeProperty().get());
         autoSource.addCheckedChangeListener();
@@ -659,6 +664,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
         } else if (buttonView == disableFullscreenInput) {
             sharedPreferences.edit().putBoolean("disableFullscreenInput", isChecked).apply();
+        } else if (buttonView == enableCopyLog) {
+            sharedPreferences.edit().putBoolean("enableCopyLog", isChecked).apply();
         } else if (buttonView == autoExitLauncher) {
             sharedPreferences.edit().putBoolean("autoExitLauncher", isChecked).apply();
         }

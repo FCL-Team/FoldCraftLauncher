@@ -67,7 +67,10 @@
         android:text="@string/crash_reporter_copy"
         app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split" />
+        app:layout_constraintStart_toEndOf="@+id/split"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent="0.7" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/upload"

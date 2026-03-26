@@ -8,6 +8,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -95,6 +96,11 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         java = getIntent().getExtras().getString("java");
 
         title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add) : getString(R.string.jar_executor_crash_title));
+
+        SharedPreferences sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE);
+        boolean enableCopyLog = sharedPreferences.getBoolean("enableCopyLog", false);
+        copy.setVisibility(enableCopyLog ? View.VISIBLE : View.GONE);
+
         setLoading(true);
         try {
             init();

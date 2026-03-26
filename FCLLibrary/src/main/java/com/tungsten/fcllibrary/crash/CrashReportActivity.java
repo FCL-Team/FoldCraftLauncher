@@ -3,6 +3,7 @@ package com.tungsten.fcllibrary.crash;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -61,6 +62,10 @@ public class CrashReportActivity extends FCLActivity implements View.OnClickList
 
         error = findViewById(R.id.error);
         error.setText(CrashReporter.getAllErrorDetailsFromIntent(this, getIntent()));
+
+        SharedPreferences sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE);
+        boolean enableCopyLog = sharedPreferences.getBoolean("enableCopyLog", false);
+        copy.setVisibility(enableCopyLog ? View.VISIBLE : View.GONE);
     }
 
     @Override
