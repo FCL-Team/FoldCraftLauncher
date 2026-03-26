@@ -4,18 +4,14 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
@@ -56,7 +52,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
 
     private FCLButton restart;
     private FCLButton close;
-    private FCLButton copy;
     private FCLButton upload;
     private FCLButton share;
 
@@ -74,13 +69,11 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
 
         restart = findViewById(R.id.restart);
         close = findViewById(R.id.close);
-        copy = findViewById(R.id.copy);
         upload = findViewById(R.id.upload);
         share = findViewById(R.id.share);
 
         restart.setOnClickListener(this);
         close.setOnClickListener(this);
-        copy.setOnClickListener(this);
         upload.setOnClickListener(this);
         share.setOnClickListener(this);
 
@@ -96,10 +89,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         java = getIntent().getExtras().getString("java");
 
         title.setText(game ? getString(R.string.game_crash_title) + getString(R.string.game_crash_title_add) : getString(R.string.jar_executor_crash_title));
-
-        SharedPreferences sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE);
-        boolean enableCopyLog = sharedPreferences.getBoolean("enableCopyLog", false);
-        copy.setVisibility(enableCopyLog ? View.VISIBLE : View.GONE);
 
         setLoading(true);
         try {
@@ -274,14 +263,6 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
             finish();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);
-        }
-        if (v == copy) {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-            if (clipboard != null) {
-                ClipData clip = ClipData.newPlainText(null, error.getText().toString());
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, com.tungsten.fcllibrary.R.string.crash_reporter_toast, Toast.LENGTH_SHORT).show();
-            }
         }
         if (v == upload) {
             String logContent = error.getText().toString();

@@ -171,21 +171,6 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray" />
 
-                <com.tungsten.fcllibrary.component.view.FCLSwitch
-                    android:id="@+id/enable_copy_log"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="8dp"
-                    android:text="@string/settings_launcher_enable_copy_log" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
-
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

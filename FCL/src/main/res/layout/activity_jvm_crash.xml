@@ -83,15 +83,7 @@
         android:id="@+id/close"
         style="@style/FCLCrashButton"
         android:text="@string/crash_reporter_close"
-        app:layout_constraintBottom_toTopOf="@+id/copy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split" />
-
-    <com.tungsten.fcllibrary.component.view.FCLButton
-        android:id="@+id/copy"
-        style="@style/FCLCrashButton"
-        android:text="@string/crash_reporter_copy"
-        app:layout_constraintBottom_toTopOf="@id/upload"
+        app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/split" />
 
