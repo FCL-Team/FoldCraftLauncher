@@ -30,7 +30,7 @@
 
 ✅ **全版本支持**  
 - 原生支持 Minecraft 全版本（包括最新快照）
-- 模组加载器支持：Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
+- 模组加载器支持：Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt/Cleanroom...
 
 ⚙️ **功能亮点**  
 - 内置多版本 Java 运行时（Java 8/17/21/25）同时支持导入Java
