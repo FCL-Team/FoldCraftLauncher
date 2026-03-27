@@ -397,18 +397,6 @@
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLSwitch
-                        android:id="@+id/vulkan_driver_system"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/settings_fcl_vulkan_driver_system" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
-
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -467,7 +455,32 @@
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray" />
 
+                    <com.tungsten.fcllibrary.component.view.FCLSwitch
+                        android:id="@+id/pojav_big_core"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/settings_fcl_pojav_bigcore" />
+                    
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLSwitch
+                        android:id="@+id/vulkan_driver_system"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/settings_fcl_vulkan_driver_system" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray" />
+
                     <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/driverContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="48dp"
@@ -517,17 +530,6 @@
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <com.tungsten.fcllibrary.component.view.FCLSwitch
-                        android:id="@+id/pojav_big_core"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/settings_fcl_pojav_bigcore" />
 
                 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

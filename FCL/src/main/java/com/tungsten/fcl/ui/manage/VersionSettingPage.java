@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -113,6 +114,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton rendererInstallButton;
     private FCLImageButton driverButton;
     private FCLImageButton driverInstallButton;
+    private LinearLayoutCompat driverContainer;
 
     private FCLTextView javaText;
     private FCLTextView controllerText;
@@ -174,6 +176,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         rendererInstallButton = findViewById(R.id.install_renderer);
         driverButton = findViewById(R.id.edit_driver);
         driverInstallButton = findViewById(R.id.install_driver);
+        driverContainer = findViewById(R.id.driverContainer);
 
         javaButton.setOnClickListener(this);
         javaInstallButton.setOnClickListener(this);
@@ -258,6 +261,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                 builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
                 builder.create().show();
             }
+            updateDriverButtonVisibility(vulkanDriverSystemSwitch.checkProperty().get(), driverButton);
         });
         View.OnLongClickListener listener = view -> {
             FullEditDialog dialog = new FullEditDialog(getContext(), str -> ((FCLEditText) view).setText(str));
@@ -272,6 +276,14 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             editForceResolution();
             return true;
         });
+    }
+
+    private void updateDriverButtonVisibility(boolean useSystemVulkan, FCLImageButton driverButton) {
+        if (useSystemVulkan) {
+            driverContainer.setVisibility(View.GONE);
+        } else {
+            driverContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     private void editForceResolution() {
@@ -375,6 +387,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
         rendererText.setSelected(true);
         rendererText.setText(renderer.getDes());
+        updateDriverButtonVisibility(versionSetting.getVkDriverSystemProperty().get(), driverButton);
         if (!versionSetting.getDriver().equals("Turnip")) {
             boolean isSelected = false;
             for (DriverPlugin.Driver driver : DriverPlugin.getDriverList()) {
