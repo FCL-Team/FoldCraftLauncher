@@ -730,7 +730,7 @@
     <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="settings_fcl_vulkan_driver_system">Использовать системные драйверы Vulkan</string>
     <string name="settings_fcl_renderer">Рендер</string>
-    <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга (Ядро Pojav)</string>
+    <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
 

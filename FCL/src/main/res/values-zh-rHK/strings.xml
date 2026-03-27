@@ -785,7 +785,7 @@
     <string name="settings_fcl_controller_injector">基岩版觸控手勢</string>
     <string name="settings_fcl_vulkan_driver_system">使用系統Vulkan驅動</string>
     <string name="settings_fcl_renderer">渲染器</string>
-    <string name="settings_fcl_pojav_bigcore">強制渲染器喺大核上運行(Pojav後端)</string>
+    <string name="settings_fcl_pojav_bigcore">強制渲染器喺大核上運行</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 僅支持 1.17-)</string>
 
     <string name="settings_fcl_driver">Vulkan驅動</string>

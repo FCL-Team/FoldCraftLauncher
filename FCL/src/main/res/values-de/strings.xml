@@ -676,7 +676,7 @@
     <string name="settings_fcl_controller_injector">Serverseitige Gesten</string>
     <string name="settings_fcl_vulkan_driver_system">System-Vulkan-Treiber verwenden</string>
     <string name="settings_fcl_renderer">Renderer</string>
-    <string name="settings_fcl_pojav_bigcore">Leistungskerne für Rendering erzwingen (Pojav-Kern)</string>
+    <string name="settings_fcl_pojav_bigcore">Leistungskerne für Rendering erzwingen</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, nur 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, nur für GPU a616-a660)</string>
 
