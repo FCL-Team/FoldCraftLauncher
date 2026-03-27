@@ -33,7 +33,7 @@
 - 模组加载器支持：Forge/NeoForge/LiteLoader/OptiFine/Fabric/Quilt...
 
 ⚙️ **功能亮点**  
-- 内置多版本 Java 运行时（Java 8/11/17/21）同时支持导入Java
+- 内置多版本 Java 运行时（Java 8/17/21/25）同时支持导入Java
 - 虚拟鼠标与自定义按键映射
 - 光影支持（需VirGL/Zink/MG渲染器）
 - 动态资源管理（模组/整合包/材质/光影/存档）
