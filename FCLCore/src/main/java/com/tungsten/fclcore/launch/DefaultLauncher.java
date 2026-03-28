@@ -175,6 +175,8 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dsodium.checks.issue2561=", "false");
         res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
         res.addDefault("-Dcpu.name=", FCLauncher.getSocName());
+        res.add("-Dimgui.library.name=imgui-java");
+        res.addDefault("-DZstdNativePath=", context.getApplicationInfo().nativeLibraryDir + "/libzstd-jni-1.5.7-6-dhcompat.so");
         File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
         if (jnaVersion != null && !jnaVersion.isEmpty()) {
             libJna = new File(libJna, jnaVersion);
