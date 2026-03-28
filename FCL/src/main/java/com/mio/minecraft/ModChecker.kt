@@ -101,20 +101,6 @@ class ModChecker(val context: Context, val version: String) {
                     )
                 }
 
-                "axiom" -> {
-                    val arch = getElfArchFromZip(
-                        mod.file.toFile(),
-                        "io/imgui/java/native-bin/libimgui-javaarm64.so"
-                    )
-                    if (arch.isBlank())
-                        throw ModCheckException(
-                            context.getString(
-                                R.string.mod_check_axiom,
-                                mod.file.toFile().name
-                            )
-                        )
-                }
-
                 "sodium", "embeddium" -> {
                     if (version.isNotEmpty() && bridge.renderer == RendererManager.RENDERER_GL4ES.name && GameVersionNumber.compare(
                             version,
