@@ -130,6 +130,7 @@ void pojavPumpEvents(void* window) {
                 break;
             case EVENT_TYPE_CURSOR_ENTER:
                 if(pojav_environ->GLFW_invoke_CursorEnter) pojav_environ->GLFW_invoke_CursorEnter(window, event.i1);
+                break;
             case EVENT_TYPE_SCROLL:
                 if(pojav_environ->GLFW_invoke_Scroll) pojav_environ->GLFW_invoke_Scroll(window, event.i1, event.i2);
                 break;

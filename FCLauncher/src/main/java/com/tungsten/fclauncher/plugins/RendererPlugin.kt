@@ -9,7 +9,7 @@ import com.mio.data.Renderer
 import com.tungsten.fclauncher.utils.FCLPath
 
 object RendererPlugin {
-    private var isInit = false;
+    private var isInit = false
     private const val PACKAGE_FLAGS =
         PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
 
@@ -86,7 +86,7 @@ object RendererPlugin {
 
     private fun Bundle.safeGetString(key: String): String? {
         return if (containsKey(key)) {
-            return runCatching { getString(key) }.getOrNull()
+            runCatching { getString(key) }.getOrNull()
                 ?: runCatching { getFloat(key).toString() }.getOrNull()
         } else null
     }
