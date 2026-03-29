@@ -36,6 +36,11 @@ object NativeLibPlugin {
             return field
         }
 
+    @JvmStatic
+    fun getPaths(split: String): String {
+        return pluginList.joinToString(split) { it.path }
+    }
+
     /**
      * 获取所有未禁用的原生库插件的 JVM 环境参数
      */

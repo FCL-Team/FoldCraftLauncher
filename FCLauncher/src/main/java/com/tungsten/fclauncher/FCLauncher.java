@@ -16,6 +16,7 @@ import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
+import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 
@@ -130,6 +131,9 @@ public class FCLauncher {
                     javaLibDir +
                     jvmLibDir;
         }
+
+        String nativeLibPaths = NativeLibPlugin.getPaths(split);
+
         return javaPath +
                 javaLibDir +
                 split +
@@ -159,6 +163,9 @@ public class FCLauncher {
                 split +
 
                 ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
+
+                nativeLibPaths +
+                split +
 
                 FCLPath.MOD_RUNTIME_DIR +
                 split +
