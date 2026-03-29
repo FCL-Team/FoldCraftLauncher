@@ -30,6 +30,7 @@ import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -175,6 +176,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dsodium.checks.issue2561=", "false");
         res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
         res.addDefault("-Dcpu.name=", FCLauncher.getSocName());
+        NativeLibPlugin.getJVMEnv().forEach((k, v) -> res.addDefault(k + "=", v));
         File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
         if (jnaVersion != null && !jnaVersion.isEmpty()) {
             libJna = new File(libJna, jnaVersion);

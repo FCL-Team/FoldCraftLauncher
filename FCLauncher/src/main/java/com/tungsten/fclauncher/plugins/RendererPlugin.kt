@@ -83,11 +83,4 @@ object RendererPlugin {
         rendererList.removeIf { it.id == renderer.id }
         rendererList.add(renderer)
     }
-
-    private fun Bundle.safeGetString(key: String): String? {
-        return if (containsKey(key)) {
-            return runCatching { getString(key) }.getOrNull()
-                ?: runCatching { getFloat(key).toString() }.getOrNull()
-        } else null
-    }
 }
