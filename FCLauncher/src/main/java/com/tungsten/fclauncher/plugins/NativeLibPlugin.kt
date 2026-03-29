@@ -14,8 +14,8 @@ object NativeLibPlugin {
         val appName: String,
         val appVersion: String,
         val displayName: String,
-        val minMCVer: String? = null,
-        val maxMCVer: String? = null,
+        val minMCVer: String,
+        val maxMCVer: String,
         val path: String,
         val envMap: Map<String, String>
     )
@@ -107,8 +107,8 @@ object NativeLibPlugin {
                     appName = appName,
                     appVersion = appVersion,
                     displayName = des,
-                    minMCVer = metaData.safeGetString("minMCVer"),
-                    maxMCVer = metaData.safeGetString("maxMCVer"),
+                    minMCVer = metaData.safeGetString("minMCVer") ?: "",
+                    maxMCVer = metaData.safeGetString("maxMCVer") ?: "",
                     path = nativeLibraryDir,
                     envMap = envMap
                 )

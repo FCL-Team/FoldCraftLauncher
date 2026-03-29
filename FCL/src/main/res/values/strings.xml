@@ -1212,6 +1212,7 @@
     <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
     <string name="supported_mc_version">Supported MC version:</string>
     <string name="message_check_renderer">The current renderer %s does not support this game version. Continuing to use it may cause rendering errors or game crashes! Do you want to continue?</string>
+    <string name="message_check_plugin">The current plugin %s does not support this game version. Continuing to use it may cause the game to crash! Do you want to continue?</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
     <string name="close">Close</string>
