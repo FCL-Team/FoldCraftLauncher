@@ -38,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="170dp"
+            android:layout_marginEnd="120dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,18 +66,6 @@
                 app:auto_text_tint="true" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/move"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="120dp"
-            android:src="@drawable/ic_baseline_output_24"
-            app:auto_tint="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
 
         <com.tungsten.fcllibrary.component.view.FCLProgressBar
             android:id="@+id/skin_progress"

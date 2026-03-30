@@ -45,7 +45,6 @@ public class AccountListAdapter extends FCLAdapter {
         FCLTextView type;
         FCLProgressBar refreshProgress;
         FCLProgressBar skinProgress;
-        FCLImageButton move;
         FCLImageButton refresh;
         FCLImageButton skin;
         FCLImageButton delete;
@@ -75,7 +74,6 @@ public class AccountListAdapter extends FCLAdapter {
             viewHolder.type = view.findViewById(R.id.type);
             viewHolder.refreshProgress = view.findViewById(R.id.refresh_progress);
             viewHolder.skinProgress = view.findViewById(R.id.skin_progress);
-            viewHolder.move = view.findViewById(R.id.move);
             viewHolder.refresh = view.findViewById(R.id.refresh);
             viewHolder.skin = view.findViewById(R.id.skin);
             viewHolder.delete = view.findViewById(R.id.delete);
@@ -97,28 +95,6 @@ public class AccountListAdapter extends FCLAdapter {
         viewHolder.radioButton.setOnClickListener(v -> {
             Accounts.setSelectedAccount(account.getAccount());
             UIManager.getInstance().getAccountUI().refresh().start();
-        });
-        viewHolder.move.imageProperty().bind(Bindings.createObjectBinding(() -> account.getAccount().isPortable() ? getContext().getDrawable(R.drawable.ic_baseline_earth_24) : getContext().getDrawable(R.drawable.ic_baseline_output_24), account.getAccount().portableProperty()));
-        viewHolder.move.setOnClickListener(v -> {
-            Account acc = account.getAccount();
-            Accounts.getAccounts().remove(acc);
-            if (acc.isPortable()) {
-                acc.setPortable(false);
-                if (!Accounts.getAccounts().contains(acc))
-                    Accounts.getAccounts().add(acc);
-            } else {
-                acc.setPortable(true);
-                if (!Accounts.getAccounts().contains(acc)) {
-                    int idx = 0;
-                    for (int j = Accounts.getAccounts().size() - 1; j >= 0; j--) {
-                        if (Accounts.getAccounts().get(j).isPortable()) {
-                            idx = j + 1;
-                            break;
-                        }
-                    }
-                    Accounts.getAccounts().add(idx, acc);
-                }
-            }
         });
         viewHolder.refresh.setOnClickListener(v -> {
             viewHolder.refresh.setVisibility(View.GONE);
