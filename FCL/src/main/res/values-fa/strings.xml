@@ -736,7 +736,7 @@
 
     <string name="settings_fcl_controller">کنترلر</string>
     <string name="settings_fcl_controller_injector">اینجکتور کنترلر</string>
-    <string name="settings_fcl_renderer">رندر</string>
+    <string name="settings_fcl_renderer">پیاده‌سازی OpenGL (رندر)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از نسخه های ۱.۱۷ به بعد پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از پردازنده های گرافیکی a616-a660 پشتیبانی می کند)</string>
 

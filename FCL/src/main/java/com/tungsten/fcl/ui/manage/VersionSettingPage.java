@@ -255,13 +255,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             Schedulers.androidUIThread().execute(() -> loadVersion(profile, versionId));
         });
         vulkanDriverSystemSwitch.setOnClickListener(v -> {
-            if (vulkanDriverSystemSwitch.checkProperty().get() && AndroidUtils.isAdrenoGPU()) {
-                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                builder.setMessage(getContext().getString(R.string.message_vulkan_driver_system));
-                builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                builder.create().show();
-            }
             driverContainer.setVisibility(vulkanDriverSystemSwitch.checkProperty().get() ? View.GONE : View.VISIBLE);
         });
         View.OnLongClickListener listener = view -> {

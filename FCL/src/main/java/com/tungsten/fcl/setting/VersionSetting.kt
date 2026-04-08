@@ -192,7 +192,7 @@ class VersionSetting : Cloneable {
         }
 
     val vkDriverSystemProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "vulkanDriverSystem", false)
+        SimpleBooleanProperty(this, "vulkanDriverSystem", true)
     var isVKDriverSystem: Boolean
         get() = vkDriverSystemProperty.get()
         set(vulkanDriverSystem) {
