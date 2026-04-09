@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1297,
-    "versionName": "1.2.9.7",
-    "date": "2026.04.04",
+    "versionCode": 1298,
+    "versionName": "1.2.9.8",
+    "date": "2026.04.09",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n0. Fix the issue where the mod loader cannot be installed properly after the update.\n1. Support loading native library plugins.  \n2. Fix an issue where resetting menu icons and mouse cursor images might fail.  \n3. Fix an issue where corrupted Java information might prevent entering the launcher.  \n4. Remove redundant libshaderc.so.  \n5. Fix an issue where 26w14a was not displayed in the April Fools' list.  \n6. Fix issues related to game version numbers."
+        "text": "(Translated from Chinese by AI)\n1. Add feature to display memory usage in-game.  \n2. Add \"Invert Selection\" feature on the mod management page.  \n3. Add a back button on the mod download page for quick return.  \n4. Automatically show a prompt when launching after hiding the menu key to prevent users from not knowing how to open it after accidental touch.  \n5. Fix incorrect shadow effects in some UI elements.  \n6. Fix the issue where native libraries cannot be loaded correctly on 26.2+ (this fix does not yet allow you to properly launch 26.2 snapshot 1)."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n0.修复更新后无法正常安装模组加载器的问题\n1.支持加载原生库插件\n2.修复重置菜单图标和鼠标光标图片可能失败的问题\n3.修复java信息损坏可能导致无法进入启动器的问题\n4.清理多余的libshaderc.so\n5.修复26w14a不显示在愚人节列表内的问题\n6.修复游戏版本号相关问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加游戏内显示内存的功能\n2.在模组管理页面添加“反选”功能\n3.模组下载页面增加返回按钮点击快速返回\n4.隐藏菜单键后启动时自动弹出提示，防止误触后不知道如何打开\n5.修复部分UI阴影效果错误\n6.修复26.2+无法正确加载原生库的问题（该修复暂时不能使你正常启动26.2 snapshot 1）"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/d31560359838",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.7/FCL-release-1.2.9.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/cec1b00bd310",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.8/FCL-release-1.2.9.8-all.apk"
   }
 ]
