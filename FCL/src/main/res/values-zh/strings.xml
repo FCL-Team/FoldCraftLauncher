@@ -1103,7 +1103,7 @@
     <string name="gamepad_dpad">方向键</string>
     <string name="gamepad_button_binding">手柄按键绑定</string>
     <string name="joystick_r">右摇杆</string>
-    <string name="message_vulkan_driver_system">当前GPU为Adreno,不建议开启此选项。</string>
+    <string name="message_vulkan_driver_system">警告：使用系统Vulkan驱动可能获得更好的性能，但也可能因兼容性问题导致崩溃！。</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
 
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>

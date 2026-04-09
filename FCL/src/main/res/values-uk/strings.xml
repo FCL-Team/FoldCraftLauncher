@@ -896,7 +896,7 @@
     <string name="gamepad_dpad">Хрестовина</string>
     <string name="gamepad_button_binding">Прив\'язка кнопок геймпада</string>
     <string name="joystick_r">Правий стік</string>
-    <string name="message_vulkan_driver_system">Поточний GPU Adreno, не рекомендується вмикати цю опцію.</string>
+    <string name="message_vulkan_driver_system">Попередження: Використання системного драйвера Vulkan може призвести до кращої продуктивності, але також може спричинити збої через проблеми сумісності!</string>
     <string name="message_loading_controllers">Йде завантаження контролерів...</string>
 
     <string name="installed">Встановлено</string>

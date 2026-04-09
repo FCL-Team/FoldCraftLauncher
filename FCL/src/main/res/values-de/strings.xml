@@ -879,7 +879,7 @@
     <string name="gamepad_dpad">D-Pad</string>
     <string name="gamepad_button_binding">Gamepad-Button-Zuordnung</string>
     <string name="joystick_r">Rechter Stick</string>
-    <string name="message_vulkan_driver_system">Aktuelle GPU ist Adreno, es wird nicht empfohlen, diese Option zu aktivieren.</string>
+    <string name="message_vulkan_driver_system">Warnung: Die Verwendung des System-Vulkan-Treibers kann zwar zu einer besseren Leistung führen, aber aufgrund von Kompatibilitätsproblemen auch Abstürze verursachen!</string>
     <string name="message_loading_controllers">Controller werden geladen...</string>
 
     <string name="installed">Installiert</string>

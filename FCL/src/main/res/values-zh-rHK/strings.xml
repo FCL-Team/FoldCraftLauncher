@@ -993,7 +993,7 @@
     <string name="gamepad_dpad">方向鍵</string>
     <string name="gamepad_button_binding">手柄按鍵綁定</string>
     <string name="joystick_r">右搖桿</string>
-    <string name="message_vulkan_driver_system">當前GPU為Adreno,唔建議開啟此選項。</string>
+    <string name="message_vulkan_driver_system">警告：使用系統Vulkan驅動可能獲得更好的效能，但也可能因相容性問題導致崩潰！ 。</string>
     <string name="message_loading_controllers">正在加載自定義按鍵，請等待...</string>
 
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-tw</string>
