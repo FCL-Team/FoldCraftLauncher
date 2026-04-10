@@ -159,6 +159,10 @@ public class FCLauncher {
                 "/hw" +
                 split +
 
+                "/system_ext/" +
+                libDirName +
+                split +
+
                 context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
                 split +
 
@@ -188,6 +192,10 @@ public class FCLauncher {
                 "/vendor/" +
                 libDirName +
                 "/hw" +
+                split +
+
+                "/system_ext/" +
+                libDirName +
                 split +
 
                 context.getDir("runtime", 0).getAbsolutePath() + "/jna" +

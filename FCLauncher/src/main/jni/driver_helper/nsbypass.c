@@ -79,7 +79,7 @@ bool linker_ns_load(const char* lib_search_path) {
     snprintf(full_path, sizeof(full_path), "%s:%s", SEARCH_PATH, lib_search_path);
 
     driver_namespace = create_namespace_local("driver_namespace", full_path, full_path, 3, 
-                                              "/system/:/data/:/vendor/:/apex/", NULL);
+                                              "/system/:/data/:/vendor/:/apex/:/system_ext", NULL);
 
     android_link_namespaces(driver_namespace, NULL, "ld-android.so");
     android_link_namespaces(driver_namespace, NULL, "libnativeloader.so");
