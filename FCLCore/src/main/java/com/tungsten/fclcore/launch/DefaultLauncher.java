@@ -173,6 +173,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Duser.country=", Locale.getDefault().getCountry());
         res.addDefault("-Duser.timezone=", TimeZone.getDefault().getID());
         res.addDefault("-Dorg.lwjgl.vulkan.libname=", "libvulkan.so");
+        res.addDefault("-Dorg.lwjgl.spvc.libname=", "spirv-cross-c-shared");
         res.addDefault("-Dsodium.checks.issue2561=", "false");
         res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
         res.addDefault("-Dcpu.name=", FCLauncher.getSocName());
