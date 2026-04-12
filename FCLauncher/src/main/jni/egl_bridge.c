@@ -16,7 +16,6 @@
 #include "ctxbridges/osmesa_loader.h"
 #include "ctxbridges/egl_loader.h"
 #include "virgl/virgl.h"
-#include "fcl/include/fcl_bridge.h"
 
 #ifdef GLES_TEST
 #include <GLES2/gl2.h>
@@ -211,14 +210,6 @@ EXTERNAL_API void pojavSwapInterval(int interval) {
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapInterval(interval);
     else br_swap_interval(interval);
-}
-
-EXTERNAL_API void pojavSetInjectorCallback(FCLinjectorfun callback) {
-    fclSetInjectorCallback(callback);
-}
-
-EXTERNAL_API void pojavSetHitResultType(int type) {
-    fclSetHitResultType(type);
 }
 
 JNIEXPORT jint JNICALL

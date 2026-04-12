@@ -185,10 +185,6 @@ public class DefaultLauncher extends Launcher {
         }
         res.addDefault("-Djna.boot.library.path=", libJna.exists() ? libJna.getAbsolutePath() : context.getApplicationInfo().nativeLibraryDir);
 
-        if (getInjectorArg() != null && options.isBeGesture()) {
-            res.addDefault("-Dfcl.injector=", getInjectorArg());
-        }
-
         // Fix 1.7.2 Forge
         if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().equals("1.7.2")) {
             res.addDefault("-Dsort.patch=", "true");
@@ -334,40 +330,6 @@ public class DefaultLauncher extends Launcher {
             }
         }
         res.add(cacioClasspath.toString());
-    }
-
-    public String getInjectorArg() {
-        try {
-            String map = IOUtils.readFullyAsString(DefaultLauncher.class.getResourceAsStream("/assets/map.json"));
-            InjectorMap injectorMap = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create()
-                    .fromJson(map, InjectorMap.class);
-            Optional<InjectorMap.MapInfo> mapInfo = injectorMap.getMaps().stream()
-                    .filter(it -> {
-                        String versionTypeId = version.getAssetIndex().getId();
-                        if (versionTypeId.equals("legacy") || versionTypeId.equals("pre-1.6")) {
-                            versionTypeId = repository.getGameVersion(version).orElse("");
-                        }
-                        if (versionTypeId.equals("1.8")
-                                && repository.getGameVersion(version).isPresent()
-                                && (repository.getGameVersion(version).get().equals("1.8.8")
-                                || repository.getGameVersion(version).get().equals("1.8.9"))) {
-                            versionTypeId = "1.8.8";
-                        }
-                        if (versionTypeId.equals("1.9")
-                                && repository.getGameVersion(version).isPresent()
-                                && repository.getGameVersion(version).get().equals("1.9.4")) {
-                            versionTypeId = "1.9.4";
-                        }
-                        return it.getId().equals(versionTypeId);
-                    })
-                    .findFirst();
-            return mapInfo.map(it -> it.getArgument().getArgument(version, repository.getGameVersion(version).orElse(null))).orElse(null);
-        } catch (IOException e) {
-            LOG.log(Level.WARNING, "Failed to get game map", e);
-            return null;
-        }
     }
 
     public Map<String, Boolean> getFeatures() {

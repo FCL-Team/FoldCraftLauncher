@@ -468,7 +468,6 @@
 
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_settings_debug">Log</string>
-    <string name="menu_settings_disable_be_gesture">Erweiterte Gesten deaktivieren</string>
     <string name="menu_settings_disable_gesture">Gesten deaktivieren</string>
     <string name="menu_settings_disable_left_touch">Berührungen auf der linken Bildschirmhälfte deaktivieren</string>
     <string name="menu_settings_force_exit">Erzwungener Beenden</string>
@@ -673,7 +672,6 @@
     <string name="settings_advanced_server_ip_prompt">Automatisch nach dem Start beitreten</string>
 
     <string name="settings_fcl_controller">Controller</string>
-    <string name="settings_fcl_controller_injector">Serverseitige Gesten</string>
     <string name="settings_fcl_vulkan_driver_system">System-Vulkan-Treiber verwenden</string>
     <string name="settings_fcl_renderer">OpenGL-Implementierung (Renderer)</string>
     <string name="settings_fcl_pojav_bigcore">Leistungskerne für Rendering erzwingen</string>

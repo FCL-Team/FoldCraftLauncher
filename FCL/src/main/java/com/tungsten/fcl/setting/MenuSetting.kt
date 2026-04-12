@@ -124,14 +124,6 @@ class MenuSetting {
             disableGestureProperty.set(disableGesture)
         }
 
-    val disableBEGestureProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "disableBEGesture", false)
-    var isDisableBEGesture: Boolean
-        get() = disableBEGestureProperty.get()
-        set(disableBEGesture) {
-            disableBEGestureProperty.set(disableBEGesture)
-        }
-
     val gestureModeProperty: ObjectProperty<GestureMode> =
         SimpleObjectProperty(this, "gestureMode", GestureMode.BUILD)
     var gestureMode: GestureMode
@@ -247,7 +239,6 @@ class MenuSetting {
         menuPositionXProperty.addListener(listener)
         menuPositionYProperty.addListener(listener)
         disableGestureProperty.addListener(listener)
-        disableBEGestureProperty.addListener(listener)
         gestureModeProperty.addListener(listener)
         disableLeftTouchProperty.addListener(listener)
         enableGyroscopeProperty.addListener(listener)
@@ -284,7 +275,6 @@ class MenuSetting {
                 addProperty("menuPositionX", src.menuPositionX)
                 addProperty("menuPositionY", src.menuPositionY)
                 addProperty("disableGesture", src.isDisableGesture)
-                addProperty("disableBEGesture", src.isDisableBEGesture)
                 addProperty("gestureMode", src.gestureMode.id)
                 addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
@@ -322,7 +312,6 @@ class MenuSetting {
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
                 ms.menuPositionY = json["menuPositionY"]?.asDouble ?: 0.5
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false
-                ms.isDisableBEGesture = json["disableBEGesture"]?.asBoolean ?: false
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
                 ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false

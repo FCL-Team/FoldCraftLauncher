@@ -105,7 +105,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLBridge fclBridge;
     private FCLInput fclInput;
     private MenuSetting menuSetting;
-    private int hitResultType = FCLBridge.HIT_RESULT_TYPE_UNKNOWN;
     private int cursorX;
     private int cursorY;
     private int pointerX;
@@ -173,10 +172,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public int getCursorMode() {
         return cursorModeProperty.get();
-    }
-
-    public int getHitResultType() {
-        return hitResultType;
     }
 
     public int getCursorX() {
@@ -384,7 +379,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch showMemory = findViewById(R.id.switch_show_memory);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
         FCLSwitch disableGestureSwitch = findViewById(R.id.switch_gesture);
-        FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
         FCLSwitch disableLeftTouchSwitch = findViewById(R.id.switch_left_touch);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
         FCLSwitch physicalMouseSwitch = findViewById(R.id.switch_physical_mouse_mode);
@@ -426,7 +420,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());
         FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
         FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
-        FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
         FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
         FXUtils.bindBoolean(physicalMouseSwitch, menuSetting.getPhysicalMouseMode());
@@ -984,11 +977,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         @Override
         public void onCursorModeChange(int mode) {
             gameMenu.onCursorModeChange(mode);
-        }
-
-        @Override
-        public void onHitResultTypeChange(int type) {
-            gameMenu.hitResultType = type;
         }
 
         @Override

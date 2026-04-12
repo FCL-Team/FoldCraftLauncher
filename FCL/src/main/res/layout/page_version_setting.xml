@@ -385,18 +385,6 @@
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLSwitch
-                        android:id="@+id/edit_controller_injector"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/settings_fcl_controller_injector" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
-
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

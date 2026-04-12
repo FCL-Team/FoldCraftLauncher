@@ -14,8 +14,6 @@
 #include <errno.h>
 #include <android/native_window.h>
 
-#include "fcl_bridge.h"
-
 struct FCLInternal {
     JavaVM* android_jvm;
     jclass class_FCLBridge;

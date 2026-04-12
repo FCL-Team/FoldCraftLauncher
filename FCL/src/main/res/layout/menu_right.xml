@@ -262,16 +262,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider_gesture" />
 
-            <com.tungsten.fcllibrary.component.view.FCLSwitch
-                android:id="@+id/switch_be_gesture"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/menu_settings_disable_be_gesture"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_gesture" />
-
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -290,7 +280,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_be_gesture" />
+                app:layout_constraintTop_toBottomOf="@id/switch_gesture" />
 
             <com.tungsten.fcllibrary.component.view.FCLSwitch
                 android:id="@+id/switch_left_touch"

@@ -523,7 +523,6 @@
 
     <string name="menu_settings">设置</string>
     <string name="menu_settings_debug">调试</string>
-    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
     <string name="menu_settings_disable_gesture">禁用手势</string>
     <string name="menu_settings_disable_left_touch">禁用左半屏触控</string>
     <string name="menu_settings_force_exit">强制退出</string>
@@ -805,7 +804,6 @@
     <string name="settings_advanced_force_resolution">强制设置分辨率（实验性选项，谨慎使用）</string>
 
     <string name="settings_fcl_controller">控制</string>
-    <string name="settings_fcl_controller_injector">基岩版触控手势</string>
     <string name="settings_fcl_vulkan_driver_system">使用系统Vulkan驱动</string>
     <string name="settings_fcl_renderer">OpenGL实现方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行</string>

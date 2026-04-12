@@ -555,7 +555,6 @@
 
     <string name="menu_settings">Settings</string>
     <string name="menu_settings_debug">Debug</string>
-    <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
     <string name="menu_settings_disable_gesture">Disable Gesture</string>
     <string name="menu_settings_disable_left_touch">Disable left half screen touch</string>
     <string name="menu_settings_force_exit">Force Exit</string>
@@ -852,7 +851,6 @@
     <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
 
     <string name="settings_fcl_controller">Controller</string>
-    <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="settings_fcl_vulkan_driver_system">Use System Vulkan driver</string>
     <string name="settings_fcl_renderer">OpenGL Implementation (Renderer)</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core</string>

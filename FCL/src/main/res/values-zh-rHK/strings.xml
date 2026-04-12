@@ -507,7 +507,6 @@
 
     <string name="menu_settings">設置</string>
     <string name="menu_settings_debug">調試</string>
-    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手勢</string>
     <string name="menu_settings_disable_gesture">禁用手勢</string>
     <string name="menu_settings_disable_left_touch">禁用左半屏觸控</string>
     <string name="menu_settings_force_exit">強制退出</string>
@@ -782,7 +781,6 @@
     <string name="settings_advanced_server_ip_prompt">啟動遊戲後自動加入對應伺服器</string>
 
     <string name="settings_fcl_controller">控制</string>
-    <string name="settings_fcl_controller_injector">基岩版觸控手勢</string>
     <string name="settings_fcl_vulkan_driver_system">使用系統Vulkan驅動</string>
     <string name="settings_fcl_renderer">OpenGL實作方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">強制渲染器喺大核上運行</string>

@@ -469,7 +469,6 @@
 
     <string name="menu_settings">Налаштування</string>
     <string name="menu_settings_debug">Лог</string>
-    <string name="menu_settings_disable_be_gesture">Вимкнути розширені жести</string>
     <string name="menu_settings_disable_gesture">Вимкнути жести</string>
     <string name="menu_settings_disable_left_touch">Вимкнути дотики в лівій половині екрана</string>
     <string name="menu_settings_force_exit">Примусовий вихід</string>
@@ -690,7 +689,6 @@
     <string name="settings_advanced_server_ip_prompt">Автоприєднання після запуску</string>
 
     <string name="settings_fcl_controller">Контролер</string>
-    <string name="settings_fcl_controller_injector">Жести на стороні сервера</string>
     <string name="settings_fcl_vulkan_driver_system">Використання системних драйверів Vulkan</string>
     <string name="settings_fcl_renderer">Реалізація OpenGL (рендерер)</string>
     <string name="settings_fcl_pojav_bigcore">Примусово використовувати продуктивні ядра для рендерингу</string>

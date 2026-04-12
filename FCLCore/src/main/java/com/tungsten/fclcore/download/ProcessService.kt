@@ -71,10 +71,6 @@ class ProcessService : Service() {
                 // Ignore
             }
 
-            override fun onHitResultTypeChange(type: Int) {
-                // Ignore
-            }
-
             override fun onLog(log: String?) {
                 try {
                     if (firstLog) {
