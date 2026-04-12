@@ -516,8 +516,6 @@ public class GLFW
     public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(317);
     public static final ByteBuffer mouseDownBuffer = ByteBuffer.allocateDirect(8);
 
-    private static final String PROP_WINDOW_WIDTH = "glfwstub.windowWidth";
-    private static final String PROP_WINDOW_HEIGHT= "glfwstub.windowHeight";
     public static long mainContext = 0;
 
     static {

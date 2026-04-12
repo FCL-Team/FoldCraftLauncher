@@ -28,9 +28,8 @@ import java.util.*;
 
 public class GLFW
 {
-    static FloatBuffer joystickAxisData;
-    static ByteBuffer joystickButtonData;
-    static ByteBuffer empty = (ByteBuffer)ByteBuffer.allocate(0);
+    static FloatBuffer joystickData = (FloatBuffer)FloatBuffer.allocate(8).flip();
+    static ByteBuffer buttonData = (ByteBuffer)ByteBuffer.allocate(8).flip();
     /** The major version number of the GLFW library. This is incremented when the API is changed in non-compatible ways. */
     public static final int GLFW_VERSION_MAJOR = 3;
 
@@ -524,10 +523,7 @@ public class GLFW
     public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(317);
     public static final ByteBuffer mouseDownBuffer = ByteBuffer.allocateDirect(8);
 
-    private static final String PROP_WINDOW_WIDTH = "glfwstub.windowWidth";
-    private static final String PROP_WINDOW_HEIGHT= "glfwstub.windowHeight";
     public static long mainContext = 0;
-    private static long gamepadDataPointer;
 
     static {
         try {
@@ -648,8 +644,6 @@ public class GLFW
         }
         return win;
     }
-
-    private static native long internalGetGamepadDataPointer();
 
     // Generated stub callback methods
     public static GLFWCharCallback glfwSetCharCallback(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("GLFWcharfun") GLFWCharCallbackI cbfun) {
@@ -842,10 +836,6 @@ public class GLFW
             mGLFWInitialTime = (double) System.nanoTime();
             long __functionAddress = Functions.Init;
             isGLFWReady = invokeI(__functionAddress) != 0;
-            gamepadDataPointer = internalGetGamepadDataPointer();
-            // NOTE: hardcoded order (also in android CallbackBridge)
-            joystickAxisData = CallbackBridge.nativeCreateGamepadAxisBuffer().order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
-            joystickButtonData = CallbackBridge.nativeCreateGamepadButtonBuffer();
         }
         return isGLFWReady;
     }
@@ -1049,14 +1039,14 @@ public class GLFW
         boolean turnipLoad = System.getenv("POJAV_LOAD_TURNIP") != null &&
                 System.getenv("POJAV_LOAD_TURNIP").equals("1");
         // These values can be found at headings_array.xml
-        String glDriver = System.getenv("AMETHYST_RENDERER");
+        String glDriver = System.getenv("POJAV_RENDERER");
         if (turnipLoad && glDriver.equals("vulkan_zink")) {
             glMajor = 4;
             glMinor = 6;
-        } else if (glDriver.equals("opengles3_virgl")) {
+        } else if (glDriver.equals("gallium_virgl")) {
             glMajor = 4;
             glMinor = 3;
-        } else if (glDriver.equals("opengles_mobileglues")) {
+        } else if (glDriver.equals("opengles3")) {
             glMajor = 4;
             glMinor = 0;
         }
@@ -1170,6 +1160,9 @@ public class GLFW
         win.windowAttribs.put(GLFW_VISIBLE, 0);
     }
 
+    public static void glfwFocusWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
     public static void glfwWindowHint(int hint, int value) {
         if (hint == GLFW_VISIBLE) {
             mGLFWWindowVisibleOnCreation = value == GLFW_TRUE;
@@ -1269,9 +1262,7 @@ public class GLFW
     }
 
     public static int glfwGetKey(@NativeType("GLFWwindow *") long window, int key) {
-        // This is jank, anything asking for int 348 results in an IndexOutOfBounds because idk.
-        // Probably an off-by-one error. This is the 'fix'
-        if (key == GLFW_KEY_LAST){return GLFW_KEY_LAST;}
+        if (key == GLFW_KEY_LAST) return GLFW_KEY_LAST;
         return keyDownBuffer.get(Math.max(0, key-31));
     }
 
@@ -1329,62 +1320,50 @@ public class GLFW
     }
 
     public static boolean glfwJoystickPresent(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            CallbackBridge.enableGamepadDirectInput();
+        if(jid == 0) {
             return true;
         }else return false;
     }
     public static String glfwGetJoystickName(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            return "Pojav XBOX 360 compatible gamepad";
+        if(jid == 0) {
+            return "AIC event bus controller";
         }else return null;
     }
     public static FloatBuffer glfwGetJoystickAxes(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            return joystickAxisData;
+        if(jid == 0) {
+            return joystickData;
         }else return null;
     }
     public static ByteBuffer glfwGetJoystickButtons(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            return joystickButtonData;
+        if(jid == 0) {
+            return buttonData;
         }else return null;
     }
-    public static ByteBuffer glfwGetJoystickHats(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            return empty; // Maybe implement this later?
-        }else return null;
+    public static ByteBuffer glfwGetjoystickHats(int jid) {
+        return null;
     }
     public static boolean glfwJoystickIsGamepad(int jid) {
-        if(jid == GLFW_JOYSTICK_1) {
-            CallbackBridge.enableGamepadDirectInput();
-            return true;
-        }else return false;
+        if(jid == 0) return true;
+        else return false;
     }
     public static String glfwGetJoystickGUID(int jid) {
-        // Return Xbox 360 controller GUID
-        if(jid == GLFW_JOYSTICK_1) return "030000005e0400008e02000056210000";
+        if(jid == 0) return "aio0";
         else return null;
     }
-
-    private static long mUserPointer;
-
     public static long glfwGetJoystickUserPointer(int jid) {
-        return mUserPointer;
+        return 0;
     }
     public static void glfwSetJoystickUserPointer(int jid, long pointer) {
-        mUserPointer = pointer;
+
     }
     public static boolean glfwUpdateGamepadMappings(ByteBuffer string) {
         return false;
     }
     public static String glfwGetGamepadName(int jid) {
-        if(jid == GLFW_JOYSTICK_1) return "Pojav XBOX 360 compatible gamepad";
-        else return null;
+        return null;
     }
     public static boolean glfwGetGamepadState(int jid, GLFWGamepadState state) {
-        if(jid != 0) return false;
-        MemoryUtil.memCopy(gamepadDataPointer, state.address(), state.sizeof());
-        return true;
+        return false;
     }
 
     /** Array version of: {@link #glfwGetVersion GetVersion} */
@@ -1461,6 +1440,7 @@ public class GLFW
         yscale.put(0, 1);
     }
 
+
     /** Array version of: {@link #glfwGetWindowPos GetWindowPos} */
     public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("int *") int[] xpos, @Nullable @NativeType("int *") int[] ypos) {
         if (CHECKS) {
@@ -1507,24 +1487,14 @@ public class GLFW
         right[0] = internalGetWindow(window).width;
         bottom[0] = internalGetWindow(window).height;
     }
-    static float scale = CallbackBridge.nativeGetAndroidDPI(); // This is overkill but hey, its the proper implementation!
+
     /** Array version of: {@link #glfwGetWindowContentScale GetWindowContentScale} */
     public static void glfwGetWindowContentScale(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("float *") float[] xscale, @Nullable @NativeType("float *") float[] yscale) {
-        // Assume uniform scaling because we are in the modern era
-        if (xscale != null) Arrays.fill(xscale, scale);
-        if (yscale != null) Arrays.fill(yscale, scale);
-    }
-/*
-    public static void glfwGetWindowContentScale(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("float *") float[] xscale, @Nullable @NativeType("float *") float[] yscale) {
-        long __functionAddress = Functions.GetWindowContentScale;
-        if (CHECKS) {
-            // check(window);
-            checkSafe(xscale, 1);
-            checkSafe(yscale, 1);
+        if (xscale != null && yscale != null) {
+            xscale[0] = 1f;
+            yscale[0] = 1f;
         }
-        invokePPPV(window, xscale, yscale, __functionAddress);
     }
-
 
     /** Array version of: {@link #glfwGetCursorPos GetCursorPos} */
     public static void glfwGetCursorPos(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("double *") double[] xpos, @Nullable @NativeType("double *") double[] ypos) {
@@ -1540,6 +1510,54 @@ public class GLFW
     public static boolean glfwExtensionSupported(@NativeType("char const *") CharSequence ext) {
         //return Arrays.stream(glGetString(GL_EXTENSIONS).split(" ")).anyMatch(ext::equals);
         // Fast path, but will return true if one has the same prefix
-        return glGetString(GL_EXTENSIONS).contains(ext);
+        String string = glGetString(GL_EXTENSIONS);
+        return string != null && string.contains(ext);
     }
+
+    /**
+     * Returns the size, in millimetres, of the display area of the specified monitor.
+     *
+     * <p>Some platforms do not provide accurate monitor size information, either because the monitor
+     * <a href="https://en.wikipedia.org/wiki/Extended_display_identification_data">EDID</a> data is incorrect or because the driver does not report it
+     * accurately.</p>
+     *
+     * <p>Any or all of the size arguments may be {@code NULL}. If an error occurs, all non-{@code NULL} size arguments will be set to zero.</p>
+     *
+     * <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
+     *
+     * <ul>
+     * <li>This function must only be called from the main thread.</li>
+     * <li><b>Windows</b>: On Windows 8 and earlier the physical size is calculated from the current resolution and system DPI instead of querying the monitor
+     * EDID data.</li>
+     * </ul></div>
+     *
+     * @param monitor  the monitor to query
+     * @param widthMM  where to store the width, in millimetres, of the monitor's display area, or {@code NULL}
+     * @param heightMM where to store the height, in millimetres, of the monitor's display area, or {@code NULL}
+     * @since version 3.0
+     */
+    public static void glfwGetMonitorPhysicalSize(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("int *") IntBuffer widthMM, @Nullable @NativeType("int *") IntBuffer heightMM) {
+        if (widthMM != null && heightMM != null) {
+            widthMM.put(mGLFWWindowWidth);
+            heightMM.put(mGLFWWindowHeight);
+        }
+    }
+
+    /**
+     * Array version of: {@link #glfwGetMonitorPhysicalSize GetMonitorPhysicalSize}
+     */
+    public static void glfwGetMonitorPhysicalSize(@NativeType("GLFWmonitor *") long monitor, @Nullable @NativeType("int *") int[] widthMM, @Nullable @NativeType("int *") int[] heightMM) {
+        if (widthMM != null && heightMM != null) {
+            widthMM[0] = mGLFWWindowWidth;
+            heightMM[0] = mGLFWWindowHeight;
+        }
+    }
+
+    public static void glfwMaximizeWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
+    public static void glfwRestoreWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
+
 }
