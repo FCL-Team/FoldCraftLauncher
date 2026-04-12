@@ -1,5 +1,6 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.tasks.MergeSourceSetFolders
+import com.android.tools.r8.internal.lw
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -86,10 +87,28 @@ android {
                             println("arch:$arch")
                             jreList.forEach { jre ->
                                 val runtimeDir = "$assetsDir/app_runtime/java/$jre"
-                                println("runtimeDir:$runtimeDir")
+                                println("java runtime dir:$runtimeDir")
                                 File(runtimeDir).listFiles().forEach {
                                     if (arch != "all" && it.name != "version" && !it.name.contains("universal") && it.name != "bin-${arch}.tar.xz") {
                                         println("delete:${it} : ${it.delete()}")
+                                    }
+                                }
+                            }
+                            val lwjglNatives = listOf("3.3.3", "3.4.1")
+                            lwjglNatives.forEach { version ->
+                                val natives = "$assetsDir/app_runtime/lwjgl/$version/natives"
+                                println("lwjgl natives dir:$natives")
+                                File(natives).listFiles().forEach {
+                                    if (arch != "all") {
+                                        val a = when (arch) {
+                                            "arm" -> "armeabi-v7a"
+                                            "arm64" -> "arm64-v8a"
+                                            "x86" -> "x86"
+                                            "x86_64" -> "x86_64"
+                                            else -> return@forEach
+                                        }
+                                        if (!it.name.contains(a))
+                                            println("delete:${it} : ${it.deleteRecursively()}")
                                     }
                                 }
                             }
