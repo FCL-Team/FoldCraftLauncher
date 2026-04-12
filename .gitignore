@@ -31,3 +31,4 @@ FCL/src/main/java/com/mio/Main.kt
 .DS_Store
 /LWJGL-Pojav/bin
 LWJGL-Pojav/compileOnly/jspecify-1.0.0.jar
+LWJGL/compileOnly/jspecify-1.0.0.jar
