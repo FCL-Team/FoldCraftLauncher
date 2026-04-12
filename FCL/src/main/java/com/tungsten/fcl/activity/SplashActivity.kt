@@ -234,7 +234,7 @@ class SplashActivity : FCLActivity() {
         try {
             lwjgl = RuntimeUtils.isLatest(
                 FCLPath.LWJGL_DIR,
-                "/assets/app_runtime/lwjgl"
+                "/assets/app_runtime/lwjgl/3.3.3"
             )
             cacio = RuntimeUtils.isLatest(
                 FCLPath.CACIOCAVALLO_8_DIR,
