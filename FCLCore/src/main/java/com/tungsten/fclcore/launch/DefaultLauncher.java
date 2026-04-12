@@ -59,6 +59,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,6 +75,7 @@ import java.util.stream.Collectors;
 
 public class DefaultLauncher extends Launcher {
     private String jnaVersion;
+    private String lwjglVersion = "3.3.3";
 
     public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
         super(context, repository, version, authInfo, options);
@@ -273,7 +275,10 @@ public class DefaultLauncher extends Launcher {
 
     private void addLWJGLClassPath(Set<String> classpath) {
         Set<String> temp = new LinkedHashSet<>();
-        temp.add(FCLPath.LWJGL_DIR + "/lwjgl.jar");
+        File dir = new File(FCLPath.LWJGL_DIR, lwjglVersion);
+        temp.add(dir.getAbsolutePath() + "/lwjgl.jar");
+        Set<String> list = Arrays.stream(Objects.requireNonNull(dir.listFiles())).filter(file -> !file.getName().equals("lwjgl.jar") && file.getName().endsWith(".jar")).map(file -> file.getAbsolutePath()).collect(Collectors.toSet());
+        temp.addAll(list);
         temp.addAll(classpath);
         classpath.clear();
         classpath.addAll(temp);
@@ -463,10 +468,15 @@ public class DefaultLauncher extends Launcher {
                 analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
                 analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
         ));
+        config.setLwjglVersion(lwjglVersion);
         return FCLauncher.launchMinecraft(config);
     }
 
     public void setJnaVersion(String jnaVersion) {
         this.jnaVersion = jnaVersion;
+    }
+
+    public void setLwjglVersion(String lwjglVersion) {
+        this.lwjglVersion = lwjglVersion;
     }
 }

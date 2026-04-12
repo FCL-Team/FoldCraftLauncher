@@ -36,7 +36,6 @@ tasks.jar {
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName.set("lwjgl-${lwjglVersion}-merged-modules")
-//    destinationDirectory.set(project(":jre_lwjgl3glfw").layout.buildDirectory.dir("libs/${lwjglVersion}"))
     destinationDirectory.set(file("$rootDir/FCL/src/main/assets/app_runtime/lwjgl/${lwjglVersion}"))
 
     // Mark as using multiple Java versions.
@@ -66,7 +65,6 @@ tasks.jar {
     isReproducibleFileOrder = true
 
     val versionFile = File(destinationDirectory.get().asFile, "version")
-    val jarFile = archiveFile.get().asFile
     doLast {
         val excludedModulesFileList = excludedModules.flatMap { fileName ->
             configurations["lwjglModules"].filter { it.name == fileName }
@@ -81,11 +79,6 @@ tasks.jar {
     // Adds the jank to outputs
     outputs.file(versionFile)
     outputs.files(excludedModules.map { path -> File(destinationDirectory.get().asFile, path) })
-////  Prints out the output.files for troubleshooting
-//    println("Task outputs:")
-//    outputs.files.forEach { file ->
-//        println("  ${file}")
-//    }
     exclude("net/java/openjdk/cacio/ctc/**")
 }
 

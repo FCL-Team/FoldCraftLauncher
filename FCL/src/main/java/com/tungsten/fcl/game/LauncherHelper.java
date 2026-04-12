@@ -195,6 +195,8 @@ public final class LauncherHelper {
                             version.get().getLibraries().forEach(library -> {
                                 if (library.getName().startsWith("net.java.dev.jna:jna:")) {
                                     launcher.setJnaVersion(library.getVersion());
+                                } else if (library.getName().startsWith("org.lwjgl:lwjgl:")) {
+                                    launcher.setLwjglVersion(library.getVersion());
                                 }
                             });
                             return launcher;

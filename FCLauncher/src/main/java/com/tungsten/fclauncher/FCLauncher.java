@@ -108,9 +108,7 @@ public class FCLauncher {
         return jvmLibDir;
     }
 
-    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
-        String nativeDir = context.getApplicationInfo().nativeLibraryDir;
-        String libDirName = is64BitsDevice() ? "lib64" : "lib";
+    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath, String lwjglVersion) throws IOException {
         String javaLibDir = getJavaLibDir(javaPath);
         String jvmLibDir = getJvmLibDir(javaPath);
         String jliLibDir = "/jli";
@@ -132,8 +130,6 @@ public class FCLauncher {
                     jvmLibDir;
         }
 
-        String nativeLibPaths = NativeLibPlugin.getPaths(split);
-
         return javaPath +
                 javaLibDir +
                 split +
@@ -146,41 +142,15 @@ public class FCLauncher {
                 jreLibDir +
                 split +
 
-                "/system/" +
-                libDirName +
-                split +
-
-                "/vendor/" +
-                libDirName +
-                split +
-
-                "/vendor/" +
-                libDirName +
-                "/hw" +
-                split +
-
-                "/system_ext/" +
-                libDirName +
-                split +
-
-                context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
-                split +
-
-                ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
-
-                ((!nativeLibPaths.isEmpty() ? nativeLibPaths + split : "")) +
-
-                FCLPath.MOD_RUNTIME_DIR +
-                split +
-
-                nativeDir;
+                getLibraryPath(context, pluginLibPath, lwjglVersion);
     }
 
-    private static String getLibraryPath(Context context, String pluginLibPath) {
+    private static String getLibraryPath(Context context, String pluginLibPath, String lwjglVersion) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
         String nativeLibPaths = NativeLibPlugin.getPaths(split);
+        String arch = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
         return "/system/" +
                 libDirName +
                 split +
@@ -198,7 +168,7 @@ public class FCLauncher {
                 libDirName +
                 split +
 
-                context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
+                FCLPath.RUNTIME_DIR + "/jna" +
                 split +
 
                 ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
@@ -206,6 +176,9 @@ public class FCLauncher {
                 ((!nativeLibPaths.isEmpty() ? nativeLibPaths + split : "")) +
 
                 FCLPath.MOD_RUNTIME_DIR +
+                split +
+
+                FCLPath.LWJGL_DIR + "/" + lwjglVersion + "/natives/" + arch +
                 split +
 
                 nativeDir;
@@ -217,7 +190,7 @@ public class FCLauncher {
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i);
-            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath());
+            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.getLwjglVersion());
             if (argList.get(i).contains("-Djava.library.path")) {
                 a = "-Djava.library.path=${natives_directory}";
             }
@@ -238,7 +211,7 @@ public class FCLauncher {
         envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath()));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.getLwjglVersion()));
         envMap.put("FORCE_VSYNC", "false");
 
         // Native mod env var
@@ -459,7 +432,7 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath()));
+        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.getLwjglVersion()));
         bridge.setupExitTrap(bridge);
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);
