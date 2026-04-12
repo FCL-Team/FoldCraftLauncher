@@ -189,7 +189,7 @@ void gl_swap_interval(int swapInterval) {
 }
 
 JNIEXPORT void JNICALL
-Java_org_lwjgl_opengl_RendererInit_nativeInitGl4esInternals(JNIEnv *env, jclass clazz,
+Java_org_lwjgl_opengl_PojavRendererInit_nativeInitGl4esInternals(JNIEnv *env, jclass clazz,
                                                                  jobject function_provider) {
     __android_log_print(ANDROID_LOG_INFO, g_LogTag, "GL4ES internals initializing...");
     jclass funcProviderClass = (*env)->GetObjectClass(env, function_provider);
