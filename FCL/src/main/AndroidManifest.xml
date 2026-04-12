@@ -46,6 +46,15 @@
         android:usesCleartextTraffic="true"
         tools:ignore="DiscouragedApi"
         tools:targetApi="33">
+        
+        <!-- 专门为小米手机桌面卸载添加了提示，提升用户体验 -->
+        <meta-data
+            android:name="app_description_title"
+            android:resource="@string/miui_uninstall_title" />
+        <meta-data
+            android:name="app_description_content"
+            android:resource="@string/miui_uninstall_content" />
+        
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
