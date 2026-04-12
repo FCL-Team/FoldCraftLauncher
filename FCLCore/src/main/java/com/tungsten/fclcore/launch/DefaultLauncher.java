@@ -48,6 +48,7 @@ import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.jackhuang.hmcl.util.ServerAddress;
 
@@ -75,7 +76,8 @@ import java.util.stream.Collectors;
 
 public class DefaultLauncher extends Launcher {
     private String jnaVersion;
-    private String lwjglVersion = "3.3.3";
+    private String lwjglVersion;
+    private boolean useLwjglX = false;
 
     public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
         super(context, repository, version, authInfo, options);
@@ -277,7 +279,16 @@ public class DefaultLauncher extends Launcher {
         Set<String> temp = new LinkedHashSet<>();
         File dir = new File(FCLPath.LWJGL_DIR, lwjglVersion);
         temp.add(dir.getAbsolutePath() + "/lwjgl.jar");
-        Set<String> list = Arrays.stream(Objects.requireNonNull(dir.listFiles())).filter(file -> !file.getName().equals("lwjgl.jar") && file.getName().endsWith(".jar")).map(file -> file.getAbsolutePath()).collect(Collectors.toSet());
+        if (useLwjglX) {
+            temp.add(dir.getAbsolutePath() + "/lwjglx.jar");
+        }
+        Set<String> list = Arrays.stream(Objects.requireNonNull(dir.listFiles(), "LWJGL directory(" + dir + ") not found!"))
+                .filter(file -> file.getName().endsWith(".jar")
+                        && !file.getName().equals("lwjgl.jar")
+                        && !file.getName().equals("lwjglx.jar")
+                )
+                .map(File::getAbsolutePath)
+                .collect(Collectors.toSet());
         temp.addAll(list);
         temp.addAll(classpath);
         classpath.clear();
@@ -477,6 +488,17 @@ public class DefaultLauncher extends Launcher {
     }
 
     public void setLwjglVersion(String lwjglVersion) {
-        this.lwjglVersion = lwjglVersion;
+        try {
+            VersionNumber v1 = VersionNumber.asVersion(lwjglVersion);
+            if (v1.compareTo("3.0") < 0) {
+                useLwjglX = true;
+            }
+            if (v1.compareTo("3.4.1") >= 0) {
+                this.lwjglVersion = "3.4.1";
+                return;
+            }
+        } catch (Throwable ignore) {
+        }
+        this.lwjglVersion = "3.3.3";
     }
 }

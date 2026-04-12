@@ -145,7 +145,7 @@ public final class LauncherHelper {
         TaskExecutor executor = checkGameState(context, setting, version.get())
                 .thenComposeAsync(javaVersion -> {
                     javaVersionRef.set(Objects.requireNonNull(javaVersion));
-                    version.set(LibFilter.filter(version.get()));
+                    version.set(LibFilter.filter(version.get(), false));
                     if (setting.isNotCheckGame())
                         return null;
                     return Task.allOf(
@@ -195,7 +195,7 @@ public final class LauncherHelper {
                             version.get().getLibraries().forEach(library -> {
                                 if (library.getName().startsWith("net.java.dev.jna:jna:")) {
                                     launcher.setJnaVersion(library.getVersion());
-                                } else if (library.getName().startsWith("org.lwjgl:lwjgl:")) {
+                                } else if (library.getName().startsWith("org.lwjgl.lwjgl:lwjgl:") || library.getName().startsWith("org.lwjgl:lwjgl:")) {
                                     launcher.setLwjglVersion(library.getVersion());
                                 }
                             });
@@ -388,16 +388,16 @@ public final class LauncherHelper {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 List<NativeLibPlugin.@NotNull NativePlugin> pluginList = NativeLibPlugin.getPluginList();
                 List<String> unsupportedPlugins = pluginList.stream().filter(plugin -> {
-                    String minVer = plugin.getMinMCVer();
-                    String maxVer = plugin.getMaxMCVer();
-                    if (!minVer.isEmpty() && GameVersionNumber.compare(version, minVer) < 0) {
-                        return true;
-                    }
-                    if (!maxVer.isEmpty() && GameVersionNumber.compare(version, maxVer) > 0) {
-                        return true;
-                    }
-                    return false;
-                }).map(NativeLibPlugin.NativePlugin::getAppName)
+                            String minVer = plugin.getMinMCVer();
+                            String maxVer = plugin.getMaxMCVer();
+                            if (!minVer.isEmpty() && GameVersionNumber.compare(version, minVer) < 0) {
+                                return true;
+                            }
+                            if (!maxVer.isEmpty() && GameVersionNumber.compare(version, maxVer) > 0) {
+                                return true;
+                            }
+                            return false;
+                        }).map(NativeLibPlugin.NativePlugin::getAppName)
                         .collect(toList());
                 if (!unsupportedPlugins.isEmpty()) {
                     String fullString = org.apache.commons.lang3.StringUtils.join(unsupportedPlugins, ", ");
