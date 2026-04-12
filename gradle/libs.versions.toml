@@ -1,6 +1,7 @@
 [versions]
 compileSdk = "35"
 datastore = "1.2.1"
+jspecify = "1.0.0"
 kotlinxSerializationJson = "1.10.0"
 minSdk = "26"
 targetSdk = "34"
@@ -32,6 +33,7 @@ bytehook = "1.0.10"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }
 nanohttpd = { group = "org.nanohttpd", name = "nanohttpd", version.ref = "nanohttpd" }
