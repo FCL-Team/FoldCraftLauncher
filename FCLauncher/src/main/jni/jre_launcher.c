@@ -33,8 +33,9 @@
 // Boardwalk: missing include
 #include <string.h>
 
-#include "fcl/include/fcl_internal.h"
-
+#include "log.h"
+#include "utils.h"
+#include "environ/environ.h"
 
 // Uncomment to try redirect signal handling to JVM
 // #define TRY_SIG2JVM
@@ -43,21 +44,21 @@
 #define FULL_VERSION "1.8.0-internal"
 #define DOT_VERSION "1.8"
 
-static const char *const_progname = "java";
-static const char *const_launcher = "openjdk";
-static const char **const_jargs = NULL;
-static const char **const_appclasspath = NULL;
+static const char* const_progname = "java";
+static const char* const_launcher = "openjdk";
+static const char** const_jargs = NULL;
+static const char** const_appclasspath = NULL;
 static const jboolean const_javaw = JNI_FALSE;
 static const jboolean const_cpwildcard = JNI_TRUE;
 static const jint const_ergo_class = 0; // DEFAULT_POLICY
 
-typedef jint JLI_Launch_func(int argc, char **argv, /* main argc, argc */
-                             int jargc, const char **jargv,          /* java args */
-                             int appclassc, const char **appclassv,  /* app classpath */
-                             const char *fullversion,                /* full version defined */
-                             const char *dotversion,                 /* dot version defined */
-                             const char *pname,                      /* program name */
-                             const char *lname,                      /* launcher name */
+typedef jint JLI_Launch_func(int argc, char ** argv, /* main argc, argc */
+                             int jargc, const char** jargv,          /* java args */
+                             int appclassc, const char** appclassv,  /* app classpath */
+                             const char* fullversion,                /* full version defined */
+                             const char* dotversion,                 /* dot version defined */
+                             const char* pname,                      /* program name */
+                             const char* lname,                      /* launcher name */
                              jboolean javaargs,                      /* JAVA_ARGS */
                              jboolean cpwildcard,                    /* classpath wildcard*/
                              jboolean javaw,                         /* windows-only javaw */
@@ -69,7 +70,9 @@ struct {
     int pipe[2];
 } abort_waiter_data;
 
-_Noreturn static void *abort_waiter_thread(void *extraArg) {
+_Noreturn extern void nominal_exit(int code, bool is_signal);
+
+_Noreturn static void* abort_waiter_thread(void* extraArg) {
     // Don't allow this thread to receive signals this thread is tracking.
     // We should only receive them externally.
     pthread_sigmask(SIG_BLOCK, &abort_waiter_data.tracked_sigset, NULL);
@@ -77,13 +80,13 @@ _Noreturn static void *abort_waiter_thread(void *extraArg) {
     // Block for reading the signal ID until it arrives
     read(abort_waiter_data.pipe[0], &signal, sizeof(int));
     // Die
-    nominal_exit(signal);
+    nominal_exit(signal, true);
 }
 
 _Noreturn static void abort_waiter_handler(int signal) {
     // Write the final signal into the pipe and block forever.
     write(abort_waiter_data.pipe[1], &signal, sizeof(int));
-    while (1) {}
+    while(1) {}
 }
 
 static void abort_waiter_setup() {
@@ -94,24 +97,23 @@ static void abort_waiter_setup() {
     const static int ntracked = (sizeof(tracked_signals) / sizeof(tracked_signals[0]));
     struct sigaction sigactions[ntracked];
     sigemptyset(&abort_waiter_data.tracked_sigset);
-    for (size_t i = 0; i < ntracked; i++) {
+    for(size_t i = 0; i < ntracked; i++) {
         sigaddset(&abort_waiter_data.tracked_sigset, tracked_signals[i]);
         sigactions[i].sa_handler = abort_waiter_handler;
     }
-    if (pipe(abort_waiter_data.pipe) != 0) {
+    if(pipe(abort_waiter_data.pipe) != 0) {
         printf("Failed to set up aborter pipe: %s\n", strerror(errno));
         return;
     }
-    pthread_t waiter_thread;
-    int result;
-    if ((result = pthread_create(&waiter_thread, NULL, abort_waiter_thread, NULL)) != 0) {
+    pthread_t waiter_thread; int result;
+    if((result = pthread_create(&waiter_thread, NULL, abort_waiter_thread, NULL)) != 0) {
         printf("Failed to start up waiter thread: %s", strerror(result));
-        for (int i = 0; i < 2; i++) close(abort_waiter_data.pipe[i]);
+        for(int i = 0; i < 2; i++) close(abort_waiter_data.pipe[i]);
         return;
     }
     // Only set the sigactions *after* we have already set up the pipe and the thread.
-    for (size_t i = 0; i < ntracked; i++) {
-        if (sigaction(tracked_signals[i], &sigactions[i], NULL) != 0) {
+    for(size_t i = 0; i < ntracked; i++) {
+        if(sigaction(tracked_signals[i], &sigactions[i], NULL) != 0) {
             // Not returning here because we may have set some handlers successfully.
             // Some handling is better than no handling.
             printf("Failed to set signal hander for signal %i: %s", i, strerror(errno));
@@ -119,18 +121,18 @@ static void abort_waiter_setup() {
     }
 }
 
-static jint launchJVM(int margc, char **margv) {
-    void *libjli = dlopen("libjli.so", RTLD_LAZY | RTLD_GLOBAL);
+static jint launchJVM(int margc, char** margv) {
+    void* libjli = dlopen("libjli.so", RTLD_LAZY | RTLD_GLOBAL);
 
     // Unset all signal handlers to create a good slate for JVM signal detection.
     struct sigaction clean_sa;
-    memset(&clean_sa, 0, sizeof(struct sigaction));
-    for (int sigid = SIGHUP; sigid < NSIG; sigid++) {
+    memset(&clean_sa, 0, sizeof (struct sigaction));
+    for(int sigid = SIGHUP; sigid < NSIG; sigid++) {
         // For some reason Android specifically checks if you set SIGSEGV to SIG_DFL.
         // There's probably a good reason for that but the signal handler here is
         // temporary and will be replaced by the Java VM's signal/crash handler.
         // Work around the warning by using SIG_IGN for SIGSEGV
-        if (sigid == SIGSEGV) clean_sa.sa_handler = SIG_IGN;
+        if(sigid == SIGSEGV) clean_sa.sa_handler = SIG_IGN;
         else clean_sa.sa_handler = SIG_DFL;
         sigaction(sigid, &clean_sa, NULL);
     }
@@ -140,22 +142,22 @@ static jint launchJVM(int margc, char **margv) {
     // Boardwalk: silence
     // LOGD("JLI lib = %x", (int)libjli);
     if (NULL == libjli) {
-        FCL_INTERNAL_LOG("JLI lib = NULL: %s", dlerror());
+        LOGE("JLI lib = NULL: %s", dlerror());
         return -1;
     }
-    FCL_INTERNAL_LOG("Found JLI lib");
+    LOGD("Found JLI lib");
 
     JLI_Launch_func *pJLI_Launch =
-            (JLI_Launch_func *) dlsym(libjli, "JLI_Launch");
+            (JLI_Launch_func *)dlsym(libjli, "JLI_Launch");
     // Boardwalk: silence
     // LOGD("JLI_Launch = 0x%x", *(int*)&pJLI_Launch);
 
     if (NULL == pJLI_Launch) {
-        FCL_INTERNAL_LOG("JLI_Launch = NULL");
+        LOGE("JLI_Launch = NULL");
         return -1;
     }
 
-    FCL_INTERNAL_LOG("Calling JLI_Launch");
+    LOGD("Calling JLI_Launch");
 
     return pJLI_Launch(margc, margv,
                        0, NULL, // sizeof(const_jargs) / sizeof(char *), const_jargs,
@@ -174,42 +176,17 @@ static jint launchJVM(int margc, char **margv) {
 */
 }
 
-char **convert_to_char_array(JNIEnv *env, jobjectArray jstringArray) {
-    int num_rows = (*env)->GetArrayLength(env, jstringArray);
-    char **cArray = (char **) malloc(num_rows * sizeof(char *));
-    jstring row;
-
-    for (int i = 0; i < num_rows; i++) {
-        row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-        cArray[i] = (char *) (*env)->GetStringUTFChars(env, row, 0);
-    }
-
-    return cArray;
-}
-
-
-void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray) {
-    int num_rows = (*env)->GetArrayLength(env, jstringArray);
-    jstring row;
-
-    for (int i = 0; i < num_rows; i++) {
-        row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-        (*env)->ReleaseStringUTFChars(env, row, charArray[i]);
-    }
-}
-
 /*
  * Class:     com_oracle_dalvik_VMLauncher
  * Method:    launchJVM
  * Signature: ([Ljava/lang/String;)I
  */
+JNIEXPORT jint JNICALL Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectArray argsArray) {
 
-jint JNICALL
-Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectArray argsArray) {
     jint res = 0;
 
     if (argsArray == NULL) {
-        FCL_INTERNAL_LOG("Args array null, returning");
+        LOGE("Args array null, returning");
         //handle error
         return 0;
     }
@@ -217,14 +194,14 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectAr
     int argc = (*env)->GetArrayLength(env, argsArray);
     char **argv = convert_to_char_array(env, argsArray);
 
-    FCL_INTERNAL_LOG("Done processing args");
+    LOGD("Done processing args");
 
     res = launchJVM(argc, argv);
 
-    FCL_INTERNAL_LOG("Going to free args");
+    LOGD("Going to free args");
     free_char_array(env, argsArray, argv);
 
-    FCL_INTERNAL_LOG("Free done");
+    LOGD("Free done");
 
     return res;
 }

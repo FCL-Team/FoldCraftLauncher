@@ -1,8 +1,6 @@
-#include "egl_bridge.h"
 #include <jni.h>
 #include <assert.h>
 #include <dlfcn.h>
-#include <limits.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -27,6 +25,7 @@
 #include <string.h>
 #include "environ/environ.h"
 #include <android/dlext.h>
+#include "utils.h"
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
 #include "driver_helper/driver_helper.h"
@@ -41,6 +40,17 @@
 // This means that you are forced to have this function/variable for ABI compatibility
 #define ABI_COMPAT __attribute__((unused))
 
+
+struct PotatoBridge {
+
+    /* EGLContext */ void* eglContext;
+    /* EGLDisplay */ void* eglDisplay;
+    /* EGLSurface */ void* eglSurface;
+/*
+    void* eglSurfaceRead;
+    void* eglSurfaceDraw;
+*/
+};
 EGLConfig config;
 struct PotatoBridge potatoBridge;
 
@@ -141,11 +151,19 @@ int pojavInitOpenGL() {
     return 0;
 }
 
+extern void updateMonitorSize(int width, int height);
+
 EXTERNAL_API int pojavInit() {
+    pojav_environ->glfwThreadVmEnv = get_attached_env(pojav_environ->runtimeJavaVMPtr);
+    if(pojav_environ->glfwThreadVmEnv == NULL) {
+        printf("Failed to attach Java-side JNIEnv to GLFW thread\n");
+        return 0;
+    }
     ANativeWindow_acquire(pojav_environ->pojavWindow);
     pojav_environ->savedWidth = ANativeWindow_getWidth(pojav_environ->pojavWindow);
     pojav_environ->savedHeight = ANativeWindow_getHeight(pojav_environ->pojavWindow);
     ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow,pojav_environ->savedWidth,pojav_environ->savedHeight,AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM);
+    updateMonitorSize(pojav_environ->savedWidth, pojav_environ->savedHeight);
     pojavInitOpenGL();
     return 1;
 }
@@ -200,6 +218,7 @@ void* maybe_load_vulkan() {
     if(getenv("VULKAN_PTR") == NULL) load_vulkan();
     return (void*) strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
 }
+
 EXTERNAL_API JNIEXPORT jlong JNICALL
 Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
     printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");

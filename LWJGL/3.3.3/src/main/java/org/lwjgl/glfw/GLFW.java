@@ -6,7 +6,6 @@ package org.lwjgl.glfw;
 
 import android.util.*;
 
-import java.lang.annotation.Native;
 import java.lang.reflect.*;
 import java.nio.*;
 
@@ -16,6 +15,7 @@ import org.lwjgl.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
@@ -315,13 +315,16 @@ public class GLFW
     GLFW_STICKY_KEYS          = 0x33002,
     GLFW_STICKY_MOUSE_BUTTONS = 0x33003,
     GLFW_LOCK_KEY_MODS        = 0x33004,
-    GLFW_RAW_MOUSE_MOTION     = 0x33005;
+    GLFW_RAW_MOUSE_MOTION     = 0x33005,
+    GLFW_UNLIMITED_MOUSE_BUTTONS = 0x33006,
+    GLFW_IME = 0x33007;
 
     /** Cursor state. */
     public static final int
     GLFW_CURSOR_NORMAL   = 0x34001,
     GLFW_CURSOR_HIDDEN   = 0x34002,
-    GLFW_CURSOR_DISABLED = 0x34003;
+    GLFW_CURSOR_DISABLED = 0x34003,
+    GLFW_CURSOR_CAPTURED = 0x34004;
 
     /** The regular arrow cursor shape. */
     public static final int GLFW_ARROW_CURSOR = 0x36001;
@@ -444,9 +447,9 @@ public class GLFW
 
     /** Values for the {@link #GLFW_CLIENT_API CLIENT_API} hint. */
     public static final int
-    GLFW_NO_API        = 0,
-    GLFW_OPENGL_API    = 0x30001,
-    GLFW_OPENGL_ES_API = 0x30002;
+            GLFW_NO_API        = 0,
+            GLFW_OPENGL_API    = 0x30001,
+            GLFW_OPENGL_ES_API = 0x30002;
 
     /** Values for the {@link #GLFW_CONTEXT_ROBUSTNESS CONTEXT_ROBUSTNESS} hint. */
     public static final int
@@ -479,7 +482,6 @@ public class GLFW
     /* volatile */ public static GLFWCursorPosCallback mGLFWCursorPosCallback;
     /* volatile */ public static GLFWDropCallback mGLFWDropCallback;
     /* volatile */ public static GLFWErrorCallback mGLFWErrorCallback;
-    /* volatile */ public static GLFWFramebufferSizeCallback mGLFWFramebufferSizeCallback;
     /* volatile */ public static GLFWJoystickCallback mGLFWJoystickCallback;
     /* volatile */ public static GLFWKeyCallback mGLFWKeyCallback;
     /* volatile */ public static GLFWMonitorCallback mGLFWMonitorCallback;
@@ -492,7 +494,11 @@ public class GLFW
     /* volatile */ public static GLFWWindowMaximizeCallback mGLFWWindowMaximizeCallback;
     /* volatile */ public static GLFWWindowPosCallback mGLFWWindowPosCallback;
     /* volatile */ public static GLFWWindowRefreshCallback mGLFWWindowRefreshCallback;
-    /* volatile */ public static GLFWWindowSizeCallback mGLFWWindowSizeCallback;
+
+    // Store callback method references directly to avoid a roundtrip through
+    // JNI when calling the default LWJGL callbacks.
+    @Nullable public static GLFWFramebufferSizeCallbackI mGLFWFramebufferSizeCallbackI;
+    @Nullable public static GLFWWindowSizeCallbackI mGLFWWindowSizeCallbackI;
 
     volatile public static int mGLFWWindowWidth, mGLFWWindowHeight;
 
@@ -515,22 +521,6 @@ public class GLFW
     public static long mainContext = 0;
 
     static {
-        String windowWidth = System.getProperty(PROP_WINDOW_WIDTH);
-        String windowHeight = System.getProperty(PROP_WINDOW_HEIGHT);
-        if (windowWidth == null || windowHeight == null) {
-            System.err.println("Warning: Property " + PROP_WINDOW_WIDTH + " or " + PROP_WINDOW_HEIGHT + " not set, defaulting to 1280 and 720");
-
-            mGLFWWindowWidth = 1280;
-            mGLFWWindowHeight = 720;
-        } else {
-            mGLFWWindowWidth = Integer.parseInt(windowWidth);
-            mGLFWWindowHeight = Integer.parseInt(windowHeight);
-        }
-
-        // Minecraft triggers a glfwPollEvents() on splash screen, so update window size there.
-        // CallbackBridge.receiveCallback(CallbackBridge.EVENT_TYPE_FRAMEBUFFER_SIZE, mGLFWWindowWidth, mGLFWWindowHeight, 0, 0);
-        // CallbackBridge.receiveCallback(CallbackBridge.EVENT_TYPE_WINDOW_SIZE, mGLFWWindowWidth, mGLFWWindowHeight, 0, 0);
-
         try {
             System.loadLibrary("pojavexec");
         } catch (UnsatisfiedLinkError e) {
@@ -584,11 +574,9 @@ public class GLFW
     private static native long nglfwSetCharModsCallback(long window, long ptr);
     private static native long nglfwSetCursorEnterCallback(long window, long ptr);
     private static native long nglfwSetCursorPosCallback(long window, long ptr);
-    private static native long nglfwSetFramebufferSizeCallback(long window, long ptr);
     private static native long nglfwSetKeyCallback(long window, long ptr);
     private static native long nglfwSetMouseButtonCallback(long window, long ptr);
     private static native long nglfwSetScrollCallback(long window, long ptr);
-    private static native long nglfwSetWindowSizeCallback(long window, long ptr);
     // private static native void nglfwSetInputReady();
     private static native void nglfwSetShowingWindow(long window);
 
@@ -608,7 +596,7 @@ public class GLFW
         throw new UnsupportedOperationException();
     }
 
-    public static final SharedLibrary GLFW = Library.loadNative(GLFW.class, "org.lwjgl.glfw", "libpojavexec.so", true);
+    private static final SharedLibrary GLFW = Library.loadNative(GLFW.class, "org.lwjgl.glfw", "libpojavexec.so", true);
 
     /** Contains the function pointers loaded from the glfw {@link SharedLibrary}. */
     public static final class Functions {
@@ -635,6 +623,7 @@ public class GLFW
         return GLFW;
     }
 
+    @SuppressWarnings("unused") // Used by pojavexec
     public static void internalChangeMonitorSize(int width, int height) {
         mGLFWWindowWidth = width;
         mGLFWWindowHeight = height;
@@ -701,11 +690,12 @@ public class GLFW
     }
 
     public static GLFWFramebufferSizeCallback glfwSetFramebufferSizeCallback(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("GLFWframebuffersizefun") GLFWFramebufferSizeCallbackI cbfun) {
-        GLFWFramebufferSizeCallback lastCallback = mGLFWFramebufferSizeCallback;
-        if (cbfun == null) mGLFWFramebufferSizeCallback = null;
-        else mGLFWFramebufferSizeCallback = GLFWFramebufferSizeCallback.createSafe(nglfwSetFramebufferSizeCallback(window, memAddressSafe(cbfun)));
-
-        return lastCallback;
+        GLFWFramebufferSizeCallback previousCallback = null;
+        if(mGLFWFramebufferSizeCallbackI != null) {
+            previousCallback = GLFWFramebufferSizeCallback.create(mGLFWFramebufferSizeCallbackI);
+        }
+        mGLFWFramebufferSizeCallbackI = cbfun;
+        return previousCallback;
     }
 
     public static GLFWJoystickCallback glfwSetJoystickCallback(/* @NativeType("GLFWwindow *") long window, */ @Nullable @NativeType("GLFWjoystickfun") GLFWJoystickCallbackI cbfun) {
@@ -804,11 +794,12 @@ public class GLFW
     }
 
     public static GLFWWindowSizeCallback glfwSetWindowSizeCallback(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("GLFWwindowsizefun") GLFWWindowSizeCallbackI cbfun) {
-        GLFWWindowSizeCallback lastCallback = mGLFWWindowSizeCallback;
-        if (cbfun == null) mGLFWWindowSizeCallback = null;
-        else mGLFWWindowSizeCallback = GLFWWindowSizeCallback.createSafe(nglfwSetWindowSizeCallback(window, memAddressSafe(cbfun)));
-
-        return lastCallback;
+        GLFWWindowSizeCallback previousCallback = null;
+        if(mGLFWWindowSizeCallbackI != null) {
+            previousCallback = GLFWWindowSizeCallback.create(mGLFWWindowSizeCallbackI);
+        }
+        mGLFWWindowSizeCallbackI = cbfun;
+        return previousCallback;
     }
 
     static boolean isGLFWReady;
@@ -899,8 +890,6 @@ public class GLFW
     }
 
     public static int glfwGetWindowAttrib(@NativeType("GLFWwindow *") long window, int attrib) {
-        if (attrib == GLFW_CONTEXT_VERSION_MAJOR) return 4; // TODO: report actual GL version or add an option for users to select the version
-        if (attrib == GLFW_CONTEXT_VERSION_MINOR) return 6;
         return internalGetWindow(window).windowAttribs.getOrDefault(attrib, 0);
     }
 
@@ -1011,10 +1000,77 @@ public class GLFW
         win.width = mGLFWWindowWidth;
         win.height = mGLFWWindowHeight;
         win.title = title;
+        win.windowAttribs.put(GLFW_RESIZABLE, GLFW_FALSE);
+        // I don't understand why Minecraft doesn't set this itself or why it crashes trying to read
+        // it before set when it controls the cursor status...
+        win.inputModes.put(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        win.inputModes.put(GLFW_STICKY_KEYS, GLFW_FALSE); // TODO: Fix glfwGetKeyName() to support this
+        win.inputModes.put(GLFW_STICKY_MOUSE_BUTTONS, GLFW_FALSE); // TODO: Fix glfwGetMouseButton() to support this
+        win.inputModes.put(GLFW_IME, GLFW_FALSE);
 
-        win.windowAttribs.put(GLFW_HOVERED, 1);
-        win.windowAttribs.put(GLFW_VISIBLE, 1);
+        // Set the Open GL version for context because Forge and derivatives ask for it
+        // Default on 3.3 because mod compat
+        int glMajor = 3;
+        int glMinor = 3;
+        // Custom defaults for specific renderers
+        boolean turnipLoad = System.getenv("POJAV_LOAD_TURNIP") != null &&
+                System.getenv("POJAV_LOAD_TURNIP").equals("1");
+        // These values can be found at headings_array.xml
+        String glDriver = System.getenv("POJAV_RENDERER");
+        if (turnipLoad && glDriver.equals("vulkan_zink")) {
+            glMajor = 4;
+            glMinor = 6;
+        } else if (glDriver.equals("gallium_virgl")) {
+            glMajor = 4;
+            glMinor = 3;
+        } else if (glDriver.equals("opengles3")) {
+            glMajor = 4;
+            glMinor = 0;
+        }
+        // Get the real values properly, but only if they're higher
+        FunctionProvider functionProvider = org.lwjgl.opengl.GL.getFunctionProvider();
+        if (functionProvider != null) {
+            // Save the old context so we can swap back to it later after getting driver info
+            // This is because sometimes there are early loading windows like forge that get context
+            // and not returning it causes some obvious issues
+            long oldPtr = glfwGetCurrentContext();
+            // Need to swap context to us so glFuncs work
+            glfwMakeContextCurrent(ptr);
 
+            // We don't assume createCapabilities has been called nor do we call it
+            // This was based from LWJGL GL.createCapabilities()
+            long GetError    = functionProvider.getFunctionAddress("glGetError");
+            long GetString   = functionProvider.getFunctionAddress("glGetString");
+            long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
+
+            // Change the default to whatever GL_VERSION can be extracted to, only if higher ver
+            String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
+            if (versionString != null) {
+                try {
+                    APIVersion apiVersion = apiParseVersion(versionString);
+                    if (3 <= apiVersion.major && apiVersion.major <= 4) glMajor = apiVersion.major;
+                    if (3 <= apiVersion.minor && apiVersion.minor <= 6) glMinor = apiVersion.minor;
+                    System.out.println("Driver "+glDriver+" GL string returned "+apiVersion.major+apiVersion.minor);
+                } catch (Throwable ignored){} // In case the string is invalid/garbage
+            }
+            // Try to get values from GL30+ driver directly, only use if higher ver
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer version = stack.ints(0, 0);
+                callPV(GL_MAJOR_VERSION, memAddress(version, 0), GetIntegerv);
+                if (callI(GetError) == GL_NO_ERROR &&
+                        3 <= version.get(0) && version.get(0) <= 4) glMajor = version.get(0);
+                callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
+                if (callI(GetError) == GL_NO_ERROR &&
+                        3 <= version.get(0) && version.get(1) <= 4) glMinor = version.get(1);
+                System.out.println("Driver "+glDriver+" GL version returned "+version.get(0)+version.get(1));
+            }
+            System.out.println("Using GL version "+glMajor+glMinor+" for GLFW window context!");
+
+            // We finished getting the driver info, we can return it back to its original state now
+            glfwMakeContextCurrent(oldPtr);
+        }
+        win.windowAttribs.put(GLFW_CONTEXT_VERSION_MAJOR, glMajor);
+        win.windowAttribs.put(GLFW_CONTEXT_VERSION_MINOR, glMinor);
         mGLFWWindowMap.put(ptr, win);
         mainContext = ptr;
 
@@ -1118,18 +1174,19 @@ public class GLFW
         // During interactions with UI elements, Minecraft likes to update the screen as events related to those inputs arrive.
         // This leads to calls to glfwPollEvents within glfwPollEvents, which is not good for our queue system.
         // Prevent these with this code.
-        if (mGLFWInputPumping) return;
+        if(mGLFWInputPumping) return;
         mGLFWInputPumping = true;
         callV(Functions.StartPumping);
         for (Long ptr : mGLFWWindowMap.keySet()) callJV(ptr, Functions.PumpEvents);
         callV(Functions.StopPumping);
         mGLFWInputPumping = false;
     }
-
-    public static void internalWindowSizeChanged(long window, int w, int h) {
+    @SuppressWarnings("unused") // Used by pojavexec
+    public static void internalWindowSizeChanged(long window) {
         try {
-            internalChangeMonitorSize(w, h);
             glfwSetWindowSize(window, mGLFWWindowWidth, mGLFWWindowHeight);
+            if(mGLFWFramebufferSizeCallbackI != null) mGLFWFramebufferSizeCallbackI.invoke(window, mGLFWWindowWidth, mGLFWWindowHeight);
+            if(mGLFWWindowSizeCallbackI != null) mGLFWWindowSizeCallbackI.invoke(window, mGLFWWindowWidth, mGLFWWindowHeight);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -1178,6 +1235,7 @@ public class GLFW
     }
 
     public static int glfwGetKey(@NativeType("GLFWwindow *") long window, int key) {
+        if (key == GLFW_KEY_LAST) return GLFW_KEY_LAST;
         return keyDownBuffer.get(Math.max(0, key-31));
     }
 
