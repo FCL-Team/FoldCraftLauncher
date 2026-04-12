@@ -369,7 +369,6 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setWidth(vs.isForceResolution() ? FCLBridge.FORCE_RESOLUTION_WIDTH : (int) (AndroidUtils.getScreenWidth() * scaleFactor))
                 .setHeight(vs.isForceResolution() ? FCLBridge.FORCE_RESOLUTION_HEIGHT : (int) (AndroidUtils.getScreenHeight() * scaleFactor))
                 .setServerIp(vs.getServerIp())
-                .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setPojavBigCore(vs.isPojavBigCore())
                 .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
