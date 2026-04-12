@@ -1,11 +1,9 @@
 package com.tungsten.fclauncher;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fclauncher.utils.Architecture.ARCH_X86;
 import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -48,7 +46,6 @@ public class FCLauncher {
 
     private static void logStartInfo(FCLConfig config, FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
-        log(bridge, "Renderer: " + bridge.getRenderer());
         log(bridge, "Device: " + getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU: " + getSocName());
@@ -111,59 +108,80 @@ public class FCLauncher {
         return jvmLibDir;
     }
 
-    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
-        StringBuilder sb = new StringBuilder();
+    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath, String lwjglVersion) throws IOException {
+        String javaLibDir = getJavaLibDir(javaPath);
+        String jvmLibDir = getJvmLibDir(javaPath);
+        String jliLibDir = "/jli";
         String split = ":";
+        String jreLibDir;
+        if (isJDK8(javaPath)) {
+            jreLibDir = javaPath +
+                    "/jre" +
+                    javaLibDir +
+                    jvmLibDir +
+                    split +
 
-        if (javaPath != null) {
-            String javaLibDir = getJavaLibDir(javaPath);
-            String jvmLibDir = getJvmLibDir(javaPath);
-
-            sb.append(javaPath).append(javaLibDir).append(split);
-            sb.append(javaPath).append(javaLibDir).append("/jli").append(split);
-
-            String jreLibDir;
-            if (isJDK8(javaPath)) {
-                jreLibDir = javaPath + "/jre" + javaLibDir + jvmLibDir;
-                sb.append(jreLibDir).append(split);
-                sb.append(javaPath).append("/jre").append(javaLibDir).append(split);
-            } else {
-                jreLibDir = javaPath + javaLibDir + jvmLibDir;
-                sb.append(jreLibDir).append(split);
-            }
+                    javaPath +
+                    "/jre" +
+                    javaLibDir;
+        } else {
+            jreLibDir = javaPath +
+                    javaLibDir +
+                    jvmLibDir;
         }
 
-        return appendCommonPaths(sb, context, pluginLibPath);
+        return javaPath +
+                javaLibDir +
+                split +
+
+                javaPath +
+                javaLibDir +
+                jliLibDir +
+                split +
+
+                jreLibDir +
+                split +
+
+                getLibraryPath(context, pluginLibPath, lwjglVersion);
     }
 
-    private static String getLibraryPath(Context context, String pluginLibPath) {
-        return appendCommonPaths(new StringBuilder(), context, pluginLibPath);
-    }
-
-    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath) {
+    private static String getLibraryPath(Context context, String pluginLibPath, String lwjglVersion) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
-
-        sb.append(context.getDir("runtime", 0).getAbsolutePath()).append("/jna").append(split);
-
-        if (pluginLibPath != null && !pluginLibPath.isEmpty() && !pluginLibPath.equals("null")) {
-            sb.append(pluginLibPath).append(split);
-        }
-
         String nativeLibPaths = NativeLibPlugin.getPaths(split);
-        if (!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null")) {
-            sb.append(nativeLibPaths).append(split);
-        }
+        String arch = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
+        return "/system/" +
+                libDirName +
+                split +
 
-        sb.append(FCLPath.MOD_RUNTIME_DIR).append(split);
-        sb.append("/system/").append(libDirName).append(split);
-        sb.append("/vendor/").append(libDirName).append(split);
-        sb.append("/vendor/").append(libDirName).append("/hw").append(split);
-        sb.append("/system_ext/").append(libDirName).append(split);
-        sb.append(nativeDir);
+                "/vendor/" +
+                libDirName +
+                split +
 
-        return sb.toString();
+                "/vendor/" +
+                libDirName +
+                "/hw" +
+                split +
+
+                "/system_ext/" +
+                libDirName +
+                split +
+
+                FCLPath.RUNTIME_DIR + "/jna" +
+                split +
+
+                ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
+
+                ((!nativeLibPaths.isEmpty() ? nativeLibPaths + split : "")) +
+
+                FCLPath.MOD_RUNTIME_DIR +
+                split +
+
+                FCLPath.LWJGL_DIR + "/" + lwjglVersion + "/natives/" + arch +
+                split +
+
+                nativeDir;
     }
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {
@@ -172,7 +190,7 @@ public class FCLauncher {
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i);
-            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath());
+            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.getLwjglVersion());
             if (argList.get(i).contains("-Djava.library.path")) {
                 a = "-Djava.library.path=${natives_directory}";
             }
@@ -193,9 +211,8 @@ public class FCLauncher {
         envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath()));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.getLwjglVersion()));
         envMap.put("FORCE_VSYNC", "false");
-        envMap.put("ALSOFT_DRIVERS", "opensl");
 
         // Native mod env var
         envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR == null ? "" : FCLPath.MOD_RUNTIME_DIR);
@@ -302,9 +319,7 @@ public class FCLauncher {
                 envMap.put("POJAV_RENDERER", "gallium_virgl");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer.isEqual(Renderer.ID_ZINK)) {
-                envMap.put("POJAV_RENDERER", "opengles3_desktopgl_zink_kopper");
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("POJAVEXEC_EGL", renderer.getEglName());
+                envMap.put("POJAV_RENDERER", "vulkan_zink");
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
@@ -318,31 +333,15 @@ public class FCLauncher {
         if (render) {
             addRendererEnv(config, envMap);
         }
-        addCustomEnv(config, envMap);
         printTaskTitle(bridge, "Env Map");
         for (String key : envMap.keySet()) {
             log(bridge, "Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
-    }
-
-    private static void addCustomEnv(FCLConfig config, HashMap<String, String> envMap) {
-        SharedPreferences preferences = config.getContext().getSharedPreferences("launcher", MODE_PRIVATE);
-        String[] env = preferences.getString("env", "").split("\n");
-        for (String e : env) {
-            try {
-                String[] split = e.split("=", 2);
-                if (split.length == 2) {
-                    envMap.put(split[0], split[1]);
-                }
-            } catch (Throwable ignore) {
-            }
-        }
-
+        printTaskTitle(bridge, "Env Map");
     }
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
-        printTaskTitle(bridge, "DLOPEN");
         String javaLibDir = config.getJavaPath() + getJavaLibDir(config.getJavaPath());
         String jliLibDir = new File(javaLibDir + "/jli/libjli.so").exists() ? javaLibDir + "/jli" : javaLibDir;
         if (isJDK8(config.getJavaPath()))
@@ -433,7 +432,7 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath()));
+        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.getLwjglVersion()));
         bridge.setupExitTrap(bridge);
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);
