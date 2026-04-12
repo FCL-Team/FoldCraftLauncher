@@ -31,7 +31,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.GsonBuilder;
 import com.mio.JavaManager;
 import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
@@ -43,8 +42,6 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.control.MenuType;
-import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -73,6 +70,7 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
+import com.tungsten.fclcore.mod.server.ServerModpackProvider;
 import com.tungsten.fclcore.task.DownloadException;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -81,7 +79,6 @@ import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.LibFilter;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
@@ -109,7 +106,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public final class LauncherHelper {
 
@@ -119,7 +115,6 @@ public final class LauncherHelper {
     private final String selectedVersion;
     private final VersionSetting setting;
     private final TaskDialog launchingStepsPane;
-    private double scaleFactor;
 
     public LauncherHelper(Context context, Profile profile, Account account, String selectedVersion) {
         this.context = Objects.requireNonNull(context);
@@ -150,7 +145,7 @@ public final class LauncherHelper {
         TaskExecutor executor = checkGameState(context, setting, version.get())
                 .thenComposeAsync(javaVersion -> {
                     javaVersionRef.set(Objects.requireNonNull(javaVersion));
-                    version.set(LibFilter.filter(version.get()));
+                    version.set(LibFilter.filter(version.get(), false));
                     if (setting.isNotCheckGame())
                         return null;
                     return Task.allOf(
@@ -161,7 +156,7 @@ public final class LauncherHelper {
                                     ModpackProvider provider = ModpackHelper.getProviderByType(configuration.getType());
                                     if (provider == null)
                                         return null;
-                                    else
+                                    else if (configuration.getType().equals(ServerModpackProvider.INSTANCE.getName()))
                                         return provider.createCompletionTask(dependencyManager, selectedVersion);
                                 } catch (IOException ignore) {
                                 }
@@ -189,18 +184,7 @@ public final class LauncherHelper {
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
                 .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
-                            try {
-                                MenuSetting menuSetting = new GsonBuilder()
-                                        .setPrettyPrinting()
-                                        .create()
-                                        .fromJson(FileUtils.readText(new File(FCLPath.FILES_DIR + "/menu_setting.json")), MenuSetting.class);
-                                if (menuSetting != null) {
-                                    scaleFactor = menuSetting.getWindowScale();
-                                }
-                            } catch (Throwable ignore) {
-                                scaleFactor = 1d;
-                            }
-                            LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), scaleFactor);
+                            LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir());
                             FCLGameLauncher launcher = new FCLGameLauncher(
                                     context,
                                     repository,
@@ -211,7 +195,7 @@ public final class LauncherHelper {
                             version.get().getLibraries().forEach(library -> {
                                 if (library.getName().startsWith("net.java.dev.jna:jna:")) {
                                     launcher.setJnaVersion(library.getVersion());
-                                } else if (library.getName().startsWith("org.lwjgl:lwjgl:")) {
+                                } else if (library.getName().startsWith("org.lwjgl.lwjgl:lwjgl:") || library.getName().startsWith("org.lwjgl:lwjgl:")) {
                                     launcher.setLwjglVersion(library.getVersion());
                                 }
                             });
@@ -231,15 +215,11 @@ public final class LauncherHelper {
                         }).thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
                             return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
-                        }).thenComposeAsync(fclBridge -> {
-                            GameOption gameOption = new GameOption(repository.getRunDirectory(selectedVersion).getAbsolutePath());
-                            gameOption.set("preferredGraphicsBackend", setting.getGraphicsBackend());
-                            gameOption.save();
-                            return Task.completed(fclBridge);
-                        }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
+                        })
+                        .thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {
                             CallbackBridge.nativeSetUseInputStackQueue(version.get().getArguments().isPresent());
                             Intent intent = new Intent(context, JVMActivity.class);
-                            fclBridge.setScaleFactor(scaleFactor);
+                            fclBridge.setScaleFactor(repository.getVersionSetting(selectedVersion).getScaleFactor() / 100.0);
                             fclBridge.setController(repository.getVersionSetting(selectedVersion).getController());
                             fclBridge.setGameDir(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                             fclBridge.setJava(Integer.toString(javaVersionRef.get().getVersion()));
@@ -413,11 +393,14 @@ public final class LauncherHelper {
                             if (!minVer.isEmpty() && GameVersionNumber.compare(version, minVer) < 0) {
                                 return true;
                             }
-                            return !maxVer.isEmpty() && GameVersionNumber.compare(version, maxVer) > 0;
+                            if (!maxVer.isEmpty() && GameVersionNumber.compare(version, maxVer) > 0) {
+                                return true;
+                            }
+                            return false;
                         }).map(NativeLibPlugin.NativePlugin::getAppName)
                         .collect(toList());
                 if (!unsupportedPlugins.isEmpty()) {
-                    String fullString = String.join(", ", unsupportedPlugins);
+                    String fullString = org.apache.commons.lang3.StringUtils.join(unsupportedPlugins, ", ");
                     Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                             .setCancelable(false)
                             .setMessage(context.getString(R.string.message_check_plugin, fullString))
@@ -448,7 +431,7 @@ public final class LauncherHelper {
                                 future.completeExceptionally(new CancellationException());
                                 UIManager manager = UIManager.getInstance();
                                 MainActivity.getInstance().binding.manage.setSelected(true);
-                                manager.getManageUI().runAfterInit(() -> {
+                                manager.getManageUI().checkPageManager(() -> {
                                     FCLTabLayout tabLayout = manager.getManageUI().tabLayout;
                                     tabLayout.selectTab(tabLayout.getTabAt(2));
                                 });

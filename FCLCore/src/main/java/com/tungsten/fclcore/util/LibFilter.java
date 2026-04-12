@@ -46,13 +46,18 @@ public class LibFilter {
     private static final Library OSHI_6_3 = GSON.fromJson(OSHI_6_3_STRING, Library.class);
 
     public static Version filter(Version version) {
-        return version.setLibraries(filterLibs(version.getLibraries()));
+        return version.setLibraries(filterLibs(version.getLibraries(), true));
     }
 
-    public static List<Library> filterLibs(List<Library> libraries) {
+    public static Version filter(Version version, boolean skipLwjgl) {
+        return version.setLibraries(filterLibs(version.getLibraries(), skipLwjgl));
+    }
+
+    public static List<Library> filterLibs(List<Library> libraries, boolean skipLwjgl) {
         ArrayList<Library> newLibraries = new ArrayList<>();
         for (Library library : libraries) {
-            if (!library.getName().contains("org.lwjgl") && !library.getName().contains("jinput-platform") && !library.getName().contains("twitch-platform")) {
+            if (library.getName().contains("org.lwjgl") && skipLwjgl) continue;
+            if (!library.getName().contains("jinput-platform") && !library.getName().contains("twitch-platform")) {
                 String[] version = library.getName().split(":")[2].split("\\.");
                 if (library.getArtifactId().equals("asm-all") && Integer.parseInt(version[0]) < 5) {
                     newLibraries.add(ASM_ALL_5_0_4);

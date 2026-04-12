@@ -237,12 +237,14 @@ public interface GameRepository extends VersionProvider {
 
     default Set<String> getClasspath(Version version) {
         Set<String> classpath = new LinkedHashSet<>();
-        for (Library library : version.getLibraries())
+        for (Library library : version.getLibraries()) {
+            if (library.getName().contains("org.lwjgl")) continue;
             if (library.appliesToCurrentEnvironment() && !library.isNative()) {
                 File f = getLibraryFile(version, library);
                 if (f.exists() && f.isFile())
                     classpath.add(f.getAbsolutePath());
             }
+        }
         return classpath;
     }
 }
