@@ -1227,6 +1227,6 @@
     <string name="swap_hands">Double Tap Swap Hands</string>
 
     <!-- MiUI Uninstall Desc -->
-    <string name="miui_uninstall_title">别走嘛~</string>
-    <string name="miui_uninstall_content">我哪里做的不好，你说出来我肯定改！\n不要卸载我pwq</string>
+    <string name="miui_uninstall_title">卸载前提醒</string>
+    <string name="miui_uninstall_content">注意！卸载Fold Craft Launcher后，所有保存在应用私有目录内的数据（包括你的启动器设置、应用私有目录内的文件等）会被删除\n卸载后，Fold Craft Launcher保存的微软账号登录状态和账号信息会完全清除，卸载后重新安装需要重新完成登录\n保存在"手机内置存储/FCL目录"下的文件不会因卸载而删除</string>
 </resources>
