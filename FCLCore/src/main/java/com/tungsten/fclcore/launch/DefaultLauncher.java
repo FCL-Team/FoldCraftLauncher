@@ -171,8 +171,6 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
         res.addDefault("-Dorg.lwjgl.system.allocator=", "system");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
-        res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
         res.addDefault("-Dglfwstub.initEgl=", "false");
         res.addDefault("-Dloader.disable_forked_guis=", "true");
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
@@ -184,6 +182,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dsodium.checks.issue2561=", "false");
         res.addDefault("-Djdk.lang.Process.launchMechanism=", "FORK");
         res.addDefault("-Dcpu.name=", FCLauncher.getSocName());
+        res.addDefault("-Dorg.lwjgl.system.allocator=","system");
         NativeLibPlugin.getJVMEnv().forEach((k, v) -> res.addDefault(k + "=", v));
         File libJna = new File(FCLPath.RUNTIME_DIR, "jna");
         if (jnaVersion != null && !jnaVersion.isEmpty()) {
