@@ -1,5 +1,4 @@
 import java.io.File
-import com.mio.build.writeVersionFile
 
 plugins {
     java
@@ -43,6 +42,7 @@ tasks.jar {
     // Mark as using multiple Java versions.
     manifest {
         attributes("Multi-Release" to "true")
+        attributes("Automatic-Module-Name" to "org.lwjgl")
     }
 
     from({
@@ -76,7 +76,7 @@ tasks.jar {
             from(excludedModulesFileList)
             into(archiveFile.get().asFile.parentFile)
         }
-        writeVersionFile(arrayOf(jarFile) + excludedModulesFileList.toTypedArray(), versionFile)
+        versionFile.writeText(System.currentTimeMillis().toString())
     }
     // Adds the jank to outputs
     outputs.file(versionFile)
