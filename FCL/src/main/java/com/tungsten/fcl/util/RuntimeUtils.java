@@ -32,6 +32,7 @@ public class RuntimeUtils {
                 return true;
             }
         }
+        if (!targetFile.exists()) return false;
         long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));
         String installedVersion = FileUtils.readText(targetFile);
         if (installedVersion.isEmpty()) return false;
