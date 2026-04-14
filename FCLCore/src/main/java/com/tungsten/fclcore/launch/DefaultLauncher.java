@@ -284,7 +284,7 @@ public class DefaultLauncher extends Launcher {
         Set<String> list = Arrays.stream(Objects.requireNonNull(dir.listFiles(), "LWJGL directory(" + dir + ") not found!"))
                 .filter(file -> file.getName().endsWith(".jar")
                         && !file.getName().equals("lwjgl.jar")
-                        && !file.getName().equals("lwjglx.jar")
+                        && !file.getName().equals("lwjgl-lwjglx.jar")
                 )
                 .map(File::getAbsolutePath)
                 .collect(Collectors.toSet());
