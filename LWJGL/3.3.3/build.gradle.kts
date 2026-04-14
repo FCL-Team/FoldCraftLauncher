@@ -35,12 +35,12 @@ tasks.jar {
     )
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveBaseName.set("lwjgl-${lwjglVersion}-merged-modules")
+    archiveBaseName.set("lwjgl")
     destinationDirectory.set(file("$rootDir/FCL/src/main/assets/app_runtime/lwjgl/${lwjglVersion}"))
 
     // Mark as using multiple Java versions.
     manifest {
-        attributes("Multi-Release" to "true")
+//        attributes("Multi-Release" to "true")
         attributes("Automatic-Module-Name" to "org.lwjgl")
     }
 
@@ -48,9 +48,9 @@ tasks.jar {
         // Ensure that the core lwjgl jar is processed first so duplicates in META-INF from other classes
         // are ignored. This avoids InvalidModuleDescriptorException due to say, using the module-info.class
         // from lwjgl-jemalloc.
-        val includedModules = configurations["lwjglModules"].filter { dep ->
+        val includedModules = configurations["lwjglModules"]/*.filter { dep ->
             !excludedModules.any { it == dep.name }
-        }
+        }*/
         val coreJar = includedModules.find { it.name == "lwjgl.jar" }
         val jarList = if (coreJar != null) listOf(coreJar) + (includedModules - coreJar) else includedModules
         println("Merging LWJGL $lwjglVersion modules in the order: ")
@@ -66,19 +66,8 @@ tasks.jar {
 
     val versionFile = File(destinationDirectory.get().asFile, "version")
     doLast {
-        val excludedModulesFileList = excludedModules.flatMap { fileName ->
-            configurations["lwjglModules"].filter { it.name == fileName }
-        }
-        copy {
-            // Copy excluded modules to the lwjgl classes dir
-            from(excludedModulesFileList)
-            into(archiveFile.get().asFile.parentFile)
-        }
         versionFile.writeText(System.currentTimeMillis().toString())
     }
-    // Adds the jank to outputs
-    outputs.file(versionFile)
-    outputs.files(excludedModules.map { path -> File(destinationDirectory.get().asFile, path) })
     exclude("net/java/openjdk/cacio/ctc/**")
 }
 
