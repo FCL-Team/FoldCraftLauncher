@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1298,
-    "versionName": "1.2.9.8",
-    "date": "2026.04.09",
+    "versionCode": 1299,
+    "versionName": "1.2.9.9",
+    "date": "2026.04.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add feature to display memory usage in-game.  \n2. Add \"Invert Selection\" feature on the mod management page.  \n3. Add a back button on the mod download page for quick return.  \n4. Automatically show a prompt when launching after hiding the menu key to prevent users from not knowing how to open it after accidental touch.  \n5. Fix incorrect shadow effects in some UI elements.  \n6. Fix the issue where native libraries cannot be loaded correctly on 26.2+ (this fix does not yet allow you to properly launch 26.2 snapshot 1)."
+        "text": "(Translated from Chinese by AI)\n1. Fix the issue where 26.2 snapshot 1+ cannot start.  \n2. Add a feature to allow switching the graphics API for 26.2+ within the launcher.  \n3. Add /system_ext to fix the issue where some library files may fail to load.  \n4. Fix the issue caused by glfwGetKey that prevents entering saves/worlds when using certain mods.  \n5. Adjust some text descriptions for the renderer and driver."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增加游戏内显示内存的功能\n2.在模组管理页面添加“反选”功能\n3.模组下载页面增加返回按钮点击快速返回\n4.隐藏菜单键后启动时自动弹出提示，防止误触后不知道如何打开\n5.修复部分UI阴影效果错误\n6.修复26.2+无法正确加载原生库的问题（该修复暂时不能使你正常启动26.2 snapshot 1）"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复26.2 snapshot 1+无法启动的问题\n2.新增功能允许在启动器内切换26.2+图形API\n3.添加/system_ext修复部分库文件可能无法加载的问题\n4.修复glfwGetKey导致的部分使用模组后无法进入存档的问题\n5.调整渲染器、驱动部分文本描述"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/cec1b00bd310",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.8/FCL-release-1.2.9.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/2ccbf5ae0a87",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.2.9.9/FCL-release-1.2.9.9-all.apk"
   }
 ]

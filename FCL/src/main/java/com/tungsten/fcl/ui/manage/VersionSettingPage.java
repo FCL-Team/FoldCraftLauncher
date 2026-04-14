@@ -96,6 +96,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLNumberSeekBar scaleFactorSeekbar;
 
     private FCLSwitch isolateWorkingDirSwitch;
+    private FCLSwitch useOpenglSwitch;
     private FCLSwitch vulkanDriverSystemSwitch;
     private FCLSwitch pojavBigCoreSwitch;
     private FCLSwitch noGameCheckSwitch;
@@ -154,6 +155,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
         specialSettingSwitch.addCheckedChangeListener();
         isolateWorkingDirSwitch = findViewById(R.id.edit_game_dir);
+        useOpenglSwitch = findViewById(R.id.use_opengl);
         vulkanDriverSystemSwitch = findViewById(R.id.vulkan_driver_system);
         pojavBigCoreSwitch = findViewById(R.id.pojav_big_core);
         noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
@@ -342,6 +344,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(noModCheckSwitch, lastVersionSetting.getNotCheckModProperty());
             FXUtils.unbindBoolean(debugLogSwitch, lastVersionSetting.getDebugLogProperty());
             FXUtils.unbindBoolean(forceResolutionSwitch, lastVersionSetting.getForceResolutionProperty());
+            FXUtils.unbindBoolean(useOpenglSwitch, lastVersionSetting.getUseOpenglProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
             scaleFactorSeekbar.progressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
@@ -365,6 +368,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(noModCheckSwitch, versionSetting.getNotCheckModProperty());
         FXUtils.bindBoolean(debugLogSwitch, versionSetting.getDebugLogProperty());
         FXUtils.bindBoolean(forceResolutionSwitch, versionSetting.getForceResolutionProperty());
+        FXUtils.bindBoolean(useOpenglSwitch, versionSetting.getUseOpenglProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
         scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());

@@ -42,6 +42,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.control.MenuType;
+import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
@@ -213,6 +214,9 @@ public final class LauncherHelper {
                             if (skip) return Task.supplyAsync(() -> fclBridge);
                             return checkModLoader(fclBridge, repository);
                         }).thenComposeAsync(fclBridge -> {
+                            GameOption gameOption = new GameOption(repository.getRunDirectory(selectedVersion).getAbsolutePath());
+                            gameOption.set("preferredGraphicsBackend", setting.isUseOpengl() ? "opengl" : "default");
+                            gameOption.save();
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
                             return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
                         })

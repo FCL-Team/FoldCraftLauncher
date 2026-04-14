@@ -805,6 +805,7 @@
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_vulkan_driver_system">使用系统Vulkan驱动</string>
+    <string name="settings_fcl_use_opengl">使用OpenGL图形API（仅对26.2+生效）</string>
     <string name="settings_fcl_renderer">OpenGL实现方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
