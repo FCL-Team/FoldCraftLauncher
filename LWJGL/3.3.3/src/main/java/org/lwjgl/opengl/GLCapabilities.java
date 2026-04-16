@@ -17,7 +17,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 /** Defines the capabilities of an OpenGL context. */
 public final class GLCapabilities {
 
-    static final int ADDRESS_BUFFER_SIZE = 2226;
+    static final int ADDRESS_BUFFER_SIZE = 2228;
 
     // GL11
     public final long
@@ -2019,6 +2019,11 @@ public final class GLCapabilities {
     public final long
             glBlitFramebufferEXT;
 
+    // EXT_framebuffer_blit_layers
+    public final long
+            glBlitFramebufferLayersEXT,
+            glBlitFramebufferLayerEXT;
+
     // EXT_framebuffer_multisample
     public final long
             glRenderbufferStorageMultisampleEXT;
@@ -2811,7 +2816,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDBlendMinmaxFactor} is supported. */
     public final boolean GL_AMD_blend_minmax_factor;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_conservative_depth.txt">AMD_conservative_depth</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_conservative_depth.txt">AMD_conservative_depth</a> extension is supported.
      *
      * <p>There is a common optimization for hardware accelerated implementation of OpenGL which relies on an early depth test to be run before the fragment
      * shader so that the shader evaluation can be skipped if the fragment ends up being discarded because it is occluded.</p>
@@ -2834,7 +2839,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDFramebufferMultisampleAdvanced} is supported. */
     public final boolean GL_AMD_framebuffer_multisample_advanced;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gcn_shader.txt">AMD_gcn_shader</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gcn_shader.txt">AMD_gcn_shader</a> extension is supported.
      *
      * <p>This extension exposes miscellaneous features of the AMD "Graphics Core Next" shader architecture that do not cleanly fit into other extensions
      * and are not significant enough alone to warrant their own extensions. This includes cross-SIMD lane ballots, cube map query functions and a
@@ -2848,7 +2853,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDGPUShaderHalfFloatFetch} is supported. */
     public final boolean GL_AMD_gpu_shader_half_float_fetch;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gpu_shader_int16.txt">AMD_gpu_shader_int16</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_gpu_shader_int16.txt">AMD_gpu_shader_int16</a> extension is supported.
      *
      * <p>This extension was developed to allow implementations supporting 16-bit integers to expose the feature in GLSL.</p>
      *
@@ -2881,7 +2886,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDSeamlessCubemapPerTexture} is supported. */
     public final boolean GL_AMD_seamless_cubemap_per_texture;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_atomic_counter_ops.txt">AMD_shader_atomic_counter_ops</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_atomic_counter_ops.txt">AMD_shader_atomic_counter_ops</a> extension is supported.
      *
      * <p>This extension is written against the OpenGL 4.3 (core) specification and the GLSL 4.30.7 specification.</p>
      *
@@ -2889,7 +2894,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_shader_atomic_counter_ops;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_ballot.txt">AMD_shader_ballot</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_ballot.txt">AMD_shader_ballot</a> extension is supported.
      *
      * <p>The extensions {@code ARB_shader_group_vote} and {@code ARB_shader_ballot} introduced the concept of sub-groups and a set of operations that allow data
      * exchange across shader invocations within a sub-group.</p>
@@ -2900,7 +2905,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_shader_ballot;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_explicit_vertex_parameter.txt">AMD_shader_explicit_vertex_parameter</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_explicit_vertex_parameter.txt">AMD_shader_explicit_vertex_parameter</a> extension is supported.
      *
      * <p>Unextended GLSL provides a set of fixed function interpolation modes and even those are limited to certain types of interpolants (for example,
      * interpolation of integer and double isn't supported).</p>
@@ -2912,7 +2917,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_shader_explicit_vertex_parameter;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_image_load_store_lod.txt">AMD_shader_image_load_store_lod</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_image_load_store_lod.txt">AMD_shader_image_load_store_lod</a> extension is supported.
      *
      * <p>This extension was developed based on the {@link ARBShaderImageLoadStore ARB_shader_image_load_store} extension to allow implementations supporting loads and stores on mipmap
      * texture images.</p>
@@ -2921,7 +2926,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_shader_image_load_store_lod;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_stencil_export.txt">AMD_shader_stencil_export</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_stencil_export.txt">AMD_shader_stencil_export</a> extension is supported.
      *
      * <p>In OpenGL, the stencil test is a powerful mechanism to selectively discard fragments based on the content of the stencil buffer. However, facilites to
      * update the content of the stencil buffer are limited to operations such as incrementing the existing value, or overwriting with a fixed reference value.</p>
@@ -2934,7 +2939,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_shader_stencil_export;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_trinary_minmax.txt">AMD_shader_trinary_minmax</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_shader_trinary_minmax.txt">AMD_shader_trinary_minmax</a> extension is supported.
      *
      * <p>This extension introduces three new trinary built-in functions to the OpenGL Shading Languages. These functions allow the minimum, maximum or median of
      * three inputs to be found with a single function call. These operations may be useful for sorting and filtering operations, for example. By explicitly
@@ -2949,14 +2954,14 @@ public final class GLCapabilities {
     /** When true, {@link AMDStencilOperationExtended} is supported. */
     public final boolean GL_AMD_stencil_operation_extended;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_texture_gather_bias_lod.txt">AMD_texture_gather_bias_lod</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_texture_gather_bias_lod.txt">AMD_texture_gather_bias_lod</a> extension is supported.
      *
      * <p>This extension was developed based on existing built-in texture gather functions to allow implementations supporting bias of implicit level of detail
      * and explicit control of level of detail in texture gather operations.</p>
      */
     public final boolean GL_AMD_texture_gather_bias_lod;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_texture_texture4.txt">AMD_texture_texture4</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_texture_texture4.txt">AMD_texture_texture4</a> extension is supported.
      *
      * <p>This extension adds new shading language built-in texture functions to the shading language.</p>
      *
@@ -2968,7 +2973,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_texture_texture4;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_transform_feedback3_lines_triangles.txt">AMD_transform_feedback3_lines_triangles</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_transform_feedback3_lines_triangles.txt">AMD_transform_feedback3_lines_triangles</a> extension is supported.
      *
      * <p>OpenGL 4.0 introduced the ability to record primitives into multiple output streams using transform feedback. However, the restriction that all streams
      * must output {@link GL11#GL_POINT POINT} primitives when more than one output stream is active was also introduced. This extension simply removes that restriction, allowing
@@ -2980,7 +2985,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDTransformFeedback4} is supported. */
     public final boolean GL_AMD_transform_feedback4;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_layer.txt">AMD_vertex_shader_layer</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_layer.txt">AMD_vertex_shader_layer</a> extension is supported.
      *
      * <p>The {@code gl_Layer} built-in shading language variable was introduced with the {@link #GL_ARB_geometry_shader4 ARB_geometry_shader4} extension and subsequently promoted to core
      * OpenGL in version 3.2. This variable is an output from the geometry shader stage that allows rendering to be directed to a specific layer of an array
@@ -2999,7 +3004,7 @@ public final class GLCapabilities {
     /** When true, {@link AMDVertexShaderTessellator} is supported. */
     public final boolean GL_AMD_vertex_shader_tessellator;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_viewport_index.txt">AMD_vertex_shader_viewport_index</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/AMD/AMD_vertex_shader_viewport_index.txt">AMD_vertex_shader_viewport_index</a> extension is supported.
      *
      * <p>The {@code gl_ViewportIndex} built-in variable was introduced by the {@link #GL_ARB_viewport_array ARB_viewport_array} extension and {@link GL41 OpenGL 4.1}. This variable is available
      * in un-extended OpenGL only to the geometry shader. When written in the geometry shader, it causes geometry to be directed to one of an array of several
@@ -3013,7 +3018,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_AMD_vertex_shader_viewport_index;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_arrays_of_arrays.txt">ARB_arrays_of_arrays</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_arrays_of_arrays.txt">ARB_arrays_of_arrays</a> extension is supported.
      *
      * <p>This extension removes the restriction that arrays cannot be formed into arrays, allowing arrays of arrays to be declared.</p>
      *
@@ -3039,7 +3044,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBColorBufferFloat} is supported. */
     public final boolean GL_ARB_color_buffer_float;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_compatibility.txt">ARB_compatibility</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_compatibility.txt">ARB_compatibility</a> extension is supported.
      *
      * <p>This extension restores features deprecated by {@link GL30 OpenGL 3.0}.</p>
      */
@@ -3053,7 +3058,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBConditionalRenderInverted} is supported. */
     public final boolean GL_ARB_conditional_render_inverted;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_conservative_depth.txt">ARB_conservative_depth</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_conservative_depth.txt">ARB_conservative_depth</a> extension is supported.
      *
      * <p>There is a common optimization for hardware accelerated implementation of OpenGL which relies on an early depth test to be run before the fragment
      * shader so that the shader evaluation can be skipped if the fragment ends up being discarded because it is occluded.</p>
@@ -3082,7 +3087,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBDepthTexture} is supported. */
     public final boolean GL_ARB_depth_texture;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_derivative_control.txt">ARB_derivative_control</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_derivative_control.txt">ARB_derivative_control</a> extension is supported.
      *
      * <p>This extension provides control over the spacial granularity at which the underlying implementation computes derivatives.</p>
      *
@@ -3139,7 +3144,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBES3Compatibility} is supported. */
     public final boolean GL_ARB_ES3_compatibility;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_explicit_attrib_location.txt">ARB_explicit_attrib_location</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_explicit_attrib_location.txt">ARB_explicit_attrib_location</a> extension is supported.
      *
      * <p>This extension provides a method to pre-assign attribute locations to named vertex shader inputs and color numbers to named fragment shader outputs.
      * This allows applications to globally assign a particular semantic meaning, such as diffuse color or vertex normal, to a particular attribute location
@@ -3151,7 +3156,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBExplicitUniformLocation} is supported. */
     public final boolean GL_ARB_explicit_uniform_location;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_coord_conventions.txt">ARB_fragment_coord_conventions</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_coord_conventions.txt">ARB_fragment_coord_conventions</a> extension is supported.
      *
      * <p>This extension provides alternative conventions for the fragment coordinate XY location available for programmable fragment processing.</p>
      *
@@ -3191,7 +3196,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_fragment_coord_conventions;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_layer_viewport.txt">ARB_fragment_layer_viewport</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_layer_viewport.txt">ARB_fragment_layer_viewport</a> extension is supported.
      *
      * <p>The geometry shader has the special built-in variables gl_Layer and gl_ViewportIndex that specify which layer and viewport primitives are rendered to.
      * Currently the fragment shader does not know which layer or viewport the fragments are being written to without the application implementing their own
@@ -3206,7 +3211,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBFragmentProgram} is supported. */
     public final boolean GL_ARB_fragment_program;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_program_shadow.txt">ARB_fragment_program_shadow</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_program_shadow.txt">ARB_fragment_program_shadow</a> extension is supported.
      *
      * <p>This extension extends ARB_fragment_program to remove the interaction with ARB_shadow and defines the program option "ARB_fragment_program_shadow".</p>
      *
@@ -3216,7 +3221,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBFragmentShader} is supported. */
     public final boolean GL_ARB_fragment_shader;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_shader_interlock.txt">ARB_fragment_shader_interlock</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_fragment_shader_interlock.txt">ARB_fragment_shader_interlock</a> extension is supported.
      *
      * <p>In unextended OpenGL 4.5, applications may produce a large number of fragment shader invocations that perform loads and stores to memory using image
      * uniforms, atomic counter uniforms, buffer variables, or pointers. The order in which loads and stores to common addresses are performed by different
@@ -3320,7 +3325,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBPolygonOffsetClamp} is supported. */
     public final boolean GL_ARB_polygon_offset_clamp;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_post_depth_coverage.txt">ARB_post_depth_coverage</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_post_depth_coverage.txt">ARB_post_depth_coverage</a> extension is supported.
      *
      * <p>This extension allows the fragment shader to control whether values in {@code gl_SampleMaskIn[]} reflect the coverage after application of the early
      * depth and stencil tests. This feature can be enabled with the following layout qualifier in the fragment shader:</p>
@@ -3338,7 +3343,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBQueryBufferObject} is supported. */
     public final boolean GL_ARB_query_buffer_object;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robust_buffer_access_behavior.txt">ARB_robust_buffer_access_behavior</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robust_buffer_access_behavior.txt">ARB_robust_buffer_access_behavior</a> extension is supported.
      *
      * <p>This extension specifies the behavior of out-of-bounds buffer and array accesses. This is an improvement over the existing ARB_robustness extension
      * which stated that the application should not crash, but the behavior is otherwise undefined. This extension specifies the access protection provided by
@@ -3352,7 +3357,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBRobustness} is supported. */
     public final boolean GL_ARB_robustness;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness_application_isolation.txt">ARB_robustness_application_isolation</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness_application_isolation.txt">ARB_robustness_application_isolation</a> extension is supported.
      *
      * <p>{@link ARBRobustness ARB_robustness} and supporting window system extensions allow creating an OpenGL context supporting graphics reset notification behavior. This
      * extension provides stronger guarantees about the possible side-effects of a graphics reset.</p>
@@ -3374,7 +3379,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_robustness_application_isolation;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness_application_isolation.txt">ARB_robustness_share_group_isolation</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_robustness_application_isolation.txt">ARB_robustness_share_group_isolation</a> extension is supported.
      *
      * <p>See {@link #GL_ARB_robustness_application_isolation ARB_robustness_application_isolation}.</p>
      *
@@ -3402,7 +3407,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBSeparateShaderObjects} is supported. */
     public final boolean GL_ARB_separate_shader_objects;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counter_ops.txt">ARB_shader_atomic_counter_ops</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_atomic_counter_ops.txt">ARB_shader_atomic_counter_ops</a> extension is supported.
      *
      * <p>The {@link ARBShaderAtomicCounters ARB_shader_atomic_counters} extension introduced atomic counters, but it limits list of potential operations that can be performed on them
      * to increment, decrement, and query. This extension extends the list of GLSL built-in functions that can operate on atomic counters. The list of new
@@ -3421,7 +3426,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShaderAtomicCounters} is supported. */
     public final boolean GL_ARB_shader_atomic_counters;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_ballot.txt">ARB_shader_ballot</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_ballot.txt">ARB_shader_ballot</a> extension is supported.
      *
      * <p>This extension provides the ability for a group of invocations which execute in lockstep to do limited forms of cross-invocation communication via a
      * group broadcast of a invocation value, or broadcast of a bitarray representing a predicate value from each invocation in the group.</p>
@@ -3430,7 +3435,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_ballot;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_bit_encoding.txt">ARB_shader_bit_encoding</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_bit_encoding.txt">ARB_shader_bit_encoding</a> extension is supported.
      *
      * <p>This extension trivially adds built-in functions for getting/setting the bit encoding for floating-point values in the OpenGL Shading Language.</p>
      *
@@ -3438,14 +3443,14 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_bit_encoding;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_clock.txt">ARB_shader_clock</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_clock.txt">ARB_shader_clock</a> extension is supported.
      *
      * <p>This extension exposes a 64-bit monotonically incrementing shader counter which may be used to derive local timing information within a single shader
      * invocation.</p>
      */
     public final boolean GL_ARB_shader_clock;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_draw_parameters.txt">ARB_shader_draw_parameters</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_draw_parameters.txt">ARB_shader_draw_parameters</a> extension is supported.
      *
      * <p>In unextended GL, vertex shaders have inputs named {@code gl_VertexID} and {@code gl_InstanceID}, which contain, respectively the index of the vertex
      * and instance. The value of {@code gl_VertexID} is the implicitly passed index of the vertex being processed, which includes the value of baseVertex, for
@@ -3466,7 +3471,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_draw_parameters;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_group_vote.txt">ARB_shader_group_vote</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_group_vote.txt">ARB_shader_group_vote</a> extension is supported.
      *
      * <p>This extension provides new built-in functions to compute the composite of a set of boolean conditions across a group of shader invocations. These
      * composite results may be used to execute shaders more efficiently on a single-instruction multiple-data (SIMD) processor. The set of shader invocations
@@ -3510,7 +3515,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShaderImageLoadStore} is supported. */
     public final boolean GL_ARB_shader_image_load_store;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_image_size.txt">ARB_shader_image_size</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_image_size.txt">ARB_shader_image_size</a> extension is supported.
      *
      * <p>This extension provides GLSL built-in functions allowing shaders to query the size of an image.</p>
      *
@@ -3520,7 +3525,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShaderObjects} is supported. */
     public final boolean GL_ARB_shader_objects;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_precision.txt">ARB_shader_precision</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_precision.txt">ARB_shader_precision</a> extension is supported.
      *
      * <p>This extension more clearly restricts the precision requirements of implementations of the GLSL specification. These include precision of arithmetic
      * operations (operators '+', '/', ...), transcendentals (log, exp, pow, reciprocal sqrt, ...), when NaNs (not a number) and INFs (infinities) will be
@@ -3530,7 +3535,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_precision;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_stencil_export.txt">ARB_shader_stencil_export</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_stencil_export.txt">ARB_shader_stencil_export</a> extension is supported.
      *
      * <p>In OpenGL, the stencil test is a powerful mechanism to selectively discard fragments based on the content of the stencil buffer. However, facilites to
      * update the content of the stencil buffer are limited to operations such as incrementing the existing value, or overwriting with a fixed reference value.</p>
@@ -3547,7 +3552,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShaderSubroutine} is supported. */
     public final boolean GL_ARB_shader_subroutine;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_texture_image_samples.txt">ARB_shader_texture_image_samples</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_texture_image_samples.txt">ARB_shader_texture_image_samples</a> extension is supported.
      *
      * <p>This extension provides GLSL built-in functions allowing shaders to query the number of samples of a texture.</p>
      *
@@ -3555,7 +3560,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_texture_image_samples;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_texture_lod.txt">ARB_shader_texture_lod</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_texture_lod.txt">ARB_shader_texture_lod</a> extension is supported.
      *
      * <p>This extension adds additional texture functions to the OpenGL Shading Language which provide the shader writer with explicit control of LOD.</p>
      *
@@ -3649,7 +3654,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_shader_texture_lod;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_viewport_layer_array.txt">ARB_shader_viewport_layer_array</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shader_viewport_layer_array.txt">ARB_shader_viewport_layer_array</a> extension is supported.
      *
      * <p>The gl_ViewportIndex and gl_Layer built-in variables were introduced by the in OpenGL 4.1. These variables are available in un-extended OpenGL only to
      * the geometry shader. When written in the geometry shader, they cause geometry to be directed to one of an array of several independent viewport
@@ -3668,7 +3673,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShadingLanguage100} is supported. */
     public final boolean GL_ARB_shading_language_100;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_420pack.txt">ARB_shading_language_420pack</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_420pack.txt">ARB_shading_language_420pack</a> extension is supported.
      *
      * <p>This is a language feature only extension formed from changes made to version 4.20 of GLSL. It includes:</p>
      *
@@ -3695,7 +3700,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBShadingLanguageInclude} is supported. */
     public final boolean GL_ARB_shading_language_include;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_packing.txt">ARB_shading_language_packing</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_shading_language_packing.txt">ARB_shading_language_packing</a> extension is supported.
      *
      * <p>This extension provides the GLSL built-in functions to convert a 32-bit unsigned integer holding a pair of 16-bit floating-point values to or from a
      * two-component floating-point vector (vec2).</p>
@@ -3721,7 +3726,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBSparseTexture} is supported. */
     public final boolean GL_ARB_sparse_texture;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture2.txt">ARB_sparse_texture2</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture2.txt">ARB_sparse_texture2</a> extension is supported.
      *
      * <p>This extension builds on the {@link ARBSparseTexture ARB_sparse_texture} extension, providing the following new functionality:</p>
      *
@@ -3744,7 +3749,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_sparse_texture2;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture_clamp.txt">ARB_sparse_texture_clamp</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_sparse_texture_clamp.txt">ARB_sparse_texture_clamp</a> extension is supported.
      *
      * <p>This extension builds on the {@link #GL_ARB_sparse_texture2 ARB_sparse_texture2} extension, providing the following new functionality:</p>
      *
@@ -3771,7 +3776,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBTextureBufferObject} is supported. */
     public final boolean GL_ARB_texture_buffer_object;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_object_rgb32.txt">ARB_texture_buffer_object_rgb32</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_buffer_object_rgb32.txt">ARB_texture_buffer_object_rgb32</a> extension is supported.
      *
      * <p>This extension adds three new buffer texture formats - RGB32F, RGB32I, and RGB32UI. This partially addresses one of the limitations of buffer textures
      * in the original {@link #GL_EXT_texture_buffer_object EXT_texture_buffer_object} extension and in {@link GL31 OpenGL 3.1}, which provide no support for three-component formats.</p>
@@ -3792,7 +3797,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBTextureCubeMapArray} is supported. */
     public final boolean GL_ARB_texture_cube_map_array;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_env_add.txt">ARB_texture_env_add</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_env_add.txt">ARB_texture_env_add</a> extension is supported.
      *
      * <p>This extension adds a new texture environment function: ADD.</p>
      *
@@ -3802,7 +3807,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBTextureEnvCombine} is supported. */
     public final boolean GL_ARB_texture_env_combine;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_env_crossbar.txt">ARB_texture_env_crossbar</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_env_crossbar.txt">ARB_texture_env_crossbar</a> extension is supported.
      *
      * <p>This extension adds the capability to use the texture color from other texture units as sources to the {@link ARBTextureEnvCombine#GL_COMBINE_ARB COMBINE_ARB} environment
      * function. The {@link ARBTextureEnvCombine ARB_texture_env_combine} extension defined texture environment functions which could use the color from the current texture unit
@@ -3828,7 +3833,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBTextureMultisample} is supported. */
     public final boolean GL_ARB_texture_multisample;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_non_power_of_two.txt">ARB_texture_non_power_of_two</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_non_power_of_two.txt">ARB_texture_non_power_of_two</a> extension is supported.
      *
      * <p>Conventional OpenGL texturing is limited to images with power-of-two dimensions and an optional 1-texel border. This extension relaxes the size
      * restrictions for the 1D, 2D, cube map, and 3D texture targets.</p>
@@ -3837,7 +3842,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_texture_non_power_of_two;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_query_levels.txt">ARB_texture_query_levels</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_query_levels.txt">ARB_texture_query_levels</a> extension is supported.
      *
      * <p>This extension provides a new set of texture functions ({@code textureQueryLevels}) in the OpenGL Shading Language that exposes the number of accessible
      * mipmap levels in the texture associated with a GLSL sampler variable. The set of accessible levels includes all the levels of the texture defined either
@@ -3855,7 +3860,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_ARB_texture_query_levels;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_query_lod.txt">ARB_texture_query_lod</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_query_lod.txt">ARB_texture_query_lod</a> extension is supported.
      *
      * <p>This extension provides a new set of fragment shader texture functions ({@code textureLOD}) that return the results of automatic level-of-detail
      * computations that would be performed if a texture lookup were performed.</p>
@@ -3870,7 +3875,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBTextureRGB10_A2UI} is supported. */
     public final boolean GL_ARB_texture_rgb10_a2ui;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_stencil8.txt">ARB_texture_stencil8</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_texture_stencil8.txt">ARB_texture_stencil8</a> extension is supported.
      *
      * <p>This extension accepts {@link GL30#GL_STENCIL_INDEX8 STENCIL_INDEX8} as a texture internal format, and adds STENCIL_INDEX8 to the required internal format list. This removes the
      * need to use renderbuffers if a stencil-only format is desired.</p>
@@ -3917,7 +3922,7 @@ public final class GLCapabilities {
     /** When true, {@link ARBVertexShader} is supported. */
     public final boolean GL_ARB_vertex_shader;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_type_10f_11f_11f_rev.txt">ARB_vertex_type_10f_11f_11f_rev</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_type_10f_11f_11f_rev.txt">ARB_vertex_type_10f_11f_11f_rev</a> extension is supported.
      *
      * <p>This extension a new vertex attribute data format: a packed 11.11.10 unsigned float vertex data format. This vertex data format can be used to describe
      * a compressed 3 component stream of values that can be represented by 10- or 11-bit unsigned floating point values.</p>
@@ -3935,7 +3940,7 @@ public final class GLCapabilities {
     public final boolean GL_ARB_window_pos;
     /** When true, {@link ATIMeminfo} is supported. */
     public final boolean GL_ATI_meminfo;
-    /** When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ATI/ATI_shader_texture_lod.txt">ATI_shader_texture_lod</a> extension is supported. */
+    /** When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/ATI/ATI_shader_texture_lod.txt">ATI_shader_texture_lod</a> extension is supported. */
     public final boolean GL_ATI_shader_texture_lod;
     /** When true, {@link ATITextureCompression3DC} is supported. */
     public final boolean GL_ATI_texture_compression_3dc;
@@ -3976,7 +3981,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTEGLImageStorage} is supported. */
     public final boolean GL_EXT_EGL_image_storage;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_EGL_sync.txt">EXT_EGL_sync</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_EGL_sync.txt">EXT_EGL_sync</a> extension is supported.
      *
      * <p>This extension extends {@code EGL_KHR_fence_sync} with client API support for OpenGL (compatibility or core profiles) as an EXT extension.</p>
      *
@@ -3988,6 +3993,8 @@ public final class GLCapabilities {
     public final boolean GL_EXT_external_buffer;
     /** When true, {@link EXTFramebufferBlit} is supported. */
     public final boolean GL_EXT_framebuffer_blit;
+    /** When true, {@link EXTFramebufferBlitLayers} is supported. */
+    public final boolean GL_EXT_framebuffer_blit_layers;
     /** When true, {@link EXTFramebufferMultisample} is supported. */
     public final boolean GL_EXT_framebuffer_multisample;
     /** When true, {@link EXTFramebufferMultisampleBlitScaled} is supported. */
@@ -4009,7 +4016,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTMemoryObjectWin32} is supported. */
     public final boolean GL_EXT_memory_object_win32;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_tessellation_geometry_shader.txt">EXT_multiview_tessellation_geometry_shader</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_tessellation_geometry_shader.txt">EXT_multiview_tessellation_geometry_shader</a> extension is supported.
      *
      * <p>This extension removes one of the limitations of the {@code OVR_multiview} extension by allowing the use of tessellation control, tessellation
      * evaluation, and geometry shaders during multiview rendering. {@code OVR_multiview} by itself forbids the use of any of these shader types.</p>
@@ -4027,7 +4034,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_EXT_multiview_tessellation_geometry_shader;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_texture_multisample.txt">EXT_multiview_texture_multisample</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_texture_multisample.txt">EXT_multiview_texture_multisample</a> extension is supported.
      *
      * <p>This extension removes one of the limitations of the {@code OVR_multiview} extension by allowing the use of multisample textures during multiview
      * rendering.</p>
@@ -4049,7 +4056,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_EXT_multiview_texture_multisample;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_timer_query.txt">EXT_multiview_timer_query</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_multiview_timer_query.txt">EXT_multiview_timer_query</a> extension is supported.
      *
      * <p>This extension removes one of the limitations of the {@code OVR_multiview} extension by allowing the use of timer queries during multiview rendering.
      * {@code OVR_multiview} does not specify defined behavior for such usage.</p>
@@ -4068,7 +4075,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTPolygonOffsetClamp} is supported. */
     public final boolean GL_EXT_polygon_offset_clamp;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_post_depth_coverage.txt">EXT_post_depth_coverage</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_post_depth_coverage.txt">EXT_post_depth_coverage</a> extension is supported.
      *
      * <p>This extension allows the fragment shader to control whether values in {@code gl_SampleMaskIn[]} reflect the coverage after application of the early
      * depth and stencil tests.  This feature can be enabled with the following layout qualifier in the fragment shader:</p>
@@ -4101,7 +4108,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTShaderFramebufferFetchNonCoherent} is supported. */
     public final boolean GL_EXT_shader_framebuffer_fetch_non_coherent;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_image_load_formatted.txt">EXT_shader_image_load_formatted</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_image_load_formatted.txt">EXT_shader_image_load_formatted</a> extension is supported.
      *
      * <p>{@link ARBShaderImageLoadStore ARB_shader_image_load_store} (and OpenGL 4.2) added support for random access load and store from/to texture images, but due to hardware
      * limitations, loads were required to declare the image format in the shader source. This extension relaxes that requirement, and the return values from
@@ -4111,7 +4118,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTShaderImageLoadStore} is supported. */
     public final boolean GL_EXT_shader_image_load_store;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_integer_mix.txt">EXT_shader_integer_mix</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_integer_mix.txt">EXT_shader_integer_mix</a> extension is supported.
      *
      * <p>GLSL 1.30 (and GLSL ES 3.00) expanded the mix() built-in function to operate on a boolean third argument that does not interpolate but selects. This
      * extension extends mix() to select between int, uint, and bool components.</p>
@@ -4120,7 +4127,34 @@ public final class GLCapabilities {
      */
     public final boolean GL_EXT_shader_integer_mix;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shadow_funcs.txt">EXT_shadow_funcs</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_samples_identical.txt">EXT_shader_samples_identical</a> extension is supported.
+     *
+     * <p>Multisampled antialiasing has become a common method for improving the quality of rendered images. Multisampling differs from supersampling in that the
+     * color of a primitive that covers all or part of a pixel is resolved once, regardless of the number of samples covered. If a large polygon is rendered,
+     * the colors of all samples in each interior pixel will be the same. This suggests a simple compression scheme that can reduce the necessary memory
+     * bandwidth requirements. In one such scheme, each sample is stored in a separate slice of the multisample surface. An additional multisample control
+     * surface (MCS) contains a mapping from pixel samples to slices.</p>
+     *
+     * <p>If all the values stored in the MCS for a particular pixel are the same, then all the samples have the same value. Applications can take advantage of
+     * this information to reduce the bandwidth of reading multisample textures. A custom multisample resolve filter could optimize resolving pixels where
+     * every sample is identical by reading the color once.</p>
+     *
+     * <pre><code>
+     * color = texelFetch(sampler, coordinate, 0);
+     * if (!textureSamplesIdenticalEXT(sampler, coordinate)) {
+     *     for (int i = 1; i &lt; MAX_SAMPLES; i++) {
+     *         vec4 c = texelFetch(sampler, coordinate, i);
+     *
+     *         //... accumulate c into color
+     *
+     *     }
+     * }</code></pre>
+     *
+     * <p>Requires {@link GL32 OpenGL 3.2} or {@link ARBTextureMultisample ARB_texture_multisample}.</p>
+     */
+    public final boolean GL_EXT_shader_samples_identical;
+    /**
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_shadow_funcs.txt">EXT_shadow_funcs</a> extension is supported.
      *
      * <p>This extension generalizes the {@link #GL_ARB_shadow ARB_shadow} extension to support all eight binary texture comparison functions rather than just {@link GL11#GL_LEQUAL LEQUAL} and
      * {@link GL11#GL_GEQUAL GEQUAL}.</p>
@@ -4131,7 +4165,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTSharedTexturePalette} is supported. */
     public final boolean GL_EXT_shared_texture_palette;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_sparse_texture2.txt">EXT_sparse_texture2</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_sparse_texture2.txt">EXT_sparse_texture2</a> extension is supported.
      *
      * <p>This extension builds on the {@link ARBSparseTexture ARB_sparse_texture} extension, providing the following new functionality:</p>
      *
@@ -4212,7 +4246,7 @@ public final class GLCapabilities {
     /** When true, {@link EXTTransformFeedback} is supported. */
     public final boolean GL_EXT_transform_feedback;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_array_bgra.txt">EXT_vertex_array_bgra</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_vertex_array_bgra.txt">EXT_vertex_array_bgra</a> extension is supported.
      *
      * <p>This extension provides a single new component format for vertex arrays to read 4-component unsigned byte vertex attributes with a BGRA component
      * ordering.</p>
@@ -4268,7 +4302,7 @@ public final class GLCapabilities {
     /** When true, {@link INTELConservativeRasterization} is supported. */
     public final boolean GL_INTEL_conservative_rasterization;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_fragment_shader_ordering.txt">INTEL_fragment_shader_ordering</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_fragment_shader_ordering.txt">INTEL_fragment_shader_ordering</a> extension is supported.
      *
      * <p>Graphics devices may execute in parallel fragment shaders referring to the same window xy coordinates. Framebuffer writes are guaranteed to be
      * processed in primitive rasterization order, but there is no order guarantee for other instructions and image or buffer object accesses in particular.</p>
@@ -4286,7 +4320,7 @@ public final class GLCapabilities {
     /** When true, {@link INTELPerformanceQuery} is supported. */
     public final boolean GL_INTEL_performance_query;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_shader_integer_functions2.txt">INTEL_shader_integer_functions2</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/INTEL/INTEL_shader_integer_functions2.txt">INTEL_shader_integer_functions2</a> extension is supported.
      *
      * <p>OpenCL and other GPU programming environments provides a number of useful functions operating on integer data. Many of these functions are supported by
      * specialized instructions various GPUs. Correct GLSL implementations for some of these functions are non-trivial. Recognizing open-coded versions of
@@ -4310,7 +4344,7 @@ public final class GLCapabilities {
     /** When true, {@link KHRParallelShaderCompile} is supported. */
     public final boolean GL_KHR_parallel_shader_compile;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_robust_buffer_access_behavior.txt">KHR_robust_buffer_access_behavior</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_robust_buffer_access_behavior.txt">KHR_robust_buffer_access_behavior</a> extension is supported.
      *
      * <p>This extension specifies the behavior of out-of-bounds buffer and array accesses. This is an improvement over the existing {@link #GL_KHR_robustness KHR_robustness}
      * extension which states that the application should not crash, but that behavior is otherwise undefined. This extension specifies the access protection
@@ -4326,7 +4360,7 @@ public final class GLCapabilities {
     /** When true, {@link KHRShaderSubgroup} is supported. */
     public final boolean GL_KHR_shader_subgroup;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_hdr.txt">KHR_texture_compression_astc_hdr</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_hdr.txt">KHR_texture_compression_astc_hdr</a> extension is supported.
      *
      * <p>This extension corresponds to the ASTC HDR Profile, see {@link KHRTextureCompressionASTCLDR KHR_texture_compression_astc_ldr} for details.</p>
      */
@@ -4334,7 +4368,7 @@ public final class GLCapabilities {
     /** When true, {@link KHRTextureCompressionASTCLDR} is supported. */
     public final boolean GL_KHR_texture_compression_astc_ldr;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_sliced_3d.txt">KHR_texture_compression_astc_sliced_3d</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_texture_compression_astc_sliced_3d.txt">KHR_texture_compression_astc_sliced_3d</a> extension is supported.
      *
      * <p>Adaptive Scalable Texture Compression (ASTC) is a new texture compression technology that offers unprecendented flexibility, while producing better or
      * comparable results than existing texture compressions at all bit rates. It includes support for 2D and slice-based 3D textures, with low and high
@@ -4353,7 +4387,7 @@ public final class GLCapabilities {
     /** When true, {@link MESAFramebufferSwapXY} is supported. */
     public final boolean GL_MESA_framebuffer_swap_xy;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/MESA/MESA_tile_raster_order.txt">MESA_tile_raster_order</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/MESA/MESA_tile_raster_order.txt">MESA_tile_raster_order</a> extension is supported.
      *
      * <p>This extension extends the sampling-from-the-framebuffer behavior provided by {@code GL_ARB_texture_barrier} to allow setting the rasterization order
      * of the scene, so that overlapping blits can be implemented. This can be used for scrolling or window movement within in 2D scenes, without first
@@ -4376,14 +4410,14 @@ public final class GLCapabilities {
     public final boolean GL_NV_blend_equation_advanced_coherent;
     /** When true, {@link NVBlendMinmaxFactor} is supported. */
     public final boolean GL_NV_blend_minmax_factor;
-    /** When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_blend_square.txt">NV_blend_square</a> extension is supported. */
+    /** When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_blend_square.txt">NV_blend_square</a> extension is supported. */
     public final boolean GL_NV_blend_square;
     /** When true, {@link NVClipSpaceWScaling} is supported. */
     public final boolean GL_NV_clip_space_w_scaling;
     /** When true, {@link NVCommandList} is supported. */
     public final boolean GL_NV_command_list;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_compute_shader_derivatives.txt">NV_compute_shader_derivatives</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_compute_shader_derivatives.txt">NV_compute_shader_derivatives</a> extension is supported.
      *
      * <p>This extension adds OpenGL API support for the OpenGL Shading Language (GLSL) extension {@code "NV_compute_shader_derivatives"}.</p>
      *
@@ -4406,7 +4440,7 @@ public final class GLCapabilities {
     /** When true, {@link NVConservativeRasterPreSnapTriangles} is supported. */
     public final boolean GL_NV_conservative_raster_pre_snap_triangles;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster_underestimation.txt">NV_conservative_raster_underestimation</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_conservative_raster_underestimation.txt">NV_conservative_raster_underestimation</a> extension is supported.
      *
      * <p>The extension {@link NVConservativeRaster NV_conservative_raster} provides a new rasterization mode known as "Overestimated Conservative Rasterization", where any pixel
      * that is partially covered, even if no sample location is covered, is treated as fully covered and a corresponding fragment will be shaded. There is
@@ -4430,7 +4464,7 @@ public final class GLCapabilities {
     public final boolean GL_NV_draw_texture;
     /** When true, {@link NVDrawVulkanImage} is supported. */
     public final boolean GL_NV_draw_vulkan_image;
-    /** When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_ES3_1_compatibility.txt">NV_ES3_1_compatibility</a> extension is supported. */
+    /** When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_ES3_1_compatibility.txt">NV_ES3_1_compatibility</a> extension is supported. */
     public final boolean GL_NV_ES3_1_compatibility;
     /** When true, {@link NVExplicitMultisample} is supported. */
     public final boolean GL_NV_explicit_multisample;
@@ -4444,12 +4478,12 @@ public final class GLCapabilities {
     public final boolean GL_NV_fog_distance;
     /** When true, {@link NVFragmentCoverageToColor} is supported. */
     public final boolean GL_NV_fragment_coverage_to_color;
-    /** When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_program4.txt">NV_fragment_program4</a> extension is supported. */
+    /** When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_program4.txt">NV_fragment_program4</a> extension is supported. */
     public final boolean GL_NV_fragment_program4;
-    /** When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_program_option.txt">NV_fragment_program_option</a> extension is supported. */
+    /** When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_program_option.txt">NV_fragment_program_option</a> extension is supported. */
     public final boolean GL_NV_fragment_program_option;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_shader_barycentric.txt">NV_fragment_shader_barycentric</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_shader_barycentric.txt">NV_fragment_shader_barycentric</a> extension is supported.
      *
      * <p>This extension advertises OpenGL support for the OpenGL Shading Language (GLSL) extension {@code "NV_fragment_shader_barycentric"}, which provides
      * fragment shader built-in variables holding barycentric weight vectors that identify the location of the fragment within its primitive. Additionally,
@@ -4459,7 +4493,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_NV_fragment_shader_barycentric;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_shader_interlock.txt">NV_fragment_shader_interlock</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_fragment_shader_interlock.txt">NV_fragment_shader_interlock</a> extension is supported.
      *
      * <p>In unextended OpenGL 4.3, applications may produce a large number of fragment shader invocations that perform loads and stores to memory using image
      * uniforms, atomic counter uniforms, buffer variables, or pointers. The order in which loads and stores to common addresses are performed by different
@@ -4501,7 +4535,7 @@ public final class GLCapabilities {
     /** When true, {@link NVFramebufferMultisampleCoverage} is supported. */
     public final boolean GL_NV_framebuffer_multisample_coverage;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_geometry_shader4.txt">NV_geometry_shader4</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_geometry_shader4.txt">NV_geometry_shader4</a> extension is supported.
      *
      * <p>This extension builds upon the {@link #GL_EXT_geometry_shader4 EXT_geometry_shader4} specification to provide two additional capabilities:</p>
      *
@@ -4516,7 +4550,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_NV_geometry_shader4;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_geometry_shader_passthrough.txt">NV_geometry_shader_passthrough</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_geometry_shader_passthrough.txt">NV_geometry_shader_passthrough</a> extension is supported.
      *
      * <p>This extension provides a shading language abstraction to express such shaders without requiring explicit logic to manually copy attributes from input
      * vertices to output vertices.</p>
@@ -4567,7 +4601,7 @@ public final class GLCapabilities {
     /** When true, {@link NVSampleLocations} is supported. */
     public final boolean GL_NV_sample_locations;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_sample_mask_override_coverage.txt">NV_sample_mask_override_coverage</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_sample_mask_override_coverage.txt">NV_sample_mask_override_coverage</a> extension is supported.
      *
      * <p>This extension allows the fragment shader to control whether the gl_SampleMask output can enable samples that were not covered by the original
      * primitive, or that failed the early depth/stencil tests.</p>
@@ -4576,7 +4610,7 @@ public final class GLCapabilities {
     /** When true, {@link NVScissorExclusive} is supported. */
     public final boolean GL_NV_scissor_exclusive;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_float.txt">NV_shader_atomic_float</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_float.txt">NV_shader_atomic_float</a> extension is supported.
      *
      * <p>This extension provides GLSL built-in functions and assembly opcodes allowing shaders to perform atomic read-modify-write operations to buffer or
      * texture memory with floating-point components.  The set of atomic operations provided by this extension is limited to adds and exchanges. Providing
@@ -4585,11 +4619,11 @@ public final class GLCapabilities {
      *
      * <p>This extension provides GLSL support for atomics targeting image uniforms (if GLSL 4.20, {@link #GL_ARB_shader_image_load_store ARB_shader_image_load_store}, or
      * {@link #GL_EXT_shader_image_load_store EXT_shader_image_load_store} is supported) or floating-point pointers (if {@link #GL_NV_gpu_shader5 NV_gpu_shader5} is supported). Additionally, assembly opcodes
-     * for these operations is also provided if <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program5.txt">NV_gpu_program5</a> is supported.</p>
+     * for these operations is also provided if <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_gpu_program5.txt">NV_gpu_program5</a> is supported.</p>
      */
     public final boolean GL_NV_shader_atomic_float;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_float64.txt">NV_shader_atomic_float64</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_float64.txt">NV_shader_atomic_float64</a> extension is supported.
      *
      * <p>This extension provides GLSL built-in functions and assembly opcodes allowing shaders to perform atomic read-modify-write operations to buffer or
      * shared memory with double-precision floating-point components.  The set of atomic operations provided by this extension is limited to adds and
@@ -4603,7 +4637,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_NV_shader_atomic_float64;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_fp16_vector.txt">NV_shader_atomic_fp16_vector</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_fp16_vector.txt">NV_shader_atomic_fp16_vector</a> extension is supported.
      *
      * <p>This extension provides GLSL built-in functions and assembly opcodes allowing shaders to perform a limited set of atomic read-modify-write operations
      * to buffer or texture memory with 16-bit floating point vector surface formats.</p>
@@ -4612,7 +4646,7 @@ public final class GLCapabilities {
      */
     public final boolean GL_NV_shader_atomic_fp16_vector;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_int64.txt">NV_shader_atomic_int64</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_atomic_int64.txt">NV_shader_atomic_int64</a> extension is supported.
      *
      * <p>This extension provides additional GLSL built-in functions and assembly opcodes allowing shaders to perform additional atomic read-modify-write
      * operations on 64-bit signed and unsigned integers stored in buffer object memory.</p>
@@ -4625,7 +4659,7 @@ public final class GLCapabilities {
     /** When true, {@link NVShaderSubgroupPartitioned} is supported. */
     public final boolean GL_NV_shader_subgroup_partitioned;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_texture_footprint.txt">NV_shader_texture_footprint</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_texture_footprint.txt">NV_shader_texture_footprint</a> extension is supported.
      *
      * <p>This extension adds OpenGL API support for the OpenGL Shading Language (GLSL) extension {@code "NV_shader_texture_footprint"}. That extension adds a
      * new set of texture query functions ({@code "textureFootprint*NV"}) to GLSL. These built-in functions prepare to perform a filtered texture lookup based
@@ -4659,7 +4693,7 @@ public final class GLCapabilities {
     /** When true, {@link NVShaderThreadGroup} is supported. */
     public final boolean GL_NV_shader_thread_group;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_thread_shuffle.txt">NV_shader_thread_shuffle</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_shader_thread_shuffle.txt">NV_shader_thread_shuffle</a> extension is supported.
      *
      * <p>Implementations of the OpenGL Shading Language may, but are not required, to run multiple shader threads for a single stage as a SIMD thread group,
      * where individual execution threads are assigned to thread groups in an undefined, implementation-dependent order.  This extension provides a set of
@@ -4671,7 +4705,7 @@ public final class GLCapabilities {
     /** When true, {@link NVShadingRateImage} is supported. */
     public final boolean GL_NV_shading_rate_image;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_stereo_view_rendering.txt">NV_stereo_view_rendering</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_stereo_view_rendering.txt">NV_stereo_view_rendering</a> extension is supported.
      *
      * <p>Virtual reality (VR) applications often render a single logical scene from multiple views corresponding to a pair of eyes. The views (eyes) are
      * separated by a fixed offset in the X direction.</p>
@@ -4694,7 +4728,7 @@ public final class GLCapabilities {
     /** When true, {@link NVTextureBarrier} is supported. */
     public final boolean GL_NV_texture_barrier;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_compression_vtc.txt">NV_texture_compression_vtc</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_compression_vtc.txt">NV_texture_compression_vtc</a> extension is supported.
      *
      * <p>This extension adds support for the VTC 3D texture compression formats, which are analogous to the S3TC texture compression formats, with the addition
      * of some retiling in the Z direction. VTC has the same compression ratio as S3TC and uses 4x4x1, 4x4x2, (4x4x3 when non-power-of-two textures are
@@ -4704,7 +4738,7 @@ public final class GLCapabilities {
     /** When true, {@link NVTextureMultisample} is supported. */
     public final boolean GL_NV_texture_multisample;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_rectangle_compressed.txt">NV_texture_rectangle_compressed</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_texture_rectangle_compressed.txt">NV_texture_rectangle_compressed</a> extension is supported.
      *
      * <p>This extension allows applications to use compressed texture formats with the {@link GL31#GL_TEXTURE_RECTANGLE TEXTURE_RECTANGLE} texture target, removing an old limitation that
      * prohibited such usage globally for rectangle textures.</p>
@@ -4722,6 +4756,19 @@ public final class GLCapabilities {
     public final boolean GL_NV_transform_feedback;
     /** When true, {@link NVTransformFeedback2} is supported. */
     public final boolean GL_NV_transform_feedback2;
+    /**
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_uniform_buffer_std430_layout.txt">NV_uniform_buffer_std430_layout</a> extension is supported.
+     *
+     * <p>OpenGL 4.3 (and {@code ARB_enhanced_layouts}) provide an enhanced layout qualifier syntax for aligning members of uniform and shader storage blocks.
+     * The std430 enhanced layout qualifier is advantageous, compared with std140, because it provides a more space-efficient layout of arrays that more
+     * easily matches the data layout in C/C++ structures stored in CPU memory.</p>
+     *
+     * <p>However OpenGL 4.3 precluded using the std430 layout qualifier for uniform blocks (by mandating a compilation error be generated).</p>
+     *
+     * <p>This extension makes std430 a legal layout qualifier for uniform blocks in GLSL when the extension's GLSL {@code #extension} functionality is enabled
+     * or required.</p>
+     */
+    public final boolean GL_NV_uniform_buffer_std430_layout;
     /** When true, {@link NVUniformBufferUnifiedMemory} is supported. */
     public final boolean GL_NV_uniform_buffer_unified_memory;
     /** When true, {@link NVVertexArrayRange} is supported. */
@@ -4733,7 +4780,7 @@ public final class GLCapabilities {
     /** When true, {@link NVVertexBufferUnifiedMemory} is supported. */
     public final boolean GL_NV_vertex_buffer_unified_memory;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_viewport_array2.txt">NV_viewport_array2</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_viewport_array2.txt">NV_viewport_array2</a> extension is supported.
      *
      * <p>This extension provides new support allowing a single primitive to be broadcast to multiple viewports and/or multiple layers. A shader output
      * gl_ViewportMask[] is provided, allowing a single primitive to be output to multiple viewports simultaneously. Also, a new shader option is provided to
@@ -4751,7 +4798,7 @@ public final class GLCapabilities {
     /** When true, {@link NVViewportSwizzle} is supported. */
     public final boolean GL_NV_viewport_swizzle;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_blend_equation_advanced_multi_draw_buffers.txt">NVX_blend_equation_advanced_multi_draw_buffers</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/NVX/NVX_blend_equation_advanced_multi_draw_buffers.txt">NVX_blend_equation_advanced_multi_draw_buffers</a> extension is supported.
      *
      * <p>This extension adds support for using advanced blend equations introduced with {@link NVBlendEquationAdvanced NV_blend_equation_advanced} (and standardized by
      * {@link KHRBlendEquationAdvanced KHR_blend_equation_advanced}) in conjunction with multiple draw buffers. The NV_blend_equation_advanced extension supports advanced blending
@@ -4772,7 +4819,7 @@ public final class GLCapabilities {
     /** When true, {@link OVRMultiview} is supported. */
     public final boolean GL_OVR_multiview;
     /**
-     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview2.txt">OVR_multiview2</a> extension is supported.
+     * When true, the <a href="https://www.khronos.org/registry/OpenGL/extensions/OVR/OVR_multiview2.txt">OVR_multiview2</a> extension is supported.
      *
      * <p>This extension relaxes the restriction in OVR_multiview that only {@code gl_Position} can depend on {@code ViewID} in the vertex shader.  With this
      * change, view-dependent outputs like reflection vectors and similar are allowed.</p>
@@ -4791,8 +4838,6 @@ public final class GLCapabilities {
 
     GLCapabilities(FunctionProvider provider, Set<String> ext, boolean fc, IntFunction<PointerBuffer> bufferFactory) {
         forwardCompatible = fc;
-
-        PojavRendererInit.onCreateCapabilities(provider);
 
         PointerBuffer caps = bufferFactory.apply(ADDRESS_BUFFER_SIZE);
 
@@ -5044,6 +5089,7 @@ public final class GLCapabilities {
         GL_EXT_EGL_sync = ext.contains("GL_EXT_EGL_sync");
         GL_EXT_external_buffer = check_EXT_external_buffer(provider, caps, ext);
         GL_EXT_framebuffer_blit = check_EXT_framebuffer_blit(provider, caps, ext);
+        GL_EXT_framebuffer_blit_layers = check_EXT_framebuffer_blit_layers(provider, caps, ext);
         GL_EXT_framebuffer_multisample = check_EXT_framebuffer_multisample(provider, caps, ext);
         GL_EXT_framebuffer_multisample_blit_scaled = ext.contains("GL_EXT_framebuffer_multisample_blit_scaled");
         GL_EXT_framebuffer_object = check_EXT_framebuffer_object(provider, caps, ext);
@@ -5075,6 +5121,7 @@ public final class GLCapabilities {
         GL_EXT_shader_image_load_formatted = ext.contains("GL_EXT_shader_image_load_formatted");
         GL_EXT_shader_image_load_store = check_EXT_shader_image_load_store(provider, caps, ext);
         GL_EXT_shader_integer_mix = ext.contains("GL_EXT_shader_integer_mix");
+        GL_EXT_shader_samples_identical = ext.contains("GL_EXT_shader_samples_identical");
         GL_EXT_shadow_funcs = ext.contains("GL_EXT_shadow_funcs");
         GL_EXT_shared_texture_palette = ext.contains("GL_EXT_shared_texture_palette");
         GL_EXT_sparse_texture2 = ext.contains("GL_EXT_sparse_texture2");
@@ -5217,6 +5264,7 @@ public final class GLCapabilities {
         GL_NV_timeline_semaphore = check_NV_timeline_semaphore(provider, caps, ext);
         GL_NV_transform_feedback = check_NV_transform_feedback(provider, caps, ext);
         GL_NV_transform_feedback2 = check_NV_transform_feedback2(provider, caps, ext);
+        GL_NV_uniform_buffer_std430_layout = ext.contains("GL_NV_uniform_buffer_std430_layout");
         GL_NV_uniform_buffer_unified_memory = ext.contains("GL_NV_uniform_buffer_unified_memory");
         GL_NV_vertex_array_range = check_NV_vertex_array_range(provider, caps, ext);
         GL_NV_vertex_array_range2 = ext.contains("GL_NV_vertex_array_range2");
@@ -6966,496 +7014,498 @@ public final class GLCapabilities {
         glBufferStorageExternalEXT = caps.get(1730);
         glNamedBufferStorageExternalEXT = caps.get(1731);
         glBlitFramebufferEXT = caps.get(1732);
-        glRenderbufferStorageMultisampleEXT = caps.get(1733);
-        glIsRenderbufferEXT = caps.get(1734);
-        glBindRenderbufferEXT = caps.get(1735);
-        glDeleteRenderbuffersEXT = caps.get(1736);
-        glGenRenderbuffersEXT = caps.get(1737);
-        glRenderbufferStorageEXT = caps.get(1738);
-        glGetRenderbufferParameterivEXT = caps.get(1739);
-        glIsFramebufferEXT = caps.get(1740);
-        glBindFramebufferEXT = caps.get(1741);
-        glDeleteFramebuffersEXT = caps.get(1742);
-        glGenFramebuffersEXT = caps.get(1743);
-        glCheckFramebufferStatusEXT = caps.get(1744);
-        glFramebufferTexture1DEXT = caps.get(1745);
-        glFramebufferTexture2DEXT = caps.get(1746);
-        glFramebufferTexture3DEXT = caps.get(1747);
-        glFramebufferRenderbufferEXT = caps.get(1748);
-        glGetFramebufferAttachmentParameterivEXT = caps.get(1749);
-        glGenerateMipmapEXT = caps.get(1750);
-        glProgramParameteriEXT = caps.get(1751);
-        glFramebufferTextureEXT = caps.get(1752);
-        glFramebufferTextureLayerEXT = caps.get(1753);
-        glFramebufferTextureFaceEXT = caps.get(1754);
-        glProgramEnvParameters4fvEXT = caps.get(1755);
-        glProgramLocalParameters4fvEXT = caps.get(1756);
-        glVertexAttribI1iEXT = caps.get(1757);
-        glVertexAttribI2iEXT = caps.get(1758);
-        glVertexAttribI3iEXT = caps.get(1759);
-        glVertexAttribI4iEXT = caps.get(1760);
-        glVertexAttribI1uiEXT = caps.get(1761);
-        glVertexAttribI2uiEXT = caps.get(1762);
-        glVertexAttribI3uiEXT = caps.get(1763);
-        glVertexAttribI4uiEXT = caps.get(1764);
-        glVertexAttribI1ivEXT = caps.get(1765);
-        glVertexAttribI2ivEXT = caps.get(1766);
-        glVertexAttribI3ivEXT = caps.get(1767);
-        glVertexAttribI4ivEXT = caps.get(1768);
-        glVertexAttribI1uivEXT = caps.get(1769);
-        glVertexAttribI2uivEXT = caps.get(1770);
-        glVertexAttribI3uivEXT = caps.get(1771);
-        glVertexAttribI4uivEXT = caps.get(1772);
-        glVertexAttribI4bvEXT = caps.get(1773);
-        glVertexAttribI4svEXT = caps.get(1774);
-        glVertexAttribI4ubvEXT = caps.get(1775);
-        glVertexAttribI4usvEXT = caps.get(1776);
-        glVertexAttribIPointerEXT = caps.get(1777);
-        glGetVertexAttribIivEXT = caps.get(1778);
-        glGetVertexAttribIuivEXT = caps.get(1779);
-        glGetUniformuivEXT = caps.get(1780);
-        glBindFragDataLocationEXT = caps.get(1781);
-        glGetFragDataLocationEXT = caps.get(1782);
-        glUniform1uiEXT = caps.get(1783);
-        glUniform2uiEXT = caps.get(1784);
-        glUniform3uiEXT = caps.get(1785);
-        glUniform4uiEXT = caps.get(1786);
-        glUniform1uivEXT = caps.get(1787);
-        glUniform2uivEXT = caps.get(1788);
-        glUniform3uivEXT = caps.get(1789);
-        glUniform4uivEXT = caps.get(1790);
-        glGetUnsignedBytevEXT = caps.get(1791);
-        glGetUnsignedBytei_vEXT = caps.get(1792);
-        glDeleteMemoryObjectsEXT = caps.get(1793);
-        glIsMemoryObjectEXT = caps.get(1794);
-        glCreateMemoryObjectsEXT = caps.get(1795);
-        glMemoryObjectParameterivEXT = caps.get(1796);
-        glGetMemoryObjectParameterivEXT = caps.get(1797);
-        glTexStorageMem2DEXT = caps.get(1798);
-        glTexStorageMem2DMultisampleEXT = caps.get(1799);
-        glTexStorageMem3DEXT = caps.get(1800);
-        glTexStorageMem3DMultisampleEXT = caps.get(1801);
-        glBufferStorageMemEXT = caps.get(1802);
-        glTextureStorageMem2DEXT = caps.get(1803);
-        glTextureStorageMem2DMultisampleEXT = caps.get(1804);
-        glTextureStorageMem3DEXT = caps.get(1805);
-        glTextureStorageMem3DMultisampleEXT = caps.get(1806);
-        glNamedBufferStorageMemEXT = caps.get(1807);
-        glTexStorageMem1DEXT = caps.get(1808);
-        glTextureStorageMem1DEXT = caps.get(1809);
-        glImportMemoryFdEXT = caps.get(1810);
-        glImportMemoryWin32HandleEXT = caps.get(1811);
-        glImportMemoryWin32NameEXT = caps.get(1812);
-        glPointParameterfEXT = caps.get(1813);
-        glPointParameterfvEXT = caps.get(1814);
-        glPolygonOffsetClampEXT = caps.get(1815);
-        glProvokingVertexEXT = caps.get(1816);
-        glRasterSamplesEXT = caps.get(1817);
-        glSecondaryColor3bEXT = caps.get(1818);
-        glSecondaryColor3sEXT = caps.get(1819);
-        glSecondaryColor3iEXT = caps.get(1820);
-        glSecondaryColor3fEXT = caps.get(1821);
-        glSecondaryColor3dEXT = caps.get(1822);
-        glSecondaryColor3ubEXT = caps.get(1823);
-        glSecondaryColor3usEXT = caps.get(1824);
-        glSecondaryColor3uiEXT = caps.get(1825);
-        glSecondaryColor3bvEXT = caps.get(1826);
-        glSecondaryColor3svEXT = caps.get(1827);
-        glSecondaryColor3ivEXT = caps.get(1828);
-        glSecondaryColor3fvEXT = caps.get(1829);
-        glSecondaryColor3dvEXT = caps.get(1830);
-        glSecondaryColor3ubvEXT = caps.get(1831);
-        glSecondaryColor3usvEXT = caps.get(1832);
-        glSecondaryColor3uivEXT = caps.get(1833);
-        glSecondaryColorPointerEXT = caps.get(1834);
-        glGenSemaphoresEXT = caps.get(1835);
-        glDeleteSemaphoresEXT = caps.get(1836);
-        glIsSemaphoreEXT = caps.get(1837);
-        glSemaphoreParameterui64vEXT = caps.get(1838);
-        glGetSemaphoreParameterui64vEXT = caps.get(1839);
-        glWaitSemaphoreEXT = caps.get(1840);
-        glSignalSemaphoreEXT = caps.get(1841);
-        glImportSemaphoreFdEXT = caps.get(1842);
-        glImportSemaphoreWin32HandleEXT = caps.get(1843);
-        glImportSemaphoreWin32NameEXT = caps.get(1844);
-        glUseShaderProgramEXT = caps.get(1845);
-        glActiveProgramEXT = caps.get(1846);
-        glCreateShaderProgramEXT = caps.get(1847);
-        glFramebufferFetchBarrierEXT = caps.get(1848);
-        glBindImageTextureEXT = caps.get(1849);
-        glMemoryBarrierEXT = caps.get(1850);
-        glStencilClearTagEXT = caps.get(1851);
-        glActiveStencilFaceEXT = caps.get(1852);
-        glTexBufferEXT = caps.get(1853);
-        glClearColorIiEXT = caps.get(1854);
-        glClearColorIuiEXT = caps.get(1855);
-        glTexParameterIivEXT = caps.get(1856);
-        glTexParameterIuivEXT = caps.get(1857);
-        glGetTexParameterIivEXT = caps.get(1858);
-        glGetTexParameterIuivEXT = caps.get(1859);
-        glTexStorage1DEXT = caps.get(1860);
-        glTexStorage2DEXT = caps.get(1861);
-        glTexStorage3DEXT = caps.get(1862);
-        glGetQueryObjecti64vEXT = caps.get(1863);
-        glGetQueryObjectui64vEXT = caps.get(1864);
-        glBindBufferRangeEXT = caps.get(1865);
-        glBindBufferOffsetEXT = caps.get(1866);
-        glBindBufferBaseEXT = caps.get(1867);
-        glBeginTransformFeedbackEXT = caps.get(1868);
-        glEndTransformFeedbackEXT = caps.get(1869);
-        glTransformFeedbackVaryingsEXT = caps.get(1870);
-        glGetTransformFeedbackVaryingEXT = caps.get(1871);
-        glVertexAttribL1dEXT = caps.get(1872);
-        glVertexAttribL2dEXT = caps.get(1873);
-        glVertexAttribL3dEXT = caps.get(1874);
-        glVertexAttribL4dEXT = caps.get(1875);
-        glVertexAttribL1dvEXT = caps.get(1876);
-        glVertexAttribL2dvEXT = caps.get(1877);
-        glVertexAttribL3dvEXT = caps.get(1878);
-        glVertexAttribL4dvEXT = caps.get(1879);
-        glVertexAttribLPointerEXT = caps.get(1880);
-        glGetVertexAttribLdvEXT = caps.get(1881);
-        glAcquireKeyedMutexWin32EXT = caps.get(1882);
-        glReleaseKeyedMutexWin32EXT = caps.get(1883);
-        glWindowRectanglesEXT = caps.get(1884);
-        glImportSyncEXT = caps.get(1885);
-        glFrameTerminatorGREMEDY = caps.get(1886);
-        glStringMarkerGREMEDY = caps.get(1887);
-        glApplyFramebufferAttachmentCMAAINTEL = caps.get(1888);
-        glSyncTextureINTEL = caps.get(1889);
-        glUnmapTexture2DINTEL = caps.get(1890);
-        glMapTexture2DINTEL = caps.get(1891);
-        glBeginPerfQueryINTEL = caps.get(1892);
-        glCreatePerfQueryINTEL = caps.get(1893);
-        glDeletePerfQueryINTEL = caps.get(1894);
-        glEndPerfQueryINTEL = caps.get(1895);
-        glGetFirstPerfQueryIdINTEL = caps.get(1896);
-        glGetNextPerfQueryIdINTEL = caps.get(1897);
-        glGetPerfCounterInfoINTEL = caps.get(1898);
-        glGetPerfQueryDataINTEL = caps.get(1899);
-        glGetPerfQueryIdByNameINTEL = caps.get(1900);
-        glGetPerfQueryInfoINTEL = caps.get(1901);
-        glBlendBarrierKHR = caps.get(1902);
-        glMaxShaderCompilerThreadsKHR = caps.get(1903);
-        glFramebufferParameteriMESA = caps.get(1904);
-        glGetFramebufferParameterivMESA = caps.get(1905);
-        glAlphaToCoverageDitherControlNV = caps.get(1906);
-        glMultiDrawArraysIndirectBindlessNV = caps.get(1907);
-        glMultiDrawElementsIndirectBindlessNV = caps.get(1908);
-        glMultiDrawArraysIndirectBindlessCountNV = caps.get(1909);
-        glMultiDrawElementsIndirectBindlessCountNV = caps.get(1910);
-        glGetTextureHandleNV = caps.get(1911);
-        glGetTextureSamplerHandleNV = caps.get(1912);
-        glMakeTextureHandleResidentNV = caps.get(1913);
-        glMakeTextureHandleNonResidentNV = caps.get(1914);
-        glGetImageHandleNV = caps.get(1915);
-        glMakeImageHandleResidentNV = caps.get(1916);
-        glMakeImageHandleNonResidentNV = caps.get(1917);
-        glUniformHandleui64NV = caps.get(1918);
-        glUniformHandleui64vNV = caps.get(1919);
-        glProgramUniformHandleui64NV = caps.get(1920);
-        glProgramUniformHandleui64vNV = caps.get(1921);
-        glIsTextureHandleResidentNV = caps.get(1922);
-        glIsImageHandleResidentNV = caps.get(1923);
-        glBlendParameteriNV = caps.get(1924);
-        glBlendBarrierNV = caps.get(1925);
-        glViewportPositionWScaleNV = caps.get(1926);
-        glCreateStatesNV = caps.get(1927);
-        glDeleteStatesNV = caps.get(1928);
-        glIsStateNV = caps.get(1929);
-        glStateCaptureNV = caps.get(1930);
-        glGetCommandHeaderNV = caps.get(1931);
-        glGetStageIndexNV = caps.get(1932);
-        glDrawCommandsNV = caps.get(1933);
-        glDrawCommandsAddressNV = caps.get(1934);
-        glDrawCommandsStatesNV = caps.get(1935);
-        glDrawCommandsStatesAddressNV = caps.get(1936);
-        glCreateCommandListsNV = caps.get(1937);
-        glDeleteCommandListsNV = caps.get(1938);
-        glIsCommandListNV = caps.get(1939);
-        glListDrawCommandsStatesClientNV = caps.get(1940);
-        glCommandListSegmentsNV = caps.get(1941);
-        glCompileCommandListNV = caps.get(1942);
-        glCallCommandListNV = caps.get(1943);
-        glBeginConditionalRenderNV = caps.get(1944);
-        glEndConditionalRenderNV = caps.get(1945);
-        glSubpixelPrecisionBiasNV = caps.get(1946);
-        glConservativeRasterParameterfNV = caps.get(1947);
-        glConservativeRasterParameteriNV = caps.get(1948);
-        glCopyImageSubDataNV = caps.get(1949);
-        glDepthRangedNV = caps.get(1950);
-        glClearDepthdNV = caps.get(1951);
-        glDepthBoundsdNV = caps.get(1952);
-        glDrawTextureNV = caps.get(1953);
-        glDrawVkImageNV = caps.get(1954);
-        glGetVkProcAddrNV = caps.get(1955);
-        glWaitVkSemaphoreNV = caps.get(1956);
-        glSignalVkSemaphoreNV = caps.get(1957);
-        glSignalVkFenceNV = caps.get(1958);
-        glGetMultisamplefvNV = caps.get(1959);
-        glSampleMaskIndexedNV = caps.get(1960);
-        glTexRenderbufferNV = caps.get(1961);
-        glDeleteFencesNV = caps.get(1962);
-        glGenFencesNV = caps.get(1963);
-        glIsFenceNV = caps.get(1964);
-        glTestFenceNV = caps.get(1965);
-        glGetFenceivNV = caps.get(1966);
-        glFinishFenceNV = caps.get(1967);
-        glSetFenceNV = caps.get(1968);
-        glFragmentCoverageColorNV = caps.get(1969);
-        glCoverageModulationTableNV = caps.get(1970);
-        glGetCoverageModulationTableNV = caps.get(1971);
-        glCoverageModulationNV = caps.get(1972);
-        glRenderbufferStorageMultisampleCoverageNV = caps.get(1973);
-        glRenderGpuMaskNV = caps.get(1974);
-        glMulticastBufferSubDataNV = caps.get(1975);
-        glMulticastCopyBufferSubDataNV = caps.get(1976);
-        glMulticastCopyImageSubDataNV = caps.get(1977);
-        glMulticastBlitFramebufferNV = caps.get(1978);
-        glMulticastFramebufferSampleLocationsfvNV = caps.get(1979);
-        glMulticastBarrierNV = caps.get(1980);
-        glMulticastWaitSyncNV = caps.get(1981);
-        glMulticastGetQueryObjectivNV = caps.get(1982);
-        glMulticastGetQueryObjectuivNV = caps.get(1983);
-        glMulticastGetQueryObjecti64vNV = caps.get(1984);
-        glMulticastGetQueryObjectui64vNV = caps.get(1985);
-        glVertex2hNV = caps.get(1986);
-        glVertex2hvNV = caps.get(1987);
-        glVertex3hNV = caps.get(1988);
-        glVertex3hvNV = caps.get(1989);
-        glVertex4hNV = caps.get(1990);
-        glVertex4hvNV = caps.get(1991);
-        glNormal3hNV = caps.get(1992);
-        glNormal3hvNV = caps.get(1993);
-        glColor3hNV = caps.get(1994);
-        glColor3hvNV = caps.get(1995);
-        glColor4hNV = caps.get(1996);
-        glColor4hvNV = caps.get(1997);
-        glTexCoord1hNV = caps.get(1998);
-        glTexCoord1hvNV = caps.get(1999);
-        glTexCoord2hNV = caps.get(2000);
-        glTexCoord2hvNV = caps.get(2001);
-        glTexCoord3hNV = caps.get(2002);
-        glTexCoord3hvNV = caps.get(2003);
-        glTexCoord4hNV = caps.get(2004);
-        glTexCoord4hvNV = caps.get(2005);
-        glMultiTexCoord1hNV = caps.get(2006);
-        glMultiTexCoord1hvNV = caps.get(2007);
-        glMultiTexCoord2hNV = caps.get(2008);
-        glMultiTexCoord2hvNV = caps.get(2009);
-        glMultiTexCoord3hNV = caps.get(2010);
-        glMultiTexCoord3hvNV = caps.get(2011);
-        glMultiTexCoord4hNV = caps.get(2012);
-        glMultiTexCoord4hvNV = caps.get(2013);
-        glFogCoordhNV = caps.get(2014);
-        glFogCoordhvNV = caps.get(2015);
-        glSecondaryColor3hNV = caps.get(2016);
-        glSecondaryColor3hvNV = caps.get(2017);
-        glVertexWeighthNV = caps.get(2018);
-        glVertexWeighthvNV = caps.get(2019);
-        glVertexAttrib1hNV = caps.get(2020);
-        glVertexAttrib1hvNV = caps.get(2021);
-        glVertexAttrib2hNV = caps.get(2022);
-        glVertexAttrib2hvNV = caps.get(2023);
-        glVertexAttrib3hNV = caps.get(2024);
-        glVertexAttrib3hvNV = caps.get(2025);
-        glVertexAttrib4hNV = caps.get(2026);
-        glVertexAttrib4hvNV = caps.get(2027);
-        glVertexAttribs1hvNV = caps.get(2028);
-        glVertexAttribs2hvNV = caps.get(2029);
-        glVertexAttribs3hvNV = caps.get(2030);
-        glVertexAttribs4hvNV = caps.get(2031);
-        glGetInternalformatSampleivNV = caps.get(2032);
-        glGetMemoryObjectDetachedResourcesuivNV = caps.get(2033);
-        glResetMemoryObjectParameterNV = caps.get(2034);
-        glTexAttachMemoryNV = caps.get(2035);
-        glBufferAttachMemoryNV = caps.get(2036);
-        glTextureAttachMemoryNV = caps.get(2037);
-        glNamedBufferAttachMemoryNV = caps.get(2038);
-        glBufferPageCommitmentMemNV = caps.get(2039);
-        glNamedBufferPageCommitmentMemNV = caps.get(2040);
-        glTexPageCommitmentMemNV = caps.get(2041);
-        glTexturePageCommitmentMemNV = caps.get(2042);
-        glDrawMeshTasksNV = caps.get(2043);
-        glDrawMeshTasksIndirectNV = caps.get(2044);
-        glMultiDrawMeshTasksIndirectNV = caps.get(2045);
-        glMultiDrawMeshTasksIndirectCountNV = caps.get(2046);
-        glPathCommandsNV = caps.get(2047);
-        glPathCoordsNV = caps.get(2048);
-        glPathSubCommandsNV = caps.get(2049);
-        glPathSubCoordsNV = caps.get(2050);
-        glPathStringNV = caps.get(2051);
-        glPathGlyphsNV = caps.get(2052);
-        glPathGlyphRangeNV = caps.get(2053);
-        glPathGlyphIndexArrayNV = caps.get(2054);
-        glPathMemoryGlyphIndexArrayNV = caps.get(2055);
-        glCopyPathNV = caps.get(2056);
-        glWeightPathsNV = caps.get(2057);
-        glInterpolatePathsNV = caps.get(2058);
-        glTransformPathNV = caps.get(2059);
-        glPathParameterivNV = caps.get(2060);
-        glPathParameteriNV = caps.get(2061);
-        glPathParameterfvNV = caps.get(2062);
-        glPathParameterfNV = caps.get(2063);
-        glPathDashArrayNV = caps.get(2064);
-        glGenPathsNV = caps.get(2065);
-        glDeletePathsNV = caps.get(2066);
-        glIsPathNV = caps.get(2067);
-        glPathStencilFuncNV = caps.get(2068);
-        glPathStencilDepthOffsetNV = caps.get(2069);
-        glStencilFillPathNV = caps.get(2070);
-        glStencilStrokePathNV = caps.get(2071);
-        glStencilFillPathInstancedNV = caps.get(2072);
-        glStencilStrokePathInstancedNV = caps.get(2073);
-        glPathCoverDepthFuncNV = caps.get(2074);
-        glPathColorGenNV = caps.get(2075);
-        glPathTexGenNV = caps.get(2076);
-        glPathFogGenNV = caps.get(2077);
-        glCoverFillPathNV = caps.get(2078);
-        glCoverStrokePathNV = caps.get(2079);
-        glCoverFillPathInstancedNV = caps.get(2080);
-        glCoverStrokePathInstancedNV = caps.get(2081);
-        glStencilThenCoverFillPathNV = caps.get(2082);
-        glStencilThenCoverStrokePathNV = caps.get(2083);
-        glStencilThenCoverFillPathInstancedNV = caps.get(2084);
-        glStencilThenCoverStrokePathInstancedNV = caps.get(2085);
-        glPathGlyphIndexRangeNV = caps.get(2086);
-        glProgramPathFragmentInputGenNV = caps.get(2087);
-        glGetPathParameterivNV = caps.get(2088);
-        glGetPathParameterfvNV = caps.get(2089);
-        glGetPathCommandsNV = caps.get(2090);
-        glGetPathCoordsNV = caps.get(2091);
-        glGetPathDashArrayNV = caps.get(2092);
-        glGetPathMetricsNV = caps.get(2093);
-        glGetPathMetricRangeNV = caps.get(2094);
-        glGetPathSpacingNV = caps.get(2095);
-        glGetPathColorGenivNV = caps.get(2096);
-        glGetPathColorGenfvNV = caps.get(2097);
-        glGetPathTexGenivNV = caps.get(2098);
-        glGetPathTexGenfvNV = caps.get(2099);
-        glIsPointInFillPathNV = caps.get(2100);
-        glIsPointInStrokePathNV = caps.get(2101);
-        glGetPathLengthNV = caps.get(2102);
-        glPointAlongPathNV = caps.get(2103);
-        glMatrixLoad3x2fNV = caps.get(2104);
-        glMatrixLoad3x3fNV = caps.get(2105);
-        glMatrixLoadTranspose3x3fNV = caps.get(2106);
-        glMatrixMult3x2fNV = caps.get(2107);
-        glMatrixMult3x3fNV = caps.get(2108);
-        glMatrixMultTranspose3x3fNV = caps.get(2109);
-        glGetProgramResourcefvNV = caps.get(2110);
-        glPixelDataRangeNV = caps.get(2111);
-        glFlushPixelDataRangeNV = caps.get(2112);
-        glPointParameteriNV = caps.get(2113);
-        glPointParameterivNV = caps.get(2114);
-        glPrimitiveRestartNV = caps.get(2115);
-        glPrimitiveRestartIndexNV = caps.get(2116);
-        glQueryResourceNV = caps.get(2117);
-        glGenQueryResourceTagNV = caps.get(2118);
-        glDeleteQueryResourceTagNV = caps.get(2119);
-        glQueryResourceTagNV = caps.get(2120);
-        glFramebufferSampleLocationsfvNV = caps.get(2121);
-        glNamedFramebufferSampleLocationsfvNV = caps.get(2122);
-        glResolveDepthValuesNV = caps.get(2123);
-        glScissorExclusiveArrayvNV = caps.get(2124);
-        glScissorExclusiveNV = caps.get(2125);
-        glMakeBufferResidentNV = caps.get(2126);
-        glMakeBufferNonResidentNV = caps.get(2127);
-        glIsBufferResidentNV = caps.get(2128);
-        glMakeNamedBufferResidentNV = caps.get(2129);
-        glMakeNamedBufferNonResidentNV = caps.get(2130);
-        glIsNamedBufferResidentNV = caps.get(2131);
-        glGetBufferParameterui64vNV = caps.get(2132);
-        glGetNamedBufferParameterui64vNV = caps.get(2133);
-        glGetIntegerui64vNV = caps.get(2134);
-        glUniformui64NV = caps.get(2135);
-        glUniformui64vNV = caps.get(2136);
-        glProgramUniformui64NV = caps.get(2137);
-        glProgramUniformui64vNV = caps.get(2138);
-        glBindShadingRateImageNV = caps.get(2139);
-        glShadingRateImagePaletteNV = caps.get(2140);
-        glGetShadingRateImagePaletteNV = caps.get(2141);
-        glShadingRateImageBarrierNV = caps.get(2142);
-        glShadingRateSampleOrderNV = caps.get(2143);
-        glShadingRateSampleOrderCustomNV = caps.get(2144);
-        glGetShadingRateSampleLocationivNV = caps.get(2145);
-        glTextureBarrierNV = caps.get(2146);
-        glTexImage2DMultisampleCoverageNV = caps.get(2147);
-        glTexImage3DMultisampleCoverageNV = caps.get(2148);
-        glTextureImage2DMultisampleNV = caps.get(2149);
-        glTextureImage3DMultisampleNV = caps.get(2150);
-        glTextureImage2DMultisampleCoverageNV = caps.get(2151);
-        glTextureImage3DMultisampleCoverageNV = caps.get(2152);
-        glCreateSemaphoresNV = caps.get(2153);
-        glSemaphoreParameterivNV = caps.get(2154);
-        glGetSemaphoreParameterivNV = caps.get(2155);
-        glBeginTransformFeedbackNV = caps.get(2156);
-        glEndTransformFeedbackNV = caps.get(2157);
-        glTransformFeedbackAttribsNV = caps.get(2158);
-        glBindBufferRangeNV = caps.get(2159);
-        glBindBufferOffsetNV = caps.get(2160);
-        glBindBufferBaseNV = caps.get(2161);
-        glTransformFeedbackVaryingsNV = caps.get(2162);
-        glActiveVaryingNV = caps.get(2163);
-        glGetVaryingLocationNV = caps.get(2164);
-        glGetActiveVaryingNV = caps.get(2165);
-        glGetTransformFeedbackVaryingNV = caps.get(2166);
-        glTransformFeedbackStreamAttribsNV = caps.get(2167);
-        glBindTransformFeedbackNV = caps.get(2168);
-        glDeleteTransformFeedbacksNV = caps.get(2169);
-        glGenTransformFeedbacksNV = caps.get(2170);
-        glIsTransformFeedbackNV = caps.get(2171);
-        glPauseTransformFeedbackNV = caps.get(2172);
-        glResumeTransformFeedbackNV = caps.get(2173);
-        glDrawTransformFeedbackNV = caps.get(2174);
-        glVertexArrayRangeNV = caps.get(2175);
-        glFlushVertexArrayRangeNV = caps.get(2176);
-        glVertexAttribL1i64NV = caps.get(2177);
-        glVertexAttribL2i64NV = caps.get(2178);
-        glVertexAttribL3i64NV = caps.get(2179);
-        glVertexAttribL4i64NV = caps.get(2180);
-        glVertexAttribL1i64vNV = caps.get(2181);
-        glVertexAttribL2i64vNV = caps.get(2182);
-        glVertexAttribL3i64vNV = caps.get(2183);
-        glVertexAttribL4i64vNV = caps.get(2184);
-        glVertexAttribL1ui64NV = caps.get(2185);
-        glVertexAttribL2ui64NV = caps.get(2186);
-        glVertexAttribL3ui64NV = caps.get(2187);
-        glVertexAttribL4ui64NV = caps.get(2188);
-        glVertexAttribL1ui64vNV = caps.get(2189);
-        glVertexAttribL2ui64vNV = caps.get(2190);
-        glVertexAttribL3ui64vNV = caps.get(2191);
-        glVertexAttribL4ui64vNV = caps.get(2192);
-        glGetVertexAttribLi64vNV = caps.get(2193);
-        glGetVertexAttribLui64vNV = caps.get(2194);
-        glVertexAttribLFormatNV = caps.get(2195);
-        glBufferAddressRangeNV = caps.get(2196);
-        glVertexFormatNV = caps.get(2197);
-        glNormalFormatNV = caps.get(2198);
-        glColorFormatNV = caps.get(2199);
-        glIndexFormatNV = caps.get(2200);
-        glTexCoordFormatNV = caps.get(2201);
-        glEdgeFlagFormatNV = caps.get(2202);
-        glSecondaryColorFormatNV = caps.get(2203);
-        glFogCoordFormatNV = caps.get(2204);
-        glVertexAttribFormatNV = caps.get(2205);
-        glVertexAttribIFormatNV = caps.get(2206);
-        glGetIntegerui64i_vNV = caps.get(2207);
-        glViewportSwizzleNV = caps.get(2208);
-        glBeginConditionalRenderNVX = caps.get(2209);
-        glEndConditionalRenderNVX = caps.get(2210);
-        glAsyncCopyImageSubDataNVX = caps.get(2211);
-        glAsyncCopyBufferSubDataNVX = caps.get(2212);
-        glUploadGpuMaskNVX = caps.get(2213);
-        glMulticastViewportArrayvNVX = caps.get(2214);
-        glMulticastScissorArrayvNVX = caps.get(2215);
-        glMulticastViewportPositionWScaleNVX = caps.get(2216);
-        glCreateProgressFenceNVX = caps.get(2217);
-        glSignalSemaphoreui64NVX = caps.get(2218);
-        glWaitSemaphoreui64NVX = caps.get(2219);
-        glClientWaitSemaphoreui64NVX = caps.get(2220);
-        glFramebufferTextureMultiviewOVR = caps.get(2221);
-        glNamedFramebufferTextureMultiviewOVR = caps.get(2222);
+        glBlitFramebufferLayersEXT = caps.get(1733);
+        glBlitFramebufferLayerEXT = caps.get(1734);
+        glRenderbufferStorageMultisampleEXT = caps.get(1735);
+        glIsRenderbufferEXT = caps.get(1736);
+        glBindRenderbufferEXT = caps.get(1737);
+        glDeleteRenderbuffersEXT = caps.get(1738);
+        glGenRenderbuffersEXT = caps.get(1739);
+        glRenderbufferStorageEXT = caps.get(1740);
+        glGetRenderbufferParameterivEXT = caps.get(1741);
+        glIsFramebufferEXT = caps.get(1742);
+        glBindFramebufferEXT = caps.get(1743);
+        glDeleteFramebuffersEXT = caps.get(1744);
+        glGenFramebuffersEXT = caps.get(1745);
+        glCheckFramebufferStatusEXT = caps.get(1746);
+        glFramebufferTexture1DEXT = caps.get(1747);
+        glFramebufferTexture2DEXT = caps.get(1748);
+        glFramebufferTexture3DEXT = caps.get(1749);
+        glFramebufferRenderbufferEXT = caps.get(1750);
+        glGetFramebufferAttachmentParameterivEXT = caps.get(1751);
+        glGenerateMipmapEXT = caps.get(1752);
+        glProgramParameteriEXT = caps.get(1753);
+        glFramebufferTextureEXT = caps.get(1754);
+        glFramebufferTextureLayerEXT = caps.get(1755);
+        glFramebufferTextureFaceEXT = caps.get(1756);
+        glProgramEnvParameters4fvEXT = caps.get(1757);
+        glProgramLocalParameters4fvEXT = caps.get(1758);
+        glVertexAttribI1iEXT = caps.get(1759);
+        glVertexAttribI2iEXT = caps.get(1760);
+        glVertexAttribI3iEXT = caps.get(1761);
+        glVertexAttribI4iEXT = caps.get(1762);
+        glVertexAttribI1uiEXT = caps.get(1763);
+        glVertexAttribI2uiEXT = caps.get(1764);
+        glVertexAttribI3uiEXT = caps.get(1765);
+        glVertexAttribI4uiEXT = caps.get(1766);
+        glVertexAttribI1ivEXT = caps.get(1767);
+        glVertexAttribI2ivEXT = caps.get(1768);
+        glVertexAttribI3ivEXT = caps.get(1769);
+        glVertexAttribI4ivEXT = caps.get(1770);
+        glVertexAttribI1uivEXT = caps.get(1771);
+        glVertexAttribI2uivEXT = caps.get(1772);
+        glVertexAttribI3uivEXT = caps.get(1773);
+        glVertexAttribI4uivEXT = caps.get(1774);
+        glVertexAttribI4bvEXT = caps.get(1775);
+        glVertexAttribI4svEXT = caps.get(1776);
+        glVertexAttribI4ubvEXT = caps.get(1777);
+        glVertexAttribI4usvEXT = caps.get(1778);
+        glVertexAttribIPointerEXT = caps.get(1779);
+        glGetVertexAttribIivEXT = caps.get(1780);
+        glGetVertexAttribIuivEXT = caps.get(1781);
+        glGetUniformuivEXT = caps.get(1782);
+        glBindFragDataLocationEXT = caps.get(1783);
+        glGetFragDataLocationEXT = caps.get(1784);
+        glUniform1uiEXT = caps.get(1785);
+        glUniform2uiEXT = caps.get(1786);
+        glUniform3uiEXT = caps.get(1787);
+        glUniform4uiEXT = caps.get(1788);
+        glUniform1uivEXT = caps.get(1789);
+        glUniform2uivEXT = caps.get(1790);
+        glUniform3uivEXT = caps.get(1791);
+        glUniform4uivEXT = caps.get(1792);
+        glGetUnsignedBytevEXT = caps.get(1793);
+        glGetUnsignedBytei_vEXT = caps.get(1794);
+        glDeleteMemoryObjectsEXT = caps.get(1795);
+        glIsMemoryObjectEXT = caps.get(1796);
+        glCreateMemoryObjectsEXT = caps.get(1797);
+        glMemoryObjectParameterivEXT = caps.get(1798);
+        glGetMemoryObjectParameterivEXT = caps.get(1799);
+        glTexStorageMem2DEXT = caps.get(1800);
+        glTexStorageMem2DMultisampleEXT = caps.get(1801);
+        glTexStorageMem3DEXT = caps.get(1802);
+        glTexStorageMem3DMultisampleEXT = caps.get(1803);
+        glBufferStorageMemEXT = caps.get(1804);
+        glTextureStorageMem2DEXT = caps.get(1805);
+        glTextureStorageMem2DMultisampleEXT = caps.get(1806);
+        glTextureStorageMem3DEXT = caps.get(1807);
+        glTextureStorageMem3DMultisampleEXT = caps.get(1808);
+        glNamedBufferStorageMemEXT = caps.get(1809);
+        glTexStorageMem1DEXT = caps.get(1810);
+        glTextureStorageMem1DEXT = caps.get(1811);
+        glImportMemoryFdEXT = caps.get(1812);
+        glImportMemoryWin32HandleEXT = caps.get(1813);
+        glImportMemoryWin32NameEXT = caps.get(1814);
+        glPointParameterfEXT = caps.get(1815);
+        glPointParameterfvEXT = caps.get(1816);
+        glPolygonOffsetClampEXT = caps.get(1817);
+        glProvokingVertexEXT = caps.get(1818);
+        glRasterSamplesEXT = caps.get(1819);
+        glSecondaryColor3bEXT = caps.get(1820);
+        glSecondaryColor3sEXT = caps.get(1821);
+        glSecondaryColor3iEXT = caps.get(1822);
+        glSecondaryColor3fEXT = caps.get(1823);
+        glSecondaryColor3dEXT = caps.get(1824);
+        glSecondaryColor3ubEXT = caps.get(1825);
+        glSecondaryColor3usEXT = caps.get(1826);
+        glSecondaryColor3uiEXT = caps.get(1827);
+        glSecondaryColor3bvEXT = caps.get(1828);
+        glSecondaryColor3svEXT = caps.get(1829);
+        glSecondaryColor3ivEXT = caps.get(1830);
+        glSecondaryColor3fvEXT = caps.get(1831);
+        glSecondaryColor3dvEXT = caps.get(1832);
+        glSecondaryColor3ubvEXT = caps.get(1833);
+        glSecondaryColor3usvEXT = caps.get(1834);
+        glSecondaryColor3uivEXT = caps.get(1835);
+        glSecondaryColorPointerEXT = caps.get(1836);
+        glGenSemaphoresEXT = caps.get(1837);
+        glDeleteSemaphoresEXT = caps.get(1838);
+        glIsSemaphoreEXT = caps.get(1839);
+        glSemaphoreParameterui64vEXT = caps.get(1840);
+        glGetSemaphoreParameterui64vEXT = caps.get(1841);
+        glWaitSemaphoreEXT = caps.get(1842);
+        glSignalSemaphoreEXT = caps.get(1843);
+        glImportSemaphoreFdEXT = caps.get(1844);
+        glImportSemaphoreWin32HandleEXT = caps.get(1845);
+        glImportSemaphoreWin32NameEXT = caps.get(1846);
+        glUseShaderProgramEXT = caps.get(1847);
+        glActiveProgramEXT = caps.get(1848);
+        glCreateShaderProgramEXT = caps.get(1849);
+        glFramebufferFetchBarrierEXT = caps.get(1850);
+        glBindImageTextureEXT = caps.get(1851);
+        glMemoryBarrierEXT = caps.get(1852);
+        glStencilClearTagEXT = caps.get(1853);
+        glActiveStencilFaceEXT = caps.get(1854);
+        glTexBufferEXT = caps.get(1855);
+        glClearColorIiEXT = caps.get(1856);
+        glClearColorIuiEXT = caps.get(1857);
+        glTexParameterIivEXT = caps.get(1858);
+        glTexParameterIuivEXT = caps.get(1859);
+        glGetTexParameterIivEXT = caps.get(1860);
+        glGetTexParameterIuivEXT = caps.get(1861);
+        glTexStorage1DEXT = caps.get(1862);
+        glTexStorage2DEXT = caps.get(1863);
+        glTexStorage3DEXT = caps.get(1864);
+        glGetQueryObjecti64vEXT = caps.get(1865);
+        glGetQueryObjectui64vEXT = caps.get(1866);
+        glBindBufferRangeEXT = caps.get(1867);
+        glBindBufferOffsetEXT = caps.get(1868);
+        glBindBufferBaseEXT = caps.get(1869);
+        glBeginTransformFeedbackEXT = caps.get(1870);
+        glEndTransformFeedbackEXT = caps.get(1871);
+        glTransformFeedbackVaryingsEXT = caps.get(1872);
+        glGetTransformFeedbackVaryingEXT = caps.get(1873);
+        glVertexAttribL1dEXT = caps.get(1874);
+        glVertexAttribL2dEXT = caps.get(1875);
+        glVertexAttribL3dEXT = caps.get(1876);
+        glVertexAttribL4dEXT = caps.get(1877);
+        glVertexAttribL1dvEXT = caps.get(1878);
+        glVertexAttribL2dvEXT = caps.get(1879);
+        glVertexAttribL3dvEXT = caps.get(1880);
+        glVertexAttribL4dvEXT = caps.get(1881);
+        glVertexAttribLPointerEXT = caps.get(1882);
+        glGetVertexAttribLdvEXT = caps.get(1883);
+        glAcquireKeyedMutexWin32EXT = caps.get(1884);
+        glReleaseKeyedMutexWin32EXT = caps.get(1885);
+        glWindowRectanglesEXT = caps.get(1886);
+        glImportSyncEXT = caps.get(1887);
+        glFrameTerminatorGREMEDY = caps.get(1888);
+        glStringMarkerGREMEDY = caps.get(1889);
+        glApplyFramebufferAttachmentCMAAINTEL = caps.get(1890);
+        glSyncTextureINTEL = caps.get(1891);
+        glUnmapTexture2DINTEL = caps.get(1892);
+        glMapTexture2DINTEL = caps.get(1893);
+        glBeginPerfQueryINTEL = caps.get(1894);
+        glCreatePerfQueryINTEL = caps.get(1895);
+        glDeletePerfQueryINTEL = caps.get(1896);
+        glEndPerfQueryINTEL = caps.get(1897);
+        glGetFirstPerfQueryIdINTEL = caps.get(1898);
+        glGetNextPerfQueryIdINTEL = caps.get(1899);
+        glGetPerfCounterInfoINTEL = caps.get(1900);
+        glGetPerfQueryDataINTEL = caps.get(1901);
+        glGetPerfQueryIdByNameINTEL = caps.get(1902);
+        glGetPerfQueryInfoINTEL = caps.get(1903);
+        glBlendBarrierKHR = caps.get(1904);
+        glMaxShaderCompilerThreadsKHR = caps.get(1905);
+        glFramebufferParameteriMESA = caps.get(1906);
+        glGetFramebufferParameterivMESA = caps.get(1907);
+        glAlphaToCoverageDitherControlNV = caps.get(1908);
+        glMultiDrawArraysIndirectBindlessNV = caps.get(1909);
+        glMultiDrawElementsIndirectBindlessNV = caps.get(1910);
+        glMultiDrawArraysIndirectBindlessCountNV = caps.get(1911);
+        glMultiDrawElementsIndirectBindlessCountNV = caps.get(1912);
+        glGetTextureHandleNV = caps.get(1913);
+        glGetTextureSamplerHandleNV = caps.get(1914);
+        glMakeTextureHandleResidentNV = caps.get(1915);
+        glMakeTextureHandleNonResidentNV = caps.get(1916);
+        glGetImageHandleNV = caps.get(1917);
+        glMakeImageHandleResidentNV = caps.get(1918);
+        glMakeImageHandleNonResidentNV = caps.get(1919);
+        glUniformHandleui64NV = caps.get(1920);
+        glUniformHandleui64vNV = caps.get(1921);
+        glProgramUniformHandleui64NV = caps.get(1922);
+        glProgramUniformHandleui64vNV = caps.get(1923);
+        glIsTextureHandleResidentNV = caps.get(1924);
+        glIsImageHandleResidentNV = caps.get(1925);
+        glBlendParameteriNV = caps.get(1926);
+        glBlendBarrierNV = caps.get(1927);
+        glViewportPositionWScaleNV = caps.get(1928);
+        glCreateStatesNV = caps.get(1929);
+        glDeleteStatesNV = caps.get(1930);
+        glIsStateNV = caps.get(1931);
+        glStateCaptureNV = caps.get(1932);
+        glGetCommandHeaderNV = caps.get(1933);
+        glGetStageIndexNV = caps.get(1934);
+        glDrawCommandsNV = caps.get(1935);
+        glDrawCommandsAddressNV = caps.get(1936);
+        glDrawCommandsStatesNV = caps.get(1937);
+        glDrawCommandsStatesAddressNV = caps.get(1938);
+        glCreateCommandListsNV = caps.get(1939);
+        glDeleteCommandListsNV = caps.get(1940);
+        glIsCommandListNV = caps.get(1941);
+        glListDrawCommandsStatesClientNV = caps.get(1942);
+        glCommandListSegmentsNV = caps.get(1943);
+        glCompileCommandListNV = caps.get(1944);
+        glCallCommandListNV = caps.get(1945);
+        glBeginConditionalRenderNV = caps.get(1946);
+        glEndConditionalRenderNV = caps.get(1947);
+        glSubpixelPrecisionBiasNV = caps.get(1948);
+        glConservativeRasterParameterfNV = caps.get(1949);
+        glConservativeRasterParameteriNV = caps.get(1950);
+        glCopyImageSubDataNV = caps.get(1951);
+        glDepthRangedNV = caps.get(1952);
+        glClearDepthdNV = caps.get(1953);
+        glDepthBoundsdNV = caps.get(1954);
+        glDrawTextureNV = caps.get(1955);
+        glDrawVkImageNV = caps.get(1956);
+        glGetVkProcAddrNV = caps.get(1957);
+        glWaitVkSemaphoreNV = caps.get(1958);
+        glSignalVkSemaphoreNV = caps.get(1959);
+        glSignalVkFenceNV = caps.get(1960);
+        glGetMultisamplefvNV = caps.get(1961);
+        glSampleMaskIndexedNV = caps.get(1962);
+        glTexRenderbufferNV = caps.get(1963);
+        glDeleteFencesNV = caps.get(1964);
+        glGenFencesNV = caps.get(1965);
+        glIsFenceNV = caps.get(1966);
+        glTestFenceNV = caps.get(1967);
+        glGetFenceivNV = caps.get(1968);
+        glFinishFenceNV = caps.get(1969);
+        glSetFenceNV = caps.get(1970);
+        glFragmentCoverageColorNV = caps.get(1971);
+        glCoverageModulationTableNV = caps.get(1972);
+        glGetCoverageModulationTableNV = caps.get(1973);
+        glCoverageModulationNV = caps.get(1974);
+        glRenderbufferStorageMultisampleCoverageNV = caps.get(1975);
+        glRenderGpuMaskNV = caps.get(1976);
+        glMulticastBufferSubDataNV = caps.get(1977);
+        glMulticastCopyBufferSubDataNV = caps.get(1978);
+        glMulticastCopyImageSubDataNV = caps.get(1979);
+        glMulticastBlitFramebufferNV = caps.get(1980);
+        glMulticastFramebufferSampleLocationsfvNV = caps.get(1981);
+        glMulticastBarrierNV = caps.get(1982);
+        glMulticastWaitSyncNV = caps.get(1983);
+        glMulticastGetQueryObjectivNV = caps.get(1984);
+        glMulticastGetQueryObjectuivNV = caps.get(1985);
+        glMulticastGetQueryObjecti64vNV = caps.get(1986);
+        glMulticastGetQueryObjectui64vNV = caps.get(1987);
+        glVertex2hNV = caps.get(1988);
+        glVertex2hvNV = caps.get(1989);
+        glVertex3hNV = caps.get(1990);
+        glVertex3hvNV = caps.get(1991);
+        glVertex4hNV = caps.get(1992);
+        glVertex4hvNV = caps.get(1993);
+        glNormal3hNV = caps.get(1994);
+        glNormal3hvNV = caps.get(1995);
+        glColor3hNV = caps.get(1996);
+        glColor3hvNV = caps.get(1997);
+        glColor4hNV = caps.get(1998);
+        glColor4hvNV = caps.get(1999);
+        glTexCoord1hNV = caps.get(2000);
+        glTexCoord1hvNV = caps.get(2001);
+        glTexCoord2hNV = caps.get(2002);
+        glTexCoord2hvNV = caps.get(2003);
+        glTexCoord3hNV = caps.get(2004);
+        glTexCoord3hvNV = caps.get(2005);
+        glTexCoord4hNV = caps.get(2006);
+        glTexCoord4hvNV = caps.get(2007);
+        glMultiTexCoord1hNV = caps.get(2008);
+        glMultiTexCoord1hvNV = caps.get(2009);
+        glMultiTexCoord2hNV = caps.get(2010);
+        glMultiTexCoord2hvNV = caps.get(2011);
+        glMultiTexCoord3hNV = caps.get(2012);
+        glMultiTexCoord3hvNV = caps.get(2013);
+        glMultiTexCoord4hNV = caps.get(2014);
+        glMultiTexCoord4hvNV = caps.get(2015);
+        glFogCoordhNV = caps.get(2016);
+        glFogCoordhvNV = caps.get(2017);
+        glSecondaryColor3hNV = caps.get(2018);
+        glSecondaryColor3hvNV = caps.get(2019);
+        glVertexWeighthNV = caps.get(2020);
+        glVertexWeighthvNV = caps.get(2021);
+        glVertexAttrib1hNV = caps.get(2022);
+        glVertexAttrib1hvNV = caps.get(2023);
+        glVertexAttrib2hNV = caps.get(2024);
+        glVertexAttrib2hvNV = caps.get(2025);
+        glVertexAttrib3hNV = caps.get(2026);
+        glVertexAttrib3hvNV = caps.get(2027);
+        glVertexAttrib4hNV = caps.get(2028);
+        glVertexAttrib4hvNV = caps.get(2029);
+        glVertexAttribs1hvNV = caps.get(2030);
+        glVertexAttribs2hvNV = caps.get(2031);
+        glVertexAttribs3hvNV = caps.get(2032);
+        glVertexAttribs4hvNV = caps.get(2033);
+        glGetInternalformatSampleivNV = caps.get(2034);
+        glGetMemoryObjectDetachedResourcesuivNV = caps.get(2035);
+        glResetMemoryObjectParameterNV = caps.get(2036);
+        glTexAttachMemoryNV = caps.get(2037);
+        glBufferAttachMemoryNV = caps.get(2038);
+        glTextureAttachMemoryNV = caps.get(2039);
+        glNamedBufferAttachMemoryNV = caps.get(2040);
+        glBufferPageCommitmentMemNV = caps.get(2041);
+        glNamedBufferPageCommitmentMemNV = caps.get(2042);
+        glTexPageCommitmentMemNV = caps.get(2043);
+        glTexturePageCommitmentMemNV = caps.get(2044);
+        glDrawMeshTasksNV = caps.get(2045);
+        glDrawMeshTasksIndirectNV = caps.get(2046);
+        glMultiDrawMeshTasksIndirectNV = caps.get(2047);
+        glMultiDrawMeshTasksIndirectCountNV = caps.get(2048);
+        glPathCommandsNV = caps.get(2049);
+        glPathCoordsNV = caps.get(2050);
+        glPathSubCommandsNV = caps.get(2051);
+        glPathSubCoordsNV = caps.get(2052);
+        glPathStringNV = caps.get(2053);
+        glPathGlyphsNV = caps.get(2054);
+        glPathGlyphRangeNV = caps.get(2055);
+        glPathGlyphIndexArrayNV = caps.get(2056);
+        glPathMemoryGlyphIndexArrayNV = caps.get(2057);
+        glCopyPathNV = caps.get(2058);
+        glWeightPathsNV = caps.get(2059);
+        glInterpolatePathsNV = caps.get(2060);
+        glTransformPathNV = caps.get(2061);
+        glPathParameterivNV = caps.get(2062);
+        glPathParameteriNV = caps.get(2063);
+        glPathParameterfvNV = caps.get(2064);
+        glPathParameterfNV = caps.get(2065);
+        glPathDashArrayNV = caps.get(2066);
+        glGenPathsNV = caps.get(2067);
+        glDeletePathsNV = caps.get(2068);
+        glIsPathNV = caps.get(2069);
+        glPathStencilFuncNV = caps.get(2070);
+        glPathStencilDepthOffsetNV = caps.get(2071);
+        glStencilFillPathNV = caps.get(2072);
+        glStencilStrokePathNV = caps.get(2073);
+        glStencilFillPathInstancedNV = caps.get(2074);
+        glStencilStrokePathInstancedNV = caps.get(2075);
+        glPathCoverDepthFuncNV = caps.get(2076);
+        glPathColorGenNV = caps.get(2077);
+        glPathTexGenNV = caps.get(2078);
+        glPathFogGenNV = caps.get(2079);
+        glCoverFillPathNV = caps.get(2080);
+        glCoverStrokePathNV = caps.get(2081);
+        glCoverFillPathInstancedNV = caps.get(2082);
+        glCoverStrokePathInstancedNV = caps.get(2083);
+        glStencilThenCoverFillPathNV = caps.get(2084);
+        glStencilThenCoverStrokePathNV = caps.get(2085);
+        glStencilThenCoverFillPathInstancedNV = caps.get(2086);
+        glStencilThenCoverStrokePathInstancedNV = caps.get(2087);
+        glPathGlyphIndexRangeNV = caps.get(2088);
+        glProgramPathFragmentInputGenNV = caps.get(2089);
+        glGetPathParameterivNV = caps.get(2090);
+        glGetPathParameterfvNV = caps.get(2091);
+        glGetPathCommandsNV = caps.get(2092);
+        glGetPathCoordsNV = caps.get(2093);
+        glGetPathDashArrayNV = caps.get(2094);
+        glGetPathMetricsNV = caps.get(2095);
+        glGetPathMetricRangeNV = caps.get(2096);
+        glGetPathSpacingNV = caps.get(2097);
+        glGetPathColorGenivNV = caps.get(2098);
+        glGetPathColorGenfvNV = caps.get(2099);
+        glGetPathTexGenivNV = caps.get(2100);
+        glGetPathTexGenfvNV = caps.get(2101);
+        glIsPointInFillPathNV = caps.get(2102);
+        glIsPointInStrokePathNV = caps.get(2103);
+        glGetPathLengthNV = caps.get(2104);
+        glPointAlongPathNV = caps.get(2105);
+        glMatrixLoad3x2fNV = caps.get(2106);
+        glMatrixLoad3x3fNV = caps.get(2107);
+        glMatrixLoadTranspose3x3fNV = caps.get(2108);
+        glMatrixMult3x2fNV = caps.get(2109);
+        glMatrixMult3x3fNV = caps.get(2110);
+        glMatrixMultTranspose3x3fNV = caps.get(2111);
+        glGetProgramResourcefvNV = caps.get(2112);
+        glPixelDataRangeNV = caps.get(2113);
+        glFlushPixelDataRangeNV = caps.get(2114);
+        glPointParameteriNV = caps.get(2115);
+        glPointParameterivNV = caps.get(2116);
+        glPrimitiveRestartNV = caps.get(2117);
+        glPrimitiveRestartIndexNV = caps.get(2118);
+        glQueryResourceNV = caps.get(2119);
+        glGenQueryResourceTagNV = caps.get(2120);
+        glDeleteQueryResourceTagNV = caps.get(2121);
+        glQueryResourceTagNV = caps.get(2122);
+        glFramebufferSampleLocationsfvNV = caps.get(2123);
+        glNamedFramebufferSampleLocationsfvNV = caps.get(2124);
+        glResolveDepthValuesNV = caps.get(2125);
+        glScissorExclusiveArrayvNV = caps.get(2126);
+        glScissorExclusiveNV = caps.get(2127);
+        glMakeBufferResidentNV = caps.get(2128);
+        glMakeBufferNonResidentNV = caps.get(2129);
+        glIsBufferResidentNV = caps.get(2130);
+        glMakeNamedBufferResidentNV = caps.get(2131);
+        glMakeNamedBufferNonResidentNV = caps.get(2132);
+        glIsNamedBufferResidentNV = caps.get(2133);
+        glGetBufferParameterui64vNV = caps.get(2134);
+        glGetNamedBufferParameterui64vNV = caps.get(2135);
+        glGetIntegerui64vNV = caps.get(2136);
+        glUniformui64NV = caps.get(2137);
+        glUniformui64vNV = caps.get(2138);
+        glProgramUniformui64NV = caps.get(2139);
+        glProgramUniformui64vNV = caps.get(2140);
+        glBindShadingRateImageNV = caps.get(2141);
+        glShadingRateImagePaletteNV = caps.get(2142);
+        glGetShadingRateImagePaletteNV = caps.get(2143);
+        glShadingRateImageBarrierNV = caps.get(2144);
+        glShadingRateSampleOrderNV = caps.get(2145);
+        glShadingRateSampleOrderCustomNV = caps.get(2146);
+        glGetShadingRateSampleLocationivNV = caps.get(2147);
+        glTextureBarrierNV = caps.get(2148);
+        glTexImage2DMultisampleCoverageNV = caps.get(2149);
+        glTexImage3DMultisampleCoverageNV = caps.get(2150);
+        glTextureImage2DMultisampleNV = caps.get(2151);
+        glTextureImage3DMultisampleNV = caps.get(2152);
+        glTextureImage2DMultisampleCoverageNV = caps.get(2153);
+        glTextureImage3DMultisampleCoverageNV = caps.get(2154);
+        glCreateSemaphoresNV = caps.get(2155);
+        glSemaphoreParameterivNV = caps.get(2156);
+        glGetSemaphoreParameterivNV = caps.get(2157);
+        glBeginTransformFeedbackNV = caps.get(2158);
+        glEndTransformFeedbackNV = caps.get(2159);
+        glTransformFeedbackAttribsNV = caps.get(2160);
+        glBindBufferRangeNV = caps.get(2161);
+        glBindBufferOffsetNV = caps.get(2162);
+        glBindBufferBaseNV = caps.get(2163);
+        glTransformFeedbackVaryingsNV = caps.get(2164);
+        glActiveVaryingNV = caps.get(2165);
+        glGetVaryingLocationNV = caps.get(2166);
+        glGetActiveVaryingNV = caps.get(2167);
+        glGetTransformFeedbackVaryingNV = caps.get(2168);
+        glTransformFeedbackStreamAttribsNV = caps.get(2169);
+        glBindTransformFeedbackNV = caps.get(2170);
+        glDeleteTransformFeedbacksNV = caps.get(2171);
+        glGenTransformFeedbacksNV = caps.get(2172);
+        glIsTransformFeedbackNV = caps.get(2173);
+        glPauseTransformFeedbackNV = caps.get(2174);
+        glResumeTransformFeedbackNV = caps.get(2175);
+        glDrawTransformFeedbackNV = caps.get(2176);
+        glVertexArrayRangeNV = caps.get(2177);
+        glFlushVertexArrayRangeNV = caps.get(2178);
+        glVertexAttribL1i64NV = caps.get(2179);
+        glVertexAttribL2i64NV = caps.get(2180);
+        glVertexAttribL3i64NV = caps.get(2181);
+        glVertexAttribL4i64NV = caps.get(2182);
+        glVertexAttribL1i64vNV = caps.get(2183);
+        glVertexAttribL2i64vNV = caps.get(2184);
+        glVertexAttribL3i64vNV = caps.get(2185);
+        glVertexAttribL4i64vNV = caps.get(2186);
+        glVertexAttribL1ui64NV = caps.get(2187);
+        glVertexAttribL2ui64NV = caps.get(2188);
+        glVertexAttribL3ui64NV = caps.get(2189);
+        glVertexAttribL4ui64NV = caps.get(2190);
+        glVertexAttribL1ui64vNV = caps.get(2191);
+        glVertexAttribL2ui64vNV = caps.get(2192);
+        glVertexAttribL3ui64vNV = caps.get(2193);
+        glVertexAttribL4ui64vNV = caps.get(2194);
+        glGetVertexAttribLi64vNV = caps.get(2195);
+        glGetVertexAttribLui64vNV = caps.get(2196);
+        glVertexAttribLFormatNV = caps.get(2197);
+        glBufferAddressRangeNV = caps.get(2198);
+        glVertexFormatNV = caps.get(2199);
+        glNormalFormatNV = caps.get(2200);
+        glColorFormatNV = caps.get(2201);
+        glIndexFormatNV = caps.get(2202);
+        glTexCoordFormatNV = caps.get(2203);
+        glEdgeFlagFormatNV = caps.get(2204);
+        glSecondaryColorFormatNV = caps.get(2205);
+        glFogCoordFormatNV = caps.get(2206);
+        glVertexAttribFormatNV = caps.get(2207);
+        glVertexAttribIFormatNV = caps.get(2208);
+        glGetIntegerui64i_vNV = caps.get(2209);
+        glViewportSwizzleNV = caps.get(2210);
+        glBeginConditionalRenderNVX = caps.get(2211);
+        glEndConditionalRenderNVX = caps.get(2212);
+        glAsyncCopyImageSubDataNVX = caps.get(2213);
+        glAsyncCopyBufferSubDataNVX = caps.get(2214);
+        glUploadGpuMaskNVX = caps.get(2215);
+        glMulticastViewportArrayvNVX = caps.get(2216);
+        glMulticastScissorArrayvNVX = caps.get(2217);
+        glMulticastViewportPositionWScaleNVX = caps.get(2218);
+        glCreateProgressFenceNVX = caps.get(2219);
+        glSignalSemaphoreui64NVX = caps.get(2220);
+        glWaitSemaphoreui64NVX = caps.get(2221);
+        glClientWaitSemaphoreui64NVX = caps.get(2222);
+        glFramebufferTextureMultiviewOVR = caps.get(2223);
+        glNamedFramebufferTextureMultiviewOVR = caps.get(2224);
 
         addresses = ThreadLocalUtil.setupAddressBuffer(caps);
     }
@@ -7471,6 +7521,10 @@ public final class GLCapabilities {
     }
 
     private static boolean check_GL11(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
+        if (!ext.contains("OpenGL11")) {
+            return false;
+        }
+
         int flag0 = !fc || ext.contains("GL_NV_vertex_buffer_unified_memory") ? 0 : Integer.MIN_VALUE;
 
         return ((fc || checkFunctions(provider, caps, new int[] {
@@ -7514,7 +7568,7 @@ public final class GLCapabilities {
                 "glVertex2f", "glVertex2s", "glVertex2i", "glVertex2d", "glVertex2fv", "glVertex2sv", "glVertex2iv", "glVertex2dv", "glVertex3f", "glVertex3s",
                 "glVertex3i", "glVertex3d", "glVertex3fv", "glVertex3sv", "glVertex3iv", "glVertex3dv", "glVertex4f", "glVertex4s", "glVertex4i", "glVertex4d",
                 "glVertex4fv", "glVertex4sv", "glVertex4iv", "glVertex4dv", "glVertexPointer"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         0, 1, 7, 9, 12, 14, 15, 17, 51, 55, 57, 58, 59, flag0 + 60, 61, 62, 63, flag0 + 68, 83, 84, 89, 91, 92, 94, 95, 96, 97, 98, 109, 111, 117, 118, 119,
                         120, 121, 122, 137, 139, 149, 155, 190, 191, 195, 196, 197, 232, 233, 247, 250, 251, 252, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306,
                         307, 335
@@ -7527,19 +7581,25 @@ public final class GLCapabilities {
                 "glPolygonMode", "glPolygonOffset", "glReadBuffer", "glReadPixels", "glScissor", "glStencilFunc", "glStencilMask", "glStencilOp", "glTexImage1D",
                 "glTexImage2D", "glCopyTexImage1D", "glCopyTexImage2D", "glCopyTexSubImage1D", "glCopyTexSubImage2D", "glTexParameteri", "glTexParameteriv",
                 "glTexParameterf", "glTexParameterfv", "glTexSubImage1D", "glTexSubImage2D", "glViewport"
-        ) & ext.contains("OpenGL11")) || reportMissing("GL", "OpenGL11");
+        )) || reportMissing("GL", "OpenGL11");
     }
 
     private static boolean check_GL12(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
+        if (!ext.contains("OpenGL12")) {
+            return false;
+        }
 
         return (checkFunctions(provider, caps, new int[] {
                         336, 337, 338, 339
                 },
                 "glTexImage3D", "glTexSubImage3D", "glCopyTexSubImage3D", "glDrawRangeElements"
-        ) & ext.contains("OpenGL12")) || reportMissing("GL", "OpenGL12");
+        )) || reportMissing("GL", "OpenGL12");
     }
 
     private static boolean check_GL13(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
+        if (!ext.contains("OpenGL13")) {
+            return false;
+        }
 
         return ((fc || checkFunctions(provider, caps, new int[] {
                         349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377,
@@ -7552,15 +7612,18 @@ public final class GLCapabilities {
                 "glMultiTexCoord3dv", "glMultiTexCoord4f", "glMultiTexCoord4s", "glMultiTexCoord4i", "glMultiTexCoord4d", "glMultiTexCoord4fv",
                 "glMultiTexCoord4sv", "glMultiTexCoord4iv", "glMultiTexCoord4dv", "glLoadTransposeMatrixf", "glLoadTransposeMatrixd", "glMultTransposeMatrixf",
                 "glMultTransposeMatrixd"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         340, 341, 342, 343, 344, 345, 346, 347, 348
                 },
                 "glCompressedTexImage3D", "glCompressedTexImage2D", "glCompressedTexImage1D", "glCompressedTexSubImage3D", "glCompressedTexSubImage2D",
                 "glCompressedTexSubImage1D", "glGetCompressedTexImage", "glSampleCoverage", "glActiveTexture"
-        ) & ext.contains("OpenGL13")) || reportMissing("GL", "OpenGL13");
+        )) || reportMissing("GL", "OpenGL13");
     }
 
     private static boolean check_GL14(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
+        if (!ext.contains("OpenGL14")) {
+            return false;
+        }
 
         return ((fc || checkFunctions(provider, caps, new int[] {
                         388, 389, 390, 391, 392, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 417, 418, 419, 420, 421, 422, 423,
@@ -7572,15 +7635,18 @@ public final class GLCapabilities {
                 "glSecondaryColor3uiv", "glSecondaryColorPointer", "glWindowPos2i", "glWindowPos2s", "glWindowPos2f", "glWindowPos2d", "glWindowPos2iv",
                 "glWindowPos2sv", "glWindowPos2fv", "glWindowPos2dv", "glWindowPos3i", "glWindowPos3s", "glWindowPos3f", "glWindowPos3d", "glWindowPos3iv",
                 "glWindowPos3sv", "glWindowPos3fv", "glWindowPos3dv"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         386, 387, 393, 394, 395, 396, 397, 398, 416
                 },
                 "glBlendColor", "glBlendEquation", "glMultiDrawArrays", "glMultiDrawElements", "glPointParameterf", "glPointParameteri", "glPointParameterfv",
                 "glPointParameteriv", "glBlendFuncSeparate"
-        ) & ext.contains("OpenGL14")) || reportMissing("GL", "OpenGL14");
+        )) || reportMissing("GL", "OpenGL14");
     }
 
     private static boolean check_GL15(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
+        if (!ext.contains("OpenGL15")) {
+            return false;
+        }
 
         return (checkFunctions(provider, caps, new int[] {
                         433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451
@@ -7588,10 +7654,13 @@ public final class GLCapabilities {
                 "glBindBuffer", "glDeleteBuffers", "glGenBuffers", "glIsBuffer", "glBufferData", "glBufferSubData", "glGetBufferSubData", "glMapBuffer",
                 "glUnmapBuffer", "glGetBufferParameteriv", "glGetBufferPointerv", "glGenQueries", "glDeleteQueries", "glIsQuery", "glBeginQuery", "glEndQuery",
                 "glGetQueryiv", "glGetQueryObjectiv", "glGetQueryObjectuiv"
-        ) & ext.contains("OpenGL15")) || reportMissing("GL", "OpenGL15");
+        )) || reportMissing("GL", "OpenGL15");
     }
 
     private static boolean check_GL20(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
+        if (!ext.contains("OpenGL20")) {
+            return false;
+        }
 
         return (checkFunctions(provider, caps, new int[] {
                         452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480,
@@ -7613,20 +7682,22 @@ public final class GLCapabilities {
                 "glEnableVertexAttribArray", "glDisableVertexAttribArray", "glBindAttribLocation", "glGetActiveAttrib", "glGetAttribLocation",
                 "glGetVertexAttribiv", "glGetVertexAttribfv", "glGetVertexAttribdv", "glGetVertexAttribPointerv", "glDrawBuffers", "glBlendEquationSeparate",
                 "glStencilOpSeparate", "glStencilFuncSeparate", "glStencilMaskSeparate"
-        ) & ext.contains("OpenGL20")) || reportMissing("GL", "OpenGL20");
+        )) || reportMissing("GL", "OpenGL20");
     }
 
     private static boolean check_GL21(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
+        if (!ext.contains("OpenGL21")) {
+            return false;
+        }
 
         return (checkFunctions(provider, caps, new int[] {
                         545, 546, 547, 548, 549, 550
                 },
                 "glUniformMatrix2x3fv", "glUniformMatrix3x2fv", "glUniformMatrix2x4fv", "glUniformMatrix4x2fv", "glUniformMatrix3x4fv", "glUniformMatrix4x3fv"
-        ) & ext.contains("OpenGL21")) || reportMissing("GL", "OpenGL21");
+        )) || reportMissing("GL", "OpenGL21");
     }
 
     private static boolean check_GL30(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-
         return (checkFunctions(provider, caps, new int[] {
                         551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579,
                         580, 581, 582, 583, 584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608,
@@ -7646,22 +7717,20 @@ public final class GLCapabilities {
                 "glGetTexParameterIuiv", "glColorMaski", "glGetBooleani_v", "glGetIntegeri_v", "glEnablei", "glDisablei", "glIsEnabledi", "glBindBufferRange",
                 "glBindBufferBase", "glBeginTransformFeedback", "glEndTransformFeedback", "glTransformFeedbackVaryings", "glGetTransformFeedbackVarying",
                 "glBindVertexArray", "glDeleteVertexArrays", "glGenVertexArrays", "glIsVertexArray"
-        ) & ext.contains("OpenGL30")) || reportMissing("GL", "OpenGL30");
+        )) && ext.contains("OpenGL30") || reportMissing("GL", "OpenGL30");
     }
 
     private static boolean check_GL31(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-
         return (checkFunctions(provider, caps, new int[] {
                         635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646
                 },
                 "glDrawArraysInstanced", "glDrawElementsInstanced", "glCopyBufferSubData", "glPrimitiveRestartIndex", "glTexBuffer", "glGetUniformIndices",
                 "glGetActiveUniformsiv", "glGetActiveUniformName", "glGetUniformBlockIndex", "glGetActiveUniformBlockiv", "glGetActiveUniformBlockName",
                 "glUniformBlockBinding"
-        ) & ext.contains("OpenGL31")) || reportMissing("GL", "OpenGL31");
+        )) && ext.contains("OpenGL31") || reportMissing("GL", "OpenGL31");
     }
 
     private static boolean check_GL32(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-
         return (checkFunctions(provider, caps, new int[] {
                         647, 648, 649, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659, 660, 661, 662, 663, 664, 665
                 },
@@ -7669,11 +7738,10 @@ public final class GLCapabilities {
                 "glMultiDrawElementsBaseVertex", "glProvokingVertex", "glTexImage2DMultisample", "glTexImage3DMultisample", "glGetMultisamplefv", "glSampleMaski",
                 "glFramebufferTexture", "glFenceSync", "glIsSync", "glDeleteSync", "glClientWaitSync", "glWaitSync", "glGetInteger64v", "glGetInteger64i_v",
                 "glGetSynciv"
-        ) & ext.contains("OpenGL32")) || reportMissing("GL", "OpenGL32");
+        )) && ext.contains("OpenGL32") || reportMissing("GL", "OpenGL32");
     }
 
     private static boolean check_GL33(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
-
         return ((fc || checkFunctions(provider, caps, new int[] {
                         686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698, 699, 700, 701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714,
                         715
@@ -7683,7 +7751,7 @@ public final class GLCapabilities {
                 "glMultiTexCoordP2ui", "glMultiTexCoordP3ui", "glMultiTexCoordP4ui", "glMultiTexCoordP1uiv", "glMultiTexCoordP2uiv", "glMultiTexCoordP3uiv",
                 "glMultiTexCoordP4uiv", "glNormalP3ui", "glNormalP3uiv", "glColorP3ui", "glColorP4ui", "glColorP3uiv", "glColorP4uiv", "glSecondaryColorP3ui",
                 "glSecondaryColorP3uiv"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 716, 717, 718, 719, 720, 721, 722, 723
                 },
                 "glBindFragDataLocationIndexed", "glGetFragDataIndex", "glGenSamplers", "glDeleteSamplers", "glIsSampler", "glBindSampler", "glSamplerParameteri",
@@ -7691,7 +7759,7 @@ public final class GLCapabilities {
                 "glGetSamplerParameterfv", "glGetSamplerParameterIiv", "glGetSamplerParameterIuiv", "glQueryCounter", "glGetQueryObjecti64v",
                 "glGetQueryObjectui64v", "glVertexAttribDivisor", "glVertexAttribP1ui", "glVertexAttribP2ui", "glVertexAttribP3ui", "glVertexAttribP4ui",
                 "glVertexAttribP1uiv", "glVertexAttribP2uiv", "glVertexAttribP3uiv", "glVertexAttribP4uiv"
-        ) & ext.contains("OpenGL33")) || reportMissing("GL", "OpenGL33");
+        )) && ext.contains("OpenGL33") || reportMissing("GL", "OpenGL33");
     }
 
     private static boolean check_GL40(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
@@ -7803,11 +7871,11 @@ public final class GLCapabilities {
         int flag4 = provider.getFunctionAddress("glGetPixelMapuiv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag5 = provider.getFunctionAddress("glGetPixelMapusv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag6 = provider.getFunctionAddress("glGetPolygonStipple") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag7 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag8 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag9 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag10 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag11 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag7 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag8 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag9 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag10 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag11 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
                         922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950,
@@ -8452,7 +8520,7 @@ public final class GLCapabilities {
                 "glConvolutionParameteri", "glConvolutionParameteriv", "glConvolutionParameterf", "glConvolutionParameterfv", "glGetConvolutionParameteriv",
                 "glGetConvolutionParameterfv", "glHistogram", "glResetHistogram", "glGetHistogram", "glGetHistogramParameteriv", "glGetHistogramParameterfv",
                 "glMinmax", "glResetMinmax", "glGetMinmax", "glGetMinmaxParameteriv", "glGetMinmaxParameterfv"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         386, 387
                 },
                 "glBlendColor", "glBlendEquation"
@@ -8686,11 +8754,11 @@ public final class GLCapabilities {
         int flag4 = provider.getFunctionAddress("glGetPixelMapuiv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag5 = provider.getFunctionAddress("glGetPixelMapusv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag6 = provider.getFunctionAddress("glGetPolygonStipple") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag7 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag8 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag9 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag10 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag11 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag7 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag8 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag9 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag10 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag11 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
         int flag12 = ext.contains("OpenGL13") ? 0 : Integer.MIN_VALUE;
         int flag13 = ext.contains("OpenGL20") ? 0 : Integer.MIN_VALUE;
         int flag15 = ext.contains("OpenGL30") ? 0 : Integer.MIN_VALUE;
@@ -9209,7 +9277,7 @@ public final class GLCapabilities {
                 "glMultiTexCoordP2ui", "glMultiTexCoordP3ui", "glMultiTexCoordP4ui", "glMultiTexCoordP1uiv", "glMultiTexCoordP2uiv", "glMultiTexCoordP3uiv",
                 "glMultiTexCoordP4uiv", "glNormalP3ui", "glNormalP3uiv", "glColorP3ui", "glColorP4ui", "glColorP3uiv", "glColorP4uiv", "glSecondaryColorP3ui",
                 "glSecondaryColorP3uiv"
-        )) & checkFunctions(provider, caps, new int[] {
+        )) && checkFunctions(provider, caps, new int[] {
                         716, 717, 718, 719, 720, 721, 722, 723
                 },
                 "glVertexAttribP1ui", "glVertexAttribP2ui", "glVertexAttribP3ui", "glVertexAttribP4ui", "glVertexAttribP1uiv", "glVertexAttribP2uiv",
@@ -9511,13 +9579,25 @@ public final class GLCapabilities {
         )) || reportMissing("GL", "GL_EXT_framebuffer_blit");
     }
 
+    private static boolean check_EXT_framebuffer_blit_layers(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
+        if (!ext.contains("GL_EXT_framebuffer_blit_layers")) {
+            return false;
+        }
+
+        return (checkFunctions(provider, caps, new int[] {
+                        1733, 1734
+                },
+                "glBlitFramebufferLayersEXT", "glBlitFramebufferLayerEXT"
+        )) || reportMissing("GL", "GL_EXT_framebuffer_blit_layers");
+    }
+
     private static boolean check_EXT_framebuffer_multisample(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
         if (!ext.contains("GL_EXT_framebuffer_multisample")) {
             return false;
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1733
+                        1735
                 },
                 "glRenderbufferStorageMultisampleEXT"
         )) || reportMissing("GL", "GL_EXT_framebuffer_multisample");
@@ -9529,7 +9609,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1734, 1735, 1736, 1737, 1738, 1739, 1740, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749, 1750
+                        1736, 1737, 1738, 1739, 1740, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749, 1750, 1751, 1752
                 },
                 "glIsRenderbufferEXT", "glBindRenderbufferEXT", "glDeleteRenderbuffersEXT", "glGenRenderbuffersEXT", "glRenderbufferStorageEXT",
                 "glGetRenderbufferParameterivEXT", "glIsFramebufferEXT", "glBindFramebufferEXT", "glDeleteFramebuffersEXT", "glGenFramebuffersEXT",
@@ -9544,7 +9624,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1751, 1752, 1753, 1754
+                        1753, 1754, 1755, 1756
                 },
                 "glProgramParameteriEXT", "glFramebufferTextureEXT", "glFramebufferTextureLayerEXT", "glFramebufferTextureFaceEXT"
         )) || reportMissing("GL", "GL_EXT_geometry_shader4");
@@ -9556,7 +9636,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1755, 1756
+                        1757, 1758
                 },
                 "glProgramEnvParameters4fvEXT", "glProgramLocalParameters4fvEXT"
         )) || reportMissing("GL", "GL_EXT_gpu_program_parameters");
@@ -9568,8 +9648,8 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1757, 1758, 1759, 1760, 1761, 1762, 1763, 1764, 1765, 1766, 1767, 1768, 1769, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1780,
-                        1781, 1782, 1783, 1784, 1785, 1786, 1787, 1788, 1789, 1790
+                        1759, 1760, 1761, 1762, 1763, 1764, 1765, 1766, 1767, 1768, 1769, 1770, 1771, 1772, 1773, 1774, 1775, 1776, 1777, 1778, 1779, 1780, 1781, 1782,
+                        1783, 1784, 1785, 1786, 1787, 1788, 1789, 1790, 1791, 1792
                 },
                 "glVertexAttribI1iEXT", "glVertexAttribI2iEXT", "glVertexAttribI3iEXT", "glVertexAttribI4iEXT", "glVertexAttribI1uiEXT", "glVertexAttribI2uiEXT",
                 "glVertexAttribI3uiEXT", "glVertexAttribI4uiEXT", "glVertexAttribI1ivEXT", "glVertexAttribI2ivEXT", "glVertexAttribI3ivEXT",
@@ -9589,8 +9669,8 @@ public final class GLCapabilities {
         int flag0 = hasDSA(ext) ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        1791, 1792, 1793, 1794, 1795, 1796, 1797, 1798, 1799, 1800, 1801, 1802, flag0 + 1803, flag0 + 1804, flag0 + 1805, flag0 + 1806, flag0 + 1807, 1808,
-                        flag0 + 1809
+                        1793, 1794, 1795, 1796, 1797, 1798, 1799, 1800, 1801, 1802, 1803, 1804, flag0 + 1805, flag0 + 1806, flag0 + 1807, flag0 + 1808, flag0 + 1809, 1810,
+                        flag0 + 1811
                 },
                 "glGetUnsignedBytevEXT", "glGetUnsignedBytei_vEXT", "glDeleteMemoryObjectsEXT", "glIsMemoryObjectEXT", "glCreateMemoryObjectsEXT",
                 "glMemoryObjectParameterivEXT", "glGetMemoryObjectParameterivEXT", "glTexStorageMem2DEXT", "glTexStorageMem2DMultisampleEXT",
@@ -9606,7 +9686,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1810
+                        1812
                 },
                 "glImportMemoryFdEXT"
         )) || reportMissing("GL", "GL_EXT_memory_object_fd");
@@ -9618,7 +9698,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1811, 1812
+                        1813, 1814
                 },
                 "glImportMemoryWin32HandleEXT", "glImportMemoryWin32NameEXT"
         )) || reportMissing("GL", "GL_EXT_memory_object_win32");
@@ -9630,7 +9710,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1813, 1814
+                        1815, 1816
                 },
                 "glPointParameterfEXT", "glPointParameterfvEXT"
         )) || reportMissing("GL", "GL_EXT_point_parameters");
@@ -9642,7 +9722,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1815
+                        1817
                 },
                 "glPolygonOffsetClampEXT"
         )) || reportMissing("GL", "GL_EXT_polygon_offset_clamp");
@@ -9654,7 +9734,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1816
+                        1818
                 },
                 "glProvokingVertexEXT"
         )) || reportMissing("GL", "GL_EXT_provoking_vertex");
@@ -9666,7 +9746,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1817
+                        1819
                 },
                 "glRasterSamplesEXT"
         )) || reportMissing("GL", "GL_EXT_raster_multisample");
@@ -9678,7 +9758,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1818, 1819, 1820, 1821, 1822, 1823, 1824, 1825, 1826, 1827, 1828, 1829, 1830, 1831, 1832, 1833, 1834
+                        1820, 1821, 1822, 1823, 1824, 1825, 1826, 1827, 1828, 1829, 1830, 1831, 1832, 1833, 1834, 1835, 1836
                 },
                 "glSecondaryColor3bEXT", "glSecondaryColor3sEXT", "glSecondaryColor3iEXT", "glSecondaryColor3fEXT", "glSecondaryColor3dEXT",
                 "glSecondaryColor3ubEXT", "glSecondaryColor3usEXT", "glSecondaryColor3uiEXT", "glSecondaryColor3bvEXT", "glSecondaryColor3svEXT",
@@ -9693,7 +9773,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1791, 1792, 1835, 1836, 1837, 1838, 1839, 1840, 1841
+                        1793, 1794, 1837, 1838, 1839, 1840, 1841, 1842, 1843
                 },
                 "glGetUnsignedBytevEXT", "glGetUnsignedBytei_vEXT", "glGenSemaphoresEXT", "glDeleteSemaphoresEXT", "glIsSemaphoreEXT",
                 "glSemaphoreParameterui64vEXT", "glGetSemaphoreParameterui64vEXT", "glWaitSemaphoreEXT", "glSignalSemaphoreEXT"
@@ -9706,7 +9786,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1842
+                        1844
                 },
                 "glImportSemaphoreFdEXT"
         )) || reportMissing("GL", "GL_EXT_semaphore_fd");
@@ -9718,7 +9798,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1843, 1844
+                        1845, 1846
                 },
                 "glImportSemaphoreWin32HandleEXT", "glImportSemaphoreWin32NameEXT"
         )) || reportMissing("GL", "GL_EXT_semaphore_win32");
@@ -9730,7 +9810,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1845, 1846, 1847
+                        1847, 1848, 1849
                 },
                 "glUseShaderProgramEXT", "glActiveProgramEXT", "glCreateShaderProgramEXT"
         )) || reportMissing("GL", "GL_EXT_separate_shader_objects");
@@ -9742,7 +9822,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1848
+                        1850
                 },
                 "glFramebufferFetchBarrierEXT"
         )) || reportMissing("GL", "GL_EXT_shader_framebuffer_fetch_non_coherent");
@@ -9754,7 +9834,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1849, 1850
+                        1851, 1852
                 },
                 "glBindImageTextureEXT", "glMemoryBarrierEXT"
         )) || reportMissing("GL", "GL_EXT_shader_image_load_store");
@@ -9766,7 +9846,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1851
+                        1853
                 },
                 "glStencilClearTagEXT"
         )) || reportMissing("GL", "GL_EXT_stencil_clear_tag");
@@ -9778,7 +9858,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1852
+                        1854
                 },
                 "glActiveStencilFaceEXT"
         )) || reportMissing("GL", "GL_EXT_stencil_two_side");
@@ -9790,7 +9870,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1753
+                        1755
                 },
                 "glFramebufferTextureLayerEXT"
         )) || reportMissing("GL", "GL_EXT_texture_array");
@@ -9802,7 +9882,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1853
+                        1855
                 },
                 "glTexBufferEXT"
         )) || reportMissing("GL", "GL_EXT_texture_buffer_object");
@@ -9814,7 +9894,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1854, 1855, 1856, 1857, 1858, 1859
+                        1856, 1857, 1858, 1859, 1860, 1861
                 },
                 "glClearColorIiEXT", "glClearColorIuiEXT", "glTexParameterIivEXT", "glTexParameterIuivEXT", "glGetTexParameterIivEXT", "glGetTexParameterIuivEXT"
         )) || reportMissing("GL", "GL_EXT_texture_integer");
@@ -9828,7 +9908,7 @@ public final class GLCapabilities {
         int flag0 = hasDSA(ext) ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        1860, 1861, 1862, flag0 + 1375, flag0 + 1376, flag0 + 1377
+                        1862, 1863, 1864, flag0 + 1375, flag0 + 1376, flag0 + 1377
                 },
                 "glTexStorage1DEXT", "glTexStorage2DEXT", "glTexStorage3DEXT", "glTextureStorage1DEXT", "glTextureStorage2DEXT", "glTextureStorage3DEXT"
         )) || reportMissing("GL", "GL_EXT_texture_storage");
@@ -9840,7 +9920,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1863, 1864
+                        1865, 1866
                 },
                 "glGetQueryObjecti64vEXT", "glGetQueryObjectui64vEXT"
         )) || reportMissing("GL", "GL_EXT_timer_query");
@@ -9852,7 +9932,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1865, 1866, 1867, 1868, 1869, 1870, 1871, 1595, 1596
+                        1867, 1868, 1869, 1870, 1871, 1872, 1873, 1595, 1596
                 },
                 "glBindBufferRangeEXT", "glBindBufferOffsetEXT", "glBindBufferBaseEXT", "glBeginTransformFeedbackEXT", "glEndTransformFeedbackEXT",
                 "glTransformFeedbackVaryingsEXT", "glGetTransformFeedbackVaryingEXT", "glGetIntegerIndexedvEXT", "glGetBooleanIndexedvEXT"
@@ -9867,7 +9947,7 @@ public final class GLCapabilities {
         int flag0 = ext.contains("GL_EXT_direct_state_access") ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1880, 1881, flag0 + 1384
+                        1874, 1875, 1876, 1877, 1878, 1879, 1880, 1881, 1882, 1883, flag0 + 1384
                 },
                 "glVertexAttribL1dEXT", "glVertexAttribL2dEXT", "glVertexAttribL3dEXT", "glVertexAttribL4dEXT", "glVertexAttribL1dvEXT", "glVertexAttribL2dvEXT",
                 "glVertexAttribL3dvEXT", "glVertexAttribL4dvEXT", "glVertexAttribLPointerEXT", "glGetVertexAttribLdvEXT", "glVertexArrayVertexAttribLOffsetEXT"
@@ -9880,7 +9960,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1882, 1883
+                        1884, 1885
                 },
                 "glAcquireKeyedMutexWin32EXT", "glReleaseKeyedMutexWin32EXT"
         )) || reportMissing("GL", "GL_EXT_win32_keyed_mutex");
@@ -9892,7 +9972,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1884
+                        1886
                 },
                 "glWindowRectanglesEXT"
         )) || reportMissing("GL", "GL_EXT_window_rectangles");
@@ -9904,7 +9984,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1885
+                        1887
                 },
                 "glImportSyncEXT"
         )) || reportMissing("GL", "GL_EXT_x11_sync_object");
@@ -9916,7 +9996,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1886
+                        1888
                 },
                 "glFrameTerminatorGREMEDY"
         )) || reportMissing("GL", "GL_GREMEDY_frame_terminator");
@@ -9928,7 +10008,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1887
+                        1889
                 },
                 "glStringMarkerGREMEDY"
         )) || reportMissing("GL", "GL_GREMEDY_string_marker");
@@ -9940,7 +10020,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1888
+                        1890
                 },
                 "glApplyFramebufferAttachmentCMAAINTEL"
         )) || reportMissing("GL", "GL_INTEL_framebuffer_CMAA");
@@ -9952,7 +10032,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1889, 1890, 1891
+                        1891, 1892, 1893
                 },
                 "glSyncTextureINTEL", "glUnmapTexture2DINTEL", "glMapTexture2DINTEL"
         )) || reportMissing("GL", "GL_INTEL_map_texture");
@@ -9964,7 +10044,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1892, 1893, 1894, 1895, 1896, 1897, 1898, 1899, 1900, 1901
+                        1894, 1895, 1896, 1897, 1898, 1899, 1900, 1901, 1902, 1903
                 },
                 "glBeginPerfQueryINTEL", "glCreatePerfQueryINTEL", "glDeletePerfQueryINTEL", "glEndPerfQueryINTEL", "glGetFirstPerfQueryIdINTEL",
                 "glGetNextPerfQueryIdINTEL", "glGetPerfCounterInfoINTEL", "glGetPerfQueryDataINTEL", "glGetPerfQueryIdByNameINTEL", "glGetPerfQueryInfoINTEL"
@@ -9977,7 +10057,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1902
+                        1904
                 },
                 "glBlendBarrierKHR"
         )) || reportMissing("GL", "GL_KHR_blend_equation_advanced");
@@ -10002,7 +10082,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1903
+                        1905
                 },
                 "glMaxShaderCompilerThreadsKHR"
         )) || reportMissing("GL", "GL_KHR_parallel_shader_compile");
@@ -10026,7 +10106,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1904, 1905
+                        1906, 1907
                 },
                 "glFramebufferParameteriMESA", "glGetFramebufferParameterivMESA"
         )) || reportMissing("GL", "GL_MESA_framebuffer_flip_y");
@@ -10038,7 +10118,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1906
+                        1908
                 },
                 "glAlphaToCoverageDitherControlNV"
         )) || reportMissing("GL", "GL_NV_alpha_to_coverage_dither_control");
@@ -10050,7 +10130,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1907, 1908
+                        1909, 1910
                 },
                 "glMultiDrawArraysIndirectBindlessNV", "glMultiDrawElementsIndirectBindlessNV"
         )) || reportMissing("GL", "GL_NV_bindless_multi_draw_indirect");
@@ -10062,7 +10142,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1909, 1910
+                        1911, 1912
                 },
                 "glMultiDrawArraysIndirectBindlessCountNV", "glMultiDrawElementsIndirectBindlessCountNV"
         )) || reportMissing("GL", "GL_NV_bindless_multi_draw_indirect_count");
@@ -10074,7 +10154,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1911, 1912, 1913, 1914, 1915, 1916, 1917, 1918, 1919, 1920, 1921, 1922, 1923
+                        1913, 1914, 1915, 1916, 1917, 1918, 1919, 1920, 1921, 1922, 1923, 1924, 1925
                 },
                 "glGetTextureHandleNV", "glGetTextureSamplerHandleNV", "glMakeTextureHandleResidentNV", "glMakeTextureHandleNonResidentNV", "glGetImageHandleNV",
                 "glMakeImageHandleResidentNV", "glMakeImageHandleNonResidentNV", "glUniformHandleui64NV", "glUniformHandleui64vNV", "glProgramUniformHandleui64NV",
@@ -10088,7 +10168,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1924, 1925
+                        1926, 1927
                 },
                 "glBlendParameteriNV", "glBlendBarrierNV"
         )) || reportMissing("GL", "GL_NV_blend_equation_advanced");
@@ -10100,7 +10180,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1926
+                        1928
                 },
                 "glViewportPositionWScaleNV"
         )) || reportMissing("GL", "GL_NV_clip_space_w_scaling");
@@ -10112,7 +10192,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1927, 1928, 1929, 1930, 1931, 1932, 1933, 1934, 1935, 1936, 1937, 1938, 1939, 1940, 1941, 1942, 1943
+                        1929, 1930, 1931, 1932, 1933, 1934, 1935, 1936, 1937, 1938, 1939, 1940, 1941, 1942, 1943, 1944, 1945
                 },
                 "glCreateStatesNV", "glDeleteStatesNV", "glIsStateNV", "glStateCaptureNV", "glGetCommandHeaderNV", "glGetStageIndexNV", "glDrawCommandsNV",
                 "glDrawCommandsAddressNV", "glDrawCommandsStatesNV", "glDrawCommandsStatesAddressNV", "glCreateCommandListsNV", "glDeleteCommandListsNV",
@@ -10126,7 +10206,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1944, 1945
+                        1946, 1947
                 },
                 "glBeginConditionalRenderNV", "glEndConditionalRenderNV"
         )) || reportMissing("GL", "GL_NV_conditional_render");
@@ -10138,7 +10218,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1946
+                        1948
                 },
                 "glSubpixelPrecisionBiasNV"
         )) || reportMissing("GL", "GL_NV_conservative_raster");
@@ -10150,7 +10230,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1947
+                        1949
                 },
                 "glConservativeRasterParameterfNV"
         )) || reportMissing("GL", "GL_NV_conservative_raster_dilate");
@@ -10162,7 +10242,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1948
+                        1950
                 },
                 "glConservativeRasterParameteriNV"
         )) || reportMissing("GL", "GL_NV_conservative_raster_pre_snap_triangles");
@@ -10174,7 +10254,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1949
+                        1951
                 },
                 "glCopyImageSubDataNV"
         )) || reportMissing("GL", "GL_NV_copy_image");
@@ -10186,7 +10266,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1950, 1951, 1952
+                        1952, 1953, 1954
                 },
                 "glDepthRangedNV", "glClearDepthdNV", "glDepthBoundsdNV"
         )) || reportMissing("GL", "GL_NV_depth_buffer_float");
@@ -10198,7 +10278,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1953
+                        1955
                 },
                 "glDrawTextureNV"
         )) || reportMissing("GL", "GL_NV_draw_texture");
@@ -10210,7 +10290,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1954, 1955, 1956, 1957, 1958
+                        1956, 1957, 1958, 1959, 1960
                 },
                 "glDrawVkImageNV", "glGetVkProcAddrNV", "glWaitVkSemaphoreNV", "glSignalVkSemaphoreNV", "glSignalVkFenceNV"
         )) || reportMissing("GL", "GL_NV_draw_vulkan_image");
@@ -10222,7 +10302,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1959, 1960, 1961
+                        1961, 1962, 1963
                 },
                 "glGetMultisamplefvNV", "glSampleMaskIndexedNV", "glTexRenderbufferNV"
         )) || reportMissing("GL", "GL_NV_explicit_multisample");
@@ -10234,7 +10314,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1962, 1963, 1964, 1965, 1966, 1967, 1968
+                        1964, 1965, 1966, 1967, 1968, 1969, 1970
                 },
                 "glDeleteFencesNV", "glGenFencesNV", "glIsFenceNV", "glTestFenceNV", "glGetFenceivNV", "glFinishFenceNV", "glSetFenceNV"
         )) || reportMissing("GL", "GL_NV_fence");
@@ -10246,7 +10326,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1969
+                        1971
                 },
                 "glFragmentCoverageColorNV"
         )) || reportMissing("GL", "GL_NV_fragment_coverage_to_color");
@@ -10258,7 +10338,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1817, 1970, 1971, 1972
+                        1819, 1972, 1973, 1974
                 },
                 "glRasterSamplesEXT", "glCoverageModulationTableNV", "glGetCoverageModulationTableNV", "glCoverageModulationNV"
         )) || reportMissing("GL", "GL_NV_framebuffer_mixed_samples");
@@ -10270,7 +10350,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1973
+                        1975
                 },
                 "glRenderbufferStorageMultisampleCoverageNV"
         )) || reportMissing("GL", "GL_NV_framebuffer_multisample_coverage");
@@ -10282,7 +10362,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        1974, 1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985
+                        1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987
                 },
                 "glRenderGpuMaskNV", "glMulticastBufferSubDataNV", "glMulticastCopyBufferSubDataNV", "glMulticastCopyImageSubDataNV",
                 "glMulticastBlitFramebufferNV", "glMulticastFramebufferSampleLocationsfvNV", "glMulticastBarrierNV", "glMulticastWaitSyncNV",
@@ -10322,9 +10402,9 @@ public final class GLCapabilities {
         int flag6 = ext.contains("GL_NV_vertex_program") ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-                        2010, 2011, 2012, 2013, flag0 + 2014, flag0 + 2015, flag2 + 2016, flag2 + 2017, flag4 + 2018, flag4 + 2019, flag6 + 2020, flag6 + 2021,
-                        flag6 + 2022, flag6 + 2023, flag6 + 2024, flag6 + 2025, flag6 + 2026, flag6 + 2027, flag6 + 2028, flag6 + 2029, flag6 + 2030, flag6 + 2031
+                        1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011,
+                        2012, 2013, 2014, 2015, flag0 + 2016, flag0 + 2017, flag2 + 2018, flag2 + 2019, flag4 + 2020, flag4 + 2021, flag6 + 2022, flag6 + 2023,
+                        flag6 + 2024, flag6 + 2025, flag6 + 2026, flag6 + 2027, flag6 + 2028, flag6 + 2029, flag6 + 2030, flag6 + 2031, flag6 + 2032, flag6 + 2033
                 },
                 "glVertex2hNV", "glVertex2hvNV", "glVertex3hNV", "glVertex3hvNV", "glVertex4hNV", "glVertex4hvNV", "glNormal3hNV", "glNormal3hvNV", "glColor3hNV",
                 "glColor3hvNV", "glColor4hNV", "glColor4hvNV", "glTexCoord1hNV", "glTexCoord1hvNV", "glTexCoord2hNV", "glTexCoord2hvNV", "glTexCoord3hNV",
@@ -10342,7 +10422,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2032
+                        2034
                 },
                 "glGetInternalformatSampleivNV"
         )) || reportMissing("GL", "GL_NV_internalformat_sample_query");
@@ -10356,7 +10436,7 @@ public final class GLCapabilities {
         int flag0 = hasDSA(ext) ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        2033, 2034, 2035, 2036, flag0 + 2037, flag0 + 2038
+                        2035, 2036, 2037, 2038, flag0 + 2039, flag0 + 2040
                 },
                 "glGetMemoryObjectDetachedResourcesuivNV", "glResetMemoryObjectParameterNV", "glTexAttachMemoryNV", "glBufferAttachMemoryNV",
                 "glTextureAttachMemoryNV", "glNamedBufferAttachMemoryNV"
@@ -10369,7 +10449,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2039, 2040, 2041, 2042
+                        2041, 2042, 2043, 2044
                 },
                 "glBufferPageCommitmentMemNV", "glNamedBufferPageCommitmentMemNV", "glTexPageCommitmentMemNV", "glTexturePageCommitmentMemNV"
         )) || reportMissing("GL", "GL_NV_memory_object_sparse");
@@ -10381,7 +10461,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2043, 2044, 2045, 2046
+                        2045, 2046, 2047, 2048
                 },
                 "glDrawMeshTasksNV", "glDrawMeshTasksIndirectNV", "glMultiDrawMeshTasksIndirectNV", "glMultiDrawMeshTasksIndirectCountNV"
         )) || reportMissing("GL", "GL_NV_mesh_shader");
@@ -10393,8 +10473,8 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2047, 2048, 2049, 2050, 2051, 2052, 2053, 2056, 2058, 2059, 2060, 2061, 2062, 2063, 2064, 2065, 2066, 2067, 2068, 2069, 2070, 2071, 2072, 2073,
-                        2074, 2078, 2079, 2080, 2081, 2088, 2089, 2090, 2091, 2092, 2093, 2094, 2095, 2100, 2101, 2102, 2103
+                        2049, 2050, 2051, 2052, 2053, 2054, 2055, 2058, 2060, 2061, 2062, 2063, 2064, 2065, 2066, 2067, 2068, 2069, 2070, 2071, 2072, 2073, 2074, 2075,
+                        2076, 2080, 2081, 2082, 2083, 2090, 2091, 2092, 2093, 2094, 2095, 2096, 2097, 2102, 2103, 2104, 2105
                 },
                 "glPathCommandsNV", "glPathCoordsNV", "glPathSubCommandsNV", "glPathSubCoordsNV", "glPathStringNV", "glPathGlyphsNV", "glPathGlyphRangeNV",
                 "glCopyPathNV", "glInterpolatePathsNV", "glTransformPathNV", "glPathParameterivNV", "glPathParameteriNV", "glPathParameterfvNV",
@@ -10412,7 +10492,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2111, 2112
+                        2113, 2114
                 },
                 "glPixelDataRangeNV", "glFlushPixelDataRangeNV"
         )) || reportMissing("GL", "GL_NV_pixel_data_range");
@@ -10424,7 +10504,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2113, 2114
+                        2115, 2116
                 },
                 "glPointParameteriNV", "glPointParameterivNV"
         )) || reportMissing("GL", "GL_NV_point_sprite");
@@ -10436,7 +10516,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2115, 2116
+                        2117, 2118
                 },
                 "glPrimitiveRestartNV", "glPrimitiveRestartIndexNV"
         )) || reportMissing("GL", "GL_NV_primitive_restart");
@@ -10448,7 +10528,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2117
+                        2119
                 },
                 "glQueryResourceNV"
         )) || reportMissing("GL", "GL_NV_query_resource");
@@ -10460,7 +10540,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2118, 2119, 2120
+                        2120, 2121, 2122
                 },
                 "glGenQueryResourceTagNV", "glDeleteQueryResourceTagNV", "glQueryResourceTagNV"
         )) || reportMissing("GL", "GL_NV_query_resource_tag");
@@ -10472,7 +10552,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2121, 2122, 2123
+                        2123, 2124, 2125
                 },
                 "glFramebufferSampleLocationsfvNV", "glNamedFramebufferSampleLocationsfvNV", "glResolveDepthValuesNV"
         )) || reportMissing("GL", "GL_NV_sample_locations");
@@ -10484,7 +10564,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2124, 2125
+                        2126, 2127
                 },
                 "glScissorExclusiveArrayvNV", "glScissorExclusiveNV"
         )) || reportMissing("GL", "GL_NV_scissor_exclusive");
@@ -10496,7 +10576,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2126, 2127, 2128, 2129, 2130, 2131, 2132, 2133, 2134, 2135, 2136, 1075, 2137, 2138
+                        2128, 2129, 2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 1075, 2139, 2140
                 },
                 "glMakeBufferResidentNV", "glMakeBufferNonResidentNV", "glIsBufferResidentNV", "glMakeNamedBufferResidentNV", "glMakeNamedBufferNonResidentNV",
                 "glIsNamedBufferResidentNV", "glGetBufferParameterui64vNV", "glGetNamedBufferParameterui64vNV", "glGetIntegerui64vNV", "glUniformui64NV",
@@ -10510,7 +10590,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2139, 2140, 2141, 2142, 2143, 2144, 2145
+                        2141, 2142, 2143, 2144, 2145, 2146, 2147
                 },
                 "glBindShadingRateImageNV", "glShadingRateImagePaletteNV", "glGetShadingRateImagePaletteNV", "glShadingRateImageBarrierNV",
                 "glShadingRateSampleOrderNV", "glShadingRateSampleOrderCustomNV", "glGetShadingRateSampleLocationivNV"
@@ -10523,7 +10603,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2146
+                        2148
                 },
                 "glTextureBarrierNV"
         )) || reportMissing("GL", "GL_NV_texture_barrier");
@@ -10535,7 +10615,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2147, 2148, 2149, 2150, 2151, 2152
+                        2149, 2150, 2151, 2152, 2153, 2154
                 },
                 "glTexImage2DMultisampleCoverageNV", "glTexImage3DMultisampleCoverageNV", "glTextureImage2DMultisampleNV", "glTextureImage3DMultisampleNV",
                 "glTextureImage2DMultisampleCoverageNV", "glTextureImage3DMultisampleCoverageNV"
@@ -10548,7 +10628,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2153, 2154, 2155
+                        2155, 2156, 2157
                 },
                 "glCreateSemaphoresNV", "glSemaphoreParameterivNV", "glGetSemaphoreParameterivNV"
         )) || reportMissing("GL", "GL_NV_timeline_semaphore");
@@ -10560,7 +10640,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2156, 2157, 2158, 2159, 2160, 2161, 2162, 2163, 2164, 2165, 2166, 2167
+                        2158, 2159, 2160, 2161, 2162, 2163, 2164, 2165, 2166, 2167, 2168, 2169
                 },
                 "glBeginTransformFeedbackNV", "glEndTransformFeedbackNV", "glTransformFeedbackAttribsNV", "glBindBufferRangeNV", "glBindBufferOffsetNV",
                 "glBindBufferBaseNV", "glTransformFeedbackVaryingsNV", "glActiveVaryingNV", "glGetVaryingLocationNV", "glGetActiveVaryingNV",
@@ -10574,7 +10654,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2168, 2169, 2170, 2171, 2172, 2173, 2174
+                        2170, 2171, 2172, 2173, 2174, 2175, 2176
                 },
                 "glBindTransformFeedbackNV", "glDeleteTransformFeedbacksNV", "glGenTransformFeedbacksNV", "glIsTransformFeedbackNV", "glPauseTransformFeedbackNV",
                 "glResumeTransformFeedbackNV", "glDrawTransformFeedbackNV"
@@ -10587,7 +10667,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2175, 2176
+                        2177, 2178
                 },
                 "glVertexArrayRangeNV", "glFlushVertexArrayRangeNV"
         )) || reportMissing("GL", "GL_NV_vertex_array_range");
@@ -10601,7 +10681,7 @@ public final class GLCapabilities {
         int flag0 = ext.contains("GL_NV_vertex_buffer_unified_memory") ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        2177, 2178, 2179, 2180, 2181, 2182, 2183, 2184, 2185, 2186, 2187, 2188, 2189, 2190, 2191, 2192, 2193, 2194, flag0 + 2195
+                        2179, 2180, 2181, 2182, 2183, 2184, 2185, 2186, 2187, 2188, 2189, 2190, 2191, 2192, 2193, 2194, 2195, 2196, flag0 + 2197
                 },
                 "glVertexAttribL1i64NV", "glVertexAttribL2i64NV", "glVertexAttribL3i64NV", "glVertexAttribL4i64NV", "glVertexAttribL1i64vNV",
                 "glVertexAttribL2i64vNV", "glVertexAttribL3i64vNV", "glVertexAttribL4i64vNV", "glVertexAttribL1ui64NV", "glVertexAttribL2ui64NV",
@@ -10616,7 +10696,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2196, 2197, 2198, 2199, 2200, 2201, 2202, 2203, 2204, 2205, 2206, 2207
+                        2198, 2199, 2200, 2201, 2202, 2203, 2204, 2205, 2206, 2207, 2208, 2209
                 },
                 "glBufferAddressRangeNV", "glVertexFormatNV", "glNormalFormatNV", "glColorFormatNV", "glIndexFormatNV", "glTexCoordFormatNV", "glEdgeFlagFormatNV",
                 "glSecondaryColorFormatNV", "glFogCoordFormatNV", "glVertexAttribFormatNV", "glVertexAttribIFormatNV", "glGetIntegerui64i_vNV"
@@ -10629,7 +10709,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2208
+                        2210
                 },
                 "glViewportSwizzleNV"
         )) || reportMissing("GL", "GL_NV_viewport_swizzle");
@@ -10641,7 +10721,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2209, 2210
+                        2211, 2212
                 },
                 "glBeginConditionalRenderNVX", "glEndConditionalRenderNVX"
         )) || reportMissing("GL", "GL_NVX_conditional_render");
@@ -10653,7 +10733,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2211, 2212, 2213, 2214, 2215, 2216
+                        2213, 2214, 2215, 2216, 2217, 2218
                 },
                 "glAsyncCopyImageSubDataNVX", "glAsyncCopyBufferSubDataNVX", "glUploadGpuMaskNVX", "glMulticastViewportArrayvNVX", "glMulticastScissorArrayvNVX",
                 "glMulticastViewportPositionWScaleNVX"
@@ -10666,7 +10746,7 @@ public final class GLCapabilities {
         }
 
         return (checkFunctions(provider, caps, new int[] {
-                        2217, 2218, 2219, 2220
+                        2219, 2220, 2221, 2222
                 },
                 "glCreateProgressFenceNVX", "glSignalSemaphoreui64NVX", "glWaitSemaphoreui64NVX", "glClientWaitSemaphoreui64NVX"
         )) || reportMissing("GL", "GL_NVX_progress_fence");
@@ -10680,7 +10760,7 @@ public final class GLCapabilities {
         int flag0 = hasDSA(ext) ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
-                        2221, flag0 + 2222
+                        2223, flag0 + 2224
                 },
                 "glFramebufferTextureMultiviewOVR", "glNamedFramebufferTextureMultiviewOVR"
         )) || reportMissing("GL", "GL_OVR_multiview");
