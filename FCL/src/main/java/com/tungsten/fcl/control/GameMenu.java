@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -587,8 +588,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     @Override
-    public void setup(FCLActivity activity, FCLBridge fclBridge) {
-        this.activity = activity;
+    public void setup(Activity activity, FCLBridge fclBridge) {
+        this.activity = (FCLActivity) activity;
         this.fclBridge = fclBridge;
         this.simulated = fclBridge == null;
         this.fclInput = new FCLInput(this);
@@ -648,7 +649,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
-            ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
+            //ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
             assert getBridge() != null;
             gameOption = new GameOption(getBridge().getGameDir());
@@ -963,7 +964,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 width = FCLBridge.FORCE_RESOLUTION_WIDTH;
                 height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
             }
-            fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
+            fclBridge.resizeSurface(width, height);
             fclBridge.pushEventWindow(width, height);
         }
     }

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,6 +74,7 @@ public class FCLBridge implements Serializable {
     private String renderer;
     private String java;
     private Surface surface;
+    private SurfaceHolder surfaceHolder;
     private boolean surfaceDestroyed;
     private Handler handler;
     private Thread thread;
@@ -126,6 +128,30 @@ public class FCLBridge implements Serializable {
 
     public void setSurfaceTexture(SurfaceTexture surfaceTexture) {
         this.surfaceTexture = surfaceTexture;
+    }
+
+    public void setSurfaceHolder(@Nullable SurfaceHolder surfaceHolder) {
+        this.surfaceHolder = surfaceHolder;
+    }
+
+    public void resizeSurface(int width, int height) {
+        if (surfaceHolder != null) {
+            surfaceHolder.setFixedSize(width, height);
+            return;
+        }
+        if (surfaceTexture != null) {
+            surfaceTexture.setDefaultBufferSize(width, height);
+        }
+    }
+
+    public void attachSurface(@NonNull Surface surface) {
+        this.surface = surface;
+        surfaceDestroyed = false;
+        if (gameDir != null) {
+            CallbackBridge.setupBridgeWindow(surface);
+        } else {
+            handleWindow();
+        }
     }
 
     public FCLBridgeCallback getCallback() {

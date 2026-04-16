@@ -1,3 +1,9 @@
 [submodule "NG-GL4ES"]
 	path = NG-GL4ES/NG-GL4ES
 	url = https://github.com/BZLZHH/NG-GL4ES.git
+[submodule "MobileGlues"]
+	path = MobileGlues
+	url = https://github.com/Swung0x48/MobileGlues
+[submodule "MobileGL"]
+	path = MobileGL
+	url = https://github.com/MobileGL-Dev/MobileGL.git

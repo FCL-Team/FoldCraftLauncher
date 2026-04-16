@@ -42,7 +42,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tungsten.fcl"
+        applicationId = "com.tungsten.fcl.mgdebug"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1299
@@ -108,7 +108,11 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
-            pickFirsts += listOf("**/libbytehook.so")
+            pickFirsts += listOf(
+                "**/libbytehook.so",
+                "**/libspirv-cross-c-shared.so"
+            )
+            keepDebugSymbols.add("**/*.so")
         }
     }
 

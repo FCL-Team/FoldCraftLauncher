@@ -1,6 +1,7 @@
 package com.tungsten.fcl.control;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,7 +22,6 @@ import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
 import com.tungsten.fclauncher.keycodes.AWTInputEvent;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -32,7 +32,7 @@ import java.util.logging.Level;
 
 public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View.OnTouchListener {
 
-    private FCLActivity activity;
+    private Activity activity;
     private FCLBridge fclBridge;
     private AWTInput awtInput;
 
@@ -62,7 +62,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
     private int initialY;
 
     @Override
-    public void setup(FCLActivity activity, FCLBridge fclBridge) {
+    public void setup(Activity activity, FCLBridge fclBridge) {
         this.activity = activity;
         this.fclBridge = fclBridge;
 

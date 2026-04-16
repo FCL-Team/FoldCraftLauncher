@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextureView
+    <SurfaceView
+        android:id="@+id/surface_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/texture_view"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

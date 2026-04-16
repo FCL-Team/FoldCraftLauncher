@@ -114,7 +114,11 @@
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:launchMode="standard"
-            android:screenOrientation="sensorLandscape" />
+            android:screenOrientation="sensorLandscape">
+            <meta-data
+                android:name="com.android.graphics.injectLayers.enable"
+                android:value="true" />
+        </activity>
         <activity
             android:name=".activity.JVMCrashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"

@@ -13,6 +13,7 @@
 #include <fcl_internal.h>
 #include <sys/mman.h>
 #include <pthread.h>
+#include <android/native_activity.h>
 
 typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
@@ -267,4 +268,8 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTr
     }else {
         atexit(custom_atexit);
     }
+}
+
+void ANativeActivity_onCreate(ANativeActivity* activity, void* savedState, size_t savedStateSize) {
+
 }

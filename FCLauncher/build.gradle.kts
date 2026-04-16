@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.tungsten.fclauncher"
-    compileSdk = libs.versions.compileSdk.get().toInt()
+    compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
     defaultConfig {
         minSdk = libs.versions.minSdk.get().toInt()
@@ -59,4 +59,5 @@ dependencies {
     implementation(libs.bytehook)
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(project(":MobileGlues"))
 }

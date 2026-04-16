@@ -286,6 +286,20 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         Renderer renderer = config.getRenderer();
+        if (renderer == null) {
+            return;
+        }
+        if (renderer.isEqual(Renderer.ID_MOBILEGLUES) || renderer.isEqual(Renderer.ID_MOBILEGL)) {
+            envMap.put("LIBGL_ES", "3");
+            envMap.put("LIBEGL_NAME", renderer.getEglName());
+            envMap.put("POJAV_RENDERER", "opengles3");
+            envMap.put("POJAVEXEC_EGL", renderer.getEglName());
+        }
+
+        if (renderer.isEqual(Renderer.ID_MOBILEGL)) {
+            envMap.put("MOBILEGL_BACKEND_TYPE", "DirectVulkan");
+        }
+
         if (!renderer.getPath().isEmpty()) {
             String eglName = renderer.getEglName();
             if (eglName.startsWith("/")) {
@@ -347,6 +361,9 @@ public class FCLauncher {
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer.isEqual(Renderer.ID_ZINK)) {
                 envMap.put("POJAV_RENDERER", "vulkan_zink");
+            } else if (renderer.isEqual(Renderer.ID_ZINK_KOPPER)) {
+                envMap.put("POJAV_RENDERER", "opengles3_desktopgl_zink_kopper");
+                envMap.put("POJAVEXEC_EGL", renderer.getEglName());
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }

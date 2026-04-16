@@ -7,7 +7,6 @@ import com.mio.data.Renderer;
 import java.io.Serializable;
 
 public class FCLConfig implements Serializable {
-
     public static class InstalledModLoaders {
         private final boolean installForge;
         private final boolean installCleanroom;

@@ -1,18 +1,17 @@
 package com.tungsten.fcl.control;
 
-import android.view.KeyEvent;
+import android.app.Activity;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
-import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 
 public interface MenuCallback {
 
-    void setup(FCLActivity activity, FCLBridge fclBridge);
+    void setup(Activity activity, FCLBridge fclBridge);
 
     View getLayout();
 

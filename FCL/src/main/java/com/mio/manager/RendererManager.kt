@@ -12,8 +12,11 @@ object RendererManager {
     lateinit var RENDERER_VIRGL: Renderer
     lateinit var RENDERER_VGPU: Renderer
     lateinit var RENDERER_ZINK: Renderer
+    lateinit var RENDERER_ZINK_KOPPER: Renderer
     lateinit var RENDERER_FREEDRENO: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
+    lateinit var RENDERER_MOBILEGLUES: Renderer
+    lateinit var RENDERER_MOBILEGL: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -81,6 +84,19 @@ object RendererManager {
             ""
         )
 
+        RENDERER_ZINK_KOPPER = Renderer(
+            "ZinkKopper",
+            context.getString(R.string.settings_fcl_renderer_zink_kopper),
+            "libglxshim.so",
+            "libEGL_mesa.so",
+            "",
+            null,
+            null,
+            Renderer.ID_ZINK_KOPPER,
+            "",
+            ""
+        )
+
         RENDERER_FREEDRENO = Renderer(
             "Freedreno",
             context.getString(R.string.settings_fcl_renderer_freedreno),
@@ -107,6 +123,32 @@ object RendererManager {
             ""
         )
 
+        RENDERER_MOBILEGLUES = Renderer(
+            "MobileGluesDev",
+            context.getString(R.string.settings_fcl_renderer_mobileglues),
+            "libmobileglues.so",
+            "libEGL.so",
+            "",
+            null,
+            null,
+            Renderer.ID_MOBILEGLUES,
+            "",
+            ""
+        )
+
+        RENDERER_MOBILEGL = Renderer(
+            "MobileGLDev",
+            context.getString(R.string.settings_fcl_renderer_mobilegl),
+            "libMobileGL.so",
+            "libMobileGL.so",
+            "",
+            null,
+            null,
+            Renderer.ID_MOBILEGL,
+            "",
+            ""
+        )
+
         RendererPlugin.init(context)
         addRenderer()
         DriverPlugin.init(context)
@@ -118,7 +160,10 @@ object RendererManager {
         rendererList.add(RENDERER_VIRGL)
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
+        rendererList.add(RENDERER_ZINK_KOPPER)
         rendererList.add(RENDERER_FREEDRENO)
+        rendererList.add(RENDERER_MOBILEGLUES)
+        rendererList.add(RENDERER_MOBILEGL)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 
