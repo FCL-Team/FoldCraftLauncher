@@ -29,15 +29,15 @@ void virglSwapBuffers() {
 }
 
 void virglMakeCurrent(void *window) {
-    printf("OSMDroid: making current\n");
+    //printf("OSMDroid: making current\n");
     OSMesaMakeCurrent_p((OSMesaContext) window,
                         setbuffer,
                         GL_UNSIGNED_BYTE,
                         pojav_environ->savedWidth,
                         pojav_environ->savedHeight);
 
-    printf("OSMDroid: vendor: %s\n", glGetString_p(GL_VENDOR));
-    printf("OSMDroid: renderer: %s\n", glGetString_p(GL_RENDERER));
+    //printf("OSMDroid: vendor: %s\n", glGetString_p(GL_VENDOR));
+    //printf("OSMDroid: renderer: %s\n", glGetString_p(GL_RENDERER));
     glClear_p(GL_COLOR_BUFFER_BIT);
     glClearColor_p(0.4f, 0.4f, 0.4f, 1.0f);
 
@@ -49,9 +49,9 @@ void virglMakeCurrent(void *window) {
 }
 
 void *virglCreateContext(void *contextSrc) {
-    printf("OSMDroid: generating context\n");
+    //printf("OSMDroid: generating context\n");
     void *ctx = OSMesaCreateContext_p(OSMESA_RGBA, contextSrc);
-    printf("OSMDroid: context=%p\n", ctx);
+    //printf("OSMDroid: context=%p\n", ctx);
     return ctx;
 }
 
@@ -63,9 +63,9 @@ void loadSymbolsVirGL() {
 
     sprintf(fileName, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
     void *handle = dlopen(fileName, RTLD_LAZY);
-    printf("VirGL: libvirgl_test_server = %p\n", handle);
+    //printf("VirGL: libvirgl_test_server = %p\n", handle);
     if (!handle) {
-        printf("VirGL: %s\n", dlerror());
+        //printf("VirGL: %s\n", dlerror());
     }
     vtest_main_p = dlsym(handle, "vtest_main");
     vtest_swap_buffers_p = dlsym(handle, "vtest_swap_buffers");
@@ -82,13 +82,13 @@ void *egl_make_current(void *window) {
     );
 
     if (success == EGL_FALSE) {
-        printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
+        //printf("EGLBridge: Error: eglMakeCurrent() failed: %p\n", eglGetError_p());
     } else {
-        printf("EGLBridge: eglMakeCurrent() succeed!\n");
+        //printf("EGLBridge: eglMakeCurrent() succeed!\n");
     }
 
-    printf("VirGL: vtest_main = %p\n", vtest_main_p);
-    printf("VirGL: Calling VTest server's main function\n");
+    //printf("VirGL: vtest_main = %p\n", vtest_main_p);
+    //printf("VirGL: Calling VTest server's main function\n");
     vtest_main_p(3, (const char *[]) {"vtest", "--no-loop-or-fork", "--use-gles", NULL, NULL});
 }
 
@@ -100,26 +100,26 @@ int virglInit() {
     if (potatoBridge.eglDisplay == NULL || potatoBridge.eglDisplay == EGL_NO_DISPLAY) {
         potatoBridge.eglDisplay = eglGetDisplay_p(EGL_DEFAULT_DISPLAY);
         if (potatoBridge.eglDisplay == EGL_NO_DISPLAY) {
-            printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
+            //printf("EGLBridge: Error eglGetDefaultDisplay() failed: %p\n", eglGetError_p());
             return 0;
         }
     }
 
-    printf("EGLBridge: Initializing\n");
+    //printf("EGLBridge: Initializing\n");
     // printf("EGLBridge: ANativeWindow pointer = %p\n", pojav_environ->pojavWindow);
     //(*env)->ThrowNew(env,(*env)->FindClass(env,"java/lang/Exception"),"Trace exception");
     if (!eglInitialize_p(potatoBridge.eglDisplay, NULL, NULL)) {
-        printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
+        //printf("EGLBridge: Error eglInitialize() failed: %s\n", eglGetError_p());
         return 0;
     }
 
     static const EGLint attribs[] = {
-            EGL_RED_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_BLUE_SIZE, 8,
-            EGL_ALPHA_SIZE, 8,
+            EGL_RED_SIZE, 5,
+            EGL_GREEN_SIZE, 5,
+            EGL_BLUE_SIZE, 5,
+            EGL_ALPHA_SIZE, 5,
             // Minecraft required on initial 24
-            EGL_DEPTH_SIZE, 24,
+            EGL_DEPTH_SIZE, 16,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL_NONE
     };
@@ -128,7 +128,7 @@ int virglInit() {
     EGLint vid;
 
     if (!eglChooseConfig_p(potatoBridge.eglDisplay, attribs, &config, 1, &num_configs)) {
-        printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
+        //printf("EGLBridge: Error couldn't get an EGL visual config: %s\n", eglGetError_p());
         return 0;
     }
 
@@ -137,7 +137,7 @@ int virglInit() {
 
     if (!eglGetConfigAttrib_p(potatoBridge.eglDisplay, config, EGL_NATIVE_VISUAL_ID, &vid)) {
         printf("EGLBridge: Error eglGetConfigAttrib() failed: %s\n", eglGetError_p());
-        return 0;
+        //return 0;
     }
 
     ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow, 0, 0, vid);
@@ -160,9 +160,9 @@ int virglInit() {
         assert(val & EGL_WINDOW_BIT);
     }
 
-    printf("EGLBridge: Initialized!\n");
-    printf("EGLBridge: ThreadID=%d\n", gettid());
-    printf("EGLBridge: EGLDisplay=%p, EGLSurface=%p\n",
+    //printf("EGLBridge: Initialized!\n");
+    //printf("EGLBridge: ThreadID=%d\n", gettid());
+    //printf("EGLBridge: EGLDisplay=%p, EGLSurface=%p\n",
 /* window==0 ? EGL_NO_CONTEXT : */
            potatoBridge.eglDisplay,
            potatoBridge.eglSurface
@@ -174,7 +174,7 @@ int virglInit() {
             EGL_NONE
     };
     EGLContext *ctx = eglCreateContext_p(potatoBridge.eglDisplay, config, NULL, ctx_attribs);
-    printf("VirGL: created EGL context %p\n", ctx);
+    //printf("VirGL: created EGL context %p\n", ctx);
 
     pthread_t t;
     pthread_create(&t, NULL, egl_make_current, (void *) ctx);
