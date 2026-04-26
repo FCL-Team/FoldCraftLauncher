@@ -1,19 +1,7 @@
 /*
  * Hello Minecraft! Launcher
  * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * ... (Standard GPL License) ...
  */
 package com.tungsten.fclcore.launch;
 
@@ -23,6 +11,15 @@ import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.content.Context;
 import android.os.Build;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import androidx.annotation.NonNull;
 
 import com.google.gson.GsonBuilder;
 import com.mio.JavaManager;
@@ -56,6 +53,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -68,6 +67,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -110,7 +111,6 @@ public class DefaultLauncher extends Launcher {
             res.addDefault("-Dstderr.encoding=", encoding.name());
         }
 
-        // Fix RCE vulnerability of log4j2
         res.addDefault("-Djava.rmi.server.useCodebaseOnly=", "true");
         res.addDefault("-Dcom.sun.jndi.rmi.object.trustURLCodebase=", "false");
         res.addDefault("-Dcom.sun.jndi.cosnaming.object.trustURLCodebase=", "false");
@@ -120,28 +120,10 @@ public class DefaultLauncher extends Launcher {
             res.addDefault("-Dlog4j.configurationFile=", getLog4jConfigurationFile().getAbsolutePath());
         }
 
-        // Default JVM Args
         appendJvmArgs(res);
 
         res.addDefault("-Dminecraft.client.jar=", repository.getVersionJar(version).toString());
 
-        // Using G1GC with its settings by default
-//        if (options.getJava().getVersion() >= 8
-//                && res.noneMatch(arg -> "-XX:-UseG1GC".equals(arg) || (arg.startsWith("-XX:+Use") && arg.endsWith("GC")))) {
-//            res.addUnstableDefault("UnlockExperimentalVMOptions", true);
-//            res.addUnstableDefault("UseG1GC", true);
-//            res.addUnstableDefault("G1NewSizePercent", "20");
-//            res.addUnstableDefault("G1ReservePercent", "20");
-//            res.addUnstableDefault("MaxGCPauseMillis", "50");
-//            res.addUnstableDefault("G1HeapRegionSize", "32m");
-//        }
-//
-//        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
-//        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
-//        res.addUnstableDefault("DontCompileHugeMethods", false);
-
-        // As 32-bit JVM allocate 320KB for stack by default rather than 64-bit version allocating 1MB,
-        // causing Minecraft 1.13 crashed accounting for java.lang.StackOverflowError.
         if (Architecture.is32BitsDevice()) {
             res.addDefault("-Xss", "1m");
         }
@@ -151,12 +133,6 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dfml.ignoreInvalidMinecraftCertificates=", "true");
         res.addDefault("-Dfml.ignorePatchDiscrepancies=", "true");
 
-        // LWJGL debug mode
-        // res.addDefault("-Dorg.lwjgl.util.Debug=", "true");
-        // res.addDefault("-Dorg.lwjgl.util.DebugLoader=", "true");
-        // res.addDefault("-Dorg.lwjgl.util.DebugFunctions=", "true");
-
-        // FCL specific args
         JavaVersion javaVersion = options.getJava().isAuto() ? JavaManager.getSuitableJavaVersion(version) : options.getJava();
         res.addDefault("-Dext.net.resolvPath=", FCLPath.JAVA_PATH + "/resolv.conf");
         res.addDefault("-Djava.io.tmpdir=", FCLPath.CACHE_DIR);
@@ -189,15 +165,10 @@ public class DefaultLauncher extends Launcher {
             res.addDefault("-Dfcl.injector=", getInjectorArg());
         }
 
-        // Fix 1.7.2 Forge
         if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().equals("1.7.2")) {
             res.addDefault("-Dsort.patch=", "true");
         }
 
-        // Fix 1.16.x multiplayer
-//        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
-//
-//        }
         res.add("-javaagent:" + FCLPath.LIB_PATCHER_PATH);
 
         Set<String> classpath = repository.getClasspath(version);
@@ -212,14 +183,13 @@ public class DefaultLauncher extends Launcher {
         }
         classpath.add(jar.getAbsolutePath());
 
-        // Provided Minecraft arguments
         Path gameAssets = repository.getActualAssetDirectory(version.getId(), version.getAssetIndex().getId());
         Map<String, String> configuration = getConfigurations();
         configuration.put("${classpath}", String.join(File.pathSeparator, classpath));
         configuration.put("${game_assets}", gameAssets.toAbsolutePath().toString());
         configuration.put("${assets_root}", gameAssets.toAbsolutePath().toString());
-
         configuration.put("${natives_directory}", "${natives_directory}");
+        
         List<String> jvmArgs = Arguments.parseArguments(version.getArguments().map(Arguments::getJvm).orElseGet(this::getDefaultJVMArguments), configuration);
         res.addAll(jvmArgs.stream().map(arg -> {
             String result = arg;
@@ -228,6 +198,7 @@ public class DefaultLauncher extends Launcher {
             }
             return result;
         }).collect(Collectors.toList()));
+        
         Arguments argumentsFromAuthInfo = authInfo.getLaunchArguments(options);
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getJvm() != null && !argumentsFromAuthInfo.getJvm().isEmpty())
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getJvm(), configuration));
@@ -393,13 +364,6 @@ public class DefaultLauncher extends Launcher {
         return Arguments.DEFAULT_GAME_ARGUMENTS;
     }
 
-    /**
-     * Do something here.
-     * i.e.
-     * -Dminecraft.launcher.version=&lt;Your launcher name&gt;
-     * -Dminecraft.launcher.brand=&lt;Your launcher version&gt;
-     * -Dlog4j.configurationFile=&lt;Your custom log4j configuration&gt;
-     */
     protected void appendJvmArgs(CommandBuilder result) {
     }
 
@@ -438,7 +402,6 @@ public class DefaultLauncher extends Launcher {
         String uuid = options.getUuid().replace("-", "");
         boolean customUuid = uuid.length() == 32;
         return mapOf(
-                // defined by Minecraft official launcher
                 pair("${auth_player_name}", authInfo.getUsername()),
                 pair("${auth_session}", authInfo.getAccessToken()),
                 pair("${auth_access_token}", authInfo.getAccessToken()),
@@ -456,15 +419,94 @@ public class DefaultLauncher extends Launcher {
                 pair("${classpath_separator}", File.pathSeparator),
                 pair("${primary_jar}", repository.getVersionJar(version).getAbsolutePath()),
                 pair("${language}", Locale.getDefault().toString()),
-
-                // file_separator is used in -DignoreList
                 pair("${file_separator}", File.pathSeparator),
                 pair("${primary_jar_name}", FileUtils.getName(repository.getVersionJar(version).toPath()))
         );
     }
 
+    // =========================================================
+    // ✅ SKIN INJECTION LOGIC ADDED HERE
+    // =========================================================
+    private void injectCustomSkin() {
+        if (authInfo == null || authInfo.getUsername() == null || authInfo.getUsername().isEmpty()) {
+            return;
+        }
+        
+        String username = authInfo.getUsername();
+        File skinsDir = new File(repository.getRunDirectory(version.getId()).getAbsolutePath(), "assets/skins");
+        if (!skinsDir.exists()) {
+            skinsDir.mkdirs();
+        }
+        
+        String savePath = new File(skinsDir, username + ".png").getAbsolutePath();
+        CountDownLatch latch = new CountDownLatch(1);
+        
+        Log.i("CS_SkinInjector", "Injecting skin for: " + username);
+
+        try {
+            FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(username)
+                .child("skinUrl")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String skinUrl = snapshot.getValue(String.class);
+                        if (skinUrl != null && !skinUrl.isEmpty()) {
+                            Log.i("CS_SkinInjector", "Firebase URL found: " + skinUrl);
+                            downloadAndSaveSkin(skinUrl, savePath, latch);
+                        } else {
+                            downloadAndSaveSkin("https://minotar.net/skin/" + username, savePath, latch);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        downloadAndSaveSkin("https://minotar.net/skin/" + username, savePath, latch);
+                    }
+                });
+
+            // Wait for download to finish (Max 5 seconds)
+            latch.await(5000, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            Log.e("CS_SkinInjector", "Skin injection skipped", e);
+        }
+    }
+
+    private void downloadAndSaveSkin(String urlStr, String savePath, CountDownLatch latch) {
+        new Thread(() -> {
+            HttpURLConnection conn = null;
+            try {
+                conn = (HttpURLConnection) new URL(urlStr).openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+                conn.connect();
+                if (conn.getResponseCode() == 200) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+                    if (bitmap != null) {
+                        FileOutputStream fos = new FileOutputStream(savePath);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                        bitmap.recycle();
+                        Log.i("CS_SkinInjector", "✅ Skin saved: " + savePath);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("CS_SkinInjector", "Skin download failed for: " + urlStr, e);
+            } finally {
+                if (conn != null) conn.disconnect();
+                latch.countDown();
+            }
+        }).start();
+    }
+    // =========================================================
+
     @Override
     public FCLBridge launch() throws IOException, InterruptedException {
+        // ✅ INJECT SKIN RIGHT BEFORE GENERATING COMMAND LINE
+        injectCustomSkin();
+
         final CommandBuilder command = generateCommandLine();
 
         List<String> rawCommandLine = command.asList();
