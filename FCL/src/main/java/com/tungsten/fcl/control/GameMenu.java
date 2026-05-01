@@ -781,7 +781,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (!menuSetting.isShowLog() && menuSetting.isAutoShowLog()) {
             logWindow.setVisibility(false);
         }
-        refreshWindowsSize(menuSetting.getWindowScale());
     }
 
     @Override

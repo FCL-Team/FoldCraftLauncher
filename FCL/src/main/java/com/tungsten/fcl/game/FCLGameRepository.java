@@ -346,7 +346,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             vs.setUsesGlobal(true);
     }
 
-    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir) {
+    public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, double scaleFactor) {
         VersionSetting vs = getVersionSetting(version);
 
         LaunchOptions.Builder builder = new LaunchOptions.Builder()
@@ -364,8 +364,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMaxMemory())
                 .setUUid(vs.getUuid())
-                .setWidth(AndroidUtils.getScreenWidth())
-                .setHeight(AndroidUtils.getScreenHeight())
+                .setWidth((int) (AndroidUtils.getScreenWidth() * scaleFactor))
+                .setHeight((int) (AndroidUtils.getScreenHeight() * scaleFactor))
                 .setServerIp(vs.getServerIp())
                 .setBEGesture(vs.isBeGesture())
                 .setVkDriverSystem(vs.isVKDriverSystem())
