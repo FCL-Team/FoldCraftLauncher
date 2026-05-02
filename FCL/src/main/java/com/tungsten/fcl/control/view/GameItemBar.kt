@@ -167,8 +167,9 @@ class GameItemBar @JvmOverloads constructor(
     }
 
     fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
-        if (e.x >= 0 && e.x <= 9 * height) {
-            func(((e.x / height).toInt() + 1).coerceIn(1, 9))
+        if (e.x >= 0 && e.x <= width) {
+            val size = width / 9f
+            func(((e.x / size).toInt() + 1).coerceIn(1, 9))
         }
     }
 
