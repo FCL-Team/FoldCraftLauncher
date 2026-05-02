@@ -924,6 +924,7 @@
     <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
     <string name="settings_disable_fullscreen_input">Disable fullscreen input (For TouchController mod)</string>
     <string name="settings_launcher_exit_after_launching">Launcher exits after launching</string>
+    <string name="settings_launcher_custom_launcher_name">Custom launcher information</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>

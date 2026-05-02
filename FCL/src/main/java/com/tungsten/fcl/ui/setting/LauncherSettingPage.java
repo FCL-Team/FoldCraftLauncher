@@ -53,6 +53,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
+import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
@@ -105,6 +106,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     private FCLNumberSeekBar animationSpeed;
     private FCLNumberSeekBar vibrationDuration;
     private FCLSwitch disableFullscreenInput;
+    private FCLEditText editLauncherName;
     private FCLCheckBox autoSource;
     private FCLSpinner<String> versionList;
     private FCLSpinner<String> downloadType;
@@ -154,6 +156,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         animationSpeed = findViewById(R.id.animation_speed);
         vibrationDuration = findViewById(R.id.vibration_duration);
         disableFullscreenInput = findViewById(R.id.disable_fullscreen_input);
+        editLauncherName = findViewById(R.id.edit_launcher_name);
         autoSource = findViewById(R.id.check_auto_source);
         versionList = findViewById(R.id.source_auto);
         downloadType = findViewById(R.id.source);
@@ -241,6 +244,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         });
         disableFullscreenInput.setChecked(sharedPreferences.getBoolean("disableFullscreenInput", true));
         disableFullscreenInput.setOnCheckedChangeListener(this);
+
+        editLauncherName.setText(sharedPreferences.getString("custom_launcher_name", getContext().getString(R.string.app_name)));
+        editLauncherName.addTextWatcher(s -> {
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putString("custom_launcher_name", s);
+            edit.apply();
+        });
 
         autoSource.setChecked(config().autoChooseDownloadTypeProperty().get());
         autoSource.addCheckedChangeListener();

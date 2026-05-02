@@ -125,6 +125,29 @@ public class FCLEditText extends AppCompatEditText {
         });
     }
 
+    public void addTextWatcher(@NonNull Callback callback) {
+        addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                callback.onTextChange(getText().toString());
+            }
+        });
+    }
+
+    public interface Callback {
+        void onTextChange(String text);
+    }
+
     private static final class SignedIntegerFilter implements InputFilter {
         private final Pattern pattern;
 

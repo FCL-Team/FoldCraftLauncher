@@ -17,6 +17,7 @@
  */
 package com.tungsten.fcl.game;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.annotation.SuppressLint;
@@ -348,13 +349,14 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, double scaleFactor) {
         VersionSetting vs = getVersionSetting(version);
-
+        String appName = FCLPath.CONTEXT.getString(R.string.app_name);
+        String versionType = FCLPath.CONTEXT.getSharedPreferences("launcher", MODE_PRIVATE).getString("custom_launcher_name", appName);
         LaunchOptions.Builder builder = new LaunchOptions.Builder()
                 .setGameDir(gameDir)
                 .setJava(javaVersion)
-                .setVersionType(FCLPath.CONTEXT.getString(R.string.app_name))
+                .setVersionType(versionType.isEmpty() ? appName : versionType)
                 .setVersionName(version)
-                .setProfileName(FCLPath.CONTEXT.getString(R.string.app_name))
+                .setProfileName(appName)
                 .setGameArguments(StringUtils.tokenize(vs.getMinecraftArgs()))
                 .setJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
                 .setMaxMemory((int) (getAllocatedMemory(
@@ -470,7 +472,7 @@ public class FCLGameRepository extends DefaultGameRepository {
         FCLBridge.FORCE_RESOLUTION = vs.isForceResolution();
         if (FCLBridge.FORCE_RESOLUTION) {
             try {
-                SharedPreferences preferences = Objects.requireNonNull(FCLApplication.getCurrentActivity()).getSharedPreferences("launcher", Context.MODE_PRIVATE);
+                SharedPreferences preferences = Objects.requireNonNull(FCLApplication.getCurrentActivity()).getSharedPreferences("launcher", MODE_PRIVATE);
                 String[] split = preferences.getString("force_resolution", "1920x1080").toLowerCase().split("x");
                 if (split.length == 2) {
                     int w = Integer.parseInt(split[0]);
