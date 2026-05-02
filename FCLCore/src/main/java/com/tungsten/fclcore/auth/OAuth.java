@@ -27,6 +27,7 @@ import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -125,14 +126,19 @@ public class OAuth {
                 throw new NoSelectedCharacterException();
             }
 
-            TokenResponse tokenResponse = HttpRequest.POST(tokenURL)
-                    .form(
-                            pair("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
-                            pair("code", deviceTokenResponse.deviceCode),
-                            pair("client_id", options.callback.getClientId()))
-                    .ignoreHttpCode()
-                    .retry(5)
-                    .getJson(TokenResponse.class);
+            TokenResponse tokenResponse;
+            try {
+                tokenResponse = HttpRequest.POST(tokenURL)
+                        .form(
+                                pair("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
+                                pair("code", deviceTokenResponse.deviceCode),
+                                pair("client_id", options.callback.getClientId()))
+                        .ignoreHttpCode()
+                        .retry(5)
+                        .getJson(TokenResponse.class);
+            } catch (UnknownHostException e) {
+                continue;
+            }
 
             if ("authorization_pending".equals(tokenResponse.error)) {
                 continue;
