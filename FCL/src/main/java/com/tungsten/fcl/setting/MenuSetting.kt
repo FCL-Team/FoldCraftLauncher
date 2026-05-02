@@ -172,12 +172,20 @@ class MenuSetting {
             mouseMoveModeProperty.set(mouseMoveMode)
         }
 
-    val itemBarScaleProperty: IntegerProperty =
-        SimpleIntegerProperty(this, "itemBarScale", 0)
-    var itemBarScale: Int
-        get() = itemBarScaleProperty.get()
-        set(itemBarScale) {
-            itemBarScaleProperty.set(itemBarScale)
+    val itemBarWidthProperty: IntegerProperty =
+        SimpleIntegerProperty(this, "itemBarWidth", 0)
+    var itemBarWidth: Int
+        get() = itemBarWidthProperty.get()
+        set(v) {
+            itemBarWidthProperty.set(v)
+        }
+
+    val itemBarHeightProperty: IntegerProperty =
+        SimpleIntegerProperty(this, "itemBarHeight", 0)
+    var itemBarHeight: Int
+        get() = itemBarHeightProperty.get()
+        set(v) {
+            itemBarHeightProperty.set(v)
         }
 
     val windowScaleProperty: DoubleProperty = SimpleDoubleProperty(this, "windowScale", 1.0)
@@ -257,7 +265,8 @@ class MenuSetting {
         mouseSensitivityCursorProperty.addListener(listener)
         mouseSizeProperty.addListener(listener)
         physicalMouseMode.addListener(listener)
-        itemBarScaleProperty.addListener(listener)
+        itemBarWidthProperty.addListener(listener)
+        itemBarHeightProperty.addListener(listener)
         windowScaleProperty.addListener(listener)
         cursorOffsetProperty.addListener(listener)
         gamepadDeadzoneProperty.addListener(listener)
@@ -294,7 +303,8 @@ class MenuSetting {
                 addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
                 addProperty("mouseSize", src.mouseSize)
                 addProperty("physicalMouseMode", src.isPhysicalMouseMode)
-                addProperty("itemBarScale", src.itemBarScale)
+                addProperty("itemBarWidth", src.itemBarWidth)
+                addProperty("itemBarHeight", src.itemBarHeight)
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
@@ -332,7 +342,8 @@ class MenuSetting {
                 ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
                 ms.mouseSize = json["mouseSize"]?.asInt ?: 15
                 ms.isPhysicalMouseMode = json["physicalMouseMode"]?.asBoolean ?: false
-                ms.itemBarScale = json["itemBarScale"]?.asInt ?: 0
+                ms.itemBarWidth = json["itemBarWidth"]?.asInt ?: 0
+                ms.itemBarHeight = json["itemBarHeight"]?.asInt ?: 0
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
