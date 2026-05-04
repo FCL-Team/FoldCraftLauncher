@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1303,
-    "versionName": "1.3.0.3",
-    "date": "2026.04.29",
+    "versionCode": 1304,
+    "versionName": "1.3.0.4",
+    "date": "2026.05.04",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue where CurForge source does not display Minecraft 26.x versions.  \n2. Allow searching by the fetched remote mod name on the Manage Mods page.  \n3. Optimize the layout of the Manage Mods page.  \n4. Improve the mod management search functionality to automatically search as you type.  \n5. Migrate the download mirror domain for controls to resolve the issue where controls could not be retrieved.  \n6. Fix the loading issue with Veil 3.1.0- ImGui."
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the download layout interface could not retrieve the layout.  \n2. Fixed an issue where in-game scaling might be invalid after restarting on some devices.  \n3. Added a custom launcher info feature in the launcher settings.  \n4. Adjusted the item bar scaling function to directly set height and width.  \n5. Fixed an issue where Microsoft login might be interrupted unexpectedly due to UnknownHostException."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复 CurseForge 源中内容不显示 Minecraft 26.x 版本的问题\n2.管理模组页面允许使用获取到的远程模组名搜索\n3.优化管理模组页面布局\n4.优化模组管理搜索功能，输入后自动搜索\n5.迁移控件下载镜像域名，修复无法获取到控件的问题\n6.修复Veil3.1.0- ImGui加载问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复下载布局界面无法获取布局的问题\n2.修复部分设备游戏内缩放重启后可能无效的问题\n3.启动器设置内添加自定义启动器信息功能\n4.物品栏缩放功能调整为直接设置高度和宽度\n5.修复微软登录可能因UnknownHostException意外打断的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/ae55f0b54733",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.3/FCL-release-1.3.0.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/d779bb0ca07c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.4/FCL-release-1.3.0.4-all.apk"
   }
 ]
