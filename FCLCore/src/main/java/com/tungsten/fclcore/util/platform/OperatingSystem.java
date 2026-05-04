@@ -20,6 +20,7 @@ package com.tungsten.fclcore.util.platform;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.regex.Pattern;
 
 public enum OperatingSystem {
     /**
@@ -51,6 +52,9 @@ public enum OperatingSystem {
 
     public static final Charset NATIVE_CHARSET;
 
+    // 非法字符正则：\ / : * ? " < > |
+    private static final Pattern ILLEGAL_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|]");
+
     static {
         String nativeEncoding = System.getProperty("native.encoding");
         Charset nativeCharset = Charset.defaultCharset();
@@ -81,7 +85,7 @@ public enum OperatingSystem {
         // \0 and / are forbidden on all platforms
         if (name.indexOf('/') != -1 || name.indexOf('\0') != -1)
             return false;
-
-        return true;
+        // 在 FAT32/exFAT 规范中，以下字符不允许用于文件名：\ / : * ? " < > |
+        return !ILLEGAL_CHARS_PATTERN.matcher(name).find();
     }
 }
