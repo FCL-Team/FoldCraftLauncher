@@ -162,7 +162,7 @@ public final class LauncherHelper {
                                     ModpackProvider provider = ModpackHelper.getProviderByType(configuration.getType());
                                     if (provider == null)
                                         return null;
-                                    else if (configuration.getType().equals(ServerModpackProvider.INSTANCE.getName()))
+                                    else
                                         return provider.createCompletionTask(dependencyManager, selectedVersion);
                                 } catch (IOException ignore) {
                                 }
