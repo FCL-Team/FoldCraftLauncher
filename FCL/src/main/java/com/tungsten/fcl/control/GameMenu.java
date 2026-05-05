@@ -546,16 +546,17 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(gestureModeSpinner, menuSetting.getGestureModeProperty());
         FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeProperty());
 
-        initSeekbar(itemBarWidthSeekbar, menuSetting.getItemBarWidth(), observable -> {
-            menuSetting.setItemBarWidth(itemBarWidthSeekbar.progressProperty().get());
+        int screenWidth = AndroidUtils.getScreenWidth();
+        initSeekbar(itemBarWidthSeekbar, (int) (menuSetting.getItemBarWidth() * 100f / screenWidth), observable -> {
+            menuSetting.setItemBarWidth((int) (screenWidth / 100f * itemBarWidthSeekbar.progressProperty().get()));
             GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
             if (optionListener != null) {
                 optionListener.onOptionChanged(true);
             }
         });
-
-        initSeekbar(itemBarHeightSeekbar, menuSetting.getItemBarHeight(), observable -> {
-            menuSetting.setItemBarHeight(itemBarHeightSeekbar.progressProperty().get());
+        int screenHeight = AndroidUtils.getScreenHeight();
+        initSeekbar(itemBarHeightSeekbar, (int) (menuSetting.getItemBarHeight() * 100f / screenHeight), observable -> {
+            menuSetting.setItemBarHeight((int) (screenHeight / 100f * itemBarHeightSeekbar.progressProperty().get()));
             GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
             if (optionListener != null) {
                 optionListener.onOptionChanged(true);
