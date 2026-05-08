@@ -8,8 +8,10 @@ import android.content.Intent
 import android.os.Environment
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.Process
 import androidx.core.app.NotificationCompat
+import androidx.core.os.postDelayed
 import com.mio.data.Renderer
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.FCLauncher
@@ -92,8 +94,10 @@ class ProcessService : Service() {
                 sendCode(code)
             }
         }
-        val handler = Handler()
-        handler.postDelayed(Runnable { bridge.execute(null, callback) }, 1000)
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(1000) {
+            bridge.execute(null, callback)
+        }
     }
 
     private fun sendCode(code: Int) {
