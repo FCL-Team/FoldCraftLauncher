@@ -68,7 +68,7 @@ class VersionListAdapter(val context: Context, private val list: ArrayList<Versi
                 versionListItem.profile.selectedVersion = versionListItem.version
                 val uiManager = MainActivity.getInstance().uiManager
                 MainActivity.getInstance().binding.manage.isSelected = true
-                uiManager.manageUI.checkPageManager {
+                uiManager.manageUI.runAfterInit {
                     val tab = uiManager.manageUI.tabLayout.getTabAt(0)
                     uiManager.manageUI.tabLayout.selectTab(tab)
                 }

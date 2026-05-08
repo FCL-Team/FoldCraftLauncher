@@ -445,7 +445,7 @@ public final class LauncherHelper {
                                 future.completeExceptionally(new CancellationException());
                                 UIManager manager = UIManager.getInstance();
                                 MainActivity.getInstance().binding.manage.setSelected(true);
-                                manager.getManageUI().checkPageManager(() -> {
+                                manager.getManageUI().runAfterInit(() -> {
                                     FCLTabLayout tabLayout = manager.getManageUI().tabLayout;
                                     tabLayout.selectTab(tabLayout.getTabAt(2));
                                 });

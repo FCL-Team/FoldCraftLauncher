@@ -485,7 +485,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == controllerInstallButton) {
             UIManager uiManager = MainActivity.getInstance().getUiManager();
             MainActivity.getInstance().binding.controller.setSelected(true);
-            uiManager.getControllerUI().checkPageManager(() -> uiManager.getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO));
+            uiManager.getControllerUI().runAfterInit(() -> uiManager.getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO));
         }
         if (view == javaButton) {
             new JavaManageDialog(getContext(), java -> {

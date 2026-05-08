@@ -23,6 +23,7 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     private SettingPageManager pageManager;
 
     private FCLUILayout container;
+    public FCLTabLayout tabLayout;
 
     public SettingUI(Context context, FCLUILayout parent, int id) {
         super(context, parent, id);
@@ -31,7 +32,7 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     @Override
     public void onCreate() {
         super.onCreate();
-        FCLTabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);
