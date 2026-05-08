@@ -46,6 +46,7 @@ public class FCLauncher {
 
     private static void logStartInfo(FCLConfig config, FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
+        log(bridge, "Renderer: " + bridge.getRenderer());
         log(bridge, "Device: " + getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU: " + getSocName());
@@ -365,10 +366,10 @@ public class FCLauncher {
             log(bridge, "Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
-        printTaskTitle(bridge, "Env Map");
     }
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
+        printTaskTitle(bridge, "DLOPEN");
         String javaLibDir = config.getJavaPath() + getJavaLibDir(config.getJavaPath());
         String jliLibDir = new File(javaLibDir + "/jli/libjli.so").exists() ? javaLibDir + "/jli" : javaLibDir;
         if (isJDK8(config.getJavaPath()))

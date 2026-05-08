@@ -4,7 +4,7 @@ import android.content.Context
 import com.tungsten.fcllibrary.R
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 
-fun showErrorDialog(context: Context, message: Int, vararg args: String) {
+fun showErrorDialog(context: Context, message: Int, vararg args: String?) {
     showErrorDialog(context, context.getString(message, *args))
 }
 

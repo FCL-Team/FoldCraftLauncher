@@ -165,16 +165,16 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
         if (log.contains("OR:") || log.contains("ERROR:") || log.contains("INTERNAL ERROR:")) {
             return;
         }
-        logWindow.appendLog(log + "\n");
+        logWindow.appendLog(log);
         if (BuildConfig.DEBUG) {
             Log.d("FCL Debug", log);
         }
         try {
             if (firstLog) {
-                FileUtils.writeText(new File(fclBridge.getLogPath()), log + "\n");
+                FileUtils.writeText(new File(fclBridge.getLogPath()), log);
                 firstLog = false;
             } else {
-                FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log + "\n");
+                FileUtils.writeTextWithAppendMode(new File(fclBridge.getLogPath()), log);
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Can't log jar executor log to target file", e.getMessage());

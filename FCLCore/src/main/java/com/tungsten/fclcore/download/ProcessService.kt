@@ -80,10 +80,10 @@ class ProcessService : Service() {
             override fun onLog(log: String?) {
                 try {
                     if (firstLog) {
-                        FileUtils.writeText(File(bridge.logPath), log + "\n")
+                        FileUtils.writeText(File(bridge.logPath), log)
                         firstLog = false
                     } else {
-                        FileUtils.writeTextWithAppendMode(File(bridge.logPath), log + "\n")
+                        FileUtils.writeTextWithAppendMode(File(bridge.logPath), log)
                     }
                 } catch (e: IOException) {
                     Logging.LOG.log(Level.WARNING, "Can't log game log to target file", e.message)

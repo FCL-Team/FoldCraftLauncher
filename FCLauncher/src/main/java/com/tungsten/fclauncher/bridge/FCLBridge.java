@@ -138,17 +138,18 @@ public class FCLBridge implements Serializable {
         this.surface = surface;
         setFCLBridge(this);
         CallbackBridge.setFCLBridge(this);
-        receiveLog("invoke redirectStdio" + "\n");
+        receiveLog("==================== Before Start ====================\n");
+        receiveLog("invoke redirectStdio\n");
         int errorCode = redirectStdio(getLogPath());
         if (errorCode != 0) {
             receiveLog("Can't exec redirectStdio! Error code: " + errorCode + "\n");
         }
-        receiveLog("invoke setLogPipeReady" + "\n");
+        receiveLog("invoke setLogPipeReady\n");
         // set graphic output and event pipe
         if (surface != null) {
             handleWindow();
         }
-        receiveLog("invoke setEventPipe" + "\n");
+        receiveLog("invoke setEventPipe\n");
 
         // start
         if (thread != null) {
