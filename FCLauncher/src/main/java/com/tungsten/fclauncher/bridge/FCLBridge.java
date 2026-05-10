@@ -331,6 +331,7 @@ public class FCLBridge implements Serializable {
         this.renderer = renderer;
     }
 
+    @Nullable
     public String getRenderer() {
         return renderer;
     }

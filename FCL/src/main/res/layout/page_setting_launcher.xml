@@ -913,7 +913,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="20dp"
                         android:layout_weight="1"
-                        android:hint="--versionType xxx"
+                        android:hint="Fold Craft Launcher/${launcher_version}"
                         android:singleLine="true"
                         android:textSize="14sp"
                         app:auto_edit_tint="true"
