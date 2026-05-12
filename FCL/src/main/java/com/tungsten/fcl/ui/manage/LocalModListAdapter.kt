@@ -33,7 +33,11 @@ import kotlinx.coroutines.withContext
 import java.util.Optional
 import java.util.logging.Level
 
-class LocalModListAdapter(private val context: Context, private val modListPage: ModListPage) :
+class LocalModListAdapter(
+    private val context: Context,
+    private val modListPage: ModListPage,
+    val onChecked: () -> Unit
+) :
     RecyclerView.Adapter<LocalModListAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
@@ -176,6 +180,7 @@ class LocalModListAdapter(private val context: Context, private val modListPage:
         binding.check.isChecked = modInfoObject.active.get()
         binding.check.setOnCheckedChangeListener { _, checked ->
             modInfoObject.active.set(checked)
+            onChecked.invoke()
         }
         binding.icon.tag = position
         binding.name.text = modInfoObject.title

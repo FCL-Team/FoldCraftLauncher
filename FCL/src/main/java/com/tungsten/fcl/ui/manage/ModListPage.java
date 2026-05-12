@@ -4,6 +4,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
 import static com.tungsten.fcllibrary.browser.FileBrowser.SELECTED_FILES;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -77,6 +77,8 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import kotlin.Unit;
+
 public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private final BooleanProperty modded = new SimpleBooleanProperty(this, "modded", false);
@@ -113,7 +115,10 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     public ModListPage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
-        adapter = new LocalModListAdapter(getContext(), this);
+        adapter = new LocalModListAdapter(getContext(), this, () -> {
+            calculateMod();
+            return Unit.INSTANCE;
+        });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         Bindings.bindContent(adapter.listProperty(), itemsProperty);
@@ -308,6 +313,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             setLoading(false);
             if (exception == null)
                 try {
+                    calculateMod();
                     itemsProperty.setAll(list.stream().filter(modInfoObject -> {
                         boolean active = modInfoObject.getModInfo().isActive();
                         return (enabled.isChecked() && active) || (disabled.isChecked() && !active);
@@ -522,7 +528,21 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private void calculateMod() {
+        try {
+            List<LocalModFile> mods = modManager.getMods();
+            long activeCount = mods.stream().filter(LocalModFile::isActive).count();
+            enabled.setText(getContext().getString(R.string.enabled) + " (" + activeCount + ")");
+            disabled.setText(getContext().getString(R.string.disabled) + " (" + (mods.size() - activeCount) + ")");
+        } catch (Exception ignore) {
+            enabled.setText(getContext().getString(R.string.enabled));
+            disabled.setText(getContext().getString(R.string.disabled));
+        }
+    }
+
     public static class ModInfoObject {
+
         private final BooleanProperty active;
         private final LocalModFile localModFile;
         private final String title;
