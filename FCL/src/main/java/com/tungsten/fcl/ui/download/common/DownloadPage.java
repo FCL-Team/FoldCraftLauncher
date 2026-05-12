@@ -10,7 +10,6 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -57,6 +56,7 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
@@ -275,6 +275,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         first.setOnClickListener(this);
         last.setOnClickListener(this);
         retry.setOnClickListener(this);
+        page.setOnClickListener(this);
 
         nameEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -409,6 +410,21 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         }
         if (v == retry && retrySearch != null) {
             retrySearch.run();
+        }
+        if (v == page && pageCount.get() != 0 && pageCount.get() != -1) {
+            new EditDialog(getContext(), s -> {
+                try {
+                    int i = Integer.parseInt(s);
+                    if (i <= 0) {
+                        i = 1;
+                    } else if (i > pageCount.get()) {
+                        i = pageCount.get();
+                    }
+                    pageOffset.set(i - 1);
+                    search();
+                } catch (Throwable ignore) {
+                }
+            }).show();
         }
     }
 
