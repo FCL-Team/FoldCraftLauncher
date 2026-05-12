@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
@@ -112,7 +114,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLButton previous;
     private FCLButton first;
     private FCLButton last;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
@@ -130,7 +132,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sortSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             listLayout.setVisibility(loading ? View.GONE : View.VISIBLE);
-            listView.setVisibility(loading ? View.GONE : View.VISIBLE);
+            recyclerView.setVisibility(loading ? View.GONE : View.VISIBLE);
             if (loading) {
                 retry.setVisibility(View.GONE);
             }
@@ -142,7 +144,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             retry.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             listLayout.setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         });
     }
 
@@ -182,7 +184,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                             RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
                             DownloadPageManager.getInstance().showTempPage(page);
                         });
-                        listView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(adapter);
                     } else {
                         setFailed();
                         pageCount.set(-1);
@@ -264,7 +267,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         previous = findViewById(R.id.previous);
         first = findViewById(R.id.first);
         last = findViewById(R.id.last);
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         next.setOnClickListener(this);
