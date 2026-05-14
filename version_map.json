@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1305,
-    "versionName": "1.3.0.5",
-    "date": "2026.05.09",
+    "versionCode": 1306,
+    "versionName": "1.3.0.6",
+    "date": "2026.05.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Enhanced file name validity check, fixed installation issues caused by special characters in files stored in external storage.\n2. Fixed the modpack file auto-completion feature.\n3. Optimized the logic for setting inventory width and height, now using percentage-based scaling according to the current screen resolution.\n4. Fixed the crash of TouchController caused by LWJGL missing the input method positioning function.\n5. Added a quick jump to version settings next to the launch button on the main page.\n6. Fixed the issue where invalid logs were uploaded when log files were too large.\n7. Adjusted log output formatting."
+        "text": "(Translated from Chinese by AI)\n1. Fixed custom launcher info and added support for displaying the currently used launcher version number.\n2. The mod management interface now shows the number of enabled and disabled mods.\n3. Optimized the layout of the download interface.\n4. Added a feature to jump to a specific page number on the download page.\n5. Fixed an issue where forcing resolution settings might not take effect after launching on some devices."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.增强文件名合法性校验，修复外部储存中文件含有特殊字符时安装异常的问题\n2.修复整合包文件补全功能\n3.优化物品栏宽高设置逻辑，根据当前屏幕分辨率进行百分比设置\n4.修复LWJGL缺少输入法定位函数，导致 TouchController 崩溃的问题\n5.主页启动按钮旁添加快捷跳转版本设置功能\n6.修复日志文件过大上传文件时上传无效日志的问题\n7.调整日志输出相关格式"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复自定义启动器信息并支持显示当前使用的启动器版本号\n2.模组管理界面显示已启用和已禁用模组数\n3.优化下载界面布局\n4.下载页面添加跳转至指定页码功能\n5.修复强制设置分辨率在部分设备上启动后可能无法生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/76cd6dc5b0e3",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.5/FCL-release-1.3.0.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/ee62a16ce443",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.6/FCL-release-1.3.0.6-all.apk"
   }
 ]
