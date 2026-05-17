@@ -501,7 +501,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == javaInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_java)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
@@ -534,7 +534,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == rendererInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
@@ -552,7 +552,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == driverInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";

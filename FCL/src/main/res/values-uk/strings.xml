@@ -699,6 +699,8 @@
 
     <string name="settings_fcl_driver">Драйвер Vulkan</string>
 
+    <string name="settings_download_netdisk">Netdisk (рекомендовано для користувачів у Китаї)</string>
+
     <string name="settings_game">Налаштування гри</string>
     <string name="settings_game_dimension">Роздільна здатність</string>
     <string name="settings_game_cursor_offset">Зміщення курсора</string>

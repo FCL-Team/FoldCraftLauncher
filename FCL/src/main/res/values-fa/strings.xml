@@ -740,6 +740,8 @@
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+، فقط از نسخه های ۱.۱۷ به بعد پشتیبانی می کند)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6، فقط از پردازنده های گرافیکی a616-a660 پشتیبانی می کند)</string>
 
+    <string name="settings_download_netdisk">Netdisk (برای کاربران در چین توصیه می‌شود)</string>
+
     <string name="settings_game">تنظیمات بازی</string>
     <string name="settings_game_dimension">رزولوشن</string>
     <string name="settings_game_java_version">نسخه جاوا</string>
