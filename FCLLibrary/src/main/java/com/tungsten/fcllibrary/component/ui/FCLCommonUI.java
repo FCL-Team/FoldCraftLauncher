@@ -33,7 +33,9 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     @Override
     public boolean isShowing() {
-        return getContentView().getVisibility() == View.VISIBLE;
+        View contentView = getContentView();
+        if (contentView == null) return false;
+        return contentView.getVisibility() == View.VISIBLE;
     }
 
     @Override
