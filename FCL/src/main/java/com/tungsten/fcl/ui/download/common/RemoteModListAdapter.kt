@@ -13,6 +13,7 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
 import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.util.ModTranslations
+import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
@@ -37,8 +38,9 @@ class RemoteModListAdapter(
         if (downloadPage is ModDownloadPage) {
             MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
                 val modManager = downloadPage.modManager
-                val modFiles =
+                val modFiles = runCatching {
                     modManager.getMods().parallelStream().collect(Collectors.toList())
+                }.getOrNull() ?: emptyList<LocalModFile>()
                 for (localModFile in modFiles) {
                     try {
                         val size = localModFile.file.toFile().length()
