@@ -682,6 +682,8 @@
 
     <string name="settings_fcl_driver">Vulkan-Treiber</string>
 
+    <string name="settings_download_netdisk">Netdisk(Qıtayda qullanğanlar içün tevsiye etile)</string>
+
     <string name="settings_game">Spieleinstellungen</string>
     <string name="settings_game_dimension">Auflösung</string>
     <string name="settings_game_cursor_offset">Cursor-Versatz</string>

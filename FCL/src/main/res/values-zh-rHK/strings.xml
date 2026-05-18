@@ -787,10 +787,12 @@
     <string name="settings_fcl_renderer">OpenGL實作方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">強制渲染器喺大核上運行</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 僅支持 1.17-)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 僅支持GPU a616-a660)</string>
 
     <string name="settings_fcl_driver">Vulkan驅動</string>
 
-    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 僅支持GPU a616-a660)</string>
+    <string name="settings_download_netdisk">網盤</string>
+
     <string name="settings_game">遊戲設置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
     <string name="settings_game_cursor_offset">滑鼠指針偏移</string>
@@ -993,7 +995,7 @@
     <string name="gamepad_dpad">方向鍵</string>
     <string name="gamepad_button_binding">手柄按鍵綁定</string>
     <string name="joystick_r">右搖桿</string>
-    <string name="message_vulkan_driver_system">警告：使用系統Vulkan驅動可能獲得更好的效能，但也可能因相容性問題導致崩潰！ 。</string>
+    <string name="message_vulkan_driver_system">警告：使用系統Vulkan驅動可能獲得更好的效能，但也可能因相容性問題導致崩潰！ </string>
     <string name="message_loading_controllers">正在加載自定義按鍵，請等待...</string>
 
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-tw</string>

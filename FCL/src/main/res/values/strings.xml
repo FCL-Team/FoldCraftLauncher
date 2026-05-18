@@ -867,6 +867,8 @@
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
 
+    <string name="settings_download_netdisk">Netdisk(Recommended for users in China)</string>
+
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
     <string name="settings_game_cursor_offset">Cursor Offset</string>
