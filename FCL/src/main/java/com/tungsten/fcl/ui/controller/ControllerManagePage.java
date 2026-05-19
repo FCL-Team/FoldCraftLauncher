@@ -15,6 +15,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.core.content.FileProvider;
 
 import com.google.gson.GsonBuilder;
+import com.mio.util.DialogUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.ControllerActivity;
 import com.tungsten.fcl.setting.Controller;
@@ -218,7 +219,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
                         } else {
                             addController(controller);
                         }
-                    } catch (IOException e) {
+                    } catch (Throwable e) {
+                        DialogUtilKt.showErrorDialog(getContext(), getContext().getString(R.string.control_import_failed) + "\n" + e.getMessage());
                         Logging.LOG.log(Level.SEVERE, "Failed to import controller", e);
                     }
                 }
