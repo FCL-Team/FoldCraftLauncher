@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1306,
-    "versionName": "1.3.0.6",
-    "date": "2026.05.14",
+    "versionCode": 1307,
+    "versionName": "1.3.0.7",
+    "date": "2026.05.19",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed custom launcher info and added support for displaying the currently used launcher version number.\n2. The mod management interface now shows the number of enabled and disabled mods.\n3. Optimized the layout of the download interface.\n4. Added a feature to jump to a specific page number on the download page.\n5. Fixed an issue where forcing resolution settings might not take effect after launching on some devices."
+        "text": "(Translated from Chinese by AI)\n1. Fixed the issue where versions 26.2+ could not automatically fall back to OpenGL when Vulkan requirements were not met.\n2. Fixed the freeze/crash issue when using the system's windowed game feature (small window) on phones with 26.2-snapshots.\n3. Fixed the issue where the launcher would sometimes crash directly on some devices when opening.\n4. Fixed the launcher crash when downloading mods without any version installed.\n5. Corrected some text descriptions within the launcher.\n6. Fixed the launcher crash caused by importing a corrupted layout file."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复自定义启动器信息并支持显示当前使用的启动器版本号\n2.模组管理界面显示已启用和已禁用模组数\n3.优化下载界面布局\n4.下载页面添加跳转至指定页码功能\n5.修复强制设置分辨率在部分设备上启动后可能无法生效的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复26.2+不满足Vulkan要求时无法自动使用OpenGL的问题\n2.修复26.2-snapshots 使用手机系统小窗游戏功能运行时卡死崩溃的问题\n3.修复部分设备打开启动器时有概率直接崩溃的问题\n4.修复未安装版本时下载模组导致启动器崩溃的问题\n5.修正启动器内部分文本描述\n6.修复导入的布局文件损坏导致启动器崩溃的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/ee62a16ce443",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.6/FCL-release-1.3.0.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/42665de2b2a0",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.7/FCL-release-1.3.0.7-all.apk"
   }
 ]
