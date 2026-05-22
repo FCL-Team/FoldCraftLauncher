@@ -71,8 +71,8 @@ object RendererManager {
         RENDERER_ZINK = Renderer(
             "Zink",
             context.getString(R.string.settings_fcl_renderer_zink),
-            "libOSMesa_8.so",
-            "libEGL.so",
+            "libglxshim.so",
+            "libEGL_mesa.so",
             "",
             null,
             null,

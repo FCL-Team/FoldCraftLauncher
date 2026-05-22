@@ -347,7 +347,9 @@ public class FCLauncher {
                 envMap.put("POJAV_RENDERER", "gallium_virgl");
                 envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
             } else if (renderer.isEqual(Renderer.ID_ZINK)) {
-                envMap.put("POJAV_RENDERER", "vulkan_zink");
+                envMap.put("POJAV_RENDERER", "opengles3_desktopgl_zink_kopper");
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("POJAVEXEC_EGL", renderer.getEglName());
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
