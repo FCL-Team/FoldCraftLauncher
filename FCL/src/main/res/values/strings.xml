@@ -211,6 +211,9 @@
     <string name="curse_category_4472">Tech</string>
     <string name="curse_category_4473">Magic</string>
     <string name="curse_category_5128">Vanilla+</string>
+    <string name="curse_category_7418">Horror</string>
+    <string name="curse_category_9243">Expert</string>
+    <string name="curse_category_10683" translatable="false">RLCraft</string>
 
     <string name="curse_category_5299">Education</string>
     <string name="curse_category_5232">Galacticraft</string>
@@ -234,6 +237,9 @@
     <string name="curse_category_419">Magic</string>
     <string name="curse_category_412">Technology</string>
     <string name="curse_category_4557">Redstone</string>
+    <string name="curse_category_8937" translatable="false">ModJam 2025</string>
+    <string name="curse_category_9026">CreativeMode</string>
+    <string name="curse_category_10775">Horror</string>
     <string name="curse_category_428">Tinker\'s Construct</string>
     <string name="curse_category_414">Player Transport</string>
     <string name="curse_category_4486">Lucky Blocks</string>
@@ -265,6 +271,9 @@
     <string name="curse_category_4558">Redstone</string>
     <string name="curse_category_4843">Automation</string>
     <string name="curse_category_4906">MCreator</string>
+    <string name="curse_category_7669">Twilight Forest</string>
+    <string name="curse_category_9049">Refined Storage</string>
+    <string name="curse_category_10754">Farmer\'s Delight</string>
 
     <string name="curse_category_5244">Font Packs</string>
     <string name="curse_category_5193">Data Packs</string>

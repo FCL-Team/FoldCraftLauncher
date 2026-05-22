@@ -122,7 +122,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     @Override
     public SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
-        if (category != null) categoryId = ((CurseAddon.Category) category.getSelf()).getId();
+        if (category != null) categoryId = ((CurseAddon.Category) category.self()).getId();
         var query = new LinkedHashMap<String, String>();
         query.put("gameId", "432");
         query.put("classId", Integer.toString(section));
@@ -146,7 +146,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                         .getJson(new TypeToken<Response<List<CurseAddon>>>() {
                         }.getType());
                 if (searchFilter.isEmpty()) {
-                    return new SearchResult(response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+                    return new SearchResult(response.data().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
                 }
                 break;
             } catch (IOException e) {
@@ -174,7 +174,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
 
-        return new SearchResult(response.getData().stream().map(CurseAddon::toMod).map(remoteMod -> {
+        return new SearchResult(response.data().stream().map(CurseAddon::toMod).map(remoteMod -> {
             String lowerCaseResult = remoteMod.getTitle().toLowerCase();
             int diff = levCalculator.calc(lowerCaseSearchFilter, lowerCaseResult);
 
@@ -185,7 +185,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
             }
 
             return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.getData().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.data().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
     }
 
     @Override
@@ -211,11 +211,11 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 .getJson(new TypeToken<Response<FingerprintMatchesResult>>() {
                 }.getType());
 
-        if (response.getData().getExactMatches() == null || response.getData().getExactMatches().isEmpty()) {
+        if (response.data().exactMatches() == null || response.data().exactMatches().isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(response.getData().getExactMatches().get(0).getFile().toVersion());
+        return Optional.of(response.data().exactMatches().get(0).file().toVersion());
     }
 
     @Override
@@ -231,7 +231,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         Response<CurseAddon.LatestFile> response = withApiKey(HttpRequest.GET(String.format("%s/v1/mods/%s/files/%s", PREFIX, modId, fileId)))
                 .getJson(new TypeToken<Response<CurseAddon.LatestFile>>() {
                 }.getType());
-        return response.getData().toVersion().getFile();
+        return response.data().toVersion().getFile();
     }
 
     @Override
@@ -240,14 +240,14 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 pair("pageSize", "10000")))
                 .getJson(new TypeToken<Response<List<CurseAddon.LatestFile>>>() {
                 }.getType());
-        return response.getData().stream().map(CurseAddon.LatestFile::toVersion);
+        return response.data().stream().map(CurseAddon.LatestFile::toVersion);
     }
 
     public List<CurseAddon.Category> getCategoriesImpl() throws IOException {
         Response<List<CurseAddon.Category>> categories = withApiKey(HttpRequest.GET(PREFIX + "/v1/categories", pair("gameId", "432")))
                 .getJson(new TypeToken<Response<List<CurseAddon.Category>>>() {
                 }.getType());
-        return reorganizeCategories(categories.getData(), section);
+        return reorganizeCategories(categories.data(), section);
     }
 
     @Override
@@ -296,105 +296,24 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     public static final CurseForgeRemoteModRepository CUSTOMIZATIONS = new CurseForgeRemoteModRepository(RemoteModRepository.Type.CUSTOMIZATION, SECTION_CUSTOMIZATION);
     public static final CurseForgeRemoteModRepository SHADER_PACKS = new CurseForgeRemoteModRepository(Type.SHADER_PACK, SECTION_SHADER_PACK);
 
-    public static class Pagination {
-        private final int index;
-        private final int pageSize;
-        private final int resultCount;
-        private final int totalCount;
-
-        public Pagination(int index, int pageSize, int resultCount, int totalCount) {
-            this.index = index;
-            this.pageSize = pageSize;
-            this.resultCount = resultCount;
-            this.totalCount = totalCount;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public int getPageSize() {
-            return pageSize;
-        }
-
-        public int getResultCount() {
-            return resultCount;
-        }
-
-        public int getTotalCount() {
-            return totalCount;
-        }
+    public record Pagination(int index, int pageSize, int resultCount, int totalCount) {
     }
 
-    public static class Response<T> {
-        private final T data;
-        private final Pagination pagination;
-
-        public Response(T data, Pagination pagination) {
-            this.data = data;
-            this.pagination = pagination;
-        }
-
-        public T getData() {
-            return data;
-        }
-
-        public Pagination getPagination() {
-            return pagination;
-        }
+    public record Response<T>(T data, Pagination pagination) {
     }
 
     /**
-     * @see <a href="https://docs.curseforge.com/#tocS_FingerprintsMatchesResult">Schema</a>
-     */
-    private static class FingerprintMatchesResult {
-        private final boolean isCacheBuilt;
-        private final List<FingerprintMatch> exactMatches;
-        private final List<Long> exactFingerprints;
-
-        public FingerprintMatchesResult(boolean isCacheBuilt, List<FingerprintMatch> exactMatches, List<Long> exactFingerprints) {
-            this.isCacheBuilt = isCacheBuilt;
-            this.exactMatches = exactMatches;
-            this.exactFingerprints = exactFingerprints;
-        }
-
-        public boolean isCacheBuilt() {
-            return isCacheBuilt;
-        }
-
-        public List<FingerprintMatch> getExactMatches() {
-            return exactMatches;
-        }
-
-        public List<Long> getExactFingerprints() {
-            return exactFingerprints;
-        }
+         * @see <a href="https://docs.curseforge.com/#tocS_FingerprintsMatchesResult">Schema</a>
+         */
+        private record FingerprintMatchesResult(boolean isCacheBuilt,
+                                                List<FingerprintMatch> exactMatches,
+                                                List<Long> exactFingerprints) {
     }
 
     /**
-     * @see <a href="https://docs.curseforge.com/#tocS_FingerprintMatch">Schema</a>
-     */
-    private static class FingerprintMatch {
-        private final int id;
-        private final CurseAddon.LatestFile file;
-        private final List<CurseAddon.LatestFile> latestFiles;
-
-        public FingerprintMatch(int id, CurseAddon.LatestFile file, List<CurseAddon.LatestFile> latestFiles) {
-            this.id = id;
-            this.file = file;
-            this.latestFiles = latestFiles;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public CurseAddon.LatestFile getFile() {
-            return file;
-        }
-
-        public List<CurseAddon.LatestFile> getLatestFiles() {
-            return latestFiles;
-        }
+         * @see <a href="https://docs.curseforge.com/#tocS_FingerprintMatch">Schema</a>
+         */
+        private record FingerprintMatch(int id, CurseAddon.LatestFile file,
+                                        List<CurseAddon.LatestFile> latestFiles) {
     }
 }

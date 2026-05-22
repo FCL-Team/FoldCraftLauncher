@@ -100,28 +100,7 @@ public interface RemoteModRepository {
 
     Stream<Category> getCategories() throws IOException;
 
-    class Category {
-        private final Object self;
-        private final String id;
-        private final List<Category> subcategories;
-
-        public Category(Object self, String id, List<Category> subcategories) {
-            this.self = self;
-            this.id = id;
-            this.subcategories = subcategories;
-        }
-
-        public Object getSelf() {
-            return self;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public List<Category> getSubcategories() {
-            return subcategories;
-        }
+    record Category(Object self, String id, List<Category> subcategories) {
     }
 
     String[] DEFAULT_GAME_VERSIONS = GameVersionNumber.Release.getDefaultGameVersions();

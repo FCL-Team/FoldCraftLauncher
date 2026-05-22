@@ -201,16 +201,16 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         StringBuilder result = new StringBuilder();
         result.append(StringUtils.repeats(' ', indented.indent() * 4));
 
-        String localized = getLocalizedCategory(indented.category().getId());
+        String localized = getLocalizedCategory(indented.category().id());
         if (!localized.startsWith("curse_category_")) {
             result.append(localized);
             return result.toString();
         }
-        Object self = indented.category().getSelf();
+        Object self = indented.category().self();
         if (self instanceof CurseAddon.Category curseCategory) {
             result.append(curseCategory.getName());
         } else if (self instanceof ModrinthRemoteModRepository.Category modrinthCategory) {
-            result.append(modrinthCategory.getName());
+            result.append(modrinthCategory.name());
         }
         return result.toString();
     }
@@ -437,7 +437,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
     private static void resolveCategory(RemoteModRepository.Category category, int indent, List<CategoryIndented> result) {
         result.add(new CategoryIndented(indent, category));
-        for (RemoteModRepository.Category subcategory : category.getSubcategories()) {
+        for (RemoteModRepository.Category subcategory : category.subcategories()) {
             resolveCategory(subcategory, indent + 1, result);
         }
     }

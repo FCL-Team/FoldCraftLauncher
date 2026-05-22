@@ -189,6 +189,8 @@
     <string name="curse_category_4472">科技</string>
     <string name="curse_category_4473">魔法</string>
     <string name="curse_category_5128">原版增强</string>
+    <string name="curse_category_7418">恐怖</string>
+    <string name="curse_category_9243">专家</string>
 
     <string name="curse_category_5299">教育</string>
     <string name="curse_category_5232">额外行星</string>
@@ -212,7 +214,10 @@
     <string name="curse_category_419">魔法</string>
     <string name="curse_category_412">科技</string>
     <string name="curse_category_4557">红石</string>
+    <string name="curse_category_9026">创造模式</string>
+    <string name="curse_category_10775">恐怖</string>
     <string name="curse_category_428">匠魂</string>
+
     <string name="curse_category_414">交通运输</string>
     <string name="curse_category_4486">幸运方块 (Lucky Blocks)</string>
     <string name="curse_category_432">建筑 (Buildcraft)</string>
@@ -243,6 +248,9 @@
     <string name="curse_category_4558">红石</string>
     <string name="curse_category_4843">自动化</string>
     <string name="curse_category_4906">MCreator</string>
+    <string name="curse_category_7669">暮色森林</string>
+    <string name="curse_category_9049">精致存储 (Refined Storage)</string>
+    <string name="curse_category_10754">农夫乐事 (Farmer\'s Delight)</string>
 
     <string name="curse_category_5244">字体包</string>
     <string name="curse_category_5193">数据包</string>
