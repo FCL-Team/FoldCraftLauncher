@@ -24,9 +24,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
 
 import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.ProcessService;
@@ -57,7 +57,12 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -234,9 +239,10 @@ public final class OptiFineInstallTask extends Task<Version> {
     private void runJVMProcess(String[] command, int java) throws Exception {
         Activity context = FCLApplication.getCurrentActivity();
         int exitCode;
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         boolean listen = true;
         while (listen) {
-            if (((ActivityManager) FCLPath.CONTEXT.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses().size() == 1) {
+            if (activityManager.getRunningAppProcesses().size() == 1) {
                 listen = false;
             }
         }
@@ -246,12 +252,29 @@ public final class OptiFineInstallTask extends Task<Version> {
             server1.stop();
             latch.countDown();
         });
-        Intent service = new Intent(context, ProcessService.class);
-        Bundle bundle = new Bundle();
-        bundle.putStringArray("command", command);
-        bundle.putInt("java", java);
-        service.putExtras(bundle);
-        context.startForegroundService(service);
+        context.runOnUiThread(() -> {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    Intent service = new Intent(context, ProcessService.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArray("command", command);
+                    bundle.putInt("java", java);
+                    service.putExtras(bundle);
+                    context.startForegroundService(service);
+                } catch (Throwable e) {
+                    activityManager.getRunningAppProcesses().forEach(info -> {
+                        if (info.pid != android.os.Process.myPid()) {
+                            Process.killProcess(info.pid);
+                        }
+                    });
+                    if (i == 4) {
+                        throw e;
+                    }
+                    continue;
+                }
+                break;
+            }
+        });
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());
@@ -284,7 +307,8 @@ public final class OptiFineInstallTask extends Task<Version> {
         try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(installer)) {
             Path configClass = fs.getPath("Config.class");
             if (!Files.exists(configClass)) configClass = fs.getPath("net/optifine/Config.class");
-            if (!Files.exists(configClass)) configClass = fs.getPath("notch/net/optifine/Config.class");
+            if (!Files.exists(configClass))
+                configClass = fs.getPath("notch/net/optifine/Config.class");
             if (!Files.exists(configClass)) throw new IOException("Unrecognized installer");
             ConstantPool pool = ConstantPoolScanner.parse(Files.readAllBytes(configClass), ConstantType.UTF8);
             List<String> constants = new ArrayList<>();

@@ -204,7 +204,7 @@ public class FCLauncher {
 
                 ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
 
-                ((!nativeLibPaths.isEmpty() ? nativeLibPaths + split : "")) +
+                ((!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null") ? nativeLibPaths + split : "")) +
 
                 FCLPath.MOD_RUNTIME_DIR +
                 split +
