@@ -220,6 +220,7 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
             UIManager.getInstance().onBackPressed();
         }
         if (view == back) {
+            back.setEnabled(false);
             for (int i = 0; i < 3; i++) {
                 UIManager.getInstance().onBackPressed();
             }
