@@ -226,6 +226,20 @@ class MenuSetting {
             mouseSizeProperty.set(mouseSize)
         }
 
+    val mouseOffsetXProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetX", 15)
+    var mouseOffsetX: Int
+        get() = mouseOffsetXProperty.get()
+        set(v) {
+            mouseOffsetXProperty.set(v)
+        }
+
+    val mouseOffsetYProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetY", 15)
+    var mouseOffsetY: Int
+        get() = mouseOffsetYProperty.get()
+        set(v) {
+            mouseOffsetYProperty.set(v)
+        }
+
     val physicalMouseMode: BooleanProperty = SimpleBooleanProperty(this, "physicalMouseMode", false)
     var isPhysicalMouseMode: Boolean
         get() = physicalMouseMode.get()
@@ -264,6 +278,8 @@ class MenuSetting {
         mouseSensitivityProperty.addListener(listener)
         mouseSensitivityCursorProperty.addListener(listener)
         mouseSizeProperty.addListener(listener)
+        mouseOffsetXProperty.addListener(listener)
+        mouseOffsetYProperty.addListener(listener)
         physicalMouseMode.addListener(listener)
         itemBarWidthProperty.addListener(listener)
         itemBarHeightProperty.addListener(listener)
@@ -302,6 +318,8 @@ class MenuSetting {
                 addProperty("mouseSensitivity", src.mouseSensitivity)
                 addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
                 addProperty("mouseSize", src.mouseSize)
+                addProperty("mouseOffsetX", src.mouseOffsetX)
+                addProperty("mouseOffsetY", src.mouseOffsetY)
                 addProperty("physicalMouseMode", src.isPhysicalMouseMode)
                 addProperty("itemBarWidth", src.itemBarWidth)
                 addProperty("itemBarHeight", src.itemBarHeight)
@@ -341,6 +359,8 @@ class MenuSetting {
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
                 ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
                 ms.mouseSize = json["mouseSize"]?.asInt ?: 15
+                ms.mouseOffsetX = json["mouseOffsetX"]?.asInt ?: 0
+                ms.mouseOffsetY = json["mouseOffsetY"]?.asInt ?: 0
                 ms.isPhysicalMouseMode = json["physicalMouseMode"]?.asBoolean ?: false
                 ms.itemBarWidth = json["itemBarWidth"]?.asInt ?: 0
                 ms.itemBarHeight = json["itemBarHeight"]?.asInt ?: 0

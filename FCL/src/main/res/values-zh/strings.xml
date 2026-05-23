@@ -555,6 +555,8 @@
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
     <string name="menu_settings_mouse_cursor_sensitivity">鼠标灵敏度（当指针可见时）</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_mouse_offset_x">鼠标偏移X</string>
+    <string name="menu_settings_mouse_offset_y">鼠标偏移Y</string>
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_disable_mapping">禁用手柄映射</string>

@@ -184,8 +184,8 @@
                 android:layout_marginBottom="5dp"
                 android:max="100"
                 android:min="0"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/item_bar_scale_text" />
+                app:layout_constraintTop_toBottomOf="@id/item_bar_scale_text"
+                app:suffix="%" />
 
             <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                 android:id="@+id/item_bar_height"
@@ -195,8 +195,8 @@
                 android:layout_marginBottom="5dp"
                 android:max="100"
                 android:min="0"
-                app:suffix="%"
-                app:layout_constraintTop_toBottomOf="@id/item_bar_width" />
+                app:layout_constraintTop_toBottomOf="@id/item_bar_width"
+                app:suffix="%" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/window_scale_text"
@@ -425,6 +425,54 @@
                 app:layout_constraintTop_toBottomOf="@id/mouse_size_text"
                 app:suffix="dp" />
 
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/mouse_offset_x_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:text="@string/menu_settings_mouse_offset_x"
+                android:textSize="12sp"
+                app:auto_text_tint="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mouse_size" />
+
+            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
+                android:id="@+id/mouse_offset_x"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:max="30"
+                android:min="-30"
+                app:layout_constraintTop_toBottomOf="@id/mouse_offset_x_text"
+                app:suffix="dp" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/mouse_offset_y_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:singleLine="true"
+                android:text="@string/menu_settings_mouse_offset_y"
+                android:textSize="12sp"
+                app:auto_text_tint="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mouse_offset_x" />
+
+            <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
+                android:id="@+id/mouse_offset_y"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:max="30"
+                android:min="-30"
+                app:layout_constraintTop_toBottomOf="@id/mouse_offset_y_text"
+                app:suffix="dp" />
+
             <com.tungsten.fcllibrary.component.view.FCLSwitch
                 android:id="@+id/switch_physical_mouse_mode"
                 android:layout_width="match_parent"
@@ -433,7 +481,7 @@
                 android:text="@string/menu_settings_physical_mouse_mode"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mouse_size" />
+                app:layout_constraintTop_toBottomOf="@id/mouse_offset_y" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/text_gamepad"

@@ -31,6 +31,7 @@ import com.google.gson.GsonBuilder;
 import com.mio.touchcontroller.TouchController;
 import com.mio.touchcontroller.TouchControllerInputView;
 import com.mio.ui.dialog.GamepadMapDialog;
+import com.mio.ui.view.CursorView;
 import com.mio.ui.view.DraggableTextView;
 import com.mio.util.AndroidUtilKt;
 import com.mio.util.ImageUtil;
@@ -77,7 +78,6 @@ import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -121,7 +121,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private TouchCharInput touchCharInput;
     private TouchControllerInputView touchControllerInputView;
     private FCLProgressBar launchProgress;
-    private FCLImageView cursorView;
+    private CursorView cursorView;
     private ViewManager viewManager;
     private Gyroscope gyroscope;
     private GameOption gameOption;
@@ -403,6 +403,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLNumberSeekBar mouseSensitivitySeekbar = findViewById(R.id.mouse_sensitivity);
         FCLNumberSeekBar mouseSensitivityCursorSeekbar = findViewById(R.id.mouse_sensitivity_cursor);
         FCLNumberSeekBar mouseSizeSeekbar = findViewById(R.id.mouse_size);
+        FCLNumberSeekBar mouseOffsetXSeekbar = findViewById(R.id.mouse_offset_x);
+        FCLNumberSeekBar mouseOffsetYSeekbar = findViewById(R.id.mouse_offset_y);
         FCLNumberSeekBar gamepadDeadzoneSeekbar = findViewById(R.id.gamepad_deadzone_size);
         FCLNumberSeekBar gyroSensitivitySeekbar = findViewById(R.id.gyro_sensitivity);
 
@@ -578,7 +580,15 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         initSeekbar(mouseSensitivitySeekbar, (int) (menuSetting.getMouseSensitivity() * 100), observable -> menuSetting.setMouseSensitivity(mouseSensitivitySeekbar.progressProperty().get() / 100d));
         initSeekbar(mouseSensitivityCursorSeekbar, (int) (menuSetting.getMouseSensitivityCursor() * 100), observable -> menuSetting.setMouseSensitivityCursor(mouseSensitivityCursorSeekbar.progressProperty().get() / 100d));
-        initSeekbar(mouseSizeSeekbar, menuSetting.getMouseSizeProperty().get(), observable -> menuSetting.setMouseSize(mouseSizeSeekbar.progressProperty().get()));
+        initSeekbar(mouseSizeSeekbar, menuSetting.getMouseSize(), observable -> menuSetting.setMouseSize(mouseSizeSeekbar.progressProperty().get()));
+        initSeekbar(mouseOffsetXSeekbar, menuSetting.getMouseOffsetX(), observable -> {
+            menuSetting.setMouseOffsetX(mouseOffsetXSeekbar.progressProperty().get());
+            cursorView.setOffsetX(menuSetting.getMouseOffsetX());
+        });
+        initSeekbar(mouseOffsetYSeekbar, menuSetting.getMouseOffsetY(), observable -> {
+            menuSetting.setMouseOffsetY(mouseOffsetYSeekbar.progressProperty().get());
+            cursorView.setOffsetY(menuSetting.getMouseOffsetY());
+        });
         initSeekbar(gamepadDeadzoneSeekbar, (int) (menuSetting.getGamepadDeadzone() * 100), observable -> menuSetting.setGamepadDeadzone(gamepadDeadzoneSeekbar.progressProperty().get() / 100d));
         initSeekbar(gyroSensitivitySeekbar, menuSetting.getGyroscopeSensitivityProperty().get(), observable -> menuSetting.setGyroscopeSensitivity(gyroSensitivitySeekbar.progressProperty().get()));
 
@@ -666,16 +676,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         touchPad.init(this);
         touchCharInput.setCharacterSender(this, new LwjglCharSender(this));
-        ViewGroup.LayoutParams layoutParams = cursorView.getLayoutParams();
-        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
-        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
-        cursorView.setLayoutParams(layoutParams);
-        menuSetting.getMouseSizeProperty().addListener(observable -> {
-            ViewGroup.LayoutParams params = cursorView.getLayoutParams();
-            params.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
-            params.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
-            cursorView.setLayoutParams(params);
-        });
+        initCursorView(activity);
+        menuSetting.getMouseSizeProperty().addListener(observable -> initCursorView(activity));
 
         gyroscope = new Gyroscope(this);
         gyroscope.enableProperty().bind(menuSetting.getEnableGyroscopeProperty());
@@ -688,7 +690,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         viewManager.setup();
 
         if (new File(FCLPath.FILES_DIR, "cursor.gif").exists()) {
-            Glide.with(getCursor()).asGif().skipMemoryCache(true).load(new File(FCLPath.FILES_DIR, "cursor.gif")).into(new CustomViewTarget<FCLImageView, GifDrawable>(getCursor()) {
+            Glide.with(getCursor()).asGif().skipMemoryCache(true).load(new File(FCLPath.FILES_DIR, "cursor.gif")).into(new CustomViewTarget<CursorView, GifDrawable>(getCursor()) {
                 @Override
                 public void onLoadFailed(@Nullable Drawable errorDrawable) {
                 }
@@ -734,6 +736,15 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
     }
 
+    private void initCursorView(FCLActivity activity) {
+        ViewGroup.LayoutParams layoutParams = cursorView.getLayoutParams();
+        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
+        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
+        cursorView.setLayoutParams(layoutParams);
+        cursorView.setOffsetX(menuSetting.getMouseOffsetX());
+        cursorView.setOffsetY(menuSetting.getMouseOffsetX());
+    }
+
     @Override
     public View getLayout() {
         if (layout == null) {
@@ -760,7 +771,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     @Override
-    public FCLImageView getCursor() {
+    public CursorView getCursor() {
         return cursorView;
     }
 

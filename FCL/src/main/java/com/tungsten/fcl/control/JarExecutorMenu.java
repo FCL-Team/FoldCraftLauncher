@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.mio.ui.view.CursorView;
 import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMCrashActivity;
@@ -39,7 +40,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
     private View layout;
     private View touchPad;
     private LogWindow logWindow;
-    private FCLImageView cursorView;
+    private CursorView cursorView;
     private TouchCharInput touchCharInput;
     private FCLButton forceExit;
     private FCLButton showLog;
@@ -128,7 +129,7 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
     }
 
     @Override
-    public FCLImageView getCursor() {
+    public CursorView getCursor() {
         return cursorView;
     }
 
