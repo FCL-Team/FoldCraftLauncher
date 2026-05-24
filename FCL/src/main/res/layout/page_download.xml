@@ -36,9 +36,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:imeOptions="actionSearch"
                 android:singleLine="true"
                 android:textSize="13sp"
-                android:imeOptions="actionSearch"
                 app:auto_edit_tint="true" />
 
             <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -123,10 +123,10 @@
         android:id="@+id/install_modpack"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:singleLine="true"
         android:text="@string/install_modpack"
         android:visibility="gone"
-        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@id/search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.3"
@@ -144,98 +144,104 @@
         app:layout_constraintWidth_percent="0.3"
         app:ripple="true" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/list_layout"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="10dp"
-        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/search_layout"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toEndOf="@id/search_layout">
 
-        <com.tungsten.fcllibrary.component.view.FCLImageView
-            android:id="@+id/translate"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/ic_translation"
-            android:visibility="gone"
-            app:use_theme_color="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/page"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@drawable/bg_container_white"
-            android:gravity="center"
-            android:text="@string/search_page_n"
-            app:auto_text_background_tint="true"
-            app:auto_text_tint="true" />
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/previous"
-            android:layout_width="wrap_content"
+        <com.mio.ui.widget.FCLAppBarLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:padding="10dp"
-            android:text="@string/search_previous_page"
-            app:auto_padding="false"
-            app:ripple="true" />
+            android:background="@android:color/transparent"
+            app:auto_tint="true">
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/next"
-            android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <com.tungsten.fcllibrary.component.view.FCLImageView
+                    android:id="@+id/translate"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/ic_translation"
+                    android:visibility="gone"
+                    app:use_theme_color="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/page"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_container_white"
+                    android:gravity="center"
+                    android:text="@string/search_page_n"
+                    app:auto_text_background_tint="true"
+                    app:auto_text_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/previous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:padding="10dp"
+                    android:text="@string/search_previous_page"
+                    app:auto_padding="false"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:padding="10dp"
+                    android:text="@string/search_next_page"
+                    app:auto_padding="false"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/first"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:padding="10dp"
+                    android:text="@string/search_first_page"
+                    app:auto_padding="false"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/last"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="10dp"
+                    android:padding="10dp"
+                    android:text="@string/search_last_page"
+                    app:auto_padding="false"
+                    app:ripple="true" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </com.mio.ui.widget.FCLAppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:padding="10dp"
-            android:text="@string/search_next_page"
-            app:auto_padding="false"
-            app:ripple="true" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/first"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:padding="10dp"
-            android:text="@string/search_first_page"
-            app:auto_padding="false"
-            app:ripple="true" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/last"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:padding="10dp"
-            android:text="@string/search_last_page"
-            app:auto_padding="false"
-            app:ripple="true" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/search_layout"
-        app:layout_constraintTop_toBottomOf="@id/list_layout"
-        app:layout_constraintVertical_bias="1.0" />
 
     <com.tungsten.fcllibrary.component.view.FCLProgressBar
         android:id="@+id/progress"
@@ -243,8 +249,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/list"
-        app:layout_constraintTop_toBottomOf="@id/list_layout" />
+        app:layout_constraintStart_toEndOf="@id/search_layout"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/retry"
@@ -252,8 +258,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_refresh_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/search_layout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/search_layout"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

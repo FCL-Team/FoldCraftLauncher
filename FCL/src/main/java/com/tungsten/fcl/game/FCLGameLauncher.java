@@ -21,6 +21,7 @@ import android.content.Context;
 
 import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
+import com.mio.util.LauncherUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.RuntimeUtils;
@@ -53,7 +54,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
     @Override
     protected Map<String, String> getConfigurations() {
         Map<String, String> res = super.getConfigurations();
-        res.put("${launcher_name}", FCLPath.CONTEXT.getString(R.string.app_name));
+        res.put("${launcher_name}", LauncherUtilKt.getLauncherName(FCLPath.CONTEXT));
         res.put("${launcher_version}", FCLPath.CONTEXT.getString(R.string.app_version));
         return res;
     }
@@ -89,8 +90,13 @@ public final class FCLGameLauncher extends DefaultLauncher {
     }
 
     private void fixOptions(GameOption gameOption) {
+        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
         gameOption.set("touchscreen", "false");
         gameOption.set("options.narrator", "0"); //关闭文本转语音功能
+        if (gameVersion.compareTo("1.13") < 0) {
+            gameOption.set("key_key.fullscreen", "0");
+            gameOption.set("key_key.streamStartStop", "0");
+        }
     }
 
     private void fixLang(GameOption gameOption) {

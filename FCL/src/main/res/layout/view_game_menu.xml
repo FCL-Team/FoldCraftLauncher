@@ -46,7 +46,7 @@
             app:save_key="memory"
             app:use_theme_color="true" />
 
-        <com.tungsten.fcllibrary.component.view.FCLImageView
+        <com.mio.ui.view.CursorView
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:id="@+id/cursor"

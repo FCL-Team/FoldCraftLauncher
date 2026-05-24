@@ -132,8 +132,9 @@
         <service
             android:name="com.tungsten.fclcore.download.ProcessService"
             android:enabled="true"
+            android:exported="false"
             android:foregroundServiceType="dataSync"
-            android:process=":processService" />
+            android:process=":jvm" />
         <service
             android:name=".terracotta.TerracottaVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE"

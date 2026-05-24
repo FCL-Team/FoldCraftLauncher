@@ -10,12 +10,13 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
@@ -28,6 +29,7 @@ import com.tungsten.fcl.ui.download.ModDownloadPage;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.version.Versions;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
@@ -45,6 +47,8 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
+import com.tungsten.fclcore.mod.curse.CurseAddon;
+import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -52,6 +56,7 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
@@ -72,6 +77,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
+
+import kotlin.Unit;
 
 public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -107,7 +114,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLButton previous;
     private FCLButton first;
     private FCLButton last;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
@@ -125,7 +132,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sortSpinner.setEnabled(!loading);
             progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
             listLayout.setVisibility(loading ? View.GONE : View.VISIBLE);
-            listView.setVisibility(loading ? View.GONE : View.VISIBLE);
+            recyclerView.setVisibility(loading ? View.GONE : View.VISIBLE);
             if (loading) {
                 retry.setVisibility(View.GONE);
             }
@@ -137,13 +144,13 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             retry.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
             listLayout.setVisibility(View.GONE);
-            listView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
         });
     }
 
     public void search() {
         search(gameVersion.get(),
-                category.get().getCategory(),
+                category.get().category(),
                 pageOffset.get(),
                 Objects.requireNonNull(nameEditText.getText()).toString(),
                 sortType.get());
@@ -161,7 +168,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     if (DownloadPage.this instanceof ModDownloadPage && selectedModLoader != null) {
                         list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
                             try {
-                                return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toList()).contains(selectedModLoader);
+                                return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toCollection(ArrayList::new)).contains(selectedModLoader);
                             } catch (Throwable ignore) {
                             }
                             return true;
@@ -177,7 +184,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                             RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
                             DownloadPageManager.getInstance().showTempPage(page);
                         });
-                        listView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(adapter);
                     } else {
                         setFailed();
                         pageCount.set(-1);
@@ -186,11 +194,25 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 }).executor(true);
     }
 
-    protected String getLocalizedCategoryIndent(CategoryIndented category) {
-        return StringUtils.repeats(' ', category.getIndent() * 4) +
-                (category.getCategory() == null
-                        ? getContext().getString(R.string.curse_category_0)
-                        : getLocalizedCategory(category.getCategory().getId()));
+    protected String getLocalizedCategoryIndent(CategoryIndented indented) {
+        if (indented.category() == null) {
+            return getContext().getString(R.string.curse_category_0);
+        }
+        StringBuilder result = new StringBuilder();
+        result.append(StringUtils.repeats(' ', indented.indent() * 4));
+
+        String localized = getLocalizedCategory(indented.category().id());
+        if (!localized.startsWith("curse_category_")) {
+            result.append(localized);
+            return result.toString();
+        }
+        Object self = indented.category().self();
+        if (self instanceof CurseAddon.Category curseCategory) {
+            result.append(curseCategory.getName());
+        } else if (self instanceof ModrinthRemoteModRepository.Category modrinthCategory) {
+            result.append(modrinthCategory.name());
+        }
+        return result.toString();
     }
 
     protected String getLocalizedOfficialPage() {
@@ -245,7 +267,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         previous = findViewById(R.id.previous);
         first = findViewById(R.id.first);
         last = findViewById(R.id.last);
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         next.setOnClickListener(this);
@@ -253,6 +275,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         first.setOnClickListener(this);
         last.setOnClickListener(this);
         retry.setOnClickListener(this);
+        page.setOnClickListener(this);
 
         nameEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -274,8 +297,10 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             FXUtils.bindSelection(sourceSpinner, downloadSource);
         }
 
-        gameVersionSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList())));
-        ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList())));
+        ArrayList<String> versionList = Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toCollection(ArrayList::new));
+        versionList.add(0, "");
+        gameVersionSpinner.setDataList(versionList);
+        ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, versionList);
         gameVersionAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         gameVersionSpinner.setAdapter(gameVersionAdapter);
         gameVersionSpinner.setSelection(0);
@@ -386,33 +411,33 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (v == retry && retrySearch != null) {
             retrySearch.run();
         }
+        if (v == page && pageCount.get() != 0 && pageCount.get() != -1) {
+            new EditDialog(getContext(), s -> {
+                try {
+                    int i = Integer.parseInt(s);
+                    if (i <= 0) {
+                        i = 1;
+                    } else if (i > pageCount.get()) {
+                        i = pageCount.get();
+                    }
+                    pageOffset.set(i - 1);
+                    search();
+                } catch (Throwable ignore) {
+                }
+            }).show();
+        }
     }
 
     public RemoteModRepository getRepository() {
         return repository;
     }
 
-    private static class CategoryIndented {
-        private final int indent;
-        private final RemoteModRepository.Category category;
-
-        public CategoryIndented(int indent, RemoteModRepository.Category category) {
-            this.indent = indent;
-            this.category = category;
-        }
-
-        public int getIndent() {
-            return indent;
-        }
-
-        public RemoteModRepository.Category getCategory() {
-            return category;
-        }
+    private record CategoryIndented(int indent, RemoteModRepository.Category category) {
     }
 
     private static void resolveCategory(RemoteModRepository.Category category, int indent, List<CategoryIndented> result) {
         result.add(new CategoryIndented(indent, category));
-        for (RemoteModRepository.Category subcategory : category.getSubcategories()) {
+        for (RemoteModRepository.Category subcategory : category.subcategories()) {
             resolveCategory(subcategory, indent + 1, result);
         }
     }
@@ -442,337 +467,11 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         new TranslationDialog(getContext(), repository, s -> {
             nameEditText.setText(s);
             search();
-            return null;
+            return Unit.INSTANCE;
         }).show();
     }
 
     protected String getLocalizedCategory(String category) {
-        int id;
-        switch (category) {
-            case "curse_category_0":
-                id = R.string.curse_category_0;
-                break;
-            case "curse_category_4474":
-                id = R.string.curse_category_4474;
-                break;
-            case "curse_category_4481":
-                id = R.string.curse_category_4481;
-                break;
-            case "curse_category_4483":
-                id = R.string.curse_category_4483;
-                break;
-            case "curse_category_4477":
-                id = R.string.curse_category_4477;
-                break;
-            case "curse_category_4478":
-                id = R.string.curse_category_4478;
-                break;
-            case "curse_category_4484":
-                id = R.string.curse_category_4484;
-                break;
-            case "curse_category_4476":
-                id = R.string.curse_category_4476;
-                break;
-            case "curse_category_4736":
-                id = R.string.curse_category_4736;
-                break;
-            case "curse_category_4475":
-                id = R.string.curse_category_4475;
-                break;
-            case "curse_category_4487":
-                id = R.string.curse_category_4487;
-                break;
-            case "curse_category_4480":
-                id = R.string.curse_category_4480;
-                break;
-            case "curse_category_4479":
-                id = R.string.curse_category_4479;
-                break;
-            case "curse_category_4482":
-                id = R.string.curse_category_4482;
-                break;
-            case "curse_category_4472":
-                id = R.string.curse_category_4472;
-                break;
-            case "curse_category_4473":
-                id = R.string.curse_category_4473;
-                break;
-            case "curse_category_5128":
-                id = R.string.curse_category_5128;
-                break;
-            case "curse_category_5299":
-                id = R.string.curse_category_5299;
-                break;
-            case "curse_category_5232":
-                id = R.string.curse_category_5232;
-                break;
-            case "curse_category_5129":
-                id = R.string.curse_category_5129;
-                break;
-            case "curse_category_5189":
-                id = R.string.curse_category_5189;
-                break;
-            case "curse_category_6814":
-                id = R.string.curse_category_6814;
-                break;
-            case "curse_category_6954":
-                id = R.string.curse_category_6954;
-                break;
-            case "curse_category_6484":
-                id = R.string.curse_category_6484;
-                break;
-            case "curse_category_6821":
-                id = R.string.curse_category_6821;
-                break;
-            case "curse_category_6145":
-                id = R.string.curse_category_6145;
-                break;
-            case "curse_category_5190":
-                id = R.string.curse_category_5190;
-                break;
-            case "curse_category_5191":
-                id = R.string.curse_category_5191;
-                break;
-            case "curse_category_5192":
-                id = R.string.curse_category_5192;
-                break;
-            case "curse_category_423":
-                id = R.string.curse_category_423;
-                break;
-            case "curse_category_426":
-                id = R.string.curse_category_426;
-                break;
-            case "curse_category_434":
-                id = R.string.curse_category_434;
-                break;
-            case "curse_category_409":
-                id = R.string.curse_category_409;
-                break;
-            case "curse_category_4485":
-                id = R.string.curse_category_4485;
-                break;
-            case "curse_category_420":
-                id = R.string.curse_category_420;
-                break;
-            case "curse_category_429":
-                id = R.string.curse_category_429;
-                break;
-            case "curse_category_419":
-                id = R.string.curse_category_419;
-                break;
-            case "curse_category_412":
-                id = R.string.curse_category_412;
-                break;
-            case "curse_category_4557":
-                id = R.string.curse_category_4557;
-                break;
-            case "curse_category_428":
-                id = R.string.curse_category_428;
-                break;
-            case "curse_category_414":
-                id = R.string.curse_category_414;
-                break;
-            case "curse_category_4486":
-                id = R.string.curse_category_4486;
-                break;
-            case "curse_category_432":
-                id = R.string.curse_category_432;
-                break;
-            case "curse_category_418":
-                id = R.string.curse_category_418;
-                break;
-            case "curse_category_4671":
-                id = R.string.curse_category_4671;
-                break;
-            case "curse_category_5314":
-                id = R.string.curse_category_5314;
-                break;
-            case "curse_category_408":
-                id = R.string.curse_category_408;
-                break;
-            case "curse_category_4773":
-                id = R.string.curse_category_4773;
-                break;
-            case "curse_category_430":
-                id = R.string.curse_category_430;
-                break;
-            case "curse_category_422":
-                id = R.string.curse_category_422;
-                break;
-            case "curse_category_413":
-                id = R.string.curse_category_413;
-                break;
-            case "curse_category_417":
-                id = R.string.curse_category_417;
-                break;
-            case "curse_category_415":
-                id = R.string.curse_category_415;
-                break;
-            case "curse_category_433":
-                id = R.string.curse_category_433;
-                break;
-            case "curse_category_425":
-                id = R.string.curse_category_425;
-                break;
-            case "curse_category_4545":
-                id = R.string.curse_category_4545;
-                break;
-            case "curse_category_416":
-                id = R.string.curse_category_416;
-                break;
-            case "curse_category_421":
-                id = R.string.curse_category_421;
-                break;
-            case "curse_category_4780":
-                id = R.string.curse_category_4780;
-                break;
-            case "curse_category_424":
-                id = R.string.curse_category_424;
-                break;
-            case "curse_category_406":
-                id = R.string.curse_category_406;
-                break;
-            case "curse_category_435":
-                id = R.string.curse_category_435;
-                break;
-            case "curse_category_411":
-                id = R.string.curse_category_411;
-                break;
-            case "curse_category_407":
-                id = R.string.curse_category_407;
-                break;
-            case "curse_category_427":
-                id = R.string.curse_category_427;
-                break;
-            case "curse_category_410":
-                id = R.string.curse_category_410;
-                break;
-            case "curse_category_436":
-                id = R.string.curse_category_436;
-                break;
-            case "curse_category_4558":
-                id = R.string.curse_category_4558;
-                break;
-            case "curse_category_4843":
-                id = R.string.curse_category_4843;
-                break;
-            case "curse_category_4906":
-                id = R.string.curse_category_4906;
-                break;
-            case "curse_category_5244":
-                id = R.string.curse_category_5244;
-                break;
-            case "curse_category_5193":
-                id = R.string.curse_category_5193;
-                break;
-            case "curse_category_399":
-                id = R.string.curse_category_399;
-                break;
-            case "curse_category_396":
-                id = R.string.curse_category_396;
-                break;
-            case "curse_category_398":
-                id = R.string.curse_category_398;
-                break;
-            case "curse_category_397":
-                id = R.string.curse_category_397;
-                break;
-            case "curse_category_405":
-                id = R.string.curse_category_405;
-                break;
-            case "curse_category_395":
-                id = R.string.curse_category_395;
-                break;
-            case "curse_category_400":
-                id = R.string.curse_category_400;
-                break;
-            case "curse_category_393":
-                id = R.string.curse_category_393;
-                break;
-            case "curse_category_403":
-                id = R.string.curse_category_403;
-                break;
-            case "curse_category_394":
-                id = R.string.curse_category_394;
-                break;
-            case "curse_category_404":
-                id = R.string.curse_category_404;
-                break;
-            case "curse_category_4465":
-                id = R.string.curse_category_4465;
-                break;
-            case "curse_category_402":
-                id = R.string.curse_category_402;
-                break;
-            case "curse_category_401":
-                id = R.string.curse_category_401;
-                break;
-            case "curse_category_4464":
-                id = R.string.curse_category_4464;
-                break;
-            case "curse_category_250":
-                id = R.string.curse_category_250;
-                break;
-            case "curse_category_249":
-                id = R.string.curse_category_249;
-                break;
-            case "curse_category_251":
-                id = R.string.curse_category_251;
-                break;
-            case "curse_category_253":
-                id = R.string.curse_category_253;
-                break;
-            case "curse_category_248":
-                id = R.string.curse_category_248;
-                break;
-            case "curse_category_252":
-                id = R.string.curse_category_252;
-                break;
-            case "curse_category_4551":
-                id = R.string.curse_category_4551;
-                break;
-            case "curse_category_4548":
-                id = R.string.curse_category_4548;
-                break;
-            case "curse_category_4556":
-                id = R.string.curse_category_4556;
-                break;
-            case "curse_category_4752":
-                id = R.string.curse_category_4752;
-                break;
-            case "curse_category_4553":
-                id = R.string.curse_category_4553;
-                break;
-            case "curse_category_4554":
-                id = R.string.curse_category_4554;
-                break;
-            case "curse_category_4549":
-                id = R.string.curse_category_4549;
-                break;
-            case "curse_category_4547":
-                id = R.string.curse_category_4547;
-                break;
-            case "curse_category_4550":
-                id = R.string.curse_category_4550;
-                break;
-            case "curse_category_4555":
-                id = R.string.curse_category_4555;
-                break;
-            case "curse_category_4552":
-                id = R.string.curse_category_4552;
-                break;
-            case "curse_category_6555":
-                id = R.string.curse_category_6555;
-                break;
-            case "curse_category_6554":
-                id = R.string.curse_category_6554;
-                break;
-            case "curse_category_6553":
-                id = R.string.curse_category_6553;
-                break;
-            default:
-                return category;
-        }
-        return getContext().getString(id);
+        return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
     }
 }

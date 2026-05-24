@@ -76,4 +76,7 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
 
     @Override
     public abstract FCLBasePage getPage(int id);
+
+    public void runAfterInit(Runnable runnable) {
+    }
 }

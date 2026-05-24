@@ -189,6 +189,8 @@
     <string name="curse_category_4472">科技</string>
     <string name="curse_category_4473">魔法</string>
     <string name="curse_category_5128">原版增强</string>
+    <string name="curse_category_7418">恐怖</string>
+    <string name="curse_category_9243">专家</string>
 
     <string name="curse_category_5299">教育</string>
     <string name="curse_category_5232">额外行星</string>
@@ -212,7 +214,10 @@
     <string name="curse_category_419">魔法</string>
     <string name="curse_category_412">科技</string>
     <string name="curse_category_4557">红石</string>
+    <string name="curse_category_9026">创造模式</string>
+    <string name="curse_category_10775">恐怖</string>
     <string name="curse_category_428">匠魂</string>
+
     <string name="curse_category_414">交通运输</string>
     <string name="curse_category_4486">幸运方块 (Lucky Blocks)</string>
     <string name="curse_category_432">建筑 (Buildcraft)</string>
@@ -243,6 +248,9 @@
     <string name="curse_category_4558">红石</string>
     <string name="curse_category_4843">自动化</string>
     <string name="curse_category_4906">MCreator</string>
+    <string name="curse_category_7669">暮色森林</string>
+    <string name="curse_category_9049">精致存储 (Refined Storage)</string>
+    <string name="curse_category_10754">农夫乐事 (Farmer\'s Delight)</string>
 
     <string name="curse_category_5244">字体包</string>
     <string name="curse_category_5193">数据包</string>
@@ -546,6 +554,8 @@
     <string name="menu_settings_mouse_sensitivity">鼠标灵敏度</string>
     <string name="menu_settings_mouse_cursor_sensitivity">鼠标灵敏度（当指针可见时）</string>
     <string name="menu_settings_mouse_size">鼠标尺寸</string>
+    <string name="menu_settings_mouse_offset_x">鼠标偏移X</string>
+    <string name="menu_settings_mouse_offset_y">鼠标偏移Y</string>
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_disable_mapping">禁用手柄映射</string>
@@ -809,11 +819,13 @@
     <string name="settings_fcl_renderer">OpenGL实现方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
-
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, 内置的)</string>
+
     <string name="settings_fcl_driver">Vulkan驱动</string>
 
-    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
+    <string name="settings_download_netdisk">网盘</string>
+
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
     <string name="settings_game_cursor_offset">鼠标指针偏移</string>
@@ -861,6 +873,7 @@
     <string name="settings_launcher_vibrate_duration">震动时长（用于TouchController模组）</string>
     <string name="settings_disable_fullscreen_input">禁用全屏输入（用于TouchController模组）</string>
     <string name="settings_launcher_exit_after_launching">启动器启动后自动关闭</string>
+    <string name="settings_launcher_custom_launcher_name">自定义启动器信息</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>
@@ -1102,7 +1115,7 @@
     <string name="gamepad_dpad">方向键</string>
     <string name="gamepad_button_binding">手柄按键绑定</string>
     <string name="joystick_r">右摇杆</string>
-    <string name="message_vulkan_driver_system">警告：使用系统Vulkan驱动可能获得更好的性能，但也可能因兼容性问题导致崩溃！。</string>
+    <string name="message_vulkan_driver_system">警告：使用系统Vulkan驱动可能获得更好的性能，但也可能因兼容性问题导致崩溃！</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
 
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>

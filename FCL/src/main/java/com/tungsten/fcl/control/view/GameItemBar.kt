@@ -47,13 +47,15 @@ class GameItemBar @JvmOverloads constructor(
             (gameMenu.touchPad.width * gameMenu.bridge!!.scaleFactor).toInt()
         val height =
             (gameMenu.touchPad.height * gameMenu.bridge!!.scaleFactor).toInt()
+        val autoSize = gameOption.getGuiScale(
+            width,
+            height,
+            0
+        )
         optionListener = GameOptionListener { manually: Boolean ->
             notifySize(
-                if (gameMenu.menuSetting.itemBarScale == 0) gameOption.getGuiScale(
-                    width,
-                    height,
-                    0
-                ) * 20 else gameMenu.menuSetting.itemBarScale
+                if (gameMenu.menuSetting.itemBarWidth == 0) autoSize * 20 * 9 else gameMenu.menuSetting.itemBarWidth,
+                if (gameMenu.menuSetting.itemBarHeight == 0) autoSize * 20 else gameMenu.menuSetting.itemBarHeight
             )
             if (manually) {
                 restore?.let {
@@ -76,11 +78,11 @@ class GameItemBar @JvmOverloads constructor(
         }
     }
 
-    fun notifySize(size: Int) {
+    fun notifySize(width: Int, height: Int) {
         post {
             val params = layoutParams
-            params.width = size * 9
-            params.height = size
+            params.width = width
+            params.height = height
             setLayoutParams(params)
         }
     }
@@ -165,8 +167,9 @@ class GameItemBar @JvmOverloads constructor(
     }
 
     fun runIfInPosition(e: MotionEvent, func: (position: Int) -> Unit) {
-        if (e.x >= 0 && e.x <= 9 * height) {
-            func(((e.x / height).toInt() + 1).coerceIn(1, 9))
+        if (e.x >= 0 && e.x <= width) {
+            val size = width / 9f
+            func(((e.x / size).toInt() + 1).coerceIn(1, 9))
         }
     }
 

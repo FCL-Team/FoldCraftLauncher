@@ -267,40 +267,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:singleLine="true"
-                            android:text="@string/settings_game_dimension"
-                            app:auto_text_tint="true" />
-
-                        <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
-                            android:id="@+id/edit_scale_factor"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="10dp"
-                            android:layout_weight="1"
-                            android:max="100"
-                            android:min="25"
-                            app:suffix="%" />
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="48dp"
-                        android:orientation="horizontal"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
-
-                        <com.tungsten.fcllibrary.component.view.FCLTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:singleLine="true"
                             android:text="@string/settings_advanced_server_ip"
                             app:auto_text_tint="true" />
 

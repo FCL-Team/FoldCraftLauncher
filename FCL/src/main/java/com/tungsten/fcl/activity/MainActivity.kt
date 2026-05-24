@@ -57,7 +57,6 @@ import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -183,6 +182,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
                 account.setOnClickListener(this@MainActivity)
                 version.setOnClickListener(this@MainActivity)
+                goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
                     RendererSelectDialog(this@MainActivity, false) {
@@ -412,6 +412,22 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }.getOrNull() ?: DriverPlugin.driverList[0]
                 DisplayUtil.refreshDisplayMetrics(this@MainActivity)
                 Versions.launch(this@MainActivity, selectedProfile)
+            }
+            if (view === goSetting) {
+                val profile = Profiles.getSelectedProfile()
+                if (profile.versionSetting.isGlobal) {
+                    setting.isSelected = true
+                    uiManager.settingUI.runAfterInit {
+                        val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                        uiManager.settingUI.tabLayout.selectTab(tab)
+                    }
+                } else {
+                    manage.isSelected = true
+                    uiManager.manageUI.runAfterInit {
+                        val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                        uiManager.manageUI.tabLayout.selectTab(tab)
+                    }
+                }
             }
         }
     }
@@ -784,7 +800,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         ).show()
         binding.download.isSelected = true
         val downloadUI = uiManager.downloadUI
-        downloadUI.checkPageManager {
+        downloadUI.runAfterInit {
             val page = LocalModpackPage(
                 this,
                 PageManager.PAGE_ID_TEMP,

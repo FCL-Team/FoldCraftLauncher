@@ -29,6 +29,7 @@
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
 #include "driver_helper/driver_helper.h"
+#include <stdatomic.h>
 
 #define GLFW_CLIENT_API 0x22001
 /* Consider GLFW_NO_API as Vulkan API */
@@ -60,7 +61,7 @@ void bigcore_set_affinity();
 #define RENDERER_VK_ZINK 2
 #define RENDERER_VULKAN 4
 
-static uint16_t fps = 0;
+static atomic_uint fps = 0;
 
 EXTERNAL_API void pojavTerminate() {
     printf("EGLBridge: Terminating\n");
@@ -114,6 +115,11 @@ int pojavInitOpenGL() {
     const char *renderer = getenv("POJAV_RENDERER");
     if (!strncmp("opengles", renderer, 8)) {
         pojav_environ->config_renderer = RENDERER_GL4ES;
+        if (!strcmp(renderer, "opengles3_desktopgl_zink_kopper")) {
+            load_vulkan();
+            setenv("GALLIUM_DRIVER", "zink", 1);
+            setenv("MESA_ANDROID_NO_KMS_SWRAST", "1", 1);
+        }
         set_gl_bridge_tbl();
     }
 
@@ -177,6 +183,12 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             // pojavInitVulkan();
             break;
         case GLFW_OPENGL_API:
+            const char *renderer = getenv("POJAV_RENDERER");
+            if (!strncmp("opengles", renderer, 8)) {
+                pojav_environ->config_renderer = RENDERER_GL4ES;
+            } else if (!strcmp(renderer, "vulkan_zink")) {
+                pojav_environ->config_renderer = RENDERER_VK_ZINK;
+            }
             /* Nothing to do: initialization is called in pojavCreateContext */
             // pojavInitOpenGL();
             break;
@@ -187,7 +199,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 }
 
 EXTERNAL_API void pojavSwapBuffers() {
-    fps++;
+    atomic_fetch_add(&fps, 1);
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapBuffers();
     else br_swap_buffers();
@@ -233,7 +245,10 @@ EXTERNAL_API void pojavSwapInterval(int interval) {
 
 JNIEXPORT jint JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_getFps(JNIEnv *env, jclass clazz) {
-    uint16_t f = fps;
-    fps = 0;
-    return f;
+    return atomic_exchange(&fps, 0);
+}
+
+EXTERNAL_API JNIEXPORT jlong JNICALL
+Java_org_lwjgl_vulkan_VK_getFpsAddress(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
+    return (jlong) &fps;
 }

@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,9 +15,9 @@ import android.widget.ScrollView;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.mio.util.DialogUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclcore.game.CrashReportAnalyzer;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Lang;
@@ -107,12 +106,7 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
 
     private void init() throws IOException {
         String summarize = "Exit Normally, exit code = " + exitCode;
-        String log;
-        if (new File(logPath).length() < 8 * 1024 * 1024) {
-            log = FileUtils.readText(new File(logPath));
-        } else {
-            log = "Log file is too large, please check the log file manually.\n";
-        }
+        String log = readLog();
         List<String> errorLines = Arrays.stream(log.split("\n")).collect(Collectors.toList());
         if (exitCode != 0 && StringUtils.containsOne(errorLines,
                 "Could not create the Java Virtual Machine.",
@@ -124,15 +118,9 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         }
         errorLines.add(0, "");
         errorLines.add(0, "");
-        errorLines.add(0, "==================== Basic Information ====================");
         errorLines.add(0, "Summarize: " + summarize);
-        errorLines.add(0, "Renderer: " + renderer);
-        errorLines.add(0, "Java Version: " + java);
-        errorLines.add(0, "Android SDK: " + Build.VERSION.SDK_INT);
-        errorLines.add(0, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
-        errorLines.add(0, "FCL Version: " + getString(R.string.app_version));
-        errorLines.add(0, "==================== Basic Information ====================");
         errorLines.forEach(it -> error.append(it + "\n"));
+
 
         if (game) {
             analyzeCrashReport(log);
@@ -265,14 +253,18 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
             System.exit(10);
         }
         if (v == upload) {
-            String logContent = error.getText().toString();
-            LogSharingUtilsKt.uploadLog(this, logContent);
+            try {
+                LogSharingUtilsKt.uploadLog(this, readLog());
+            } catch (IOException e) {
+                DialogUtilKt.showErrorDialog(this, R.string.upload_failed, e.getMessage());
+            }
         }
         if (v == share) {
             try {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 File file = File.createTempFile("fcl-latest", ".log");
-                FileUtils.writeText(file, error.getText().toString());
+                file.delete();
+                FileUtils.copyFile(new File(logPath), file);
                 Uri uri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".provider", file);
                 intent.setType("text/plain");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -297,5 +289,12 @@ public class JVMCrashActivity extends FCLActivity implements View.OnClickListene
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    private String readLog() throws IOException {
+        if (new File(logPath).length() < 8 * 1024 * 1024) {
+            return FileUtils.readText(new File(logPath));
+        }
+        throw new IOException("Log file is too large, please check the log file manually.");
     }
 }

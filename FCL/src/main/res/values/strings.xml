@@ -211,6 +211,9 @@
     <string name="curse_category_4472">Tech</string>
     <string name="curse_category_4473">Magic</string>
     <string name="curse_category_5128">Vanilla+</string>
+    <string name="curse_category_7418">Horror</string>
+    <string name="curse_category_9243">Expert</string>
+    <string name="curse_category_10683" translatable="false">RLCraft</string>
 
     <string name="curse_category_5299">Education</string>
     <string name="curse_category_5232">Galacticraft</string>
@@ -234,6 +237,9 @@
     <string name="curse_category_419">Magic</string>
     <string name="curse_category_412">Technology</string>
     <string name="curse_category_4557">Redstone</string>
+    <string name="curse_category_8937" translatable="false">ModJam 2025</string>
+    <string name="curse_category_9026">CreativeMode</string>
+    <string name="curse_category_10775">Horror</string>
     <string name="curse_category_428">Tinker\'s Construct</string>
     <string name="curse_category_414">Player Transport</string>
     <string name="curse_category_4486">Lucky Blocks</string>
@@ -265,6 +271,9 @@
     <string name="curse_category_4558">Redstone</string>
     <string name="curse_category_4843">Automation</string>
     <string name="curse_category_4906">MCreator</string>
+    <string name="curse_category_7669">Twilight Forest</string>
+    <string name="curse_category_9049">Refined Storage</string>
+    <string name="curse_category_10754">Farmer\'s Delight</string>
 
     <string name="curse_category_5244">Font Packs</string>
     <string name="curse_category_5193">Data Packs</string>
@@ -578,6 +587,8 @@
     <string name="menu_settings_mouse_sensitivity">Mouse Sensitivity</string>
     <string name="menu_settings_mouse_cursor_sensitivity">Mouse Sensitivity(When the cursor is displayed)</string>
     <string name="menu_settings_mouse_size">Mouse Size</string>
+    <string name="menu_settings_mouse_offset_x">Mouse Offset X</string>
+    <string name="menu_settings_mouse_offset_y">Mouse Offset Y</string>
     <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_disable_mapping">Disable Gamepad Mapping</string>
@@ -858,12 +869,13 @@
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
-    <string name="settings_fcl_renderer_zink" translatable="false">Vulkan Zink (OpenGL 4.6)</string>
+    <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
-    <string name="settings_fcl_renderer_gl4esp" translatable="false">GL4ES+ (unstable)(OpenGL 2.1)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, built-in)</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
+
+    <string name="settings_download_netdisk">Netdisk(Recommended for users in China)</string>
 
     <string name="settings_game">Game Settings</string>
     <string name="settings_game_dimension">Resolution</string>
@@ -922,6 +934,7 @@
     <string name="settings_launcher_vibrate_duration">Vibration Duration (For TouchController mod)</string>
     <string name="settings_disable_fullscreen_input">Disable fullscreen input (For TouchController mod)</string>
     <string name="settings_launcher_exit_after_launching">Launcher exits after launching</string>
+    <string name="settings_launcher_custom_launcher_name">Custom launcher information</string>
 
     <string name="settings_memory">Memory</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>

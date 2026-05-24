@@ -22,6 +22,7 @@ import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Pair;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -592,7 +593,7 @@ public class CurseAddon implements RemoteMod.IMod {
                         }
                         return RemoteMod.Dependency.ofGeneral(RELATION_TYPE.get(dependency.getRelationType()), CurseForgeRemoteModRepository.MODS, Integer.toString(dependency.getModId()));
                     }).distinct().filter(Objects::nonNull).collect(Collectors.toList()),
-                    gameVersions.stream().filter(ver -> ver.startsWith("1.") || ver.contains("w")).collect(Collectors.toList()),
+                    gameVersions.stream().filter(GameVersionNumber::isKnown).collect(Collectors.toList()),
                     gameVersions.stream().flatMap(version -> {
                         if ("fabric".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.FABRIC);
                         else if ("forge".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.FORGE);

@@ -167,11 +167,6 @@ class VersionSetting : Cloneable {
             serverIpProperty.set(serverIp)
         }
 
-    val scaleFactorProperty: IntegerProperty = SimpleIntegerProperty(this, "newScaleFactor", 100)
-    var scaleFactor: Int
-        get() = scaleFactorProperty.get()
-        set(v) = scaleFactorProperty.set(v)
-
     /**
      * 0 - .minecraft<br></br>
      * 1 - .minecraft/versions/&lt;version&gt;/<br></br>
@@ -276,7 +271,6 @@ class VersionSetting : Cloneable {
         notCheckGameProperty.addListener(listener)
         notCheckJVMProperty.addListener(listener)
         serverIpProperty.addListener(listener)
-        scaleFactorProperty.addListener(listener)
         isolateGameDirProperty.addListener(listener)
         useOpenglProperty.addListener(listener)
         vkDriverSystemProperty.addListener(listener)
@@ -302,7 +296,6 @@ class VersionSetting : Cloneable {
             it.isNotCheckGame = isNotCheckGame
             it.isNotCheckJVM = isNotCheckJVM
             it.serverIp = serverIp
-            it.scaleFactor = scaleFactor
             it.isIsolateGameDir = isIsolateGameDir
             it.isUseOpengl = isUseOpengl
             it.isVKDriverSystem = isVKDriverSystem
@@ -336,7 +329,6 @@ class VersionSetting : Cloneable {
                 addProperty("autoMemory", src.isAutoMemory)
                 addProperty("serverIp", src.serverIp)
                 addProperty("java", src.java)
-                addProperty("newScaleFactor", src.scaleFactor)
                 addProperty("notCheckGame", src.isNotCheckGame)
                 addProperty("notCheckJVM", src.isNotCheckJVM)
                 addProperty("useOpengl", src.isUseOpengl)
@@ -377,7 +369,6 @@ class VersionSetting : Cloneable {
                 vs.java =
                     JavaManager.javaList.find { it.name == json["java"]?.asString }?.name
                         ?: "Auto"
-                vs.scaleFactor = json["newScaleFactor"]?.asInt ?: 100
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
                 vs.isUseOpengl = json["useOpengl"]?.asBoolean ?: false

@@ -8,9 +8,8 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.LinearLayoutCompat;
-
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
@@ -93,7 +92,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageView iconView;
 
     private FCLNumberSeekBar allocateSeekbar;
-    private FCLNumberSeekBar scaleFactorSeekbar;
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch useOpenglSwitch;
@@ -150,7 +148,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         iconView = findViewById(R.id.icon);
 
         allocateSeekbar = findViewById(R.id.edit_memory);
-        scaleFactorSeekbar = findViewById(R.id.edit_scale_factor);
 
         FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
         specialSettingSwitch.addCheckedChangeListener();
@@ -165,7 +162,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         forceResolutionSwitch = findViewById(R.id.force_resolution);
 
         isolateWorkingDirSwitch.disableProperty().bind(modpack);
-        scaleFactorSeekbar.addProgressListener();
 
         javaButton = findViewById(R.id.edit_java);
         javaInstallButton = findViewById(R.id.install_java);
@@ -346,7 +342,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(forceResolutionSwitch, lastVersionSetting.getForceResolutionProperty());
             FXUtils.unbindBoolean(useOpenglSwitch, lastVersionSetting.getUseOpenglProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
-            scaleFactorSeekbar.progressProperty().unbindBidirectional(lastVersionSetting.getScaleFactorProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
 
             lastVersionSetting.getUsesGlobalProperty().removeListener(specificSettingsListener);
@@ -370,7 +365,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(forceResolutionSwitch, versionSetting.getForceResolutionProperty());
         FXUtils.bindBoolean(useOpenglSwitch, versionSetting.getUseOpenglProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
-        scaleFactorSeekbar.progressProperty().bindBidirectional(versionSetting.getScaleFactorProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
         chkAutoAllocate.setChecked(versionSetting.isAutoMemory());
@@ -487,7 +481,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == controllerInstallButton) {
             UIManager uiManager = MainActivity.getInstance().getUiManager();
             MainActivity.getInstance().binding.controller.setSelected(true);
-            uiManager.getControllerUI().checkPageManager(() -> uiManager.getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO));
+            uiManager.getControllerUI().runAfterInit(() -> uiManager.getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO));
         }
         if (view == javaButton) {
             new JavaManageDialog(getContext(), java -> {
@@ -503,7 +497,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == javaInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_java)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
@@ -536,7 +530,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == rendererInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
@@ -554,7 +548,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         if (view == driverInstallButton) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.update_netdisk)}, (d, w) -> {
+                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
                         String url = switch (w) {
                             case 0 ->
                                     "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";

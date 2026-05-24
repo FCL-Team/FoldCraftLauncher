@@ -142,7 +142,8 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         return pageManager;
     }
 
-    public void checkPageManager(Runnable runnable) {
+    @Override
+    public void runAfterInit(Runnable runnable) {
         this.runnable = runnable;
         if (pageManager != null) {
             runnable.run();

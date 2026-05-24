@@ -42,6 +42,7 @@ public class MenuView extends View {
     private GameMenu gameMenu;
 
     private boolean isGif = false;
+
     public MenuView(Context context) {
         super(context);
         this.screenWidth = AndroidUtils.getScreenWidth();
@@ -116,7 +117,8 @@ public class MenuView extends View {
                 protected void onResourceCleared(@Nullable Drawable placeholder) {
                 }
             });
-        } else {
+        }
+        if (!isGif && icon == null) {
             icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.img_app);
         }
     }

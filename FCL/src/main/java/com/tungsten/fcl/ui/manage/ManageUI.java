@@ -8,7 +8,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.controller.ControllerPageManager;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
@@ -57,7 +56,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void onStart() {
         super.onStart();
-        addLoadingCallback(()->{
+        addLoadingCallback(() -> {
             // If we jumped to game list page and deleted this version
             // and back to this page, we should return to main page.
             if (!getProfile().getRepository().isLoaded() ||
@@ -211,7 +210,8 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         return pageManager;
     }
 
-    public void checkPageManager(Runnable runnable) {
+    @Override
+    public void runAfterInit(Runnable runnable) {
         this.runnable = runnable;
         if (pageManager != null) {
             runnable.run();

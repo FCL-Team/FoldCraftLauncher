@@ -18,7 +18,7 @@
         android:focusable="false"
         android:clickable="false"/>
 
-    <com.tungsten.fcllibrary.component.view.FCLImageView
+    <com.mio.ui.view.CursorView
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:id="@+id/cursor"

@@ -127,7 +127,7 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
         return 4;
     }
     fcl->logFile = fdopen(fclFd[1], "a");
-    FCL_INTERNAL_LOG("Log pipe ready.");
+    FCL_LOG("Log pipe ready.");
     (*env)->GetJavaVM(env, &log_pipe_jvm);
     int result = pthread_create(&logger, 0, logger_thread, 0);
     if (result != 0){

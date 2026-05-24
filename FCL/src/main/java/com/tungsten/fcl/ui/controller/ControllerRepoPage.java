@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 public class ControllerRepoPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     public static final String CONTROLLER_GITHUB = "https://raw.githubusercontent.com/FCL-Team/FCL-Controllers/main/";
-    public static final String CONTROLLER_GIT_CN = "https://fcl.lemwood.icu/fcl_controllers/";
+    public static final String CONTROLLER_GIT_CN = "https://repo.miawa.cn/fcl_controllers/";
 
     private final ObjectProperty<ControllerCategory> categoryProperty = new SimpleObjectProperty<>(new ControllerCategory(0, null));
     private boolean refreshCategory = true;

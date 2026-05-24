@@ -86,6 +86,7 @@
                         android:id="@+id/all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
                         android:checked="true"
                         android:text="@string/curse_category_0"
                         app:text_use_theme_color="true" />
@@ -94,29 +95,29 @@
                         android:id="@+id/fabric"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:text_use_theme_color="true"
-                        android:text="Fabric" />
+                        android:text="Fabric"
+                        app:text_use_theme_color="true" />
 
                     <com.tungsten.fcllibrary.component.view.FCLRadioButton
                         android:id="@+id/forge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:text_use_theme_color="true"
-                        android:text="Forge" />
+                        android:text="Forge"
+                        app:text_use_theme_color="true" />
 
                     <com.tungsten.fcllibrary.component.view.FCLRadioButton
                         android:id="@+id/neoforge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:text_use_theme_color="true"
-                        android:text="NeoForge" />
+                        android:text="NeoForge"
+                        app:text_use_theme_color="true" />
 
                     <com.tungsten.fcllibrary.component.view.FCLRadioButton
                         android:id="@+id/other"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:text_use_theme_color="true"
-                        android:text="@string/control_download_device_other" />
+                        android:text="@string/control_download_device_other"
+                        app:text_use_theme_color="true" />
 
                 </RadioGroup>
 
@@ -129,10 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="3dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/profile_list" />
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
