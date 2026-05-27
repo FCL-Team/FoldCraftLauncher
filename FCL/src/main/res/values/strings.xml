@@ -855,6 +855,7 @@
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
+    <string name="settings_advanced_env">Environment Variables</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>

@@ -1,9 +1,11 @@
 package com.tungsten.fclauncher;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fclauncher.utils.Architecture.ARCH_X86;
 import static com.tungsten.fclauncher.utils.Architecture.is64BitsDevice;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -363,11 +365,27 @@ public class FCLauncher {
         if (render) {
             addRendererEnv(config, envMap);
         }
+        addCustomEnv(config, envMap);
         printTaskTitle(bridge, "Env Map");
         for (String key : envMap.keySet()) {
             log(bridge, "Env: " + key + "=" + envMap.get(key));
             bridge.setenv(key, envMap.get(key));
         }
+    }
+
+    private static void addCustomEnv(FCLConfig config, HashMap<String, String> envMap) {
+        SharedPreferences preferences = config.getContext().getSharedPreferences("launcher", MODE_PRIVATE);
+        String[] env = preferences.getString("env", "").split("\n");
+        for (String e : env) {
+            try {
+                String[] split = e.split("=", 2);
+                if (split.length == 2) {
+                    envMap.put(split[0], split[1]);
+                }
+            } catch (Throwable ignore) {
+            }
+        }
+
     }
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {

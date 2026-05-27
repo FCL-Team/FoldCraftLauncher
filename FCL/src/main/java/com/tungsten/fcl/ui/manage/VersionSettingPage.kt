@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage
 
 import android.app.Activity
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
 import android.content.Intent
 import android.view.View
@@ -113,6 +114,7 @@ class VersionSettingPage(
         binding.buttonInstallRenderer.setOnClickListener(this)
         binding.buttonEditDriver.setOnClickListener(this)
         binding.buttonInstallDriver.setOnClickListener(this)
+        binding.buttonEditEnv.setOnClickListener(this)
 
         val memoryBar = findViewById<FCLProgressBar>(R.id.memory_bar)
 
@@ -589,5 +591,58 @@ class VersionSettingPage(
                 .create()
                 .show()
         }
+        if (view == binding.buttonEditEnv) {
+            val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
+            val dialog = FullEditDialog(context, true) {
+                val env = getEnvironmentFromString(it)
+                preferences.edit {
+                    putString("env", env.joinToString("\n"))
+                }
+            }
+            dialog.binding.editText.setText(preferences.getString("env", ""))
+            dialog.show()
+        }
+    }
+
+    fun getEnvironmentFromString(input: String): List<String> {
+        val result = mutableListOf<String>()
+        val lines = input.trim().lines()
+
+        lines.forEachIndexed { _, rawLine ->
+            val line = rawLine.trim()
+
+            // 跳过空行
+            if (line.isEmpty()) {
+                return@forEachIndexed
+            }
+
+            // 检查是否包含 '='
+            val firstEq = line.indexOf('=')
+            if (firstEq == -1) {
+                return@forEachIndexed
+            }
+
+            val name = line.substring(0, firstEq).trim()
+            val value = line.substring(firstEq + 1).trim() // 值可以为空
+
+            // 变量名不能为空
+            if (name.isEmpty()) {
+                return@forEachIndexed
+            }
+
+            // 变量名规则：字母、数字、下划线，且不能以数字开头
+            val validNameRegex = Regex("^[a-zA-Z_][a-zA-Z0-9_]*$")
+            if (!validNameRegex.matches(name)) {
+                return@forEachIndexed
+            }
+
+            // 长度检查（通常环境变量名不超过 255 字符）
+            if (name.length > 255) {
+                return@forEachIndexed
+            }
+            result.add("$name=$value")
+        }
+
+        return result
     }
 }
