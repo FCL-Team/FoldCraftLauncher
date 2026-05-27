@@ -363,12 +363,47 @@
                         android:layout_height="1dp"
                         android:background="@android:color/darker_gray" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLSwitch
-                        android:id="@+id/use_opengl"
+                    <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/settings_fcl_use_opengl" />
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp">
+
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:singleLine="true"
+                            android:text="@string/settings_fcl_graphics_backend"
+                            app:auto_text_tint="true" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <com.tungsten.fcllibrary.component.view.FCLTextView
+                            android:id="@+id/graphics_backend"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:singleLine="true"
+                            app:auto_text_tint="true" />
+
+                        <com.tungsten.fcllibrary.component.view.FCLImageButton
+                            android:id="@+id/edit_graphics_backend"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:src="@drawable/ic_baseline_settings_24"
+                            app:auto_tint="true"
+                            app:no_padding="true" />
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                     <View
                         android:layout_width="match_parent"

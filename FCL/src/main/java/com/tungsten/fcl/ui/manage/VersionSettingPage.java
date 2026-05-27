@@ -69,6 +69,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import kotlin.Unit;
@@ -95,7 +96,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLSwitch isolateWorkingDirSwitch;
     private FCLSwitch beGestureSwitch;
-    private FCLSwitch useOpenglSwitch;
     private FCLSwitch vulkanDriverSystemSwitch;
     private FCLSwitch pojavBigCoreSwitch;
     private FCLSwitch noGameCheckSwitch;
@@ -110,6 +110,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
     private FCLImageButton deleteIconButton;
     private FCLImageButton controllerButton;
     private FCLImageButton controllerInstallButton;
+    private FCLImageButton graphicsBackendButton;
     private FCLImageButton rendererButton;
     private FCLImageButton rendererInstallButton;
     private FCLImageButton driverButton;
@@ -118,6 +119,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
     private FCLTextView javaText;
     private FCLTextView controllerText;
+    private FCLTextView graphicsBackendText;
     private FCLTextView rendererText;
     private FCLTextView driverText;
 
@@ -154,7 +156,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         specialSettingSwitch.addCheckedChangeListener();
         isolateWorkingDirSwitch = findViewById(R.id.edit_game_dir);
         beGestureSwitch = findViewById(R.id.edit_controller_injector);
-        useOpenglSwitch = findViewById(R.id.use_opengl);
         vulkanDriverSystemSwitch = findViewById(R.id.vulkan_driver_system);
         pojavBigCoreSwitch = findViewById(R.id.pojav_big_core);
         noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
@@ -171,6 +172,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton = findViewById(R.id.delete_icon);
         controllerButton = findViewById(R.id.edit_controller);
         controllerInstallButton = findViewById(R.id.install_controller);
+        graphicsBackendButton = findViewById(R.id.edit_graphics_backend);
         rendererButton = findViewById(R.id.edit_renderer);
         rendererInstallButton = findViewById(R.id.install_renderer);
         driverButton = findViewById(R.id.edit_driver);
@@ -183,6 +185,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         deleteIconButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         controllerInstallButton.setOnClickListener(this);
+        graphicsBackendButton.setOnClickListener(this);
         rendererButton.setOnClickListener(this);
         rendererInstallButton.setOnClickListener(this);
         driverButton.setOnClickListener(this);
@@ -190,6 +193,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         javaText = findViewById(R.id.java);
         controllerText = findViewById(R.id.controller);
+        graphicsBackendText = findViewById(R.id.graphics_backend);
         rendererText = findViewById(R.id.renderer);
         driverText = findViewById(R.id.driver);
 
@@ -343,7 +347,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
             FXUtils.unbindBoolean(debugLogSwitch, lastVersionSetting.getDebugLogProperty());
             FXUtils.unbindBoolean(forceResolutionSwitch, lastVersionSetting.getForceResolutionProperty());
             FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
-            FXUtils.unbindBoolean(useOpenglSwitch, lastVersionSetting.getUseOpenglProperty());
             FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
             maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
 
@@ -367,7 +370,6 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
         FXUtils.bindBoolean(debugLogSwitch, versionSetting.getDebugLogProperty());
         FXUtils.bindBoolean(forceResolutionSwitch, versionSetting.getForceResolutionProperty());
         FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
-        FXUtils.bindBoolean(useOpenglSwitch, versionSetting.getUseOpenglProperty());
         FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
         maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
 
@@ -375,6 +377,7 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
 
         javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
         Controllers.addCallback(() -> controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName()));
+        graphicsBackendText.setText(versionSetting.getGraphicsBackend());
         Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
         rendererText.setSelected(true);
         rendererText.setText(renderer.getDes());
@@ -515,6 +518,13 @@ public class VersionSettingPage extends FCLCommonPage implements ManageUI.Versio
                     .setPositiveButton(R.string.button_cancel, null)
                     .create()
                     .show();
+        }
+        if (view == graphicsBackendButton) {
+            DialogUtilKt.showItemSelectionDialog(getContext(), getContext().getString(R.string.settings_fcl_graphics_backend), List.of("default", "opengl", "vulkan"), backendName -> {
+                graphicsBackendText.setText(backendName);
+                lastVersionSetting.setGraphicsBackend(backendName);
+                return Unit.INSTANCE;
+            });
         }
         if (view == rendererButton) {
             new RendererSelectDialog(getContext(), globalSetting, name -> {
