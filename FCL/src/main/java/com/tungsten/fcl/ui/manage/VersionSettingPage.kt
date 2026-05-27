@@ -1,581 +1,593 @@
-package com.tungsten.fcl.ui.manage;
+package com.tungsten.fcl.ui.manage
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.view.View;
-import android.widget.Toast;
+import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.view.View
+import android.view.View.OnLongClickListener
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.edit
+import androidx.core.net.toUri
+import com.mio.manager.RendererManager.getRenderer
+import com.mio.ui.dialog.DriverSelectDialog
+import com.mio.ui.dialog.JavaManageDialog
+import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.util.showErrorDialog
+import com.mio.util.showItemSelectionDialog
+import com.tungsten.fcl.R
+import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
+import com.tungsten.fcl.control.SelectControllerDialog
+import com.tungsten.fcl.databinding.PageVersionSettingBinding
+import com.tungsten.fcl.game.FCLGameRepository
+import com.tungsten.fcl.setting.Controllers
+import com.tungsten.fcl.setting.Profile
+import com.tungsten.fcl.setting.Profiles.getSelectedProfile
+import com.tungsten.fcl.setting.VersionSetting
+import com.tungsten.fcl.ui.controller.ControllerPageManager
+import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
+import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fcl.util.FXUtils
+import com.tungsten.fcl.util.RequestCodes
+import com.tungsten.fcl.util.WeakListenerHolder
+import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
+import com.tungsten.fclauncher.plugins.DriverPlugin.selected
+import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fclcore.event.Event
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fclcore.fakefx.beans.binding.Bindings
+import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
+import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
+import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
+import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty
+import com.tungsten.fclcore.fakefx.beans.property.StringProperty
+import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
+import com.tungsten.fclcore.task.Schedulers
+import com.tungsten.fclcore.task.Task
+import com.tungsten.fclcore.util.Lang
+import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.platform.MemoryUtils
+import com.tungsten.fcllibrary.browser.FileBrowser
+import com.tungsten.fcllibrary.browser.options.LibMode
+import com.tungsten.fcllibrary.browser.options.SelectionMode
+import com.tungsten.fcllibrary.component.dialog.EditDialog
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
+import com.tungsten.fcllibrary.component.dialog.FullEditDialog
+import com.tungsten.fcllibrary.component.ui.FCLCommonPage
+import com.tungsten.fcllibrary.component.view.FCLEditText
+import com.tungsten.fcllibrary.component.view.FCLProgressBar
+import com.tungsten.fcllibrary.component.view.FCLSwitch
+import com.tungsten.fcllibrary.component.view.FCLTextView
+import com.tungsten.fcllibrary.component.view.FCLUILayout
+import java.io.File
+import java.io.IOException
+import java.util.Locale
+import java.util.logging.Level
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.LinearLayoutCompat;
+class VersionSettingPage(
+    context: Context?,
+    id: Int,
+    parent: FCLUILayout?,
+    resId: Int,
+    private val globalSetting: Boolean
+) : FCLCommonPage(context, id, parent, resId), VersionLoadable, View.OnClickListener {
+    private lateinit var lastVersionSetting: VersionSetting
+    private lateinit var profile: Profile
+    private lateinit var listenerHolder: WeakListenerHolder
+    private var versionId: String? = null
 
-import com.mio.data.Renderer;
-import com.mio.manager.RendererManager;
-import com.mio.ui.dialog.DriverSelectDialog;
-import com.mio.ui.dialog.JavaManageDialog;
-import com.mio.ui.dialog.RendererSelectDialog;
-import com.mio.util.DialogUtilKt;
-import com.tungsten.fcl.R;
-import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.control.SelectControllerDialog;
-import com.tungsten.fcl.game.FCLGameRepository;
-import com.tungsten.fcl.setting.Controllers;
-import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.controller.ControllerPageManager;
-import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fcl.util.WeakListenerHolder;
-import com.tungsten.fclauncher.plugins.DriverPlugin;
-import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.event.Event;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.task.Task;
-import com.tungsten.fclcore.util.Lang;
-import com.tungsten.fclcore.util.Logging;
-import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fclcore.util.platform.MemoryUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
-import com.tungsten.fcllibrary.component.dialog.EditDialog;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.dialog.FullEditDialog;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
-import com.tungsten.fcllibrary.component.view.FCLCheckBox;
-import com.tungsten.fcllibrary.component.view.FCLEditText;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLSwitch;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
+    private lateinit var binding: PageVersionSettingBinding
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
+    private val specificSettingsListener: InvalidationListener
+    private val selectedVersion: StringProperty = SimpleStringProperty()
+    private val enableSpecificSettings: BooleanProperty = SimpleBooleanProperty(false)
+    private val maxMemory: IntegerProperty = SimpleIntegerProperty()
+    private val usedMemory: IntegerProperty = SimpleIntegerProperty(0)
+    private val modpack: BooleanProperty = SimpleBooleanProperty()
 
-import kotlin.Unit;
-
-public class VersionSettingPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
-
-    private final boolean globalSetting;
-
-    private VersionSetting lastVersionSetting = null;
-    private Profile profile;
-    private WeakListenerHolder listenerHolder;
-    private String versionId;
-
-    private FCLEditText txtJVMArgs;
-    private FCLEditText txtGameArgs;
-    private FCLEditText txtUUID;
-    private FCLEditText txtServerIP;
-
-    private FCLCheckBox chkAutoAllocate;
-
-    private FCLImageView iconView;
-
-    private FCLNumberSeekBar allocateSeekbar;
-
-    private FCLSwitch isolateWorkingDirSwitch;
-    private FCLSwitch beGestureSwitch;
-    private FCLSwitch vulkanDriverSystemSwitch;
-    private FCLSwitch pojavBigCoreSwitch;
-    private FCLSwitch noGameCheckSwitch;
-    private FCLSwitch noJVMCheckSwitch;
-    private FCLSwitch noModCheckSwitch;
-    private FCLSwitch debugLogSwitch;
-    private FCLSwitch forceResolutionSwitch;
-
-    private FCLImageButton javaButton;
-    private FCLImageButton javaInstallButton;
-    private FCLImageButton editIconButton;
-    private FCLImageButton deleteIconButton;
-    private FCLImageButton controllerButton;
-    private FCLImageButton controllerInstallButton;
-    private FCLImageButton graphicsBackendButton;
-    private FCLImageButton rendererButton;
-    private FCLImageButton rendererInstallButton;
-    private FCLImageButton driverButton;
-    private FCLImageButton driverInstallButton;
-    private LinearLayoutCompat driverContainer;
-
-    private FCLTextView javaText;
-    private FCLTextView controllerText;
-    private FCLTextView graphicsBackendText;
-    private FCLTextView rendererText;
-    private FCLTextView driverText;
-
-    private final InvalidationListener specificSettingsListener;
-    private final StringProperty selectedVersion = new SimpleStringProperty();
-    private final BooleanProperty enableSpecificSettings = new SimpleBooleanProperty(false);
-    private final IntegerProperty maxMemory = new SimpleIntegerProperty();
-    private final IntegerProperty usedMemory = new SimpleIntegerProperty(0);
-    private final BooleanProperty modpack = new SimpleBooleanProperty();
-
-    public VersionSettingPage(Context context, int id, FCLUILayout parent, int resId, boolean globalSetting) {
-        super(context, id, parent, resId);
-        this.globalSetting = globalSetting;
-        create();
-        specificSettingsListener = any -> enableSpecificSettings.set(!lastVersionSetting.isUsesGlobal());
+    init {
+        create()
+        specificSettingsListener =
+            InvalidationListener { enableSpecificSettings.set(!lastVersionSetting.isUsesGlobal) }
     }
 
-    private void create() {
-        FCLLinearLayout settingTypeLayout = findViewById(R.id.special_setting_layout);
-        FCLLinearLayout settingLayout = findViewById(R.id.setting_layout);
+    private fun create() {
+        binding = PageVersionSettingBinding.bind(contentView)
 
-        txtJVMArgs = findViewById(R.id.edit_jvm_args);
-        txtGameArgs = findViewById(R.id.edit_minecraft_args);
-        txtUUID = findViewById(R.id.edit_uuid);
-        txtServerIP = findViewById(R.id.edit_server);
 
-        chkAutoAllocate = findViewById(R.id.edit_auto_allocate);
+        val specialSettingSwitch = findViewById<FCLSwitch>(R.id.enable_per_instance_setting)
+        specialSettingSwitch.addCheckedChangeListener()
+        binding.switchGameDir.disableProperty().bind(modpack)
 
-        iconView = findViewById(R.id.icon);
+        binding.buttonEditJava.setOnClickListener(this)
+        binding.buttonInstallJava.setOnClickListener(this)
+        binding.buttonEditIcon.setOnClickListener(this)
+        binding.buttonDeleteIcon.setOnClickListener(this)
+        binding.buttonEditController.setOnClickListener(this)
+        binding.buttonInstallController.setOnClickListener(this)
+        binding.buttonEditGraphicsBackend.setOnClickListener(this)
+        binding.buttonEditRenderer.setOnClickListener(this)
+        binding.buttonInstallRenderer.setOnClickListener(this)
+        binding.buttonEditDriver.setOnClickListener(this)
+        binding.buttonInstallDriver.setOnClickListener(this)
 
-        allocateSeekbar = findViewById(R.id.edit_memory);
+        val memoryBar = findViewById<FCLProgressBar>(R.id.memory_bar)
 
-        FCLSwitch specialSettingSwitch = findViewById(R.id.enable_per_instance_setting);
-        specialSettingSwitch.addCheckedChangeListener();
-        isolateWorkingDirSwitch = findViewById(R.id.edit_game_dir);
-        beGestureSwitch = findViewById(R.id.edit_controller_injector);
-        vulkanDriverSystemSwitch = findViewById(R.id.vulkan_driver_system);
-        pojavBigCoreSwitch = findViewById(R.id.pojav_big_core);
-        noGameCheckSwitch = findViewById(R.id.edit_not_check_game);
-        noJVMCheckSwitch = findViewById(R.id.edit_not_check_java);
-        noModCheckSwitch = findViewById(R.id.not_check_mod);
-        debugLogSwitch = findViewById(R.id.debug_log);
-        forceResolutionSwitch = findViewById(R.id.force_resolution);
+        val memoryStateText = findViewById<FCLTextView>(R.id.memory_state)
+        val memoryInfoText = findViewById<FCLTextView>(R.id.memory_info_text)
+        val memoryAllocateText = findViewById<FCLTextView>(R.id.memory_allocate_text)
 
-        isolateWorkingDirSwitch.disableProperty().bind(modpack);
-
-        javaButton = findViewById(R.id.edit_java);
-        javaInstallButton = findViewById(R.id.install_java);
-        editIconButton = findViewById(R.id.edit_icon);
-        deleteIconButton = findViewById(R.id.delete_icon);
-        controllerButton = findViewById(R.id.edit_controller);
-        controllerInstallButton = findViewById(R.id.install_controller);
-        graphicsBackendButton = findViewById(R.id.edit_graphics_backend);
-        rendererButton = findViewById(R.id.edit_renderer);
-        rendererInstallButton = findViewById(R.id.install_renderer);
-        driverButton = findViewById(R.id.edit_driver);
-        driverInstallButton = findViewById(R.id.install_driver);
-        driverContainer = findViewById(R.id.driver_container);
-
-        javaButton.setOnClickListener(this);
-        javaInstallButton.setOnClickListener(this);
-        editIconButton.setOnClickListener(this);
-        deleteIconButton.setOnClickListener(this);
-        controllerButton.setOnClickListener(this);
-        controllerInstallButton.setOnClickListener(this);
-        graphicsBackendButton.setOnClickListener(this);
-        rendererButton.setOnClickListener(this);
-        rendererInstallButton.setOnClickListener(this);
-        driverButton.setOnClickListener(this);
-        driverInstallButton.setOnClickListener(this);
-
-        javaText = findViewById(R.id.java);
-        controllerText = findViewById(R.id.controller);
-        graphicsBackendText = findViewById(R.id.graphics_backend);
-        rendererText = findViewById(R.id.renderer);
-        driverText = findViewById(R.id.driver);
-
-        FCLProgressBar memoryBar = findViewById(R.id.memory_bar);
-
-        FCLTextView memoryStateText = findViewById(R.id.memory_state);
-        FCLTextView memoryInfoText = findViewById(R.id.memory_info_text);
-        FCLTextView memoryAllocateText = findViewById(R.id.memory_allocate_text);
-
-        memoryStateText.stringProperty().bind(Bindings.createStringBinding(() -> {
-            if (chkAutoAllocate.isChecked()) {
-                return getContext().getString(R.string.settings_memory_lower_bound);
+        memoryStateText.stringProperty().bind(Bindings.createStringBinding({
+            if (binding.checkAutoAllocate.isChecked) {
+                return@createStringBinding context.getString(R.string.settings_memory_lower_bound)
             } else {
-                return getContext().getString(R.string.settings_memory);
+                return@createStringBinding context.getString(R.string.settings_memory)
             }
-        }, chkAutoAllocate.checkProperty()));
+        }, binding.checkAutoAllocate.checkProperty()))
 
-        allocateSeekbar.setMax(MemoryUtils.getTotalDeviceMemory(getContext()));
-        memoryBar.setMax(MemoryUtils.getTotalDeviceMemory(getContext()));
+        binding.barMemory.setMax(MemoryUtils.getTotalDeviceMemory(context))
+        memoryBar.setMax(MemoryUtils.getTotalDeviceMemory(context))
 
-        allocateSeekbar.addProgressListener();
-        allocateSeekbar.progressProperty().bindBidirectional(maxMemory);
+        binding.barMemory.addProgressListener()
+        binding.barMemory.progressProperty().bindBidirectional(maxMemory)
 
-        memoryBar.firstProgressProperty().bind(usedMemory);
-        memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding(() -> {
-            int allocate = (int) (FCLGameRepository.getAllocatedMemory(maxMemory.intValue() * 1024L * 1024L, MemoryUtils.getFreeDeviceMemory(getContext()) * 1024L * 1024L, chkAutoAllocate.isChecked()) / 1024. / 1024);
-            return usedMemory.intValue() + (chkAutoAllocate.isChecked() ? allocate : maxMemory.intValue());
-        }, usedMemory, maxMemory, chkAutoAllocate.checkProperty()));
+        memoryBar.firstProgressProperty().bind(usedMemory)
+        memoryBar.secondProgressProperty().bind(Bindings.createIntegerBinding({
+            val allocate = (FCLGameRepository.getAllocatedMemory(
+                maxMemory.intValue() * 1024L * 1024L,
+                MemoryUtils.getFreeDeviceMemory(context) * 1024L * 1024L,
+                binding.checkAutoAllocate.isChecked
+            ) / 1024.0 / 1024).toInt()
+            usedMemory.intValue() + (if (binding.checkAutoAllocate.isChecked) allocate else maxMemory.intValue())
+        }, usedMemory, maxMemory, binding.checkAutoAllocate.checkProperty()))
 
-        memoryInfoText.stringProperty().bind(Bindings.createStringBinding(() -> AndroidUtils.getLocalizedText(getContext(), "settings_memory_used_per_total", MemoryUtils.getUsedDeviceMemory(getContext()) / 1024., MemoryUtils.getTotalDeviceMemory(getContext()) / 1024.), usedMemory));
+        memoryInfoText.stringProperty().bind(Bindings.createStringBinding({
+            AndroidUtils.getLocalizedText(
+                context,
+                "settings_memory_used_per_total",
+                MemoryUtils.getUsedDeviceMemory(context) / 1024.0,
+                MemoryUtils.getTotalDeviceMemory(context) / 1024.0
+            )
+        }, usedMemory))
 
-        memoryAllocateText.stringProperty().bind(Bindings.createStringBinding(() -> {
-            long maxMemory = Lang.parseInt(this.maxMemory.get(), 0) * 1024L * 1024L;
-            return AndroidUtils.getLocalizedText(getContext(), maxMemory / 1024. / 1024. > MemoryUtils.getFreeDeviceMemory(getContext())
-                            ? (chkAutoAllocate.isChecked() ? "settings_memory_allocate_auto_exceeded" : "settings_memory_allocate_manual_exceeded")
-                            : (chkAutoAllocate.isChecked() ? "settings_memory_allocate_auto" : "settings_memory_allocate_manual"),
-                    maxMemory / 1024. / 1024. / 1024.,
-                    FCLGameRepository.getAllocatedMemory(maxMemory, MemoryUtils.getFreeDeviceMemory(getContext()) * 1024L * 1024L, chkAutoAllocate.isChecked()) / 1024. / 1024. / 1024.,
-                    MemoryUtils.getFreeDeviceMemory(getContext()) / 1024.);
-        }, usedMemory, maxMemory, chkAutoAllocate.checkProperty()));
+        memoryAllocateText.stringProperty().bind(Bindings.createStringBinding({
+            val maxMemory = Lang.parseInt(this.maxMemory.get(), 0) * 1024L * 1024L
+            AndroidUtils.getLocalizedText(
+                context,
+                if (maxMemory / 1024.0 / 1024.0 > MemoryUtils.getFreeDeviceMemory(context))
+                    (if (binding.checkAutoAllocate.isChecked) "settings_memory_allocate_auto_exceeded" else "settings_memory_allocate_manual_exceeded")
+                else
+                    (if (binding.checkAutoAllocate.isChecked) "settings_memory_allocate_auto" else "settings_memory_allocate_manual"),
+                maxMemory / 1024.0 / 1024.0 / 1024.0,
+                FCLGameRepository.getAllocatedMemory(
+                    maxMemory,
+                    MemoryUtils.getFreeDeviceMemory(context) * 1024L * 1024L,
+                    binding.checkAutoAllocate.isChecked
+                ) / 1024.0 / 1024.0 / 1024.0,
+                MemoryUtils.getFreeDeviceMemory(context) / 1024.0
+            )
+        }, usedMemory, maxMemory, binding.checkAutoAllocate.checkProperty()))
 
-        settingTypeLayout.setVisibility(globalSetting ? View.GONE : View.VISIBLE);
+        binding.specialSettingLayout.visibility = if (globalSetting) View.GONE else View.VISIBLE
 
         if (!globalSetting) {
-            specialSettingSwitch.disableProperty().bind(modpack);
-            specialSettingSwitch.checkProperty().bindBidirectional(enableSpecificSettings);
-            settingLayout.visibilityProperty().bind(enableSpecificSettings);
+            specialSettingSwitch.disableProperty().bind(modpack)
+            specialSettingSwitch.checkProperty().bindBidirectional(enableSpecificSettings)
+            binding.settingLayout.visibilityProperty().bind(enableSpecificSettings)
         }
 
-        enableSpecificSettings.addListener((a, b, newValue) -> {
-            if (versionId == null) return;
-
+        enableSpecificSettings.addListener(ChangeListener { _, _, newValue ->
+            if (versionId == null) return@ChangeListener
             // do not call versionSettings.setUsesGlobal(true/false)
             // because versionSettings can be the global one.
             // global versionSettings.usesGlobal is always true.
-            if (newValue)
-                profile.getRepository().specializeVersionSetting(versionId);
-            else
-                profile.getRepository().globalizeVersionSetting(versionId);
-
-            Schedulers.androidUIThread().execute(() -> loadVersion(profile, versionId));
-        });
-        vulkanDriverSystemSwitch.setOnClickListener(v -> {
-            if (vulkanDriverSystemSwitch.checkProperty().get() && AndroidUtils.isAdrenoGPU()) {
-                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                builder.setMessage(getContext().getString(R.string.message_vulkan_driver_system));
-                builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                builder.create().show();
+            if (newValue) profile.repository.specializeVersionSetting(versionId)
+            else profile.repository.globalizeVersionSetting(versionId)
+            Schedulers.androidUIThread().execute { loadVersion(profile, versionId) }
+        })
+        binding.switchVulkanDriverSystem.setOnClickListener {
+            if (binding.switchVulkanDriverSystem.checkProperty()
+                    .get() && AndroidUtils.isAdrenoGPU()
+            ) {
+                val builder = FCLAlertDialog.Builder(context)
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                builder.setMessage(context.getString(R.string.message_vulkan_driver_system))
+                builder.setNegativeButton(
+                    context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                    null
+                )
+                builder.create().show()
             }
-            driverContainer.setVisibility(vulkanDriverSystemSwitch.checkProperty().get() ? View.GONE : View.VISIBLE);
-        });
-        View.OnLongClickListener listener = view -> {
-            FullEditDialog dialog = new FullEditDialog(getContext(), str -> ((FCLEditText) view).setText(str));
-            dialog.getEditText().setText(((FCLEditText) view).getText());
-            dialog.show();
-            return true;
-        };
-        txtJVMArgs.setOnLongClickListener(listener);
-        txtGameArgs.setOnLongClickListener(listener);
-        forceResolutionSwitch.setOnClickListener(v -> editForceResolution());
-        forceResolutionSwitch.setOnLongClickListener(view -> {
-            editForceResolution();
-            return true;
-        });
-    }
-
-    private void editForceResolution() {
-        if (forceResolutionSwitch.checkProperty().get()) {
-            SharedPreferences preferences = getContext().getSharedPreferences("launcher", Context.MODE_PRIVATE);
-            EditDialog dialog = new EditDialog(getContext(), str -> {
-                try {
-                    String[] split = str.toLowerCase().split("x");
-                    if (split.length == 2) {
-                        int w = Integer.parseInt(split[0]);
-                        int h = Integer.parseInt(split[1]);
-                        preferences.edit().putString("force_resolution", w + "x" + h).apply();
-                    }
-                } catch (Exception e) {
-                    DialogUtilKt.showErrorDialog(getContext(), e.toString());
-                }
-            });
-            dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"));
-            dialog.show();
+            binding.driverContainer.visibility =
+                if (binding.switchVulkanDriverSystem.checkProperty()
+                        .get()
+                ) View.GONE else View.VISIBLE
+        }
+        val listener = OnLongClickListener { view: View? ->
+            val dialog = FullEditDialog(
+                context
+            ) { str: String? -> (view as FCLEditText).setText(str) }
+            dialog.getEditText().setText((view as FCLEditText).getText())
+            dialog.show()
+            true
+        }
+        binding.editJvmArgs.setOnLongClickListener(listener)
+        binding.editMinecraftArgs.setOnLongClickListener(listener)
+        binding.switchForceResolution.setOnClickListener { editForceResolution() }
+        binding.switchForceResolution.setOnLongClickListener {
+            editForceResolution()
+            true
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
+    private fun editForceResolution() {
+        if (binding.switchForceResolution.checkProperty().get()) {
+            val preferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+            val dialog = EditDialog(context) { str ->
+                try {
+                    val split =
+                        str.lowercase(Locale.getDefault()).split("x".toRegex())
+                            .dropLastWhile { it.isEmpty() }.toTypedArray()
+                    if (split.size == 2) {
+                        val w = split[0].toInt()
+                        val h = split[1].toInt()
+                        preferences.edit {
+                            putString("force_resolution", w.toString() + "x" + h)
+                        }
+                    }
+                } catch (e: Exception) {
+                    showErrorDialog(context, e.toString())
+                }
+            }
+            dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"))
+            dialog.show()
+        }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));
+    override fun refresh(vararg param: Any?): Task<*>? {
+        return null
     }
 
-    @Override
-    public void loadVersion(Profile profile, String versionId) {
-        this.profile = profile;
-        this.versionId = versionId;
-        this.listenerHolder = new WeakListenerHolder();
+    override fun onResume() {
+        super.onResume()
+        usedMemory.set(MemoryUtils.getUsedDeviceMemory(context))
+    }
+
+    override fun loadVersion(profile: Profile, versionId: String?) {
+        this.profile = profile
+        this.versionId = versionId
+        this.listenerHolder = WeakListenerHolder()
 
         if (versionId == null) {
-            enableSpecificSettings.set(true);
-            listenerHolder.add(FXUtils.onWeakChangeAndOperate(profile.selectedVersionProperty(), this.selectedVersion::setValue));
+            enableSpecificSettings.set(true)
+            listenerHolder.add(
+                FXUtils.onWeakChangeAndOperate<String?>(
+                    profile.selectedVersionProperty()
+                ) { v: String? -> this.selectedVersion.value = v }
+            )
         }
 
-        VersionSetting versionSetting = profile.getVersionSetting(versionId);
-        versionSetting.checkController();
+        val versionSetting = profile.getVersionSetting(versionId)
+        versionSetting.checkController()
 
-        modpack.set(versionId != null && profile.getRepository().isModpack(versionId));
-        usedMemory.set(MemoryUtils.getUsedDeviceMemory(getContext()));
+        modpack.set(versionId != null && profile.repository.isModpack(versionId))
+        usedMemory.set(MemoryUtils.getUsedDeviceMemory(context))
 
-        InvalidationListener listener = observable -> ManagePageManager.getInstance().onRunDirectoryChange(profile, versionId);
+        val listener = InvalidationListener {
+            ManagePageManager.instance!!.onRunDirectoryChange(
+                profile,
+                versionId
+            )
+        }
 
         // unbind data fields
-        if (lastVersionSetting != null) {
-            lastVersionSetting.getIsolateGameDirProperty().removeListener(listener);
-            FXUtils.unbind(txtJVMArgs, lastVersionSetting.getJavaArgsProperty());
-            FXUtils.unbind(txtGameArgs, lastVersionSetting.getMinecraftArgsProperty());
-            FXUtils.unbind(txtUUID, lastVersionSetting.getUuidProperty());
-            FXUtils.unbind(txtServerIP, lastVersionSetting.getServerIpProperty());
-            FXUtils.unbindBoolean(chkAutoAllocate, lastVersionSetting.getAutoMemoryProperty());
-            FXUtils.unbindBoolean(isolateWorkingDirSwitch, lastVersionSetting.getIsolateGameDirProperty());
-            FXUtils.unbindBoolean(pojavBigCoreSwitch, lastVersionSetting.getPojavBigCoreProperty());
-            FXUtils.unbindBoolean(noGameCheckSwitch, lastVersionSetting.getNotCheckGameProperty());
-            FXUtils.unbindBoolean(noJVMCheckSwitch, lastVersionSetting.getNotCheckJVMProperty());
-            FXUtils.unbindBoolean(noModCheckSwitch, lastVersionSetting.getNotCheckModProperty());
-            FXUtils.unbindBoolean(debugLogSwitch, lastVersionSetting.getDebugLogProperty());
-            FXUtils.unbindBoolean(forceResolutionSwitch, lastVersionSetting.getForceResolutionProperty());
-            FXUtils.unbindBoolean(beGestureSwitch, lastVersionSetting.getBeGestureProperty());
-            FXUtils.unbindBoolean(vulkanDriverSystemSwitch, lastVersionSetting.getVkDriverSystemProperty());
-            maxMemory.unbindBidirectional(lastVersionSetting.getMaxMemoryProperty());
+        if (::lastVersionSetting.isInitialized) {
+            lastVersionSetting.isolateGameDirProperty.removeListener(listener)
+            FXUtils.unbind(binding.editJvmArgs, lastVersionSetting.javaArgsProperty)
+            FXUtils.unbind(binding.editMinecraftArgs, lastVersionSetting.minecraftArgsProperty)
+            FXUtils.unbind(binding.editUuid, lastVersionSetting.uuidProperty)
+            FXUtils.unbind(binding.editServer, lastVersionSetting.serverIpProperty)
+            FXUtils.unbindBoolean(
+                binding.checkAutoAllocate,
+                lastVersionSetting.autoMemoryProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchGameDir,
+                lastVersionSetting.isolateGameDirProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchPojavBigCore,
+                lastVersionSetting.pojavBigCoreProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchNotCheckGame,
+                lastVersionSetting.notCheckGameProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchNotCheckJava,
+                lastVersionSetting.notCheckJVMProperty
+            )
+            FXUtils.unbindBoolean(binding.switchNotCheckMod, lastVersionSetting.notCheckModProperty)
+            FXUtils.unbindBoolean(binding.switchDebugLog, lastVersionSetting.debugLogProperty)
+            FXUtils.unbindBoolean(
+                binding.switchForceResolution,
+                lastVersionSetting.forceResolutionProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchControllerInjector,
+                lastVersionSetting.beGestureProperty
+            )
+            FXUtils.unbindBoolean(
+                binding.switchVulkanDriverSystem,
+                lastVersionSetting.vkDriverSystemProperty
+            )
+            maxMemory.unbindBidirectional(lastVersionSetting.maxMemoryProperty)
 
-            lastVersionSetting.getUsesGlobalProperty().removeListener(specificSettingsListener);
+            lastVersionSetting.usesGlobalProperty.removeListener(specificSettingsListener)
         }
 
         // bind new data fields
-        if (getId() == ManagePageManager.PAGE_ID_MANAGE_SETTING) {
-            versionSetting.getIsolateGameDirProperty().addListener(listener);
+        if (id == ManagePageManager.PAGE_ID_MANAGE_SETTING) {
+            versionSetting.isolateGameDirProperty.addListener(listener)
         }
-        FXUtils.bindString(txtJVMArgs, versionSetting.getJavaArgsProperty());
-        FXUtils.bindString(txtGameArgs, versionSetting.getMinecraftArgsProperty());
-        FXUtils.bindString(txtUUID, versionSetting.getUuidProperty());
-        FXUtils.bindString(txtServerIP, versionSetting.getServerIpProperty());
-        FXUtils.bindBoolean(chkAutoAllocate, versionSetting.getAutoMemoryProperty());
-        FXUtils.bindBoolean(isolateWorkingDirSwitch, versionSetting.getIsolateGameDirProperty());
-        FXUtils.bindBoolean(pojavBigCoreSwitch, versionSetting.getPojavBigCoreProperty());
-        FXUtils.bindBoolean(noGameCheckSwitch, versionSetting.getNotCheckGameProperty());
-        FXUtils.bindBoolean(noJVMCheckSwitch, versionSetting.getNotCheckJVMProperty());
-        FXUtils.bindBoolean(noModCheckSwitch, versionSetting.getNotCheckModProperty());
-        FXUtils.bindBoolean(debugLogSwitch, versionSetting.getDebugLogProperty());
-        FXUtils.bindBoolean(forceResolutionSwitch, versionSetting.getForceResolutionProperty());
-        FXUtils.bindBoolean(beGestureSwitch, versionSetting.getBeGestureProperty());
-        FXUtils.bindBoolean(vulkanDriverSystemSwitch, versionSetting.getVkDriverSystemProperty());
-        maxMemory.bindBidirectional(versionSetting.getMaxMemoryProperty());
+        FXUtils.bindString(binding.editJvmArgs, versionSetting.javaArgsProperty)
+        FXUtils.bindString(binding.editMinecraftArgs, versionSetting.minecraftArgsProperty)
+        FXUtils.bindString(binding.editUuid, versionSetting.uuidProperty)
+        FXUtils.bindString(binding.editServer, versionSetting.serverIpProperty)
+        FXUtils.bindBoolean(binding.checkAutoAllocate, versionSetting.autoMemoryProperty)
+        FXUtils.bindBoolean(binding.switchGameDir, versionSetting.isolateGameDirProperty)
+        FXUtils.bindBoolean(binding.switchPojavBigCore, versionSetting.pojavBigCoreProperty)
+        FXUtils.bindBoolean(binding.switchNotCheckGame, versionSetting.notCheckGameProperty)
+        FXUtils.bindBoolean(binding.switchNotCheckJava, versionSetting.notCheckJVMProperty)
+        FXUtils.bindBoolean(binding.switchNotCheckMod, versionSetting.notCheckModProperty)
+        FXUtils.bindBoolean(binding.switchDebugLog, versionSetting.debugLogProperty)
+        FXUtils.bindBoolean(binding.switchForceResolution, versionSetting.forceResolutionProperty)
+        FXUtils.bindBoolean(binding.switchControllerInjector, versionSetting.beGestureProperty)
+        FXUtils.bindBoolean(binding.switchVulkanDriverSystem, versionSetting.vkDriverSystemProperty)
+        maxMemory.bindBidirectional(versionSetting.maxMemoryProperty)
 
-        chkAutoAllocate.setChecked(versionSetting.isAutoMemory());
+        binding.checkAutoAllocate.setChecked(versionSetting.isAutoMemory)
 
-        javaText.setText(versionSetting.getJava().equals("Auto") ? getContext().getString(R.string.settings_game_java_version_auto) : versionSetting.getJava());
-        Controllers.addCallback(() -> controllerText.setText(Controllers.findControllerById(versionSetting.getController()).getName()));
-        graphicsBackendText.setText(versionSetting.getGraphicsBackend());
-        Renderer renderer = RendererManager.getRenderer(versionSetting.getRenderer());
-        rendererText.setSelected(true);
-        rendererText.setText(renderer.getDes());
-        driverContainer.setVisibility(vulkanDriverSystemSwitch.checkProperty().get() ? View.GONE : View.VISIBLE);
-        if (!versionSetting.getDriver().equals("Turnip")) {
-            boolean isSelected = false;
-            for (DriverPlugin.Driver driver : DriverPlugin.getDriverList()) {
-                if (driver.getDriver().equals(versionSetting.getDriver())) {
-                    DriverPlugin.setSelected(driver);
-                    versionSetting.setDriver(driver.getDriver());
-                    isSelected = true;
+        binding.java.text =
+            if (versionSetting.java == "Auto") context.getString(R.string.settings_game_java_version_auto) else versionSetting.java
+        Controllers.addCallback {
+            binding.controller.text = Controllers.findControllerById(
+                versionSetting.controller
+            ).name
+        }
+        binding.graphicsBackend.text = versionSetting.graphicsBackend
+        val renderer = getRenderer(versionSetting.renderer)
+        binding.renderer.setSelected(true)
+        binding.renderer.text = renderer.des
+        binding.driverContainer.visibility =
+            if (binding.switchVulkanDriverSystem.checkProperty().get()) View.GONE else View.VISIBLE
+        if (versionSetting.driver != "Turnip") {
+            var isSelected = false
+            for (driver in driverList) {
+                if (driver.driver == versionSetting.driver) {
+                    selected = driver
+                    versionSetting.driver = driver.driver
+                    isSelected = true
                 }
             }
             if (!isSelected) {
-                versionSetting.setDriver("Turnip");
+                versionSetting.driver = "Turnip"
             }
         }
-        driverText.setText(versionSetting.getDriver());
+        binding.driver.text = versionSetting.driver
 
-        versionSetting.getUsesGlobalProperty().addListener(specificSettingsListener);
-        if (versionId != null)
-            enableSpecificSettings.set(!versionSetting.isUsesGlobal());
+        versionSetting.usesGlobalProperty.addListener(specificSettingsListener)
+        if (versionId != null) enableSpecificSettings.set(!versionSetting.isUsesGlobal)
 
-        lastVersionSetting = versionSetting;
+        lastVersionSetting = versionSetting
 
-        loadIcon();
+        loadIcon()
     }
 
-    private void onExploreIcon() {
-        if (versionId == null)
-            return;
+    private fun onExploreIcon() {
+        if (versionId == null) return
 
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        ArrayList<String> suffix = new ArrayList<>();
-        suffix.add(".png");
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-        builder.setTitle(getContext().getString(R.string.settings_icon));
-        builder.setSuffix(suffix);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_VERSION_ICON_CODE, (requestCode, resultCode, data) -> {
+        val builder = FileBrowser.Builder(context)
+        val suffix = ArrayList<String?>()
+        suffix.add(".png")
+        builder.setLibMode(LibMode.FILE_CHOOSER)
+        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
+        builder.setTitle(context.getString(R.string.settings_icon))
+        builder.setSuffix(suffix)
+        builder.create().browse(
+            activity,
+            RequestCodes.SELECT_VERSION_ICON_CODE
+        ) { requestCode: Int, resultCode: Int, data: Intent? ->
             if (requestCode == RequestCodes.SELECT_VERSION_ICON_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                if (FileBrowser.getSelectedFiles(data).isEmpty())
-                    return;
+                if (FileBrowser.getSelectedFiles(data).isEmpty()) return@browse
 
-                String path = FileBrowser.getSelectedFiles(data).get(0);
-                Uri uri = Uri.parse(path);
+                var path = FileBrowser.getSelectedFiles(data)[0]
+                val uri = path.toUri()
                 if (AndroidUtils.isDocUri(uri)) {
-                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+                    path =
+                        AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
                 }
-                if (path == null)
-                    return;
+                if (path == null) return@browse
 
-                File selectedFile = new File(path);
-                File iconFile = profile.getRepository().getVersionIconFile(versionId);
+                val selectedFile = File(path)
+                val iconFile = profile.repository.getVersionIconFile(versionId)
                 try {
-                    FileUtils.copyFile(selectedFile, iconFile);
+                    FileUtils.copyFile(selectedFile, iconFile)
 
-                    profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
-                    loadIcon();
-                } catch (IOException e) {
-                    Logging.LOG.log(Level.SEVERE, "Failed to copy icon file from " + selectedFile + " to " + iconFile, e);
+                    profile.repository.onVersionIconChanged.fireEvent(Event(this))
+                    loadIcon()
+                } catch (e: IOException) {
+                    Logging.LOG.log(
+                        Level.SEVERE,
+                        "Failed to copy icon file from $selectedFile to $iconFile",
+                        e
+                    )
                 }
             }
-        });
+        }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void onDeleteIcon() {
-        if (versionId == null)
-            return;
+    private fun onDeleteIcon() {
+        if (versionId == null) return
 
-        File iconFile = profile.getRepository().getVersionIconFile(versionId);
-        if (iconFile.exists())
-            iconFile.delete();
-        profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
-        loadIcon();
+        val iconFile = profile.repository.getVersionIconFile(versionId)
+        if (iconFile.exists()) iconFile.delete()
+        profile.repository.onVersionIconChanged.fireEvent(Event(this))
+        loadIcon()
     }
 
-    private void loadIcon() {
+    private fun loadIcon() {
         if (versionId == null) {
-            return;
+            return
         }
-        Schedulers.defaultScheduler().execute(() -> {
-            Drawable icon = profile.getRepository().getVersionIconImage(versionId);
-            Schedulers.androidUIThread().execute(() -> iconView.setImageDrawable(icon));
-        });
+        Schedulers.defaultScheduler().execute {
+            val icon = profile.repository.getVersionIconImage(versionId)
+            Schedulers.androidUIThread().execute { binding.icon.setImageDrawable(icon) }
+        }
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view == editIconButton) {
-            onExploreIcon();
+    override fun onClick(view: View?) {
+        if (view === binding.buttonEditIcon) {
+            onExploreIcon()
         }
-        if (view == deleteIconButton) {
-            onDeleteIcon();
+        if (view === binding.buttonDeleteIcon) {
+            onDeleteIcon()
         }
-        if (view == controllerButton) {
+        if (view === binding.buttonEditController) {
             if (Controllers.isInitialized()) {
-                SelectControllerDialog dialog = new SelectControllerDialog(getContext(), lastVersionSetting.getController(), controller -> {
-                    lastVersionSetting.setController(controller.getId());
-                    controllerText.setText(controller.getName());
-                });
-                dialog.show();
+                val dialog = SelectControllerDialog(
+                    context,
+                    lastVersionSetting.controller
+                ) {
+                    lastVersionSetting.controller = it.id
+                    binding.controller.text = it.name
+                }
+                dialog.show()
             } else {
-                Toast.makeText(getContext(), getContext().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.message_data_is_loading),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
-        if (view == controllerInstallButton) {
-            UIManager uiManager = MainActivity.getInstance().getUiManager();
-            MainActivity.getInstance().binding.controller.setSelected(true);
-            uiManager.getControllerUI().runAfterInit(() -> uiManager.getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO));
+        if (view === binding.buttonInstallController) {
+            val uiManager = getInstance().uiManager
+            getInstance().binding.controller.setSelected(true)
+            uiManager.controllerUI.runAfterInit {
+                uiManager.controllerUI.pageManager
+                    .switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO)
+            }
         }
-        if (view == javaButton) {
-            new JavaManageDialog(getContext(), java -> {
-                lastVersionSetting.setJava(java);
-                if (java.equals("Auto")) {
-                    javaText.setText(R.string.settings_game_java_version_auto);
+        if (view === binding.buttonEditJava) {
+            JavaManageDialog(context) {
+                lastVersionSetting.java = it
+                if (it == "Auto") {
+                    binding.java.setText(R.string.settings_game_java_version_auto)
                 } else {
-                    javaText.setText(java);
+                    binding.java.text = it
                 }
-                return Unit.INSTANCE;
-            }).show();
+            }.show()
         }
-        if (view == javaInstallButton) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.message_install_java)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
-                        String url = switch (w) {
-                            case 0 ->
-                                    "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java";
-                            case 1 -> "https://pan.quark.cn/s/1a25ca305bda";
-                            default -> null;
-                        };
-                        if (url != null) {
-                            AndroidUtils.openLink(getContext(), url);
-                        }
-                    })
-                    .setPositiveButton(R.string.button_cancel, null)
-                    .create()
-                    .show();
-        }
-        if (view == graphicsBackendButton) {
-            DialogUtilKt.showItemSelectionDialog(getContext(), getContext().getString(R.string.settings_fcl_graphics_backend), List.of("default", "opengl", "vulkan"), backendName -> {
-                graphicsBackendText.setText(backendName);
-                lastVersionSetting.setGraphicsBackend(backendName);
-                return Unit.INSTANCE;
-            });
-        }
-        if (view == rendererButton) {
-            new RendererSelectDialog(getContext(), globalSetting, name -> {
-                if (globalSetting && Profiles.getSelectedProfile().getVersionSetting() != null && !Profiles.getSelectedProfile().getVersionSetting().isGlobal()) {
-                    FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                    builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                    builder.setMessage(getContext().getString(R.string.message_warn_renderer_global_setting));
-                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                    builder.create().show();
+        if (view === binding.buttonInstallJava) {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.message_install_java)
+                .setItems(
+                    arrayOf(
+                        "Github",
+                        context.getString(R.string.settings_download_netdisk)
+                    )
+                ) { _: DialogInterface?, w: Int ->
+                    val url = when (w) {
+                        0 -> "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java"
+                        1 -> "https://pan.quark.cn/s/1a25ca305bda"
+                        else -> null
+                    }
+                    if (url != null) {
+                        AndroidUtils.openLink(context, url)
+                    }
                 }
-                rendererText.setText(name);
-            }).show();
+                .setPositiveButton(R.string.button_cancel, null)
+                .create()
+                .show()
         }
-        if (view == driverButton) {
-            new DriverSelectDialog(getContext(), globalSetting, name -> driverText.setText(name)).show();
+        if (view === binding.buttonEditGraphicsBackend) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.settings_fcl_graphics_backend),
+                mutableListOf("default", "opengl", "vulkan")
+            ) { backendName: String ->
+                binding.graphicsBackend.text = backendName
+                lastVersionSetting.graphicsBackend = backendName
+            }
         }
-        if (view == rendererInstallButton) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
-                        String url = switch (w) {
-                            case 0 ->
-                                    "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer";
-                            case 1 -> "https://pan.quark.cn/s/a9f6e9d860d9";
-                            default -> null;
-                        };
-                        if (url != null) {
-                            AndroidUtils.openLink(getContext(), url);
-                        }
-                    })
-                    .setPositiveButton(R.string.button_cancel, null)
-                    .create()
-                    .show();
+        if (view === binding.buttonEditRenderer) {
+            RendererSelectDialog(context, globalSetting) { name: String? ->
+                if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isGlobal) {
+                    val builder = FCLAlertDialog.Builder(context)
+                    builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                    builder.setMessage(context.getString(R.string.message_warn_renderer_global_setting))
+                    builder.setNegativeButton(
+                        context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                        null
+                    )
+                    builder.create().show()
+                }
+                binding.renderer.text = name
+            }.show()
         }
-        if (view == driverInstallButton) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.message_install_plugin)
-                    .setItems(new String[]{"Github", getContext().getString(R.string.settings_download_netdisk)}, (d, w) -> {
-                        String url = switch (w) {
-                            case 0 ->
-                                    "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip";
-                            case 1 -> "https://pan.quark.cn/s/d87c59695250";
-                            default -> null;
-                        };
-                        if (url != null) {
-                            AndroidUtils.openLink(getContext(), url);
-                        }
-                    })
-                    .setPositiveButton(R.string.button_cancel, null)
-                    .create()
-                    .show();
+        if (view === binding.buttonEditDriver) {
+            DriverSelectDialog(
+                context,
+                globalSetting
+            ) { binding.driver.text = it }.show()
+        }
+        if (view === binding.buttonInstallRenderer) {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.message_install_plugin)
+                .setItems(
+                    arrayOf(
+                        "Github",
+                        context.getString(R.string.settings_download_netdisk)
+                    )
+                ) { _, w ->
+                    val url = when (w) {
+                        0 -> "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer"
+                        1 -> "https://pan.quark.cn/s/a9f6e9d860d9"
+                        else -> null
+                    }
+                    if (url != null) {
+                        AndroidUtils.openLink(context, url)
+                    }
+                }
+                .setPositiveButton(R.string.button_cancel, null)
+                .create()
+                .show()
+        }
+        if (view === binding.buttonInstallDriver) {
+            AlertDialog.Builder(context)
+                .setTitle(R.string.message_install_plugin)
+                .setItems(
+                    arrayOf(
+                        "Github",
+                        context.getString(R.string.settings_download_netdisk)
+                    )
+                ) { _, w ->
+                    val url = when (w) {
+                        0 -> "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip"
+                        1 -> "https://pan.quark.cn/s/d87c59695250"
+                        else -> null
+                    }
+                    if (url != null) {
+                        AndroidUtils.openLink(context, url)
+                    }
+                }
+                .setPositiveButton(R.string.button_cancel, null)
+                .create()
+                .show()
         }
     }
 }
