@@ -5,14 +5,17 @@ import android.view.View;
 import android.widget.ListView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.fakefx.collections.ObservableListBase;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class AccountUI extends FCLCommonUI implements View.OnClickListener {
 
@@ -20,7 +23,7 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     private LinearLayoutCompat addMicrosoftAccount;
     private LinearLayoutCompat addLoginServer;
 
-    private ListView listView;
+    private RecyclerView recyclerView;
     private AccountListAdapter accountListAdapter;
 
     public AccountUI(Context context, FCLUILayout parent, int id) {
@@ -38,7 +41,8 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         addMicrosoftAccount.setOnClickListener(this);
         addLoginServer.setOnClickListener(this);
 
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ListView serverListView = findViewById(R.id.server_list);
         serverListView.setAdapter(new ServerListAdapter(getContext()));
@@ -47,30 +51,20 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        addLoadingCallback(() -> {
-            refresh().start();
-        });
+        addLoadingCallback(() -> refresh().start());
     }
 
     @Override
     public Task<?> refresh(Object... param) {
         addLoadingCallback(() -> {
+            ArrayList<AccountListItem> accountList = Accounts.getAccounts().stream()
+                    .map(account -> new AccountListItem(getContext(), account))
+                    .collect(Collectors.toCollection(ArrayList::new));
             if (accountListAdapter == null) {
-                ObservableList<AccountListItem> list = new ObservableListBase<AccountListItem>() {
-                    @Override
-                    public AccountListItem get(int i) {
-                        return new AccountListItem(getContext(), Accounts.getAccounts().get(i));
-                    }
-
-                    @Override
-                    public int size() {
-                        return Accounts.getAccounts().size();
-                    }
-                };
-                accountListAdapter = new AccountListAdapter(getContext(), list);
-                listView.setAdapter(accountListAdapter);
+                accountListAdapter = new AccountListAdapter(getContext(), accountList);
+                recyclerView.setAdapter(accountListAdapter);
             } else {
-                accountListAdapter.notifyDataSetChanged();
+                accountListAdapter.refresh(accountList);
             }
         });
         return Task.runAsync(() -> {

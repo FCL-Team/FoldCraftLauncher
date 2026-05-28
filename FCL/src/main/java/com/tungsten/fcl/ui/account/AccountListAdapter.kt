@@ -1,175 +1,164 @@
-package com.tungsten.fcl.ui.account;
+package com.tungsten.fcl.ui.account
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.tungsten.fcl.R
+import com.tungsten.fcl.databinding.ItemAccountBinding
+import com.tungsten.fcl.setting.Accounts
+import com.tungsten.fcl.ui.UIManager.Companion.instance
+import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
+import com.tungsten.fclcore.auth.offline.OfflineAccount
+import com.tungsten.fclcore.task.Schedulers
+import com.tungsten.fclcore.task.Task
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
+import java.util.Objects
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
 
-import com.tungsten.fcl.R;
-import com.tungsten.fcl.setting.Accounts;
-import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fclcore.auth.Account;
-import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount;
-import com.tungsten.fclcore.auth.offline.OfflineAccount;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLConstraintLayout;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLRadioButton;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-
-public class AccountListAdapter extends FCLAdapter {
-
-    private final ObservableList<AccountListItem> list;
-
-    public AccountListAdapter(Context context, ObservableList<AccountListItem> list) {
-        super(context);
-        this.list = list;
+class AccountListAdapter(
+    private val context: Context,
+    private val list: MutableList<AccountListItem>
+) : RecyclerView.Adapter<AccountListAdapter.ViewHolder>() {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_account, parent, false)
+        )
     }
 
-    static class ViewHolder {
-        FCLConstraintLayout parent;
-        FCLRadioButton radioButton;
-        FCLImageView avatar;
-        FCLTextView name;
-        FCLTextView type;
-        FCLProgressBar refreshProgress;
-        FCLProgressBar skinProgress;
-        FCLImageButton refresh;
-        FCLImageButton skin;
-        FCLImageButton delete;
-    }
-
-    @Override
-    public int getCount() {
-        return list.size();
-    }
-
-    @Override
-    public Object getItem(int i) {
-        return list.get(i);
-    }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        final ViewHolder viewHolder;
-        if (view == null) {
-            viewHolder = new ViewHolder();
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_account, null);
-            viewHolder.parent = view.findViewById(R.id.parent);
-            viewHolder.radioButton = view.findViewById(R.id.radio);
-            viewHolder.avatar = view.findViewById(R.id.avatar);
-            viewHolder.name = view.findViewById(R.id.name);
-            viewHolder.type = view.findViewById(R.id.type);
-            viewHolder.refreshProgress = view.findViewById(R.id.refresh_progress);
-            viewHolder.skinProgress = view.findViewById(R.id.skin_progress);
-            viewHolder.refresh = view.findViewById(R.id.refresh);
-            viewHolder.skin = view.findViewById(R.id.skin);
-            viewHolder.delete = view.findViewById(R.id.delete);
-            view.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) view.getTag();
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val item = list[position]
+        val binding = ItemAccountBinding.bind(holder.itemView)
+        binding.radio.isChecked = item.account == Accounts.getSelectedAccount()
+        binding.avatar.imageProperty().unbind()
+        binding.avatar.imageProperty().bind(item.imageProperty())
+        binding.name.stringProperty().unbind()
+        binding.name.stringProperty().bind(item.titleProperty())
+        binding.name.setSelected(true)
+        binding.type.stringProperty().unbind()
+        binding.type.stringProperty().bind(item.subtitleProperty())
+        binding.type.setSelected(true)
+        binding.skin.setVisibility(
+            if (item.canUploadSkin().get()) View.VISIBLE else View.INVISIBLE
+        )
+        binding.radio.setOnClickListener {
+            Accounts.setSelectedAccount(item.account)
+            instance.accountUI.refresh().start()
         }
-        AccountListItem account = list.get(i);
-        viewHolder.radioButton.setChecked(account.getAccount() == Accounts.getSelectedAccount());
-        viewHolder.avatar.imageProperty().unbind();
-        viewHolder.avatar.imageProperty().bind(account.imageProperty());
-        viewHolder.name.stringProperty().unbind();
-        viewHolder.name.stringProperty().bind(account.titleProperty());
-        viewHolder.name.setSelected(true);
-        viewHolder.type.stringProperty().unbind();
-        viewHolder.type.stringProperty().bind(account.subtitleProperty());
-        viewHolder.type.setSelected(true);
-        viewHolder.skin.setVisibility(account.canUploadSkin().get() ? View.VISIBLE : View.GONE);
-        viewHolder.radioButton.setOnClickListener(v -> {
-            Accounts.setSelectedAccount(account.getAccount());
-            UIManager.getInstance().getAccountUI().refresh().start();
-        });
-        viewHolder.refresh.setOnClickListener(v -> {
-            viewHolder.refresh.setVisibility(View.GONE);
-            viewHolder.refreshProgress.setVisibility(View.VISIBLE);
-            account.refreshAsync()
-                    .whenComplete(Schedulers.androidUIThread(), ex -> {
-                        viewHolder.refresh.setVisibility(View.VISIBLE);
-                        viewHolder.refreshProgress.setVisibility(View.GONE);
-                        if (ex != null) {
-                            FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
-                            builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                            builder1.setMessage(Accounts.localizeErrorMessage(getContext(), ex));
-                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                            builder1.create().show();
-                        }
-                        account.refreshSkinBinding();
-                        UIManager.getInstance().getAccountUI().refresh().start();
-                    })
-                    .start();
-        });
-        viewHolder.skin.setOnClickListener(v -> {
+        binding.refresh.setOnClickListener {
+            binding.refresh.setVisibility(View.INVISIBLE)
+            binding.refreshProgress.visibility = View.VISIBLE
+            item.refreshAsync()
+                .whenComplete(Schedulers.androidUIThread()) { ex: Exception? ->
+                    binding.refresh.setVisibility(View.VISIBLE)
+                    binding.refreshProgress.visibility = View.INVISIBLE
+                    if (ex != null) {
+                        val builder1 = FCLAlertDialog.Builder(context)
+                        builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                        builder1.setMessage(Accounts.localizeErrorMessage(context, ex))
+                        builder1.setNegativeButton(
+                            context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            null
+                        )
+                        builder1.create().show()
+                    }
+                    item.refreshSkinBinding()
+                    instance.accountUI.refresh().start()
+                }.start()
+        }
+        binding.skin.setOnClickListener {
             try {
-                if (account.getAccount() instanceof AuthlibInjectorAccount) {
-                    new Thread(() -> {
+                if (item.account is AuthlibInjectorAccount) {
+                    Thread {
                         try {
-                            Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
-                            Schedulers.androidUIThread().execute(() -> {
+                            val uploadTask =
+                                Objects.requireNonNull<CompletableFuture<Task<*>?>>(item.uploadSkin())
+                                    .get()
+                            Schedulers.androidUIThread().execute {
                                 if (uploadTask != null) {
-                                    viewHolder.skin.setVisibility(View.GONE);
-                                    viewHolder.skinProgress.setVisibility(View.VISIBLE);
+                                    binding.skin.setVisibility(View.INVISIBLE)
+                                    binding.skinProgress.visibility = View.VISIBLE
                                     uploadTask
-                                            .whenComplete(Schedulers.androidUIThread(), ex -> {
-                                                viewHolder.skin.setVisibility(View.VISIBLE);
-                                                viewHolder.skinProgress.setVisibility(View.GONE);
-                                                account.refreshSkinBinding();
-                                            })
-                                            .start();
+                                        .whenComplete(
+                                            Schedulers.androidUIThread()
+                                        ) {
+                                            binding.skin.setVisibility(View.VISIBLE)
+                                            binding.skinProgress.visibility = View.INVISIBLE
+                                            item.refreshSkinBinding()
+                                        }
+                                        .start()
                                 }
-                            });
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
+                            }
+                        } catch (e: ExecutionException) {
+                            e.printStackTrace()
+                        } catch (e: InterruptedException) {
+                            e.printStackTrace()
                         }
-                    }).start();
-                } else if (account.getAccount() instanceof OfflineAccount) {
-                    OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(getContext(), account);
-                    dialog.show();
+                    }.start()
+                } else if (item.account is OfflineAccount) {
+                    val dialog = OfflineAccountSkinDialog(context, item)
+                    dialog.show()
                 } else {
-                    Task<?> uploadTask = Objects.requireNonNull(account.uploadSkin()).get();
+                    val uploadTask =
+                        Objects.requireNonNull<CompletableFuture<Task<*>?>>(item.uploadSkin()).get()
                     if (uploadTask != null) {
-                        viewHolder.skin.setVisibility(View.GONE);
-                        viewHolder.skinProgress.setVisibility(View.VISIBLE);
+                        binding.skin.setVisibility(View.INVISIBLE)
+                        binding.skinProgress.visibility = View.VISIBLE
                         uploadTask
-                                .whenComplete(Schedulers.androidUIThread(), ex -> {
-                                    viewHolder.skin.setVisibility(View.VISIBLE);
-                                    viewHolder.skinProgress.setVisibility(View.GONE);
-                                    account.refreshSkinBinding();
-                                })
-                                .start();
+                            .whenComplete(
+                                Schedulers.androidUIThread()
+                            ) {
+                                binding.skin.setVisibility(View.VISIBLE)
+                                binding.skinProgress.visibility = View.INVISIBLE
+                                item.refreshSkinBinding()
+                            }
+                            .start()
                     }
                 }
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
-        });
-        viewHolder.delete.setOnClickListener(v -> {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setMessage(String.format(getContext().getString(R.string.version_manage_remove_confirm), account.getTitle()));
-            builder.setPositiveButton(() -> {
-                account.remove();
-                UIManager.getInstance().getAccountUI().refresh().start();
-            });
-            builder.setNegativeButton(null);
-            builder.create().show();
-        });
-        return view;
+        }
+        binding.delete.setOnClickListener {
+            val builder = FCLAlertDialog.Builder(context)
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+            builder.setMessage(
+                String.format(
+                    context.getString(R.string.version_manage_remove_confirm),
+                    item.title
+                )
+            )
+            builder.setPositiveButton {
+                item.remove()
+                instance.accountUI.refresh().start()
+            }
+            builder.setNegativeButton(null)
+            builder.create().show()
+        }
     }
+
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun refresh(list: List<AccountListItem>) {
+        this.list.clear()
+        this.list.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
 }
