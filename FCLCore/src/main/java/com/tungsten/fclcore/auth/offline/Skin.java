@@ -187,14 +187,16 @@ public class Skin {
                     Texture skin = null, cape = null;
                     Optional<Path> skinPath = FileUtils.tryGetPath(localSkinPath);
                     Optional<Path> capePath = FileUtils.tryGetPath(localCapePath);
-                    if (skinPath.isPresent()) skin = Texture.loadTexture(Files.newInputStream(skinPath.get()));
-                    if (capePath.isPresent()) cape = Texture.loadTexture(Files.newInputStream(capePath.get()));
+                    if (skinPath.isPresent())
+                        skin = Texture.loadTexture(Files.newInputStream(skinPath.get()));
+                    if (capePath.isPresent())
+                        cape = Texture.loadTexture(Files.newInputStream(capePath.get()));
                     return new LoadedSkin(getTextureModel(), skin, cape);
                 });
             case LITTLE_SKIN:
             case CUSTOM_SKIN_LOADER_API:
                 String realCslApi = type == Type.LITTLE_SKIN ? "https://littleskin.cn/csl" : NetworkUtils.addHttpsIfMissing(StringUtils.removeSuffix(cslApi, "/"));
-                return Task.composeAsync(() -> new GetTask(new URL(String.format("%s/%s.json", StringUtils.isBlank(realCslApi) ? "https://littleskin.cn/csl" : realCslApi, username))))
+                return Task.composeAsync(() -> new GetTask(new URL(String.format("%s/%s.json", StringUtils.isBlank(cslApi) ? "https://littleskin.cn/csl" : realCslApi, username))))
                         .thenComposeAsync(json -> {
                             SkinJson result = JsonUtils.GSON.fromJson(json, SkinJson.class);
 
@@ -334,7 +336,7 @@ public class Skin {
         private final String cape;
         private final String elytra;
 
-        @SerializedName(value = "textures", alternate = { "skins" })
+        @SerializedName(value = "textures", alternate = {"skins"})
         private final TextureJson textures;
 
         public SkinJson(String username, String skin, String cape, String elytra, TextureJson textures) {
