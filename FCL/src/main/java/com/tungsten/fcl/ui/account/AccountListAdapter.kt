@@ -5,11 +5,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.mio.util.copyToClipBoard
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemAccountBinding
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager.Companion.instance
+import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.task.Schedulers
@@ -129,6 +132,10 @@ class AccountListAdapter(
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
+        }
+        binding.copyUuid.setOnClickListener {
+            copyToClipBoard(context, item.account.uuid.toString())
+            Toast.makeText(context, R.string.message_copy, Toast.LENGTH_SHORT).show()
         }
         binding.delete.setOnClickListener {
             val builder = FCLAlertDialog.Builder(context)

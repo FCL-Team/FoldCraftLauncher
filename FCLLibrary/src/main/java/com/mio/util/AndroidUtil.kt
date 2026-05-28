@@ -1,6 +1,8 @@
 package com.mio.util
 
 import android.app.ActivityManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.app.ActivityManagerCompat
 import net.fornwall.jelf.ElfFile
@@ -120,4 +122,9 @@ fun getTotalMemory(context: Context): Long {
 fun getUsedMemory(context: Context): Long {
     val info = getMemoryInfo(context)
     return info.totalMem - info.availMem
+}
+
+fun copyToClipBoard(context: Context, text: String) {
+    val clip = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    clip.setPrimaryClip(ClipData.newPlainText("", text))
 }
