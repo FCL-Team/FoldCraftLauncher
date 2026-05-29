@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1308,
-    "versionName": "1.3.0.8",
-    "date": "2026.05.24",
+    "versionCode": 1309,
+    "versionName": "1.3.0.9",
+    "date": "2026.05.29",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Change Vulkan Zink to Kopper Zink to improve performance.  \n2. Update CurseForge category translations.  \n3. Fix installation issues with certain mod loaders.  \n4. Allow setting an offset between the displayed mouse position and the actual position in-game.  \n5. Fix an issue where quickly clicking the back button multiple times on the mod download page would cause the launcher to exit."
+        "text": "(Translated from Chinese by AI)\n1. Support directly setting the 26.2+ graphics backend within the launcher.  \n2. Support customizing environment variables within the launcher.  \n3. Refactor and optimize the account list, with support for copying UUIDs.  \n4. Fix the issue where clicking CSL while setting a skin for an offline account would directly cause an error."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.将Vulkan Zink改为Kopper Zink，提高性能\n2.更新 CurseForge 分类翻译\n3.修复部分模组加载器安装问题\n4.允许在游戏内设置鼠标显示位置与实际位置的偏移\n5.修复快速点击多次模组下载页面的返回会导致退出启动器的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.支持在启动器内直接设置26.2+图形后端\n2.支持在启动器内自定义环境变量\n3.重构优化账户列表，支持复制UUID\n4.修复离线账户设置皮肤时点击CSL直接报错的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a181007a1a94",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.8/FCL-release-1.3.0.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/bd88c22c81b1",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.0.9/FCL-release-1.3.0.9-all.apk"
   }
 ]
