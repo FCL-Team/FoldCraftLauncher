@@ -188,7 +188,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
     }
 
     private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
-        LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command).toString());
+        LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command));
         Activity context = FCLApplication.getCurrentActivity();
         int exitCode;
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -204,29 +204,27 @@ public class NeoForgeOldInstallTask extends Task<Version> {
             server1.stop();
             latch.countDown();
         });
-        context.runOnUiThread(() -> {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    Intent service = new Intent(context, ProcessService.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArray("command", command.toArray(new String[0]));
-                    bundle.putInt("java", java);
-                    service.putExtras(bundle);
-                    context.startForegroundService(service);
-                } catch (Throwable e) {
-                    activityManager.getRunningAppProcesses().forEach(info -> {
-                        if (info.pid != android.os.Process.myPid()) {
-                            Process.killProcess(info.pid);
-                        }
-                    });
-                    if (i == 4) {
-                        throw e;
+        for (int i = 0; i < 5; i++) {
+            try {
+                Intent service = new Intent(context, ProcessService.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("command", command.toArray(new String[0]));
+                bundle.putInt("java", java);
+                service.putExtras(bundle);
+                context.startForegroundService(service);
+            } catch (Throwable e) {
+                activityManager.getRunningAppProcesses().forEach(info -> {
+                    if (info.pid != android.os.Process.myPid()) {
+                        Process.killProcess(info.pid);
                     }
-                    continue;
+                });
+                if (i == 4) {
+                    throw e;
                 }
-                break;
+                continue;
             }
-        });
+            break;
+        }
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());
@@ -256,7 +254,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
     private final String selfVersion;
 
     private Path tempDir;
-    private AtomicInteger processorDoneCount = new AtomicInteger(0);
+    private final AtomicInteger processorDoneCount = new AtomicInteger(0);
 
     NeoForgeOldInstallTask(DefaultDependencyManager dependencyManager, Version version, String selfVersion, Path installer) {
         this.dependencyManager = dependencyManager;

@@ -101,7 +101,7 @@ public final class OptiFineInstallTask extends Task<Version> {
                 new Artifact("optifine", "OptiFine", mavenVersion, "installer"), null,
                 new LibrariesDownloadInfo(new LibraryDownloadInfo(
                         "optifine/OptiFine/" + mavenVersion + "/OptiFine-" + mavenVersion + "-installer.jar",
-                        remote.getUrls().get(0).toString()))
+                        remote.getUrls().get(0)))
         );
     }
 
@@ -252,29 +252,27 @@ public final class OptiFineInstallTask extends Task<Version> {
             server1.stop();
             latch.countDown();
         });
-        context.runOnUiThread(() -> {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    Intent service = new Intent(context, ProcessService.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putStringArray("command", command);
-                    bundle.putInt("java", java);
-                    service.putExtras(bundle);
-                    context.startForegroundService(service);
-                } catch (Throwable e) {
-                    activityManager.getRunningAppProcesses().forEach(info -> {
-                        if (info.pid != android.os.Process.myPid()) {
-                            Process.killProcess(info.pid);
-                        }
-                    });
-                    if (i == 4) {
-                        throw e;
+        for (int i = 0; i < 5; i++) {
+            try {
+                Intent service = new Intent(context, ProcessService.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("command", command);
+                bundle.putInt("java", java);
+                service.putExtras(bundle);
+                context.startForegroundService(service);
+            } catch (Throwable e) {
+                activityManager.getRunningAppProcesses().forEach(info -> {
+                    if (info.pid != android.os.Process.myPid()) {
+                        Process.killProcess(info.pid);
                     }
-                    continue;
+                });
+                if (i == 4) {
+                    throw e;
                 }
-                break;
+                continue;
             }
-        });
+            break;
+        }
         server.start();
         latch.await();
         exitCode = Integer.parseInt((String) server.getResult());
