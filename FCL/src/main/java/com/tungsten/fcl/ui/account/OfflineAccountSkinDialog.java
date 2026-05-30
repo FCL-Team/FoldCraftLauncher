@@ -5,9 +5,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -16,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.auth.offline.OfflineAccount;
@@ -38,7 +37,6 @@ import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.skin.SkinCanvas;
 import com.tungsten.fcllibrary.skin.SkinRenderer;
-import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -48,27 +46,27 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
     private final AccountListItem accountListItem;
     private final OfflineAccount account;
 
-    private ConstraintLayout root;
-    private SkinCanvas skinCanvas;
-    private SkinRenderer renderer;
+    private final ConstraintLayout root;
+    private final SkinCanvas skinCanvas;
+    private final SkinRenderer renderer;
 
-    private FCLTextView title;
-    private FCLButton positive;
-    private FCLButton negative;
+    private final FCLTextView title;
+    private final FCLButton positive;
+    private final FCLButton negative;
 
-    private FCLRadioButton defaultSkin;
-    private FCLRadioButton steve;
-    private FCLRadioButton alex;
-    private FCLRadioButton local;
-    private FCLRadioButton csl;
+    private final FCLRadioButton defaultSkin;
+    private final FCLRadioButton steve;
+    private final FCLRadioButton alex;
+    private final FCLRadioButton local;
+    private final FCLRadioButton csl;
 
-    private FCLLinearLayout localLayout;
-    private FCLLinearLayout cslLayout;
-    private FCLImageButton skinPath;
-    private FCLImageButton capePath;
-    private FCLTextView skinPathText;
-    private FCLTextView capePathText;
-    private FCLEditText cslUrl;
+    private final FCLLinearLayout localLayout;
+    private final FCLLinearLayout cslLayout;
+    private final FCLImageButton skinPath;
+    private final FCLImageButton capePath;
+    private final FCLTextView skinPathText;
+    private final FCLTextView capePathText;
+    private final FCLEditText cslUrl;
 
     private final InvalidationListener skinBinding;
     private final ObjectProperty<Skin.Type> typeProperty = new SimpleObjectProperty<>(this, "type", Skin.Type.DEFAULT);
@@ -78,17 +76,14 @@ public class OfflineAccountSkinDialog extends FCLDialog implements View.OnClickL
         this.accountListItem = accountListItem;
         this.account = (OfflineAccount) accountListItem.getAccount();
 
-        WindowManager wm = getWindow().getWindowManager();
-        Point point = new Point();
-        wm.getDefaultDisplay().getSize(point);
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.width = point.x * 2 / 3;
-        if (point.y * 2 < point.x) {
-            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        int width = AndroidUtils.getScreenWidth();
+        int height = AndroidUtils.getScreenHeight();
+        if (height * 2 < width) {
+            height = WindowManager.LayoutParams.MATCH_PARENT;
         } else {
-            params.height = point.y * 2 / 3;
+            height = height * 2 / 3;
         }
-        getWindow().setAttributes(params);
+        getWindow().setLayout(width * 2 / 3, height);
 
         setContentView(R.layout.dialog_offline_account_skin);
         setCancelable(false);
