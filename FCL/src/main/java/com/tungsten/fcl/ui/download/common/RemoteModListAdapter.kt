@@ -8,13 +8,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mio.util.AnimUtil.Companion.playTranslationX
+import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
+import com.tungsten.fcl.databinding.ItemRemoteModBinding
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
 import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
+import com.tungsten.fclcore.mod.curse.CurseAddon
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -71,7 +74,7 @@ class RemoteModListAdapter(
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            ItemRemoteVersionBinding.inflate(
+            ItemRemoteModBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
                 false
@@ -83,7 +86,7 @@ class RemoteModListAdapter(
         holder: ViewHolder,
         position: Int
     ) {
-        val binding = ItemRemoteVersionBinding.bind(holder.itemView)
+        val binding = ItemRemoteModBinding.bind(holder.itemView)
         val remoteMod = list[position]
         binding.parent.setOnClickListener {
             callback.onItemSelect(
@@ -96,7 +99,7 @@ class RemoteModListAdapter(
         val mod =
             ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
                 .getModByCurseForgeId(remoteMod.slug)
-        binding.version.text =
+        binding.title.text =
             if (mod != null && LocaleUtils.isChinese(context)) mod.getDisplayName() else remoteMod.title
         val categories = remoteMod.categories.stream()
             .map<String> { downloadPage.getLocalizedCategory(it) }
@@ -105,9 +108,10 @@ class RemoteModListAdapter(
             ).joinToString("   ")
         val tag = StringUtils.removeSuffix(categories, "   ")
         binding.tag.text = tag
-        binding.date.text = remoteMod.description
+        binding.description.text = remoteMod.description
         binding.tag.setSelected(true)
-        binding.date.setSelected(true)
+        binding.description.setSelected(true)
+        binding.downloadCount.text = remoteMod.downloadCount.format(context)
         playTranslationX(
             binding.root,
             ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
@@ -116,9 +120,9 @@ class RemoteModListAdapter(
         ).start()
         if (downloadPage is ModDownloadPage) {
             if (modIdList.isNotEmpty() && modIdList.contains(remoteMod.modID)) {
-                val text = binding.version.getText().toString()
+                val text = binding.title.getText().toString()
                 if (!text.startsWith(context.getString(R.string.installed))) {
-                    binding.version.text = String.format(
+                    binding.title.text = String.format(
                         "[%s] %s",
                         context.getString(R.string.installed),
                         text

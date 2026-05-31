@@ -182,22 +182,22 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
     public record Category(String icon, String name,
                            @SerializedName("project_type") String projectType) {
-            public Category() {
-                this("", "", "");
-            }
+        public Category() {
+            this("", "", "");
+        }
 
         @Override
         public String projectType() {
-                return projectType;
-            }
-
-            public RemoteModRepository.Category toCategory() {
-                return new RemoteModRepository.Category(
-                        this,
-                        name,
-                        Collections.emptyList());
-            }
+            return projectType;
         }
+
+        public RemoteModRepository.Category toCategory() {
+            return new RemoteModRepository.Category(
+                    this,
+                    name,
+                    Collections.emptyList());
+        }
+    }
 
     /**
      * @param body A long body describing project in detail.
@@ -210,59 +210,60 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         @Override
         public String projectType() {
-                return projectType;
-            }
-
-            @Override
-            public String iconUrl() {
-                return iconUrl;
-            }
-
-            @Override
-            public List<Screenshot> screenshots() {
-                return screenshots;
-            }
-
-            @Override
-            public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
-                Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(id())
-                        .flatMap(version -> version.getDependencies().stream())
-                        .collect(Collectors.toSet());
-                List<RemoteMod> mods = new ArrayList<>();
-                for (RemoteMod.Dependency dependency : dependencies) {
-                    mods.add(dependency.load());
-                }
-                return mods;
-            }
-
-            @Override
-            public Stream<RemoteMod.Version> loadVersions(RemoteModRepository modRepository) throws IOException {
-                return modRepository.getRemoteVersionsById(id());
-            }
-
-            @Override
-            public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) {
-                List<RemoteMod.Screenshot> screenshotList = new ArrayList<>();
-                for (Screenshot screenshot : this.screenshots) {
-                    screenshotList.add(new RemoteMod.Screenshot(screenshot.url, screenshot.title, screenshot.description));
-                }
-                return screenshotList;
-            }
-
-            public RemoteMod toMod() {
-                return new RemoteMod(
-                        slug,
-                        "",
-                        title,
-                        description,
-                        categories,
-                        String.format("https://modrinth.com/%s/%s", projectType, id),
-                        iconUrl,
-                        this,
-                        id
-                );
-            }
+            return projectType;
         }
+
+        @Override
+        public String iconUrl() {
+            return iconUrl;
+        }
+
+        @Override
+        public List<Screenshot> screenshots() {
+            return screenshots;
+        }
+
+        @Override
+        public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
+            Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(id())
+                    .flatMap(version -> version.getDependencies().stream())
+                    .collect(Collectors.toSet());
+            List<RemoteMod> mods = new ArrayList<>();
+            for (RemoteMod.Dependency dependency : dependencies) {
+                mods.add(dependency.load());
+            }
+            return mods;
+        }
+
+        @Override
+        public Stream<RemoteMod.Version> loadVersions(RemoteModRepository modRepository) throws IOException {
+            return modRepository.getRemoteVersionsById(id());
+        }
+
+        @Override
+        public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) {
+            List<RemoteMod.Screenshot> screenshotList = new ArrayList<>();
+            for (Screenshot screenshot : this.screenshots) {
+                screenshotList.add(new RemoteMod.Screenshot(screenshot.url, screenshot.title, screenshot.description));
+            }
+            return screenshotList;
+        }
+
+        public RemoteMod toMod() {
+            return new RemoteMod(
+                    slug,
+                    "",
+                    title,
+                    description,
+                    categories,
+                    String.format("https://modrinth.com/%s/%s", projectType, id),
+                    iconUrl,
+                    this,
+                    downloads,
+                    id
+            );
+        }
+    }
 
     public record Dependency(@SerializedName("version_id") String versionId,
                              @SerializedName("project_id") String projectId,
@@ -270,19 +271,19 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         @Override
         public String versionId() {
-                return versionId;
-            }
-
-            @Override
-            public String projectId() {
-                return projectId;
-            }
-
-            @Override
-            public String dependencyType() {
-                return dependencyType;
-            }
+            return versionId;
         }
+
+        @Override
+        public String projectId() {
+            return projectId;
+        }
+
+        @Override
+        public String dependencyType() {
+            return dependencyType;
+        }
+    }
 
     public record ProjectVersion(String name,
                                  @SerializedName("version_number") String versionNumber,
@@ -296,114 +297,114 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                                  int downloads,
                                  @SerializedName("changelog_url") String changelogUrl,
                                  List<ProjectVersionFile> files) implements RemoteMod.IVersion {
-            private static final Map<String, RemoteMod.DependencyType> DEPENDENCY_TYPE = mapOf(
-                    pair("required", RemoteMod.DependencyType.REQUIRED),
-                    pair("optional", RemoteMod.DependencyType.OPTIONAL),
-                    pair("embedded", RemoteMod.DependencyType.EMBEDDED),
-                    pair("incompatible", RemoteMod.DependencyType.INCOMPATIBLE)
-            );
+        private static final Map<String, RemoteMod.DependencyType> DEPENDENCY_TYPE = mapOf(
+                pair("required", RemoteMod.DependencyType.REQUIRED),
+                pair("optional", RemoteMod.DependencyType.OPTIONAL),
+                pair("embedded", RemoteMod.DependencyType.EMBEDDED),
+                pair("incompatible", RemoteMod.DependencyType.INCOMPATIBLE)
+        );
 
         @Override
         public String versionNumber() {
-                return versionNumber;
-            }
-
-            @Override
-            public List<String> gameVersions() {
-                return gameVersions;
-            }
-
-            @Override
-            public String versionType() {
-                return versionType;
-            }
-
-            @Override
-            public String projectId() {
-                return projectId;
-            }
-
-            @Override
-            public String authorId() {
-                return authorId;
-            }
-
-            @Override
-            public Instant datePublished() {
-                return datePublished;
-            }
-
-            @Override
-            public String changelogUrl() {
-                return changelogUrl;
-            }
-
-            @Override
-            public RemoteMod.Type getType() {
-                return RemoteMod.Type.MODRINTH;
-            }
-
-            public Optional<RemoteMod.Version> toVersion() {
-                RemoteMod.VersionType type;
-                if ("release".equals(versionType)) {
-                    type = RemoteMod.VersionType.Release;
-                } else if ("beta".equals(versionType)) {
-                    type = RemoteMod.VersionType.Beta;
-                } else if ("alpha".equals(versionType)) {
-                    type = RemoteMod.VersionType.Alpha;
-                } else {
-                    type = RemoteMod.VersionType.Release;
-                }
-
-                if (files.size() == 0) {
-                    return Optional.empty();
-                }
-
-                return Optional.of(new RemoteMod.Version(
-                        this,
-                        projectId,
-                        name,
-                        versionNumber,
-                        changelog,
-                        datePublished,
-                        type,
-                        files.get(0).toFile(),
-                        dependencies.stream().map(dependency -> {
-                            if (dependency.projectId == null) {
-                                return RemoteMod.Dependency.ofBroken();
-                            }
-
-                            if (!DEPENDENCY_TYPE.containsKey(dependency.dependencyType)) {
-                                throw new IllegalStateException("Broken datas");
-                            }
-
-                            return RemoteMod.Dependency.ofGeneral(DEPENDENCY_TYPE.get(dependency.dependencyType), MODS, dependency.projectId);
-                        }).filter(Objects::nonNull).collect(Collectors.toList()),
-                        gameVersions,
-                        loaders.stream().flatMap(loader -> {
-                            if ("fabric".equalsIgnoreCase(loader))
-                                return Stream.of(ModLoaderType.FABRIC);
-                            else if ("forge".equalsIgnoreCase(loader))
-                                return Stream.of(ModLoaderType.FORGE);
-                            else if ("neoforge".equalsIgnoreCase(loader))
-                                return Stream.of(ModLoaderType.NEO_FORGED);
-                            else if ("quilt".equalsIgnoreCase(loader))
-                                return Stream.of(ModLoaderType.QUILT);
-                            else if ("liteloader".equalsIgnoreCase(loader))
-                                return Stream.of(ModLoaderType.LITE_LOADER);
-                            else return Stream.empty();
-                        }).collect(Collectors.toList())
-                ));
-            }
+            return versionNumber;
         }
+
+        @Override
+        public List<String> gameVersions() {
+            return gameVersions;
+        }
+
+        @Override
+        public String versionType() {
+            return versionType;
+        }
+
+        @Override
+        public String projectId() {
+            return projectId;
+        }
+
+        @Override
+        public String authorId() {
+            return authorId;
+        }
+
+        @Override
+        public Instant datePublished() {
+            return datePublished;
+        }
+
+        @Override
+        public String changelogUrl() {
+            return changelogUrl;
+        }
+
+        @Override
+        public RemoteMod.Type getType() {
+            return RemoteMod.Type.MODRINTH;
+        }
+
+        public Optional<RemoteMod.Version> toVersion() {
+            RemoteMod.VersionType type;
+            if ("release".equals(versionType)) {
+                type = RemoteMod.VersionType.Release;
+            } else if ("beta".equals(versionType)) {
+                type = RemoteMod.VersionType.Beta;
+            } else if ("alpha".equals(versionType)) {
+                type = RemoteMod.VersionType.Alpha;
+            } else {
+                type = RemoteMod.VersionType.Release;
+            }
+
+            if (files.size() == 0) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new RemoteMod.Version(
+                    this,
+                    projectId,
+                    name,
+                    versionNumber,
+                    changelog,
+                    datePublished,
+                    type,
+                    files.get(0).toFile(),
+                    dependencies.stream().map(dependency -> {
+                        if (dependency.projectId == null) {
+                            return RemoteMod.Dependency.ofBroken();
+                        }
+
+                        if (!DEPENDENCY_TYPE.containsKey(dependency.dependencyType)) {
+                            throw new IllegalStateException("Broken datas");
+                        }
+
+                        return RemoteMod.Dependency.ofGeneral(DEPENDENCY_TYPE.get(dependency.dependencyType), MODS, dependency.projectId);
+                    }).filter(Objects::nonNull).collect(Collectors.toList()),
+                    gameVersions,
+                    loaders.stream().flatMap(loader -> {
+                        if ("fabric".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FABRIC);
+                        else if ("forge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.FORGE);
+                        else if ("neoforge".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.NEO_FORGED);
+                        else if ("quilt".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.QUILT);
+                        else if ("liteloader".equalsIgnoreCase(loader))
+                            return Stream.of(ModLoaderType.LITE_LOADER);
+                        else return Stream.empty();
+                    }).collect(Collectors.toList())
+            ));
+        }
+    }
 
     public record ProjectVersionFile(Map<String, String> hashes, String url, String filename,
                                      boolean primary, int size) {
 
         public RemoteMod.File toFile() {
-                return new RemoteMod.File(hashes, url, filename);
-            }
+            return new RemoteMod.File(hashes, url, filename);
         }
+    }
 
     public record ProjectSearchResult(String slug, String title, String description,
                                       List<String> categories,
@@ -417,71 +418,72 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         @Override
         public String projectType() {
-                return projectType;
-            }
-
-            @Override
-            public String iconUrl() {
-                return iconUrl;
-            }
-
-            @Override
-            public String projectId() {
-                return projectId;
-            }
-
-            @Override
-            public Instant dateCreated() {
-                return dateCreated;
-            }
-
-            @Override
-            public Instant dateModified() {
-                return dateModified;
-            }
-
-            @Override
-            public String latestVersion() {
-                return latestVersion;
-            }
-
-            @Override
-            public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
-                Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(projectId())
-                        .flatMap(version -> version.getDependencies().stream())
-                        .collect(Collectors.toSet());
-                List<RemoteMod> mods = new ArrayList<>();
-                for (RemoteMod.Dependency dependency : dependencies) {
-                    mods.add(dependency.load());
-                }
-                return mods;
-            }
-
-            @Override
-            public Stream<RemoteMod.Version> loadVersions(RemoteModRepository modRepository) throws IOException {
-                return modRepository.getRemoteVersionsById(projectId());
-            }
-
-            @Override
-            public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) throws IOException {
-                //由于直接搜索得到的截图信息只有链接，没有标题、描述等信息，所以需要直接获取这个Mod的详细信息
-                return modRepository.getModById(projectId()).getData().loadScreenshots(modRepository);
-            }
-
-            public RemoteMod toMod() {
-                return new RemoteMod(
-                        slug,
-                        author,
-                        title,
-                        description,
-                        categories,
-                        String.format("https://modrinth.com/%s/%s", projectType, projectId),
-                        iconUrl,
-                        this,
-                        projectId
-                );
-            }
+            return projectType;
         }
+
+        @Override
+        public String iconUrl() {
+            return iconUrl;
+        }
+
+        @Override
+        public String projectId() {
+            return projectId;
+        }
+
+        @Override
+        public Instant dateCreated() {
+            return dateCreated;
+        }
+
+        @Override
+        public Instant dateModified() {
+            return dateModified;
+        }
+
+        @Override
+        public String latestVersion() {
+            return latestVersion;
+        }
+
+        @Override
+        public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
+            Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(projectId())
+                    .flatMap(version -> version.getDependencies().stream())
+                    .collect(Collectors.toSet());
+            List<RemoteMod> mods = new ArrayList<>();
+            for (RemoteMod.Dependency dependency : dependencies) {
+                mods.add(dependency.load());
+            }
+            return mods;
+        }
+
+        @Override
+        public Stream<RemoteMod.Version> loadVersions(RemoteModRepository modRepository) throws IOException {
+            return modRepository.getRemoteVersionsById(projectId());
+        }
+
+        @Override
+        public List<RemoteMod.Screenshot> loadScreenshots(RemoteModRepository modRepository) throws IOException {
+            //由于直接搜索得到的截图信息只有链接，没有标题、描述等信息，所以需要直接获取这个Mod的详细信息
+            return modRepository.getModById(projectId()).getData().loadScreenshots(modRepository);
+        }
+
+        public RemoteMod toMod() {
+            return new RemoteMod(
+                    slug,
+                    author,
+                    title,
+                    description,
+                    categories,
+                    String.format("https://modrinth.com/%s/%s", projectType, projectId),
+                    iconUrl,
+                    this,
+                    downloads,
+                    projectId
+            );
+        }
+    }
 
     public static class Response<T> {
         private final int offset;
@@ -526,7 +528,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
 
         @Override
         public String rawUrl() {
-                return rawUrl;
-            }
+            return rawUrl;
         }
+    }
 }

@@ -32,7 +32,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CurseAddon implements RemoteMod.IMod {
+public record CurseAddon(int id, int gameId, String name, String slug, Links links, String summary,
+                         int status, int downloadCount, boolean isFeatured, int primaryCategoryId,
+                         List<Category> categories, int classId, List<Author> authors, Logo logo,
+                         int mainFileId, List<LatestFile> latestFiles,
+                         List<LatestFileIndex> latestFileIndices, Instant dateCreated,
+                         Instant dateModified, Instant dateReleased, boolean allowModDistribution,
+                         int gamePopularityRank, boolean isAvailable, int thumbsUpCount,
+                         List<Screenshot> screenshots) implements RemoteMod.IMod {
     public static final Map<Integer, RemoteMod.DependencyType> RELATION_TYPE = Lang.mapOf(
             Pair.pair(1, RemoteMod.DependencyType.EMBEDDED),
             Pair.pair(2, RemoteMod.DependencyType.OPTIONAL),
@@ -42,166 +49,12 @@ public class CurseAddon implements RemoteMod.IMod {
             Pair.pair(6, RemoteMod.DependencyType.INCLUDE)
     );
 
-    private final int id;
-    private final int gameId;
-    private final String name;
-    private final String slug;
-    private final Links links;
-    private final String summary;
-    private final int status;
-    private final int downloadCount;
-    private final boolean isFeatured;
-    private final int primaryCategoryId;
-    private final List<Category> categories;
-    private final int classId;
-    private final List<Author> authors;
-    private final Logo logo;
-    private final int mainFileId;
-    private final List<LatestFile> latestFiles;
-    private final List<LatestFileIndex> latestFileIndices;
-    private final Instant dateCreated;
-    private final Instant dateModified;
-    private final Instant dateReleased;
-    private final boolean allowModDistribution;
-    private final int gamePopularityRank;
-    private final boolean isAvailable;
-    private final int thumbsUpCount;
-    private final List<Screenshot> screenshots;
-
-    public CurseAddon(int id, int gameId, String name, String slug, Links links, String summary, int status, int downloadCount, boolean isFeatured, int primaryCategoryId, List<Category> categories, int classId, List<Author> authors, Logo logo, int mainFileId, List<LatestFile> latestFiles, List<LatestFileIndex> latestFileIndices, Instant dateCreated, Instant dateModified, Instant dateReleased, boolean allowModDistribution, int gamePopularityRank, boolean isAvailable, int thumbsUpCount, List<Screenshot> screenshots) {
-        this.id = id;
-        this.gameId = gameId;
-        this.name = name;
-        this.slug = slug;
-        this.links = links;
-        this.summary = summary;
-        this.status = status;
-        this.downloadCount = downloadCount;
-        this.isFeatured = isFeatured;
-        this.primaryCategoryId = primaryCategoryId;
-        this.categories = categories;
-        this.classId = classId;
-        this.authors = authors;
-        this.logo = logo;
-        this.mainFileId = mainFileId;
-        this.latestFiles = latestFiles;
-        this.latestFileIndices = latestFileIndices;
-        this.dateCreated = dateCreated;
-        this.dateModified = dateModified;
-        this.dateReleased = dateReleased;
-        this.allowModDistribution = allowModDistribution;
-        this.gamePopularityRank = gamePopularityRank;
-        this.isAvailable = isAvailable;
-        this.thumbsUpCount = thumbsUpCount;
-        this.screenshots = screenshots;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getGameId() {
-        return gameId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public int getDownloadCount() {
-        return downloadCount;
-    }
-
-    public boolean isFeatured() {
-        return isFeatured;
-    }
-
-    public int getPrimaryCategoryId() {
-        return primaryCategoryId;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public int getClassId() {
-        return classId;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public Logo getLogo() {
-        return logo;
-    }
-
-    public int getMainFileId() {
-        return mainFileId;
-    }
-
-    public List<LatestFile> getLatestFiles() {
-        return latestFiles;
-    }
-
-    public List<LatestFileIndex> getLatestFileIndices() {
-        return latestFileIndices;
-    }
-
-    public Instant getDateCreated() {
-        return dateCreated;
-    }
-
-    public Instant getDateModified() {
-        return dateModified;
-    }
-
-    public Instant getDateReleased() {
-        return dateReleased;
-    }
-
-    public boolean isAllowModDistribution() {
-        return allowModDistribution;
-    }
-
-    public int getGamePopularityRank() {
-        return gamePopularityRank;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public int getThumbsUpCount() {
-        return thumbsUpCount;
-    }
-
-    public List<Screenshot> getScreenshots() {
-        return screenshots;
-    }
-
     @Override
     public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
         Set<Integer> dependencies = latestFiles.stream()
-                .flatMap(latestFile -> latestFile.getDependencies().stream())
-                .filter(dep -> dep.getRelationType() == 3)
-                .map(Dependency::getModId)
+                .flatMap(latestFile -> latestFile.dependencies().stream())
+                .filter(dep -> dep.relationType() == 3)
+                .map(Dependency::modId)
                 .collect(Collectors.toSet());
         List<RemoteMod> mods = new ArrayList<>();
         for (int dependencyId : dependencies) {
@@ -225,7 +78,7 @@ public class CurseAddon implements RemoteMod.IMod {
     }
 
     public RemoteMod toMod() {
-        String iconUrl = Optional.ofNullable(logo).map(Logo::getThumbnailUrl).orElse("");
+        String iconUrl = Optional.ofNullable(logo).map(Logo::thumbnailUrl).orElse("");
 
         return new RemoteMod(
                 slug,
@@ -236,324 +89,66 @@ public class CurseAddon implements RemoteMod.IMod {
                 links.websiteUrl,
                 iconUrl,
                 this,
+                downloadCount,
                 String.valueOf(id)
         );
     }
 
-    public static class Links {
-        private final String websiteUrl;
-        private final String wikiUrl;
-        private final String issuesUrl;
-        private final String sourceUrl;
+    public record Links(String websiteUrl, String wikiUrl, String issuesUrl, String sourceUrl) {
 
-        public Links(String websiteUrl, String wikiUrl, String issuesUrl, String sourceUrl) {
-            this.websiteUrl = websiteUrl;
-            this.wikiUrl = wikiUrl;
-            this.issuesUrl = issuesUrl;
-            this.sourceUrl = sourceUrl;
-        }
-
-        public String getWebsiteUrl() {
-            return websiteUrl;
-        }
-
-        public String getWikiUrl() {
-            return wikiUrl;
-        }
-
+        @Override
         @Nullable
-        public String getIssuesUrl() {
+        public String issuesUrl() {
             return issuesUrl;
         }
 
+        @Override
         @Nullable
-        public String getSourceUrl() {
+        public String sourceUrl() {
             return sourceUrl;
         }
     }
 
-    public static class Author {
-        private final int id;
-        private final String name;
-        private final String url;
-
-        public Author(int id, String name, String url) {
-            this.id = id;
-            this.name = name;
-            this.url = url;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getUrl() {
-            return url;
-        }
+    public record Author(int id, String name, String url) {
     }
 
-    public static class Logo {
-        private final int id;
-        private final int modId;
-        private final String title;
-        private final String description;
-        private final String thumbnailUrl;
-        private final String url;
-
-        public Logo(int id, int modId, String title, String description, String thumbnailUrl, String url) {
-            this.id = id;
-            this.modId = modId;
-            this.title = title;
-            this.description = description;
-            this.thumbnailUrl = thumbnailUrl;
-            this.url = url;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getModId() {
-            return modId;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getThumbnailUrl() {
-            return thumbnailUrl;
-        }
-
-        public String getUrl() {
-            return url;
-        }
+    public record Logo(int id, int modId, String title, String description, String thumbnailUrl,
+                       String url) {
     }
 
-    public static class Attachment {
-        private final int id;
-        private final int projectId;
-        private final String description;
-        private final boolean isDefault;
-        private final String thumbnailUrl;
-        private final String title;
-        private final String url;
-        private final int status;
-
-        public Attachment(int id, int projectId, String description, boolean isDefault, String thumbnailUrl, String title, String url, int status) {
-            this.id = id;
-            this.projectId = projectId;
-            this.description = description;
-            this.isDefault = isDefault;
-            this.thumbnailUrl = thumbnailUrl;
-            this.title = title;
-            this.url = url;
-            this.status = status;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getProjectId() {
-            return projectId;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public boolean isDefault() {
-            return isDefault;
-        }
-
-        public String getThumbnailUrl() {
-            return thumbnailUrl;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public int getStatus() {
-            return status;
-        }
+    public record Attachment(int id, int projectId, String description, boolean isDefault,
+                             String thumbnailUrl, String title, String url, int status) {
     }
 
-    public static class Dependency {
-        private final int modId;
-        private final int relationType;
-
+    public record Dependency(int modId, int relationType) {
         public Dependency() {
             this(0, 1);
         }
 
-        public Dependency(int modId, int relationType) {
-            this.modId = modId;
-            this.relationType = relationType;
-        }
-
-        public int getModId() {
-            return modId;
-        }
-
-        public int getRelationType() {
-            return relationType;
-        }
     }
 
     /**
      * @see <a href="https://docs.curseforge.com/#schemafilehash">Schema</a>
      */
-    public static class LatestFileHash {
-        private final String value;
-        private final int algo;
-
-        public LatestFileHash(String value, int algo) {
-            this.value = value;
-            this.algo = algo;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public int getAlgo() {
-            return algo;
-        }
+    public record LatestFileHash(String value, int algo) {
     }
 
     /**
      * @see <a href="https://docs.curseforge.com/#tocS_File">Schema</a>
      */
-    public static class LatestFile implements RemoteMod.IVersion {
-        private final int id;
-        private final int gameId;
-        private final int modId;
-        private final boolean isAvailable;
-        private final String displayName;
-        private final String fileName;
-        private final int releaseType;
-        private final int fileStatus;
-        private final List<LatestFileHash> hashes;
-        private final Instant fileDate;
-        private final int fileLength;
-        private final int downloadCount;
-        private final String downloadUrl;
-        private final List<String> gameVersions;
-        private final List<Dependency> dependencies;
-        private final int alternateFileId;
-        private final boolean isServerPack;
-        private final long fileFingerprint;
+    public record LatestFile(int id, int gameId, int modId, boolean isAvailable, String displayName,
+                             String fileName, int releaseType, int fileStatus,
+                             List<LatestFileHash> hashes, Instant fileDate, int fileLength,
+                             int downloadCount, String downloadUrl, List<String> gameVersions,
+                             List<Dependency> dependencies, int alternateFileId,
+                             boolean isServerPack,
+                             long fileFingerprint) implements RemoteMod.IVersion {
 
-        public LatestFile(int id, int gameId, int modId, boolean isAvailable, String displayName, String fileName, int releaseType, int fileStatus, List<LatestFileHash> hashes, Instant fileDate, int fileLength, int downloadCount, String downloadUrl, List<String> gameVersions, List<Dependency> dependencies, int alternateFileId, boolean isServerPack, long fileFingerprint) {
-            this.id = id;
-            this.gameId = gameId;
-            this.modId = modId;
-            this.isAvailable = isAvailable;
-            this.displayName = displayName;
-            this.fileName = fileName;
-            this.releaseType = releaseType;
-            this.fileStatus = fileStatus;
-            this.hashes = hashes;
-            this.fileDate = fileDate;
-            this.fileLength = fileLength;
-            this.downloadCount = downloadCount;
-            this.downloadUrl = downloadUrl;
-            this.gameVersions = gameVersions;
-            this.dependencies = dependencies;
-            this.alternateFileId = alternateFileId;
-            this.isServerPack = isServerPack;
-            this.fileFingerprint = fileFingerprint;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getGameId() {
-            return gameId;
-        }
-
-        public int getModId() {
-            return modId;
-        }
-
-        public boolean isAvailable() {
-            return isAvailable;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public int getReleaseType() {
-            return releaseType;
-        }
-
-        public int getFileStatus() {
-            return fileStatus;
-        }
-
-        public List<LatestFileHash> getHashes() {
-            return hashes;
-        }
-
-        public Instant getFileDate() {
-            return fileDate;
-        }
-
-        public int getFileLength() {
-            return fileLength;
-        }
-
-        public int getDownloadCount() {
-            return downloadCount;
-        }
-
-        public String getDownloadUrl() {
-            if (downloadUrl == null) {
-                // This addon is not allowed for distribution, and downloadUrl will be null.
-                // We try to find its download url.
-                return String.format("https://edge.forgecdn.net/files/%d/%d/%s", id / 1000, id % 1000, fileName);
-            }
-            return downloadUrl;
-        }
-
-        public List<String> getGameVersions() {
-            return gameVersions;
-        }
-
-        public List<Dependency> getDependencies() {
-            return dependencies;
-        }
-
-        public int getAlternateFileId() {
-            return alternateFileId;
-        }
-
-        public boolean isServerPack() {
-            return isServerPack;
-        }
-
-        public long getFileFingerprint() {
-            return fileFingerprint;
+        @Override
+        public String downloadUrl() {
+            // This addon is not allowed for distribution, and downloadUrl will be null.
+            // We try to find its download url.
+            return Objects.requireNonNullElseGet(downloadUrl, () -> String.format(Locale.getDefault(), "https://edge.forgecdn.net/files/%d/%d/%s", id / 1000, id % 1000, fileName));
         }
 
         @Override
@@ -562,43 +157,37 @@ public class CurseAddon implements RemoteMod.IMod {
         }
 
         public RemoteMod.Version toVersion() {
-            RemoteMod.VersionType versionType;
-            switch (getReleaseType()) {
-                case 1:
-                    versionType = RemoteMod.VersionType.Release;
-                    break;
-                case 2:
-                    versionType = RemoteMod.VersionType.Beta;
-                    break;
-                case 3:
-                    versionType = RemoteMod.VersionType.Alpha;
-                    break;
-                default:
-                    versionType = RemoteMod.VersionType.Release;
-                    break;
-            }
+            RemoteMod.VersionType versionType = switch (releaseType()) {
+                case 2 -> RemoteMod.VersionType.Beta;
+                case 3 -> RemoteMod.VersionType.Alpha;
+                default -> RemoteMod.VersionType.Release;
+            };
 
             return new RemoteMod.Version(
                     this,
                     Integer.toString(modId),
-                    getDisplayName(),
-                    getFileName(),
+                    displayName(),
+                    fileName(),
                     null,
-                    getFileDate(),
+                    fileDate(),
                     versionType,
-                    new RemoteMod.File(Collections.emptyMap(), getDownloadUrl(), getFileName()),
+                    new RemoteMod.File(Collections.emptyMap(), downloadUrl(), fileName()),
                     dependencies.stream().map(dependency -> {
-                        if (!RELATION_TYPE.containsKey(dependency.getRelationType())) {
+                        if (!RELATION_TYPE.containsKey(dependency.relationType())) {
                             throw new IllegalStateException("Broken datas.");
                         }
-                        return RemoteMod.Dependency.ofGeneral(RELATION_TYPE.get(dependency.getRelationType()), CurseForgeRemoteModRepository.MODS, Integer.toString(dependency.getModId()));
+                        return RemoteMod.Dependency.ofGeneral(RELATION_TYPE.get(dependency.relationType()), CurseForgeRemoteModRepository.MODS, Integer.toString(dependency.modId()));
                     }).distinct().filter(Objects::nonNull).collect(Collectors.toList()),
                     gameVersions.stream().filter(GameVersionNumber::isKnown).collect(Collectors.toList()),
                     gameVersions.stream().flatMap(version -> {
-                        if ("fabric".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.FABRIC);
-                        else if ("forge".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.FORGE);
-                        else if ("quilt".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.QUILT);
-                        else if ("neoforge".equalsIgnoreCase(version)) return Stream.of(ModLoaderType.NEO_FORGED);
+                        if ("fabric".equalsIgnoreCase(version))
+                            return Stream.of(ModLoaderType.FABRIC);
+                        else if ("forge".equalsIgnoreCase(version))
+                            return Stream.of(ModLoaderType.FORGE);
+                        else if ("quilt".equalsIgnoreCase(version))
+                            return Stream.of(ModLoaderType.QUILT);
+                        else if ("neoforge".equalsIgnoreCase(version))
+                            return Stream.of(ModLoaderType.NEO_FORGED);
                         else return Stream.empty();
                     }).collect(Collectors.toList())
             );
@@ -608,46 +197,13 @@ public class CurseAddon implements RemoteMod.IMod {
     /**
      * @see <a href="https://docs.curseforge.com/#tocS_FileIndex">Schema</a>
      */
-    public static class LatestFileIndex {
-        private final String gameVersion;
-        private final int fileId;
-        private final String filename;
-        private final int releaseType;
-        private final int gameVersionTypeId;
-        private final int modLoader;
+    public record LatestFileIndex(String gameVersion, int fileId, String filename, int releaseType,
+                                  int gameVersionTypeId, int modLoader) {
 
-        public LatestFileIndex(String gameVersion, int fileId, String filename, int releaseType, int gameVersionTypeId, int modLoader) {
-            this.gameVersion = gameVersion;
-            this.fileId = fileId;
-            this.filename = filename;
-            this.releaseType = releaseType;
-            this.gameVersionTypeId = gameVersionTypeId;
-            this.modLoader = modLoader;
-        }
-
-        public String getGameVersion() {
-            return gameVersion;
-        }
-
-        public int getFileId() {
-            return fileId;
-        }
-
-        public String getFilename() {
-            return filename;
-        }
-
-        public int getReleaseType() {
-            return releaseType;
-        }
-
+        @Override
         @Nullable
-        public int getGameVersionTypeId() {
+        public int gameVersionTypeId() {
             return gameVersionTypeId;
-        }
-
-        public int getModLoader() {
-            return modLoader;
         }
     }
 

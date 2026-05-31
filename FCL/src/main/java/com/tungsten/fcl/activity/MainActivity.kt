@@ -154,7 +154,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     override fun loadScreenshots(modRepository: RemoteModRepository): MutableList<RemoteMod.Screenshot> {
                         throw IOException()
                     }
-                })
+                },
+                114514,
+                ""
+            )
         )
 
         if (!ConfigHolder.isInit()) {

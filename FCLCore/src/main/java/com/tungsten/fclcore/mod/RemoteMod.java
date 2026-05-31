@@ -53,9 +53,10 @@ public class RemoteMod {
     private final String pageUrl;
     private final String iconUrl;
     private final IMod data;
+    private final int downloadCount;
     private String modID;
 
-    public RemoteMod(String slug, String author, String title, String description, List<String> categories, String pageUrl, String iconUrl, IMod data) {
+    public RemoteMod(String slug, String author, String title, String description, List<String> categories, String pageUrl, String iconUrl, IMod data, int downloadCount, String modID) {
         this.slug = slug;
         this.author = author;
         this.title = title;
@@ -64,11 +65,7 @@ public class RemoteMod {
         this.pageUrl = pageUrl;
         this.iconUrl = iconUrl;
         this.data = data;
-        this.modID = "";
-    }
-
-    public RemoteMod(String slug, String author, String title, String description, List<String> categories, String pageUrl, String iconUrl, IMod data, String modID) {
-        this(slug, author, title, description, categories, pageUrl, iconUrl, data);
+        this.downloadCount = downloadCount;
         this.modID = modID;
     }
 
@@ -102,6 +99,10 @@ public class RemoteMod {
 
     public IMod getData() {
         return data;
+    }
+
+    public int getDownloadCount() {
+        return downloadCount;
     }
 
     public String getModID() {
