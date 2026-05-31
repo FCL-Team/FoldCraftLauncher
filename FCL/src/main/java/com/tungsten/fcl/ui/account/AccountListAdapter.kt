@@ -12,7 +12,6 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemAccountBinding
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager.Companion.instance
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.task.Schedulers
