@@ -47,6 +47,7 @@ public final class Logging {
     }
 
     public static String filterForbiddenToken(String message) {
+        if (message == null) return "";
         for (String token : accessTokens)
             message = message.replace(token, "<access token>");
         return message;

@@ -146,7 +146,7 @@ object Profiles {
             EventBus.EVENT_BUS.channel<RefreshedVersionsEvent?>(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
                     val profile = selectedProfile.get()
-                    if (profile.repository === event.getSource()) {
+                    if (profile.repository === event!!.getSource()) {
                         selectedVersion.bind(profile.selectedVersionProperty())
                         for (listener in versionsListeners) listener.accept(profile)
                     }
