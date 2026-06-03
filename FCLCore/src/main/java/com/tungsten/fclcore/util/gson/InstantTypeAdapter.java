@@ -71,7 +71,6 @@ public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDe
             .optionalStart().appendOffset("+HH:MM", "+00:00").optionalEnd()
             .optionalStart().appendOffset("+HHMM", "+0000").optionalEnd()
             .optionalStart().appendOffset("+HH", "Z").optionalEnd()
-            .optionalStart().appendOffset("+H:MM", "+00:00").optionalEnd()
             .optionalStart().appendOffsetId().optionalEnd()
             .toFormatter();
 
@@ -87,7 +86,13 @@ public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDe
                     LocalDateTime localDateTime = LocalDateTime.parse(string, ISO_LOCAL_DATE_TIME);
                     return localDateTime.atZone(ZoneId.systemDefault()).toInstant();
                 } catch (DateTimeParseException e2) {
-                    throw new JsonParseException("Invalid instant: " + string, e);
+                    try {
+                        string = string.replaceFirst("\\+([0-9]):", "+0$1:");
+                        ZonedDateTime zonedDateTime = ZonedDateTime.parse(string, ISO_DATE_TIME);
+                        return zonedDateTime.toInstant();
+                    } catch (DateTimeParseException e3) {
+                        throw new JsonParseException("Invalid instant: " + string, e);
+                    }
                 }
             }
         }
