@@ -1543,5 +1543,9 @@ public class GLFW
     public static void glfwRestoreWindow(@NativeType("GLFWwindow *") long window) {
     }
 
+    public static String glfwGetMonitorName(@NativeType("GLFWwindow *") long window) {
+        return "Monitor";
+    }
+
 
 }
