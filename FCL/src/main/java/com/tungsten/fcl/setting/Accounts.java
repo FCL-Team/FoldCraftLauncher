@@ -36,7 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -370,6 +372,29 @@ public final class Accounts {
 
     public static ObjectProperty<Account> selectedAccountProperty() {
         return selectedAccount;
+    }
+
+    public static void addAccount(Account account) {
+        int oldIndex = Accounts.getAccounts().indexOf(account);
+        if (oldIndex == -1) {
+            Accounts.getAccounts().add(account);
+        } else {
+            // adding an already-added account
+            // instead of discarding the new account, we first remove the existing one then add the new one
+            Accounts.getAccounts().remove(oldIndex);
+            Accounts.getAccounts().add(oldIndex, account);
+        }
+    }
+
+    public static void replaceAccount(UUID uuid, Account account) {
+        List<Account> list = Accounts.getAccounts().stream().filter(a -> a.getUUID().equals(uuid)).collect(Collectors.toList());
+        if (list.isEmpty()) {
+            Accounts.getAccounts().add(account);
+        } else {
+            int oldIndex = Accounts.getAccounts().indexOf(list.get(0));
+            Accounts.getAccounts().remove(oldIndex);
+            Accounts.getAccounts().add(oldIndex, account);
+        }
     }
 
     // ==== authlib-injector ====

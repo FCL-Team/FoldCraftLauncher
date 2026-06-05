@@ -25,8 +25,10 @@ import com.tungsten.fcllibrary.browser.FileBrowser
 import com.tungsten.fcllibrary.browser.options.LibMode
 import com.tungsten.fcllibrary.browser.options.SelectionMode
 import com.tungsten.fcllibrary.component.ResultListener
+import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import java.util.Objects
+import java.util.UUID
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
@@ -60,6 +62,9 @@ class AccountListAdapter(
         binding.type.setSelected(true)
         binding.skin.setVisibility(
             if (item.canUploadSkin().get()) View.VISIBLE else View.INVISIBLE
+        )
+        binding.edit.setVisibility(
+            if (item.account is OfflineAccount) View.VISIBLE else View.GONE
         )
         binding.radio.setOnClickListener {
             Accounts.setSelectedAccount(item.account)
@@ -144,6 +149,27 @@ class AccountListAdapter(
         binding.copyUuid.setOnClickListener {
             copyToClipBoard(context, item.account.uuid.toString())
             Toast.makeText(context, R.string.message_copy, Toast.LENGTH_SHORT).show()
+        }
+        binding.edit.setOnClickListener {
+            if (item.account is OfflineAccount) {
+                val dialog = EditDialog(context) { str ->
+                    val uuid = runCatching { UUID.fromString(str) }.getOrNull()
+                        ?: run {
+                            Toast.makeText(context, R.string.message_failed, Toast.LENGTH_SHORT)
+                                .show()
+                            return@EditDialog
+                        }
+                    Accounts.FACTORY_OFFLINE.create(item.account.username, uuid)
+                        .apply {
+                            skin = (item.account as OfflineAccount).skin
+                            Accounts.replaceAccount(item.account.uuid, this)
+                            Accounts.setSelectedAccount(this)
+                        }
+                    instance.accountUI.refresh().start()
+                }
+                dialog.binding.editText.setText(item.account.uuid.toString())
+                dialog.show()
+            }
         }
         binding.delete.setOnClickListener {
             val builder = FCLAlertDialog.Builder(context)

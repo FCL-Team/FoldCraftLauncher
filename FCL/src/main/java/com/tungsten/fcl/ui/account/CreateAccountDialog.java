@@ -183,16 +183,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             CharacterSelector selector = new DialogCharacterSelector(getContext());
             loginTask = Task.supplyAsync(() -> factory.create(selector, username, password, null, additionalData))
                     .whenComplete(Schedulers.androidUIThread(), account -> {
-                        int oldIndex = Accounts.getAccounts().indexOf(account);
-                        if (oldIndex == -1) {
-                            Accounts.getAccounts().add(account);
-                        } else {
-                            // adding an already-added account
-                            // instead of discarding the new account, we first remove the existing one then add the new one
-                            Accounts.getAccounts().remove(oldIndex);
-                            Accounts.getAccounts().add(oldIndex, account);
-                        }
-
+                        Accounts.addAccount(account);
                         // select the new account
                         Accounts.setSelectedAccount(account);
 
