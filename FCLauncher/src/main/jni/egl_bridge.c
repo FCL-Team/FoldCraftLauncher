@@ -30,7 +30,7 @@
 #include <android/dlext.h>
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
-#include "driver_helper/driver_helper.h"
+#include "pojavexec.h"
 #include <stdatomic.h>
 
 #define GLFW_CLIENT_API 0x22001
@@ -107,7 +107,7 @@ int pojavInitOpenGL() {
     if (!strncmp("opengles", renderer, 8)) {
         pojav_environ->config_renderer = RENDERER_GL4ES;
         if (!strcmp(renderer, "opengles3_desktopgl_zink_kopper")) {
-            load_vulkan();
+            pojavexec_loadVulkanDriver();
             setenv("GALLIUM_DRIVER", "zink", 1);
             setenv("MESA_ANDROID_NO_KMS_SWRAST", "1", 1);
         }
@@ -124,14 +124,14 @@ int pojavInitOpenGL() {
 
     if (!strcmp(renderer, "vulkan_zink")) {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
+        pojavexec_loadVulkanDriver();
         setenv("GALLIUM_DRIVER", "zink", 1);
         set_osm_bridge_tbl();
     }
 
     if (!strcmp(renderer, "gallium_freedreno")) {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
+        pojavexec_loadVulkanDriver();
         setenv("GALLIUM_DRIVER", "freedreno", 1);
         setenv("MESA_LOADER_DRIVER_OVERRIDE", "kgsl", 1);
         set_osm_bridge_tbl();
@@ -139,7 +139,7 @@ int pojavInitOpenGL() {
 
     if (!strcmp(renderer, "custom_gallium")) {
         pojav_environ->config_renderer = RENDERER_VK_ZINK;
-        load_vulkan();
+        pojavexec_loadVulkanDriver();
         set_osm_bridge_tbl();
     }
 
@@ -206,17 +206,10 @@ EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
     return br_init_context((basic_render_window_t*)contextSrc);
 }
 
-void* maybe_load_vulkan() {
-    // We use the env var because
-    // 1. it's easier to do that
-    // 2. it won't break if something will try to load vulkan and osmesa simultaneously
-    if(getenv("VULKAN_PTR") == NULL) load_vulkan();
-    return (void*) strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
-}
 EXTERNAL_API JNIEXPORT jlong JNICALL
 Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
     printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");
-    return (jlong) maybe_load_vulkan();
+    return (jlong) pojavexec_loadVulkanDriver();
 }
 
 EXTERNAL_API void pojavSwapInterval(int interval) {

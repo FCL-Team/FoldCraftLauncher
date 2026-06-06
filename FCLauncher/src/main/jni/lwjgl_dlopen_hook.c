@@ -12,8 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "fcl/include/fcl_internal.h"
-
-extern void* maybe_load_vulkan();
+#include "pojavexec.h"
 
 /**
  * Basically a verbatim implementation of ndlopen(), found at
@@ -29,7 +28,7 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
     // Oveeride vulkan loading to let us load vulkan ourselves
     if(strstr(filename, "libvulkan.so") == filename) {
         FCL_LOG("LWJGL linkerhook: replacing load for libvulkan.so with custom driver");
-        return (jlong) maybe_load_vulkan();
+        return (jlong) pojavexec_loadVulkanDriver();
     }
 
     if (getenv("RENDERER_HANDLE") != NULL && strstr(filename,"plugin")) {

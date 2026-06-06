@@ -44,52 +44,6 @@ target_link_libraries(
     android
 )
 
-# 模块：driver_helper
-add_library(
-    driver_helper
-    SHARED
-    driver_helper/driver_helper.c
-    driver_helper/nsbypass.c
-)
-
-target_compile_options(
-    driver_helper
-    PRIVATE
-    -rdynamic
-)
-
-target_link_libraries(
-    driver_helper
-    PRIVATE
-    log
-    dl
-    android
-)
-
-# 仅在arm64-v8a架构下链接EGL和GLESv2
-if(${ANDROID_ABI} STREQUAL "arm64-v8a")
-    target_link_libraries(
-        driver_helper
-        PRIVATE
-        EGL
-        GLESv2
-    )
-endif()
-
-# 模块：linkerhook
-add_library(
-    linkerhook
-    SHARED
-    linkerhook/linkerhook.cpp
-    linkerhook/linkerns.c
-)
-
-target_link_options(
-    linkerhook
-    PRIVATE
-    -z global
-)
-
 # 模块：awt_headless - 占位库
 add_library(
     awt_headless
@@ -154,6 +108,10 @@ add_library(
     virgl/virgl.c
     jre_launcher.c
     lwjgl_dlopen_hook.c
+    driver_helper/nsbypass.c
+    driver_helper/fake_dlfcn.c
+    driver_helper/func_locator.c
+    vulkan_loader.c
 )
 
 target_include_directories(
@@ -163,13 +121,13 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ctxbridges
     ${CMAKE_CURRENT_SOURCE_DIR}/environ
     ${CMAKE_CURRENT_SOURCE_DIR}/virgl
+    ${CMAKE_CURRENT_SOURCE_DIR}/driver_helper
 )
 
 target_link_libraries(
     pojavexec
     PRIVATE
     fcl
-    driver_helper
     log
     dl
     android
@@ -183,4 +141,15 @@ if(${ANDROID_ABI} STREQUAL "arm64-v8a")
         EGL
         GLESv2
     )
+endif()
+
+if(${ANDROID_ABI} STREQUAL "arm64-v8a")
+    target_sources(pojavexec PRIVATE driver_helper/arm64_func_locator.c)
+    target_compile_definitions(pojavexec PRIVATE USE_ARM64_LOCATOR)
+    target_compile_definitions(pojavexec PRIVATE ENABLE_TURNIP_LOADER)
+
+    add_library(linkerhook SHARED
+            driver_helper/hook.c
+    )
+    target_link_options(linkerhook PRIVATE "-Wl,-z,global")
 endif()

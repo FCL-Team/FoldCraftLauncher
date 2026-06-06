@@ -22,6 +22,8 @@ import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 
+import org.lwjgl.glfw.CallbackBridge;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -428,7 +430,9 @@ public class FCLauncher {
 
     private static void setupGraphicAndSoundEngine(FCLConfig config, FCLBridge bridge) {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
-
+        if (config.getRenderer().isEqual(Renderer.ID_ZINK)) {
+            CallbackBridge.preloadVulkan();
+        }
         bridge.dlopen(nativeDir + "/libopenal.so");
         if (!config.getRenderer().getPath().isEmpty()) {
             List<String> envList = config.getRenderer().getPojavEnv();

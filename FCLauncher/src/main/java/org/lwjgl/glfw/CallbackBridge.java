@@ -242,6 +242,8 @@ public class CallbackBridge {
 
     public static native int getFps();
 
+    public static native void preloadVulkan();
+
     static {
         System.loadLibrary("pojavexec");
     }
