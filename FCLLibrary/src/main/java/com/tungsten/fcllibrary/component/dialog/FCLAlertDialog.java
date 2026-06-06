@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.text.Spanned;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -11,8 +12,10 @@ import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.utils.widget.ImageFilterView;
+import androidx.core.text.method.LinkMovementMethodCompat;
 
 import com.tungsten.fcllibrary.R;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -167,6 +170,12 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         extraListener = listener;
     }
 
+    public void useAutoLink() {
+        Linkify.addLinks(this.message, Linkify.WEB_URLS);
+        this.message.setMovementMethod(LinkMovementMethodCompat.getInstance());
+        this.message.setLinkTextColor(ThemeEngine.getInstance().getTheme().getColor());
+    }
+
     public static class Builder {
 
         private Context context;
@@ -233,6 +242,11 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
 
         public Builder setExtraButton(String text, ButtonListener listener) {
             dialog.setExtraButton(text, listener);
+            return this;
+        }
+
+        public Builder useAutoLink() {
+            dialog.useAutoLink();
             return this;
         }
     }

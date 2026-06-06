@@ -195,12 +195,14 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                         if (exception instanceof NoSelectedCharacterException || exception instanceof CancellationException) {
                             dismiss();
                         } else {
-                            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                            builder.setMessage(Accounts.localizeErrorMessage(getContext(), exception));
-                            builder.setCancelable(false);
-                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                            builder.create().show();
+                            new FCLAlertDialog.Builder(getContext())
+                                    .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                                    .setMessage(Accounts.localizeErrorMessage(getContext(), exception))
+                                    .setCancelable(false)
+                                    .setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null)
+                                    .useAutoLink()
+                                    .create()
+                                    .show();
                         }
                         login.setEnabled(true);
                         cancel.setEnabled(true);
@@ -208,17 +210,17 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
         };
 
         if (factory instanceof OfflineAccountFactory && username != null && !USERNAME_CHECKER_PATTERN.matcher(username).matches()) {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setTitle(getContext().getString(R.string.message_warning));
-            builder.setMessage(getContext().getString(R.string.account_methods_offline_name_invalid));
-            builder.setCancelable(false);
-            builder.setPositiveButton(doCreate::run);
-            builder.setNegativeButton(() -> {
-                login.setEnabled(true);
-                cancel.setEnabled(true);
-            });
-            builder.create().show();
+            new FCLAlertDialog.Builder(getContext())
+                    .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                    .setTitle(getContext().getString(R.string.message_warning))
+                    .setMessage(getContext().getString(R.string.account_methods_offline_name_invalid))
+                    .setCancelable(false)
+                    .setPositiveButton(doCreate::run)
+                    .setNegativeButton(() -> {
+                        login.setEnabled(true);
+                        cancel.setEnabled(true);
+                    })
+                    .create().show();
         } else {
             doCreate.run();
         }

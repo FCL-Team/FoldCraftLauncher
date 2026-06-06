@@ -43,8 +43,6 @@
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/text"
-            android:autoLink="web"
-            android:textColorLink="#77FF00"
             android:textIsSelectable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
