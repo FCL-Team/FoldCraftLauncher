@@ -1,0 +1,7 @@
+#!/system/bin/sh
+${fclshell_load_lang} hello
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+  echo "${lang_hello_help}"
+else
+  echo "${lang_hello_welcome}"
+fi
