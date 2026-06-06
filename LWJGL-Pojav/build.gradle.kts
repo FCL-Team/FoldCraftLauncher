@@ -4,21 +4,19 @@ plugins {
 
 group = "org.lwjgl"
 
-configurations.default.get().apply {
+val runtimeConfig by configurations.creating {
     isCanBeResolved = true
 }
-
-project.setProperty("archivesBaseName", "lwjgl")
-
-project.setProperty("libsDirName", "${rootDir}/FCL/src/main/assets/app_runtime/lwjgl")
 
 tasks.register("buildLwjgl") {
     dependsOn("jar")
 }
 
 tasks.jar {
+    archiveBaseName.set("lwjgl")
+    destinationDirectory.set(file("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl"))
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.default.get().map {
+    from(runtimeConfig.map {
         println(it.name)
         if (it.isDirectory) it else zipTree(it)
     })
@@ -40,6 +38,6 @@ java {
 }
 
 dependencies {
-    implementation(fileTree("dir" to "libs", "include" to listOf("*.jar")))
+    runtimeConfig(fileTree("dir" to "libs", "include" to listOf("*.jar")))
     compileOnly(fileTree("dir" to "compileOnly", "include" to listOf("*.jar")))
 }
