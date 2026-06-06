@@ -500,7 +500,9 @@ public final class Accounts {
             }
         } else if (exception instanceof MicrosoftService.XBox400Exception) {
             return context.getString(R.string.account_methods_microsoft_error_wrong_verify_method);
-        } else if (exception instanceof MicrosoftService.NoMinecraftJavaEditionProfileException) {
+        } else if (exception instanceof MicrosoftService.MinecraftJavaEditionLicenseNotFoundException) {
+            return context.getString(R.string.account_methods_microsoft_error_no_license);
+        } else if (exception instanceof MicrosoftService.MinecraftJavaEditionProfileNotFoundException) {
             return context.getString(R.string.account_methods_microsoft_error_no_character);
         } else if (exception instanceof MicrosoftService.NoXuiException) {
             return context.getString(R.string.account_methods_microsoft_error_add_family_probably);

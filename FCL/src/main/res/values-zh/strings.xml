@@ -69,11 +69,12 @@
     <string name="account_skin_invalid_skin">无效的皮肤文件</string>
     <string name="account_methods_microsoft_error_add_family">你尚未满 18 岁，需要一位成年将你加入至家庭中。</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live 不支持您所在的国家/地区。</string>
-    <string name="account_methods_microsoft_error_missing_xbox_account">你的微软账户没有链接到 Xbox 账户，请先创建。</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">请确认你已经购买了 Minecraft: Java 版。若已购买，请点击此处（ https://www.minecraft.net/msaprofile/mygames/editprofile ）创建游戏档案。</string>
     <string name="account_methods_microsoft_error_banned">你的账户可能被 Xbox Live 封禁。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
-    <string name="account_methods_microsoft_error_no_character">你的账户尚未获取 Minecraft : Java Edition</string>
+    <string name="account_methods_microsoft_error_no_license">未找到 Minecraft 购买记录。请点击此处（ https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj ） 购买游戏。\n若你使用 Game Pass，请在此处（ https://www.minecraft.net/msaprofile/mygames/editprofile )创建游戏档案。若已购买，请检查登录的账户是否正确。\n你可以点击右上角帮助按钮进行求助。</string>
+    <string name="account_methods_microsoft_error_no_character">你尚未创建游戏档案。请点击此处（ https://www.minecraft.net/msaprofile/mygames/editprofile ）创建游戏档案。</string>
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
     <string name="account_methods_microsoft_hint">请点击“登录”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
