@@ -20,11 +20,11 @@ package com.tungsten.fclcore.mod.multimc;
 import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import java.io.IOException;
 import java.util.List;
+
+import kala.compress.archivers.zip.ZipArchiveEntry;
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 public final class MultiMCManifest {
 
@@ -54,7 +54,7 @@ public final class MultiMCManifest {
      * @throws IOException if zip file is malformed
      * @throws com.google.gson.JsonParseException if manifest is malformed.
      */
-    public static MultiMCManifest readMultiMCModpackManifest(ZipFile zipFile, String rootEntryName) throws IOException {
+    public static MultiMCManifest readMultiMCModpackManifest(ZipArchiveReader zipFile, String rootEntryName) throws IOException {
         ZipArchiveEntry mmcPack = zipFile.getEntry(rootEntryName + "mmc-pack.json");
         if (mmcPack == null)
             return null;

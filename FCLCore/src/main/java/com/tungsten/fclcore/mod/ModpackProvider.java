@@ -22,12 +22,12 @@ import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.task.Task;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 public interface ModpackProvider {
 
@@ -45,7 +45,7 @@ public interface ModpackProvider {
      * @throws JsonParseException if the manifest.json is missing or malformed.
      * @return the manifest.
      */
-    Modpack readManifest(ZipFile zipFile, Path file, Charset encoding) throws IOException, JsonParseException;
+    Modpack readManifest(ZipArchiveReader zipFile, Path file, Charset encoding) throws IOException, JsonParseException;
 
     default void injectLaunchOptions(String modpackConfigurationJson, LaunchOptions.Builder builder) {
     }

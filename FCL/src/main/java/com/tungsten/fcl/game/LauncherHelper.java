@@ -109,6 +109,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public final class LauncherHelper {
 
@@ -414,7 +415,7 @@ public final class LauncherHelper {
                         }).map(NativeLibPlugin.NativePlugin::getAppName)
                         .collect(toList());
                 if (!unsupportedPlugins.isEmpty()) {
-                    String fullString = org.apache.commons.lang3.StringUtils.join(unsupportedPlugins, ", ");
+                    String fullString = String.join(", ", unsupportedPlugins);
                     Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                             .setCancelable(false)
                             .setMessage(context.getString(R.string.message_check_plugin, fullString))

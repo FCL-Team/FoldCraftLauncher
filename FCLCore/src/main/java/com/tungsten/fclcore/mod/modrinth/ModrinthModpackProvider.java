@@ -27,12 +27,12 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 public final class ModrinthModpackProvider implements ModpackProvider {
     public static final ModrinthModpackProvider INSTANCE = new ModrinthModpackProvider();
@@ -56,7 +56,7 @@ public final class ModrinthModpackProvider implements ModpackProvider {
     }
 
     @Override
-    public Modpack readManifest(ZipFile zip, Path file, Charset encoding) throws IOException, JsonParseException {
+    public Modpack readManifest(ZipArchiveReader zip, Path file, Charset encoding) throws IOException, JsonParseException {
         ModrinthManifest manifest = JsonUtils.fromNonNullJson(CompressingUtils.readTextZipEntry(zip, "modrinth.index.json"), ModrinthManifest.class);
         return new Modpack(manifest.getName(), "", manifest.getVersionId(), manifest.getGameVersion(), manifest.getSummary(), encoding, manifest) {
             @Override

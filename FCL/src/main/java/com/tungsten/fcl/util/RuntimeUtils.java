@@ -12,9 +12,10 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.io.Unzipper;
 
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
+import org.tukaani.xz.XZInputStream;
+
+import kala.compress.archivers.tar.TarArchiveEntry;
+import kala.compress.archivers.tar.TarArchiveInputStream;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,8 +101,8 @@ public class RuntimeUtils {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void uncompressTarXZ(final InputStream tarFileInputStream, final File dest) throws IOException {
         dest.mkdirs();
-        TarArchiveInputStream tarIn = new TarArchiveInputStream(new XZCompressorInputStream(tarFileInputStream));
-        TarArchiveEntry tarEntry = tarIn.getNextTarEntry();
+        TarArchiveInputStream tarIn = new TarArchiveInputStream(new XZInputStream(tarFileInputStream));
+        TarArchiveEntry tarEntry = tarIn.getNextEntry();
         while (tarEntry != null) {
             if (tarEntry.getSize() <= 20480) {
                 try {
@@ -132,7 +133,7 @@ public class RuntimeUtils {
                 }
                 os.close();
             }
-            tarEntry = tarIn.getNextTarEntry();
+            tarEntry = tarIn.getNextEntry();
         }
         tarIn.close();
     }

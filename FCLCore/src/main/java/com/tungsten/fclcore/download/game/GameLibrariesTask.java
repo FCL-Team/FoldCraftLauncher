@@ -94,7 +94,7 @@ public final class GameLibrariesTask extends Task<Void> {
             if (!library.getDownload().validateChecksum(jar, true)) {
                 return true;
             }
-            if (library.getChecksums() != null && !library.getChecksums().isEmpty() && !LibraryDownloadTask.checksumValid(file, library.getChecksums())) {
+            if (library.getChecksums() != null && !library.getChecksums().isEmpty() && !LibraryDownloadTask.checksumValid(file.toPath(), library.getChecksums())) {
                 return true;
             }
             if (FileUtils.getExtension(file).equals("jar")) {
@@ -133,7 +133,7 @@ public final class GameLibrariesTask extends Task<Void> {
                 }
             }
             if (shouldDownloadLibrary(gameRepository, version, library, integrityCheck) && (library.hasDownloadURL() || !"optifine".equals(library.getGroupId()))) {
-                dependencies.add(new LibraryDownloadTask(dependencyManager, file, library));
+                dependencies.add(new LibraryDownloadTask(dependencyManager, file.toPath(), library));
             } else {
                 dependencyManager.getCacheRepository().tryCacheLibrary(library, file.toPath());
             }

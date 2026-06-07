@@ -27,12 +27,12 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 public final class ServerModpackProvider implements ModpackProvider {
     public static final ServerModpackProvider INSTANCE = new ServerModpackProvider();
@@ -56,7 +56,7 @@ public final class ServerModpackProvider implements ModpackProvider {
     }
 
     @Override
-    public Modpack readManifest(ZipFile zip, Path file, Charset encoding) throws IOException, JsonParseException {
+    public Modpack readManifest(ZipArchiveReader zip, Path file, Charset encoding) throws IOException, JsonParseException {
         String json = CompressingUtils.readTextZipEntry(zip, "server-manifest.json");
         ServerModpackManifest manifest = JsonUtils.fromNonNullJson(json, ServerModpackManifest.class);
         return manifest.toModpack(encoding);
