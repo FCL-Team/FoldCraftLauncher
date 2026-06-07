@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.util.Function
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +27,7 @@ class TranslationDialog(
     repository: RemoteModRepository,
     callback: (String) -> Unit
 ) : FCLDialog(context) {
-    private var text: FCLEditText
+    private var name: FCLEditText
     private var recyclerView: RecyclerView
     private var adapter: TranslationAdapter
 
@@ -36,7 +35,7 @@ class TranslationDialog(
         window?.setLayout(ConvertUtils.dip2px(context, 500f), ViewGroup.LayoutParams.MATCH_PARENT)
         val binding = DialogTranslationBinding.inflate(LayoutInflater.from(context))
         setContentView(binding.root)
-        text = binding.text
+        name = binding.name
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         val newCallback: (String) -> Unit = {
@@ -46,7 +45,7 @@ class TranslationDialog(
         adapter = TranslationAdapter(context, mutableListOf(), newCallback)
         recyclerView.adapter = adapter
         binding.cancel.setOnClickListener { dismiss() }
-        text.addTextChangedListener(object : TextWatcher {
+        name.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(
                 s: CharSequence?,
@@ -56,11 +55,13 @@ class TranslationDialog(
             ) {
             }
 
-            override fun afterTextChanged(s: Editable?) {
+            override fun afterTextChanged(editable: Editable?) {
                 lifecycleScope.launch(Dispatchers.Default) {
-                    val s = text.text?.toString() ?: return@launch
+                    val str = runCatching {
+                        editable?.toString()
+                    }.getOrNull() ?: return@launch
                     val mods = ModTranslations.getTranslationsByRepositoryType(repository.type)
-                        .searchMod(s)
+                        .searchMod(str)
                     withContext(Dispatchers.Main) {
                         adapter.update(mods)
                     }
