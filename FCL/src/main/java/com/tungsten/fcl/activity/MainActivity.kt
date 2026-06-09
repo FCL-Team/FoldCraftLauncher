@@ -450,7 +450,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                             TexturesLoader.toAvatar(
                                 TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
                                 ConvertUtils.dip2px(
-                                    this@MainActivity, 30f
+                                    this@MainActivity, 52f
                                 )
                             ).toDrawable(resources)
                         )
@@ -463,7 +463,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         avatar.imageProperty().bind(
                             TexturesLoader.avatarBinding(
                                 account, ConvertUtils.dip2px(
-                                    this@MainActivity, 30f
+                                    this@MainActivity, 52f
                                 )
                             )
                         )
@@ -481,7 +481,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 binding.avatar.imageProperty().bind(
                     TexturesLoader.avatarBinding(
                         currentAccount.get(), ConvertUtils.dip2px(
-                            this@MainActivity, 30f
+                            this@MainActivity, 52f
                         )
                     )
                 )

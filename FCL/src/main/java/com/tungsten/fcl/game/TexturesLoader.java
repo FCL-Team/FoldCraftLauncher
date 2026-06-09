@@ -19,22 +19,6 @@ package com.tungsten.fcl.game;
 
 import static com.tungsten.fclcore.util.Lang.threadPool;
 import static com.tungsten.fclcore.util.Logging.LOG;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
@@ -42,8 +26,9 @@ import static java.util.Objects.requireNonNull;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.tungsten.fcl.util.ResourceNotFoundError;
@@ -63,6 +48,21 @@ import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public final class TexturesLoader {
 
@@ -315,25 +315,39 @@ public final class TexturesLoader {
     // ====
 
     // ==== Avatar ====
-    public static Bitmap toAvatar(Bitmap skin, int size) {
-        float faceOffset = Math.round(size / 18.0);
+    private static final Paint AVATAR_PAINT = new Paint();
+
+    static {
+        AVATAR_PAINT.setFilterBitmap(false);
+    }
+
+    public static Bitmap toAvatar(
+            final Bitmap skin,
+            final int pixelSize
+    ) {
+        float faceOffset = (float) Math.round(pixelSize / 18.0);
         float scaleFactor = skin.getWidth() / 64.0f;
         int faceSize = Math.round(8 * scaleFactor);
-        Bitmap faceBitmap = Bitmap.createBitmap(skin, faceSize, faceSize, faceSize, faceSize, (Matrix) null, false);
-        Bitmap hatBitmap = Bitmap.createBitmap(skin, Math.round(40 * scaleFactor), faceSize, faceSize, faceSize, (Matrix) null, false);
-        Bitmap avatar = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        int faceEnd = faceSize * 2;
+        int hatSrcX = Math.round(40 * scaleFactor);
+        Bitmap avatar = Bitmap.createBitmap(pixelSize, pixelSize, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(avatar);
-        Matrix matrix;
-        float faceScale = ((size - 2 * faceOffset) / faceSize);
-        float hatScale = ((float) size / faceSize);
-        matrix = new Matrix();
-        matrix.postScale(faceScale, faceScale);
-        Bitmap newFaceBitmap = Bitmap.createBitmap(faceBitmap, 0, 0 , faceSize, faceSize, matrix, false);
-        matrix = new Matrix();
-        matrix.postScale(hatScale, hatScale);
-        Bitmap newHatBitmap = Bitmap.createBitmap(hatBitmap, 0, 0, faceSize, faceSize, matrix, false);
-        canvas.drawBitmap(newFaceBitmap, faceOffset, faceOffset, new Paint(Paint.ANTI_ALIAS_FLAG));
-        canvas.drawBitmap(newHatBitmap, 0, 0, new Paint(Paint.ANTI_ALIAS_FLAG));
+
+        float innerEnd = pixelSize - faceOffset;
+        canvas.drawBitmap(
+                skin,
+                new Rect(faceSize, faceSize, faceEnd, faceEnd),
+                new RectF(faceOffset, faceOffset, innerEnd, innerEnd),
+                AVATAR_PAINT
+        );
+
+        canvas.drawBitmap(
+                skin,
+                new Rect(hatSrcX, faceSize, hatSrcX + faceSize, faceEnd),
+                new RectF(0f, 0f, pixelSize, pixelSize),
+                AVATAR_PAINT
+        );
+
         return avatar;
     }
 
