@@ -53,6 +53,7 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -567,7 +568,9 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                 }
                 GameProfile gameProfile = profiles.get(i);
                 viewHolder.name.setText(gameProfile.getName());
-                viewHolder.avatar.imageProperty().bind(TexturesLoader.avatarBinding(service, gameProfile.getId(), 32));
+                viewHolder.avatar.imageProperty().bind(
+                        TexturesLoader.avatarBinding(service, gameProfile.getId(), ConvertUtils.dip2px(getContext(), 30f))
+                );
                 viewHolder.parent.setOnClickListener(view1 -> listener.onSelect(gameProfile));
                 return view;
             }
