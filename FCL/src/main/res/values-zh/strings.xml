@@ -878,6 +878,7 @@
     <string name="settings_disable_fullscreen_input">禁用全屏输入（用于TouchController模组）</string>
     <string name="settings_launcher_exit_after_launching">启动器启动后自动关闭</string>
     <string name="settings_launcher_custom_launcher_name">自定义启动器信息</string>
+    <string name="settings_launcher_allow_screenshot">允许在崩溃界面截图/录屏</string>
 
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>

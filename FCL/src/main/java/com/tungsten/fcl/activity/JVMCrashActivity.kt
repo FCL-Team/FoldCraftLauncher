@@ -33,7 +33,9 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityJvmCrashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        if (!getSharedPreferences("launcher", MODE_PRIVATE).getBoolean("allowScreenshots", false)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
 
         binding.restart.setOnClickListener(this)
         binding.close.setOnClickListener(this)
