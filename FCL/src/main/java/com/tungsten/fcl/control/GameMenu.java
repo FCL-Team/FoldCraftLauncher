@@ -860,7 +860,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onExit(int exitCode) {
         if (exitCode != 0 && fclBridge != null) {
-            JVMCrashActivity.startCrashActivity(true, activity, exitCode, fclBridge.getLogPath(), fclBridge.getRenderer(), fclBridge.getJava());
+            JVMCrashActivity.startCrashActivity(true, activity, exitCode, fclBridge.getLogPath());
             Logging.LOG.log(Level.INFO, "JVM crashed, start jvm crash activity to show errors now!");
         }
         android.os.Process.killProcess(android.os.Process.myPid());
