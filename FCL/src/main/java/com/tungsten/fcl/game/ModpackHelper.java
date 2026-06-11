@@ -53,7 +53,6 @@ import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -67,8 +66,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
+
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 public final class ModpackHelper {
     private ModpackHelper() {}
@@ -97,7 +97,7 @@ public final class ModpackHelper {
             throw new ManuallyCreatedModpackException(file);
         }
 
-        try (ZipFile zipFile = CompressingUtils.openZipFile(file, charset)) {
+        try (ZipArchiveReader zipFile = CompressingUtils.openZipFile(file, charset)) {
             // Order for trying detecting manifest is necessary here.
             // Do not change to iterating providers.
             for (ModpackProvider provider : new ModpackProvider[]{

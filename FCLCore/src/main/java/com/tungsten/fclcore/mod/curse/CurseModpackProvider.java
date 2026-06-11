@@ -28,8 +28,8 @@ import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
+import kala.compress.archivers.zip.ZipArchiveEntry;
+import kala.compress.archivers.zip.ZipArchiveReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public final class CurseModpackProvider implements ModpackProvider {
     }
 
     @Override
-    public Modpack readManifest(ZipFile zip, Path file, Charset encoding) throws IOException, JsonParseException {
+    public Modpack readManifest(ZipArchiveReader zip, Path file, Charset encoding) throws IOException, JsonParseException {
         CurseManifest manifest = JsonUtils.fromNonNullJson(CompressingUtils.readTextZipEntry(zip, "manifest.json"), CurseManifest.class);
         String description = "No description";
         try {
