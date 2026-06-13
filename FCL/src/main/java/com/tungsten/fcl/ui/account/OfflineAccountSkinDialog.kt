@@ -34,11 +34,13 @@ import java.util.logging.Level
 class OfflineAccountSkinDialog(context: Context, private val accountListItem: AccountListItem) :
     FCLDialog(context), View.OnClickListener {
     private val account: OfflineAccount = accountListItem.account as OfflineAccount
-    private var binding: DialogOfflineAccountSkinBinding = DialogOfflineAccountSkinBinding.inflate(layoutInflater)
+    private var binding: DialogOfflineAccountSkinBinding =
+        DialogOfflineAccountSkinBinding.inflate(layoutInflater)
     private val renderer: SkinRenderer
     private val skinBinding: InvalidationListener
     private val typeProperty: ObjectProperty<Skin.Type> =
-        SimpleObjectProperty<Skin.Type>(this, "type", Skin.Type.DEFAULT)
+        SimpleObjectProperty(this, "type", Skin.Type.DEFAULT)
+    private var isFirst = true
 
     init {
         setContentView(binding.root)
@@ -91,7 +93,14 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
             binding.cslUrl.setText(account.skin.cslApi)
         }
         skinBinding = FXUtils.observeWeak(
-            { this.refreshSkin() },
+            {
+                if (isFirst) {
+                    isFirst = false
+                    return@observeWeak
+                }
+                Logging.LOG.log(Level.INFO, "========== refreshSkin by skinBinding ==========")
+                this.refreshSkin()
+            },
             typeProperty,
             binding.cslUrl.stringProperty(),
             binding.skinPathText.stringProperty(),
@@ -110,6 +119,7 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
         window?.setLayout(width * 2 / 3, height)
         super.show()
         binding.skinView.onResume()
+        Logging.LOG.log(Level.INFO, "========== refreshSkin by show() ==========")
         refreshSkin()
     }
 
