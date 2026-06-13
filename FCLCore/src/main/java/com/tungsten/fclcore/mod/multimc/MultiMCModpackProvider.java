@@ -25,16 +25,17 @@ import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.FileUtils;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.stream.Stream;
-
-import kala.compress.archivers.zip.ZipArchiveEntry;
-import kala.compress.archivers.zip.ZipArchiveReader;
 
 public final class MultiMCModpackProvider implements ModpackProvider {
     public static final MultiMCModpackProvider INSTANCE = new MultiMCModpackProvider();
@@ -71,12 +72,14 @@ public final class MultiMCModpackProvider implements ModpackProvider {
         }
     }
 
-    private static String getRootEntryName(ZipArchiveReader file) throws IOException {
+    private static String getRootEntryName(ZipFile file) throws IOException {
         final String instanceFileName = "instance.cfg";
 
         if (file.getEntry(instanceFileName) != null) return "";
 
-        for (ZipArchiveEntry entry : file.getEntries()) {
+        Enumeration<ZipArchiveEntry> entries = file.getEntries();
+        while (entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
             String entryName = entry.getName();
 
             int idx = entryName.indexOf('/');
@@ -90,7 +93,7 @@ public final class MultiMCModpackProvider implements ModpackProvider {
     }
 
     @Override
-    public Modpack readManifest(ZipArchiveReader modpackFile, Path modpackPath, Charset encoding) throws IOException {
+    public Modpack readManifest(ZipFile modpackFile, Path modpackPath, Charset encoding) throws IOException {
         String rootEntryName = getRootEntryName(modpackFile);
         MultiMCManifest manifest = MultiMCManifest.readMultiMCModpackManifest(modpackFile, rootEntryName);
 

@@ -20,33 +20,28 @@ package com.tungsten.fclcore.util.io;
 import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
 
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CoderResult;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.*;
+import java.nio.file.*;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.zip.ZipError;
 import java.util.zip.ZipException;
-
-import kala.compress.archivers.zip.ZipArchiveEntry;
-import kala.compress.archivers.zip.ZipArchiveReader;
 
 /**
  * Utilities of compressing
- *
- * @author huangyuhui
  */
 public final class CompressingUtils {
 
@@ -60,24 +55,27 @@ public final class CompressingUtils {
     }
 
     public static boolean testEncoding(Path zipFile, Charset encoding) throws IOException {
-        try (ZipArchiveReader zf = openZipFile(zipFile, encoding)) {
+        try (ZipFile zf = openZipFile(zipFile, encoding)) {
             return testEncoding(zf, encoding);
         }
     }
 
-    public static boolean testEncoding(ZipArchiveReader zipFile, Charset encoding) {
+    public static boolean testEncoding(ZipFile zipFile, Charset encoding) throws IOException {
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         CharsetDecoder cd = newCharsetDecoder(encoding);
         CharBuffer cb = CharBuffer.allocate(32);
 
-        for (ZipArchiveEntry entry : zipFile.getEntries()) {
+        while (entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
+
             if (entry.getGeneralPurposeBit().usesUTF8ForNames()) continue;
 
             cd.reset();
             byte[] ba = entry.getRawName();
-            int clen = (int) (ba.length * cd.maxCharsPerByte());
+            int clen = (int)(ba.length * cd.maxCharsPerByte());
             if (clen == 0) continue;
             if (clen <= cb.capacity())
-                cb.clear();
+                ((Buffer) cb).clear(); // cast to prevent "java.lang.NoSuchMethodError: java.nio.CharBuffer.clear()Ljava/nio/CharBuffer;" when compiling with Java 9+
             else
                 cb = CharBuffer.allocate(clen);
 
@@ -91,12 +89,12 @@ public final class CompressingUtils {
     }
 
     public static Charset findSuitableEncoding(Path zipFile) throws IOException {
-        try (ZipArchiveReader zf = openZipFile(zipFile, StandardCharsets.UTF_8)) {
+        try (ZipFile zf = openZipFile(zipFile, StandardCharsets.UTF_8)) {
             return findSuitableEncoding(zf);
         }
     }
 
-    public static Charset findSuitableEncoding(ZipArchiveReader zipFile) throws IOException {
+    public static Charset findSuitableEncoding(ZipFile zipFile) throws IOException {
         if (testEncoding(zipFile, StandardCharsets.UTF_8)) return StandardCharsets.UTF_8;
         if (OperatingSystem.NATIVE_CHARSET != StandardCharsets.UTF_8 && testEncoding(zipFile, OperatingSystem.NATIVE_CHARSET))
             return OperatingSystem.NATIVE_CHARSET;
@@ -136,40 +134,12 @@ public final class CompressingUtils {
         throw new IOException("Cannot find suitable encoding for the zip.");
     }
 
-    public static ZipFileTree openZipTree(Path zipFile) throws IOException {
-        return new ZipFileTree(openZipFile(zipFile));
+    public static ZipFile openZipFile(Path zipFile) throws IOException {
+        return new ZipFile(Files.newByteChannel(zipFile));
     }
 
-    public static ZipArchiveReader openZipFile(Path zipFile) throws IOException {
-        return openZipFileWithPossibleEncoding(zipFile, StandardCharsets.UTF_8);
-    }
-
-    public static ZipArchiveReader openZipFile(Path zipFile, Charset charset) throws IOException {
-        return new ZipArchiveReader(zipFile, charset);
-    }
-
-    public static ZipArchiveReader openZipFileWithPossibleEncoding(Path zipFile, Charset possibleEncoding) throws IOException {
-        if (possibleEncoding == null)
-            possibleEncoding = StandardCharsets.UTF_8;
-
-        ZipArchiveReader zipReader = new ZipArchiveReader(Files.newByteChannel(zipFile));
-
-        Charset suitableEncoding;
-        try {
-            if (possibleEncoding != StandardCharsets.UTF_8 && CompressingUtils.testEncoding(zipReader, possibleEncoding)) {
-                suitableEncoding = possibleEncoding;
-            } else {
-                suitableEncoding = CompressingUtils.findSuitableEncoding(zipReader);
-                if (suitableEncoding == StandardCharsets.UTF_8)
-                    return zipReader;
-            }
-        } catch (Throwable e) {
-            IOUtils.closeQuietly(zipReader, e);
-            throw e;
-        }
-
-        zipReader.close();
-        return new ZipArchiveReader(Files.newByteChannel(zipFile), suitableEncoding);
+    public static ZipFile openZipFile(Path zipFile, Charset charset) throws IOException {
+        return new ZipFile(Files.newByteChannel(zipFile), charset.name());
     }
 
     public static final class Builder {
@@ -246,6 +216,9 @@ public final class CompressingUtils {
                 throw new FileSystemNotFoundException("Module jdk.zipfs does not exist");
 
             return ZIPFS_PROVIDER.newFileSystem(zipFile, env);
+        } catch (ZipError error) {
+            // Since Java 8 throws ZipError stupidly
+            throw new ZipException(error.getMessage());
         } catch (UnsupportedOperationException ex) {
             throw new ZipException("Not a zip file");
         } catch (FileSystemNotFoundException ex) {
@@ -257,12 +230,12 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name    the location of the text in zip file, something like A/B/C/D.txt
-     * @return the plain text content of given file.
+     * @param name the location of the text in zip file, something like A/B/C/D.txt
      * @throws IOException if the file is not a valid zip file.
+     * @return the plain text content of given file.
      */
-    public static String readTextZipEntry(Path zipFile, String name) throws IOException {
-        try (ZipArchiveReader s = new ZipArchiveReader(zipFile)) {
+    public static String readTextZipEntry(File zipFile, String name) throws IOException {
+        try (ZipFile s = new ZipFile(zipFile)) {
             return readTextZipEntry(s, name);
         }
     }
@@ -271,11 +244,11 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name    the location of the text in zip file, something like A/B/C/D.txt
-     * @return the plain text content of given file.
+     * @param name the location of the text in zip file, something like A/B/C/D.txt
      * @throws IOException if the file is not a valid zip file.
+     * @return the plain text content of given file.
      */
-    public static String readTextZipEntry(ZipArchiveReader zipFile, String name) throws IOException {
+    public static String readTextZipEntry(ZipFile zipFile, String name) throws IOException {
         return IOUtils.readFullyAsString(zipFile.getInputStream(zipFile.getEntry(name)));
     }
 
@@ -283,13 +256,28 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name    the location of the text in zip file, something like A/B/C/D.txt
-     * @return the plain text content of given file.
+     * @param name the location of the text in zip file, something like A/B/C/D.txt
      * @throws IOException if the file is not a valid zip file.
+     * @return the plain text content of given file.
      */
     public static String readTextZipEntry(Path zipFile, String name, Charset encoding) throws IOException {
-        try (ZipArchiveReader s = openZipFile(zipFile, encoding)) {
+        try (ZipFile s = openZipFile(zipFile, encoding)) {
             return IOUtils.readFullyAsString(s.getInputStream(s.getEntry(name)));
+        }
+    }
+
+    /**
+     * Read the text content of a file in zip.
+     *
+     * @param file the zip file
+     * @param name the location of the text in zip file, something like A/B/C/D.txt
+     * @return the plain text content of given file.
+     */
+    public static Optional<String> readTextZipEntryQuietly(File file, String name) {
+        try {
+            return Optional.of(readTextZipEntry(file, name));
+        } catch (IOException | NullPointerException e) {
+            return Optional.empty();
         }
     }
 
@@ -305,6 +293,78 @@ public final class CompressingUtils {
             return Optional.of(readTextZipEntry(file, name, encoding));
         } catch (IOException | NullPointerException e) {
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Extract a compressed file (zip or 7z) to destination directory.
+     *
+     * @param archive the compressed file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extract(File archive, File destination) throws IOException {
+        String name = archive.getName().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".zip") || name.endsWith(".jar") || name.endsWith(".mrpack")) {
+            extractZip(archive, destination);
+        } else if (name.endsWith(".7z")) {
+            extract7z(archive, destination);
+        } else {
+            throw new IOException("Unsupported archive format: " + archive.getName());
+        }
+    }
+
+    /**
+     * Extract a zip file to destination directory.
+     *
+     * @param zipFile the zip file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extractZip(File zipFile, File destination) throws IOException {
+        try (ZipFile zf = new ZipFile(zipFile)) {
+            Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+            while (entries.hasMoreElements()) {
+                ZipArchiveEntry entry = entries.nextElement();
+                File out = new File(destination, entry.getName());
+                if (entry.isDirectory()) {
+                    out.mkdirs();
+                } else {
+                    out.getParentFile().mkdirs();
+                    try (InputStream is = zf.getInputStream(entry);
+                         FileOutputStream os = new FileOutputStream(out)) {
+                        IOUtils.copyTo(is, os);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Extract a 7z file to destination directory.
+     *
+     * @param sevenZFile the 7z file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extract7z(File sevenZFile, File destination) throws IOException {
+        try (SevenZFile zf = new SevenZFile(sevenZFile)) {
+            SevenZArchiveEntry entry;
+            while ((entry = zf.getNextEntry()) != null) {
+                File out = new File(destination, entry.getName());
+                if (entry.isDirectory()) {
+                    out.mkdirs();
+                } else {
+                    out.getParentFile().mkdirs();
+                    try (FileOutputStream os = new FileOutputStream(out)) {
+                        byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+                        int len;
+                        while ((len = zf.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
+                        }
+                    }
+                }
+            }
         }
     }
 }

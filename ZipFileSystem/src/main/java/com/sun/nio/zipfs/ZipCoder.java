@@ -149,8 +149,8 @@ final class ZipCoder {
         CharsetDecoder dec = decTL.get();
         if (dec == null) {
             dec = cs.newDecoder()
-                    .onMalformedInput(CodingErrorAction.REPLACE)
-                    .onUnmappableCharacter(CodingErrorAction.REPLACE);
+              .onMalformedInput(CodingErrorAction.REPORT)
+              .onUnmappableCharacter(CodingErrorAction.REPORT);
             decTL.set(dec);
         }
         return dec;
@@ -160,8 +160,8 @@ final class ZipCoder {
         CharsetEncoder enc = encTL.get();
         if (enc == null) {
             enc = cs.newEncoder()
-                    .onMalformedInput(CodingErrorAction.REPLACE)
-                    .onUnmappableCharacter(CodingErrorAction.REPLACE);
+              .onMalformedInput(CodingErrorAction.REPORT)
+              .onUnmappableCharacter(CodingErrorAction.REPORT);
             encTL.set(enc);
         }
         return enc;

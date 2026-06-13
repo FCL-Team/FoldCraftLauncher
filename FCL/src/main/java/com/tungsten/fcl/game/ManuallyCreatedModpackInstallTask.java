@@ -47,6 +47,12 @@ public class ManuallyCreatedModpackInstallTask extends Task<Path> {
     public void execute() throws Exception {
         Path dest = Paths.get(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL").resolve(name);
         setResult(dest);
+
+        if (zipFile.getFileName().toString().toLowerCase().endsWith(".7z")) {
+            CompressingUtils.extract7z(zipFile.toFile(), dest.toFile());
+            return;
+        }
+
         Path subdirectory;
         try (FileSystem fs = CompressingUtils.readonly(zipFile).setEncoding(charset).build()) {
             subdirectory = ModpackHelper.findMinecraftDirectoryInManuallyCreatedModpack(zipFile.toString(), fs);
