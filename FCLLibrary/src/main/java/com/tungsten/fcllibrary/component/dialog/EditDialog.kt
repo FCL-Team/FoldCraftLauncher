@@ -12,6 +12,7 @@ import java.util.function.Consumer
 class EditDialog(context: Context, private val callback: Consumer<String>) : FCLDialog(context),
     View.OnClickListener {
     var binding: DialogEditBinding
+    var onCancelListener: (() -> Unit)? = null
 
     init {
         setCancelable(false)
@@ -34,6 +35,7 @@ class EditDialog(context: Context, private val callback: Consumer<String>) : FCL
                 }
             }
             if (v === negative) {
+                onCancelListener?.invoke()
                 dismiss()
             }
         }

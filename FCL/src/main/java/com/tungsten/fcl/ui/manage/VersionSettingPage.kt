@@ -227,7 +227,7 @@ class VersionSettingPage(
 
     private fun editForceResolution() {
         if (binding.switchForceResolution.checkProperty().get()) {
-            val preferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+            val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
             val dialog = EditDialog(context) { str ->
                 try {
                     val split =
@@ -245,6 +245,9 @@ class VersionSettingPage(
                 }
             }
             dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"))
+            dialog.onCancelListener = {
+                binding.switchForceResolution.isChecked = false
+            }
             dialog.show()
         }
     }
