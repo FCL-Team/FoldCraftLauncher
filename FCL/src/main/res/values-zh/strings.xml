@@ -545,6 +545,7 @@
     <string name="menu_settings_gesture_mode_fight">战斗模式</string>
     <string name="menu_settings_gesture_current">当前模式为 %s</string>
     <string name="menu_settings_gyro">陀螺仪</string>
+    <string name="menu_settings_gyro_invert">反转陀螺仪</string>
     <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
     <string name="menu_settings_hide_view">隐藏菜单键</string>

@@ -613,6 +613,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider_gyro" />
 
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/switch_gyro_invert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/menu_settings_gyro_invert"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_gyro" />
+
             <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:id="@+id/gyro_sensitivity_text"
                 android:layout_width="wrap_content"
@@ -623,7 +633,7 @@
                 android:textSize="12sp"
                 app:auto_text_tint="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/switch_gyro" />
+                app:layout_constraintTop_toBottomOf="@id/switch_gyro_invert" />
 
             <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
                 android:id="@+id/gyro_sensitivity"

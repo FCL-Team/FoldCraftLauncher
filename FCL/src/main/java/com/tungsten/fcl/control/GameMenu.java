@@ -387,6 +387,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
         FCLSwitch disableLeftTouchSwitch = findViewById(R.id.switch_left_touch);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
+        FCLSwitch gyroInvertSwitch = findViewById(R.id.switch_gyro_invert);
         FCLSwitch physicalMouseSwitch = findViewById(R.id.switch_physical_mouse_mode);
         FCLSwitch showLogSwitch = findViewById(R.id.switch_show_log);
         FCLSwitch performanceModeSwitch = findViewById(R.id.switch_performance);
@@ -432,6 +433,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
         FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
         FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
+        FXUtils.bindBoolean(gyroInvertSwitch, menuSetting.getInvertGyroscopeProperty());
         FXUtils.bindBoolean(physicalMouseSwitch, menuSetting.getPhysicalMouseMode());
         FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
         FXUtils.bindBoolean(autoShowLogSwitch, menuSetting.getAutoShowLogProperty());
