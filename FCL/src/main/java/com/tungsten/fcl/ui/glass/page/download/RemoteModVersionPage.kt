@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.glass.LocalFCLUILayout
+import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fcl.ui.glass.component.GlassButton
 import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassEmptyState
@@ -150,13 +152,23 @@ private fun downloadVersion(
     version: RemoteMod.Version,
     parent: FCLUILayout?
 ) {
-    try {
-        val profile = Profiles.getSelectedProfile()
-        val selectedVersion = Profiles.getSelectedVersion() ?: ""
+    val profile = Profiles.getSelectedProfile()
+    val selectedVersion = Profiles.getSelectedVersion() ?: ""
+
+    val task = Task.supplyAsync {
         type.installCallback(context, parent).invoke(profile, selectedVersion, version)
-    } catch (e: Throwable) {
-        showToast(context, e.message)
+    }.whenComplete(Schedulers.androidUIThread()) { _, exception ->
+        if (exception != null) {
+            showToast(context, exception.message)
+        }
     }
+
+    val dialog = TaskDialog(context, TaskCancellationAction { task.cancel() })
+    dialog.setTitle(context.getString(R.string.message_downloading))
+    val executor = task.executor()
+    dialog.setExecutor(executor)
+    dialog.show()
+    executor.start()
 }
 
 private fun showToast(context: Context, message: String?) {
