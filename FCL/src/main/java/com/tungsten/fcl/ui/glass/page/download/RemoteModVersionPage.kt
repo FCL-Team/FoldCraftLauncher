@@ -25,9 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
+import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.glass.LocalFCLUILayout
+import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fcl.ui.glass.component.GlassButton
 import com.tungsten.fcl.ui.glass.component.GlassCard
@@ -121,7 +123,9 @@ fun RemoteModVersionPage(
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        downloadVersion(context, type, version, parent)
+                        val profile = Profiles.getSelectedProfile()
+                        val selectedVersion = Profiles.getSelectedVersion() ?: ""
+                        downloadVersion(context, type, parent, profile, selectedVersion, version)
                         pendingVersion = null
                     }) {
                         Text(stringResource(R.string.download))
@@ -184,19 +188,29 @@ private fun VersionFileCard(
 private fun downloadVersion(
     context: Context,
     type: RemoteContentType,
-    version: RemoteMod.Version,
-    parent: FCLUILayout?
+    parent: FCLUILayout?,
+    profile: Profile,
+    selectedVersion: String,
+    version: RemoteMod.Version
 ) {
-    val profile = Profiles.getSelectedProfile()
-    val selectedVersion = Profiles.getSelectedVersion() ?: ""
-
-    val task = Task.supplyAsync {
-        type.installCallback(context, parent).invoke(profile, selectedVersion, version)
-    }.whenComplete(Schedulers.androidUIThread()) { _, exception ->
-        if (exception != null) {
-            showToast(context, exception.message)
-        }
+    if (type == RemoteContentType.MODPACK) {
+        // Modpack handles its own download + UI on UI thread
+        Versions.downloadModpackImpl(context, parent, profile, version)
+        return
     }
+
+    val task = type.downloadTask(context, selectedVersion, version)
+        .whenComplete(Schedulers.androidUIThread()) { file, exception ->
+            if (exception == null && file != null) {
+                try {
+                    type.install(context, parent, profile, selectedVersion, version, file)
+                } catch (e: Exception) {
+                    showToast(context, e.message)
+                }
+            } else {
+                showToast(context, exception?.message)
+            }
+        }
 
     val dialog = TaskDialog(context, TaskCancellationAction { task.cancel() })
     dialog.setTitle(context.getString(R.string.message_downloading))

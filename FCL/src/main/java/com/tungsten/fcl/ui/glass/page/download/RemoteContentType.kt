@@ -2,26 +2,21 @@ package com.tungsten.fcl.ui.glass.page.download
 
 import android.content.Context
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDialog
 import com.tungsten.fcl.R
-import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.download.common.DownloadAddonDialog
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.util.TaskCancellationAction
-import com.tungsten.fcl.setting.DownloadProviders
+import com.tungsten.fcl.setting.Profile
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository
 import com.tungsten.fclcore.task.FileDownloadTask
-import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
-import com.tungsten.fcl.setting.Profile
+import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.io.NetworkUtils
 import com.tungsten.fcllibrary.component.view.FCLUILayout
-import com.tungsten.fcllibrary.component.view.FCLAlertDialog
+import java.io.File
 import java.nio.file.Path
-import java.util.concurrent.CancellationException
 
 enum class RemoteContentType {
     MOD,
@@ -66,25 +61,48 @@ enum class RemoteContentType {
         return if (sourceName == modrinthName) RemoteModRepository.SortType.NAME else RemoteModRepository.SortType.POPULARITY
     }
 
-    fun installCallback(context: Context, parent: FCLUILayout?): (Profile, String, RemoteMod.Version) -> Unit {
-        return { profile, version, file ->
-            when (this) {
-                MOD -> downloadToSubdirectory(context, profile, version, file, "mods")
-                MODPACK -> Versions.downloadModpackImpl(context, parent, profile, file)
-                RESOURCE_PACK -> downloadToSubdirectory(context, profile, version, file, "resourcepacks")
-                SHADER_PACK -> downloadToSubdirectory(context, profile, version, file, "shaderpacks")
-            }
+    fun downloadTask(
+        context: Context,
+        version: String,
+        remoteVersion: RemoteMod.Version
+    ): Task<File> {
+        val dest = File.createTempFile("fcl_download", "_" + remoteVersion.file.filename, context.cacheDir)
+        return Task.composeAsync {
+            val task = FileDownloadTask(
+                NetworkUtils.toURL(remoteVersion.file.url),
+                dest,
+                remoteVersion.file.integrityCheck
+            )
+            task.setName(remoteVersion.name)
+            task
+        }.thenApplyAsync { dest }
+    }
+
+    fun install(
+        context: Context,
+        parent: FCLUILayout?,
+        profile: Profile,
+        version: String,
+        remoteVersion: RemoteMod.Version,
+        file: File
+    ) {
+        when (this) {
+            MOD -> installToSubdirectory(context, profile, version, remoteVersion, file, "mods")
+            MODPACK -> Versions.downloadModpackImpl(context, parent, profile, remoteVersion)
+            RESOURCE_PACK -> installToSubdirectory(context, profile, version, remoteVersion, file, "resourcepacks")
+            SHADER_PACK -> installToSubdirectory(context, profile, version, remoteVersion, file, "shaderpacks")
         }
     }
 
     fun supportsModLoader(): Boolean = this == MOD
 
     companion object {
-        private fun downloadToSubdirectory(
+        private fun installToSubdirectory(
             context: Context,
             profile: Profile,
             version: String,
-            file: RemoteMod.Version,
+            remoteVersion: RemoteMod.Version,
+            file: File,
             subdirectoryName: String
         ) {
             val actualVersion = version.ifBlank { profile.selectedVersion ?: "" }
@@ -94,36 +112,14 @@ enum class RemoteContentType {
                 profile.repository.baseDirectory.toPath()
             }
 
-            DownloadAddonDialog(context, file.file.filename) { name ->
-                val dest = runDirectory.resolve(subdirectoryName).resolve(name)
-
-                val taskDialog = TaskDialog(context, TaskCancellationAction(AppCompatDialog::dismiss))
-                taskDialog.setTitle(context.getString(R.string.message_downloading))
-                Schedulers.androidUIThread().execute {
-                    val executor = Task.composeAsync {
-                        val task = FileDownloadTask(NetworkUtils.toURL(file.file.url), dest.toFile())
-                        task.setName(file.name)
-                        task
-                    }.whenComplete(Schedulers.androidUIThread()) { exception ->
-                        if (exception != null) {
-                            if (exception is CancellationException) {
-                                Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show()
-                            } else {
-                                val builder = FCLAlertDialog.Builder(context)
-                                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-                                builder.setCancelable(false)
-                                builder.setTitle(context.getString(R.string.install_failed_downloading))
-                                builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception))
-                                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null)
-                                builder.create().show()
-                            }
-                        } else {
-                            Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show()
-                        }
-                    }.executor()
-                    taskDialog.setExecutor(executor)
-                    taskDialog.show()
-                    executor.start()
+            DownloadAddonDialog(context, remoteVersion.file.filename) { name ->
+                try {
+                    val dest = runDirectory.resolve(subdirectoryName).resolve(name).toFile()
+                    dest.parentFile?.mkdirs()
+                    FileUtils.moveFile(file, dest)
+                    Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 }
             }.show()
         }
