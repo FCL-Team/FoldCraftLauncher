@@ -60,6 +60,8 @@ class ProcessService : Service() {
             ),
             command
         )
+        config.graphicsBackend = "default"
+        config.setIsolateGameDir(false)
         startProcess(config)
         return START_NOT_STICKY
     }

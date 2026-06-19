@@ -66,6 +66,8 @@ public class FCLConfig implements Serializable {
     private boolean useVKDriverSystem = false;
     private boolean pojavBigCore = false;
     private InstalledModLoaders installedModLoaders = null;
+    private String graphicsBackend = "default";
+    private boolean isolateGameDir = true;
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -122,5 +124,21 @@ public class FCLConfig implements Serializable {
 
     public InstalledModLoaders getInstalledModLoaders() {
         return installedModLoaders;
+    }
+
+    public void setGraphicsBackend(String graphicsBackend) {
+        this.graphicsBackend = graphicsBackend;
+    }
+
+    public String getGraphicsBackend() {
+        return graphicsBackend;
+    }
+
+    public void setIsolateGameDir(boolean isolateGameDir) {
+        this.isolateGameDir = isolateGameDir;
+    }
+
+    public boolean isIsolateGameDir() {
+        return isolateGameDir;
     }
 }

@@ -125,6 +125,8 @@ public class JarExecutorLauncher extends Launcher {
                 RendererManager.RENDERER_GL4ES,
                 finalArgs
         );
+        config.setGraphicsBackend("default");
+        config.setIsolateGameDir(false);
         return FCLauncher.launchJarExecutor(config);
     }
 }

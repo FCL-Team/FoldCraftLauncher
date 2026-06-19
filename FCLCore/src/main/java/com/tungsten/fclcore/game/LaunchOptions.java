@@ -47,6 +47,8 @@ public class LaunchOptions implements Serializable {
     private Renderer renderer;
     private String uuid;
     private boolean debugLog;
+    private String graphicsBackend;
+    private boolean isolateGameDir;
 
     /**
      * The game directory
@@ -169,6 +171,20 @@ public class LaunchOptions implements Serializable {
         return debugLog;
     }
 
+    /**
+     * The graphics backend for Minecraft (vulkan/opengl/default)
+     */
+    public String getGraphicsBackend() {
+        return graphicsBackend;
+    }
+
+    /**
+     * Whether the game directory is isolated per version
+     */
+    public boolean isIsolateGameDir() {
+        return isolateGameDir;
+    }
+
     public static class Builder {
 
         private final LaunchOptions options = new LaunchOptions();
@@ -281,6 +297,16 @@ public class LaunchOptions implements Serializable {
 
         public Builder setDebugLog(boolean debugLog) {
             options.debugLog = debugLog;
+            return this;
+        }
+
+        public Builder setGraphicsBackend(String graphicsBackend) {
+            options.graphicsBackend = graphicsBackend;
+            return this;
+        }
+
+        public Builder setIsolateGameDir(boolean isolateGameDir) {
+            options.isolateGameDir = isolateGameDir;
             return this;
         }
 

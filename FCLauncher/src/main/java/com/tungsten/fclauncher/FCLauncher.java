@@ -49,6 +49,9 @@ public class FCLauncher {
     private static void logStartInfo(FCLConfig config, FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Renderer: " + bridge.getRenderer());
+        log(bridge, "Graphics API: " + config.getGraphicsBackend());
+        log(bridge, "Vulkan Driver: " + DriverPlugin.getSelected().getDriver() + " (" + DriverPlugin.getSelected().getPath() + ")");
+        log(bridge, "Version Isolation: " + config.isIsolateGameDir());
         log(bridge, "Device: " + getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU: " + getSocName());

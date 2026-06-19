@@ -492,6 +492,8 @@ public class DefaultLauncher extends Launcher {
         );
         config.setUseVKDriverSystem(options.isVKDriverSystem());
         config.setPojavBigCore(options.isPojavBigCore());
+        config.setGraphicsBackend(options.getGraphicsBackend() != null ? options.getGraphicsBackend() : "default");
+        config.setIsolateGameDir(options.isIsolateGameDir());
         config.setInstalledModLoaders(new FCLConfig.InstalledModLoaders(
                 analyzer.has(LibraryAnalyzer.LibraryType.FORGE),
                 analyzer.has(LibraryAnalyzer.LibraryType.CLEANROOM),
