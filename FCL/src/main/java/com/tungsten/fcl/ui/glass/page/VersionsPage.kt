@@ -1,50 +1,38 @@
 package com.tungsten.fcl.ui.glass.page
 
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fcl.ui.glass.component.GlassButton
 import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassChip
 import com.tungsten.fcl.ui.glass.component.GlassEmptyState
 import com.tungsten.fcl.ui.glass.component.GlassSearchBar
 import com.tungsten.fcl.ui.glass.component.GlassTopBar
+import com.tungsten.fcl.ui.glass.component.GlassVersionItem
 import com.tungsten.fcl.ui.glass.page.versions.VersionCategory
 import com.tungsten.fcl.ui.glass.page.versions.VersionListStateHolder
-import com.tungsten.fcl.ui.version.VersionListItem
-import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
 import java.util.function.Consumer
 
 @Composable
@@ -116,10 +104,17 @@ fun VersionsPage(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp, vertical = 8.dp)
             ) {
                 items(filtered, key = { it.version }) { item ->
-                    VersionItemCard(
+                    GlassVersionItem(
                         backdrop = backdrop,
                         item = item,
-                        tint = tintColor
+                        tint = tintColor,
+                        onLaunch = { state.launchVersion(context, item) },
+                        onRename = { state.renameVersion(context, item) },
+                        onDuplicate = { state.duplicateVersion(context, item) },
+                        onDelete = { state.deleteVersion(context, item) },
+                        onSettings = {
+                            Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
+                        }
                     )
                 }
             }
@@ -182,74 +177,4 @@ private fun FilterChips(
     }
 }
 
-@Composable
-private fun VersionItemCard(
-    backdrop: Backdrop,
-    item: VersionListItem,
-    tint: Color
-) {
-    val context = LocalContext.current
-    val selected by observeBooleanProperty(item.selectedProperty())
-    GlassCard(backdrop = backdrop, modifier = Modifier.fillMaxWidth()) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            val bitmap = item.drawable?.toBitmap()
-            if (bitmap != null) {
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 12.dp)
-            ) {
-                Text(
-                    text = item.version,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = item.libraries,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                if (item.tag != null) {
-                    Text(
-                        text = item.tag,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = tint.copy(alpha = 0.9f)
-                    )
-                }
-            }
-            RadioButton(
-                selected = selected,
-                onClick = { item.profile.selectedVersion = item.version }
-            )
-            GlassButton(
-                backdrop = backdrop,
-                onClick = {
-                    Versions.launch(context, item.profile, item.version)
-                },
-                tint = tint
-            ) {
-                Text(
-                    text = stringResource(R.string.launch),
-                    color = Color.White
-                )
-            }
-        }
-    }
-}
 
-@Composable
-private fun observeBooleanProperty(property: BooleanProperty): Boolean {
-    var value by remember(property) { mutableStateOf(property.get()) }
-    DisposableEffect(property) {
-        val listener = ChangeListener<Boolean> { _, _, newValue -> value = newValue }
-        property.addListener(listener)
-        onDispose { property.removeListener(listener) }
-    }
-    return value
-}

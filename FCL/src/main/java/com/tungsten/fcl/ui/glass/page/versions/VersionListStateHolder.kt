@@ -10,6 +10,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.version.VersionListItem
+import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
@@ -114,6 +115,22 @@ class VersionListStateHolder {
                 !it.libraries.contains("Fabric") && !it.libraries.contains("Forge") && !it.libraries.contains("NeoForge")
             }
         }
+    }
+
+    fun launchVersion(context: Context, item: VersionListItem) {
+        Versions.launch(context, item.profile, item.version)
+    }
+
+    fun renameVersion(context: Context, item: VersionListItem) {
+        Versions.renameVersion(context, item.profile, item.version)
+    }
+
+    fun deleteVersion(context: Context, item: VersionListItem) {
+        Versions.deleteVersion(context, item.profile, item.version)
+    }
+
+    fun duplicateVersion(context: Context, item: VersionListItem) {
+        Versions.duplicateVersion(context, item.profile, item.version)
     }
 }
 
