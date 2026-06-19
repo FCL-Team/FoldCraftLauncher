@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.setting.compose
 
-import android.content.res.Configuration
 import androidx.compose.ui.platform.ComposeView
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 

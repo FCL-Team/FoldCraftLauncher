@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kyant.backdrop.backdrops.layerBackdrop
@@ -62,7 +63,7 @@ fun LiquidGlassThemePreview(
         colorScheme = if (isDark) darkColorScheme() else lightColorScheme()
     ) {
         CompositionLocalProvider(
-            LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr
+            LocalLayoutDirection provides LayoutDirection.Ltr
         ) {
             val backgroundColor = if (isDark) Color(0xFF1A1A2E) else Color(0xFFF0F4F8)
             val tintColor = Color(preset.getColor())
