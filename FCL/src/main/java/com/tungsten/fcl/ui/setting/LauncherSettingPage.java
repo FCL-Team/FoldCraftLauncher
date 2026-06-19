@@ -54,6 +54,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.theme.ThemePreset;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcl.ui.setting.compose.ComposeViewUtilsKt;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.File;
@@ -153,6 +154,8 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         binding.themePreset.setSelection(sharedPreferences.getInt("themePreset", 0));
         binding.themePreset.setOnItemSelectedListener(this);
 
+        updateThemePreview();
+
         binding.autoExitLauncher.setChecked(sharedPreferences.getBoolean("autoExitLauncher", false));
         binding.autoExitLauncher.setOnCheckedChangeListener(this);
 
@@ -246,6 +249,13 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             case "mirror" -> 2;
             default -> 1;
         };
+    }
+
+    private void updateThemePreview() {
+        boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int presetPosition = sharedPreferences.getInt("themePreset", 0);
+        ThemePreset preset = ThemePreset.values()[presetPosition];
+        ComposeViewUtilsKt.setLiquidGlassPreview(binding.themePreview, preset, isDarkMode);
     }
 
     @Override
@@ -580,6 +590,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 mode = position == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
             }
             AppCompatDelegate.setDefaultNightMode(mode);
+            updateThemePreview();
         } else if (parent == binding.themePreset) {
             if (!isFirstThemePreset) {
                 sharedPreferences.edit().putInt("themePreset", position).apply();
@@ -587,6 +598,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 ThemeEngine.getInstance().applyAndSave(getContext(), preset.getColor());
                 ThemeEngine.getInstance().applyAndSave2(getContext(), preset.getColor2());
                 ThemeEngine.getInstance().applyAndSave2Dark(getContext(), preset.getColor2Dark());
+                updateThemePreview();
             } else {
                 isFirstThemePreset = false;
             }

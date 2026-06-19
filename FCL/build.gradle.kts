@@ -8,6 +8,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 }
 
@@ -84,7 +85,9 @@ android {
         viewBinding = true
         buildConfig = true
         resValues = true
+        compose = true
     }
+
 
     splits {
         val arch = System.getProperty("arch", "all")
@@ -166,6 +169,12 @@ dependencies {
     implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.backdrop)
 }
 
 tasks.register("updateMap") {

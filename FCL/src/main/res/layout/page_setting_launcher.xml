@@ -230,6 +230,17 @@
                 android:orientation="vertical"
                 app:auto_linear_background_tint="true">
 
+                <androidx.compose.ui.platform.ComposeView
+                    android:id="@+id/theme_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
