@@ -50,7 +50,11 @@ public class FCLauncher {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Renderer: " + bridge.getRenderer());
         log(bridge, "Graphics API: " + config.getGraphicsBackend());
-        log(bridge, "Vulkan Driver: " + DriverPlugin.getSelected().getDriver() + " (" + DriverPlugin.getSelected().getPath() + ")");
+        if (config.isUseVKDriverSystem()) {
+            log(bridge, "Vulkan Driver: System");
+        } else {
+            log(bridge, "Vulkan Driver: " + DriverPlugin.getSelected().getDriver());
+        }
         log(bridge, "Version Isolation: " + config.isIsolateGameDir());
         log(bridge, "Device: " + getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
