@@ -927,6 +927,13 @@
     <string name="settings_launcher_theme2">Secondary Theme Color(Light Mode)</string>
     <string name="settings_launcher_theme2_dark">Secondary Theme Color(Dark Mode)</string>
     <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
+    <string name="settings_launcher_theme_preset">Theme Preset</string>
+    <string name="settings_launcher_theme_preset_default">Default</string>
+    <string name="settings_launcher_theme_preset_liquid_glass">Liquid Glass</string>
+    <string name="settings_launcher_theme_preset_sakura_pink">Sakura Pink</string>
+    <string name="settings_launcher_theme_preset_mint_green">Mint Green</string>
+    <string name="settings_launcher_theme_preset_lavender">Lavender</string>
+    <string name="settings_launcher_theme_preset_sunset_orange">Sunset Orange</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_video">Launcher Background (Video .mp4)</string>

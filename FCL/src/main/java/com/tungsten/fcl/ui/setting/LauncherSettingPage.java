@@ -51,6 +51,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.theme.Theme;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+import com.tungsten.fcllibrary.component.theme.ThemePreset;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -70,6 +71,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
     public static final long ONE_DAY = 1000 * 60 * 60 * 24;
     private PageSettingLauncherBinding binding;
     private boolean isFirst = true;
+    private boolean isFirstThemePreset = true;
     private SharedPreferences sharedPreferences;
 
     public LauncherSettingPage(Context context, int id, FCLUILayout parent, int resId) {
@@ -138,6 +140,18 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         binding.themeMode.setAdapter(themeModeAdapter);
         binding.themeMode.setSelection(sharedPreferences.getInt("themeMode", 0));
         binding.themeMode.setOnItemSelectedListener(this);
+
+        ArrayList<String> themePresetList = new ArrayList<>();
+        for (ThemePreset preset : ThemePreset.values()) {
+            themePresetList.add(getContext().getString(getContext().getResources().getIdentifier(
+                    "settings_launcher_theme_preset_" + preset.getName().toLowerCase().replace(" ", "_"),
+                    "string", getContext().getPackageName())));
+        }
+        ArrayAdapter<String> themePresetAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, themePresetList);
+        themePresetAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        binding.themePreset.setAdapter(themePresetAdapter);
+        binding.themePreset.setSelection(sharedPreferences.getInt("themePreset", 0));
+        binding.themePreset.setOnItemSelectedListener(this);
 
         binding.autoExitLauncher.setChecked(sharedPreferences.getBoolean("autoExitLauncher", false));
         binding.autoExitLauncher.setOnCheckedChangeListener(this);
@@ -566,6 +580,16 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 mode = position == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
             }
             AppCompatDelegate.setDefaultNightMode(mode);
+        } else if (parent == binding.themePreset) {
+            if (!isFirstThemePreset) {
+                sharedPreferences.edit().putInt("themePreset", position).apply();
+                ThemePreset preset = ThemePreset.values()[position];
+                ThemeEngine.getInstance().applyAndSave(getContext(), preset.getColor());
+                ThemeEngine.getInstance().applyAndSave2(getContext(), preset.getColor2());
+                ThemeEngine.getInstance().applyAndSave2Dark(getContext(), preset.getColor2Dark());
+            } else {
+                isFirstThemePreset = false;
+            }
         }
     }
 
