@@ -9,7 +9,7 @@ import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.tungsten.fcl.ui.glass.FCLGlassRoute
 import com.tungsten.fcl.ui.glass.page.HomePage
-import com.tungsten.fcl.ui.glass.page.ManagePage
+import com.tungsten.fcl.ui.glass.page.AccountPage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
 import com.tungsten.fcl.ui.glass.page.VersionsPage
 import com.tungsten.fcllibrary.component.theme.ThemePreset
@@ -36,8 +36,8 @@ fun GlassNavHost(
         composable<FCLGlassRoute.Download> {
             GlassDownloadNavHost(backdrop = backdrop)
         }
-        composable<FCLGlassRoute.Manage> {
-            ManagePage(backdrop = backdrop)
+        composable<FCLGlassRoute.Account> {
+            AccountPage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Settings> {
             SettingsPage(

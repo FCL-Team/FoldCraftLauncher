@@ -13,7 +13,7 @@ sealed class FCLGlassRoute {
     data object Download : FCLGlassRoute()
 
     @Serializable
-    data object Manage : FCLGlassRoute()
+    data object Account : FCLGlassRoute()
 
     @Serializable
     data object Settings : FCLGlassRoute()

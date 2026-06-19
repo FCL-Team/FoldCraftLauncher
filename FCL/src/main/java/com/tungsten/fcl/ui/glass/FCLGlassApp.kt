@@ -60,7 +60,7 @@ fun FCLGlassApp(
                 currentDestination?.hasRoute<FCLGlassRoute.Home>() == true -> FCLGlassRoute.Home
                 currentDestination?.hasRoute<FCLGlassRoute.Versions>() == true -> FCLGlassRoute.Versions
                 currentDestination?.hasRoute<FCLGlassRoute.Download>() == true -> FCLGlassRoute.Download
-                currentDestination?.hasRoute<FCLGlassRoute.Manage>() == true -> FCLGlassRoute.Manage
+                currentDestination?.hasRoute<FCLGlassRoute.Account>() == true -> FCLGlassRoute.Account
                 currentDestination?.hasRoute<FCLGlassRoute.Settings>() == true -> FCLGlassRoute.Settings
                 else -> FCLGlassRoute.Home
             }

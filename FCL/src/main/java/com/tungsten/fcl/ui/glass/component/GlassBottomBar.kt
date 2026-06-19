@@ -58,7 +58,7 @@ fun GlassBottomBar(
             NavigationItem.Home,
             NavigationItem.Versions,
             NavigationItem.Download,
-            NavigationItem.Manage,
+            NavigationItem.Account,
             NavigationItem.Settings
         )
 
@@ -126,6 +126,6 @@ private sealed class NavigationItem(
     data object Home : NavigationItem(FCLGlassRoute.Home, R.drawable.ic_baseline_home_24, "Home")
     data object Versions : NavigationItem(FCLGlassRoute.Versions, R.drawable.ic_baseline_videogame_asset_24, "Versions")
     data object Download : NavigationItem(FCLGlassRoute.Download, R.drawable.ic_baseline_cloud_download_24, "Download")
-    data object Manage : NavigationItem(FCLGlassRoute.Manage, R.drawable.ic_baseline_tune_24, "Manage")
+    data object Account : NavigationItem(FCLGlassRoute.Account, R.drawable.ic_baseline_account_circle_24, "Account")
     data object Settings : NavigationItem(FCLGlassRoute.Settings, R.drawable.ic_baseline_settings_24, "Settings")
 }
