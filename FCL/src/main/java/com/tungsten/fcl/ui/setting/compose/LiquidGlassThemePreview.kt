@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +41,16 @@ import com.tungsten.fcllibrary.component.theme.ThemePreset
 
 /**
  * 液态玻璃主题预览，严格遵循 Backdrop 官方教程实现。
+ *
+ * 关键规则对照：
+ * - 规则 2：drawContent() 必须在 rememberLayerBackdrop 的 block 中调用
+ * - 规则 3：lens() 需要 Android 13+，必须做版本检查
+ * - 规则 4：lens() 的 shape 必须是 CornerBasedShape，因此使用 RoundedCornerShape 而非 CircleShape
+ * - 规则 5：效果顺序必须是 color filter => blur => lens
+ * - 规则 7：背景色必须在 drawContent() 之前绘制
+ * - 规则 8：shape 参数必须是 lambda 形式
+ * - 规则 10：所有尺寸参数必须使用 dp.toPx() 转换
+ * - 规则 11：着色玻璃效果必须使用 BlendMode.Hue
  */
 @Composable
 fun LiquidGlassThemePreview(
@@ -65,6 +74,7 @@ fun LiquidGlassThemePreview(
                     .background(backgroundColor)
             ) {
                 val backdrop = rememberLayerBackdrop {
+                    // 规则 7：先绘制背景色，再绘制内容
                     drawRect(backgroundColor)
                     drawContent()
                 }
@@ -183,16 +193,21 @@ private fun GlassButton(
         modifier = modifier
             .drawBackdrop(
                 backdrop = backdrop,
-                shape = { CircleShape },
+                // 规则 8：shape 参数必须是 lambda 形式
+                // 规则 4：lens() 要求 CornerBasedShape，RoundedCornerShape 是 CornerBasedShape 的子类
+                shape = { RoundedCornerShape(50f.dp) },
                 effects = {
+                    // 规则 5：效果顺序必须是 color filter => blur => lens
                     vibrancy()
                     blur(4f.dp.toPx())
+                    // 规则 3：Android 13+ 功能必须做版本检查
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         lens(16f.dp.toPx(), 32f.dp.toPx())
                     }
                 },
                 onDrawSurface = {
                     if (tintColor != null) {
+                        // 规则 11：着色玻璃效果必须使用 BlendMode.Hue
                         drawRect(tintColor, blendMode = androidx.compose.ui.graphics.BlendMode.Hue)
                         drawRect(tintColor.copy(alpha = 0.75f))
                     } else {
