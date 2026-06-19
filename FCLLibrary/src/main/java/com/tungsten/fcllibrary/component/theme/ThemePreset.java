@@ -9,7 +9,7 @@ public enum ThemePreset {
 
     DEFAULT("Default", Color.parseColor("#7797CF"), Color.parseColor("#000000"), Color.parseColor("#FFFFFF")),
 
-    LIQUID_GLASS("Liquid Glass", Color.parseColor("#7EB8DA"), Color.parseColor("#D0E8F5"), Color.parseColor("#B0D4F1")),
+    LIQUID_GLASS("Liquid Glass", Color.parseColor("#0088FF"), Color.parseColor("#D6EAFA"), Color.parseColor("#1A5C9E")),
 
     SAKURA_PINK("Sakura Pink", Color.parseColor("#FFB7C5"), Color.parseColor("#FFE4E9"), Color.parseColor("#F0C0CC")),
 
