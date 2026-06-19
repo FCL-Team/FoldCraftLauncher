@@ -71,6 +71,7 @@ private fun InstallerItemCard(
     var dependency by remember { mutableStateOf(item.dependencyName.get()) }
     var removable by remember { mutableStateOf(item.removable.get()) }
     var incompatibleWithGame by remember { mutableStateOf(item.incompatibleWithGame.get()) }
+    var installable by remember { mutableStateOf(item.installable.get()) }
 
     DisposableEffect(item) {
         val versionListener = InvalidationListener { version = item.libraryVersion.get() ?: "" }
@@ -78,12 +79,14 @@ private fun InstallerItemCard(
         val dependencyListener = InvalidationListener { dependency = item.dependencyName.get() }
         val removableListener = ChangeListener<Boolean> { _, _, new -> removable = new }
         val incompatibleWithGameListener = ChangeListener<Boolean> { _, _, new -> incompatibleWithGame = new }
+        val installableListener = ChangeListener<Boolean> { _, _, new -> installable = new }
 
         item.libraryVersion.addListener(versionListener)
         item.incompatibleLibraryName.addListener(incompatibleListener)
         item.dependencyName.addListener(dependencyListener)
         item.removable.addListener(removableListener)
         item.incompatibleWithGame.addListener(incompatibleWithGameListener)
+        item.installable.addListener(installableListener)
 
         onDispose {
             item.libraryVersion.removeListener(versionListener)
@@ -91,11 +94,12 @@ private fun InstallerItemCard(
             item.dependencyName.removeListener(dependencyListener)
             item.removable.removeListener(removableListener)
             item.incompatibleWithGame.removeListener(incompatibleWithGameListener)
+            item.installable.removeListener(installableListener)
         }
     }
 
     val iconBitmap = item.getIcon()?.toBitmap()
-    val canSelect = !incompatibleWithGame && incompatible == null && dependency == null
+    val canSelect = installable && !incompatibleWithGame && incompatible == null && dependency == null
 
     GlassCard(backdrop = backdrop, modifier = Modifier.fillMaxWidth()) {
         Row(
