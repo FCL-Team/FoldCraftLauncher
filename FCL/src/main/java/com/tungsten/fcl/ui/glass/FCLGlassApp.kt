@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.hasRoute
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.tungsten.fcl.activity.GlassMainActivity
 import com.tungsten.fcl.ui.glass.component.GlassBottomBar
 import com.tungsten.fcl.ui.glass.component.GlassNavHost
 import com.tungsten.fcl.ui.glass.theme.GlassTheme
@@ -44,52 +46,58 @@ fun FCLGlassApp(
         sharedPreferences.edit().putInt("themePreset", preset.ordinal).apply()
     }
 
-    MaterialTheme(
-        colorScheme = if (isDark) darkColorScheme() else lightColorScheme()
-    ) {
-        val navController = rememberNavController()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination
-        val currentRoute = when {
-            currentDestination?.hasRoute<FCLGlassRoute.Home>() == true -> FCLGlassRoute.Home
-            currentDestination?.hasRoute<FCLGlassRoute.Versions>() == true -> FCLGlassRoute.Versions
-            currentDestination?.hasRoute<FCLGlassRoute.Download>() == true -> FCLGlassRoute.Download
-            currentDestination?.hasRoute<FCLGlassRoute.Manage>() == true -> FCLGlassRoute.Manage
-            currentDestination?.hasRoute<FCLGlassRoute.Settings>() == true -> FCLGlassRoute.Settings
-            else -> FCLGlassRoute.Home
-        }
+    val layout = remember(context) {
+        (context as? GlassMainActivity)?.layout
+    }
 
-        val backdrop = rememberLayerBackdrop {
-            drawRect(backgroundColor)
-            drawContent()
-        }
+    CompositionLocalProvider(LocalFCLUILayout provides layout) {
+        MaterialTheme(
+            colorScheme = if (isDark) darkColorScheme() else lightColorScheme()
+        ) {
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            val currentRoute = when {
+                currentDestination?.hasRoute<FCLGlassRoute.Home>() == true -> FCLGlassRoute.Home
+                currentDestination?.hasRoute<FCLGlassRoute.Versions>() == true -> FCLGlassRoute.Versions
+                currentDestination?.hasRoute<FCLGlassRoute.Download>() == true -> FCLGlassRoute.Download
+                currentDestination?.hasRoute<FCLGlassRoute.Manage>() == true -> FCLGlassRoute.Manage
+                currentDestination?.hasRoute<FCLGlassRoute.Settings>() == true -> FCLGlassRoute.Settings
+                else -> FCLGlassRoute.Home
+            }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            GlassNavHost(
-                navController = navController,
-                backdrop = backdrop,
-                currentPreset = currentPreset,
-                onPresetChange = onPresetChange,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 80.dp)
-            )
+            val backdrop = rememberLayerBackdrop {
+                drawRect(backgroundColor)
+                drawContent()
+            }
 
-            GlassBottomBar(
-                backdrop = backdrop,
-                preset = currentPreset,
-                currentRoute = currentRoute,
-                onRouteSelected = { route ->
-                    navController.navigate(route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+            Box(modifier = Modifier.fillMaxSize()) {
+                GlassNavHost(
+                    navController = navController,
+                    backdrop = backdrop,
+                    currentPreset = currentPreset,
+                    onPresetChange = onPresetChange,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 80.dp)
+                )
+
+                GlassBottomBar(
+                    backdrop = backdrop,
+                    preset = currentPreset,
+                    currentRoute = currentRoute,
+                    onRouteSelected = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+                    },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            }
         }
     }
 }

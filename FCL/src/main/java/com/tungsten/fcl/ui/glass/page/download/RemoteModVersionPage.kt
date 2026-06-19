@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.glass.LocalFCLUILayout
 import com.tungsten.fcl.ui.glass.component.GlassButton
 import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassEmptyState
@@ -45,6 +46,7 @@ fun RemoteModVersionPage(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val parent = LocalFCLUILayout.current
     val tintColor = Color(ThemeEngine.getInstance().getTheme().getColor())
     var isLoading by remember { mutableStateOf(true) }
     var versions by remember { mutableStateOf<List<RemoteMod.Version>>(emptyList()) }
@@ -88,7 +90,7 @@ fun RemoteModVersionPage(
                         version = version,
                         tint = tintColor,
                         onDownload = {
-                            downloadVersion(context, type, version)
+                            downloadVersion(context, type, version, parent)
                         }
                     )
                 }
@@ -141,9 +143,13 @@ private fun VersionFileCard(
     }
 }
 
-private fun downloadVersion(context: Context, type: RemoteContentType, version: RemoteMod.Version) {
+private fun downloadVersion(
+    context: Context,
+    type: RemoteContentType,
+    version: RemoteMod.Version,
+    parent: FCLUILayout?
+) {
     val profile = Profiles.getSelectedProfile()
     val selectedVersion = Profiles.getSelectedVersion() ?: ""
-    val parent = context as? FCLUILayout
     type.installCallback(context, parent).invoke(profile, selectedVersion, version)
 }
