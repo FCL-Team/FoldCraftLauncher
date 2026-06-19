@@ -928,6 +928,7 @@
     <string name="settings_launcher_theme2_dark">Secondary Theme Color(Dark Mode)</string>
     <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_theme_preset">Theme Preset</string>
+    <string name="settings_launcher_theme_preview">Theme Preview</string>
     <string name="settings_launcher_theme_preset_default">Default</string>
     <string name="settings_launcher_theme_preset_liquid_glass">Liquid Glass</string>
     <string name="settings_launcher_theme_preset_sakura_pink">Sakura Pink</string>
