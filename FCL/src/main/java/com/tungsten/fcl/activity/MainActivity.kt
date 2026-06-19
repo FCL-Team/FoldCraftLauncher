@@ -42,7 +42,7 @@ import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
-import com.tungsten.fcl.game.JarExecutorHelper
+
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
@@ -77,7 +77,7 @@ import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
-import com.tungsten.fcllibrary.component.dialog.EditDialog
+
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLMenuView
@@ -193,23 +193,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }.show()
                     true
                 }
-                jar.setOnClickListener(this@MainActivity)
-                jar.setOnLongClickListener {
-                    EditDialog(this@MainActivity) {
-                        JarExecutorHelper.exec(
-                            this@MainActivity,
-                            null,
-                            JarExecutorHelper.getJava(null),
-                            it
-                        )
-                    }.apply {
-                        setTitle(R.string.jar_execute_custom_args)
-                        binding.editText.hint = "-jar xxx"
-                        binding.editText.setLines(1)
-                        binding.editText.maxLines = 1
-                    }.show()
-                    true
-                }
+
 
                 uiManager = UIManager(this@MainActivity, uiLayout)
                 _uiManager = uiManager
@@ -396,10 +380,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             if (view === back) {
                 uiManager.onBackPressed()
             }
-            if (view === jar) {
-                jar.isSelected = false
-                JarExecutorHelper.start(this@MainActivity, this@MainActivity)
-            }
+
             if (view === start) {
                 if (!Controllers.isInitialized()) {
                     title.setTextWithAnim(getString(R.string.message_loading_controllers))
@@ -577,15 +558,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             start.background = createBackground()
             createBackground().apply {
                 version.background = this
-                jar.background = this
             }
             version.backgroundTintList =
                 ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
                     version.backgroundTintList = this
-                    jar.backgroundTintList = this
                 }
             version.setTextColor(ThemeEngine.getInstance().theme.color2)
-            jar.setTextColor(ThemeEngine.getInstance().theme.color2)
         }
 
     }
@@ -670,7 +648,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 it.interpolator(BounceInterpolator()).start()
             }
             AnimUtil.playTranslationY(
-                listOf(start, version, jar),
+                listOf(start, version),
                 speed * 100L,
                 -200f,
                 0f

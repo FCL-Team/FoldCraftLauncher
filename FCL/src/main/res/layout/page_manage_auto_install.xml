@@ -18,10 +18,27 @@
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/install_offline"
         android:text="@string/install_installer_install_offline"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:ripple="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/jar_execute"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/jar_execute"
+        android:text="@string/jar_execute"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:ripple="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/install_offline"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

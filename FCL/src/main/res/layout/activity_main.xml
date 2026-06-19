@@ -259,27 +259,9 @@
             app:autoSizeMinTextSize="8sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/jar"
-            app:layout_constraintHeight_percent="0.1"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/jar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:stateListAnimator="@xml/anim_scale"
-            android:text="@string/jar_execute"
-            android:textAllCaps="false"
-            app:autoSizeMaxTextSize="14sp"
-            app:autoSizeMinTextSize="8sp"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.1"
-            app:layout_constraintStart_toEndOf="@id/version" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
