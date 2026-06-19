@@ -44,7 +44,8 @@ android {
 
     defaultConfig {
         applicationId = "com.tungsten.fcl"
-        minSdk = libs.versions.minSdk.get().toInt()
+        // 液态玻璃 UI 依赖 Backdrop 效果，需要 Android 12+ (API 31)
+        minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1313
         versionName = "1.3.1.3"
@@ -172,6 +173,8 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.navigation)
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.backdrop)
