@@ -24,11 +24,9 @@ import androidx.navigation.hasRoute
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.tungsten.fcl.ui.glass.component.GlassBottomBar
 import com.tungsten.fcl.ui.glass.component.GlassNavHost
+import com.tungsten.fcl.ui.glass.theme.GlassTheme
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 
-/**
- * FCL 液态玻璃 UI 根组件。
- */
 @Composable
 fun FCLGlassApp(
     initialPreset: ThemePreset = ThemePreset.DEFAULT
@@ -39,7 +37,12 @@ fun FCLGlassApp(
     var currentPreset by remember { mutableStateOf(ThemePreset.values()[presetOrdinal]) }
 
     val isDark = isSystemInDarkTheme()
-    val backgroundColor = if (isDark) Color(0xFF1A1A2E) else Color(0xFFF0F4F8)
+    val backgroundColor = GlassTheme.backgroundColor()
+
+    val onPresetChange: (ThemePreset) -> Unit = { preset ->
+        currentPreset = preset
+        sharedPreferences.edit().putInt("themePreset", preset.ordinal).apply()
+    }
 
     MaterialTheme(
         colorScheme = if (isDark) darkColorScheme() else lightColorScheme()
@@ -56,25 +59,22 @@ fun FCLGlassApp(
             else -> FCLGlassRoute.Home
         }
 
-        // 全局 backdrop：先绘制背景色，再捕获页面内容，供底部玻璃导航栏折射
         val backdrop = rememberLayerBackdrop {
             drawRect(backgroundColor)
             drawContent()
         }
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // 页面内容（被 layerBackdrop 捕获），底部留出导航栏空间
+        Box(modifier = Modifier.fillMaxSize()) {
             GlassNavHost(
                 navController = navController,
                 backdrop = backdrop,
+                currentPreset = currentPreset,
+                onPresetChange = onPresetChange,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = 80.dp)
             )
 
-            // 底部玻璃导航栏
             GlassBottomBar(
                 backdrop = backdrop,
                 preset = currentPreset,

@@ -13,37 +13,39 @@ import com.tungsten.fcl.ui.glass.page.HomePage
 import com.tungsten.fcl.ui.glass.page.ManagePage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
 import com.tungsten.fcl.ui.glass.page.VersionsPage
+import com.tungsten.fcllibrary.component.theme.ThemePreset
 
-/**
- * 玻璃导航容器，管理一级页面路由。
- * 整个导航 Host 被 layerBackdrop 捕获，供底部玻璃导航栏折射背景。
- */
 @Composable
 fun GlassNavHost(
     navController: NavHostController,
     backdrop: Backdrop,
+    currentPreset: ThemePreset,
+    onPresetChange: (ThemePreset) -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
         startDestination = FCLGlassRoute.Home,
-        modifier = modifier
-            .layerBackdrop(backdrop)
+        modifier = modifier.layerBackdrop(backdrop)
     ) {
         composable<FCLGlassRoute.Home> {
-            HomePage()
+            HomePage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Versions> {
-            VersionsPage()
+            VersionsPage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Download> {
-            DownloadPage()
+            DownloadPage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Manage> {
-            ManagePage()
+            ManagePage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Settings> {
-            SettingsPage()
+            SettingsPage(
+                backdrop = backdrop,
+                currentPreset = currentPreset,
+                onPresetChange = onPresetChange
+            )
         }
     }
 }

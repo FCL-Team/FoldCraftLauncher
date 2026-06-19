@@ -8,9 +8,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import com.kyant.backdrop.Backdrop
 
 @Composable
-fun VersionsPage(modifier: Modifier = Modifier) {
+fun VersionsPage(
+    backdrop: Backdrop,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

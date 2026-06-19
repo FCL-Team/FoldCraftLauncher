@@ -8,9 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
+import com.kyant.backdrop.Backdrop
+import com.tungsten.fcllibrary.component.theme.ThemePreset
 
 @Composable
-fun SettingsPage(modifier: Modifier = Modifier) {
+fun SettingsPage(
+    backdrop: Backdrop,
+    currentPreset: ThemePreset,
+    onPresetChange: (ThemePreset) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
