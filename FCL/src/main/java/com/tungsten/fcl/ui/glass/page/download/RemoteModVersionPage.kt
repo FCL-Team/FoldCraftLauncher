@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,6 +55,7 @@ fun RemoteModVersionPage(
     var isLoading by remember { mutableStateOf(true) }
     var versions by remember { mutableStateOf<List<RemoteMod.Version>>(emptyList()) }
     var error by remember { mutableStateOf<String?>(null) }
+    var pendingVersion by remember { mutableStateOf<RemoteMod.Version?>(null) }
 
     LaunchedEffect(mod, targetGameVersion, type) {
         isLoading = true
@@ -93,11 +96,43 @@ fun RemoteModVersionPage(
                         version = version,
                         tint = tintColor,
                         onDownload = {
-                            downloadVersion(context, type, version, parent)
+                            pendingVersion = version
                         }
                     )
                 }
             }
+        }
+
+        pendingVersion?.let { version ->
+            AlertDialog(
+                onDismissRequest = { pendingVersion = null },
+                title = { Text(stringResource(R.string.dependencies)) },
+                text = {
+                    val deps = version.dependencies
+                    if (deps.isNullOrEmpty()) {
+                        Text(stringResource(R.string.message_no_dependency))
+                    } else {
+                        Column {
+                            deps.forEach { dep ->
+                                Text("• [${dep.type}] ${dep.id}")
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        downloadVersion(context, type, version, parent)
+                        pendingVersion = null
+                    }) {
+                        Text(stringResource(R.string.download))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { pendingVersion = null }) {
+                        Text(stringResource(R.string.button_cancel))
+                    }
+                }
+            )
         }
 
         GlassButton(

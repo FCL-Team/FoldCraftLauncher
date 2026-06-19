@@ -798,6 +798,8 @@
     <string name="mods_choose_mod">Choose a mod</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Dependency</string>
+    <string name="dependencies">Dependencies</string>
+    <string name="message_no_dependency">No dependencies</string>
     <string name="mods_dependency_embedded">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
     <string name="mods_dependency_optional">optional pre-mod (if the game is missing, but mod functionality may be missing)</string>
     <string name="mods_dependency_required">required pre-mod (must be downloaded separately, missing may cause the game to fail to launch)</string>
