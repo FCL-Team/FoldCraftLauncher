@@ -50,22 +50,22 @@ fun DownloadPage(
         DownloadCategory(
             title = stringResource(R.string.mods),
             iconRes = R.drawable.ic_outline_extension_24,
-            route = FCLGlassDownloadRoute.Home // placeholder for mod download
+            route = FCLGlassDownloadRoute.ModDownload()
         ),
         DownloadCategory(
             title = stringResource(R.string.modpack),
             iconRes = R.drawable.ic_baseline_application_24,
-            route = FCLGlassDownloadRoute.Home // placeholder for modpack download
+            route = FCLGlassDownloadRoute.ModpackDownload()
         ),
         DownloadCategory(
             title = stringResource(R.string.resourcepack),
             iconRes = R.drawable.ic_baseline_texture_24,
-            route = FCLGlassDownloadRoute.Home // placeholder for resource pack download
+            route = FCLGlassDownloadRoute.ResourcePackDownload()
         ),
         DownloadCategory(
             title = stringResource(R.string.shaderpack),
             iconRes = R.drawable.ic_baseline_tune_24,
-            route = FCLGlassDownloadRoute.Home // placeholder for shader download
+            route = FCLGlassDownloadRoute.ShaderPackDownload()
         )
     )
 
