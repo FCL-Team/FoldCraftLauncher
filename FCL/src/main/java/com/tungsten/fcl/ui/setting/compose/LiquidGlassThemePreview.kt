@@ -195,7 +195,8 @@ private fun GlassButton(
                 backdrop = backdrop,
                 // 规则 8：shape 参数必须是 lambda 形式
                 // 规则 4：lens() 要求 CornerBasedShape，RoundedCornerShape 是 CornerBasedShape 的子类
-                shape = { RoundedCornerShape(50f.dp) },
+                // 使用 50% 圆角百分比获得真正的胶囊/药丸形状
+                shape = { RoundedCornerShape(50) },
                 effects = {
                     // 规则 5：效果顺序必须是 color filter => blur => lens
                     vibrancy()
