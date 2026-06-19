@@ -66,7 +66,7 @@ enum class RemoteContentType {
         return if (sourceName == modrinthName) RemoteModRepository.SortType.NAME else RemoteModRepository.SortType.POPULARITY
     }
 
-    fun installCallback(context: Context, parent: FCLUILayout? = null): (Profile, String, RemoteMod.Version) -> Unit {
+    fun installCallback(context: Context, parent: FCLUILayout?): (Profile, String, RemoteMod.Version) -> Unit {
         return { profile, version, file ->
             when (this) {
                 MOD -> downloadToSubdirectory(context, profile, version, file, "mods")

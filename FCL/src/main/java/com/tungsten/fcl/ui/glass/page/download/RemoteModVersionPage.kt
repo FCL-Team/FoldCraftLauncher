@@ -29,6 +29,7 @@ import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassEmptyState
 import com.tungsten.fcl.ui.glass.component.GlassTopBar
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLUILayout
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
@@ -143,5 +144,6 @@ private fun VersionFileCard(
 private fun downloadVersion(context: Context, type: RemoteContentType, version: RemoteMod.Version) {
     val profile = Profiles.getSelectedProfile()
     val selectedVersion = Profiles.getSelectedVersion() ?: ""
-    type.installCallback(context, parent = null).invoke(profile, selectedVersion, version)
+    val parent = context as? FCLUILayout
+    type.installCallback(context, parent).invoke(profile, selectedVersion, version)
 }
