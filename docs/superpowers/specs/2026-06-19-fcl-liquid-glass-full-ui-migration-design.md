@@ -11,6 +11,39 @@
 5. **Dialog 统一**：将旧 `FCLDialog` / `AlertDialog` 统一为 Compose `GlassAlertDialog` / `GlassInputDialog` / `GlassSelectionDialog`，避免页面与旧 Dialog 混用。
 6. **编译即验证**：每个阶段结束时必须能通过 `./gradlew :FCL:compileFordebugKotlin`。
 
+## Backdrop 官方最佳实践
+本迁移严格遵循 Backdrop 官方文档与示例 APP（[AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)）的用法。
+
+### Backdrop 类型选择
+- 主背景使用 `rememberLayerBackdrop { drawRect(backgroundColor); drawContent() }`，并通过 `Modifier.layerBackdrop(backdrop)` 让导航宿主绘制内容到 backdrop。
+- 需要合并多个背景源（如 Slider、Tabs）时使用 `rememberCombinedBackdrop(...)`。
+- "glass on glass" 嵌套场景（底部玻璃弹窗内再放玻璃按钮）使用 `exportedBackdrop` 参数避免循环渲染崩溃。
+
+### Effects 顺序
+必须按 `color filter ⇒ blur ⇒ lens` 的顺序调用：
+```kotlin
+effects = {
+    vibrancy()              // color filter
+    blur(4f.dp.toPx())      // blur
+    lens(16f.dp.toPx(), 32f.dp.toPx())  // lens (Android 13+)
+}
+```
+
+### 形状
+- 按钮、底部导航项等胶囊形元素优先使用官方示例中的 `Capsule()`（来自 [Shapes](https://github.com/Kyant0/Shapes) 库）。
+- 卡片使用 `RoundedCornerShape` 或 Shapes 库提供的 G2 连续圆角。
+- 注意：`lens()` 要求形状为 `CornerBasedShape`；`height` 必须在 `[0, shape.minCornerRadius]` 范围内。
+
+### 可读性
+必须在 `onDrawSurface` 中叠加半透明底色或主题色，不能只依赖 blur/lens：
+```kotlin
+onDrawSurface = { drawRect(GlassTheme.surfaceColor()) }
+```
+
+### 交互反馈
+- 按钮/导航项的按压缩放、位移等变换必须放在 `drawBackdrop` 的 `layerBlock` 中，避免 backdrop 跟随变形。
+- 参考官方示例实现 `InteractiveHighlight` 或直接使用 `Modifier.clickable` + 简单的 `Animatable` 缩放。
+
 ## 阶段划分
 
 ### 阶段 1：通用 Dialog 统一化
@@ -111,6 +144,19 @@
 ### 旧代码桥接
 - 在全部迁移完成前，部分旧 Activity 可能需要临时桥接。优先把 Dialog 改成 Compose，减少 Activity 间跳转。
 - 如果某个旧页面业务逻辑过重（如 `MainActivity` 的页面切换），先提取为独立工具类，再重写 UI。
+
+### 组件库升级
+在迁移旧页面的同时，逐步对照官方示例升级已有玻璃组件：
+- **GlassBottomBar**：增加 `layerBlock` 按压缩放反馈；可选引入 `Shapes` 库将 `RoundedCornerShape(50)` 替换为 `Capsule()`。
+- **GlassButton / GlassIconButton**：增加 `layerBlock` 交互高光/缩放；支持 `surfaceColor` 参数。
+- **GlassCard**：保持现有 `RoundedCornerShape` 或升级为 G2 连续圆角。
+- **新增组件**：
+  - `GlassBottomSheet`：使用 `exportedBackdrop` 实现玻璃底部弹窗。
+  - `GlassSlider`：使用 `rememberCombinedBackdrop` 实现轨道 + 滑块双层玻璃效果。
+  - `GlassProgressDialog`：统一后台任务进度显示。
+
+### 依赖
+当前已引入 `io.github.kyant0:backdrop:2.0.0`。如需使用官方示例中的 `Capsule()` 等形状，可额外引入 `com.kyant.shapes:shapes:<version>`，但这不是迁移阻塞项，可在视觉效果优化阶段再决定是否引入。
 
 ## 风险与回退
 - **范围风险**：阶段 4/5 设置与控制器涉及配置项较多，可能一次做不完。可在设计文档审批后进一步拆分。
