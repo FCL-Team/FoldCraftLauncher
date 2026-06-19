@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.glass.page.download
 
+import android.content.Context
 import android.widget.ImageView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -69,6 +70,7 @@ fun RemoteModInfoPage(
                 versions = list
             } else {
                 error = exception?.message ?: context.getString(R.string.download_failed_empty)
+                showToast(context, error)
             }
         }.start()
     }
@@ -182,5 +184,11 @@ fun RemoteModInfoPage(
                 }
             }
         }
+    }
+}
+
+private fun showToast(context: Context, message: String?) {
+    if (!message.isNullOrBlank()) {
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.glass.page.download
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,6 +86,7 @@ fun RemoteModListPage(
                 results = pair.second
             } else {
                 error = exception?.message ?: context.getString(R.string.download_failed_empty)
+                showToast(context, error)
             }
         }.start()
     }
@@ -191,5 +193,11 @@ fun RemoteModListPage(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             tint = tintColor
         )
+    }
+}
+
+private fun showToast(context: Context, message: String?) {
+    if (!message.isNullOrBlank()) {
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
     }
 }

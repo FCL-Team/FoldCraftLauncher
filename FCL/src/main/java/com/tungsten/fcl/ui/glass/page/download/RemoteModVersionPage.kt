@@ -67,6 +67,7 @@ fun RemoteModVersionPage(
                 versions = list
             } else {
                 error = exception?.message ?: context.getString(R.string.download_failed_empty)
+                showToast(context, error)
             }
         }.start()
     }
@@ -149,7 +150,17 @@ private fun downloadVersion(
     version: RemoteMod.Version,
     parent: FCLUILayout?
 ) {
-    val profile = Profiles.getSelectedProfile()
-    val selectedVersion = Profiles.getSelectedVersion() ?: ""
-    type.installCallback(context, parent).invoke(profile, selectedVersion, version)
+    try {
+        val profile = Profiles.getSelectedProfile()
+        val selectedVersion = Profiles.getSelectedVersion() ?: ""
+        type.installCallback(context, parent).invoke(profile, selectedVersion, version)
+    } catch (e: Throwable) {
+        showToast(context, e.message)
+    }
+}
+
+private fun showToast(context: Context, message: String?) {
+    if (!message.isNullOrBlank()) {
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
+    }
 }
