@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.glass.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,7 @@ import com.tungsten.fcl.ui.glass.page.DownloadPage
 import com.tungsten.fcl.ui.glass.page.download.InstallerVersionSelectPage
 import com.tungsten.fcl.ui.glass.page.download.VersionInstallInfoPage
 import com.tungsten.fcl.ui.glass.page.download.VersionInstallListPage
+import com.tungsten.fcl.ui.glass.page.download.VersionInstallState
 
 @Composable
 fun GlassDownloadNavHost(
@@ -32,6 +34,9 @@ fun GlassDownloadNavHost(
             )
         }
         composable<FCLGlassDownloadRoute.VersionInstallList> {
+            LaunchedEffect(Unit) {
+                VersionInstallState.clear()
+            }
             VersionInstallListPage(
                 backdrop = backdrop,
                 onNavigate = { route -> navController.navigate(route) }
@@ -52,8 +57,7 @@ fun GlassDownloadNavHost(
                 gameVersion = select.gameVersion,
                 libraryId = select.libraryId,
                 onVersionSelected = { remoteVersion ->
-                    // VersionInstallState will be introduced in Task 7.
-                    // For now just pop back.
+                    VersionInstallState.selectedVersions[select.libraryId] = remoteVersion
                     navController.popBackStack()
                 },
                 onBack = { navController.popBackStack() }

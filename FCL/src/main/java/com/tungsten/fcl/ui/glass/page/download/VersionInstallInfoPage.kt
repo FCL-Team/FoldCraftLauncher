@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,7 +54,7 @@ fun VersionInstallInfoPage(
     val group = remember { InstallerItem.InstallerItemGroup(context, gameVersion) }
     var name by remember { mutableStateOf(gameVersion) }
     var nameManuallyModified by remember { mutableStateOf(false) }
-    val selectedVersions = remember { mutableStateMapOf<String, RemoteVersion>() }
+    val selectedVersions = VersionInstallState.selectedVersions
 
     fun applySelections() {
         group.getLibraries().forEach { item ->
