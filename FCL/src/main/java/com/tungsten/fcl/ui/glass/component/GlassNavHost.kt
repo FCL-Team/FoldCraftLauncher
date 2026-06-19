@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.tungsten.fcl.ui.glass.FCLGlassRoute
-import com.tungsten.fcl.ui.glass.page.DownloadPage
 import com.tungsten.fcl.ui.glass.page.HomePage
 import com.tungsten.fcl.ui.glass.page.ManagePage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
@@ -35,7 +34,7 @@ fun GlassNavHost(
             VersionsPage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Download> {
-            DownloadPage(backdrop = backdrop)
+            GlassDownloadNavHost(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Manage> {
             ManagePage(backdrop = backdrop)
