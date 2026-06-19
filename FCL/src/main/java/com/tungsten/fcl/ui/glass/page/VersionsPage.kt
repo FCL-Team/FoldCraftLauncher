@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.glass.page
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,7 @@ import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
+import java.util.function.Consumer
 
 @Composable
 fun VersionsPage(
@@ -60,14 +60,14 @@ fun VersionsPage(
         state.loadVersions(context, state.selectedProfile)
     }
 
-    LaunchedEffect(Unit) {
-        Profiles.registerVersionsListener { profile ->
+    DisposableEffect(Unit) {
+        val listener = Consumer<Profile> { profile ->
             if (profile == state.selectedProfile) {
-                launch {
-                    state.loadVersions(context, profile)
-                }
+                state.loadVersions(context, profile)
             }
         }
+        Profiles.registerVersionsListener(listener)
+        onDispose { Profiles.unregisterVersionsListener(listener) }
     }
 
     val profiles = remember { Profiles.profiles }
