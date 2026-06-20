@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.glass.page
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,10 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.glass.FCLGlassRoute
 import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassChip
 import com.tungsten.fcl.ui.glass.component.GlassEmptyState
@@ -38,6 +39,7 @@ import java.util.function.Consumer
 @Composable
 fun VersionsPage(
     backdrop: Backdrop,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -113,7 +115,7 @@ fun VersionsPage(
                         onDuplicate = { state.duplicateVersion(context, item) },
                         onDelete = { state.deleteVersion(context, item) },
                         onSettings = {
-                            Toast.makeText(context, "Not implemented", Toast.LENGTH_SHORT).show()
+                            navController.navigate(FCLGlassRoute.VersionSettings(item.profile.name, item.version))
                         }
                     )
                 }

@@ -5,13 +5,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
+import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.glass.FCLGlassRoute
 import com.tungsten.fcl.ui.glass.page.HomePage
 import com.tungsten.fcl.ui.glass.page.AccountPage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
 import com.tungsten.fcl.ui.glass.page.VersionsPage
+import com.tungsten.fcl.ui.glass.page.version.VersionSettingsPage
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 
 @Composable
@@ -31,7 +34,10 @@ fun GlassNavHost(
             HomePage(backdrop = backdrop)
         }
         composable<FCLGlassRoute.Versions> {
-            VersionsPage(backdrop = backdrop)
+            VersionsPage(
+                backdrop = backdrop,
+                navController = navController
+            )
         }
         composable<FCLGlassRoute.Download> {
             GlassDownloadNavHost(backdrop = backdrop)
@@ -58,8 +64,16 @@ fun GlassNavHost(
         composable<FCLGlassRoute.QuickInput> {
             GlassPlaceholderPage(backdrop = backdrop, title = "QuickInput")
         }
-        composable<FCLGlassRoute.VersionSettings> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "VersionSettings")
+        composable<FCLGlassRoute.VersionSettings> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.VersionSettings>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            VersionSettingsPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                navController = navController,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.VersionInstall> {
             GlassPlaceholderPage(backdrop = backdrop, title = "VersionInstall")
