@@ -15,6 +15,8 @@ import com.tungsten.fcl.ui.glass.page.AccountPage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
 import com.tungsten.fcl.ui.glass.page.VersionsPage
 import com.tungsten.fcl.ui.glass.page.download.VersionInstallPage
+import com.tungsten.fcl.ui.glass.page.version.ModInfoPage
+import com.tungsten.fcl.ui.glass.page.version.VersionModListPage
 import com.tungsten.fcl.ui.glass.page.version.VersionSettingsPage
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 
@@ -87,8 +89,16 @@ fun GlassNavHost(
                 onComplete = { navController.popBackStack() }
             )
         }
-        composable<FCLGlassRoute.VersionMods> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "VersionMods")
+        composable<FCLGlassRoute.VersionMods> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.VersionMods>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            VersionModListPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                navController = navController,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.VersionWorlds> {
             GlassPlaceholderPage(backdrop = backdrop, title = "VersionWorlds")
@@ -99,8 +109,16 @@ fun GlassNavHost(
         composable<FCLGlassRoute.VersionShaderPacks> {
             GlassPlaceholderPage(backdrop = backdrop, title = "VersionShaderPacks")
         }
-        composable<FCLGlassRoute.ModInfo> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "ModInfo")
+        composable<FCLGlassRoute.ModInfo> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.ModInfo>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            ModInfoPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                modFileName = route.modFileName,
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
