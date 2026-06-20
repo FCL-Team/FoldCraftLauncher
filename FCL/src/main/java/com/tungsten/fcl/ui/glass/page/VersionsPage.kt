@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.glass.page
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -16,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kyant.backdrop.Backdrop
@@ -62,64 +67,80 @@ fun VersionsPage(
 
     val profiles = remember { Profiles.profiles }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        GlassTopBar(title = stringResource(R.string.version))
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            GlassTopBar(title = stringResource(R.string.version))
 
-        ProfileSelector(
-            backdrop = backdrop,
-            profiles = profiles,
-            selected = state.selectedProfile,
-            onSelect = {
-                Profiles.setSelectedProfile(it)
-                state.selectedProfile = it
-                state.refresh()
-            },
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-        )
-
-        GlassSearchBar(
-            backdrop = backdrop,
-            query = state.query,
-            onQueryChange = { state.query = it },
-            hint = stringResource(R.string.search),
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-        )
-
-        FilterChips(
-            backdrop = backdrop,
-            selected = state.selectedCategory,
-            onSelect = { state.selectedCategory = it },
-            tint = tintColor,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
-        )
-
-        val filtered = state.filteredVersions()
-        if (filtered.isEmpty() && !state.isLoading) {
-            GlassEmptyState(
-                text = stringResource(R.string.download_failed_empty),
-                modifier = Modifier.weight(1f)
+            ProfileSelector(
+                backdrop = backdrop,
+                profiles = profiles,
+                selected = state.selectedProfile,
+                onSelect = {
+                    Profiles.setSelectedProfile(it)
+                    state.selectedProfile = it
+                    state.refresh()
+                },
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
             )
-        } else {
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp, vertical = 8.dp)
-            ) {
-                items(filtered, key = { it.version }) { item ->
-                    GlassVersionItem(
-                        backdrop = backdrop,
-                        item = item,
-                        tint = tintColor,
-                        onLaunch = { state.launchVersion(context, item) },
-                        onRename = { state.renameVersion(context, item) },
-                        onDuplicate = { state.duplicateVersion(context, item) },
-                        onDelete = { state.deleteVersion(context, item) },
-                        onSettings = {
-                            navController.navigate(FCLGlassRoute.VersionSettings(item.profile.name, item.version))
-                        }
-                    )
+
+            GlassSearchBar(
+                backdrop = backdrop,
+                query = state.query,
+                onQueryChange = { state.query = it },
+                hint = stringResource(R.string.search),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            )
+
+            FilterChips(
+                backdrop = backdrop,
+                selected = state.selectedCategory,
+                onSelect = { state.selectedCategory = it },
+                tint = tintColor,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+            )
+
+            val filtered = state.filteredVersions()
+            if (filtered.isEmpty() && !state.isLoading) {
+                GlassEmptyState(
+                    text = stringResource(R.string.download_failed_empty),
+                    modifier = Modifier.weight(1f)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+                ) {
+                    items(filtered, key = { it.version }) { item ->
+                        GlassVersionItem(
+                            backdrop = backdrop,
+                            item = item,
+                            tint = tintColor,
+                            onLaunch = { state.launchVersion(context, item) },
+                            onRename = { state.renameVersion(context, item) },
+                            onDuplicate = { state.duplicateVersion(context, item) },
+                            onDelete = { state.deleteVersion(context, item) },
+                            onSettings = {
+                                navController.navigate(FCLGlassRoute.VersionSettings(item.profile.name, item.version))
+                            }
+                        )
+                    }
                 }
             }
+        }
+
+        FloatingActionButton(
+            onClick = {
+                navController.navigate(FCLGlassRoute.VersionInstall(state.selectedProfile.name))
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 96.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_download_24),
+                contentDescription = "Install"
+            )
         }
     }
 }
