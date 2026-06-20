@@ -58,5 +58,26 @@ fun GlassNavHost(
         composable<FCLGlassRoute.QuickInput> {
             GlassPlaceholderPage(backdrop = backdrop, title = "QuickInput")
         }
+        composable<FCLGlassRoute.VersionSettings> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionSettings")
+        }
+        composable<FCLGlassRoute.VersionInstall> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionInstall")
+        }
+        composable<FCLGlassRoute.VersionMods> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionMods")
+        }
+        composable<FCLGlassRoute.VersionWorlds> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionWorlds")
+        }
+        composable<FCLGlassRoute.VersionResourcePacks> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionResourcePacks")
+        }
+        composable<FCLGlassRoute.VersionShaderPacks> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "VersionShaderPacks")
+        }
+        composable<FCLGlassRoute.ModInfo> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "ModInfo")
+        }
     }
 }

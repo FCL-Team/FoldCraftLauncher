@@ -33,4 +33,47 @@ sealed class FCLGlassRoute {
         val initialValue: String,
         val hint: String
     ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionSettings(
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionInstall(
+        val profileName: String,
+        val version: String? = null
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionMods(
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionWorlds(
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionResourcePacks(
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class VersionShaderPacks(
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
+
+    @Serializable
+    data class ModInfo(
+        val modFileName: String,
+        val profileName: String,
+        val version: String
+    ) : FCLGlassRoute()
 }
