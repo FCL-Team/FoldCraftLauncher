@@ -18,6 +18,7 @@ import com.tungsten.fcl.ui.glass.page.download.VersionInstallPage
 import com.tungsten.fcl.ui.glass.page.version.ModInfoPage
 import com.tungsten.fcl.ui.glass.page.version.VersionModListPage
 import com.tungsten.fcl.ui.glass.page.version.VersionSettingsPage
+import com.tungsten.fcl.ui.glass.page.version.VersionWorldListPage
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 
 @Composable
@@ -100,8 +101,15 @@ fun GlassNavHost(
                 onBack = { navController.popBackStack() }
             )
         }
-        composable<FCLGlassRoute.VersionWorlds> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "VersionWorlds")
+        composable<FCLGlassRoute.VersionWorlds> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.VersionWorlds>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            VersionWorldListPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.VersionResourcePacks> {
             GlassPlaceholderPage(backdrop = backdrop, title = "VersionResourcePacks")
