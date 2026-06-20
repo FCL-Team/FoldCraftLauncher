@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.glass.page
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,8 +26,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.kyant.backdrop.Backdrop
 import com.tungsten.fcl.R
+import com.tungsten.fcl.ui.glass.FCLGlassRoute
 import com.tungsten.fcl.ui.glass.component.GlassCard
 import com.tungsten.fcl.ui.glass.component.GlassChip
 import com.tungsten.fcl.ui.glass.component.GlassSectionTitle
@@ -38,6 +41,7 @@ import com.tungsten.fcllibrary.component.theme.ThemePreset
 @Composable
 fun SettingsPage(
     backdrop: Backdrop,
+    navController: NavController,
     currentPreset: ThemePreset,
     onPresetChange: (ThemePreset) -> Unit,
     modifier: Modifier = Modifier
@@ -88,6 +92,49 @@ fun SettingsPage(
             },
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
         )
+
+        GlassSectionTitle(text = stringResource(R.string.settings_launcher))
+        GlassCard(
+            backdrop = backdrop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .clickable { navController.navigate(FCLGlassRoute.LauncherSettings) }
+        ) {
+            Text(
+                text = stringResource(R.string.settings_launcher),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        GlassCard(
+            backdrop = backdrop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .clickable { navController.navigate(FCLGlassRoute.JavaRuntime) }
+        ) {
+            Text(
+                text = "Java Runtime",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        GlassCard(
+            backdrop = backdrop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .clickable { navController.navigate(FCLGlassRoute.JvmArgs) }
+        ) {
+            Text(
+                text = stringResource(R.string.settings_advanced_jvm_args),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
 
         GlassSectionTitle(text = stringResource(R.string.about))
         GlassCard(

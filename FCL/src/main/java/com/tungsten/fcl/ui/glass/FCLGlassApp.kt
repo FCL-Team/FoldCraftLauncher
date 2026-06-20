@@ -25,6 +25,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.tungsten.fcl.activity.GlassMainActivity
 import com.tungsten.fcl.ui.glass.component.GlassBottomBar
 import com.tungsten.fcl.ui.glass.component.GlassNavHost
+import com.tungsten.fcl.ui.glass.component.dialog.GlassDialogHost
 import com.tungsten.fcl.ui.glass.theme.GlassTheme
 import com.tungsten.fcllibrary.component.theme.ThemePreset
 
@@ -96,6 +97,8 @@ fun FCLGlassApp(
                     },
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )
+
+                GlassDialogHost(backdrop = backdrop)
             }
         }
     }

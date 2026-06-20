@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.glass.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,14 +13,20 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.glass.FCLGlassRoute
 import com.tungsten.fcl.ui.glass.page.HomePage
 import com.tungsten.fcl.ui.glass.page.AccountPage
+import com.tungsten.fcl.ui.glass.page.QuickInputPage
 import com.tungsten.fcl.ui.glass.page.SettingsPage
 import com.tungsten.fcl.ui.glass.page.VersionsPage
 import com.tungsten.fcl.ui.glass.page.download.VersionInstallPage
+import com.tungsten.fcl.ui.glass.page.java.JavaRuntimePage
+import com.tungsten.fcl.ui.glass.page.java.JvmArgsPage
+import com.tungsten.fcl.ui.glass.page.launcher.LauncherSettingPage
 import com.tungsten.fcl.ui.glass.page.version.ModInfoPage
 import com.tungsten.fcl.ui.glass.page.version.VersionModListPage
+import com.tungsten.fcl.ui.glass.page.version.VersionPackListPage
 import com.tungsten.fcl.ui.glass.page.version.VersionSettingsPage
 import com.tungsten.fcl.ui.glass.page.version.VersionWorldListPage
 import com.tungsten.fcllibrary.component.theme.ThemePreset
+import com.tungsten.fcl.R
 
 @Composable
 fun GlassNavHost(
@@ -52,21 +59,39 @@ fun GlassNavHost(
         composable<FCLGlassRoute.Settings> {
             SettingsPage(
                 backdrop = backdrop,
+                navController = navController,
                 currentPreset = currentPreset,
                 onPresetChange = onPresetChange
             )
         }
         composable<FCLGlassRoute.LauncherSettings> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "LauncherSettings")
+            LauncherSettingPage(
+                backdrop = backdrop,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.JavaRuntime> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "JavaRuntime")
+            JavaRuntimePage(
+                backdrop = backdrop,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.JvmArgs> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "JvmArgs")
+            JvmArgsPage(
+                backdrop = backdrop,
+                onBack = { navController.popBackStack() }
+            )
         }
-        composable<FCLGlassRoute.QuickInput> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "QuickInput")
+        composable<FCLGlassRoute.QuickInput> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.QuickInput>()
+            QuickInputPage(
+                backdrop = backdrop,
+                title = route.title,
+                initialValue = route.initialValue,
+                hint = route.hint,
+                onConfirm = { /* consumers should navigate with result or use dialog */ },
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.VersionSettings> { backStackEntry ->
             val route = backStackEntry.toRoute<FCLGlassRoute.VersionSettings>()
@@ -111,11 +136,29 @@ fun GlassNavHost(
                 onBack = { navController.popBackStack() }
             )
         }
-        composable<FCLGlassRoute.VersionResourcePacks> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "VersionResourcePacks")
+        composable<FCLGlassRoute.VersionResourcePacks> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.VersionResourcePacks>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            VersionPackListPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                folderName = "resourcepacks",
+                title = stringResource(R.string.resourcepack),
+                onBack = { navController.popBackStack() }
+            )
         }
-        composable<FCLGlassRoute.VersionShaderPacks> {
-            GlassPlaceholderPage(backdrop = backdrop, title = "VersionShaderPacks")
+        composable<FCLGlassRoute.VersionShaderPacks> { backStackEntry ->
+            val route = backStackEntry.toRoute<FCLGlassRoute.VersionShaderPacks>()
+            val profile = Profiles.profiles.find { it.name == route.profileName } ?: return@composable
+            VersionPackListPage(
+                backdrop = backdrop,
+                profile = profile,
+                version = route.version,
+                folderName = "shaderpacks",
+                title = stringResource(R.string.shaderpack),
+                onBack = { navController.popBackStack() }
+            )
         }
         composable<FCLGlassRoute.ModInfo> { backStackEntry ->
             val route = backStackEntry.toRoute<FCLGlassRoute.ModInfo>()
