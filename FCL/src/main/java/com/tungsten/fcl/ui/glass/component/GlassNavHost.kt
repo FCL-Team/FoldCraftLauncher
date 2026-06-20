@@ -46,5 +46,17 @@ fun GlassNavHost(
                 onPresetChange = onPresetChange
             )
         }
+        composable<FCLGlassRoute.LauncherSettings> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "LauncherSettings")
+        }
+        composable<FCLGlassRoute.JavaRuntime> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "JavaRuntime")
+        }
+        composable<FCLGlassRoute.JvmArgs> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "JvmArgs")
+        }
+        composable<FCLGlassRoute.QuickInput> {
+            GlassPlaceholderPage(backdrop = backdrop, title = "QuickInput")
+        }
     }
 }

@@ -17,4 +17,20 @@ sealed class FCLGlassRoute {
 
     @Serializable
     data object Settings : FCLGlassRoute()
+
+    @Serializable
+    data object LauncherSettings : FCLGlassRoute()
+
+    @Serializable
+    data object JavaRuntime : FCLGlassRoute()
+
+    @Serializable
+    data object JvmArgs : FCLGlassRoute()
+
+    @Serializable
+    data class QuickInput(
+        val title: String,
+        val initialValue: String,
+        val hint: String
+    ) : FCLGlassRoute()
 }
