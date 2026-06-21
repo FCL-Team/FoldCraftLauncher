@@ -23,6 +23,7 @@ import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.LayoutConverter;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -33,9 +34,12 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
+
+import kotlin.Unit;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -43,10 +47,12 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.ui.ProgressDialog;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class ControllerManagePage extends FCLCommonPage implements View.OnClickListener {
@@ -238,14 +244,22 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             ControllerPageManager.getInstance().showTempPage(page);
         }
         if (view == share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), new File(FCLPath.CONTROLLER_DIR, getSelectedController().getFileName()));
-            intent.setType(AndroidUtils.getMimeType(FCLPath.CONTROLLER_DIR + "/" + getSelectedController().getFileName()));
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
-            getActivity().startActivity(Intent.createChooser(intent, getContext().getString(R.string.control_share)));
+            DialogUtilKt.showItemSelectionDialog(
+                    getContext(),
+                    getContext().getString(R.string.control_share_choose),
+                    new ArrayList<>(Arrays.asList(
+                            getContext().getString(R.string.control_share_direct),
+                            getContext().getString(R.string.control_share_zl2)
+                    )),
+                    selected -> {
+                        if (selected.equals(getContext().getString(R.string.control_share_direct))) {
+                            shareDirect();
+                        } else if (selected.equals(getContext().getString(R.string.control_share_zl2))) {
+                            shareAsZl2();
+                        }
+                        return Unit.INSTANCE;
+                    }
+            );
         }
         if (view == editInfo) {
             ControllerInfoDialog dialog = new ControllerInfoDialog(getContext(), false, selectedController.get(), (controller) -> changeControllerInfo(selectedController.get(), controller));
@@ -258,5 +272,54 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             intent.putExtras(bundle);
             getActivity().startActivity(intent);
         }
+    }
+
+    /** 直接分享原始 FCL 控制布局 JSON 文件。 */
+    private void shareDirect() {
+        File file = new File(FCLPath.CONTROLLER_DIR, getSelectedController().getFileName());
+        shareFile(file, R.string.control_share, AndroidUtils.getMimeType(file.getAbsolutePath()));
+    }
+
+    /** 转换为 ZL2 格式后分享。 */
+    private void shareAsZl2() {
+        if (!LayoutConverter.isSupported()) {
+            Toast.makeText(getContext(), R.string.control_convert_unsupported, Toast.LENGTH_LONG).show();
+            return;
+        }
+        ProgressDialog dialog = new ProgressDialog(getContext());
+        dialog.show();
+        Controller controller = getSelectedController();
+        File input = new File(FCLPath.CONTROLLER_DIR, controller.getFileName());
+        // 输出到公共目录 FCL/share/，便于文件管理器定位
+        File output = new File(FCLPath.SHARE_DIR, controller.getId() + "_zl2.json");
+        //noinspection ResultOfMethodCallIgnored
+        output.delete();
+        Task.supplyAsync(() -> {
+            return LayoutConverter.convertFclToZl2(input, output);
+        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<String, Exception>) error -> {
+            if (error == null) {
+                shareFile(output, R.string.control_share_zl2_title, "application/json");
+            } else {
+                DialogUtilKt.showErrorDialog(getContext(), getContext().getString(R.string.control_convert_failed) + "\n" + error);
+            }
+        }).whenComplete(Schedulers.androidUIThread(), exception -> {
+            dialog.dismiss();
+            if (exception != null) {
+                Logging.LOG.log(Level.SEVERE, "Failed to convert controller to ZL2", exception);
+                DialogUtilKt.showErrorDialog(getContext(), getContext().getString(R.string.control_convert_failed) + "\n" + exception.getMessage());
+            }
+        }).start();
+    }
+
+    /** 通过系统分享面板分享指定文件。 */
+    private void shareFile(File file, int chooserTitleRes, String mimeType) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), file);
+        intent.setType(mimeType);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().startActivity(Intent.createChooser(intent, getContext().getString(chooserTitleRes)));
     }
 }
