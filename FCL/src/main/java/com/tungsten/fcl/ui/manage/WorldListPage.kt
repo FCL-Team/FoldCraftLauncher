@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.util.showErrorDialog
@@ -23,7 +24,6 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fclcore.game.World
-import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.browser.FileBrowser
@@ -41,14 +41,13 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.nio.file.FileAlreadyExistsException
+import java.nio.file.Files
 import java.nio.file.InvalidPathException
 import java.nio.file.Path
-import java.util.concurrent.CompletableFuture
-import java.util.function.BiConsumer
-import java.util.function.Function
 import java.util.logging.Level
 import java.util.stream.Collectors
 import kotlin.coroutines.resume
+import kotlin.io.path.pathString
 
 class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     FCLCommonPage(context, id, parent, resId), VersionLoadable, View.OnClickListener {
@@ -57,8 +56,8 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
 
     private val showAll: BooleanProperty = SimpleBooleanProperty(this, "showAll", false)
 
-    private var savesDir: Path? = null
-    private var worlds: MutableList<World?>? = null
+    private lateinit var savesDir: Path
+    private var worlds: MutableList<World?> = mutableListOf()
     private var profile: Profile? = null
     private var id: String? = null
     private var gameVersion: String? = null
@@ -72,8 +71,8 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
         binding = PageManageWorldBinding.bind(contentView)
 
         showAll.addListener { _: Observable? ->
-            if (worlds != null) itemsProperty.setAll(
-                worlds!!.stream()
+            itemsProperty.setAll(
+                worlds.stream()
                     .filter { world: World? -> isShowAll() || world!!.gameVersion == null || world.gameVersion == gameVersion }
                     .map { it: World? ->
                         WorldListItem(
@@ -92,6 +91,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
         binding.showAll.checkProperty().bindBidirectional(showAll)
         binding.add.setOnClickListener(this)
         binding.refresh.setOnClickListener(this)
+        binding.fixPrivate.setOnClickListener(this)
 
         val adapter = WorldListAdapter(context)
         adapter.listProperty().bind(itemsProperty)
@@ -111,47 +111,63 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
     }
 
     override fun onClick(v: View?) {
-        if (v === binding.add) {
-            add()
-        }
-        if (v === binding.refresh) {
-            refresh()
+        when(v) {
+            binding.add -> add()
+            binding.refresh -> refresh()
+            binding.fixPrivate -> {
+                Files.walk(savesDir).forEach { path ->
+                    Files.setAttribute(
+                        path,
+                        "unix:mode",
+                        1535
+                    )
+                }
+                Toast.makeText(context,R.string.message_success, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
-    fun refresh(): CompletableFuture<*>? {
-        if (profile == null || id == null) return CompletableFuture.completedFuture<Any?>(null)
-
+    fun refresh() {
+        if (profile == null || id == null) return
         setLoading(true)
-        return CompletableFuture
-            .runAsync {
-                gameVersion = profile!!.repository.getGameVersion(id).orElse(null)
-            }
-            .thenApplyAsync(Function { _: Void? ->
-                World.getWorlds(
-                    savesDir
-                )
-            })
-            .whenCompleteAsync(BiConsumer { result: MutableList<World?>?, exception: Throwable? ->
-                worlds = result
-                setLoading(false)
-                if (exception == null) {
-                    itemsProperty.setAll(
-                        result!!.stream()
-                            .filter { world: World? -> isShowAll() || world!!.gameVersion == null || world.gameVersion == gameVersion }
-                            .map { it: World? ->
-                                WorldListItem(
-                                    context,
-                                    activity,
-                                    parent,
-                                    it
-                                )
-                            }.collect(
-                                Collectors.toList()
-                            )
+        MainActivity.getInstance().lifecycleScope.launch {
+            val result = runCatching {
+                withContext(Dispatchers.IO) {
+                    gameVersion = profile!!.repository.getGameVersion(id).orElse(null)
+                    World.getWorlds(
+                        savesDir
                     )
                 }
-            }, Schedulers.androidUIThread())
+            }.getOrElse {
+                worlds.clear()
+                return@launch
+            }
+            setLoading(false)
+            worlds.addAll(result)
+            itemsProperty.setAll(
+                result.stream()
+                    .filter { isShowAll() || it.gameVersion == null || it.gameVersion == gameVersion }
+                    .map {
+                        WorldListItem(
+                            context,
+                            activity,
+                            parent,
+                            it
+                        )
+                    }.collect(
+                        Collectors.toList()
+                    )
+            )
+            if (savesDir.pathString.startsWith(FCLPath.PRIVATE_COMMON_DIR) or savesDir.pathString.contains(
+                    "/Android/data/${context.applicationInfo.packageName}/"
+                )
+            ) {
+                if (worlds.isNotEmpty())
+                    binding.fixPrivate.visibility = View.VISIBLE
+            } else {
+                binding.fixPrivate.visibility = View.GONE
+            }
+        }
     }
 
     private fun setLoading(loading: Boolean) {
@@ -246,7 +262,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                         context,
                         activity,
                         parent,
-                        World(savesDir!!.resolve(name))
+                        World(savesDir.resolve(name))
                     )
                 )
             }
