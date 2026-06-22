@@ -40,6 +40,7 @@ import com.mio.util.DisplayUtil
 import com.mio.util.GuideUtil
 import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
+import com.mio.util.showWarningDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
@@ -397,6 +398,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiManager.onBackPressed()
             }
             if (view === jar) {
+                if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
+                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)){
+                        sharedPreferences.edit {
+                            putBoolean("showJarExecutorWarnDialog", false)
+                        }
+                    }
+                    return
+                }
                 jar.isSelected = false
                 JarExecutorHelper.start(this@MainActivity, this@MainActivity)
             }

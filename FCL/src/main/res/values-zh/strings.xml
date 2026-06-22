@@ -1178,5 +1178,6 @@
     <string name="exception_no_suitable_java">未能找到合适的Java！</string>
     <string name="slide_selection">滑动选择</string>
     <string name="swap_hands">双击切换副手</string>
+    <string name="jar_executor_warn">注意！该功能不是用于安装模组的，如果你正在安装模组，请使用启动器的下载功能或是在“管理模组”内添加。</string>
 
 </resources>

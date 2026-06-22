@@ -1243,4 +1243,5 @@
     <string name="exception_no_suitable_java">Failed to find a suitable Java!</string>
     <string name="slide_selection">Slide Selection</string>
     <string name="swap_hands">Double Tap Swap Hands</string>
+    <string name="jar_executor_warn">Note! This feature is not for installing mods. If you are installing mods, please use the launcher\'s download function or add them in "Manage Mods".</string>
 </resources>
