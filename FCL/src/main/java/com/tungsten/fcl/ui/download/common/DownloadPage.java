@@ -474,4 +474,16 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     protected String getLocalizedCategory(String category) {
         return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
     }
+
+    public void jumpToModPage(RemoteMod mod) {
+        if (mod.getData() instanceof CurseAddon) {
+            sourceSpinner.setSelection(0);
+            downloadSource.set(sourceSpinner.getItemAtPosition(0).toString());
+        } else {
+            sourceSpinner.setSelection(1);
+            downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
+        }
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+        DownloadPageManager.getInstance().showTempPage(page);
+    }
 }
