@@ -25,6 +25,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/fix_private"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:text="@string/world_permission_fix"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/add"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:ripple="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/add"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -116,7 +116,7 @@ class ManagePageManager(
         }
     }
 
-    fun onRunDirectoryChange(profile: Profile?, version: String?) {
+    fun onRunDirectoryChange(profile: Profile, version: String?) {
         modListPage.loadVersion(profile, version)
         worldListPage.loadVersion(profile, version)
     }

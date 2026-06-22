@@ -9,7 +9,11 @@ import com.tungsten.fcllibrary.databinding.DialogEditBinding
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
 
-class EditDialog(context: Context, private val callback: Consumer<String>) : FCLDialog(context),
+class EditDialog @JvmOverloads constructor(
+    context: Context,
+    private val defaultText: String = "",
+    private val callback: Consumer<String>
+) : FCLDialog(context),
     View.OnClickListener {
     var binding: DialogEditBinding
     var onCancelListener: (() -> Unit)? = null
@@ -22,6 +26,7 @@ class EditDialog(context: Context, private val callback: Consumer<String>) : FCL
         binding.apply {
             positive.setOnClickListener(this@EditDialog)
             negative.setOnClickListener(this@EditDialog)
+            editText.setText(defaultText)
         }
     }
 

@@ -1122,6 +1122,7 @@
     <string name="view_info_reference_height">Screen Height</string>
 
     <string name="world">Worlds</string>
+    <string name="world_permission_fix">Fix World File Permissions</string>
     <string name="world_add">Add a World (.zip)</string>
     <string name="world_datapack">Manage Datapacks</string>
     <string name="world_datapack_1_13">Only Minecraft 1.13 or newer supports datapacks.</string>

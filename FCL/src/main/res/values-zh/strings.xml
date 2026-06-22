@@ -1060,6 +1060,7 @@
     <string name="view_info_reference_height">屏幕高</string>
 
     <string name="world">世界</string>
+    <string name="world_permission_fix">修复世界文件权限</string>
     <string name="world_add">添加世界</string>
     <string name="world_datapack">管理数据包</string>
     <string name="world_datapack_1_13">仅 Minecraft 1.13 及之后的版本支持数据包</string>
