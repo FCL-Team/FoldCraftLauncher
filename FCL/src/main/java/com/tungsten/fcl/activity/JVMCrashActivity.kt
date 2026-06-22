@@ -64,6 +64,10 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
     private fun init() {
         var summarize = "Exit Normally, exit code = $exitCode"
         val log = readLog()
+        val error = findFabricIncompatibleModsError(log)
+        error?.let {
+            showErrorDialog(this@JVMCrashActivity, it)
+        }
         val errorLines =
             Arrays.stream(log.split("\n".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()).collect(
@@ -145,6 +149,14 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
             return FileUtils.readText(File(logPath))
         }
         throw IOException("Log file is too large, please check the log file manually.")
+    }
+
+    fun findFabricIncompatibleModsError(text: String): String? {
+        val pattern = Regex(
+            """start net\.fabricmc\.loader\.impl\.gui\.FabricGuiEntry\.displayError(.*?)end net\.fabricmc\.loader\.impl\.gui\.FabricGuiEntry\.displayError""",
+            RegexOption.DOT_MATCHES_ALL
+        )
+        return pattern.find(text)?.groupValues?.get(1)
     }
 
     companion object {
