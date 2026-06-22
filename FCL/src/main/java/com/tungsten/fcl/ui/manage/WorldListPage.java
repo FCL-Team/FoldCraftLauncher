@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
-import android.widget.ListView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -40,7 +42,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
@@ -57,7 +58,7 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
     private FCLCheckBox showAllCheckBox;
     private FCLButton addButton;
     private FCLButton refreshButton;
-    private ListView listView;
+    private RecyclerView recyclerView;
     private FCLProgressBar progressBar;
 
     public WorldListPage(Context context, int id, FCLUILayout parent, int resId) {
@@ -70,7 +71,7 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
         showAllCheckBox = findViewById(R.id.show_all);
         addButton = findViewById(R.id.add);
         refreshButton = findViewById(R.id.refresh);
-        listView = findViewById(R.id.list);
+        recyclerView = findViewById(R.id.recycler_view);
         progressBar = findViewById(R.id.progress);
 
         showAll.addListener(e -> {
@@ -87,7 +88,8 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
 
         WorldListAdapter adapter = new WorldListAdapter(getContext());
         adapter.listProperty().bind(itemsProperty);
-        listView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -133,7 +135,7 @@ public class WorldListPage extends FCLCommonPage implements ManageUI.VersionLoad
 
     private void setLoading(boolean loading) {
         progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-        listView.setVisibility(loading ? View.GONE : View.VISIBLE);
+        recyclerView.setVisibility(loading ? View.GONE : View.VISIBLE);
         showAllCheckBox.setEnabled(!loading);
         addButton.setEnabled(!loading);
         refreshButton.setEnabled(!loading);

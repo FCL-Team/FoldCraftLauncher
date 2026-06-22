@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
+import com.tungsten.fcl.databinding.ItemWorldBinding
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty
@@ -15,60 +17,45 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
-class WorldListAdapter(context: Context?) : FCLAdapter(context) {
+class WorldListAdapter(private val context: Context) :
+    RecyclerView.Adapter<WorldListAdapter.ViewHolder>() {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
     private val listProperty: ListProperty<WorldListItem> =
-        SimpleListProperty<WorldListItem>(FXCollections.observableArrayList<WorldListItem?>())
+        SimpleListProperty(FXCollections.observableArrayList())
 
     fun listProperty(): ListProperty<WorldListItem> {
         return listProperty
     }
 
     init {
-        listProperty.addListener(InvalidationListener { observable: Observable? ->
+        listProperty.addListener { _: Observable? ->
             notifyDataSetChanged()
-        })
-    }
-
-    private class ViewHolder {
-        var parent: FCLLinearLayout? = null
-        var name: FCLTextView? = null
-        var description: FCLTextView? = null
-        var datapack: FCLImageButton? = null
-        var export: FCLImageButton? = null
-        var delete: FCLImageButton? = null
-    }
-
-    override fun getCount(): Int {
-        return listProperty.getSize()
-    }
-
-    override fun getItem(i: Int): Any? {
-        return listProperty.get(i)
-    }
-
-    override fun getView(i: Int, view: View?, viewGroup: ViewGroup?): View {
-        var view = view
-        val viewHolder: ViewHolder
-        if (view == null) {
-            viewHolder = ViewHolder()
-            view = LayoutInflater.from(getContext()).inflate(R.layout.item_world, null)
-            viewHolder.parent = view.findViewById<FCLLinearLayout>(R.id.parent)
-            viewHolder.name = view.findViewById<FCLTextView>(R.id.name)
-            viewHolder.description = view.findViewById<FCLTextView>(R.id.description)
-            viewHolder.datapack = view.findViewById<FCLImageButton>(R.id.datapack)
-            viewHolder.export = view.findViewById<FCLImageButton>(R.id.export)
-            viewHolder.delete = view.findViewById<FCLImageButton>(R.id.delete)
-            view.setTag(viewHolder)
-        } else {
-            viewHolder = view.getTag() as ViewHolder
         }
-        val worldListItem = listProperty.get(i)
-        viewHolder.parent!!.setOnClickListener(View.OnClickListener { v: View? -> worldListItem.showInfo() })
-        viewHolder.name!!.stringProperty().bind(worldListItem.titleProperty())
-        viewHolder.description!!.stringProperty().bind(worldListItem.subtitleProperty())
-        viewHolder.datapack!!.setOnClickListener(View.OnClickListener { v: View? -> worldListItem.manageDatapacks() })
-        viewHolder.export!!.setOnClickListener(View.OnClickListener { v: View? -> worldListItem.export() })
-        viewHolder.delete!!.setOnClickListener(View.OnClickListener { v: View? -> worldListItem.delete() })
-        return view
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
+        return ViewHolder(ItemWorldBinding.inflate(LayoutInflater.from(context)).root)
+    }
+
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val binding = ItemWorldBinding.bind(holder.itemView)
+        val worldListItem = listProperty[position]
+        binding.parent.setOnClickListener { worldListItem.showInfo() }
+        binding.name.stringProperty().bind(worldListItem.titleProperty())
+        binding.description.stringProperty().bind(worldListItem.subtitleProperty())
+        binding.datapack.setOnClickListener { worldListItem.manageDatapacks() }
+        binding.export.setOnClickListener { worldListItem.export() }
+        binding.delete.setOnClickListener { worldListItem.delete() }
+    }
+
+    override fun getItemCount(): Int {
+        return listProperty.size
     }
 }
