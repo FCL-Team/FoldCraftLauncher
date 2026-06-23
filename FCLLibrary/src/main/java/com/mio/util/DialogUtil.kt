@@ -30,3 +30,17 @@ fun showItemSelectionDialog(
         callback(it)
     }.show()
 }
+
+fun showWarningDialog(context: Context, message: String, onConfirm: () -> Unit) {
+    FCLAlertDialog.Builder(context)
+        .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+        .setMessage(message)
+        .setPositiveButton {
+            onConfirm()
+        }
+        .setNegativeButton {
+
+        }
+        .create()
+        .show()
+}

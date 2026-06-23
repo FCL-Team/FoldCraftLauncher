@@ -156,6 +156,14 @@ class MenuSetting {
             enableGyroscopeProperty.set(enableGyroscope)
         }
 
+    val invertGyroscopeProperty: BooleanProperty =
+        SimpleBooleanProperty(this, "invertGyroscope", false)
+    var isInvertGyroscope: Boolean
+        get() = invertGyroscopeProperty.get()
+        set(v) {
+            invertGyroscopeProperty.set(v)
+        }
+
     val gyroscopeSensitivityProperty: IntegerProperty =
         SimpleIntegerProperty(this, "gyroscopeSensitivity", 10)
     var gyroscopeSensitivity: Int
@@ -273,6 +281,7 @@ class MenuSetting {
         gestureModeProperty.addListener(listener)
         disableLeftTouchProperty.addListener(listener)
         enableGyroscopeProperty.addListener(listener)
+        invertGyroscopeProperty.addListener(listener)
         gyroscopeSensitivityProperty.addListener(listener)
         mouseMoveModeProperty.addListener(listener)
         mouseSensitivityProperty.addListener(listener)
@@ -313,6 +322,7 @@ class MenuSetting {
                 addProperty("gestureMode", src.gestureMode.id)
                 addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
+                addProperty("invertGyroscope", src.isInvertGyroscope)
                 addProperty("gyroscopeSensitivity", src.gyroscopeSensitivity)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
                 addProperty("mouseSensitivity", src.mouseSensitivity)
@@ -354,6 +364,7 @@ class MenuSetting {
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
                 ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false
+                ms.isInvertGyroscope = json["invertGyroscope"]?.asBoolean ?: false
                 ms.gyroscopeSensitivity = json["gyroscopeSensitivity"]?.asInt ?: 10
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0

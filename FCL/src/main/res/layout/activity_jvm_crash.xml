@@ -37,40 +37,6 @@
         app:layout_constraintStart_toEndOf="@id/title"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/reason_title"
-        style="@style/FCLCrashSidebarTitle"
-        android:text="@string/game_crash_reason"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:id="@+id/hint_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@id/restart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/split"
-        app:layout_constraintTop_toBottomOf="@+id/reason_title">
-
-        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:id="@+id/hint"
-                style="@style/FCLCrashSidebarHint" />
-
-        </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
-
-    </ScrollView>
-
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/restart"
         style="@style/FCLCrashButton"

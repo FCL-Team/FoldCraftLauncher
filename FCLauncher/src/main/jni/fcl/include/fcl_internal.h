@@ -21,7 +21,6 @@ struct FCLInternal {
     jclass class_FCLBridge;
     jobject object_FCLBridge;
     ANativeWindow* window;
-    FILE* logFile;
     int fps;
 };
 
@@ -30,16 +29,14 @@ extern struct FCLInternal *fcl;
 _Noreturn void nominal_exit(int code);
 
 #define FCL_INTERNAL_LOG(x...) do { \
-    fprintf(fcl->logFile, "[FCL Internal] %s:%d\n", __FILE__, __LINE__); \
-    fprintf(fcl->logFile, x); \
-    fprintf(fcl->logFile, "\n"); \
-    fflush(fcl->logFile); \
+    printf("[FCL Internal] %s:%d\n", __FILE__, __LINE__); \
+    printf(x); \
+    printf("\n"); \
     } while (0)
 
 #define FCL_LOG(x...) do { \
-    fprintf(fcl->logFile, x); \
-    fprintf(fcl->logFile, "\n"); \
-    fflush(fcl->logFile); \
+    printf(x); \
+    printf("\n"); \
     } while (0)
 
 #define PrepareFCLBridgeJNI() \

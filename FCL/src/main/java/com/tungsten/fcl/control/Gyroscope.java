@@ -83,7 +83,11 @@ public class Gyroscope implements SensorEventListener {
                 angle[0] += event.values[0] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
                 angle[1] += event.values[1] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
                 if (gameMenu.getBridge() != null) {
-                    gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() - angle[0]), (gameMenu.getPointerY() + angle[1]));
+                    if (gameMenu.getMenuSetting().isInvertGyroscope()) {
+                        gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() + angle[0]), (gameMenu.getPointerY() - angle[1]));
+                    } else {
+                        gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() - angle[0]), (gameMenu.getPointerY() + angle[1]));
+                    }
                 }
             }
             timestamp = event.timestamp;

@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1310,
-    "versionName": "1.3.1.0",
-    "date": "2026.06.03",
+    "versionCode": 1314,
+    "versionName": "1.3.1.4",
+    "date": "2026.06.23",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the issue where installing mod loaders on some devices fails to start a new process, causing the launcher to crash.  \n2. The download page now supports displaying download counts.  \n3. Refactor and optimize the skin selection dialog for offline accounts.  \n4. Add the ability to long-press the clothes hanger button to directly set an offline skin.  \n5. Fix the issue where incorrect time format prevents the installation of certain Forge versions."
+        "text": "(Translated from Chinese by AI)\n1. Add a warning dialog when executing JAR files.  \n2. Refactor and optimize the world management page.  \n3. Add a permission repair feature for private directory archives.  \n4. Add automatic detection of Fabric mod conflict errors and a pop-up prompt on the JVM crash page.  \n5. Add a one‑click navigation button on the local mod management page to jump to the remote mod download page."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备安装模组加载器无法启动新进程导致启动器崩溃的问题\n2.下载页面支持显示下载量\n3.重构优化离线账户皮肤选择对话框\n4.增加长按衣架按钮直接设置离线皮肤功能\n5.修复时间格式不正确导致无法安装部分版本Forge的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加执行jar文件警告弹窗\n2.重构优化世界管理页面\n3.增加私有目录存档权限修复功能\n4.在JVM崩溃页面增加Fabric模组冲突错误自动检测及弹窗提示\n5.本地模组管理页面增加一键跳转至模组远程下载页功能"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/420eb1f915ba",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.0/FCL-release-1.3.1.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/560409dbe842",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.4/FCL-release-1.3.1.4-all.apk"
   }
 ]

@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemLocalModBinding
+import com.tungsten.fcl.ui.download.DownloadPageManager
+import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
 import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty
@@ -208,6 +210,19 @@ class LocalModListAdapter(
             val dialog = ModInfoDialog(context, modInfoObject)
             dialog.show()
         }
+        binding.jump.visibility = View.GONE
+        binding.jump.setOnClickListener {
+            val uiManager = MainActivity.getInstance().uiManager
+            MainActivity.getInstance().binding.download.isSelected = true
+            MainActivity.getInstance().uiManager.downloadUI.runAfterInit {
+                uiManager.downloadUI.tabLayout.selectTab(uiManager.downloadUI.tabLayout.getTabAt(2))
+                uiManager.downloadUI.pageManager
+                    .switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD)
+                val downloadPage =
+                    uiManager.downloadUI.pageManager.getPageById(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) as ModDownloadPage
+                downloadPage.jumpToModPage(modInfoObject.remoteMod)
+            }
+        }
 
         drawable.setTint(ThemeEngine.getInstance().getTheme().color)
         binding.icon.setImageDrawable(drawable)
@@ -247,6 +262,7 @@ class LocalModListAdapter(
                     Glide.with(binding.icon).load(mod.iconUrl).error(drawable)
                         .into(binding.icon)
                     binding.name.text = mod.title
+                    binding.jump.visibility = View.VISIBLE
                     if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
                         val name = modInfoObject.mod.name
                         if (name.isNotEmpty() && StringUtils.containsChinese(name)) {

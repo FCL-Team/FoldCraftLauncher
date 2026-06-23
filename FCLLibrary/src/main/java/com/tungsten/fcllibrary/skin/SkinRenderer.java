@@ -114,7 +114,7 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
     }
 
     public final void setTexture(Bitmap skin, Bitmap cape) {
-        this.textureProperty().set(new Bitmap[] { skin, cape });
+        this.textureProperty().set(new Bitmap[]{skin, cape});
     }
 
     public final Bitmap[] getTexture() {
@@ -123,7 +123,7 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
 
     public final ObjectProperty<Bitmap[]> textureProperty() {
         if (textureProperty == null) {
-            textureProperty = new ObjectPropertyBase<Bitmap[]>() {
+            textureProperty = new ObjectPropertyBase<>() {
 
                 public void invalidated() {
                     Schedulers.androidUIThread().execute(() -> {
@@ -140,7 +140,7 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
                     return "texture";
                 }
             };
-            textureProperty.set(new Bitmap[] { BitmapFactory.decodeStream(SkinRenderer.class.getResourceAsStream("/assets/img/alex.png")), null });
+            textureProperty.set(new Bitmap[]{BitmapFactory.decodeStream(SkinRenderer.class.getResourceAsStream("/assets/img/alex.png")), null});
         }
 
         return textureProperty;

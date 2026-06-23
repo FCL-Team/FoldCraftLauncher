@@ -251,7 +251,16 @@ public class MicrosoftService {
                 .createConnection();
         int responseCode = conn.getResponseCode();
         if (responseCode == HTTP_NOT_FOUND) {
-            throw new NoMinecraftJavaEditionProfileException();
+            MinecraftLicense license = HttpRequest.GET("https://api.minecraftservices.com/entitlements/license")
+                    .authorization(tokenType, accessToken)
+                    .getJson(MinecraftLicense.class);
+            boolean hasMinecraftLicense = license != null && license.items() != null && license.items().stream()
+                    .anyMatch(item -> "game_minecraft".equals(item.name()));
+            if (!hasMinecraftLicense) {
+                throw new MinecraftJavaEditionLicenseNotFoundException();
+            } else {
+                throw new MinecraftJavaEditionProfileNotFoundException();
+            }
         } else if (responseCode != 200) {
             throw new ResponseCodeException(new URL("https://api.minecraftservices.com/minecraft/profile"), responseCode);
         }
@@ -311,7 +320,10 @@ public class MicrosoftService {
     public static class XBox400Exception extends AuthenticationException {
     }
 
-    public static class NoMinecraftJavaEditionProfileException extends AuthenticationException {
+    public final static class MinecraftJavaEditionProfileNotFoundException extends AuthenticationException {
+    }
+
+    public final static class MinecraftJavaEditionLicenseNotFoundException extends AuthenticationException {
     }
 
     public static class NoXuiException extends AuthenticationException {
@@ -410,6 +422,19 @@ public class MicrosoftService {
 
     public static class MinecraftProfileResponseCape {
 
+    }
+
+    public record MinecraftLicense(
+            @SerializedName("items") List<MinecraftLicenseItem> items,
+            @SerializedName("signature") String signature,
+            @SerializedName("keyId") String keyId
+    ) {
+    }
+
+    public record MinecraftLicenseItem(
+            @SerializedName("name") String name,
+            @SerializedName("signature") String signature
+    ) {
     }
 
     public static class MinecraftProfileResponse extends MinecraftErrorResponse implements Validation {

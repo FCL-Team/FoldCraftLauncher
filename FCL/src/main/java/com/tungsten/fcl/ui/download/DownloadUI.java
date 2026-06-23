@@ -23,7 +23,7 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     private DownloadPageManager pageManager;
     private Runnable runnable;
 
-    private FCLTabLayout tabLayout;
+    public FCLTabLayout tabLayout;
     public FCLUILayout container;
 
     public DownloadUI(Context context, FCLUILayout parent, int id) {

@@ -17,7 +17,7 @@
         tools:ignore="HardcodedText" />
 
     <com.tungsten.fcllibrary.component.view.FCLEditText
-        android:id="@+id/text"
+        android:id="@+id/name"
         android:layout_marginTop="10dp"
         android:hint="@string/search"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/cancel"
-        app:layout_constraintTop_toBottomOf="@id/text" />
+        app:layout_constraintTop_toBottomOf="@id/name" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/cancel"
