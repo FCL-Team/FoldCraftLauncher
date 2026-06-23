@@ -7,7 +7,7 @@ import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class SkinCanvas extends GLSurfaceView {
+public class SkinViewer extends GLSurfaceView {
 
     private float density;
     private float previousX;
@@ -18,12 +18,12 @@ public class SkinCanvas extends GLSurfaceView {
     private double initDistance;
     private float initScale;
 
-    public SkinCanvas(Context context) {
+    public SkinViewer(Context context) {
         super(context);
         init();
     }
 
-    public SkinCanvas(Context context, AttributeSet attrs) {
+    public SkinViewer(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
@@ -76,7 +76,6 @@ public class SkinCanvas extends GLSurfaceView {
         getHolder().setFormat(PixelFormat.RGBA_8888);
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
         setZOrderOnTop(true);
-        setPreserveEGLContextOnPause(true);
     }
 
     public void setRenderer(SkinRenderer renderer, float density) {

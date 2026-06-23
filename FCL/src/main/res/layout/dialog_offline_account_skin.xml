@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.tungsten.fcllibrary.skin.SkinCanvas
+    <com.tungsten.fcllibrary.skin.SkinViewer
         android:id="@+id/skin_view"
         android:focusableInTouchMode="false"
         android:focusable="false"
