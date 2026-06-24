@@ -192,6 +192,13 @@
     <string name="control_list">Controller List</string>
     <string name="control_select">Select Controller</string>
     <string name="control_share">Share Controller</string>
+    <string name="control_share_choose">Choose share method</string>
+    <string name="control_share_direct">Direct share</string>
+    <string name="control_share_zl2">Share as ZL2 layout</string>
+    <string name="control_share_zl2_title">Share ZL2 layout</string>
+    <string name="control_converting">Converting…</string>
+    <string name="control_convert_failed">Conversion failed!</string>
+    <string name="control_convert_unsupported">ZL2 conversion is not supported on this device (arm64 required)</string>
     <string name="control_upload">Upload Controller</string>
 
     <string name="curse_category_0">All</string>
