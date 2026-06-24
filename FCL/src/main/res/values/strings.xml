@@ -1236,7 +1236,6 @@
     <string name="message_check_plugin">The current plugin %s does not support this game version. Continuing to use it may cause the game to crash! Do you want to continue?</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
-    <string name="close">Close</string>
     <string name="message_warn_restart_after_change">The changes will take effect after restarting.</string>
     <string name="message_check_path_valid">The currently selected game file path (%s) may contain illegal characters, which could cause the game to crash upon launching. It is recommended to check the game directory or rename the version. Do you want to continue launching?</string>
     <string name="message_check_has_modloader">It has been detected that the currently launched game version has mods installed, but the corresponding mod loader does not seem to be installed. The mods may not function properly after launching. Do you want to continue launching?</string>

@@ -165,7 +165,7 @@ class OpenFolderDialog(
                                     )
                                 )
                                 .setPositiveButton(
-                                    activity.getString(R.string.close)
+                                    activity.getString(com.tungsten.fcllibrary.R.string.close)
                                 ) {}.create().show()
                         }
                     }

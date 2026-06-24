@@ -20,15 +20,6 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />
 
-    <com.tungsten.fcllibrary.component.view.FCLImageView
-        android:id="@+id/retry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_baseline_refresh_24"
-        android:visibility="gone" />
-
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"

@@ -44,4 +44,5 @@
     <string name="log_upload_open">打开</string>
     <string name="log_upload_share">分享</string>
     <string name="log_upload_share_template">我在启动器里遇到问题了，以下是日志链接：\n%s</string>
+    <string name="close">关闭</string>
 </resources>

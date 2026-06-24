@@ -12,10 +12,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ViewModScreenshotBinding
 import com.tungsten.fclcore.mod.RemoteMod.Screenshot
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fcllibrary.component.dialog.FullImageDialog
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
 
@@ -23,84 +25,78 @@ class RemoteModScreenshotAdapter(
     val context: Context,
     private val screenshotList: List<Screenshot>
 ) :
-    RecyclerView.Adapter<RemoteModScreenshotAdapter.ScreenshotViewHolder>() {
+    RecyclerView.Adapter<ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScreenshotViewHolder {
-        return ScreenshotViewHolder(
-            ViewModScreenshotBinding.bind(
-                LayoutInflater.from(context).inflate(
-                    R.layout.view_mod_screenshot,
-                    parent,
-                    false
-                )
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(
+            ViewModScreenshotBinding.inflate(LayoutInflater.from(context)).root
         )
     }
 
     override fun getItemCount(): Int = screenshotList.size
 
-    override fun onBindViewHolder(holder: ScreenshotViewHolder, position: Int) {
-        holder.setScreenshot(screenshotList[position])
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val binding = ViewModScreenshotBinding.bind(holder.itemView)
+        val screenshot = screenshotList[position]
+
+        binding.screenshot.setImageDrawable(null)
+        loadScreenshotImage(binding, screenshot.imageUrl)
+
+        binding.screenshot.setOnClickListener {
+            loadScreenshotImage(binding, screenshot.imageUrl)
+        }
+        binding.screenshot.setOnLongClickListener {
+            showFullImageDialog(screenshot.imageUrl)
+            true
+        }
+
+        binding.title.setVisibleIfNotBlank(screenshot.title)
+        binding.description.setVisibleIfNotBlank(screenshot.description)
     }
 
-    class ScreenshotViewHolder(val binding: ViewModScreenshotBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun setScreenshot(screenshot: Screenshot) {
-            binding.retry.setOnClickListener { loadScreenshotImage(screenshot.imageUrl) }
+    private fun showFullImageDialog(imageUrl: String) {
+        val dialog = FullImageDialog(context).apply { show() }
+        Glide.with(dialog.getImageView())
+            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .fitCenter()
+            .into(dialog.getImageView())
+    }
 
-            binding.screenshot.setImageDrawable(null)
-            loadScreenshotImage(screenshot.imageUrl)
+    private fun loadScreenshotImage(binding: ViewModScreenshotBinding, imageUrl: String) {
+        binding.loading.visibility = View.VISIBLE
+        Glide.with(binding.screenshot)
+            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .fitCenter()
+            .error(R.drawable.ic_baseline_refresh_24)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.loading.visibility = View.GONE
+                    return false
+                }
 
-            binding.title.setVisibleIfNotBlank(screenshot.title)
-            binding.description.setVisibleIfNotBlank(screenshot.description)
-        }
+                override fun onResourceReady(
+                    resource: Drawable,
+                    model: Any,
+                    target: Target<Drawable>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.loading.visibility = View.GONE
+                    return false
+                }
+            })
+            .into(binding.screenshot)
+    }
 
-        private fun loadScreenshotImage(imageUrl: String) {
-            binding.apply {
-                setLoading(true)
-                Glide.with(screenshot)
-                    .load(imageUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .fitCenter()
-                    .addListener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            setLoading(false)
-                            setFailed()
-                            return false
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            setLoading(false)
-                            return false
-                        }
-                    })
-                    .into(screenshot)
-            }
-        }
-
-        private fun setLoading(loading: Boolean) {
-            binding.loading.visibility = if (loading) View.VISIBLE else View.GONE
-            if (loading) binding.retry.visibility = View.GONE
-        }
-
-        private fun setFailed() {
-            binding.retry.visibility = View.VISIBLE
-        }
-
-        private fun FCLTextView.setVisibleIfNotBlank(text: String?) {
-            visibility = if (StringUtils.isNotBlank(text)) View.VISIBLE else View.GONE
-            this.text = text
-        }
+    private fun FCLTextView.setVisibleIfNotBlank(text: String?) {
+        visibility = if (StringUtils.isNotBlank(text)) View.VISIBLE else View.GONE
+        this.text = text
     }
 }
