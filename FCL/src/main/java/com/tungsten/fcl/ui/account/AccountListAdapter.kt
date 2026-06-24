@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.mio.ui.adapter.ViewHolder
 import com.mio.util.copyToClipBoard
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
@@ -35,7 +36,7 @@ import java.util.concurrent.ExecutionException
 class AccountListAdapter(
     private val context: Context,
     private val list: MutableList<AccountListItem>
-) : RecyclerView.Adapter<AccountListAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -223,7 +224,4 @@ class AccountListAdapter(
         this.list.addAll(list)
         notifyDataSetChanged()
     }
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
 }
