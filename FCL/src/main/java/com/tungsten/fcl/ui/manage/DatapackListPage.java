@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -156,37 +157,30 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     }
 
     public void add() {
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setSelectionMode(SelectionMode.MULTIPLE_SELECTION);
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".zip");
-        builder.setSuffix(suffix);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_DATAPACK_CODE, ((requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_DATAPACK_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                ArrayList<String> path = FileBrowser.getSelectedFiles(data);
-                List<File> res = path.stream().map(File::new).collect(Collectors.toList());
-                FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
-                builder1.setCancelable(false);
-                builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                builder1.setMessage(getContext().getString(R.string.datapack_add));
-                FCLAlertDialog installDialog = builder1.create();
-                installDialog.show();
-                new Thread(() -> {
-                    res.forEach(it -> {
-                        try {
-                            installSingleDatapack(it);
-                        } catch (IOException e) {
-                            Logging.LOG.log(Level.WARNING, "Unable to parse datapack file " + datapack, e);
-                        }
-                    });
-                    Schedulers.androidUIThread().execute(() -> {
-                        installDialog.dismiss();
-                        refresh();
-                    });
-                }).start();
-            }
-        }));
+        MainActivity.getInstance().fileLauncher.launchMultiSelection(null,suffix,files->{
+            List<File> res = files.stream().map(File::new).collect(Collectors.toList());
+            FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
+            builder1.setCancelable(false);
+            builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+            builder1.setMessage(getContext().getString(R.string.datapack_add));
+            FCLAlertDialog installDialog = builder1.create();
+            installDialog.show();
+            new Thread(() -> {
+                res.forEach(it -> {
+                    try {
+                        installSingleDatapack(it);
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Unable to parse datapack file " + datapack, e);
+                    }
+                });
+                Schedulers.androidUIThread().execute(() -> {
+                    installDialog.dismiss();
+                    refresh();
+                });
+            }).start();
+        });
     }
 
     void removeSelected(ObservableList<DatapackInfoObject> selectedItems) {

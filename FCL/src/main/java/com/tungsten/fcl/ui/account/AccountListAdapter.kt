@@ -1,9 +1,7 @@
 package com.tungsten.fcl.ui.account
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
 import com.mio.util.copyToClipBoard
 import com.tungsten.fcl.R
-import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemAccountBinding
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager.Companion.instance
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
-import com.tungsten.fcllibrary.browser.FileBrowser
-import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
-import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import java.util.Objects
@@ -192,24 +185,15 @@ class AccountListAdapter(
             if (item.account !is OfflineAccount) {
                 return@setOnLongClickListener true
             }
-            val builder = FileBrowser.Builder(context)
-            builder.setLibMode(LibMode.FILE_CHOOSER)
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-            val suffix = ArrayList<String?>()
-            suffix.add(".png")
-            builder.setSuffix(suffix)
-            builder.create().browse(
-                getInstance(),
-                RequestCodes.SELECT_SKIN_CODE,
-                (ResultListener.Listener { requestCode: Int, resultCode: Int, data: Intent? ->
-                    if (requestCode == RequestCodes.SELECT_SKIN_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                        val path = FileBrowser.getSelectedFiles(data)[0]
-                        (item.account as OfflineAccount).skin =
-                            Skin(Skin.Type.LOCAL_FILE, "", null, path, null)
-                        item.refreshSkinBinding()
-                    }
-                })
-            )
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(
+                null,
+                listOf(".png")
+            ) {
+                val path = it[0]
+                (item.account as OfflineAccount).skin =
+                    Skin(Skin.Type.LOCAL_FILE, "", null, path, null)
+                item.refreshSkinBinding()
+            }
             return@setOnLongClickListener true
         }
     }

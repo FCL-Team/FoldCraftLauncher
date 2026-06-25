@@ -2,11 +2,9 @@ package com.tungsten.fcl.game;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 
 import com.mio.JavaManager;
@@ -16,15 +14,10 @@ import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.util.io.IOUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 import java.io.File;
@@ -38,26 +31,19 @@ import java.util.zip.ZipFile;
 
 public class JarExecutorHelper {
 
-    public static void start(FCLActivity activity, Context context) {
+    public static void start(FCLActivity activity) {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".jar");
-        FileBrowser.Builder builder = new FileBrowser.Builder(context);
-        builder.setInitDir(Environment.getExternalStorageDirectory().getAbsolutePath());
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-        builder.setSuffix(suffix);
-        builder.create().browse(activity, RequestCodes.SELECT_MANUAL_INSTALLER_CODE, ((requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_MANUAL_INSTALLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                String path = FileBrowser.getSelectedFiles(data).get(0);
-                Uri uri = Uri.parse(path);
-                if (AndroidUtils.isDocUri(uri)) {
-                    path = AndroidUtils.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
-                }
-                if (new File(path).exists()) {
-                    launchJarExecutor(context, new File(path));
-                }
+        activity.fileLauncher.launchSingleSelection( null, suffix, files -> {
+            String path = files.get(0);
+            Uri uri = Uri.parse(path);
+            if (AndroidUtils.isDocUri(uri)) {
+                path = AndroidUtils.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
             }
-        }));
+            if (new File(path).exists()) {
+                launchJarExecutor(activity, new File(path));
+            }
+        });
     }
 
     private static void launchJarExecutor(Context context, File file) {

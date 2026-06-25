@@ -9,6 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,11 +22,20 @@ import androidx.core.content.ContextCompat;
 
 import com.mio.util.DisplayUtil;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fcllibrary.browser.FileBrowserLauncher;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
+import java.util.List;
+import java.util.Map;
+
 public class FCLActivity extends AppCompatActivity {
-    public boolean callback = true;
+    public FileBrowserLauncher fileLauncher;
+    private ActivityResultLauncher<String[]> permissionLauncher;
+    private ActivityResultLauncher<Intent> activityLauncher;
+    private Runnable permissionCallback;
+    private ActivityResultCallback<ActivityResult> activityCallback;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +53,22 @@ public class FCLActivity extends AppCompatActivity {
         if (hasPermission) {
             FCLPath.loadPaths(this);
         }
+        fileLauncher = new FileBrowserLauncher(this);
+        permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+            @Override
+            public void onActivityResult(Map<String, Boolean> o) {
+                if (permissionCallback != null) {
+                    permissionCallback.run();
+                    permissionCallback = null;
+                }
+            }
+        });
+        activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (activityCallback != null) {
+                activityCallback.onActivityResult(result);
+                activityCallback = null;
+            }
+        });
     }
 
     protected void applySavedNightMode() {
@@ -49,7 +78,16 @@ public class FCLActivity extends AppCompatActivity {
             mode = themeMode == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
         }
         AppCompatDelegate.setDefaultNightMode(mode);
+    }
 
+    public void requestPermissions(String[] permissions, Runnable callback) {
+        permissionCallback = callback;
+        permissionLauncher.launch(permissions);
+    }
+
+    public void startActivityForResult(Intent intent, ActivityResultCallback<ActivityResult> callback) {
+        activityCallback = callback;
+        activityLauncher.launch(intent);
     }
 
     @Override
@@ -76,13 +114,5 @@ public class FCLActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         ThemeEngine.getInstance().applyFullscreen(getWindow(), ThemeEngine.getInstance().getTheme().isFullscreen());
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (callback) {
-            ResultListener.onActivityResult(requestCode, resultCode, data);
-        }
     }
 }

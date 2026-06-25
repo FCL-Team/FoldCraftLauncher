@@ -22,6 +22,7 @@ import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.ResultListener;
 
 import net.burningtnt.terracotta.TerracottaAndroidAPI;
@@ -66,7 +67,7 @@ public class Terracotta {
         return TERRACOTTA_USER_NOTICE_VERSION;
     }
 
-    public static void initialize(Activity context) {
+    public static void initialize(FCLActivity context) {
         if (initialized)
             return;
 
@@ -88,7 +89,8 @@ public class Terracotta {
                 TerracottaState.Ready state = STATE.get();
                 int index = state == null ? -1 : state.index;
                 String stateJson = TerracottaAndroidAPI.getState();
-                TerracottaState.Ready object = JsonUtils.fromNonNullJson(stateJson, new TypeToken<TerracottaState.Ready>() {}.getType());
+                TerracottaState.Ready object = JsonUtils.fromNonNullJson(stateJson, new TypeToken<TerracottaState.Ready>() {
+                }.getType());
                 TerracottaState.Ready next = object.index <= index ? null : object;
                 if (next != null) {
                     compareAndSet(state, next);
@@ -191,19 +193,17 @@ public class Terracotta {
         stateProperty().removeListener(notificationListener);
     }
 
-    private static void startTerracottaVpn(Activity context) {
+    private static void startTerracottaVpn(FCLActivity context) {
         Intent intent = VpnService.prepare(context);
         if (intent != null) {
-            ResultListener.startActivityForResult(context, intent, RequestCodes.VPN_PERMISSION_CODE, (requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.VPN_PERMISSION_CODE) {
-                    if (resultCode == Activity.RESULT_OK) {
-                        Intent vpnIntent = new Intent(context, TerracottaVPNService.class).setAction(TerracottaVPNService.ACTION_START);
-                        ContextCompat.startForegroundService(context, vpnIntent);
-                    } else {
-                        TerracottaAndroidAPI.getPendingVpnServiceRequest().reject();
-                        setWaiting(context, true);
-                        Toast.makeText(context, context.getString(R.string.terracotta_permission_vpn), Toast.LENGTH_SHORT).show();
-                    }
+            context.startActivityForResult(intent, result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent vpnIntent = new Intent(context, TerracottaVPNService.class).setAction(TerracottaVPNService.ACTION_START);
+                    ContextCompat.startForegroundService(context, vpnIntent);
+                } else {
+                    TerracottaAndroidAPI.getPendingVpnServiceRequest().reject();
+                    setWaiting(context, true);
+                    Toast.makeText(context, context.getString(R.string.terracotta_permission_vpn), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

@@ -162,7 +162,7 @@ class ManagePage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
             .setInitDir(root.absolutePath)
             .setLibMode(LibMode.FILE_BROWSER)
             .create()
-            .browse(activity, RequestCodes.BROWSE_DIR_CODE, null)
+            .browse(activity)
     }
 
     private fun redownloadAssetIndex() {

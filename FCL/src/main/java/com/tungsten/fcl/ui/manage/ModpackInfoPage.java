@@ -2,22 +2,20 @@ package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fcl.setting.ConfigHolder.config;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
@@ -28,16 +26,12 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLNumberSeekBar;
-import com.tungsten.fcllibrary.component.view.FCLSeekBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -213,15 +207,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
     }
 
     private void selectPath() {
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        builder.setLibMode(LibMode.FOLDER_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_EXPORT_FOLDER_CODE, ((requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_EXPORT_FOLDER_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                String p = FileBrowser.getSelectedFiles(data).get(0);
-                path.set(p);
-            }
-        }));
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, files -> path.set(files.get(0)));
     }
 
     @Override

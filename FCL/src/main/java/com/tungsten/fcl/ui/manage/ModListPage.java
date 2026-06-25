@@ -2,11 +2,8 @@ package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
-import static com.tungsten.fcllibrary.browser.FileBrowser.SELECTED_FILES;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.text.Editable;
@@ -29,7 +26,6 @@ import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -48,9 +44,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -331,66 +324,59 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         suffix.add(".jar");
         suffix.add(".zip");
         suffix.add(".litemod");
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setTitle(getContext().getString(R.string.mods_choose_mod));
-        builder.setSuffix(suffix);
-        builder.setSelectionMode(SelectionMode.MULTIPLE_SELECTION);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_MODS_CODE, (requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_MODS_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                ArrayList<Uri> selectedFiles = data.getParcelableArrayListExtra(SELECTED_FILES);
-                List<Object> res = selectedFiles.stream().filter(Objects::nonNull).map(uri -> {
-                    if (Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT) || Objects.equals(uri.getScheme(), ContentResolver.SCHEME_FILE)) {
-                        return uri;
+        MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
+            List<Object> res = files.stream().map(Uri::parse).filter(Objects::nonNull).map(uri -> {
+                if (AndroidUtils.isDocUri(uri)) {
+                    return uri;
+                } else {
+                    return new File(uri.toString());
+                }
+            }).collect(Collectors.toList());
+
+            // It's guaranteed that succeeded and failed are thread safe here.
+            List<String> succeeded = new ArrayList<>(res.size());
+            List<String> failed = new ArrayList<>();
+
+            Task.runAsync(() -> {
+                for (Object obj : res) {
+                    if (obj instanceof File file) {
+                        try {
+                            modManager.addMod(file.toPath());
+                            succeeded.add(file.getName());
+                        } catch (Exception e) {
+                            LOG.log(Level.WARNING, "Unable to add mod " + file, e);
+                            failed.add(file.getName());
+
+                            // Actually addMod will not throw exceptions because FileChooser has already filtered files.
+                        }
                     } else {
-                        return new File(uri.toString());
-                    }
-                }).collect(Collectors.toList());
-                // It's guaranteed that succeeded and failed are thread safe here.
-                List<String> succeeded = new ArrayList<>(res.size());
-                List<String> failed = new ArrayList<>();
+                        try {
+                            Uri uri = (Uri) obj;
+                            modManager.addMod(getActivity(), uri);
+                            succeeded.add(new File(uri.getPath()).getName());
+                        } catch (Exception e) {
+                            LOG.log(Level.WARNING, "Unable to add mod " + obj.toString(), e);
+                            failed.add(obj.toString());
 
-                Task.runAsync(() -> {
-                    for (Object obj : res) {
-                        if (obj instanceof File file) {
-                            try {
-                                modManager.addMod(file.toPath());
-                                succeeded.add(file.getName());
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Unable to add mod " + file, e);
-                                failed.add(file.getName());
-
-                                // Actually addMod will not throw exceptions because FileChooser has already filtered files.
-                            }
-                        } else {
-                            try {
-                                Uri uri = (Uri) obj;
-                                modManager.addMod(getActivity(), uri);
-                                succeeded.add(new File(uri.getPath()).getName());
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Unable to add mod " + obj.toString(), e);
-                                failed.add(obj.toString());
-
-                                // Actually addMod will not throw exceptions because FileChooser has already filtered files.
-                            }
+                            // Actually addMod will not throw exceptions because FileChooser has already filtered files.
                         }
                     }
-                }).withRunAsync(Schedulers.androidUIThread(), () -> {
-                    List<String> prompt = new ArrayList<>(1);
-                    if (!succeeded.isEmpty())
-                        prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_success", String.join(", ", succeeded)));
-                    if (!failed.isEmpty())
-                        prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_failed", String.join(", ", failed)));
-                    FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
-                    builder1.setCancelable(false);
-                    builder1.setAlertLevel(failed.isEmpty() ? FCLAlertDialog.AlertLevel.INFO : FCLAlertDialog.AlertLevel.ALERT);
-                    builder1.setTitle(getContext().getString(R.string.mods_add));
-                    builder1.setMessage(String.join("\n", prompt));
-                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                    builder1.create().show();
-                    loadMods(modManager);
-                }).start();
-            }
+                }
+            }).withRunAsync(Schedulers.androidUIThread(), () -> {
+                List<String> prompt = new ArrayList<>(1);
+                if (!succeeded.isEmpty())
+                    prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_success", String.join(", ", succeeded)));
+                if (!failed.isEmpty())
+                    prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_failed", String.join(", ", failed)));
+                FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
+                builder1.setCancelable(false);
+                builder1.setAlertLevel(failed.isEmpty() ? FCLAlertDialog.AlertLevel.INFO : FCLAlertDialog.AlertLevel.ALERT);
+                builder1.setTitle(getContext().getString(R.string.mods_add));
+                builder1.setMessage(String.join("\n", prompt));
+                builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder1.create().show();
+                loadMods(modManager);
+            }).start();
         });
     }
 

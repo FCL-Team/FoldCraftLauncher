@@ -1,19 +1,17 @@
 package com.tungsten.fcl.control
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.view.View
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogOpenFolderBinding
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fcllibrary.browser.FileBrowser
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserAdapter
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserListener
 import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
+import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import kotlinx.coroutines.CancellationException
@@ -27,7 +25,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 
 class OpenFolderDialog(
-    val activity: Activity,
+    val activity: FCLActivity,
     val initialPath: String
 ) : FCLDialog(activity), View.OnClickListener {
     private var internalPath: String = initialPath
@@ -83,18 +81,9 @@ class OpenFolderDialog(
             binding.closeButton -> dismiss()
             binding.importButton -> {
                 val targetDir = internalPath
-                FileBrowser.Builder(context)
-                    .setLibMode(LibMode.FILE_CHOOSER)
-                    .setSelectionMode(SelectionMode.MULTIPLE_SELECTION)
-                    .create()
-                    .browse(
-                        activity,
-                        RequestCodes.SELECT_IMGAME_IMPORT
-                    ) { requestCode, resultCode, data ->
-                        if (requestCode == RequestCodes.SELECT_IMGAME_IMPORT && resultCode == Activity.RESULT_OK && data != null) {
-                            importFiles(FileBrowser.getSelectedFiles(data), targetDir)
-                        }
-                    }
+                activity.fileLauncher.launchMultiSelection(targetDir, null) {
+                    importFiles(it, targetDir)
+                }
             }
 
             binding.backButton -> {

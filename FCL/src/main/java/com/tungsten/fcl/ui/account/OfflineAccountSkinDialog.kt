@@ -1,18 +1,15 @@
 package com.tungsten.fcl.ui.account
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.tungsten.fcl.R
-import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogOfflineAccountSkinBinding
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.auth.offline.Skin.LoadedSkin
@@ -23,10 +20,6 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
-import com.tungsten.fcllibrary.browser.FileBrowser
-import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
-import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.skin.SkinRenderer
 import java.util.logging.Level
@@ -206,40 +199,20 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
         }
 
         if (view === binding.skinPath) {
-            val builder = FileBrowser.Builder(context)
-            builder.setLibMode(LibMode.FILE_CHOOSER)
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-            val suffix = ArrayList<String?>()
-            suffix.add(".png")
-            builder.setSuffix(suffix)
-            builder.create().browse(
-                getInstance(),
-                RequestCodes.SELECT_SKIN_CODE,
-                (ResultListener.Listener { requestCode: Int, resultCode: Int, data: Intent? ->
-                    if (requestCode == RequestCodes.SELECT_SKIN_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                        val path = FileBrowser.getSelectedFiles(data)[0]
-                        binding.skinPathText.string = path
-                    }
-                })
-            )
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(
+                null,
+                listOf(".png")
+            ) {
+                binding.skinPathText.string = it[0]
+            }
         }
         if (view === binding.capePath) {
-            val builder = FileBrowser.Builder(context)
-            builder.setLibMode(LibMode.FILE_CHOOSER)
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-            val suffix = ArrayList<String?>()
-            suffix.add(".png")
-            builder.setSuffix(suffix)
-            builder.create().browse(
-                getInstance(),
-                RequestCodes.SELECT_CAPE_CODE,
-                (ResultListener.Listener { requestCode: Int, resultCode: Int, data: Intent? ->
-                    if (requestCode == RequestCodes.SELECT_CAPE_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                        val path = FileBrowser.getSelectedFiles(data)[0]
-                        binding.capePathText.string = path
-                    }
-                })
-            )
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(
+                null,
+                listOf(".png")
+            ) {
+                binding.capePathText.string = it[0]
+            }
         }
 
         if (view === binding.positive) {

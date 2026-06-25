@@ -404,7 +404,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     return
                 }
                 jar.isSelected = false
-                JarExecutorHelper.start(this@MainActivity, this@MainActivity)
+                JarExecutorHelper.start(this@MainActivity)
             }
             if (view === start) {
                 if (!Controllers.isInitialized()) {
