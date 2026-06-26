@@ -493,7 +493,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     while (showMemory.isChecked() && !Thread.currentThread().isInterrupted()) {
                         long usedMemory = AndroidUtilKt.getUsedMemory(getActivity()) / 1024 / 1024;
                         long totalMemory = AndroidUtilKt.getTotalMemory(getActivity()) / 1024 / 1024;
-                        long usage = usedMemory * 100 / totalMemory;
+                        long usage;
+                        if (totalMemory > 0) {
+                            usage = usedMemory * 100 / totalMemory;
+                        } else {
+                            usage = -1;
+                        }
                         Schedulers.androidUIThread().execute(() -> memoryText.setText("Mem(" + usage + "%): " + usedMemory + " / " + totalMemory + " MB"));
                         try {
                             Thread.sleep(1000);
