@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1314,
-    "versionName": "1.3.1.4",
-    "date": "2026.06.23",
+    "versionCode": 1315,
+    "versionName": "1.3.1.5",
+    "date": "2026.06.28",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Add a warning dialog when executing JAR files.  \n2. Refactor and optimize the world management page.  \n3. Add a permission repair feature for private directory archives.  \n4. Add automatic detection of Fabric mod conflict errors and a pop-up prompt on the JVM crash page.  \n5. Add a one‑click navigation button on the local mod management page to jump to the remote mod download page."
+        "text": "(Translated from Chinese by AI)\n1. Refactor and optimize the screenshot viewing feature on the download details page, adding support for long‑press to view screenshots in full screen.  \n2. Update the game version list, adding versions 26w14a and the 26.2 series.  \n3. Fix a crash issue where the launcher would crash due to calculation anomalies when total memory is reported as 0 on some devices.  \n4. Optimize the method for obtaining screen size to reduce unnecessary memory overhead.  \n5. Optimize the file picker functionality.  \n6. Optimize the 3D skin model viewing feature."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.添加执行jar文件警告弹窗\n2.重构优化世界管理页面\n3.增加私有目录存档权限修复功能\n4.在JVM崩溃页面增加Fabric模组冲突错误自动检测及弹窗提示\n5.本地模组管理页面增加一键跳转至模组远程下载页功能"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.重构优化下载详情页面截图阅览功能，增加长按全屏阅览截图功能\n2.更新游戏版本列表，添加26w14a和26.2系列版本\n3.修复部分设备获取总内存为0时的计算异常导致启动器崩溃的问题\n4.优化屏幕尺寸获取方式，减少不必要的内存开销\n5.优化文件选择器功能\n6.优化3d皮肤模型阅览功能"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/560409dbe842",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.4/FCL-release-1.3.1.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/71f5231ad1f5",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.5/FCL-release-1.3.1.5-all.apk"
   }
 ]
