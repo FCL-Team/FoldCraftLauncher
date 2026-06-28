@@ -29,7 +29,7 @@ public class FileOperator {
         rawList.sort(nameComparator);
         rawList.sort(dirComparator);
         List<File> filterList = new ArrayList<>();
-        if (fileBrowser.getSuffix().size() > 0) {
+        if (!fileBrowser.getSuffix().isEmpty()) {
             for (File file : rawList) {
                 if (file.isFile()) {
                     for (String suffix : fileBrowser.getSuffix()) {

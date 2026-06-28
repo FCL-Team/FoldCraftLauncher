@@ -152,7 +152,8 @@ public class FileBrowser implements Serializable {
         }
 
         public Builder setSuffix(List<String> suffix) {
-            fileBrowser.suffix = suffix;
+            if (suffix != null)
+                fileBrowser.suffix = suffix;
             return this;
         }
 
