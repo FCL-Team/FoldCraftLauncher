@@ -67,7 +67,7 @@ public class RemoteModVersionPage extends FCLTempPage {
     }
 
     public void saveAs(RemoteMod.Version file) {
-        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, files -> {
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             String folder = files.get(0);
             if (folder == null)
                 return;
