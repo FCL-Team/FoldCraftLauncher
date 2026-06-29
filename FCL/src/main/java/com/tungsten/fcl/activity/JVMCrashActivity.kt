@@ -21,12 +21,14 @@ import java.io.IOException
 import java.util.Arrays
 import java.util.logging.Level
 import java.util.stream.Collectors
+import kotlin.math.log
 import kotlin.system.exitProcess
 
 class JVMCrashActivity : FCLActivity(), View.OnClickListener {
     private var exitCode = 0
     private lateinit var logPath: String
     private lateinit var binding: ActivityJvmCrashBinding
+    private var fatalErrorLogPath: String? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,9 +64,9 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
 
     @Throws(IOException::class)
     private fun init() {
-        var summarize = "Exit Normally, exit code = $exitCode"
         val log = readLog()
         val error = findFabricIncompatibleModsError(log)
+        fatalErrorLogPath = findFatalErrorLogPath(log)
         error?.let {
             showErrorDialog(this@JVMCrashActivity, it)
         }
@@ -73,20 +75,6 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
                 .toTypedArray()).collect(
                 Collectors.toList()
             )
-        if (exitCode != 0 && StringUtils.containsOne(
-                errorLines,
-                "Could not create the Java Virtual Machine.",
-                "Error occurred during initialization of VM",
-                "A fatal exception has occurred. Program will exit."
-            )
-        ) {
-            summarize = "JVM launch failed, exit code = $exitCode"
-        } else if (exitCode != 0 || StringUtils.containsOne(errorLines, "Unable to launch")) {
-            summarize = "Application error, unable to launch, exit code = $exitCode"
-        }
-        errorLines.add(0, "")
-        errorLines.add(0, "")
-        errorLines.add(0, "Summarize: $summarize")
         errorLines.forEach { it: String? -> binding.error.append(it + "\n") }
 
     }
@@ -111,7 +99,11 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
         }
         if (v === binding.upload) {
             try {
-                uploadLog(this, readLog())
+                var log = readLog()
+                fatalErrorLogPath?.let {
+                    log = "$log\n${readLog(it)}"
+                }
+                uploadLog(this, log)
             } catch (e: IOException) {
                 showErrorDialog(this, R.string.upload_failed, e.message)
             }
@@ -122,6 +114,9 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
                 val file = File.createTempFile("fcl-latest", ".log")
                 file.delete()
                 FileUtils.copyFile(File(logPath), file)
+                fatalErrorLogPath?.let {
+                    file.appendText("\n${readLog(it)}")
+                }
                 val uri = FileProvider.getUriForFile(
                     this,
                     application.packageName + ".provider",
@@ -144,9 +139,9 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
     }
 
     @Throws(IOException::class)
-    private fun readLog(): String {
-        if (File(logPath).length() < 8 * 1024 * 1024) {
-            return FileUtils.readText(File(logPath))
+    private fun readLog(path: String = logPath): String {
+        if (File(path).length() < 8 * 1024 * 1024) {
+            return FileUtils.readText(File(path))
         }
         throw IOException("Log file is too large, please check the log file manually.")
     }
@@ -157,6 +152,11 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
             RegexOption.DOT_MATCHES_ALL
         )
         return pattern.find(text)?.groupValues?.get(1)
+    }
+
+    fun findFatalErrorLogPath(log: String): String? {
+        val pattern = Regex("^\\s*#?\\s*(.*hs_err_pid\\d+\\.log.*)\\s*$", RegexOption.MULTILINE)
+        return pattern.find(log)?.groupValues?.get(1)?.trim()
     }
 
     companion object {
