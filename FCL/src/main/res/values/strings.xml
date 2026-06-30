@@ -798,6 +798,8 @@
     <string name="mods_choose_mod">Choose a mod</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">Dependency</string>
+    <string name="dependencies">Dependencies</string>
+    <string name="message_no_dependency">No dependencies</string>
     <string name="mods_dependency_embedded">built-in pre-mod (already packaged in the mod file by the author, no need to download separately)</string>
     <string name="mods_dependency_optional">optional pre-mod (if the game is missing, but mod functionality may be missing)</string>
     <string name="mods_dependency_required">required pre-mod (must be downloaded separately, missing may cause the game to fail to launch)</string>
@@ -927,6 +929,14 @@
     <string name="settings_launcher_theme2">Secondary Theme Color(Light Mode)</string>
     <string name="settings_launcher_theme2_dark">Secondary Theme Color(Dark Mode)</string>
     <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
+    <string name="settings_launcher_theme_preset">Theme Preset</string>
+    <string name="settings_launcher_theme_preview">Theme Preview</string>
+    <string name="settings_launcher_theme_preset_default">Default</string>
+    <string name="settings_launcher_theme_preset_liquid_glass">Liquid Glass</string>
+    <string name="settings_launcher_theme_preset_sakura_pink">Sakura Pink</string>
+    <string name="settings_launcher_theme_preset_mint_green">Mint Green</string>
+    <string name="settings_launcher_theme_preset_lavender">Lavender</string>
+    <string name="settings_launcher_theme_preset_sunset_orange">Sunset Orange</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
     <string name="settings_launcher_background_video">Launcher Background (Video .mp4)</string>
