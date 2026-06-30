@@ -897,6 +897,7 @@
     <string name="settings_launcher_request">Request</string>
     <string name="settings_launcher_debug">Debug</string>
     <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
+    <string name="settings_launcher_download_native_lib_plugin">Download Native Library Plugin</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>

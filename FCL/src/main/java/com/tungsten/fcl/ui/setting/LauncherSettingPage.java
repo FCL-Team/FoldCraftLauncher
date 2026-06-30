@@ -25,6 +25,7 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -86,6 +87,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         binding.clearCache.setOnClickListener(this);
         binding.exportLog.setOnClickListener(this);
         binding.requestAudioRecord.setOnClickListener(this);
+        binding.downloadNativeLibPlugin.setOnClickListener(this);
         binding.theme.setOnClickListener(this);
         binding.theme2.setOnClickListener(this);
         binding.theme2Dark.setOnClickListener(this);
@@ -299,6 +301,29 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     }
                 }
             }
+        }
+        if (v == binding.downloadNativeLibPlugin) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.message_install_plugin)
+                    .setItems(
+                            new String[]{
+                                    "GitHub",
+                                    getContext().getString(R.string.settings_download_netdisk)
+                            },
+                            (dialog, which) -> {
+                                String url = null;
+                                if (which == 0) {
+                                    url = "https://github.com/ZalithLauncher/NativeLibPlugin/releases";
+                                } else if (which == 1) {
+                                    url = "https://1813283584.share.123pan.cn/123pan/YLIUVv-Hae0v?notoken=1";
+                                }
+                                if (url != null) {
+                                    AndroidUtils.openLink(getContext(), url);
+                                }
+                            })
+                    .setPositiveButton(com.tungsten.fcllibrary.R.string.dialog_positive, null)
+                    .create()
+                    .show();
         }
         if (v == binding.theme) {
             FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor(), new FCLColorPickerDialog.Listener() {
