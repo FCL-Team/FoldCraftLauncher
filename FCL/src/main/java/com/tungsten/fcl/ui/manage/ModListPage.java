@@ -352,8 +352,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                     } else {
                         try {
                             Uri uri = (Uri) obj;
-                            modManager.addMod(getActivity(), uri);
-                            succeeded.add(new File(uri.getPath()).getName());
+                            String name = AndroidUtils.getFileName(getActivity(), uri);
+                            modManager.addMod(getActivity(), uri, name);
+                            succeeded.add(name);
                         } catch (Exception e) {
                             LOG.log(Level.WARNING, "Unable to add mod " + obj.toString(), e);
                             failed.add(obj.toString());
