@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1315,
-    "versionName": "1.3.1.5",
-    "date": "2026.06.28",
+    "versionCode": 1316,
+    "versionName": "1.3.1.6",
+    "date": "2026.07.03",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Refactor and optimize the screenshot viewing feature on the download details page, adding support for long‑press to view screenshots in full screen.  \n2. Update the game version list, adding versions 26w14a and the 26.2 series.  \n3. Fix a crash issue where the launcher would crash due to calculation anomalies when total memory is reported as 0 on some devices.  \n4. Optimize the method for obtaining screen size to reduce unnecessary memory overhead.  \n5. Optimize the file picker functionality.  \n6. Optimize the 3D skin model viewing feature."
+        "text": "(Translated from Chinese by AI)\n1. Fix a crash issue caused by an empty suffix list in the launcher.  \n2. Fix the issue where the \"Save As\" option could not be selected on the download page.  \n3. Fix the issue where a folder could not be selected when exporting a modpack.  \n4. New feature: automatically append the content of `hs_err_pidxxx.log` when sharing/uploading crash logs.  \n5. Fix the issue where external apps could not be used to select mods for installation on the mod management page."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.重构优化下载详情页面截图阅览功能，增加长按全屏阅览截图功能\n2.更新游戏版本列表，添加26w14a和26.2系列版本\n3.修复部分设备获取总内存为0时的计算异常导致启动器崩溃的问题\n4.优化屏幕尺寸获取方式，减少不必要的内存开销\n5.优化文件选择器功能\n6.优化3d皮肤模型阅览功能"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复空后缀列表导致启动器崩溃的问题\n2.修复下载页面无法选择另存为的问题\n3.修复导出整合包无法选择文件夹的问题\n4.新增功能：崩溃日志分享/上传时自动追加hs_err_pidxxx.log内容\n5.修复管理模组页面无法使用外部应用选择模组安装的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/8d7394634846",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.5/FCL-release-1.3.1.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/503615d85db9",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.6/FCL-release-1.3.1.6-all.apk"
   }
 ]
