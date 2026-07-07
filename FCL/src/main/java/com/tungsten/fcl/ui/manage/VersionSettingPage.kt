@@ -479,33 +479,27 @@ class VersionSettingPage(
             }.show()
         }
         if (view === binding.buttonInstallJava) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_java)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _: DialogInterface?, w: Int ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java"
-                        1 -> "https://pan.quark.cn/s/1a25ca305bda"
-                        else -> null
+                        1 -> "https://pan.quark.cn/s/c86012deb8c5"
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view === binding.buttonEditGraphicsBackend) {
             showItemSelectionDialog(
                 context,
                 context.getString(R.string.settings_fcl_graphics_backend),
-                mutableListOf("default", "opengl", "vulkan")
-            ) { backendName: String ->
+                listOf("default", "opengl", "vulkan"),
+                false
+            ) { _, backendName: String ->
                 binding.graphicsBackend.text = backendName
                 lastVersionSetting.graphicsBackend = backendName
             }
@@ -532,48 +526,34 @@ class VersionSettingPage(
             ) { binding.driver.text = it }.show()
         }
         if (view === binding.buttonInstallRenderer) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_plugin)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _, w ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer"
                         1 -> "https://pan.quark.cn/s/a9f6e9d860d9"
-                        else -> null
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view === binding.buttonInstallDriver) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_plugin)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _, w ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip"
                         1 -> "https://pan.quark.cn/s/d87c59695250"
-                        else -> null
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view == binding.buttonEditEnv) {
             val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
