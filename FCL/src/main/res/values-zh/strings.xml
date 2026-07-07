@@ -15,6 +15,7 @@
     <string name="splash_eula_next">同意并继续</string>
     <string name="splash_runtime_title">安装或更新运行环境</string>
     <string name="splash_runtime_install">安装 / 更新</string>
+    <string name="missing_runtime_arch_files">当前安装的启动器缺少当前设备架构（%s）所需的运行时文件，请下载对应架构的安装包（%s）或是全架构安装包（%s）。</string>
 
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
