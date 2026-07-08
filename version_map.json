@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1316,
-    "versionName": "1.3.1.6",
-    "date": "2026.07.03",
+    "versionCode": 1317,
+    "versionName": "1.3.1.7",
+    "date": "2026.07.08",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix a crash issue caused by an empty suffix list in the launcher.  \n2. Fix the issue where the \"Save As\" option could not be selected on the download page.  \n3. Fix the issue where a folder could not be selected when exporting a modpack.  \n4. New feature: automatically append the content of `hs_err_pidxxx.log` when sharing/uploading crash logs.  \n5. Fix the issue where external apps could not be used to select mods for installation on the mod management page."
+        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the launcher would crash and fail to start on some devices due to untimely layout loading.  \n2. Used a modified and updated version of ANGLE (from aaaapai).  \n3. Added architecture detection and prompting functionality during Java runtime installation.  \n4. Refactored code related to the selection dialog, optimized the download dialog within game settings, and updated invalid links."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复空后缀列表导致启动器崩溃的问题\n2.修复下载页面无法选择另存为的问题\n3.修复导出整合包无法选择文件夹的问题\n4.新增功能：崩溃日志分享/上传时自动追加hs_err_pidxxx.log内容\n5.修复管理模组页面无法使用外部应用选择模组安装的问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备由于布局加载不及时导致启动器闪退无法进入的问题\n2.使用经过修改且更新的ANGLE（来自aaaapai）\n3.添加Java运行时安装时的架构检及测提示功能\n4.重构选择对话框相关代码，优化游戏设置内的下载对话框，更新失效的链接"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/503615d85db9",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.6/FCL-release-1.3.1.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/24475946e390",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.7/FCL-release-1.3.1.7-all.apk"
   }
 ]
