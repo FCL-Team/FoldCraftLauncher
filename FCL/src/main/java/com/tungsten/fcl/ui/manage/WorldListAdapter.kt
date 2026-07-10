@@ -31,7 +31,13 @@ class WorldListAdapter(private val context: Context) :
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        return ViewHolder(ItemWorldBinding.inflate(LayoutInflater.from(context)).root)
+        return ViewHolder(
+            ItemWorldBinding.inflate(
+                LayoutInflater.from(context),
+                parent,
+                false
+            ).root
+        )
     }
 
     override fun onBindViewHolder(
