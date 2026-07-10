@@ -29,7 +29,7 @@ class RemoteModScreenshotAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ViewModScreenshotBinding.inflate(LayoutInflater.from(context)).root
+            ViewModScreenshotBinding.inflate(LayoutInflater.from(parent.context), parent, false).root
         )
     }
 
