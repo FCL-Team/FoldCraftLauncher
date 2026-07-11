@@ -147,7 +147,7 @@ public class FCLauncher {
 
         sb.append(context.getDir("runtime", 0).getAbsolutePath()).append("/jna").append(split);
 
-        if (pluginLibPath != null && !pluginLibPath.isEmpty()) {
+        if (pluginLibPath != null && !pluginLibPath.isEmpty() && !pluginLibPath.equals("null")) {
             sb.append(pluginLibPath).append(split);
         }
 
