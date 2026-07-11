@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.download.modpack;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -9,13 +8,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
@@ -25,9 +24,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -64,35 +60,29 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
     }
 
     private void onChooseLocalFile() {
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".zip");
         suffix.add(".mrpack");
-        builder.setSuffix(suffix);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_MODPACK_CODE, ((requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_MODPACK_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                String path = FileBrowser.getSelectedFiles(data).get(0);
-                Uri uri = Uri.parse(path);
-                if (AndroidUtils.isDocUri(uri)) {
-                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-                }
-                if (path == null)
-                    return;
-                File selectedFile = new File(path);
-                Schedulers.androidUIThread().execute(() -> {
-                    LocalModpackPage page = new LocalModpackPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, selectedFile);
-                    if (updateVersion == null) {
-                        DownloadPageManager.getInstance().dismissCurrentTempPage();
-                        DownloadPageManager.getInstance().showTempPage(page);
-                    } else {
-                        ManagePageManager.getInstance().dismissCurrentTempPage();
-                        ManagePageManager.getInstance().showTempPage(page);
-                    }
-                });
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+            String path = files.get(0);
+            Uri uri = Uri.parse(path);
+            if (AndroidUtils.isDocUri(uri)) {
+                path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
             }
-        }));
+            if (path == null)
+                return;
+            File selectedFile = new File(path);
+            Schedulers.androidUIThread().execute(() -> {
+                LocalModpackPage page = new LocalModpackPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, selectedFile);
+                if (updateVersion == null) {
+                    DownloadPageManager.getInstance().dismissCurrentTempPage();
+                    DownloadPageManager.getInstance().showTempPage(page);
+                } else {
+                    ManagePageManager.getInstance().dismissCurrentTempPage();
+                    ManagePageManager.getInstance().showTempPage(page);
+                }
+            });
+        });
     }
 
     private void onChooseRemoteFile() {

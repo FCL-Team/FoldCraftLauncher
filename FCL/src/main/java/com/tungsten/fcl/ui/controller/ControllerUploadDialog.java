@@ -15,12 +15,9 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Controller;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -118,44 +115,26 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
     public void onClick(View view) {
         if (view == icon) {
             ArrayList<String> suffix = new ArrayList<>();
-            suffix.add("png");
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setExternalSelection(false);
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-            builder.setSuffix(suffix);
-            builder.create().browse(activity, RequestCodes.SELECT_CONTROLLER_ICON_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_CONTROLLER_ICON_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<String> results = FileBrowser.getSelectedFiles(data);
-                    if (results.size() == 1) {
-                        iconText.setText(results.get(0));
-                    }
-                }
-            }));
+            suffix.add(".png");
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, (files) -> {
+                iconText.setText(files.get(0));
+            });
         }
         if (view == screenshot) {
             if (screenshots.size() < 16) {
                 ArrayList<String> suffix = new ArrayList<>();
-                suffix.add("png");
-                FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-                builder.setExternalSelection(false);
-                builder.setLibMode(LibMode.FILE_CHOOSER);
-                builder.setSelectionMode(SelectionMode.MULTIPLE_SELECTION);
-                builder.setSuffix(suffix);
-                builder.create().browse(activity, RequestCodes.SELECT_CONTROLLER_SCREENSHOT_CODE, ((requestCode, resultCode, data) -> {
-                    if (requestCode == RequestCodes.SELECT_CONTROLLER_SCREENSHOT_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                        ArrayList<String> results = FileBrowser.getSelectedFiles(data);
-                        if (!results.isEmpty()) {
-                            results.forEach(r -> {
-                                if (!screenshots.contains(r) && screenshots.size() < 16) {
-                                    screenshots.add(r);
-                                    Item item = new Item(getContext(), r, screenshots::remove);
-                                    screenshotLayout.addView(item.createView(), new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                }
-                            });
-                        }
+                suffix.add(".png");
+                MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, (files) -> {
+                    if (!files.isEmpty()) {
+                        files.forEach(r -> {
+                            if (!screenshots.contains(r) && screenshots.size() < 16) {
+                                screenshots.add(r);
+                                Item item = new Item(getContext(), r, screenshots::remove);
+                                screenshotLayout.addView(item.createView(), new LinearLayoutCompat.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            }
+                        });
                     }
-                }));
+                });
             } else {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_info_screenshot_max), Toast.LENGTH_SHORT).show();
             }

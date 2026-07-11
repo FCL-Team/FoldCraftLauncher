@@ -73,27 +73,31 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
-            skinViewer.setVisibility(View.VISIBLE);
-            skinViewer.onResume();
-            renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
-        } else {
-            skinViewer.onPause();
-            skinViewer.setVisibility(View.GONE);
+        if (skinViewer != null) {
+            if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+                skinViewer.setVisibility(View.VISIBLE);
+                skinViewer.onResume();
+                renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
+            } else {
+                skinViewer.onPause();
+                skinViewer.setVisibility(View.GONE);
+            }
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        skinViewer.onPause();
-        skinViewer.setVisibility(View.GONE);
+        if (skinViewer != null) {
+            skinViewer.onPause();
+            skinViewer.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isShowing() && !ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+        if (skinViewer != null && isShowing() && !ThemeEngine.getInstance().theme.isCloseSkinModel()) {
             skinViewer.setVisibility(View.VISIBLE);
             skinViewer.onResume();
         }
@@ -102,8 +106,10 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
-        skinViewer.onPause();
-        skinViewer.setVisibility(View.GONE);
+        if (skinViewer != null) {
+            skinViewer.onPause();
+            skinViewer.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -122,7 +122,7 @@ public class AndroidUtils {
     }
 
     public static String copyFileToDir(Activity activity, Uri uri, File destDir) {
-        String name = new File(uri.getPath()).getName();
+        String name = getFileName(activity,uri);
         File dest = new File(destDir, name);
         try {
             InputStream inputStream = activity.getContentResolver().openInputStream(uri);

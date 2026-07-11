@@ -2,10 +2,10 @@ package com.tungsten.fcl.ui.controller
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.download.ControllerCategory
@@ -21,8 +21,7 @@ class ControllerListAdapter(
     private val categories: ArrayList<ControllerCategory>,
     private val list: ArrayList<ControllerIndex>,
     private val callback: Callback
-) : RecyclerView.Adapter<ControllerListAdapter.ViewHolder>() {
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+) : RecyclerView.Adapter<ViewHolder>() {
 
     private val repoUrl: String =
         if (source == 0) ControllerRepoPage.CONTROLLER_GITHUB else ControllerRepoPage.CONTROLLER_GIT_CN

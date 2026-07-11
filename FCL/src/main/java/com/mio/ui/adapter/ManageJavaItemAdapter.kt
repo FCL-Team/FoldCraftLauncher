@@ -17,7 +17,7 @@ class ManageJavaItemAdapter(
     val versions: List<JavaVersion>,
     val action: (JavaVersion, Boolean) -> Unit
 ) :
-    RecyclerView.Adapter<ManageJavaItemAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -53,6 +53,4 @@ class ManageJavaItemAdapter(
     override fun getItemCount(): Int {
         return versions.size
     }
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

@@ -241,16 +241,15 @@ public final class ModManager {
         addModInfo(newFile);
     }
 
-    public void addMod(Activity activity, Uri uri) throws IOException {
+    public void addMod(Activity activity, Uri uri, String name) throws IOException {
         if (!isFileNameMod(uri))
-            throw new IllegalArgumentException("File " + uri.toString() + " is not a valid mod file.");
+            throw new IllegalArgumentException("File " + uri + " is not a valid mod file.");
 
         if (!loaded)
             refreshMods();
 
         Path modsDirectory = getModsDirectory();
         Files.createDirectories(modsDirectory);
-        String name = new File(uri.getPath()).getName();
         Path newFile = modsDirectory.resolve(name);
         InputStream inputStream = activity.getContentResolver().openInputStream(uri);
         if (inputStream == null) {

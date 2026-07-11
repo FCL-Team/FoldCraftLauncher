@@ -10,6 +10,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemLocalModBinding
@@ -40,14 +41,12 @@ class LocalModListAdapter(
     private val modListPage: ModListPage,
     val onChecked: () -> Unit
 ) :
-    RecyclerView.Adapter<LocalModListAdapter.ViewHolder>() {
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
+    RecyclerView.Adapter<ViewHolder>() {
     val listProperty: ListProperty<ModInfoObject> = SimpleListProperty(
         FXCollections.observableArrayList()
     )
     val selectedItemsProperty: ListProperty<ModInfoObject?> =
-        SimpleListProperty<ModInfoObject?>(
+        SimpleListProperty(
             FXCollections.observableArrayList<ModInfoObject?>()
         )
 

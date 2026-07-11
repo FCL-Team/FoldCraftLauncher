@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
+import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
@@ -30,7 +31,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 
 class RemoteVersionListAdapter(val context: Context, private val list: ArrayList<RemoteVersion>, private val listener: OnRemoteVersionSelectListener) :
-    RecyclerView.Adapter<RemoteVersionListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -249,7 +250,6 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         return id
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
     interface OnRemoteVersionSelectListener {
         fun onSelect(remoteVersion: RemoteVersion)
     }

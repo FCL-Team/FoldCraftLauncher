@@ -16,13 +16,14 @@ class ItemSelectionDialog(
     context: Context,
     title: String,
     items: List<String>,
-    callback: (String) -> Unit
+    small: Boolean,
+    callback: (Int, String) -> Unit
 ) : FCLDialog(context) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
     class ItemSelectionAdapter(
         val context: Context,
         val items: List<String>,
-        val callback: (String) -> Unit
+        val callback: (Int, String) -> Unit
     ) : RecyclerView.Adapter<ViewHolder>() {
         override fun onCreateViewHolder(
             parent: ViewGroup,
@@ -39,7 +40,7 @@ class ItemSelectionDialog(
         ) {
             val binding = ItemTextBinding.bind(holder.itemView)
             binding.text.text = items[position]
-            binding.root.setOnClickListener { callback(items[position]) }
+            binding.root.setOnClickListener { callback(position, items[position]) }
         }
 
         override fun getItemCount(): Int {
@@ -49,13 +50,17 @@ class ItemSelectionDialog(
     }
 
     init {
-        window?.setLayout(ConvertUtils.dip2px(context, 500f), ViewGroup.LayoutParams.MATCH_PARENT)
+        window?.windowManager
+        window?.setLayout(
+            ConvertUtils.dip2px(context, 500f),
+            if (small) ConvertUtils.dip2px(context, 200f) else ViewGroup.LayoutParams.MATCH_PARENT
+        )
         val binding = DialogItemSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = title
-        binding.recyclerView.adapter = ItemSelectionAdapter(context, items) {
-            callback(it)
-            dismiss();
+        binding.recyclerView.adapter = ItemSelectionAdapter(context, items) { position, item ->
+            callback(position, item)
+            dismiss()
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.cancel.setOnClickListener { dismiss() }

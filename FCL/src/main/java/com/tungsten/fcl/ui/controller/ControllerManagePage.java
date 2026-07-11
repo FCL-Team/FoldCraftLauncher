@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.controller;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,12 +17,12 @@ import com.google.gson.GsonBuilder;
 import com.mio.util.DialogUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.ControllerActivity;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -34,9 +33,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -197,34 +193,27 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
     @Override
     public void onClick(View view) {
         if (view == importController) {
-            FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-            builder.setLibMode(LibMode.FILE_CHOOSER);
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".json");
-            builder.setSuffix(suffix);
-            builder.setTitle(getContext().getString(R.string.control_import));
-            builder.create().browse(getActivity(), RequestCodes.SELECT_CONTROLLER_CODE, ((requestCode, resultCode, data) -> {
-                if (requestCode == RequestCodes.SELECT_CONTROLLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    String path = FileBrowser.getSelectedFiles(data).get(0);
-                    Uri uri = Uri.parse(path);
-                    if (AndroidUtils.isDocUri(uri)) {
-                        path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-                    }
-                    try {
-                        String content = FileUtils.readText(new File(path));
-                        Controller controller = new GsonBuilder().setPrettyPrinting().create().fromJson(content, Controller.class);
-                        if (controller.getName().equals("Error")) {
-                            Toast.makeText(getContext(), getContext().getString(R.string.control_import_failed), Toast.LENGTH_SHORT).show();
-                        } else {
-                            addController(controller);
-                        }
-                    } catch (Throwable e) {
-                        DialogUtilKt.showErrorDialog(getContext(), getContext().getString(R.string.control_import_failed) + "\n" + e.getMessage());
-                        Logging.LOG.log(Level.SEVERE, "Failed to import controller", e);
-                    }
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, (files) -> {
+                String path = files.get(0);
+                Uri uri = Uri.parse(path);
+                if (AndroidUtils.isDocUri(uri)) {
+                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
                 }
-            }));
+                try {
+                    String content = FileUtils.readText(new File(path));
+                    Controller controller = new GsonBuilder().setPrettyPrinting().create().fromJson(content, Controller.class);
+                    if (controller.getName().equals("Error")) {
+                        Toast.makeText(getContext(), getContext().getString(R.string.control_import_failed), Toast.LENGTH_SHORT).show();
+                    } else {
+                        addController(controller);
+                    }
+                } catch (Throwable e) {
+                    DialogUtilKt.showErrorDialog(getContext(), getContext().getString(R.string.control_import_failed) + "\n" + e.getMessage());
+                    Logging.LOG.log(Level.SEVERE, "Failed to import controller", e);
+                }
+            });
         }
         if (view == createController) {
             ControllerInfoDialog dialog = new ControllerInfoDialog(getContext(), true, new Controller(""), this::addController);

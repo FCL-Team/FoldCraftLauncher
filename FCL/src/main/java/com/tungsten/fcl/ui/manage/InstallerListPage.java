@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fcl.ui.download.version.VersionInstallInfoPage.alertFailureMessage;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
@@ -13,13 +12,13 @@ import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -30,9 +29,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -143,21 +139,14 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
     public void installOffline() {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".jar");
-        FileBrowser.Builder builder = new FileBrowser.Builder(getContext());
-        builder.setTitle(getContext().getString(R.string.install_installer_install_offline_extension));
-        builder.setLibMode(LibMode.FILE_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-        builder.setSuffix(suffix);
-        builder.create().browse(getActivity(), RequestCodes.SELECT_AUTO_INSTALLER_CODE, (requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_AUTO_INSTALLER_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                String path = FileBrowser.getSelectedFiles(data).get(0);
-                Uri uri = Uri.parse(path);
-                if (AndroidUtils.isDocUri(uri)) {
-                    path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-                }
-                if (new File(path).exists()) {
-                    doInstallOffline(new File(path));
-                }
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+            String path = files.get(0);
+            Uri uri = Uri.parse(path);
+            if (AndroidUtils.isDocUri(uri)) {
+                path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+            }
+            if (new File(path).exists()) {
+                doInstallOffline(new File(path));
             }
         });
     }

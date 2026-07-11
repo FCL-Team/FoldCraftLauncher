@@ -2,7 +2,6 @@ package com.mio.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
@@ -13,7 +12,7 @@ import com.tungsten.fcl.databinding.ItemGamepadMapBinding
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 
 class GamepadMapItemAdapter(val context: Context, val gamepadMap: GamepadMap) :
-    RecyclerView.Adapter<GamepadMapItemAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ViewHolder>() {
     private val itemList = mutableListOf<Item>()
 
     init {
@@ -77,10 +76,9 @@ class GamepadMapItemAdapter(val context: Context, val gamepadMap: GamepadMap) :
         return itemList.size
     }
 
-    inner class Item(
+    class Item(
         val icon: Int,
         val button: GamepadEmulatedButton
     )
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

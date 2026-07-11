@@ -1,9 +1,7 @@
 package com.mio.ui.dialog
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -11,20 +9,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
 import com.mio.util.checkElfIsAndroid
-import com.tungsten.fcl.FCLApplication
 import com.tungsten.fcl.R
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.game.JavaVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.io.FileUtils
-import com.tungsten.fcllibrary.browser.FileBrowser
-import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
-import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
@@ -76,61 +69,50 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
         }
         binding.importJava.setOnClickListener {
             if (isLoading) return@setOnClickListener
-            val builder = FileBrowser.Builder(getContext())
-            builder.setLibMode(LibMode.FILE_CHOOSER)
-            builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-            builder.create().browse(
-                FCLApplication.getCurrentActivity(),
-                RequestCodes.SELECT_JAVA_CODE,
-                object : ResultListener.Listener {
-                    override fun onActivityResult(
-                        requestCode: Int,
-                        resultCode: Int,
-                        data: Intent?
-                    ) {
-                        if (requestCode == RequestCodes.SELECT_JAVA_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                            val path = FileBrowser.getSelectedFiles(data)[0]
-                            val uri = path.toUri()
-                            val fileName = if (AndroidUtils.isDocUri(uri)) {
-                                AndroidUtils.getFileName(context, uri)
-                            } else {
-                                File(path).name
-                            }
-                            if (!fileName.endsWith(".tar.xz")) {
-                                FCLAlertDialog.Builder(context)
-                                    .setMessage(context.getString(R.string.import_java_wrong_file))
-                                    .setAlertLevel(
-                                        FCLAlertDialog.AlertLevel.ALERT
-                                    )
-                                    .setNegativeButton(null)
-                                    .create()
-                                    .show()
-                                return
-                            }
-                            val inputStream = if (AndroidUtils.isDocUri(uri)) {
-                                context.contentResolver.openInputStream(uri)
-                            } else {
-                                Files.newInputStream(Paths.get(path))
-                            }
-                            if (JavaManager.javaList.any { it.name == fileName }) {
-                                FCLAlertDialog.Builder(context)
-                                    .setMessage(context.getString(R.string.import_java_overwrite_wrong))
-                                    .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-                                    .setPositiveButton(context.getString(R.string.button_overwrite)) {
-                                        doImport(inputStream, fileName)
-                                    }
-                                    .setNegativeButton(context.getString(R.string.button_cancel)) {
-                                        inputStream?.close()
-                                    }
-                                    .create()
-                                    .show()
-                            } else {
-                                doImport(inputStream, fileName)
-                            }
-                        }
-                    }
+            MainActivity.getInstance().fileLauncher.launchSingleSelection(
+                null,
+                listOf(".tar.xz")
+            ) { files ->
+                val path = files[0]
+                val uri = path.toUri()
+                val fileName = if (AndroidUtils.isDocUri(uri)) {
+                    AndroidUtils.getFileName(context, uri)
+                } else {
+                    File(path).name
                 }
-            )
+                if (!fileName.endsWith(".tar.xz")) {
+                    FCLAlertDialog.Builder(context)
+                        .setMessage(context.getString(R.string.import_java_wrong_file))
+                        .setAlertLevel(
+                            FCLAlertDialog.AlertLevel.ALERT
+                        )
+                        .setNegativeButton(null)
+                        .create()
+                        .show()
+                    return@launchSingleSelection
+                }
+                val inputStream = if (AndroidUtils.isDocUri(uri)) {
+                    context.contentResolver.openInputStream(uri)
+                } else {
+                    Files.newInputStream(Paths.get(path))
+                }
+                if (JavaManager.javaList.any { it.name == fileName }) {
+                    FCLAlertDialog.Builder(context)
+                        .setMessage(context.getString(R.string.import_java_overwrite_wrong))
+                        .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                        .setPositiveButton(context.getString(R.string.button_overwrite)) {
+                            doImport(inputStream, fileName)
+                        }
+                        .setNegativeButton(context.getString(R.string.button_cancel)) {
+                            inputStream?.close()
+                        }
+                        .create()
+                        .show()
+                } else {
+                    doImport(inputStream, fileName)
+                }
+
+            }
         }
     }
 

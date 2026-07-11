@@ -1,10 +1,8 @@
 package com.tungsten.fcl.ui.manage
 
-import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
-import android.content.Intent
 import android.view.View
 import android.view.View.OnLongClickListener
 import android.widget.Toast
@@ -18,6 +16,7 @@ import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
 import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.databinding.PageVersionSettingBinding
@@ -30,7 +29,6 @@ import com.tungsten.fcl.ui.controller.ControllerPageManager
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
 import com.tungsten.fclauncher.plugins.DriverPlugin.selected
@@ -51,9 +49,6 @@ import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
-import com.tungsten.fcllibrary.browser.FileBrowser
-import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog
@@ -395,42 +390,28 @@ class VersionSettingPage(
     private fun onExploreIcon() {
         if (versionId == null) return
 
-        val builder = FileBrowser.Builder(context)
-        val suffix = ArrayList<String?>()
-        suffix.add(".png")
-        builder.setLibMode(LibMode.FILE_CHOOSER)
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-        builder.setTitle(context.getString(R.string.settings_icon))
-        builder.setSuffix(suffix)
-        builder.create().browse(
-            activity,
-            RequestCodes.SELECT_VERSION_ICON_CODE
-        ) { requestCode: Int, resultCode: Int, data: Intent? ->
-            if (requestCode == RequestCodes.SELECT_VERSION_ICON_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                if (FileBrowser.getSelectedFiles(data).isEmpty()) return@browse
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".png")) {
+            var path = it[0]
+            val uri = path.toUri()
+            if (AndroidUtils.isDocUri(uri)) {
+                path =
+                    AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
+            }
+            if (path == null) return@launchSingleSelection
 
-                var path = FileBrowser.getSelectedFiles(data)[0]
-                val uri = path.toUri()
-                if (AndroidUtils.isDocUri(uri)) {
-                    path =
-                        AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
-                }
-                if (path == null) return@browse
+            val selectedFile = File(path)
+            val iconFile = profile.repository.getVersionIconFile(versionId)
+            try {
+                FileUtils.copyFile(selectedFile, iconFile)
 
-                val selectedFile = File(path)
-                val iconFile = profile.repository.getVersionIconFile(versionId)
-                try {
-                    FileUtils.copyFile(selectedFile, iconFile)
-
-                    profile.repository.onVersionIconChanged.fireEvent(Event(this))
-                    loadIcon()
-                } catch (e: IOException) {
-                    Logging.LOG.log(
-                        Level.SEVERE,
-                        "Failed to copy icon file from $selectedFile to $iconFile",
-                        e
-                    )
-                }
+                profile.repository.onVersionIconChanged.fireEvent(Event(this))
+                loadIcon()
+            } catch (e: IOException) {
+                Logging.LOG.log(
+                    Level.SEVERE,
+                    "Failed to copy icon file from $selectedFile to $iconFile",
+                    e
+                )
             }
         }
     }
@@ -498,33 +479,27 @@ class VersionSettingPage(
             }.show()
         }
         if (view === binding.buttonInstallJava) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_java)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _: DialogInterface?, w: Int ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java"
-                        1 -> "https://pan.quark.cn/s/1a25ca305bda"
-                        else -> null
+                        1 -> "https://pan.quark.cn/s/c86012deb8c5"
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view === binding.buttonEditGraphicsBackend) {
             showItemSelectionDialog(
                 context,
                 context.getString(R.string.settings_fcl_graphics_backend),
-                mutableListOf("default", "opengl", "vulkan")
-            ) { backendName: String ->
+                listOf("default", "opengl", "vulkan"),
+                false
+            ) { _, backendName: String ->
                 binding.graphicsBackend.text = backendName
                 lastVersionSetting.graphicsBackend = backendName
             }
@@ -551,48 +526,34 @@ class VersionSettingPage(
             ) { binding.driver.text = it }.show()
         }
         if (view === binding.buttonInstallRenderer) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_plugin)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _, w ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer"
                         1 -> "https://pan.quark.cn/s/a9f6e9d860d9"
-                        else -> null
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view === binding.buttonInstallDriver) {
-            AlertDialog.Builder(context)
-                .setTitle(R.string.message_install_plugin)
-                .setItems(
-                    arrayOf(
-                        "Github",
-                        context.getString(R.string.settings_download_netdisk)
-                    )
-                ) { _, w ->
-                    val url = when (w) {
+            showItemSelectionDialog(
+                context,
+                context.getString(R.string.message_install_plugin),
+                listOf("Github", context.getString(R.string.settings_download_netdisk))
+            ) { pos, _ ->
+                AndroidUtils.openLink(
+                    context, when (pos) {
                         0 -> "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip"
                         1 -> "https://pan.quark.cn/s/d87c59695250"
-                        else -> null
+                        else -> return@showItemSelectionDialog
                     }
-                    if (url != null) {
-                        AndroidUtils.openLink(context, url)
-                    }
-                }
-                .setPositiveButton(R.string.button_cancel, null)
-                .create()
-                .show()
+                )
+            }
         }
         if (view == binding.buttonEditEnv) {
             val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)

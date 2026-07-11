@@ -111,7 +111,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
     }
 
     override fun onClick(v: View?) {
-        when(v) {
+        when (v) {
             binding.add -> add()
             binding.refresh -> refresh()
             binding.fixPrivate -> {
@@ -122,7 +122,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                         1535
                     )
                 }
-                Toast.makeText(context,R.string.message_success, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, R.string.message_success, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -179,28 +179,16 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
     }
 
     fun add() {
-        val builder = FileBrowser.Builder(context)
-        builder.setLibMode(LibMode.FILE_CHOOSER)
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION)
-        val suffix = ArrayList<String?>()
-        suffix.add(".zip")
-        builder.setSuffix(suffix)
-        builder.create().browse(
-            activity,
-            RequestCodes.SELECT_WORLD_CODE,
-            (ResultListener.Listener { requestCode: Int, resultCode: Int, data: Intent? ->
-                if (requestCode == RequestCodes.SELECT_WORLD_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                    var path = FileBrowser.getSelectedFiles(data)[0]
-                    val uri = Uri.parse(path)
-                    if (AndroidUtils.isDocUri(uri)) {
-                        path =
-                            AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
-                    }
-                    val file = File(path)
-                    installWorld(file)
-                }
-            })
-        )
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".zip")) {
+            var path = it[0]
+            val uri = Uri.parse(path)
+            if (AndroidUtils.isDocUri(uri)) {
+                path =
+                    AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
+            }
+            val file = File(path)
+            installWorld(file)
+        }
     }
 
     private fun installWorld(zipFile: File) {
