@@ -11,7 +11,7 @@ on:
 
 jobs:
   release_build:
-    if: ${{ github.repository_owner == 'FCL-Team' && github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/tags/') }}
     name: Build for ${{matrix.arch}}
     strategy:
       matrix:
@@ -60,7 +60,7 @@ jobs:
         #  retention-days: 1
 
   debug_build:
-    if: ${{ (github.repository_owner != 'FCL-Team' || github.event_name == 'pull_request') && !startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ github.event_name == 'pull_request' && !startsWith(github.ref, 'refs/tags/') }}
     name: Build for ${{matrix.arch}}
     strategy:
       matrix:

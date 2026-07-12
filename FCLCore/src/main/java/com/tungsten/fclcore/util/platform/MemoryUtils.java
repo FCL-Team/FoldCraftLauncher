@@ -32,8 +32,13 @@ public class MemoryUtils {
         int totalDeviceMemory = getTotalDeviceMemory(context);
         if (totalDeviceMemory <= 1024) {
             return 512;
-        } else if (totalDeviceMemory <= 6144) {
+        } else if (totalDeviceMemory <= 4096) {
             return Architecture.is32BitsDevice() ? 768 : 1024;
+        } else if (totalDeviceMemory <= 6144) {
+            // 4-6GB phones: 1GB heap is too small for modded (Forge/NeoForge) 1.20+, which causes
+            // near-constant GC and extremely slow mod loading / world gen. 1.5GB leaves plenty of
+            // headroom for the renderer's native (Mesa/Zink) allocations. Users can still tune this.
+            return Architecture.is32BitsDevice() ? 768 : 1536;
         } else if (totalDeviceMemory <= 12288) {
             return Architecture.is32BitsDevice() ? 768 : 2048;
         } else {
