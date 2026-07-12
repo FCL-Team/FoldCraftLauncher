@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaPlayer
@@ -42,6 +43,8 @@ import com.mio.util.showWarningDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.JarExecutorHelper
+import com.tungsten.fcl.game.PluginTrustGate
+import com.tungsten.fcl.game.PluginTrustListSync
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
@@ -113,6 +116,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var theme2Dark: IntegerProperty
     var isVersionLoading = false
     private var modpackHandled = false
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        PluginTrustGate.resetUnknownPluginCooldown()
+    }
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
     private lateinit var sharedPreferences: SharedPreferences
     var mediaPlayer: MediaPlayer? = null
@@ -120,6 +128,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PluginTrustListSync.start(applicationContext)
         modpackHandled = savedInstanceState?.getBoolean("modpack_handled") ?: false
         instance = WeakReference(this)
         binding = ActivityMainBinding.inflate(layoutInflater)

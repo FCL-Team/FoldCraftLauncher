@@ -102,7 +102,9 @@ object NativeLibPlugin {
                     val entries = environment.split(" ")
                     buildMap {
                         entries.forEach { entry ->
-                            put(parseEntry(entry, nativeLibraryDir))
+                            parseEntry(entry, nativeLibraryDir)?.let { (key, value) ->
+                                this[key] = value
+                            }
                         }
                     }
                 } else {
@@ -129,8 +131,12 @@ object NativeLibPlugin {
     private fun parseEntry(
         entry: String,
         nativeLibraryDir: String
-    ): Pair<String, String> {
-        var (key, value) = entry.split("=")
+    ): Pair<String, String>? {
+        val separator = entry.indexOf('=')
+        if (separator <= 0 || separator == entry.lastIndex) return null
+        val key = entry.substring(0, separator)
+        var value = entry.substring(separator + 1)
+        if (!key.matches(Regex("[A-Za-z_][A-Za-z0-9_]*"))) return null
 
         if (value.startsWith(NATIVE_LIB_DIR_PLACEHOLDER)) {
             if (value == NATIVE_LIB_DIR_PLACEHOLDER) {
@@ -145,10 +151,6 @@ object NativeLibPlugin {
         }
 
         return Pair(key, value)
-    }
-
-    private fun <K, V> MutableMap<K, V>.put(value: Pair<K, V>) {
-        this[value.first] = value.second
     }
 
     private fun safePath(baseDir: String, input: String): Path? {

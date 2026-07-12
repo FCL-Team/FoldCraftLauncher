@@ -27,6 +27,7 @@ import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.game.LaunchOptions;
@@ -42,13 +43,27 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public final class FCLGameLauncher extends DefaultLauncher {
 
+    private List<PluginLoadAuthorization> pluginLoadAuthorizations = Collections.emptyList();
+
     public FCLGameLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
         super(context, repository, version, authInfo, options);
+    }
+
+    public void setPluginLoadAuthorizations(List<PluginLoadAuthorization> pluginLoadAuthorizations) {
+        this.pluginLoadAuthorizations = Collections.unmodifiableList(new ArrayList<>(pluginLoadAuthorizations));
+    }
+
+    @Override
+    protected List<PluginLoadAuthorization> getPluginLoadAuthorizations() {
+        return pluginLoadAuthorizations;
     }
 
     @Override

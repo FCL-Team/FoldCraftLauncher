@@ -47,6 +47,36 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1317
         versionName = "1.3.1.7"
+        fun buildConfigString(value: String) = "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+        val defaultVplTrustListUrlPrefixes = listOf(
+            "https://raw.giteeusercontent.com/fcl-team/VerifiedPluginLoad/raw/main/src/main/assets",
+            "https://raw.githubusercontent.com/ZalithLauncher/VerifiedPluginLoad/refs/heads/main/src/main/assets",
+            "https://repo.miawa.cn/vpl/src/main/assets"
+        )
+        val vplTrustListUrlPrefixes = providers.gradleProperty("vpl.trustListUrlPrefixes")
+            .orNull
+            ?.split(',')
+            ?.map(String::trim)
+            ?.filter(String::isNotBlank)
+            ?.takeIf { it.isNotEmpty() }
+            ?: defaultVplTrustListUrlPrefixes
+        val vplTrustListJsonSuffix = providers.gradleProperty("vpl.trustListJsonSuffix")
+            .orNull
+            ?.trim()
+            ?.takeIf(String::isNotBlank)
+            ?: "trusted-authors.json"
+        val vplTrustListSignatureSuffix = providers.gradleProperty("vpl.trustListSignatureSuffix")
+            .orNull
+            ?.trim()
+            ?.takeIf(String::isNotBlank)
+            ?: "trusted-authors.json.sig"
+        buildConfigField(
+            "String[]",
+            "VPL_TRUST_LIST_URL_PREFIXES",
+            "new String[] { ${vplTrustListUrlPrefixes.joinToString(", ") { buildConfigString(it) }} }"
+        )
+        buildConfigField("String", "VPL_TRUST_LIST_JSON_SUFFIX", buildConfigString(vplTrustListJsonSuffix))
+        buildConfigField("String", "VPL_TRUST_LIST_SIGNATURE_SUFFIX", buildConfigString(vplTrustListSignatureSuffix))
     }
 
     buildTypes {
@@ -148,6 +178,7 @@ dependencies {
     implementation(project(":FCLCore"))
     implementation(project(":FCLLibrary"))
     implementation(project(":FCLauncher"))
+    implementation(project(":VerifiedPluginLoad"))
     implementation(project(":Terracotta"))
     implementation(libs.taptargetview)
     implementation(libs.nanohttpd)
