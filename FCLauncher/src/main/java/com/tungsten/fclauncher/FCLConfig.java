@@ -3,8 +3,12 @@ package com.tungsten.fclauncher;
 import android.content.Context;
 
 import com.mio.data.Renderer;
+import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FCLConfig implements Serializable {
 
@@ -65,7 +69,9 @@ public class FCLConfig implements Serializable {
 
     private boolean useVKDriverSystem = false;
     private boolean pojavBigCore = false;
+    private boolean useExternalNativePlugins = false;
     private InstalledModLoaders installedModLoaders = null;
+    private List<PluginLoadAuthorization> pluginLoadAuthorizations = Collections.emptyList();
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -116,11 +122,27 @@ public class FCLConfig implements Serializable {
         return pojavBigCore;
     }
 
+    public void setUseExternalNativePlugins(boolean useExternalNativePlugins) {
+        this.useExternalNativePlugins = useExternalNativePlugins;
+    }
+
+    public boolean isUseExternalNativePlugins() {
+        return useExternalNativePlugins;
+    }
+
     public void setInstalledModLoaders(InstalledModLoaders installedModLoaders) {
         this.installedModLoaders = installedModLoaders;
     }
 
     public InstalledModLoaders getInstalledModLoaders() {
         return installedModLoaders;
+    }
+
+    public void setPluginLoadAuthorizations(List<PluginLoadAuthorization> pluginLoadAuthorizations) {
+        this.pluginLoadAuthorizations = Collections.unmodifiableList(new ArrayList<>(pluginLoadAuthorizations));
+    }
+
+    public List<PluginLoadAuthorization> getPluginLoadAuthorizations() {
+        return pluginLoadAuthorizations;
     }
 }
