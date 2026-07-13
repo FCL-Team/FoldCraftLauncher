@@ -20,7 +20,14 @@ android {
         localProperty = Properties()
         file("${rootDir}/local.properties").inputStream().use { localProperty.load(it) }
     }
-    val pwd = System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
+    // Release signing password: env (CI secret) -> local.properties -> committed fallback.
+    // The fallback keeps every build (CI or local) signed with the SAME committed key
+    // (../fcl-release.jks), so installing a new build is always an in-place UPDATE and never
+    // requires uninstalling the app first. takeIf { isNotEmpty() } guards against GitHub Actions
+    // exporting an empty string when the FCL_KEYSTORE_PASSWORD secret is not set on a fork.
+    val pwd = System.getenv("FCL_KEYSTORE_PASSWORD")?.takeIf { it.isNotEmpty() }
+        ?: localProperty?.getProperty("pwd")?.takeIf { it.isNotEmpty() }
+        ?: "FCL-GoyDevv"
     val curseApiKey = System.getenv("CURSE_API_KEY") ?: localProperty?.getProperty("curse.api.key")
     val oauthApiKey = System.getenv("OAUTH_API_KEY") ?: localProperty?.getProperty("oauth.api.key")
     if (localProperty != null && localProperty.getProperty("arch", "all") == "arm64")
@@ -28,7 +35,7 @@ android {
 
     signingConfigs {
         create("FCLKey") {
-            storeFile = file("../key-store.jks")
+            storeFile = file("../fcl-release.jks")
             storePassword = pwd
             keyAlias = "FCL-Key"
             keyPassword = pwd

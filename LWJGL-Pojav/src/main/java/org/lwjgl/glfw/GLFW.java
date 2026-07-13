@@ -1012,12 +1012,17 @@ public class GLFW
     }
 
     public static long glfwGetTimerValue() {
-        return System.currentTimeMillis();
+        // Must be consistent with glfwGetTimerFrequency(): GLFW defines
+        // time_in_seconds = glfwGetTimerValue() / glfwGetTimerFrequency().
+        // Use the same monotonic nanosecond clock as glfwGetTime() so anything that reads the raw
+        // timer stays in real time. (Previously this returned milliseconds while the frequency below
+        // returned 60, so timer-derived time ran ~16.7x too fast.)
+        return System.nanoTime();
     }
 
     public static long glfwGetTimerFrequency() {
-        // FIXME set correct value!!
-        return 60;
+        // Nanosecond timer => 1e9 ticks per second (matches LWJGL3/GLFW on Linux).
+        return 1_000_000_000L;
     }
 
     // GLFW Window functions

@@ -125,20 +125,30 @@ public class DefaultLauncher extends Launcher {
 
         res.addDefault("-Dminecraft.client.jar=", repository.getVersionJar(version).toString());
 
-        // Using G1GC with its settings by default
-//        if (options.getJava().getVersion() >= 8
-//                && res.noneMatch(arg -> "-XX:-UseG1GC".equals(arg) || (arg.startsWith("-XX:+Use") && arg.endsWith("GC")))) {
-//            res.addUnstableDefault("UnlockExperimentalVMOptions", true);
-//            res.addUnstableDefault("UseG1GC", true);
-//            res.addUnstableDefault("G1NewSizePercent", "20");
-//            res.addUnstableDefault("G1ReservePercent", "20");
-//            res.addUnstableDefault("MaxGCPauseMillis", "50");
-//            res.addUnstableDefault("G1HeapRegionSize", "32m");
-//        }
-//
-//        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
-//        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
-//        res.addUnstableDefault("DontCompileHugeMethods", false);
+        // Use G1GC with mobile-tuned settings by default.
+        // These are (a subset of) the collector/JIT flags that Mojang's own launcher ships. Without
+        // them the bundled JVM can fall back to a poor garbage collector (e.g. SerialGC when the heap
+        // is small) and, critically, leaves large modded (Forge/NeoForge) methods interpreted because
+        // -XX:+DontCompileHugeMethods is the JVM default. That combination is a major cause of very
+        // slow Forge mod loading / world generation and of the low-TPS "slow motion" while FPS stays
+        // high. We deliberately do NOT enable -XX:+AlwaysPreTouch here (it hurts startup and memory
+        // pressure on phones). Skipped entirely if the user already selected another GC.
+        if (res.noneMatch(arg -> "-XX:-UseG1GC".equals(arg) || (arg.startsWith("-XX:+Use") && arg.endsWith("GC")))) {
+            res.addUnstableDefault("UnlockExperimentalVMOptions", true);
+            res.addUnstableDefault("UseG1GC", true);
+            res.addUnstableDefault("G1NewSizePercent", "20");
+            res.addUnstableDefault("G1ReservePercent", "20");
+            res.addUnstableDefault("MaxGCPauseMillis", "50");
+            res.addUnstableDefault("G1HeapRegionSize", "16m");
+            res.addUnstableDefault("ParallelRefProcEnabled", true);
+            res.addUnstableDefault("PerfDisableSharedMem", true);
+        }
+
+        // Keep large modded methods JIT-compiled (instead of interpreted) and keep real stack traces.
+        // Both noticeably help modded (Forge/NeoForge) throughput and world-gen speed.
+        res.addUnstableDefault("UseAdaptiveSizePolicy", false);
+        res.addUnstableDefault("OmitStackTraceInFastThrow", false);
+        res.addUnstableDefault("DontCompileHugeMethods", false);
 
         // As 32-bit JVM allocate 320KB for stack by default rather than 64-bit version allocating 1MB,
         // causing Minecraft 1.13 crashed accounting for java.lang.StackOverflowError.
