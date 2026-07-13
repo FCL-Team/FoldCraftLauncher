@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1317,
-    "versionName": "1.3.1.7",
-    "date": "2026.07.08",
+    "versionCode": 1318,
+    "versionName": "1.3.1.8",
+    "date": "2026.07.13",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed an issue where the launcher would crash and fail to start on some devices due to untimely layout loading.  \n2. Used a modified and updated version of ANGLE (from aaaapai).  \n3. Added architecture detection and prompting functionality during Java runtime installation.  \n4. Refactored code related to the selection dialog, optimized the download dialog within game settings, and updated invalid links."
+        "text": "(Translated from Chinese by AI)\n1. Fix the Zink vsync issue.  \n2. Fix the incorrect screenshot preview size on the download page.  \n3. Adjust the library loading order to prioritize the launcher’s bundled libraries, fixing startup failures on some special devices.  \n4. Update OpenAL‑Soft to fix a crash issue with Create: Steam 'n' Rails in version 1.21.1.  \n5. Fix the Depth Clear issue with ANGLE."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复部分设备由于布局加载不及时导致启动器闪退无法进入的问题\n2.使用经过修改且更新的ANGLE（来自aaaapai）\n3.添加Java运行时安装时的架构检及测提示功能\n4.重构选择对话框相关代码，优化游戏设置内的下载对话框，更新失效的链接"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Zink垂直同步问题\n2.修复下载页面截图阅览尺寸错误问题\n3.调整库加载顺序，优先使用启动器自带库，修复部分特殊设备无法启动的问题\n4.更新OpenAL-Soft以修复1.21.1机械动力: 汽鸣铁道的崩溃问题\n5.修复angle的Depth Clear问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/24475946e390",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.7/FCL-release-1.3.1.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f751359a2218",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.8/FCL-release-1.3.1.8-all.apk"
   }
 ]
