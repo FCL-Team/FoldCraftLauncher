@@ -6,6 +6,7 @@ group = "org.lwjgl"
 
 val runtimeConfig by configurations.creating {
     isCanBeResolved = true
+    extendsFrom(configurations.implementation.get())
 }
 
 tasks.register("buildLwjgl") {
@@ -16,7 +17,7 @@ tasks.jar {
     archiveBaseName.set("lwjgl")
     destinationDirectory.set(file("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl"))
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(configurations.runtimeClasspath.get().map {
+    from(runtimeConfig.map {
         println(it.name)
         if (it.isDirectory) it else zipTree(it)
     })
