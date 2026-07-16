@@ -16,7 +16,7 @@ tasks.jar {
     archiveBaseName.set("lwjgl")
     destinationDirectory.set(file("${rootDir}/FCL/src/main/assets/app_runtime/lwjgl"))
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(runtimeConfig.map {
+    from(configurations.runtimeClasspath.get().map {
         println(it.name)
         if (it.isDirectory) it else zipTree(it)
     })
