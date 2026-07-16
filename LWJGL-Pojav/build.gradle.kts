@@ -38,6 +38,6 @@ java {
 }
 
 dependencies {
-    runtimeConfig(fileTree("dir" to "libs", "include" to listOf("*.jar")))
+    implementation(fileTree("dir" to "libs", "include" to listOf("*.jar")))
     compileOnly(fileTree("dir" to "compileOnly", "include" to listOf("*.jar")))
 }
