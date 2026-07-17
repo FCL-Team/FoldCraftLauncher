@@ -136,7 +136,7 @@ class SplashActivity : FCLActivity() {
                 }
             }
             startActivity(
-                handleModpack(Intent(this@SplashActivity, MainActivity::class.java)),
+                handleModpack(Intent(this@SplashActivity, GlassMainActivity::class.java)),
                 ActivityOptionsCompat.makeCustomAnimation(this@SplashActivity, 0, 0).toBundle()
             )
             finish()

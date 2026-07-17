@@ -1,5 +1,7 @@
 [versions]
 compileSdk = "35"
+backdrop = "2.0.0"
+composeBom = "2025.06.01"
 datastore = "1.2.1"
 kotlinxSerializationJson = "1.10.0"
 minSdk = "26"
@@ -31,6 +33,14 @@ jelf = "0.9.0"
 bytehook = "1.0.10"
 
 [libraries]
+backdrop = { group = "io.github.kyant0", name = "backdrop", version.ref = "backdrop" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-activity = { group = "androidx.activity", name = "activity-compose" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }

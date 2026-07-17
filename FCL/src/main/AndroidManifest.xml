@@ -47,11 +47,11 @@
         tools:ignore="DiscouragedApi"
         tools:targetApi="33">
         <activity
-            android:name=".activity.SplashActivity"
+            android:name=".activity.GlassMainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:exported="true"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Theme.Splash">
+            android:theme="@style/Theme.FoldCraftLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -92,8 +92,15 @@
             </intent-filter>
         </activity-alias>
         <activity
+            android:name=".activity.SplashActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.Splash" />
+        <activity
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
+            android:exported="false"
             android:screenOrientation="sensorLandscape" />
         <activity
             android:name=".activity.WebActivity"

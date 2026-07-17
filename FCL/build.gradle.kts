@@ -8,6 +8,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
 }
 
@@ -43,7 +44,8 @@ android {
 
     defaultConfig {
         applicationId = "com.tungsten.fcl"
-        minSdk = libs.versions.minSdk.get().toInt()
+        // 液态玻璃 UI 依赖 Backdrop 效果，需要 Android 12+ (API 31)
+        minSdk = 31
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1318
         versionName = "1.3.1.8"
@@ -84,7 +86,9 @@ android {
         viewBinding = true
         buildConfig = true
         resValues = true
+        compose = true
     }
+
 
     splits {
         val arch = System.getProperty("arch", "all")
@@ -166,6 +170,14 @@ dependencies {
     implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.backdrop)
 }
 
 tasks.register("updateMap") {
