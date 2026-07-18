@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1318,
-    "versionName": "1.3.1.8",
-    "date": "2026.07.13",
+    "versionCode": 1319,
+    "versionName": "1.3.1.9",
+    "date": "2026.07.18",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fix the Zink vsync issue.  \n2. Fix the incorrect screenshot preview size on the download page.  \n3. Adjust the library loading order to prioritize the launcher’s bundled libraries, fixing startup failures on some special devices.  \n4. Update OpenAL‑Soft to fix a crash issue with Create: Steam 'n' Rails in version 1.21.1.  \n5. Fix the Depth Clear issue with ANGLE."
+        "text": "(Translated from Chinese by AI)\n1. Adjust the library loading order to fix the issue where the FFMPEG plugin cannot be invoked correctly.  \n2. Fix the issue where switching control groups after modifying key styles does not synchronize correctly.  \n3. Fix the issue where some mods fail to start the game due to LWJGL missing the `Platform$Architecture.is64Bit()` method.  \n4. Fix the issue where changes to the directional pad style do not take effect immediately.  \n5. Fix the issue where changes to key styles made within the directional pad style editor do not take effect immediately."
       },
       {
         "lang": "zh_CN",
-        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复Zink垂直同步问题\n2.修复下载页面截图阅览尺寸错误问题\n3.调整库加载顺序，优先使用启动器自带库，修复部分特殊设备无法启动的问题\n4.更新OpenAL-Soft以修复1.21.1机械动力: 汽鸣铁道的崩溃问题\n5.修复angle的Depth Clear问题"
+        "text": "（若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.调整库加载顺序，修复FFMPEG插件无法正确调用的问题\n2.修复修改按键样式后切换控件组时未正确同步的问题\n3.修复部分模组因LWJGL缺失Platform$Architecture.is64Bit()而导致游戏无法启动的问题\n4.修复方向键样式编辑后无法立刻生效的问题\n5.修复在方向键样式内编辑按键样式后无法立刻生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f751359a2218",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.8/FCL-release-1.3.1.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/c8a222d7fac8",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.1.9/FCL-release-1.3.1.9-all.apk"
   }
 ]
