@@ -160,11 +160,11 @@ public class FCLauncher {
         }
 
         sb.append(FCLPath.MOD_RUNTIME_DIR).append(split);
-        sb.append(nativeDir).append(split);
         sb.append("/system/").append(libDirName).append(split);
         sb.append("/vendor/").append(libDirName).append(split);
         sb.append("/vendor/").append(libDirName).append("/hw").append(split);
-        sb.append("/system_ext/").append(libDirName);
+        sb.append("/system_ext/").append(libDirName).append(split);
+        sb.append(nativeDir);
 
         return sb.toString();
     }

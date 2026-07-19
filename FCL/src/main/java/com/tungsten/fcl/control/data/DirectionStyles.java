@@ -119,6 +119,16 @@ public class DirectionStyles {
             styles.add(style);
     }
 
+    public static void addStyle(ControlDirectionStyle style, int index) {
+        if (!initialized) return;
+        boolean add = true;
+        for (ControlDirectionStyle directionStyle : getStyles())
+            if (directionStyle.getName().equals(style.getName()))
+                add = false;
+        if (add)
+            styles.add(index, style);
+    }
+
     public static void removeStyles(ControlDirectionStyle style) {
         if (!initialized) return;
         styles.remove(style);
