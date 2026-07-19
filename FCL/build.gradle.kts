@@ -45,8 +45,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1317
-        versionName = "1.3.1.7"
+        versionCode = 1319
+        versionName = "1.3.1.9"
         fun buildConfigString(value: String) = "\"${value.replace("\\", "\\\\").replace("\"", "\\\"")}\""
         val defaultVplTrustListUrlPrefixes = listOf(
             "https://raw.giteeusercontent.com/fcl-team/VerifiedPluginLoad/raw/main/src/main/assets",

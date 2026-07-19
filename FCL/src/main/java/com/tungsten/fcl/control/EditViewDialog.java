@@ -23,7 +23,6 @@ import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.control.data.DirectionStyles;
-import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -31,6 +30,7 @@ import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -177,7 +177,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 visibilityTypeSpinner.setAdapter(visibilityTypeAdapter);
                 visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ?
                         0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ?
-                        1 : 2));
+                             1 : 2));
                 FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
 
                 FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
@@ -483,7 +483,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 visibilityTypeSpinner.setAdapter(visibilityTypeAdapter);
                 visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ?
                         0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ?
-                        1 : 2));
+                             1 : 2));
                 FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
 
                 FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
@@ -577,6 +577,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 style.setOnClickListener(v -> {
                     ControlDirectionStyle target = DirectionStyles.findStyleByName(data.getStyle().getName());
                     DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, target, data::setStyle);
+                    dialog.setGameMenu(menu);
                     dialog.show();
                 });
 
@@ -653,7 +654,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 followOptionSpinner.setAdapter(followOptionAdapter);
                 followOptionSpinner.setSelection(data.getEvent().getFollowOption() == DirectionEventData.FollowOption.FIXED ?
                         0 : (data.getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW ?
-                        1 : 2));
+                             1 : 2));
                 FXUtils.bindSelection(followOptionSpinner, data.getEvent().followOptionProperty());
             }
 
