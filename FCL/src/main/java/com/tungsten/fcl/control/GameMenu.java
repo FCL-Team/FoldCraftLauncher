@@ -43,6 +43,7 @@ import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
+import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionStyles;
@@ -383,6 +384,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     getViewGroup().getViewData().buttonList().forEach(it -> {
                         String name = it.getStyle().getName();
                         ControlButtonStyle style = ButtonStyles.findStyleByName(name);
+                        if (name.equals(style.getName())) {
+                            it.setStyle(style);
+                        }
+                    });
+                    getViewGroup().getViewData().directionList().forEach(it -> {
+                        String name = it.getStyle().getName();
+                        ControlDirectionStyle style = DirectionStyles.findStyleByName(name);
                         if (name.equals(style.getName())) {
                             it.setStyle(style);
                         }
