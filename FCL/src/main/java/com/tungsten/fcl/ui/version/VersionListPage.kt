@@ -24,6 +24,7 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -54,64 +55,56 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
 
             override fun afterTextChanged(s: Editable) {
                 val text = s.toString()
-                if (text.isEmpty()) {
-                    binding.versionList.adapter = adapter
-                } else {
-                    binding.versionList.adapter = VersionListAdapter(context, children.filter {
-                        it.version.lowercase(
-                            Locale.getDefault()
-                        ).contains(text.lowercase(Locale.getDefault()))
-                    } as ArrayList)
-                }
+                adapter?.updateVersionList(if (text.isEmpty()) children else children.filter {
+                    it.version.lowercase(
+                        Locale.getDefault()
+                    ).contains(text.lowercase(Locale.getDefault()))
+                })
             }
         }
         binding.category.setOnCheckedChangeListener { _, i ->
             when (i) {
                 R.id.all -> {
-                    binding.versionList.adapter = adapter
+                    adapter?.updateVersionList(children)
                 }
 
                 R.id.fabric -> {
-                    binding.versionList.adapter = VersionListAdapter(
-                        context,
+                    adapter?.updateVersionList(
                         children.filter {
                             it.libraries.split(",").find { lib ->
                                 lib.contains(":") && lib.contains("Fabric")
                             } != null
-                        } as ArrayList
+                        }
                     )
                 }
 
                 R.id.forge -> {
-                    binding.versionList.adapter = VersionListAdapter(
-                        context,
+                    adapter?.updateVersionList(
                         children.filter {
                             it.libraries.split(",").find { lib ->
                                 lib.contains(":") && lib.contains("Forge") && !lib.contains("NeoForge")
                             } != null
-                        } as ArrayList
+                        }
                     )
                 }
 
                 R.id.neoforge -> {
-                    binding.versionList.adapter = VersionListAdapter(
-                        context,
+                    adapter?.updateVersionList(
                         children.filter {
                             it.libraries.split(",").find { lib ->
                                 lib.contains(":") && lib.contains("NeoForge")
                             } != null
-                        } as ArrayList
+                        }
                     )
                 }
 
                 R.id.other -> {
-                    binding.versionList.adapter = VersionListAdapter(
-                        context,
+                    adapter?.updateVersionList(
                         children.filter {
                             it.libraries.split(",").none { lib ->
                                 lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
                             }
-                        } as ArrayList
+                        }
                     )
                 }
 
@@ -206,12 +199,16 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
                         .collect(Collectors.toList())
                 }
                 if (profile == getSelectedProfile()) {
-                    adapter = VersionListAdapter(
-                        context,
-                        children as ArrayList
-                    )
-                    binding.versionList.adapter = adapter
-                    binding.versionList.layoutManager = LinearLayoutManager(context)
+                    if (adapter == null) {
+                        adapter = VersionListAdapter(
+                            context,
+                            children
+                        )
+                        binding.versionList.adapter = adapter
+                        binding.versionList.layoutManager = LinearLayoutManager(context)
+                    } else {
+                        adapter!!.updateVersionList(children)
+                    }
                     binding.refresh.isEnabled = true
                     if (children.isNotEmpty()) {
                         binding.layout.visibility = View.VISIBLE
