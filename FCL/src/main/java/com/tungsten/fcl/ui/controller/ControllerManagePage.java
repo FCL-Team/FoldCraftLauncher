@@ -35,11 +35,6 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-
-import kotlin.Unit;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -51,8 +46,10 @@ import com.tungsten.fcllibrary.ui.ProgressDialog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
+
+import kotlin.Unit;
 
 public class ControllerManagePage extends FCLCommonPage implements View.OnClickListener {
 
@@ -239,11 +236,10 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             DialogUtilKt.showItemSelectionDialog(
                     getContext(),
                     getContext().getString(R.string.control_share_choose),
-                    new ArrayList<>(Arrays.asList(
-                            getContext().getString(R.string.control_share_direct),
-                            getContext().getString(R.string.control_share_zl2)
-                    )),
-                    selected -> {
+                    List.of(getContext().getString(R.string.control_share_direct),
+                            getContext().getString(R.string.control_share_zl2)),
+                    true,
+                    (index, selected) -> {
                         if (selected.equals(getContext().getString(R.string.control_share_direct))) {
                             shareDirect();
                         } else if (selected.equals(getContext().getString(R.string.control_share_zl2))) {
@@ -266,13 +262,17 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         }
     }
 
-    /** 直接分享原始 FCL 控制布局 JSON 文件。 */
+    /**
+     * 直接分享原始 FCL 控制布局 JSON 文件。
+     */
     private void shareDirect() {
         File file = new File(FCLPath.CONTROLLER_DIR, getSelectedController().getFileName());
         shareFile(file, R.string.control_share, AndroidUtils.getMimeType(file.getAbsolutePath()));
     }
 
-    /** 转换为 ZL2 格式后分享。 */
+    /**
+     * 转换为 ZL2 格式后分享。
+     */
     private void shareAsZl2() {
         if (!LayoutConverter.isSupported()) {
             Toast.makeText(getContext(), R.string.control_convert_unsupported, Toast.LENGTH_LONG).show();
@@ -303,7 +303,9 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         }).start();
     }
 
-    /** 通过系统分享面板分享指定文件。 */
+    /**
+     * 通过系统分享面板分享指定文件。
+     */
     private void shareFile(File file, int chooserTitleRes, String mimeType) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), file);
