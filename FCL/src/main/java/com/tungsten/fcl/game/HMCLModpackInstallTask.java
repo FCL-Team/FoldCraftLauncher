@@ -92,7 +92,7 @@ public final class HMCLModpackInstallTask extends Task<Void> {
 
     @Override
     public void execute() throws Exception {
-        String json = CompressingUtils.readTextZipEntry(zipFile, "minecraft/pack.json");
+        String json = CompressingUtils.readTextZipEntry(zipFile.toPath(), "minecraft/pack.json");
         Version originalVersion = JsonUtils.GSON.fromJson(json, Version.class).setId(name).setJar(null);
         LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(originalVersion, null);
         Task<Version> libraryTask = Task.supplyAsync(() -> originalVersion);

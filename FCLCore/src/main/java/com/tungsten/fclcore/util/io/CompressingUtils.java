@@ -17,9 +17,9 @@
  */
 package com.tungsten.fclcore.util.io;
 
-import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
+import com.tungsten.fclcore.util.tree.ZipFileTree;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
@@ -30,22 +30,25 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
-import java.util.zip.ZipError;
 import java.util.zip.ZipException;
 
 /**
  * Utilities of compressing
+ *
+ * @author huangyuhui
  */
 public final class CompressingUtils {
 
-    private static final FileSystemProvider ZIPFS_PROVIDER = new ZipFileSystemProvider();
+    private static final FileSystemProvider ZIPFS_PROVIDER = FileSystemProvider.installedProviders().stream()
+            .filter(it -> "jar".equalsIgnoreCase(it.getScheme()))
+            .findFirst()
+            .orElse(null);
 
     private CompressingUtils() {
     }
@@ -60,22 +63,20 @@ public final class CompressingUtils {
         }
     }
 
-    public static boolean testEncoding(ZipFile zipFile, Charset encoding) throws IOException {
-        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+    public static boolean testEncoding(ZipFile zipFile, Charset encoding) {
         CharsetDecoder cd = newCharsetDecoder(encoding);
         CharBuffer cb = CharBuffer.allocate(32);
-
+        Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
-
             if (entry.getGeneralPurposeBit().usesUTF8ForNames()) continue;
 
             cd.reset();
             byte[] ba = entry.getRawName();
-            int clen = (int)(ba.length * cd.maxCharsPerByte());
+            int clen = (int) (ba.length * cd.maxCharsPerByte());
             if (clen == 0) continue;
             if (clen <= cb.capacity())
-                ((Buffer) cb).clear(); // cast to prevent "java.lang.NoSuchMethodError: java.nio.CharBuffer.clear()Ljava/nio/CharBuffer;" when compiling with Java 9+
+                cb.clear();
             else
                 cb = CharBuffer.allocate(clen);
 
@@ -134,12 +135,40 @@ public final class CompressingUtils {
         throw new IOException("Cannot find suitable encoding for the zip.");
     }
 
+    public static ZipFileTree openZipTree(Path zipFile) throws IOException {
+        return new ZipFileTree(openZipFile(zipFile));
+    }
+
     public static ZipFile openZipFile(Path zipFile) throws IOException {
-        return new ZipFile(Files.newByteChannel(zipFile));
+        return openZipFileWithPossibleEncoding(zipFile, StandardCharsets.UTF_8);
     }
 
     public static ZipFile openZipFile(Path zipFile, Charset charset) throws IOException {
-        return new ZipFile(Files.newByteChannel(zipFile), charset.name());
+        return ZipFile.builder().setPath(zipFile).setCharset(charset).get();
+    }
+
+    public static ZipFile openZipFileWithPossibleEncoding(Path zipFile, Charset possibleEncoding) throws IOException {
+        if (possibleEncoding == null)
+            possibleEncoding = StandardCharsets.UTF_8;
+
+        ZipFile zipReader = ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).get();
+
+        Charset suitableEncoding;
+        try {
+            if (possibleEncoding != StandardCharsets.UTF_8 && CompressingUtils.testEncoding(zipReader, possibleEncoding)) {
+                suitableEncoding = possibleEncoding;
+            } else {
+                suitableEncoding = CompressingUtils.findSuitableEncoding(zipReader);
+                if (suitableEncoding == StandardCharsets.UTF_8)
+                    return zipReader;
+            }
+        } catch (Throwable e) {
+            IOUtils.closeQuietly(zipReader, e);
+            throw e;
+        }
+
+        zipReader.close();
+        return ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).setCharset(suitableEncoding).get();
     }
 
     public static final class Builder {
@@ -216,9 +245,6 @@ public final class CompressingUtils {
                 throw new FileSystemNotFoundException("Module jdk.zipfs does not exist");
 
             return ZIPFS_PROVIDER.newFileSystem(zipFile, env);
-        } catch (ZipError error) {
-            // Since Java 8 throws ZipError stupidly
-            throw new ZipException(error.getMessage());
         } catch (UnsupportedOperationException ex) {
             throw new ZipException("Not a zip file");
         } catch (FileSystemNotFoundException ex) {
@@ -230,12 +256,12 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name the location of the text in zip file, something like A/B/C/D.txt
-     * @throws IOException if the file is not a valid zip file.
+     * @param name    the location of the text in zip file, something like A/B/C/D.txt
      * @return the plain text content of given file.
+     * @throws IOException if the file is not a valid zip file.
      */
-    public static String readTextZipEntry(File zipFile, String name) throws IOException {
-        try (ZipFile s = new ZipFile(zipFile)) {
+    public static String readTextZipEntry(Path zipFile, String name) throws IOException {
+        try (ZipFile s = ZipFile.builder().setPath(zipFile).get()) {
             return readTextZipEntry(s, name);
         }
     }
@@ -244,9 +270,9 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name the location of the text in zip file, something like A/B/C/D.txt
-     * @throws IOException if the file is not a valid zip file.
+     * @param name    the location of the text in zip file, something like A/B/C/D.txt
      * @return the plain text content of given file.
+     * @throws IOException if the file is not a valid zip file.
      */
     public static String readTextZipEntry(ZipFile zipFile, String name) throws IOException {
         return IOUtils.readFullyAsString(zipFile.getInputStream(zipFile.getEntry(name)));
@@ -256,28 +282,13 @@ public final class CompressingUtils {
      * Read the text content of a file in zip.
      *
      * @param zipFile the zip file
-     * @param name the location of the text in zip file, something like A/B/C/D.txt
-     * @throws IOException if the file is not a valid zip file.
+     * @param name    the location of the text in zip file, something like A/B/C/D.txt
      * @return the plain text content of given file.
+     * @throws IOException if the file is not a valid zip file.
      */
     public static String readTextZipEntry(Path zipFile, String name, Charset encoding) throws IOException {
         try (ZipFile s = openZipFile(zipFile, encoding)) {
             return IOUtils.readFullyAsString(s.getInputStream(s.getEntry(name)));
-        }
-    }
-
-    /**
-     * Read the text content of a file in zip.
-     *
-     * @param file the zip file
-     * @param name the location of the text in zip file, something like A/B/C/D.txt
-     * @return the plain text content of given file.
-     */
-    public static Optional<String> readTextZipEntryQuietly(File file, String name) {
-        try {
-            return Optional.of(readTextZipEntry(file, name));
-        } catch (IOException | NullPointerException e) {
-            return Optional.empty();
         }
     }
 

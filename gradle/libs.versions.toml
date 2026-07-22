@@ -22,13 +22,13 @@ paletteKtx = "1.0.0"
 gamepadRemapper = "2.0.3"
 segmentedButton = "3.1.9"
 commonsIo = "2.15.1"
-commonsLang3 = "3.14.0"
-toml4j = "0.7.2"
+tomlj = "1.1.1"
 constantPoolScanner = "1.2"
 jsoup = "1.18.3"
 asyncLayoutInflater = "1.0.0"
 jelf = "0.9.0"
 bytehook = "1.0.10"
+chardet = "2.5.0"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
@@ -49,13 +49,13 @@ palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = 
 gamepad-remapper = { group = "com.github.Mathias-Boulay", name = "android_gamepad_remapper", version.ref = "gamepadRemapper" }
 segmented-button = { group = "com.github.addisonElliott", name = "SegmentedButton", version.ref = "segmentedButton" }
 commons-io = { group = "commons-io", name = "commons-io", version.ref = "commonsIo" }
-commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commonsLang3" }
-toml4j = { group = "com.moandjiezana.toml", name = "toml4j", version.ref = "toml4j" }
+tomlj = { group = "org.tomlj", name = "tomlj", version.ref = "tomlj" }
 constant-pool-scanner = { group = "org.jenkins-ci", name = "constant-pool-scanner", version.ref = "constantPoolScanner" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
 async-layout-inflater = { group = "androidx.asynclayoutinflater", name = "asynclayoutinflater", version.ref = "asyncLayoutInflater" }
 jelf = { group = "net.fornwall", name = "jelf", version.ref = "jelf" }
 bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook" }
+chardet = { module = "org.glavo:chardet", version.ref = "chardet" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

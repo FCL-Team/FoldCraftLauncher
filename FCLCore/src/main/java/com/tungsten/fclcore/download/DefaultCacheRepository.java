@@ -103,7 +103,7 @@ public class DefaultCacheRepository extends CacheRepository {
                 if (hash.equalsIgnoreCase(checksum))
                     cacheLibrary(library, jar, false);
             } else if (library.getChecksums() != null && !library.getChecksums().isEmpty()) {
-                if (LibraryDownloadTask.checksumValid(jar.toFile(), library.getChecksums()))
+                if (LibraryDownloadTask.checksumValid(jar, library.getChecksums()))
                     cacheLibrary(library, jar, true);
             } else {
                 // or we will not cache the library
@@ -138,7 +138,7 @@ public class DefaultCacheRepository extends CacheRepository {
                 if (fileExists(SHA1, libIndex.getHash())) {
                     Path file = getFile(SHA1, libIndex.getHash());
                     if (libIndex.getType().equalsIgnoreCase(LibraryIndex.TYPE_FORGE)) {
-                        if (LibraryDownloadTask.checksumValid(file.toFile(), library.getChecksums()))
+                        if (LibraryDownloadTask.checksumValid(file, library.getChecksums()))
                             return Optional.of(file);
                     }
                 }
@@ -156,7 +156,7 @@ public class DefaultCacheRepository extends CacheRepository {
                     if (hash.equalsIgnoreCase(checksum))
                         return Optional.of(restore(jar, () -> cacheLibrary(library, jar, false)));
                 } else if (library.getChecksums() != null && !library.getChecksums().isEmpty()) {
-                    if (LibraryDownloadTask.checksumValid(jar.toFile(), library.getChecksums()))
+                    if (LibraryDownloadTask.checksumValid(jar, library.getChecksums()))
                         return Optional.of(restore(jar, () -> cacheLibrary(library, jar, true)));
                 } else {
                     return Optional.of(jar);
