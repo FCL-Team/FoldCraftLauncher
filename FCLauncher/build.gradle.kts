@@ -57,7 +57,9 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":VerifiedPluginLoad"))
     implementation(libs.bytehook)
     implementation(libs.appcompat)
     implementation(libs.material)
+    testImplementation("junit:junit:4.13.2")
 }

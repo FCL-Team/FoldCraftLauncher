@@ -12,6 +12,7 @@ object RendererPlugin {
     private var isInit = false;
     private const val PACKAGE_FLAGS =
         PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
+    private val packageNamesByNativeLibraryDir: MutableMap<String, String> = mutableMapOf()
 
     @JvmStatic
     val rendererList: MutableList<Renderer> = mutableListOf()
@@ -43,9 +44,15 @@ object RendererPlugin {
     @JvmStatic
     fun refresh(context: Context) {
         rendererList.clear()
+        packageNamesByNativeLibraryDir.clear()
         isInit = false
         init(context)
     }
+
+    /** Returns a package only for renderers discovered from an installed plugin APK. */
+    @JvmStatic
+    fun getPluginPackageName(renderer: Renderer): String? =
+        renderer.path.takeIf { it.isNotEmpty() }?.let(packageNamesByNativeLibraryDir::get)
 
     private fun parse(info: ApplicationInfo) {
         if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
@@ -57,6 +64,7 @@ object RendererPlugin {
                 val pojavEnvString = metaData.getString("pojavEnv") ?: return
                 val nativeLibraryDir = info.nativeLibraryDir
                 val renderer = rendererString.split(":")
+                if (renderer.size != 3 || renderer.any { it.isBlank() }) return
                 val boatEnv = boatEnvString.split(":")
                 val pojavEnv = pojavEnvString.split(":")
                 val minMCVer = metaData.safeGetString("minMCVer") ?: ""
@@ -75,6 +83,7 @@ object RendererPlugin {
                         maxMCVer
                     )
                 )
+                packageNamesByNativeLibraryDir[nativeLibraryDir] = info.packageName
             }
         }
     }

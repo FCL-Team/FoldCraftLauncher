@@ -214,7 +214,11 @@ public final class LauncherHelper {
                             });
                             return launcher;
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
-                            return Task.supplyAsync(launcher::launch);
+                            Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
+                            return PluginTrustGate.verifyForLaunch(context, renderer).thenComposeAsync(authorizations -> {
+                                launcher.setPluginLoadAuthorizations(authorizations);
+                                return Task.supplyAsync(launcher::launch);
+                            });
                         }).thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))
                         .thenComposeAsync(fclBridge -> {
                             Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());

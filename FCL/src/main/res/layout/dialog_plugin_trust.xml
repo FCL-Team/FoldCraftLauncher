@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/plugin_trust_dialog_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:minHeight="168dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/plugin_trust_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/plugin_trust_severity_icon_container"
+            android:layout_width="44dp"
+            android:layout_height="44dp">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:id="@+id/plugin_trust_severity_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/plugin_trust_severity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/plugin_trust_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/plugin_trust_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="3"
+                android:textSize="14sp"
+                app:use_theme_color="true" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:id="@+id/plugin_trust_content_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:fillViewport="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/plugin_trust_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/plugin_trust_general_section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingEnd="8dp"
+                android:orientation="vertical">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/plugin_trust_general_information"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:use_theme_color="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/plugin_trust_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="4dp"
+                    android:textSize="13sp" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/plugin_trust_general_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textSize="13sp"
+                    app:use_theme_color="true" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:alpha="0.55"
+                android:background="@android:color/darker_gray" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/plugin_trust_technical_section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="8dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/plugin_trust_technical_information"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:use_theme_color="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/plugin_trust_technical_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textIsSelectable="true"
+                    android:textSize="13sp"
+                    app:use_theme_color="true" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+    <View
+        android:id="@+id/plugin_trust_action_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.55"
+        android:background="@android:color/darker_gray" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/plugin_trust_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/plugin_trust_secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="52dp"
+            android:text="@string/plugin_trust_cancel"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/plugin_trust_primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:minHeight="52dp"
+            android:text="@string/plugin_trust_close"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:ripple="true" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

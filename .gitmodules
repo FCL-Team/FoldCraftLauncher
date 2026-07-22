@@ -1,3 +1,7 @@
 [submodule "NG-GL4ES"]
 	path = NG-GL4ES/NG-GL4ES
 	url = https://github.com/BZLZHH/NG-GL4ES.git
+
+[submodule "VerifiedPluginLoad"]
+	path = VerifiedPluginLoad
+	url = https://github.com/ZalithLauncher/VerifiedPluginLoad.git
