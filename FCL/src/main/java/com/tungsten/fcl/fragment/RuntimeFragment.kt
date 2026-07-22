@@ -2,6 +2,7 @@ package com.tungsten.fcl.fragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.SplashActivity
 import com.tungsten.fcl.databinding.FragmentRuntimeBinding
 import com.tungsten.fcl.util.RuntimeUtils
+import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.FCLFragment
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
@@ -196,7 +199,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 java21Progress.visibility = View.VISIBLE
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                       runCatching {
+                        runCatching {
                             RuntimeUtils.installJava(
                                 context,
                                 FCLPath.JAVA_21_PATH,
@@ -256,16 +259,50 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
 
     override fun onClick(view: View) {
         if (view === bind.install) {
+            val deviceArch = Architecture.archAsString(Architecture.getDeviceArchitecture())
+            if (!isJavaArchSupported(deviceArch)) {
+                showErrorDialog(
+                    getString(
+                        R.string.missing_runtime_arch_files,
+                        deviceArch,
+                        "FCL-release-x.x.x.x-$deviceArch.apk",
+                        "FCL-release-x.x.x.x-all.apk"
+                    )
+                )
+                return
+            }
             install()
+        }
+    }
+
+    private fun isJavaArchSupported(arch: String): Boolean {
+        try {
+            val javaDirs = listOf("jre8", "jre17", "jre21", "jre25")
+            val assetManager = requireContext().assets
+            var supportedCount = 0
+            for (javaDir in javaDirs) {
+                val dirPath = "app_runtime/java/$javaDir"
+                val files = assetManager.list(dirPath)
+                if (files != null) {
+                    val expectedFile = "bin-$arch.tar.xz"
+                    if (files.contains(expectedFile)) {
+                        supportedCount++
+                    }
+                }
+            }
+            return supportedCount > 0
+        } catch (e: Exception) {
+            showErrorDialog(e.toString())
+            return false
         }
     }
 
     private fun showErrorDialog(message: String) {
         installing = false
-        lifecycleScope.launch(Dispatchers.Main){
+        lifecycleScope.launch(Dispatchers.Main) {
             FCLAlertDialog.Builder(requireContext())
                 .setMessage(message)
-                .setPositiveButton{
+                .setPositiveButton {
                 }
                 .create()
                 .show()

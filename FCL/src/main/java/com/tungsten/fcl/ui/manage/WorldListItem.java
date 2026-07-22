@@ -7,8 +7,8 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
@@ -20,10 +20,8 @@ import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-import java.io.IOException;
 import java.time.Instant;
 
 public class WorldListItem {
@@ -57,16 +55,10 @@ public class WorldListItem {
     }
 
     public void export() {
-        FileBrowser.Builder builder = new FileBrowser.Builder(context);
-        builder.setLibMode(LibMode.FOLDER_CHOOSER);
-        builder.setSelectionMode(SelectionMode.SINGLE_SELECTION);
-        builder.create().browse(activity, RequestCodes.SELECT_WORLD_EXPORT_CODE, ((requestCode, resultCode, data) -> {
-            if (requestCode == RequestCodes.SELECT_WORLD_EXPORT_CODE && resultCode == Activity.RESULT_OK && data != null) {
-                String path = FileBrowser.getSelectedFiles(data).get(0);
-                WorldExportDialog dialog = new WorldExportDialog(context, world, path);
-                dialog.show();
-            }
-        }));
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
+            WorldExportDialog dialog = new WorldExportDialog(context, world, files.get(0));
+            dialog.show();
+        });
     }
 
     public void manageDatapacks() {

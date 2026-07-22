@@ -24,9 +24,24 @@ fun showItemSelectionDialog(
     context: Context,
     title: String = "",
     items: List<String>,
-    callback: (String) -> Unit
+    small: Boolean = true,
+    callback: (Int, String) -> Unit
 ) {
-    ItemSelectionDialog(context, title, items) {
-        callback(it)
+    ItemSelectionDialog(context, title, items,small) { position, item ->
+        callback(position, item)
     }.show()
+}
+
+fun showWarningDialog(context: Context, message: String, onConfirm: () -> Unit) {
+    FCLAlertDialog.Builder(context)
+        .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+        .setMessage(message)
+        .setPositiveButton {
+            onConfirm()
+        }
+        .setNegativeButton {
+
+        }
+        .create()
+        .show()
 }

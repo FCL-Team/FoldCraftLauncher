@@ -16,11 +16,11 @@ import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
-import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -52,6 +52,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     private ControlButtonStyle buttonStyle;
     private boolean isEdit;
     private ControlButtonStyle beforeStyle;
+    private GameMenu menu;
 
     public interface Callback {
         void onStyleAdd(ControlDirectionStyle style);
@@ -155,6 +156,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
                     buttonStyle.setFillColorPressed(style.getFillColorPressed());
                     changeDirectionStyle();
                 });
+                dialog.setGameMenu(menu);
                 dialog.show();
             });
         }
@@ -378,5 +380,9 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         });
         dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         dialog.show();
+    }
+
+    public void setGameMenu(GameMenu menu) {
+        this.menu = menu;
     }
 }

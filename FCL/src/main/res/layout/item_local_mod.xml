@@ -105,6 +105,15 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_outline_info_24"
             app:auto_tint="true"
+            app:layout_constraintEnd_toStartOf="@id/jump" />
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/jump"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_arrow_forward_24"
+            app:auto_tint="true"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>

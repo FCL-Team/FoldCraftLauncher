@@ -209,7 +209,7 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectAr
     jint res = 0;
 
     if (argsArray == NULL) {
-        FCL_INTERNAL_LOG("Args array null, returning");
+        FCL_LOG("Args array null, returning");
         //handle error
         return 0;
     }
@@ -217,14 +217,14 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectAr
     int argc = (*env)->GetArrayLength(env, argsArray);
     char **argv = convert_to_char_array(env, argsArray);
 
-    FCL_INTERNAL_LOG("Done processing args");
+    FCL_LOG("Done processing args");
 
     res = launchJVM(argc, argv);
 
-    FCL_INTERNAL_LOG("Going to free args");
+    FCL_LOG("Going to free args");
     free_char_array(env, argsArray, argv);
 
-    FCL_INTERNAL_LOG("Free done");
+    FCL_LOG("Free done");
 
     return res;
 }

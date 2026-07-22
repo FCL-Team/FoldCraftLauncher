@@ -2,22 +2,20 @@ package com.tungsten.fcl.ui.download.common
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
-import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
 import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
-import com.tungsten.fclcore.mod.curse.CurseAddon
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -32,9 +30,7 @@ class RemoteModListAdapter(
     private val downloadPage: DownloadPage,
     private val list: ArrayList<RemoteMod>,
     private val callback: Callback
-) : RecyclerView.Adapter<RemoteModListAdapter.ViewHolder>() {
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
+) : RecyclerView.Adapter<ViewHolder>() {
     private val modIdList: MutableList<String?> = ArrayList()
 
     init {

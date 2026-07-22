@@ -46,4 +46,5 @@
     <string name="log_upload_open">Open Link</string>
     <string name="log_upload_share">Share Link</string>
     <string name="log_upload_share_template">I encountered a problem in the launcher, here is the log link:\n%s</string>
+    <string name="close">Close</string>
 </resources>

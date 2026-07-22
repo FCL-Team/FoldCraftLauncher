@@ -29,6 +29,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -52,7 +53,7 @@ import java.util.logging.Level;
 
 public class MultiplayerDialog extends FCLDialog implements View.OnClickListener {
 
-    private final Activity activity;
+    private final FCLActivity activity;
 
     private final RelativeLayout stateUIContainer;
     private final FCLProgressBar progressBar;
@@ -62,7 +63,7 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
     private final ArrayList<StateBindingUI> allUI;
     private final FCLAlertDialog logDialog;
 
-    public MultiplayerDialog(@NonNull Context context, Activity activity, int width, int height) {
+    public MultiplayerDialog(@NonNull Context context, FCLActivity activity, int width, int height) {
         super(context);
         this.activity = activity;
         setCancelable(false);

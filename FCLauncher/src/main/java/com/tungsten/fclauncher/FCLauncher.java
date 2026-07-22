@@ -112,106 +112,58 @@ public class FCLauncher {
     }
 
     private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
-        String nativeDir = context.getApplicationInfo().nativeLibraryDir;
-        String libDirName = is64BitsDevice() ? "lib64" : "lib";
-        String javaLibDir = getJavaLibDir(javaPath);
-        String jvmLibDir = getJvmLibDir(javaPath);
-        String jliLibDir = "/jli";
+        StringBuilder sb = new StringBuilder();
         String split = ":";
-        String jreLibDir;
-        if (isJDK8(javaPath)) {
-            jreLibDir = javaPath +
-                    "/jre" +
-                    javaLibDir +
-                    jvmLibDir +
-                    split +
 
-                    javaPath +
-                    "/jre" +
-                    javaLibDir;
-        } else {
-            jreLibDir = javaPath +
-                    javaLibDir +
-                    jvmLibDir;
+        if (javaPath != null) {
+            String javaLibDir = getJavaLibDir(javaPath);
+            String jvmLibDir = getJvmLibDir(javaPath);
+
+            sb.append(javaPath).append(javaLibDir).append(split);
+            sb.append(javaPath).append(javaLibDir).append("/jli").append(split);
+
+            String jreLibDir;
+            if (isJDK8(javaPath)) {
+                jreLibDir = javaPath + "/jre" + javaLibDir + jvmLibDir;
+                sb.append(jreLibDir).append(split);
+                sb.append(javaPath).append("/jre").append(javaLibDir).append(split);
+            } else {
+                jreLibDir = javaPath + javaLibDir + jvmLibDir;
+                sb.append(jreLibDir).append(split);
+            }
         }
 
-        String nativeLibPaths = NativeLibPlugin.getPaths(split);
-
-        return javaPath +
-                javaLibDir +
-                split +
-
-                javaPath +
-                javaLibDir +
-                jliLibDir +
-                split +
-
-                jreLibDir +
-                split +
-
-                "/system/" +
-                libDirName +
-                split +
-
-                "/vendor/" +
-                libDirName +
-                split +
-
-                "/vendor/" +
-                libDirName +
-                "/hw" +
-                split +
-
-                "/system_ext/" +
-                libDirName +
-                split +
-
-                context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
-                split +
-
-                ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
-
-                ((!nativeLibPaths.isEmpty() ? nativeLibPaths + split : "")) +
-
-                FCLPath.MOD_RUNTIME_DIR +
-                split +
-
-                nativeDir;
+        return appendCommonPaths(sb, context, pluginLibPath);
     }
 
     private static String getLibraryPath(Context context, String pluginLibPath) {
+        return appendCommonPaths(new StringBuilder(), context, pluginLibPath);
+    }
+
+    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
+
+        sb.append(context.getDir("runtime", 0).getAbsolutePath()).append("/jna").append(split);
+
+        if (pluginLibPath != null && !pluginLibPath.isEmpty() && !pluginLibPath.equals("null")) {
+            sb.append(pluginLibPath).append(split);
+        }
+
         String nativeLibPaths = NativeLibPlugin.getPaths(split);
-        return "/system/" +
-                libDirName +
-                split +
+        if (!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null")) {
+            sb.append(nativeLibPaths).append(split);
+        }
 
-                "/vendor/" +
-                libDirName +
-                split +
+        sb.append(FCLPath.MOD_RUNTIME_DIR).append(split);
+        sb.append("/system/").append(libDirName).append(split);
+        sb.append("/vendor/").append(libDirName).append(split);
+        sb.append("/vendor/").append(libDirName).append("/hw").append(split);
+        sb.append("/system_ext/").append(libDirName).append(split);
+        sb.append(nativeDir);
 
-                "/vendor/" +
-                libDirName +
-                "/hw" +
-                split +
-
-                "/system_ext/" +
-                libDirName +
-                split +
-
-                context.getDir("runtime", 0).getAbsolutePath() + "/jna" +
-                split +
-
-                ((pluginLibPath != null && !pluginLibPath.isEmpty()) ? pluginLibPath + split : "") +
-
-                ((!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null") ? nativeLibPaths + split : "")) +
-
-                FCLPath.MOD_RUNTIME_DIR +
-                split +
-
-                nativeDir;
+        return sb.toString();
     }
 
     private static String[] rebaseArgs(FCLConfig config) throws IOException {

@@ -15,6 +15,7 @@
     <string name="splash_eula_next">同意并继续</string>
     <string name="splash_runtime_title">安装或更新运行环境</string>
     <string name="splash_runtime_install">安装 / 更新</string>
+    <string name="missing_runtime_arch_files">当前安装的启动器缺少当前设备架构（%s）所需的运行时文件，请下载对应架构的安装包（%s）或是全架构安装包（%s）。</string>
 
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
@@ -1067,6 +1068,7 @@
     <string name="view_info_reference_height">屏幕高</string>
 
     <string name="world">世界</string>
+    <string name="world_permission_fix">修复世界文件权限</string>
     <string name="world_add">添加世界</string>
     <string name="world_datapack">管理数据包</string>
     <string name="world_datapack_1_13">仅 Minecraft 1.13 及之后的版本支持数据包</string>
@@ -1177,7 +1179,6 @@
     <string name="message_check_plugin">当前插件 %s 不支持该游戏版本，继续使用可能导致游戏崩溃！是否继续？</string>
     <string name="enabled">已启用</string>
     <string name="disabled">已禁用</string>
-    <string name="close">关闭</string>
     <string name="message_warn_restart_after_change">改动的内容将在重启后生效。</string>
     <string name="message_check_path_valid">当前选择的游戏文件路径（%s）可能包含非法字符，启动后可能会闪退，建议检查游戏目录或是重命名版本，是否继续启动？</string>
     <string name="message_check_has_modloader">检测到当前启动的游戏版本已安装模组但是似乎未安装相应的模组加载器，启动后模组可能无法运行，是否继续启动？</string>
@@ -1185,5 +1186,6 @@
     <string name="exception_no_suitable_java">未能找到合适的Java！</string>
     <string name="slide_selection">滑动选择</string>
     <string name="swap_hands">双击切换副手</string>
+    <string name="jar_executor_warn">注意！该功能不是用于安装模组的，如果你正在安装模组，请使用启动器的下载功能或是在“管理模组”内添加。</string>
 
 </resources>
