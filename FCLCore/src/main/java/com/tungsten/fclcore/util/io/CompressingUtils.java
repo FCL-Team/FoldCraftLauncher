@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.util.io;
 
+import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fclcore.util.tree.ZipFileTree;
@@ -45,10 +46,7 @@ import java.util.zip.ZipException;
  */
 public final class CompressingUtils {
 
-    private static final FileSystemProvider ZIPFS_PROVIDER = FileSystemProvider.installedProviders().stream()
-            .filter(it -> "jar".equalsIgnoreCase(it.getScheme()))
-            .findFirst()
-            .orElse(null);
+    private static final FileSystemProvider ZIPFS_PROVIDER = new ZipFileSystemProvider();
 
     private CompressingUtils() {
     }
