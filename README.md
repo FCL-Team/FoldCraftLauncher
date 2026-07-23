@@ -90,3 +90,4 @@
 - [OpenAL-Soft](https://github.com/kcat/openal-soft): [GNU GPLv2](app_pojavlauncher/src/main/assets/licenses/OPENAL-SOFT_GPL2)
     - [oboe](https://github.com/google/oboe): [Apache License 2.0](app_pojavlauncher/src/main/assets/licenses/OBOE_APACHE2).
     - [pfffft](https://bitbucket.org/jpommier/pffft/src/master/): [ARR](app_pojavlauncher/src/main/assets/licenses/PFFFT_LICENSE)
+- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL→ZL2 控制布局转换，Go 实现，打包为 `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
