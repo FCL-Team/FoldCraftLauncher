@@ -171,6 +171,13 @@
     <string name="control_list">布局列表</string>
     <string name="control_select">选择布局</string>
     <string name="control_share">分享布局</string>
+    <string name="control_share_choose">选择分享方式</string>
+    <string name="control_share_direct">直接分享</string>
+    <string name="control_share_zl2">分享为 ZL2 控制布局</string>
+    <string name="control_share_zl2_title">分享 ZL2 控制布局</string>
+    <string name="control_converting">正在转换…</string>
+    <string name="control_convert_failed">转换失败！</string>
+    <string name="control_convert_unsupported">当前设备不支持 ZL2 转换（需 arm64）</string>
     <string name="control_upload">上传布局</string>
 
     <string name="curse_category_0">全部</string>
