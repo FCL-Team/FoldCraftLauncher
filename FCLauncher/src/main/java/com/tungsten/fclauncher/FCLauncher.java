@@ -342,6 +342,15 @@ public class FCLauncher {
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
         printTaskTitle(bridge, "DLOPEN");
+        // Load ALSA stub for Java Sound (libjsound.so) compatibility
+        // libjsound.so in Android JDK 25+ depends on libasound.so.2 which is not available on Android
+        try {
+            File alsaStub = new File(config.getContext().getApplicationInfo().nativeLibraryDir, "libalsa_stub.so");
+            if (alsaStub.exists()) {
+                bridge.dlopen(alsaStub.getAbsolutePath());
+            }
+        } catch (Exception ignored) {
+        }
         String javaLibDir = config.getJavaPath() + getJavaLibDir(config.getJavaPath());
         String jliLibDir = new File(javaLibDir + "/jli/libjli.so").exists() ? javaLibDir + "/jli" : javaLibDir;
         if (isJDK8(config.getJavaPath()))
@@ -368,7 +377,10 @@ public class FCLauncher {
         File[] list = path.listFiles();
         if (list != null) {
             for (File f : list) {
-                if (f.isFile() && f.getName().endsWith(".so")) {
+                // Skip libjsound.so - it depends on libasound.so.2 (ALSA) which is not
+                // available on Android. The ALSA stub (libalsa_stub.so) provides the
+                // necessary symbols and is loaded separately in setUpJavaRuntime.
+                if (f.isFile() && f.getName().endsWith(".so") && !f.getName().equals("libjsound.so")) {
                     returnValue.add(f);
                 } else if (f.isDirectory()) {
                     returnValue.addAll(locateLibs(f));
@@ -570,3 +582,5 @@ public class FCLauncher {
     }
 
 }
+
+
