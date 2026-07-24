@@ -20,7 +20,10 @@ typedef struct _snd_pcm snd_pcm_t;
 typedef struct _snd_ctl snd_ctl_t;
 typedef struct _snd_mixer snd_mixer_t;
 typedef struct _snd_mixer_elem snd_mixer_elem_t;
-typedef struct _snd_mixer_selem_id snd_mixer_selem_id_t;
+typedef struct _snd_mixer_selem_id {
+    char name[64];
+    unsigned int index;
+} snd_mixer_selem_id_t;
 typedef struct _snd_hctl snd_hctl_t;
 typedef struct _snd_seq snd_seq_t;
 typedef struct _snd_rawmidi snd_rawmidi_t;
