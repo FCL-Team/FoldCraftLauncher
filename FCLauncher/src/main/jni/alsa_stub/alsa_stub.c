@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <pthread.h>
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
 
 #define FALSE 0
 #define TRUE 1
@@ -42,57 +39,16 @@ typedef struct _snd_rawmidi snd_rawmidi_t;
 #define SND_PCM_STATE_PAUSED 6
 #define SND_PCM_STATE_DISCONNECTED 8
 
-typedef struct {
-    unsigned int device; unsigned int subdevice; int stream; int card;
+typedef struct { unsigned int device; unsigned int subdevice; int stream; int card;
     unsigned int subdevices_count; unsigned int subdevices_avail;
-    char id[64]; char name[256]; char subname[256];
-} snd_pcm_info_t;
-
+    char id[64]; char name[256]; char subname[256]; } snd_pcm_info_t;
 typedef struct { char id[64]; char name[256]; char driver[64]; } snd_ctl_card_info_t;
-
-typedef struct {
-    unsigned int rate; unsigned int channels; unsigned int buffer_frames;
-    unsigned int period_frames; unsigned int periods;
-    snd_pcm_format_t format; snd_pcm_access_t access;
-    int bits; int sbits; int signed_fmt; int big_endian; int linear;
-} snd_pcm_hw_params_t;
-
+typedef struct { unsigned int rate; unsigned int channels; unsigned int buffer_frames;
+    unsigned int period_frames; unsigned int periods; snd_pcm_format_t format;
+    snd_pcm_access_t access; int bits; int sbits; int signed_fmt; int big_endian; int linear; } snd_pcm_hw_params_t;
 typedef struct { unsigned int flags; } snd_pcm_sw_params_t;
 
-struct _snd_pcm {
-    int stream; int state; char name[256];
-    snd_pcm_hw_params_t hw;
-    SLObjectItf engineObj; SLEngineItf engine;
-    SLObjectItf outputMixObj; SLObjectItf playerObj;
-    SLPlayItf player; SLAndroidSimpleBufferQueueItf bufferQueue;
-    short *buffer; int buffer_size; int period_frames;
-    int frame_size; int write_pos; int play_pos; int buffered_frames;
-    pthread_mutex_t mutex; int engine_initialized;
-};
-
-static int g_engine_initialized = 0;
-static SLObjectItf g_engineObj = NULL;
-static SLEngineItf g_engine = NULL;
-static SLObjectItf g_outputMixObj = NULL;
-static pthread_mutex_t g_engine_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-typedef struct {
-    snd_pcm_format_t alsa_fmt; int bits; int sbits;
-    int signed_fmt; int big_endian; int linear;
-} format_entry_t;
-
-static format_entry_t format_table[] = {
-    { SND_PCM_FORMAT_U8,      8,  8, 0, 0, 1 },
-    { SND_PCM_FORMAT_S16_LE, 16, 16, 1, 0, 1 },
-    { SND_PCM_FORMAT_S32_LE, 32, 32, 1, 0, 1 },
-    { -1, 0, 0, 0, 0, 0 },
-};
-
-static format_entry_t* find_format(snd_pcm_format_t fmt) {
-    for (int i = 0; format_table[i].alsa_fmt >= 0; i++)
-        if (format_table[i].alsa_fmt == fmt) return &format_table[i];
-    return NULL;
-}
+struct _snd_pcm { int stream; int state; char name[256]; snd_pcm_hw_params_t hw; };
 
 static const char* alsa_error_str(int err) {
     switch (err) {
@@ -110,111 +66,27 @@ static const char* alsa_error_str(int err) {
     }
 }
 
-static int init_engine(void) {
-    pthread_mutex_lock(&g_engine_mutex);
-    if (g_engine_initialized) { pthread_mutex_unlock(&g_engine_mutex); return 0; }
-    SLresult r;
-    r = slCreateEngine(&g_engineObj, 0, NULL, 0, NULL, NULL);
-    if (r != SL_RESULT_SUCCESS) { pthread_mutex_unlock(&g_engine_mutex); return -5; }
-    r = (*g_engineObj)->Realize(g_engineObj, SL_BOOLEAN_FALSE);
-    if (r != SL_RESULT_SUCCESS) { (*g_engineObj)->Destroy(g_engineObj); g_engineObj = NULL; pthread_mutex_unlock(&g_engine_mutex); return -5; }
-    r = (*g_engineObj)->GetInterface(g_engineObj, SL_IID_ENGINE, &g_engine);
-    if (r != SL_RESULT_SUCCESS) { (*g_engineObj)->Destroy(g_engineObj); g_engineObj = NULL; pthread_mutex_unlock(&g_engine_mutex); return -5; }
-    const SLInterfaceID ids[] = { SL_IID_VOLUME };
-    const SLboolean req[] = { SL_BOOLEAN_FALSE };
-    r = (*g_engine)->CreateOutputMix(g_engine, &g_outputMixObj, 1, ids, req);
-    if (r != SL_RESULT_SUCCESS) { (*g_engineObj)->Destroy(g_engineObj); g_engineObj = NULL; g_engine = NULL; pthread_mutex_unlock(&g_engine_mutex); return -5; }
-    r = (*g_outputMixObj)->Realize(g_outputMixObj, SL_BOOLEAN_FALSE);
-    if (r != SL_RESULT_SUCCESS) { (*g_outputMixObj)->Destroy(g_outputMixObj); g_outputMixObj = NULL; (*g_engineObj)->Destroy(g_engineObj); g_engineObj = NULL; g_engine = NULL; pthread_mutex_unlock(&g_engine_mutex); return -5; }
-    g_engine_initialized = 1;
-    fprintf(stderr, "ALSA stub: OpenSL ES engine initialized\n");
-    pthread_mutex_unlock(&g_engine_mutex);
-    return 0;
-}
-
-static void buffer_queue_callback(SLAndroidSimpleBufferQueueItf bq, void *context) {
-    (void)bq; (void)context;
-}
-
-static int pcm_setup_player(snd_pcm_t *pcm) {
-    if (pcm->playerObj) { (*pcm->playerObj)->Destroy(pcm->playerObj); pcm->playerObj = NULL; pcm->player = NULL; pcm->bufferQueue = NULL; }
-    format_entry_t *fe = find_format(pcm->hw.format);
-    if (!fe) return -22;
-    pcm->frame_size = (pcm->hw.channels * fe->bits) / 8;
-    if (pcm->frame_size == 0) pcm->frame_size = 2;
-    pcm->buffer_size = pcm->hw.buffer_frames;
-    pcm->period_frames = pcm->hw.period_frames;
-    SLDataFormat_PCM fmt;
-    fmt.formatType = SL_DATAFORMAT_PCM;
-    fmt.numChannels = pcm->hw.channels;
-    fmt.samplesPerSec = pcm->hw.rate * 1000;
-    fmt.bitsPerSample = fe->bits;
-    fmt.containerSize = fe->bits;
-    fmt.channelMask = (pcm->hw.channels == 1) ? SL_SPEAKER_FRONT_CENTER : SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT;
-    fmt.endianness = fe->big_endian ? SL_BYTEORDER_BIGENDIAN : SL_BYTEORDER_LITTLEENDIAN;
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = { SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 1 };
-    SLDataSource audioSrc = { &loc_bufq, &fmt };
-    SLDataLocator_OutputMix loc_outmix = { SL_DATALOCATOR_OUTPUTMIX, g_outputMixObj };
-    SLDataSink audioSink = { &loc_outmix, NULL };
-    SLInterfaceID ids[] = { SL_IID_ANDROIDSIMPLEBUFFERQUEUE };
-    SLboolean req[] = { SL_BOOLEAN_TRUE };
-    SLresult r = (*g_engine)->CreateAudioPlayer(g_engine, &pcm->playerObj, &audioSrc, &audioSink, 1, ids, req);
-    if (r != SL_RESULT_SUCCESS) return -5;
-    r = (*pcm->playerObj)->Realize(pcm->playerObj, SL_BOOLEAN_FALSE);
-    if (r != SL_RESULT_SUCCESS) { (*pcm->playerObj)->Destroy(pcm->playerObj); pcm->playerObj = NULL; return -5; }
-    r = (*pcm->playerObj)->GetInterface(pcm->playerObj, SL_IID_PLAY, &pcm->player);
-    if (r != SL_RESULT_SUCCESS) return -5;
-    r = (*pcm->playerObj)->GetInterface(pcm->playerObj, SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &pcm->bufferQueue);
-    if (r != SL_RESULT_SUCCESS) return -5;
-    r = (*pcm->bufferQueue)->RegisterCallback(pcm->bufferQueue, buffer_queue_callback, pcm);
-    if (r != SL_RESULT_SUCCESS) return -5;
-    return 0;
-}
-
 int snd_strerror(int err) { return -1; }
 const char* snd_strerror_pointer(int err) { return alsa_error_str(err); }
 typedef void (*snd_lib_error_handler_t)(const char*,int,const char*,int,const char*,...);
 snd_lib_error_handler_t snd_lib_error_set_handler(snd_lib_error_handler_t h) { return NULL; }
 
 int snd_pcm_open(snd_pcm_t **pcm, const char *name, snd_pcm_stream_t stream, int mode) {
-    if (!pcm) return -22;
-    if (!g_engine_initialized) { int ret = init_engine(); if (ret) { *pcm = NULL; return ret; } }
-    snd_pcm_t *p = (snd_pcm_t*)calloc(1, sizeof(snd_pcm_t));
-    if (!p) return -12;
-    pthread_mutex_init(&p->mutex, NULL);
-    p->stream = stream; p->state = SND_PCM_STATE_OPEN;
-    strncpy(p->name, name, sizeof(p->name) - 1);
-    p->hw.rate = 44100; p->hw.channels = 2;
-    p->hw.format = SND_PCM_FORMAT_S16_LE;
-    p->hw.access = SND_PCM_ACCESS_RW_INTERLEAVED;
-    p->hw.buffer_frames = 4096; p->hw.period_frames = 1024;
-    p->hw.periods = 4; p->hw.bits = 16; p->hw.sbits = 16;
-    p->hw.signed_fmt = 1; p->hw.linear = 1;
-    p->engine_initialized = 1;
-    *pcm = p;
-    fprintf(stderr, "ALSA stub: snd_pcm_open(%s, stream=%d) = %p\n", name, stream, (void*)p);
+    (void)name; (void)stream; (void)mode;
+    *pcm = (snd_pcm_t*)calloc(1, sizeof(snd_pcm_t));
+    if (!*pcm) return -12;
+    (*pcm)->stream = stream;
+    (*pcm)->state = SND_PCM_STATE_OPEN;
     return 0;
 }
 
-int snd_pcm_close(snd_pcm_t *pcm) {
-    if (!pcm) return 0;
-    if (pcm->playerObj) {
-        if (pcm->player) (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_STOPPED);
-        (*pcm->playerObj)->Destroy(pcm->playerObj);
-    }
-    if (pcm->buffer) free(pcm->buffer);
-    pthread_mutex_destroy(&pcm->mutex);
-    free(pcm);
-    return 0;
-}
-
+int snd_pcm_close(snd_pcm_t *pcm) { free(pcm); return 0; }
 int snd_pcm_info(snd_pcm_t *pcm, snd_pcm_info_t *info) {
     if (!pcm || !info) return -22;
-    info->card = 0; info->device = 0; info->subdevice = 0;
-    info->stream = pcm->stream; info->subdevices_count = 1; info->subdevices_avail = 1;
-    strcpy(info->id, "default");
-    snprintf(info->name, sizeof(info->name), "Android Audio (%s)", pcm->name);
-    strcpy(info->subname, "");
+    memset(info, 0, sizeof(*info));
+    info->card = 0; info->device = 0; info->stream = pcm->stream;
+    info->subdevices_count = 1; info->subdevices_avail = 1;
+    strcpy(info->id, "default"); snprintf(info->name, sizeof(info->name), "ALSA stub (%s)", pcm->name);
     return 0;
 }
 
@@ -233,93 +105,28 @@ int snd_pcm_info_get_stream(const snd_pcm_info_t *obj) { return obj->stream; }
 
 int snd_pcm_hw_params_malloc(snd_pcm_hw_params_t **ptr) { *ptr = (snd_pcm_hw_params_t*)calloc(1, sizeof(snd_pcm_hw_params_t)); return *ptr ? 0 : -12; }
 void snd_pcm_hw_params_free(snd_pcm_hw_params_t *obj) { free(obj); }
-
-int snd_pcm_hw_params_any(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) {
-    if (!params) return -22; memcpy(params, &pcm->hw, sizeof(snd_pcm_hw_params_t)); return 0;
-}
-
-int snd_pcm_hw_params_set_access(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t access) {
-    if (!params) return -22; params->access = access; return 0;
-}
-
-int snd_pcm_hw_params_set_format(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val) {
-    if (!params) return -22;
-    format_entry_t *fe = find_format(val);
-    if (!fe) return -22;
-    params->format = val; params->bits = fe->bits; params->sbits = fe->sbits;
-    params->signed_fmt = fe->signed_fmt; params->big_endian = fe->big_endian; params->linear = fe->linear;
-    return 0;
-}
-
-int snd_pcm_hw_params_set_channels(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val) {
-    if (!params) return -22; if (val < 1 || val > 2) return -22; params->channels = val; return 0;
-}
-
-int snd_pcm_hw_params_set_rate_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) {
-    if (!params || !val) return -22;
-    unsigned int rates[] = { 8000, 11025, 16000, 22050, 32000, 44100, 48000, 96000 };
-    unsigned int best = rates[0]; int best_diff = abs((int)*val - (int)rates[0]);
-    for (int i = 1; i < 8; i++) { int d = abs((int)*val - (int)rates[i]); if (d < best_diff) { best_diff = d; best = rates[i]; } }
-    params->rate = best; *val = best; if (dir) *dir = 0;
-    return 0;
-}
-
+int snd_pcm_hw_params_any(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) { if (!pcm || !params) return -22; memcpy(params, &pcm->hw, sizeof(*params)); return 0; }
+int snd_pcm_hw_params_set_access(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_access_t access) { if (params) params->access = access; return 0; }
+int snd_pcm_hw_params_set_format(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val) { if (params) { params->format = val; params->bits = 16; params->sbits = 16; params->signed_fmt = 1; params->linear = 1; } return 0; }
+int snd_pcm_hw_params_set_channels(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val) { if (params) params->channels = val; return 0; }
+int snd_pcm_hw_params_set_rate_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) { if (params && val) { params->rate = *val; if (dir) *dir = 0; } return 0; }
 int snd_pcm_hw_params_set_rate_resample(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val) { return 0; }
+int snd_pcm_hw_params_set_periods_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) { if (params && val) { params->periods = *val; if (dir) *dir = 0; } return 0; }
+int snd_pcm_hw_params_set_buffer_size_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val) { if (params && val) params->buffer_frames = *val; return 0; }
+int snd_pcm_hw_params_set_buffer_time_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) { if (params && val) { params->buffer_frames = (*val * params->rate) / 1000000; if (dir) *dir = 0; } return 0; }
+int snd_pcm_hw_params_set_period_time_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) { if (params && val) { params->period_frames = (*val * params->rate) / 1000000; if (dir) *dir = 0; } return 0; }
+int snd_pcm_hw_params(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) { if (!pcm || !params) return -22; memcpy(&pcm->hw, params, sizeof(*params)); pcm->state = SND_PCM_STATE_SETUP; return 0; }
+int snd_pcm_hw_params_current(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) { if (!pcm || !params) return -22; memcpy(params, &pcm->hw, sizeof(*params)); return 0; }
 
-int snd_pcm_hw_params_set_periods_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) {
-    if (!params || !val) return -22;
-    if (*val < 2) *val = 2; if (*val > 8) *val = 8;
-    params->periods = *val; if (dir) *dir = 0;
-    return 0;
-}
-
-int snd_pcm_hw_params_set_buffer_size_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val) {
-    if (!params || !val) return -22; params->buffer_frames = *val; return 0;
-}
-
-int snd_pcm_hw_params_set_buffer_time_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) {
-    if (!params || !val) return -22;
-    params->buffer_frames = (*val * params->rate) / 1000000; if (dir) *dir = 0;
-    return 0;
-}
-
-int snd_pcm_hw_params_set_period_time_near(snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir) {
-    if (!params || !val) return -22;
-    params->period_frames = (*val * params->rate) / 1000000;
-    if (params->period_frames < 64) params->period_frames = 64;
-    if (params->period_frames > params->buffer_frames) params->period_frames = params->buffer_frames / 4;
-    if (dir) *dir = 0;
-    return 0;
-}
-
-int snd_pcm_hw_params(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) {
-    if (!pcm || !params) return -22;
-    memcpy(&pcm->hw, params, sizeof(snd_pcm_hw_params_t));
-    pcm->state = SND_PCM_STATE_SETUP;
-    if (pcm->stream == SND_PCM_STREAM_PLAYBACK) { int ret = pcm_setup_player(pcm); if (ret) return ret; }
-    int fs = (pcm->hw.channels * pcm->hw.bits) / 8; if (fs == 0) fs = 2;
-    pcm->frame_size = fs; pcm->buffer_size = pcm->hw.buffer_frames;
-    if (pcm->buffer) free(pcm->buffer);
-    pcm->buffer = (short*)calloc(pcm->buffer_size, fs);
-    if (!pcm->buffer) return -12;
-    fprintf(stderr, "ALSA stub: hw_params: %dHz %dch fmt=%d buf=%d period=%d\n",
-            pcm->hw.rate, pcm->hw.channels, pcm->hw.format, pcm->hw.buffer_frames, pcm->hw.period_frames);
-    return 0;
-}
-
-int snd_pcm_hw_params_current(snd_pcm_t *pcm, snd_pcm_hw_params_t *params) {
-    if (!pcm || !params) return -22; memcpy(params, &pcm->hw, sizeof(snd_pcm_hw_params_t)); return 0;
-}
-
-int snd_pcm_hw_params_get_access(const snd_pcm_hw_params_t *params, snd_pcm_access_t *a) { if (!params || !a) return -22; *a = params->access; return 0; }
-int snd_pcm_hw_params_get_format(const snd_pcm_hw_params_t *params, snd_pcm_format_t *f) { if (!params || !f) return -22; *f = params->format; return 0; }
-int snd_pcm_hw_params_get_channels(const snd_pcm_hw_params_t *params, unsigned int *v) { if (!params || !v) return -22; *v = params->channels; return 0; }
-int snd_pcm_hw_params_get_rate(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (!params || !v) return -22; *v = params->rate; if (d) *d = 0; return 0; }
-int snd_pcm_hw_params_get_period_size(const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *v, int *d) { if (!params || !v) return -22; *v = params->period_frames; if (d) *d = 0; return 0; }
-int snd_pcm_hw_params_get_buffer_size(const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *v) { if (!params || !v) return -22; *v = params->buffer_frames; return 0; }
+int snd_pcm_hw_params_get_access(const snd_pcm_hw_params_t *params, snd_pcm_access_t *a) { if (params && a) *a = params->access; return 0; }
+int snd_pcm_hw_params_get_format(const snd_pcm_hw_params_t *params, snd_pcm_format_t *f) { if (params && f) *f = params->format; return 0; }
+int snd_pcm_hw_params_get_channels(const snd_pcm_hw_params_t *params, unsigned int *v) { if (params && v) *v = params->channels; return 0; }
+int snd_pcm_hw_params_get_rate(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (params && v) { *v = params->rate; if (d) *d = 0; } return 0; }
+int snd_pcm_hw_params_get_period_size(const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *v, int *d) { if (params && v) { *v = params->period_frames; if (d) *d = 0; } return 0; }
+int snd_pcm_hw_params_get_buffer_size(const snd_pcm_hw_params_t *params, snd_pcm_uframes_t *v) { if (params && v) *v = params->buffer_frames; return 0; }
 int snd_pcm_hw_params_get_sbits(const snd_pcm_hw_params_t *params) { return params ? params->sbits : 0; }
-int snd_pcm_hw_params_get_buffer_time(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (!params || !v) return -22; *v = (params->buffer_frames * 1000000) / params->rate; if (d) *d = 0; return 0; }
-int snd_pcm_hw_params_get_period_time(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (!params || !v) return -22; *v = (params->period_frames * 1000000) / params->rate; if (d) *d = 0; return 0; }
+int snd_pcm_hw_params_get_buffer_time(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (params && v) { *v = (params->buffer_frames * 1000000) / (params->rate ? params->rate : 44100); if (d) *d = 0; } return 0; }
+int snd_pcm_hw_params_get_period_time(const snd_pcm_hw_params_t *params, unsigned int *v, int *d) { if (params && v) { *v = (params->period_frames * 1000000) / (params->rate ? params->rate : 44100); if (d) *d = 0; } return 0; }
 int snd_pcm_hw_params_can_resume(const snd_pcm_hw_params_t *params) { (void)params; return 0; }
 
 int snd_pcm_sw_params_malloc(snd_pcm_sw_params_t **ptr) { *ptr = (snd_pcm_sw_params_t*)calloc(1, sizeof(snd_pcm_sw_params_t)); return *ptr ? 0 : -12; }
@@ -336,72 +143,30 @@ int snd_pcm_sw_params_get_boundary(const snd_pcm_sw_params_t *p, snd_pcm_uframes
 int snd_pcm_sw_params_set_period_event(snd_pcm_t *p, snd_pcm_sw_params_t *pp, int v) { return 0; }
 int snd_pcm_sw_params(snd_pcm_t *pcm, snd_pcm_sw_params_t *params) { return 0; }
 
-int snd_pcm_prepare(snd_pcm_t *pcm) {
-    if (!pcm) return -22;
-    pthread_mutex_lock(&pcm->mutex);
-    pcm->write_pos = 0; pcm->play_pos = 0; pcm->buffered_frames = 0;
-    if (pcm->player && pcm->stream == SND_PCM_STREAM_PLAYBACK) {
-        (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_STOPPED);
-        (*pcm->bufferQueue)->Clear(pcm->bufferQueue);
-    }
-    pcm->state = SND_PCM_STATE_PREPARED;
-    pthread_mutex_unlock(&pcm->mutex);
-    return 0;
-}
-
-snd_pcm_sframes_t snd_pcm_writei(snd_pcm_t *pcm, const void *buffer, snd_pcm_uframes_t size) {
-    if (!pcm || !buffer) return -22;
-    pthread_mutex_lock(&pcm->mutex);
-    if (pcm->state != SND_PCM_STATE_PREPARED && pcm->state != SND_PCM_STATE_RUNNING) { pthread_mutex_unlock(&pcm->mutex); return -22; }
-    if (pcm->stream != SND_PCM_STREAM_PLAYBACK) { pthread_mutex_unlock(&pcm->mutex); return -22; }
-    if (pcm->state == SND_PCM_STATE_PREPARED && pcm->player) {
-        SLresult r = (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_PLAYING);
-        if (r == SL_RESULT_SUCCESS) pcm->state = SND_PCM_STATE_RUNNING;
-    }
-    if (pcm->bufferQueue) {
-        SLresult r = (*pcm->bufferQueue)->Enqueue(pcm->bufferQueue, buffer, size * pcm->frame_size);
-        if (r != SL_RESULT_SUCCESS) { pthread_mutex_unlock(&pcm->mutex); return -5; }
-        pcm->buffered_frames += size;
-    }
-    pthread_mutex_unlock(&pcm->mutex);
-    return size;
-}
-
-snd_pcm_sframes_t snd_pcm_readi(snd_pcm_t *pcm, void *buffer, snd_pcm_uframes_t size) { (void)buffer; (void)size; return -19; }
-
-int snd_pcm_drain(snd_pcm_t *pcm) {
-    if (!pcm) return -22;
-    if (pcm->player) (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_STOPPED);
-    pcm->state = SND_PCM_STATE_DRAINING;
-    return 0;
-}
-
-int snd_pcm_drop(snd_pcm_t *pcm) {
-    if (!pcm) return -22;
-    if (pcm->player) { (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_STOPPED); (*pcm->bufferQueue)->Clear(pcm->bufferQueue); }
-    pcm->buffered_frames = 0; pcm->state = SND_PCM_STATE_SETUP;
-    return 0;
-}
-
+int snd_pcm_prepare(snd_pcm_t *pcm) { if (pcm) pcm->state = SND_PCM_STATE_PREPARED; return 0; }
+snd_pcm_sframes_t snd_pcm_writei(snd_pcm_t *pcm, const void *buffer, snd_pcm_uframes_t size) { (void)pcm; (void)buffer; return size; }
+snd_pcm_sframes_t snd_pcm_readi(snd_pcm_t *pcm, void *buffer, snd_pcm_uframes_t size) { (void)pcm; (void)buffer; (void)size; return -19; }
+int snd_pcm_drain(snd_pcm_t *pcm) { if (pcm) pcm->state = SND_PCM_STATE_DRAINING; return 0; }
+int snd_pcm_drop(snd_pcm_t *pcm) { if (pcm) pcm->state = SND_PCM_STATE_SETUP; return 0; }
 int snd_pcm_recover(snd_pcm_t *pcm, int err, int silent) { (void)err; (void)silent; return snd_pcm_prepare(pcm); }
 snd_pcm_state_t snd_pcm_state(snd_pcm_t *pcm) { return pcm ? pcm->state : SND_PCM_STATE_DISCONNECTED; }
-snd_pcm_sframes_t snd_pcm_avail_update(snd_pcm_t *pcm) { return pcm ? (snd_pcm_sframes_t)(pcm->hw.buffer_frames - pcm->buffered_frames) : -22; }
+snd_pcm_sframes_t snd_pcm_avail_update(snd_pcm_t *pcm) { return pcm ? (snd_pcm_sframes_t)(pcm->hw.buffer_frames) : 0; }
 snd_pcm_sframes_t snd_pcm_rewind(snd_pcm_t *pcm, snd_pcm_uframes_t frames) { (void)frames; return 0; }
-int snd_pcm_resume(snd_pcm_t *pcm) { if (!pcm) return -22; if (pcm->player) (*pcm->player)->SetPlayState(pcm->player, SL_PLAYSTATE_PLAYING); pcm->state = SND_PCM_STATE_RUNNING; return 0; }
+int snd_pcm_resume(snd_pcm_t *pcm) { if (pcm) pcm->state = SND_PCM_STATE_RUNNING; return 0; }
 int snd_pcm_start(snd_pcm_t *pcm) { return snd_pcm_prepare(pcm); }
 int snd_pcm_nonblock(snd_pcm_t *pcm, int nonblock) { (void)nonblock; return 0; }
 snd_pcm_sframes_t snd_pcm_avail(snd_pcm_t *pcm) { return snd_pcm_avail_update(pcm); }
-int snd_pcm_delay(snd_pcm_t *pcm, snd_pcm_sframes_t *delay) { if (!pcm || !delay) return -22; *delay = 0; return 0; }
+int snd_pcm_delay(snd_pcm_t *pcm, snd_pcm_sframes_t *delay) { if (delay) *delay = 0; return 0; }
 int snd_pcm_wait(snd_pcm_t *pcm, int timeout) { (void)timeout; return 1; }
 snd_pcm_sframes_t snd_pcm_mmap_begin(snd_pcm_t *pcm, const void **areas, snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames) { (void)areas; (void)offset; (void)frames; return -77; }
 snd_pcm_sframes_t snd_pcm_mmap_commit(snd_pcm_t *pcm, snd_pcm_uframes_t offset, snd_pcm_uframes_t frames) { (void)offset; (void)frames; return -77; }
 
-int snd_pcm_format_physical_width(snd_pcm_format_t format) { format_entry_t *fe = find_format(format); return fe ? fe->bits : 16; }
-int snd_pcm_format_width(snd_pcm_format_t format) { format_entry_t *fe = find_format(format); return fe ? fe->sbits : 16; }
-int snd_pcm_format_signed(snd_pcm_format_t format) { format_entry_t *fe = find_format(format); return fe ? fe->signed_fmt : 1; }
-int snd_pcm_format_big_endian(snd_pcm_format_t format) { format_entry_t *fe = find_format(format); return fe ? fe->big_endian : 0; }
+int snd_pcm_format_physical_width(snd_pcm_format_t format) { (void)format; return 16; }
+int snd_pcm_format_width(snd_pcm_format_t format) { (void)format; return 16; }
+int snd_pcm_format_signed(snd_pcm_format_t format) { (void)format; return 1; }
+int snd_pcm_format_big_endian(snd_pcm_format_t format) { (void)format; return 0; }
 int snd_pcm_format_linear(snd_pcm_format_t format) { return 1; }
-size_t snd_pcm_format_size(snd_pcm_format_t format, size_t samples) { format_entry_t *fe = find_format(format); return samples * ((fe ? fe->bits : 16) / 8); }
+size_t snd_pcm_format_size(snd_pcm_format_t format, size_t samples) { (void)format; return samples * 2; }
 snd_pcm_format_t snd_pcm_build_linear_format(int w, int pw, int u, int be) { (void)w; (void)pw; (void)u; (void)be; return SND_PCM_FORMAT_S16_LE; }
 int snd_pcm_link(snd_pcm_t *a, snd_pcm_t *b) { (void)a; (void)b; return 0; }
 int snd_pcm_unlink(snd_pcm_t *p) { (void)p; return 0; }
@@ -420,9 +185,7 @@ snd_mixer_elem_t* snd_mixer_elem_next(snd_mixer_elem_t *e) { (void)e; return NUL
 snd_mixer_elem_t* snd_mixer_elem_prev(snd_mixer_elem_t *e) { (void)e; return NULL; }
 int snd_mixer_handle_events(snd_mixer_t *m) { (void)m; return 0; }
 
-int snd_mixer_selem_id_malloc(snd_mixer_selem_id_t **ptr) {
-    *ptr = (snd_mixer_selem_id_t*)calloc(1, sizeof(snd_mixer_selem_id_t)); return *ptr ? 0 : -12;
-}
+int snd_mixer_selem_id_malloc(snd_mixer_selem_id_t **ptr) { *ptr = (snd_mixer_selem_id_t*)calloc(1, sizeof(snd_mixer_selem_id_t)); return *ptr ? 0 : -12; }
 void snd_mixer_selem_id_free(snd_mixer_selem_id_t *obj) { free(obj); }
 void snd_mixer_selem_id_set_name(snd_mixer_selem_id_t *obj, const char *val) { if (obj && val) strncpy(obj->name, val, sizeof(obj->name) - 1); }
 const char* snd_mixer_selem_id_get_name(snd_mixer_selem_id_t *obj) { return obj ? obj->name : ""; }
@@ -466,11 +229,7 @@ int snd_mixer_selem_channel_id(snd_mixer_selem_channel_id_t c) { return (int)c; 
 
 int snd_ctl_open(snd_ctl_t **h, const char *n, int m) { (void)n; (void)m; *h = NULL; return -19; }
 int snd_ctl_close(snd_ctl_t *h) { (void)h; return 0; }
-int snd_ctl_card_info_malloc(snd_ctl_card_info_t **ptr) {
-    *ptr = (snd_ctl_card_info_t*)calloc(1, sizeof(snd_ctl_card_info_t));
-    if (*ptr) { strcpy((*ptr)->id, "Android"); strcpy((*ptr)->name, "Android Audio"); strcpy((*ptr)->driver, "alsa_stub"); }
-    return *ptr ? 0 : -12;
-}
+int snd_ctl_card_info_malloc(snd_ctl_card_info_t **ptr) { *ptr = (snd_ctl_card_info_t*)calloc(1, sizeof(snd_ctl_card_info_t)); return *ptr ? 0 : -12; }
 void snd_ctl_card_info_free(snd_ctl_card_info_t *obj) { free(obj); }
 int snd_ctl_card_info(snd_ctl_t *h, snd_ctl_card_info_t *i) { (void)h; (void)i; return -19; }
 const char* snd_ctl_card_info_get_id(const snd_ctl_card_info_t *o) { return o ? o->id : ""; }

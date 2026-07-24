@@ -185,6 +185,7 @@ target_link_options(
 target_link_libraries(
     alsa_stub
     PRIVATE
+    OpenSLES
     log
     dl
 )
