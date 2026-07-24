@@ -1,4 +1,4 @@
-﻿package com.tungsten.fclauncher;
+package com.tungsten.fclauncher;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fclauncher.utils.Architecture.ARCH_X86;
