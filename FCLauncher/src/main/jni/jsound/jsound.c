@@ -69,7 +69,7 @@ static void ringRead(AudioCtx *ctx, char *dst, int len) {
     ctx->readPos = (ctx->readPos + len) % RING_SIZE;
 }
 
-static void bufferQueueCallback(SLBufferQueueItf caller, void *context, SLuint32 size) {
+static void bufferQueueCallback(SLBufferQueueItf caller, void *context) {
     AudioCtx *ctx = (AudioCtx*)context;
     int enqueueIdx = -1;
 
@@ -222,7 +222,6 @@ static void shutdownOpenSL(AudioCtx *ctx) {
 static AudioCtx* createCtx(void) {
     AudioCtx *ctx = (AudioCtx*)calloc(1, sizeof(AudioCtx));
     if (!ctx) return NULL;
-    ctx->ringBufferSize = RING_SIZE;
     ctx->writePos = 0;
     ctx->readPos = 0;
     ctx->buffersInQueue = 0;
