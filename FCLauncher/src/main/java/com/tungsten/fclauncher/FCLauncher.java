@@ -340,8 +340,33 @@ public class FCLauncher {
 
     }
 
-    private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
+private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
         printTaskTitle(bridge, "DLOPEN");
+        // Load ALSA stub for ALSA-dependent system libraries
+        try {
+            File alsaStub = new File(config.getContext().getApplicationInfo().nativeLibraryDir, "libalsa_stub.so");
+            if (alsaStub.exists()) {
+                bridge.dlopen(alsaStub.getAbsolutePath());
+            }
+        } catch (Exception ignored) {
+        }
+        // Copy jsound native lib to JRE lib dir for javax.sound module
+        // Java 25's module system uses System.loadLibrary("jsound") which searches
+        // the JRE's system library path, not java.library.path.
+        try {
+            File jsoundLib = new File(config.getContext().getApplicationInfo().nativeLibraryDir, "libjsound.so");
+            if (jsoundLib.exists()) {
+                String javaLibDir = config.getJavaPath() + getJavaLibDir(config.getJavaPath());
+                File target = new File(javaLibDir, "libjsound.so");
+                if (!target.exists()) {
+                    java.nio.file.Files.copy(jsoundLib.toPath(), target.toPath(),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    log(bridge, "Copied libjsound.so to " + target.getAbsolutePath());
+                }
+                bridge.dlopen(jsoundLib.getAbsolutePath());
+            }
+        } catch (Exception ignored) {
+        }
         String javaLibDir = config.getJavaPath() + getJavaLibDir(config.getJavaPath());
         String jliLibDir = new File(javaLibDir + "/jli/libjli.so").exists() ? javaLibDir + "/jli" : javaLibDir;
         if (isJDK8(config.getJavaPath()))
@@ -363,7 +388,7 @@ public class FCLauncher {
         }
     }
 
-    public static ArrayList<File> locateLibs(File path) {
+public static ArrayList<File> locateLibs(File path) {
         ArrayList<File> returnValue = new ArrayList<>();
         File[] list = path.listFiles();
         if (list != null) {
@@ -570,3 +595,5 @@ public class FCLauncher {
     }
 
 }
+
+
