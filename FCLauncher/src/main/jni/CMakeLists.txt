@@ -202,4 +202,5 @@ target_link_libraries(
     PRIVATE
     log
     dl
+    OpenSLES
 )
