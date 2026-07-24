@@ -2,24 +2,19 @@ cmake_minimum_required(VERSION 3.18.1)
 
 project("fcl")
 
-# 设置C标准
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
 
-# 查找ByteHook库
 find_package(bytehook REQUIRED CONFIG)
 
-# 设置全局包含目录
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# 检查架构
 if(${ANDROID_ABI} STREQUAL "arm64-v8a")
     add_definitions(-DADRENO_POSSIBLE)
 endif()
 
-# 模块：fcl
 add_library(
     fcl
     SHARED
@@ -44,7 +39,6 @@ target_link_libraries(
     android
 )
 
-# 模块：driver_helper
 add_library(
     driver_helper
     SHARED
@@ -66,7 +60,6 @@ target_link_libraries(
     android
 )
 
-# 仅在arm64-v8a架构下链接EGL和GLESv2
 if(${ANDROID_ABI} STREQUAL "arm64-v8a")
     target_link_libraries(
         driver_helper
@@ -76,7 +69,6 @@ if(${ANDROID_ABI} STREQUAL "arm64-v8a")
     )
 endif()
 
-# 模块：linkerhook
 add_library(
     linkerhook
     SHARED
@@ -90,22 +82,18 @@ target_link_options(
     -z global
 )
 
-# 模块：awt_headless - 占位库
 add_library(
     awt_headless
     SHARED
-    # 空库，仅作为占位
-    ${CMAKE_CURRENT_SOURCE_DIR}/awt_headless/placeholder.c
+    awt_headless/placeholder.c
 )
 
-# 为占位库添加必要的链接选项
 target_link_libraries(
     awt_headless
     PRIVATE
     log
 )
 
-# 模块：awt_xawt
 add_library(
     awt_xawt
     SHARED
@@ -124,7 +112,6 @@ target_link_libraries(
     awt_headless
 )
 
-# 模块：pojavexec_awt
 add_library(
     pojavexec_awt
     SHARED
@@ -137,7 +124,6 @@ target_link_libraries(
     fcl
 )
 
-# 模块：pojavexec
 add_library(
     pojavexec
     SHARED
@@ -175,7 +161,6 @@ target_link_libraries(
     android
 )
 
-# 仅在arm64-v8a架构下链接EGL和GLESv2
 if(${ANDROID_ABI} STREQUAL "arm64-v8a")
     target_link_libraries(
         pojavexec
@@ -202,8 +187,8 @@ target_link_libraries(
     PRIVATE
     log
     dl
-    OpenSLES
 )
+
 add_library(
     jsound
     SHARED
@@ -213,13 +198,8 @@ add_library(
 target_link_libraries(
     jsound
     PRIVATE
+    OpenSLES
     log
     dl
-    OpenSLES
-)
-
-target_link_options(
-    jsound
-    PRIVATE
-    -Wl,-soname,libjsound.so
+    android
 )
