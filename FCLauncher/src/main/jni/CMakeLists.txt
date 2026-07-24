@@ -204,3 +204,22 @@ target_link_libraries(
     dl
     OpenSLES
 )
+add_library(
+    jsound
+    SHARED
+    jsound/jsound.c
+)
+
+target_link_libraries(
+    jsound
+    PRIVATE
+    log
+    dl
+    OpenSLES
+)
+
+target_link_options(
+    jsound
+    PRIVATE
+    -Wl,-soname,libjsound.so
+)
