@@ -78,14 +78,14 @@ static pthread_mutex_t g_engine_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct {
     snd_pcm_format_t alsa_fmt; int bits; int sbits;
-    int signed_fmt; int big_endian; int linear; SLuint32 sl_format;
+    int signed_fmt; int big_endian; int linear;
 } format_entry_t;
 
 static format_entry_t format_table[] = {
-    { SND_PCM_FORMAT_U8,      8,  8, 0, 0, 1, SL_DATAFORMAT_PCM_SUB_BITS_8 },
-    { SND_PCM_FORMAT_S16_LE, 16, 16, 1, 0, 1, SL_DATAFORMAT_PCM_SUB_BITS_16 },
-    { SND_PCM_FORMAT_S32_LE, 32, 32, 1, 0, 1, SL_DATAFORMAT_PCM_SUB_BITS_32 },
-    { -1, 0, 0, 0, 0, 0, 0 },
+    { SND_PCM_FORMAT_U8,      8,  8, 0, 0, 1 },
+    { SND_PCM_FORMAT_S16_LE, 16, 16, 1, 0, 1 },
+    { SND_PCM_FORMAT_S32_LE, 32, 32, 1, 0, 1 },
+    { -1, 0, 0, 0, 0, 0 },
 };
 
 static format_entry_t* find_format(snd_pcm_format_t fmt) {
