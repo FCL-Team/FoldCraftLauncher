@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <SLES/OpenSLES.h>
-#include <SLES/AndroidOpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
 
 #define FALSE 0
 #define TRUE 1
