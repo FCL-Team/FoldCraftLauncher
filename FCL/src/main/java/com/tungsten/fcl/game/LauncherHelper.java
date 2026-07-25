@@ -150,8 +150,18 @@ public final class LauncherHelper {
         boolean pluginVerificationRequired = PluginTrustGate.isVerificationRequired(context, renderer);
 
         AtomicReference<JavaVersion> javaVersionRef = new AtomicReference<>();
+        AtomicReference<List<PluginLoadAuthorization>> pluginAuthorizationsRef =
+                new AtomicReference<>(Collections.emptyList());
 
-        TaskExecutor executor = checkGameState(context, setting, version.get())
+        Task<List<PluginLoadAuthorization>> pluginVerificationTask = pluginVerificationRequired
+                ? PluginTrustGate.verifyForLaunch(context, renderer).withStage("launch.state.verifying_plugins")
+                : Task.completed(Collections.emptyList());
+
+        TaskExecutor executor = pluginVerificationTask
+                .thenComposeAsync(authorizations -> {
+                    pluginAuthorizationsRef.set(authorizations);
+                    return checkGameState(context, setting, version.get());
+                })
                 .thenComposeAsync(javaVersion -> {
                     javaVersionRef.set(Objects.requireNonNull(javaVersion));
                     version.set(LibFilter.filter(version.get()));
@@ -217,16 +227,10 @@ public final class LauncherHelper {
                                     launcher.setJnaVersion(library.getVersion());
                                 }
                             });
+                            launcher.setPluginLoadAuthorizations(pluginAuthorizationsRef.get());
                             return launcher;
-                        }).thenComposeAsync(launcher -> { // launcher is prev task's result
-                            Task<List<PluginLoadAuthorization>> verificationTask = pluginVerificationRequired
-                                    ? PluginTrustGate.verifyForLaunch(context, renderer).withStage("launch.state.verifying_plugins")
-                                    : Task.completed(Collections.emptyList());
-                            return verificationTask.thenComposeAsync(authorizations -> {
-                                launcher.setPluginLoadAuthorizations(authorizations);
-                                return Task.supplyAsync(launcher::launch);
-                            });
-                        }).thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))
+                        }).thenComposeAsync(launcher -> Task.supplyAsync(launcher::launch))
+                        .thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))
                         .thenComposeAsync(fclBridge -> {
                             fclBridge.setRenderer(renderer.getName());
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
@@ -351,14 +355,15 @@ public final class LauncherHelper {
     }
 
     private static List<String> launchStages(boolean pluginVerificationRequired) {
-        List<String> stages = new ArrayList<>(Lang.immutableListOf(
+        List<String> stages = new ArrayList<>();
+        if (pluginVerificationRequired) {
+            stages.add("launch.state.verifying_plugins");
+        }
+        stages.addAll(Lang.immutableListOf(
                 "launch.state.java",
                 "launch.state.dependencies",
                 "launch.state.logging_in"
         ));
-        if (pluginVerificationRequired) {
-            stages.add("launch.state.verifying_plugins");
-        }
         stages.add("launch.state.waiting_launching");
         return stages;
     }
