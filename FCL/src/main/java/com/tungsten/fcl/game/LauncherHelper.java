@@ -89,6 +89,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
+import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.CallbackBridge;
@@ -102,6 +103,8 @@ import java.net.URL;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -143,6 +146,8 @@ public final class LauncherHelper {
         AtomicReference<Version> version = new AtomicReference<>(MaintainTask.maintain(repository, repository.getResolvedVersion(selectedVersion)));
         Optional<String> gameVersion = repository.getGameVersion(version.get());
         boolean integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion);
+        Renderer renderer = RendererManager.getRenderer(setting.getRenderer());
+        boolean pluginVerificationRequired = PluginTrustGate.isVerificationRequired(context, renderer);
 
         AtomicReference<JavaVersion> javaVersionRef = new AtomicReference<>();
 
@@ -214,14 +219,15 @@ public final class LauncherHelper {
                             });
                             return launcher;
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
-                            Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
-                            return PluginTrustGate.verifyForLaunch(context, renderer).thenComposeAsync(authorizations -> {
+                            Task<List<PluginLoadAuthorization>> verificationTask = pluginVerificationRequired
+                                    ? PluginTrustGate.verifyForLaunch(context, renderer).withStage("launch.state.verifying_plugins")
+                                    : Task.completed(Collections.emptyList());
+                            return verificationTask.thenComposeAsync(authorizations -> {
                                 launcher.setPluginLoadAuthorizations(authorizations);
                                 return Task.supplyAsync(launcher::launch);
                             });
                         }).thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))
                         .thenComposeAsync(fclBridge -> {
-                            Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
                             fclBridge.setRenderer(renderer.getName());
                             return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
                         }).thenComposeAsync(fclBridge -> checkNativeLibPlugin(fclBridge, repository.getGameVersion(selectedVersion).orElse("")))
@@ -262,11 +268,7 @@ public final class LauncherHelper {
                             }
                         }))
                         .withStage("launch.state.waiting_launching"))
-                .withStagesHint(Lang.immutableListOf(
-                        "launch.state.java",
-                        "launch.state.dependencies",
-                        "launch.state.logging_in",
-                        "launch.state.waiting_launching"))
+                .withStagesHint(launchStages(pluginVerificationRequired))
                 .executor();
         launchingStepsPane.setExecutor(executor, false);
         executor.addTaskListener(new TaskListener() {
@@ -346,6 +348,19 @@ public final class LauncherHelper {
         });
 
         executor.start();
+    }
+
+    private static List<String> launchStages(boolean pluginVerificationRequired) {
+        List<String> stages = new ArrayList<>(Lang.immutableListOf(
+                "launch.state.java",
+                "launch.state.dependencies",
+                "launch.state.logging_in"
+        ));
+        if (pluginVerificationRequired) {
+            stages.add("launch.state.verifying_plugins");
+        }
+        stages.add("launch.state.waiting_launching");
+        return stages;
     }
 
     private Task<FCLBridge> checkPathValid(FCLBridge bridge, FCLGameRepository repository) {

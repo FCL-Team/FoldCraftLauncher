@@ -532,6 +532,7 @@
     <string name="launch_state_modpack">Downloading dependencies</string>
     <string name="launch_state_java">Checking Java version</string>
     <string name="launch_state_logging_in">Logging in</string>
+    <string name="launch_state_verifying_plugins">Verifying plugin safety</string>
     <string name="launch_state_waiting_launching">Waiting for the game to launch</string>
     <string name="launch_state_done">Completing launch</string>
 

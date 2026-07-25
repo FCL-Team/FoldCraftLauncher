@@ -52,6 +52,10 @@ public final class PluginTrustGate {
         });
     }
 
+    public static boolean isVerificationRequired(Context context, Renderer renderer) {
+        return !collectCandidates(context, renderer).isEmpty();
+    }
+
     /** MainActivity invokes this for handled configuration changes such as screen rotation. */
     public static void resetUnknownPluginCooldown() {
         CooldownState state = ACTIVE_COOLDOWN.get();
