@@ -183,7 +183,7 @@ object Profiles {
     }
 
     private val versionsListeners: MutableList<Consumer<Profile>> =
-        ArrayList<Consumer<Profile>>(4)
+        ArrayList(4)
 
     @JvmStatic
     fun registerVersionsListener(listener: Consumer<Profile>) {

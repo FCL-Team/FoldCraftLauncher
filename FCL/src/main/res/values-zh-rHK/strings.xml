@@ -165,6 +165,13 @@
     <string name="control_list">佈局列表</string>
     <string name="control_select">選擇佈局</string>
     <string name="control_share">分享佈局</string>
+    <string name="control_share_choose">選擇分享方式</string>
+    <string name="control_share_direct">直接分享</string>
+    <string name="control_share_zl2">分享為 ZL2 控制佈局</string>
+    <string name="control_share_zl2_title">分享 ZL2 控制佈局</string>
+    <string name="control_converting">正在轉換…</string>
+    <string name="control_convert_failed">轉換失敗！</string>
+    <string name="control_convert_unsupported">當前設備不支持 ZL2 轉換（需 arm64）</string>
     <string name="control_upload">上傳佈局</string>
 
     <!-- 保持原有分類名稱不變 -->
