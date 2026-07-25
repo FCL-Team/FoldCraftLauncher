@@ -257,6 +257,10 @@ static jint JNICALL nGetNumDevices(JNIEnv *env, jclass clazz, jint type) {
     return (type == 0) ? 1 : 0;
 }
 
+static jint JNICALL nGetNumDevicesBool(JNIEnv *env, jclass clazz, jboolean capture) {
+    return (capture == JNI_FALSE) ? 1 : 0;
+}
+
 static jstring JNICALL nGetDeviceDescription(JNIEnv *env, jclass clazz, jint mixerIndex, jint deviceID) {
     return (*env)->NewStringUTF(env, "Android OpenSL ES Audio");
 }
@@ -356,9 +360,16 @@ static jint JNICALL nDrain(JNIEnv *env, jobject thiz, jlong id) {
     return 0;
 }
 
-static JNINativeMethod methods[] = {
+static JNINativeMethod portMixerMethods[] = {
     {"nGetNumDevices",        "(I)I",                     (void*)nGetNumDevices},
     {"nGetDeviceDescription", "(II)Ljava/lang/String;",   (void*)nGetDeviceDescription},
+};
+
+static JNINativeMethod directAudioDevProvMethods[] = {
+    {"nGetNumDevices",        "(Z)I",                     (void*)nGetNumDevicesBool},
+};
+
+static JNINativeMethod directAudioMethods[] = {
     {"nOpen",                 "(II)J",                    (void*)nOpen},
     {"nStart",                "(J)I",                     (void*)nStart},
     {"nStop",                 "(J)I",                     (void*)nStop},
@@ -374,15 +385,33 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if ((*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_6) != JNI_OK)
         return JNI_ERR;
 
-    jclass clazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixer");
-    if (!clazz) {
-        clazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixerProvider");
-        if (!clazz)
+    // Register PortMixerProvider native methods
+    jclass pmClazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixerProvider");
+    if (!pmClazz) {
+        pmClazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixer");
+        if (!pmClazz)
             return JNI_ERR;
     }
 
-    if ((*env)->RegisterNatives(env, clazz, methods, sizeof(methods) / sizeof(methods[0])) != JNI_OK)
+    if ((*env)->RegisterNatives(env, pmClazz, portMixerMethods,
+            sizeof(portMixerMethods) / sizeof(portMixerMethods[0])) != JNI_OK)
         return JNI_ERR;
+
+    // Register DirectAudioDeviceProvider native methods
+    jclass dapClazz = (*env)->FindClass(env, "com/sun/media/sound/DirectAudioDeviceProvider");
+    if (dapClazz) {
+        if ((*env)->RegisterNatives(env, dapClazz, directAudioDevProvMethods,
+                sizeof(directAudioDevProvMethods) / sizeof(directAudioDevProvMethods[0])) != JNI_OK)
+            return JNI_ERR;
+    }
+
+    // Register DirectAudioDevice native methods
+    jclass daClazz = (*env)->FindClass(env, "com/sun/media/sound/DirectAudioDevice");
+    if (daClazz) {
+        if ((*env)->RegisterNatives(env, daClazz, directAudioMethods,
+                sizeof(directAudioMethods) / sizeof(directAudioMethods[0])) != JNI_OK)
+            return JNI_ERR;
+    }
 
     return JNI_VERSION_1_6;
 }
