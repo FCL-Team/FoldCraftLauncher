@@ -34,6 +34,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.databinding.PageSettingLauncherBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
+import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -144,6 +145,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
 
         binding.allowUntrustedPlugins.setChecked(sharedPreferences.getBoolean("allow_untrusted_plugins", false));
         binding.allowUntrustedPlugins.setOnCheckedChangeListener(this);
+        binding.pluginTrustManagement.setOnClickListener(this);
 
         binding.ignoreNotch.setChecked(ThemeEngine.getInstance().getTheme().isFullscreen());
         binding.ignoreNotch.setOnCheckedChangeListener(this);
@@ -302,6 +304,15 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     }
                 }
             }
+        }
+        if (v == binding.pluginTrustManagement) {
+            PluginTrustManagementPage page = new PluginTrustManagementPage(
+                    getContext(),
+                    PageManager.PAGE_ID_TEMP,
+                    getParent(),
+                    R.layout.page_plugin_trust_management
+            );
+            SettingPageManager.getInstance().showTempPage(page);
         }
         if (v == binding.theme) {
             FCLColorPickerDialog dialog = new FCLColorPickerDialog(getContext(), ThemeEngine.getInstance().getTheme().getColor(), new FCLColorPickerDialog.Listener() {

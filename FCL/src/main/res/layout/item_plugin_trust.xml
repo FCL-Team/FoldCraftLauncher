@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_container_transparent_clickable"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="64dp"
+    android:padding="10dp"
+    android:stateListAnimator="@xml/anim_scale">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/revoke"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textStyle="bold"
+            app:use_theme_color="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="11sp"
+            app:use_theme_color="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/impact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="11sp"
+            app:use_theme_color="true" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/revoke"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:contentDescription="@string/plugin_trust_management_revoke"
+        android:src="@drawable/ic_baseline_delete_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:no_padding="true"
+        app:use_theme_color="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

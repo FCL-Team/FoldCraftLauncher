@@ -1231,5 +1231,29 @@
     <string name="plugin_trust_key_wait">请阅读风险说明（%1$d）</string>
     <string name="plugin_trust_cancel">取消启动</string>
     <string name="plugin_trust_close">关闭</string>
+    <string name="plugin_trust_management_title">管理插件信任</string>
+    <string name="plugin_trust_management_description">查看你手动信任的发布者和证书。撤销信任将在下次加载插件时生效，不会停止已经运行的游戏。</string>
+    <string name="plugin_trust_management_authors">已信任的发布者</string>
+    <string name="plugin_trust_management_keys">已信任的证书</string>
+    <string name="plugin_trust_management_authors_empty">尚未手动信任任何发布者。</string>
+    <string name="plugin_trust_management_keys_empty">尚未手动信任任何证书。</string>
+    <string name="plugin_trust_management_revoke">撤销信任</string>
+    <string name="plugin_trust_management_unknown_author">未知发布者</string>
+    <string name="plugin_trust_management_author_unavailable">发布者记录已不可用</string>
+    <string name="plugin_trust_management_author_subtitle">%1$s · %2$s</string>
+    <string name="plugin_trust_management_certificate">插件证书</string>
+    <string name="plugin_trust_management_fingerprint">SHA-256：%1$s</string>
+    <string name="plugin_trust_management_impact">受影响的已安装插件：%1$s</string>
+    <string name="plugin_trust_management_no_installed_impact">当前没有已安装插件使用此信任记录。</string>
+    <string name="plugin_trust_management_authors_count">已信任的发布者（%1$d）</string>
+    <string name="plugin_trust_management_keys_count">已信任的证书（%1$d）</string>
+    <string name="plugin_trust_management_author_details">发布者 ID：%1$s\n说明：%2$s\n网站：%3$s\n\n受影响的已安装插件：\n%4$s</string>
+    <string name="plugin_trust_management_key_details">SHA-256：%1$s\nSHA-1：%2$s\n\n受影响的已安装插件：\n%3$s</string>
+    <string name="plugin_trust_management_plugin_detail">%1$s\n%2$s · %3$s</string>
+    <string name="plugin_trust_management_revoke_author_confirm">撤销对“%1$s”的信任？此发布者的插件下次加载时需要重新验证。</string>
+    <string name="plugin_trust_management_revoke_key_confirm">撤销对“%1$s”的信任？使用此证书签名的插件下次加载时需要重新验证。</string>
+    <string name="plugin_trust_management_recovered_title">已恢复信任记录</string>
+    <string name="plugin_trust_management_recovered_message">最新的信任记录已损坏，FCL 已恢复上一份有效记录。请检查剩余条目。</string>
+    <string name="plugin_trust_management_error">无法更新插件信任。\n%1$s</string>
 
 </resources>

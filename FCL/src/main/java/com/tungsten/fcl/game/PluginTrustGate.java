@@ -9,11 +9,7 @@ import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.tungsten.fcl.R;
-import com.tungsten.fclauncher.plugins.DriverPlugin;
-import com.tungsten.fclauncher.plugins.FFmpegPlugin;
-import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.plugins.PluginNativeLoadGuard;
-import com.tungsten.fclauncher.plugins.RendererPlugin;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.verifiedpluginload.api.VerifiedPluginLoad;
@@ -48,12 +44,12 @@ public final class PluginTrustGate {
     public static Task<List<PluginLoadAuthorization>> verifyForLaunch(Context context, Renderer renderer) {
         return PluginTrustListSync.awaitStartupRefresh(context).thenComposeAsync(ignored -> {
             VerifiedPluginLoad vpl = VerifiedPluginLoadRegistry.get(context);
-            return verifyNext(context, vpl, collectCandidates(context, renderer), 0, new ArrayList<>());
+            return verifyNext(context, vpl, PluginCandidateRepository.forLaunch(context, renderer), 0, new ArrayList<>());
         });
     }
 
     public static boolean isVerificationRequired(Context context, Renderer renderer) {
-        return !collectCandidates(context, renderer).isEmpty();
+        return !PluginCandidateRepository.forLaunch(context, renderer).isEmpty();
     }
 
     /** MainActivity invokes this for handled configuration changes such as screen rotation. */
@@ -64,27 +60,10 @@ public final class PluginTrustGate {
         updateCooldown(state, UNKNOWN_PLUGIN_COOLDOWN_SECONDS, generation);
     }
 
-    private static List<PluginCandidate> collectCandidates(Context context, Renderer renderer) {
-        List<PluginCandidate> candidates = new ArrayList<>();
-        String rendererPackage = RendererPlugin.getPluginPackageName(renderer);
-        if (rendererPackage != null) candidates.add(new PluginCandidate(rendererPackage, R.string.plugin_type_renderer));
-
-        DriverPlugin.Driver driver = DriverPlugin.getSelected();
-        if (driver.getPackageName() != null) candidates.add(new PluginCandidate(driver.getPackageName(), R.string.plugin_type_driver));
-
-        for (NativeLibPlugin.NativePlugin plugin : NativeLibPlugin.getPluginList()) {
-            candidates.add(new PluginCandidate(plugin.getPackageName(), R.string.plugin_type_native));
-        }
-
-        FFmpegPlugin.discover(context);
-        if (FFmpegPlugin.isAvailable) candidates.add(new PluginCandidate(FFmpegPlugin.PACKAGE_NAME, R.string.plugin_type_ffmpeg));
-        return candidates;
-    }
-
     private static Task<List<PluginLoadAuthorization>> verifyNext(
             Context context,
             VerifiedPluginLoad vpl,
-            List<PluginCandidate> candidates,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
             int index,
             List<PluginLoadAuthorization> authorizations
     ) {
@@ -92,8 +71,8 @@ public final class PluginTrustGate {
             return Task.completed(Collections.unmodifiableList(new ArrayList<>(authorizations)));
         }
         return Task.composeAsync(() -> {
-            PluginCandidate candidate = candidates.get(index);
-            PluginVerificationResult result = vpl.inspectInstalledPackage(candidate.packageName);
+            PluginCandidateRepository.PluginCandidate candidate = candidates.get(index);
+            PluginVerificationResult result = vpl.inspectInstalledPackage(candidate.getPackageName());
             logDecision(context, candidate, result);
             boolean allowUntrustedPlugins = allowsUntrustedPlugins(context);
             if (result.getStatus() == PluginTrustStatus.TRUSTED) {
@@ -162,9 +141,9 @@ public final class PluginTrustGate {
     private static Task<List<PluginLoadAuthorization>> requestAuthorTrust(
             Context context,
             VerifiedPluginLoad vpl,
-            PluginCandidate candidate,
+            PluginCandidateRepository.PluginCandidate candidate,
             PluginVerificationResult result,
-            List<PluginCandidate> candidates,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
             int index,
             List<PluginLoadAuthorization> authorizations
     ) {
@@ -218,9 +197,9 @@ public final class PluginTrustGate {
     private static Task<List<PluginLoadAuthorization>> trustAuthorThenContinue(
             Context context,
             VerifiedPluginLoad vpl,
-            PluginCandidate candidate,
+            PluginCandidateRepository.PluginCandidate candidate,
             PluginVerificationResult result,
-            List<PluginCandidate> candidates,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
             int index,
             List<PluginLoadAuthorization> authorizations
     ) {
@@ -229,7 +208,7 @@ public final class PluginTrustGate {
             if (action.getStatus() != TrustActionStatus.SUCCESS) {
                 throw new SecurityException("Could not store author trust: " + action.getStatus());
             }
-            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.packageName);
+            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.getPackageName());
             if (refreshed.getStatus() != PluginTrustStatus.TRUSTED) {
                 throw new SecurityException("Plugin is not trusted after author confirmation: " + refreshed.getStatus());
             }
@@ -243,9 +222,9 @@ public final class PluginTrustGate {
     private static Task<List<PluginLoadAuthorization>> requestKeyTrust(
             Context context,
             VerifiedPluginLoad vpl,
-            PluginCandidate candidate,
+            PluginCandidateRepository.PluginCandidate candidate,
             PluginVerificationResult result,
-            List<PluginCandidate> candidates,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
             int index,
             List<PluginLoadAuthorization> authorizations
     ) {
@@ -306,9 +285,9 @@ public final class PluginTrustGate {
     private static Task<List<PluginLoadAuthorization>> trustKeyThenContinue(
             Context context,
             VerifiedPluginLoad vpl,
-            PluginCandidate candidate,
+            PluginCandidateRepository.PluginCandidate candidate,
             PluginVerificationResult result,
-            List<PluginCandidate> candidates,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
             int index,
             List<PluginLoadAuthorization> authorizations
     ) {
@@ -318,7 +297,7 @@ public final class PluginTrustGate {
             if (action.getStatus() != TrustActionStatus.SUCCESS) {
                 throw new SecurityException("Could not store key trust: " + action.getStatus());
             }
-            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.packageName);
+            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.getPackageName());
             if (refreshed.getStatus() != PluginTrustStatus.TRUSTED) {
                 throw new SecurityException("Plugin is not trusted after key confirmation: " + refreshed.getStatus());
             }
@@ -389,32 +368,32 @@ public final class PluginTrustGate {
         return authorization;
     }
 
-    private static void logDecision(Context context, PluginCandidate candidate, PluginVerificationResult result) {
+    private static void logDecision(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
         String sha256 = result.getMatchedSignature() == null ? "unknown" : result.getMatchedSignature().getSha256();
-        Log.i(TAG, "Plugin verification: type=" + context.getString(candidate.typeNameRes)
-                + ", package=" + candidate.packageName
+        Log.i(TAG, "Plugin verification: type=" + context.getString(candidate.getTypeNameRes())
+                + ", package=" + candidate.getPackageName()
                 + ", version=" + result.getPackageInfo().getVersionName()
                 + ", sha256=" + sha256
                 + ", status=" + result.getStatus()
                 + ", trustListVersion=" + result.getTrustListVersion());
     }
 
-    private static String generalDetails(Context context, PluginCandidate candidate, PluginVerificationResult result) {
+    private static String generalDetails(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
         String label = result.getPackageInfo().getApplicationLabel();
-        if (label == null || label.isBlank()) label = candidate.packageName;
+        if (label == null || label.isBlank()) label = candidate.getPackageName();
         String version = result.getPackageInfo().getVersionName() == null ? "-" : result.getPackageInfo().getVersionName();
         String details = context.getString(
                 R.string.plugin_trust_general_details,
                 label,
                 version,
-                context.getString(candidate.typeNameRes)
+                context.getString(candidate.getTypeNameRes())
         );
         return result.getAuthor() == null ? details : details + authorDetails(context, result.getAuthor());
     }
 
-    private static String technicalDetails(Context context, PluginCandidate candidate, PluginVerificationResult result) {
+    private static String technicalDetails(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
         String packageName = result.getPackageInfo().getPackageName() == null
-                ? candidate.packageName
+                ? candidate.getPackageName()
                 : result.getPackageInfo().getPackageName();
         String sha256 = result.getCurrentSignatures().isEmpty() ? "-" : result.getCurrentSignatures().get(0).getSha256();
         return context.getString(R.string.plugin_trust_technical_details, packageName, formatFingerprint(sha256));
@@ -452,16 +431,6 @@ public final class PluginTrustGate {
                 return context.getString(R.string.plugin_trust_confidence_1);
             default:
                 return context.getString(R.string.plugin_trust_confidence_0);
-        }
-    }
-
-    private static final class PluginCandidate {
-        private final String packageName;
-        private final int typeNameRes;
-
-        private PluginCandidate(String packageName, int typeNameRes) {
-            this.packageName = packageName;
-            this.typeNameRes = typeNameRes;
         }
     }
 
