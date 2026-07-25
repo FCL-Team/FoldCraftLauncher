@@ -245,6 +245,16 @@
                     android:textSize="12sp"
                     app:use_theme_color="true" />
 
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/plugin_trust_management"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/plugin_trust_management_title"
+                    app:ripple="true" />
+
             </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <com.tungsten.fcllibrary.component.view.FCLLinearLayout
