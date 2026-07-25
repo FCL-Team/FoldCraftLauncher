@@ -1200,11 +1200,6 @@
     <string name="plugin_trust_title_unknown">不受信任的插件</string>
     <string name="plugin_trust_title_banned">此插件无法启动</string>
     <string name="plugin_trust_title_failed">无法检查插件安全性</string>
-    <string name="plugin_trust_level_info">请确认</string>
-    <string name="plugin_trust_level_warning">请注意风险</string>
-    <string name="plugin_trust_level_error">已阻止启动</string>
-    <string name="plugin_trust_general_information">基本信息</string>
-    <string name="plugin_trust_technical_information">专业信息</string>
     <string name="plugin_trust_general_details">插件：%1$s\n版本：%2$s\n类型：%3$s</string>
     <string name="plugin_trust_technical_details">包名：%1$s\n\n签名 SHA-256：\n%2$s</string>
     <string name="plugin_trust_author_details">\n\n开发者：%1$s\n类别：%2$s\n说明：%3$s\n网站：%4$s</string>
