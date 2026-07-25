@@ -1,5 +1,6 @@
 package com.tungsten.fcllibrary.component.view.color;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -23,6 +24,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -251,7 +254,7 @@ public class ColorPickerView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         if (drawingRect.width() <= 0 || drawingRect.height() <= 0) {
             return;
         }
@@ -368,12 +371,11 @@ public class ColorPickerView extends View {
         canvas.drawBitmap(hueBackgroundCache.bitmap, null, rect, null);
 
         Point p = hueToPoint(hue);
-
         RectF r = new RectF();
         r.left = rect.left - sliderTrackerOffsetPx;
         r.right = rect.right + sliderTrackerOffsetPx;
-        r.top = p.y - (sliderTrackerSizePx / 2);
-        r.bottom = p.y + (sliderTrackerSizePx / 2);
+        r.top = p.y - ((float) sliderTrackerSizePx / 2);
+        r.bottom = p.y + ((float) sliderTrackerSizePx / 2);
 
         canvas.drawRoundRect(r, 2, 2, hueAlphaTrackerPaint);
     }
@@ -407,7 +409,7 @@ public class ColorPickerView extends View {
 
         canvas.drawRect(rect, alphaPaint);
 
-        if (alphaSliderText != null && !alphaSliderText.equals("")) {
+        if (alphaSliderText != null && !alphaSliderText.isEmpty()) {
             canvas.drawText(alphaSliderText, rect.centerX(), rect.centerY() + ConvertUtils.dip2px(getContext(), 4),
                     alphaTextPaint);
         }
@@ -415,8 +417,8 @@ public class ColorPickerView extends View {
         Point p = alphaToPoint(alpha);
 
         RectF r = new RectF();
-        r.left = p.x - (sliderTrackerSizePx / 2);
-        r.right = p.x + (sliderTrackerSizePx / 2);
+        r.left = p.x - ((float) sliderTrackerSizePx / 2);
+        r.right = p.x + ((float) sliderTrackerSizePx / 2);
         r.top = rect.top - sliderTrackerOffsetPx;
         r.bottom = rect.bottom + sliderTrackerOffsetPx;
 
@@ -424,7 +426,6 @@ public class ColorPickerView extends View {
     }
 
     private Point hueToPoint(float hue) {
-
         final Rect rect = hueRect;
         final float height = rect.height();
 
@@ -498,7 +499,6 @@ public class ColorPickerView extends View {
         final Rect rect = hueRect;
 
         float height = rect.height();
-
         if (y < rect.top) {
             y = 0f;
         } else if (y > rect.bottom) {
@@ -507,9 +507,7 @@ public class ColorPickerView extends View {
             y = y - rect.top;
         }
 
-        float hue = 360f - (y * 360f / height);
-
-        return hue;
+        return 360f - (y * 360f / height);
     }
 
     private int pointToAlpha(int x) {
@@ -528,24 +526,21 @@ public class ColorPickerView extends View {
         return 0xff - (x * 0xff / width);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean update = false;
-
-        switch (event.getAction()) {
-
-            case MotionEvent.ACTION_DOWN:
+        boolean update = switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN -> {
                 startTouchPoint = new Point((int) event.getX(), (int) event.getY());
-                update = moveTrackersIfNeeded(event);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                update = moveTrackersIfNeeded(event);
-                break;
-            case MotionEvent.ACTION_UP:
+                yield moveTrackersIfNeeded(event);
+            }
+            case MotionEvent.ACTION_MOVE -> moveTrackersIfNeeded(event);
+            case MotionEvent.ACTION_UP -> {
                 startTouchPoint = null;
-                update = moveTrackersIfNeeded(event);
-                break;
-        }
+                yield moveTrackersIfNeeded(event);
+            }
+            default -> false;
+        };
 
         if (update) {
             if (onColorChangedListener != null) {
@@ -570,7 +565,6 @@ public class ColorPickerView extends View {
 
         if (hueRect.contains(startX, startY)) {
             hue = pointToHue(event.getY());
-
             update = true;
         } else if (satValRect.contains(startX, startY)) {
             float[] result = pointToSatVal(event.getX(), event.getY());
@@ -618,7 +612,7 @@ public class ColorPickerView extends View {
                 }
 
                 finalWidth = widthAllowed;
-            } else if (heightMode == MeasureSpec.EXACTLY && widthMode != MeasureSpec.EXACTLY) {
+            } else if (widthMode != MeasureSpec.EXACTLY) {
                 //The height has been specified exactly, we need to stay within this height and adopt the width.
 
                 int w = (heightAllowed + panelSpacingPx + huePanelWidthPx);
@@ -791,8 +785,7 @@ public class ColorPickerView extends View {
         alphaRect = new Rect(left, top, right, bottom);
 
         alphaPatternDrawable = new AlphaPatternDrawable(ConvertUtils.dip2px(getContext(), 4));
-        alphaPatternDrawable.setBounds(Math.round(alphaRect.left), Math.round(alphaRect.top), Math.round(alphaRect.right),
-                Math.round(alphaRect.bottom));
+        alphaPatternDrawable.setBounds(alphaRect.left, alphaRect.top, alphaRect.right, alphaRect.bottom);
     }
 
     /**
@@ -830,7 +823,6 @@ public class ColorPickerView extends View {
      * @param callback If you want to get a callback to your OnColorChangedListener.
      */
     public void setColor(int color, boolean callback) {
-
         int alpha = Color.alpha(color);
         int red = Color.red(color);
         int blue = Color.blue(color);

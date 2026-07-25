@@ -70,8 +70,9 @@ public class FCLColorPickerDialog extends FCLDialog implements View.OnClickListe
     @SuppressLint("SetTextI18n")
     private void setColor(int color, boolean isFromInput) {
         currentColor = color;
-        binding.colorPicker.setColor(color);
-        if (!isFromInput) {
+        if (isFromInput) {
+            binding.colorPicker.setColor(color);
+        } else {
             binding.editColor.setText(getHex(color));
         }
         binding.destColor.setBackgroundColor(color);
