@@ -499,6 +499,7 @@
     <string name="launch_state_modpack">下载依赖</string>
     <string name="launch_state_java">检查 Java</string>
     <string name="launch_state_logging_in">登录</string>
+    <string name="launch_state_verifying_plugins">验证插件安全性</string>
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
 
