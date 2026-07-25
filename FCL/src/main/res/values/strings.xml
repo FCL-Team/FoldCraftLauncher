@@ -1264,11 +1264,6 @@
     <string name="plugin_trust_title_unknown">Untrusted plugin</string>
     <string name="plugin_trust_title_banned">This plugin cannot be started</string>
     <string name="plugin_trust_title_failed">Plugin safety check failed</string>
-    <string name="plugin_trust_level_info">Review required</string>
-    <string name="plugin_trust_level_warning">Risk notice</string>
-    <string name="plugin_trust_level_error">Launch blocked</string>
-    <string name="plugin_trust_general_information">Basic information</string>
-    <string name="plugin_trust_technical_information">Technical information</string>
     <string name="plugin_trust_general_details">Plugin: %1$s\nVersion: %2$s\nType: %3$s</string>
     <string name="plugin_trust_technical_details">Package: %1$s\n\nSignature SHA-256:\n%2$s</string>
     <string name="plugin_trust_author_details">\n\nDeveloper: %1$s\nType: %2$s\nDescription: %3$s\nWebsite: %4$s</string>

@@ -158,6 +158,10 @@ public class FCLAlertDialog extends FCLDialog implements View.OnClickListener {
         negativeListener = listener;
     }
 
+    public void setNegativeButtonEnabled(boolean enabled) {
+        negative.setEnabled(enabled);
+    }
+
     public void setNeutralButton(String text, ButtonListener listener) {
         neutral.setVisibility(View.VISIBLE);
         neutral.setText(text);
