@@ -374,7 +374,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:max="1000"
-                android:min="100"
+                android:min="1"
                 app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity_text"
                 app:suffix="%" />
 
@@ -398,7 +398,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="5dp"
                 android:max="1000"
-                android:min="100"
+                android:min="1"
                 app:layout_constraintTop_toBottomOf="@id/mouse_sensitivity_cursor_text"
                 app:suffix="%" />
 

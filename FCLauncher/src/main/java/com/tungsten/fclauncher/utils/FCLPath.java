@@ -30,6 +30,7 @@ public class FCLPath {
     public static String PLUGIN_DIR;
     public static String BACKGROUND_DIR;
     public static String CONTROLLER_DIR;
+    public static String SHARE_DIR;
 
     public static String PRIVATE_COMMON_DIR;
     public static String SHARED_COMMON_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/.minecraft";
@@ -66,6 +67,7 @@ public class FCLPath {
         PLUGIN_DIR = FILES_DIR + "/plugins";
         BACKGROUND_DIR = FILES_DIR + "/background";
         CONTROLLER_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/control";
+        SHARE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/share";
         File externalFilesDir = context.getExternalFilesDir(null);
         if (externalFilesDir == null) {
             externalFilesDir = new File(Environment.getExternalStorageDirectory(), "Android/data/" + context.getPackageName() + "/files");
@@ -94,6 +96,7 @@ public class FCLPath {
         init(PLUGIN_DIR);
         init(BACKGROUND_DIR);
         init(CONTROLLER_DIR);
+        init(SHARE_DIR);
         init(PRIVATE_COMMON_DIR);
         init(SHARED_COMMON_DIR);
     }
