@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /** Final TOCTOU and path boundary immediately before plugin native directories are used. */
 public final class PluginNativeLoadGuard {
@@ -38,14 +39,17 @@ public final class PluginNativeLoadGuard {
     private static final Set<String> PROTECTED_NATIVE_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
             "DLOPEN",
             "DRIVER_PATH",
+            "FCL_ENVIRON",
             "FFMPEG_PATH",
             "FCL_NATIVEDIR",
+            "GALLIUM_DRIVER",
             "LIBGL_DRIVERS_PATH",
             "LIB_MESA_NAME",
             "MESA_LIBRARY",
             "MESA_LOADER_DRIVER_OVERRIDE",
             "MOD_ANDROID_RUNTIME",
             "POJAVEXEC_EGL",
+            "POJAV_ENVIRON",
             "POJAV_NATIVEDIR",
             "RENDERER_HANDLE",
             "TMPDIR",
@@ -81,13 +85,25 @@ public final class PluginNativeLoadGuard {
      * native code produces at runtime.
      */
     private static final Set<String> LAUNCHER_OWNED_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
+            "FCL_ENVIRON",
             "FCL_NATIVEDIR",
             "MOD_ANDROID_RUNTIME",
+            "POJAV_ENVIRON",
             "POJAV_NATIVEDIR",
             "RENDERER_HANDLE",
             "TMPDIR",
             "VULKAN_PTR"
     ));
+    /*
+     * Protected variables that name a driver rather than a path.  Mesa's loader builds the module it
+     * dlopens by concatenating the search directory with this name and does not reject separators, so
+     * a name carrying "../" walks straight back out of the directory constrained just above.
+     */
+    private static final Set<String> DRIVER_NAME_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
+            "GALLIUM_DRIVER",
+            "MESA_LOADER_DRIVER_OVERRIDE"
+    ));
+    private static final Pattern DRIVER_NAME = Pattern.compile("[A-Za-z0-9_+-]{1,64}");
     /*
      * Read-only partitions a passthrough renderer legitimately loads system drivers from.  They are
      * already on the library path built by FCLauncher, and nothing short of root can write them, so
@@ -116,6 +132,18 @@ public final class PluginNativeLoadGuard {
     /** A stored per-certificate trust is only active while the launcher setting permits it. */
     public static boolean isExplicitKeyTrustAllowed(TrustSource trustSource, boolean allowUntrustedPlugins) {
         return trustSource != TrustSource.KEY || allowUntrustedPlugins;
+    }
+
+    /**
+     * The one parse of a plugin-declared environment entry.  Every consumer must split identically:
+     * a guard that authorizes "a.so=b" while the loader dlopens "a" is not a guard at all.  Returns
+     * null for an entry no consumer may act on.
+     */
+    public static String[] parsePluginEnvironmentEntry(String entry) {
+        if (entry == null) return null;
+        String[] split = entry.split("=", 2);
+        if (split.length != 2 || split[0].isEmpty() || split[1].isEmpty()) return null;
+        return split;
     }
 
     public static void verify(FCLConfig config) throws IOException {
@@ -204,8 +232,8 @@ public final class PluginNativeLoadGuard {
         List<String> environment = renderer.getPojavEnv();
         if (environment == null) return;
         for (String entry : environment) {
-            String[] split = entry.split("=", 2);
-            if (split.length != 2 || split[1].isEmpty()) continue;
+            String[] split = parsePluginEnvironmentEntry(entry);
+            if (split == null) continue;
             if ("DLOPEN".equals(split[0])) {
                 for (String library : split[1].split(",")) {
                     requireLibraryInside(renderer.getPath(), library, "Renderer DLOPEN library");
@@ -247,7 +275,19 @@ public final class PluginNativeLoadGuard {
             }
         } else if (LAUNCHER_OWNED_ENVIRONMENT_VARIABLES.contains(key)) {
             throw new IOException(label + " may not replace the launcher-controlled environment variable " + key);
+        } else if (DRIVER_NAME_ENVIRONMENT_VARIABLES.contains(key)) {
+            if (value == null || !DRIVER_NAME.matcher(value).matches()) {
+                throw new IOException(label + " declares " + key + " as something other than a plain driver name");
+            }
+        } else if (isProtectedNativeEnvironmentVariable(key)) {
+            // Every protected variable must land in exactly one bucket above. Reaching here means a new
+            // one was added without deciding how a plugin may set it, so refuse rather than pass it on.
+            throw new IOException(label + " declares the unclassified protected environment variable " + key);
         }
+    }
+
+    static Set<String> protectedNativeEnvironmentVariablesForTest() {
+        return PROTECTED_NATIVE_ENVIRONMENT_VARIABLES;
     }
 
     private static boolean isReadOnlySystemPath(String path) throws IOException {
