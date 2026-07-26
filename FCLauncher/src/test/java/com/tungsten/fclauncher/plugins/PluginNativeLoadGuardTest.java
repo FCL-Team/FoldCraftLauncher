@@ -8,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -115,6 +116,21 @@ public class PluginNativeLoadGuardTest {
                 "Renderer", pluginDirectory.getPath(), "LIBGL_DRIVERS_PATH", "/systemx/lib64"));
         assertThrows(IOException.class, () -> PluginNativeLoadGuard.verifyPluginDeclaredEnvironment(
                 "Renderer", pluginDirectory.getPath(), "LIBGL_DRIVERS_PATH", "/vendor/../sdcard/lib"));
+    }
+
+    @Test
+    public void aSymlinkOutOfThePluginDirectoryDoesNotPassAsAnInsidePath() throws IOException {
+        File pluginDirectory = temporaryFolder.newFolder("plugin-lib");
+        File shared = temporaryFolder.newFolder("shared-storage");
+        File escape = new File(pluginDirectory, "drivers");
+        try {
+            Files.createSymbolicLink(escape.toPath(), shared.toPath());
+        } catch (UnsupportedOperationException | IOException unsupported) {
+            return; // The filesystem under test cannot express this; the check itself is unchanged.
+        }
+
+        assertThrows(IOException.class, () -> PluginNativeLoadGuard.verifyPluginDeclaredEnvironment(
+                "Renderer", pluginDirectory.getPath(), "LIBGL_DRIVERS_PATH", escape.getPath()));
     }
 
     @Test
