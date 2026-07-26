@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.game.PluginTrustGate;
 import com.tungsten.fcl.game.PluginTrustManager;
 import com.tungsten.fcl.ui.setting.PluginTrustListAdapter.Row;
 import com.tungsten.fclcore.task.Schedulers;
@@ -215,10 +216,11 @@ public final class PluginTrustManagementPage extends FCLTempPage
         StringBuilder details = new StringBuilder();
         for (PluginTrustManager.InstalledPlugin plugin : plugins) {
             if (details.length() > 0) details.append('\n');
+            // Plugin-authored strings; the list rows elsewhere are ellipsized, this dialog is not.
             details.append(getContext().getString(
                     R.string.plugin_trust_management_plugin_detail,
-                    plugin.getLabel(),
-                    plugin.getPackageName(),
+                    PluginTrustGate.singleLine(plugin.getLabel(), 64),
+                    PluginTrustGate.singleLine(plugin.getPackageName(), 128),
                     getContext().getString(plugin.getTypeNameRes())
             ));
         }

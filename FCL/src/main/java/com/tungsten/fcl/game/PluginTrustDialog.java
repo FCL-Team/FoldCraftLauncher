@@ -72,7 +72,10 @@ final class PluginTrustDialog extends FCLAlertDialog {
     }
 
     private void updateMessage() {
-        super.setMessage(joinSections(summary, message, generalDetails, technicalDetails));
+        // Technical details carry the only authentic evidence: the real package name and fingerprint.
+        // They precede the plugin-supplied description so no amount of injected padding can push them
+        // out of the first viewport.
+        super.setMessage(joinSections(summary, message, technicalDetails, generalDetails));
     }
 
     private static String joinSections(String... sections) {
