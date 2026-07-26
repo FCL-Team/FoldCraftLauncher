@@ -378,14 +378,38 @@ public final class PluginTrustGate {
                 + ", trustListVersion=" + result.getTrustListVersion());
     }
 
+    /**
+     * The dialog body is one plain-text blob, so any line separator in a plugin-supplied string lets
+     * that plugin render text shaped exactly like the launcher's own registered-publisher block.
+     * Collapse every separator and control character, drop the bidi overrides that reorder what is
+     * displayed, and cap the length so injected padding cannot scroll the real fingerprint away.
+     */
+    public static String singleLine(String value, int maxLength) {
+        if (value == null) return "-";
+        StringBuilder sanitized = new StringBuilder(value.length());
+        value.codePoints().forEach(codePoint -> {
+            int type = Character.getType(codePoint);
+            if (type == Character.FORMAT || type == Character.CONTROL
+                    || type == Character.LINE_SEPARATOR || type == Character.PARAGRAPH_SEPARATOR
+                    || type == Character.UNASSIGNED || type == Character.PRIVATE_USE
+                    || type == Character.SURROGATE) {
+                sanitized.append(' ');
+            } else {
+                sanitized.appendCodePoint(codePoint);
+            }
+        });
+        String collapsed = sanitized.toString().replaceAll("\\s+", " ").trim();
+        if (collapsed.isEmpty()) return "-";
+        return collapsed.length() <= maxLength ? collapsed : collapsed.substring(0, maxLength) + "…";
+    }
+
     private static String generalDetails(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
         String label = result.getPackageInfo().getApplicationLabel();
         if (label == null || label.isBlank()) label = candidate.getPackageName();
-        String version = result.getPackageInfo().getVersionName() == null ? "-" : result.getPackageInfo().getVersionName();
         String details = context.getString(
                 R.string.plugin_trust_general_details,
-                label,
-                version,
+                singleLine(label, 64),
+                singleLine(result.getPackageInfo().getVersionName(), 32),
                 context.getString(candidate.getTypeNameRes())
         );
         return result.getAuthor() == null ? details : details + authorDetails(context, result.getAuthor());
@@ -396,7 +420,11 @@ public final class PluginTrustGate {
                 ? candidate.getPackageName()
                 : result.getPackageInfo().getPackageName();
         String sha256 = result.getCurrentSignatures().isEmpty() ? "-" : result.getCurrentSignatures().get(0).getSha256();
-        return context.getString(R.string.plugin_trust_technical_details, packageName, formatFingerprint(sha256));
+        return context.getString(
+                R.string.plugin_trust_technical_details,
+                singleLine(packageName, 128),
+                formatFingerprint(sha256)
+        );
     }
 
     private static String formatFingerprint(String fingerprint) {
@@ -413,12 +441,14 @@ public final class PluginTrustGate {
         String type = author.getType() == AuthorType.ORG
                 ? context.getString(R.string.plugin_trust_author_org)
                 : context.getString(R.string.plugin_trust_author_person);
+        // Signed-list content, but sanitised on the same terms so a mis-generated list cannot forge
+        // dialog structure either.
         return context.getString(
                 R.string.plugin_trust_author_details,
-                author.getName(),
+                singleLine(author.getName(), 128),
                 type,
-                author.getDescription() == null ? "-" : author.getDescription(),
-                author.getWeb() == null ? "-" : author.getWeb()
+                singleLine(author.getDescription(), 128),
+                singleLine(author.getWeb(), 128)
         );
     }
 
