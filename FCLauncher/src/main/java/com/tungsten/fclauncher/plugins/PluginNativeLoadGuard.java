@@ -264,26 +264,42 @@ public final class PluginNativeLoadGuard {
             String key,
             String value
     ) throws IOException {
-        if (isNativePathEnvironmentKey(key)) {
-            if (value == null || value.isBlank()) {
-                throw new IOException(label + " declares an empty native path for " + key);
-            }
-            for (String entry : value.split(":")) {
-                if (entry.isBlank() || !(pathInside(nativeDirectory, entry) || isReadOnlySystemPath(entry))) {
-                    throw new IOException(label + " environment points outside its installed library directory: " + key);
+        switch (pluginEnvironmentPolicy(key)) {
+            case NATIVE_PATH:
+                if (value == null || value.isBlank()) {
+                    throw new IOException(label + " declares an empty native path for " + key);
                 }
-            }
-        } else if (LAUNCHER_OWNED_ENVIRONMENT_VARIABLES.contains(key)) {
-            throw new IOException(label + " may not replace the launcher-controlled environment variable " + key);
-        } else if (DRIVER_NAME_ENVIRONMENT_VARIABLES.contains(key)) {
-            if (value == null || !DRIVER_NAME.matcher(value).matches()) {
-                throw new IOException(label + " declares " + key + " as something other than a plain driver name");
-            }
-        } else if (isProtectedNativeEnvironmentVariable(key)) {
-            // Every protected variable must land in exactly one bucket above. Reaching here means a new
-            // one was added without deciding how a plugin may set it, so refuse rather than pass it on.
-            throw new IOException(label + " declares the unclassified protected environment variable " + key);
+                for (String entry : value.split(":")) {
+                    if (entry.isBlank() || !(pathInside(nativeDirectory, entry) || isReadOnlySystemPath(entry))) {
+                        throw new IOException(label + " environment points outside its installed library directory: " + key);
+                    }
+                }
+                return;
+            case LAUNCHER_OWNED:
+                throw new IOException(label + " may not replace the launcher-controlled environment variable " + key);
+            case DRIVER_NAME_ONLY:
+                if (value == null || !DRIVER_NAME.matcher(value).matches()) {
+                    throw new IOException(label + " declares " + key + " as something other than a plain driver name");
+                }
+                return;
+            case UNPROTECTED:
+                return;
+            default:
+                // A protected variable reaching here was added without deciding how a plugin may set
+                // it. Refuse rather than pass it through to native code.
+                throw new IOException(label + " declares the unclassified protected environment variable " + key);
         }
+    }
+
+    /** How a plugin is allowed to declare a given variable. The single source of truth for the policy. */
+    enum PluginEnvironmentPolicy { NATIVE_PATH, LAUNCHER_OWNED, DRIVER_NAME_ONLY, UNPROTECTED, UNCLASSIFIED }
+
+    static PluginEnvironmentPolicy pluginEnvironmentPolicy(String key) {
+        if (isNativePathEnvironmentKey(key)) return PluginEnvironmentPolicy.NATIVE_PATH;
+        if (LAUNCHER_OWNED_ENVIRONMENT_VARIABLES.contains(key)) return PluginEnvironmentPolicy.LAUNCHER_OWNED;
+        if (DRIVER_NAME_ENVIRONMENT_VARIABLES.contains(key)) return PluginEnvironmentPolicy.DRIVER_NAME_ONLY;
+        if (isProtectedNativeEnvironmentVariable(key)) return PluginEnvironmentPolicy.UNCLASSIFIED;
+        return PluginEnvironmentPolicy.UNPROTECTED;
     }
 
     static Set<String> protectedNativeEnvironmentVariablesForTest() {

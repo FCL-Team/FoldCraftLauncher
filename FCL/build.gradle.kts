@@ -197,6 +197,7 @@ dependencies {
     implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
+    testImplementation("junit:junit:4.13.2")
 }
 
 tasks.register("updateMap") {
