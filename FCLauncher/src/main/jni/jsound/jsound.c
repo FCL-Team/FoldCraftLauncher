@@ -385,17 +385,14 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if ((*vm)->GetEnv(vm, (void**)&env, JNI_VERSION_1_6) != JNI_OK)
         return JNI_ERR;
 
-    // Register PortMixerProvider native methods
+    // Register PortMixerProvider native methods (optional, may not exist in JDK 25)
     jclass pmClazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixerProvider");
-    if (!pmClazz) {
+    if (!pmClazz)
         pmClazz = (*env)->FindClass(env, "com/sun/media/sound/PortMixer");
-        if (!pmClazz)
-            return JNI_ERR;
+    if (pmClazz) {
+        (*env)->RegisterNatives(env, pmClazz, portMixerMethods,
+            sizeof(portMixerMethods) / sizeof(portMixerMethods[0]));
     }
-
-    if ((*env)->RegisterNatives(env, pmClazz, portMixerMethods,
-            sizeof(portMixerMethods) / sizeof(portMixerMethods[0])) != JNI_OK)
-        return JNI_ERR;
 
     // Register DirectAudioDeviceProvider native methods
     jclass dapClazz = (*env)->FindClass(env, "com/sun/media/sound/DirectAudioDeviceProvider");
