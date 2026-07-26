@@ -258,8 +258,10 @@ public class FCLauncher {
             envList = renderer.getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
-                    String[] split = env.split("=");
-                    if (split[0].equals("DLOPEN") || split.length < 2) {
+                    // Split exactly as PluginNativeLoadGuard does, so the value it authorized is the
+                    // value that reaches the environment.
+                    String[] split = env.split("=", 2);
+                    if (split.length < 2 || split[1].isEmpty() || split[0].equals("DLOPEN")) {
                         return;
                     }
                     if (split[0].equals("LIB_MESA_NAME")) {

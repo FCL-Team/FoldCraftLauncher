@@ -56,6 +56,11 @@ public final class PluginNativeLoadGuard {
             "VK_LAYER_PATH",
             "VULKAN_PTR"
     ));
+    /*
+     * Protected variables a plugin may legitimately point at its own verified library directory.
+     * The Vulkan loader and the Mesa loader both dlopen whatever these name, so a value outside the
+     * declaring APK would let any process that can write that path supply the loaded code.
+     */
     private static final Set<String> NATIVE_PATH_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
             "DLOPEN",
             "DRIVER_PATH",
@@ -63,7 +68,37 @@ public final class PluginNativeLoadGuard {
             "LIBGL_DRIVERS_PATH",
             "LIB_MESA_NAME",
             "MESA_LIBRARY",
-            "POJAVEXEC_EGL"
+            "POJAVEXEC_EGL",
+            "VK_ADD_DRIVER_FILES",
+            "VK_ADD_LAYER_PATH",
+            "VK_DRIVER_FILES",
+            "VK_ICD_FILENAMES",
+            "VK_LAYER_PATH"
+    ));
+    /*
+     * Protected variables the launcher owns outright.  A plugin has no legitimate reason to move the
+     * temporary directory, retarget the launcher's own native directory, or forge a handle that
+     * native code produces at runtime.
+     */
+    private static final Set<String> LAUNCHER_OWNED_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
+            "FCL_NATIVEDIR",
+            "MOD_ANDROID_RUNTIME",
+            "POJAV_NATIVEDIR",
+            "RENDERER_HANDLE",
+            "TMPDIR",
+            "VULKAN_PTR"
+    ));
+    /*
+     * Read-only partitions a passthrough renderer legitimately loads system drivers from.  They are
+     * already on the library path built by FCLauncher, and nothing short of root can write them, so
+     * accepting them costs nothing while keeping shared and app-writable storage out of reach.
+     */
+    private static final Set<String> READ_ONLY_SYSTEM_LIBRARY_ROOTS = new HashSet<>(Arrays.asList(
+            "/apex",
+            "/odm",
+            "/system",
+            "/system_ext",
+            "/vendor"
     ));
 
     private PluginNativeLoadGuard() {
@@ -170,38 +205,62 @@ public final class PluginNativeLoadGuard {
         if (environment == null) return;
         for (String entry : environment) {
             String[] split = entry.split("=", 2);
-            if (split.length != 2) continue;
+            if (split.length != 2 || split[1].isEmpty()) continue;
             if ("DLOPEN".equals(split[0])) {
                 for (String library : split[1].split(",")) {
                     requireLibraryInside(renderer.getPath(), library, "Renderer DLOPEN library");
                 }
             } else if ("LIB_MESA_NAME".equals(split[0]) || "MESA_LIBRARY".equals(split[0])) {
+                // FCLauncher resolves these two against the plugin directory before exporting them.
                 requireLibraryInside(renderer.getPath(), split[1], "Renderer Mesa library");
+            } else {
+                verifyPluginDeclaredEnvironment("Renderer", renderer.getPath(), split[0], split[1]);
             }
         }
     }
 
     private static void verifyNativePluginEnvironment(NativeLibPlugin.NativePlugin plugin) throws IOException {
         for (Map.Entry<String, String> entry : plugin.getEnvMap().entrySet()) {
-            String value = entry.getValue();
-            if (isNativePathEnvironmentKey(entry.getKey()) && !controlledNativePath(plugin.getPath(), value)) {
-                throw new IOException("Native plugin environment points outside its installed library directory: " + entry.getKey());
-            }
+            verifyPluginDeclaredEnvironment("Native plugin", plugin.getPath(), entry.getKey(), entry.getValue());
         }
+    }
+
+    /**
+     * A verified plugin still only speaks for its own library directory.  Declaring a protected path
+     * outside it, or replacing a variable the launcher owns, would turn one-time plugin trust into a
+     * loading path that any other process able to write that location controls.
+     */
+    static void verifyPluginDeclaredEnvironment(
+            String label,
+            String nativeDirectory,
+            String key,
+            String value
+    ) throws IOException {
+        if (isNativePathEnvironmentKey(key)) {
+            if (value == null || value.isBlank()) {
+                throw new IOException(label + " declares an empty native path for " + key);
+            }
+            for (String entry : value.split(":")) {
+                if (entry.isBlank() || !(pathInside(nativeDirectory, entry) || isReadOnlySystemPath(entry))) {
+                    throw new IOException(label + " environment points outside its installed library directory: " + key);
+                }
+            }
+        } else if (LAUNCHER_OWNED_ENVIRONMENT_VARIABLES.contains(key)) {
+            throw new IOException(label + " may not replace the launcher-controlled environment variable " + key);
+        }
+    }
+
+    private static boolean isReadOnlySystemPath(String path) throws IOException {
+        for (String root : READ_ONLY_SYSTEM_LIBRARY_ROOTS) {
+            if (pathInside(root, path)) return true;
+        }
+        return false;
     }
 
     private static boolean isNativePathEnvironmentKey(String key) {
         return key != null && (key.startsWith("LD_")
                 || NATIVE_PATH_ENVIRONMENT_VARIABLES.contains(key)
                 || "PATH".equals(key));
-    }
-
-    private static boolean controlledNativePath(String base, String value) throws IOException {
-        if (value == null || value.isBlank()) return false;
-        for (String entry : value.split(":")) {
-            if (entry.isBlank() || !pathInside(base, entry)) return false;
-        }
-        return true;
     }
 
     private static void requireLibraryInside(String nativeDirectory, String relativeLibrary, String label) throws IOException {
