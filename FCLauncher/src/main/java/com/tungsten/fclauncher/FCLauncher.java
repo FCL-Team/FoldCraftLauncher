@@ -12,6 +12,7 @@ import android.os.Build;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.oracle.dalvik.VMLauncher;
@@ -38,6 +39,22 @@ import java.util.Map;
 public class FCLauncher {
 
     private static int FCL_VERSION_CODE = -1;
+
+    /**
+     * PluginNativeLoadGuard reports every refusal by throwing, and several of its checks have no
+     * earlier counterpart in the trust dialog. Swallowing that left the user with a black screen and
+     * nothing in the log window, so surface the reason and end the process deterministically.
+     */
+    private static void abortLaunch(FCLBridge bridge, Throwable cause) {
+        String reason = cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage();
+        Log.e("FCLauncher", "Launch aborted: " + reason, cause);
+        try {
+            log(bridge, "Launch aborted: " + reason);
+        } catch (Throwable ignored) {
+            // The callback may already be gone; the exit below still has to happen.
+        }
+        bridge.onExit(1);
+    }
 
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
@@ -479,7 +496,7 @@ public class FCLauncher {
                 // launch game
                 launch(config, bridge, "Minecraft");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
@@ -517,7 +534,7 @@ public class FCLauncher {
                 // launch jar executor
                 launch(config, bridge, "Jar Executor");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
@@ -551,7 +568,7 @@ public class FCLauncher {
                 // launch api installer
                 launch(config, bridge, "API Installer");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
