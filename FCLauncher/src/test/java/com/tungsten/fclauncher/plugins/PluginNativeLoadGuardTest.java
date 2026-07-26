@@ -1,6 +1,6 @@
 package com.tungsten.fclauncher.plugins;
 
-import com.tungsten.verifiedpluginload.model.TrustSource;
+import com.vpl.verifiedpluginload.model.TrustSource;
 
 import org.junit.Test;
 

@@ -5,11 +5,11 @@ import android.util.Log;
 
 import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoad;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadBlocking;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadConfig;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadRegistry;
-import com.tungsten.verifiedpluginload.model.TrustListRefreshResult;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoad;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadBlocking;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadConfig;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadRegistry;
+import com.vpl.verifiedpluginload.model.TrustListRefreshResult;
 
 import java.io.File;
 import java.util.ArrayList;

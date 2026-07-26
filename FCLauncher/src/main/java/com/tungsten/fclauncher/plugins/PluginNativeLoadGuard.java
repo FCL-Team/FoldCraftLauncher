@@ -6,12 +6,12 @@ import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoad;
-import com.tungsten.verifiedpluginload.api.VerifiedPluginLoadRegistry;
-import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
-import com.tungsten.verifiedpluginload.model.PluginTrustStatus;
-import com.tungsten.verifiedpluginload.model.PluginVerificationResult;
-import com.tungsten.verifiedpluginload.model.TrustSource;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoad;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadRegistry;
+import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
+import com.vpl.verifiedpluginload.model.PluginTrustStatus;
+import com.vpl.verifiedpluginload.model.PluginVerificationResult;
+import com.vpl.verifiedpluginload.model.TrustSource;
 
 import java.io.File;
 import java.io.IOException;

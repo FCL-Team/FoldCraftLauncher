@@ -12,8 +12,8 @@ import com.tungsten.fcl.game.PluginTrustManager;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.verifiedpluginload.model.AuthorType;
-import com.tungsten.verifiedpluginload.model.TrustedAuthorInfo;
+import com.vpl.verifiedpluginload.model.AuthorType;
+import com.vpl.verifiedpluginload.model.TrustedAuthorInfo;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
