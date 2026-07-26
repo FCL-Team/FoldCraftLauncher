@@ -89,7 +89,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
-import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
+import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
 
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.CallbackBridge;

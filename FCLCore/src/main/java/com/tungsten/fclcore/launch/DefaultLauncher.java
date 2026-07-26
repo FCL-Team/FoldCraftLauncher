@@ -33,7 +33,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
+import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Argument;

@@ -3,7 +3,7 @@ package com.tungsten.fclauncher;
 import android.content.Context;
 
 import com.mio.data.Renderer;
-import com.tungsten.verifiedpluginload.model.PluginLoadAuthorization;
+import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
 
 import java.io.Serializable;
 import java.util.ArrayList;

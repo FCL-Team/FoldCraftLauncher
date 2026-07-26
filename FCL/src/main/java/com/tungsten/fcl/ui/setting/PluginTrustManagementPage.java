@@ -15,9 +15,9 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-import com.tungsten.verifiedpluginload.model.TrustActionResult;
-import com.tungsten.verifiedpluginload.model.TrustActionStatus;
-import com.tungsten.verifiedpluginload.model.TrustedAuthorInfo;
+import com.vpl.verifiedpluginload.model.TrustActionResult;
+import com.vpl.verifiedpluginload.model.TrustActionStatus;
+import com.vpl.verifiedpluginload.model.TrustedAuthorInfo;
 
 import java.util.List;
 
