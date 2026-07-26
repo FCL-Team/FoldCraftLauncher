@@ -258,10 +258,11 @@ public class FCLauncher {
             envList = renderer.getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
-                    // Split exactly as PluginNativeLoadGuard does, so the value it authorized is the
-                    // value that reaches the environment.
-                    String[] split = env.split("=", 2);
-                    if (split.length < 2 || split[1].isEmpty() || split[0].equals("DLOPEN")) {
+                    // Parse exactly as PluginNativeLoadGuard does, so the value it authorized is the
+                    // value that reaches the environment. DLOPEN is consumed by
+                    // setupGraphicAndSoundEngine instead.
+                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    if (split == null || split[0].equals("DLOPEN")) {
                         return;
                     }
                     if (split[0].equals("LIB_MESA_NAME")) {
@@ -395,8 +396,10 @@ public class FCLauncher {
             List<String> envList = config.getRenderer().getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
-                    String[] split = env.split("=");
-                    if (split[0].equals("DLOPEN")) {
+                    // Must parse exactly as PluginNativeLoadGuard did, or we dlopen a path it never
+                    // authorized.
+                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    if (split != null && split[0].equals("DLOPEN")) {
                         String[] libs = split[1].split(",");
                         for (String lib : libs) {
                             bridge.dlopen(config.getRenderer().getPath() + "/" + lib);
