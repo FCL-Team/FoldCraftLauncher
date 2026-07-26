@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    One label/value pair. The label is always a launcher string resource and the value is always
+    data; keeping them in separate views is what stops supplied text from imitating a heading.
+    Both sides are bounded, so no value can grow the dialog or push later rows out of view.
+-->
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:baselineAligned="true"
+    android:orientation="horizontal">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/fact_label"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:maxLines="2"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/fact_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textIsSelectable="true"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

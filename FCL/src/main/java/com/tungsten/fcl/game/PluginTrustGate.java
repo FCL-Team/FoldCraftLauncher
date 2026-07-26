@@ -24,6 +24,7 @@ import com.vpl.verifiedpluginload.model.TrustActionStatus;
 import com.vpl.verifiedpluginload.model.TrustedAuthorInfo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -82,8 +83,8 @@ public final class PluginTrustGate {
                             R.string.plugin_trust_title_key_trust_disabled,
                             R.string.plugin_trust_summary_key_trust_disabled,
                             context.getString(R.string.plugin_trust_key_trust_disabled_body),
-                            generalDetails(context, candidate, result),
-                            technicalDetails(context, candidate, result)
+                            candidate,
+                            result
                     );
                 }
                 authorizations.add(requireAuthorization(result));
@@ -101,8 +102,8 @@ public final class PluginTrustGate {
                         R.string.plugin_trust_title_untrusted,
                         R.string.plugin_trust_summary_untrusted,
                         context.getString(R.string.plugin_trust_untrusted_body),
-                        generalDetails(context, candidate, result),
-                        technicalDetails(context, candidate, result)
+                        candidate,
+                        result
                 );
             }
             if (result.getStatus() == PluginTrustStatus.BANNED) {
@@ -117,11 +118,9 @@ public final class PluginTrustGate {
                         R.string.plugin_trust_title_banned,
                         R.string.plugin_trust_summary_banned,
                         context.getString(R.string.plugin_trust_banned_body, warning),
-                        generalDetails(context, candidate, result),
-                        technicalDetails(context, candidate, result) + context.getString(
-                                R.string.plugin_trust_banned_technical_details,
-                                reason
-                        )
+                        candidate,
+                        result,
+                        PluginTrustDialog.Fact.of(R.string.plugin_trust_label_reason, singleLine(reason, 160))
                 );
             }
             return closeWithFailure(
@@ -129,11 +128,9 @@ public final class PluginTrustGate {
                     R.string.plugin_trust_title_failed,
                     R.string.plugin_trust_summary_failed,
                     context.getString(R.string.plugin_trust_failed_body),
-                    generalDetails(context, candidate, result),
-                    technicalDetails(context, candidate, result) + context.getString(
-                            R.string.plugin_trust_failed_technical_details,
-                            result.getDiagnostic().name()
-                    )
+                    candidate,
+                    result,
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_check_code, result.getDiagnostic().name())
             );
         });
     }
@@ -157,14 +154,14 @@ public final class PluginTrustGate {
                             R.string.plugin_trust_registered_body,
                             confidenceText(context, author)
                     ),
-                    generalDetails(context, candidate, result),
-                    technicalDetails(context, candidate, result)
+                    candidate,
+                    result
             );
         }
         CompletableFuture<Task<List<PluginLoadAuthorization>>> future = new CompletableFuture<>();
         AtomicBoolean settled = new AtomicBoolean(false);
         Schedulers.androidUIThread().execute(() -> {
-            PluginTrustDialog dialog = new PluginTrustDialog.Builder(context)
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
                     .setSeverity(author.getConfidence() == 1
                             ? PluginTrustDialog.Severity.WARNING
                             : PluginTrustDialog.Severity.INFO)
@@ -174,9 +171,9 @@ public final class PluginTrustGate {
                     .setMessage(context.getString(
                             R.string.plugin_trust_registered_body,
                             confidenceText(context, author)
-                    ))
-                    .setGeneralDetails(generalDetails(context, candidate, result))
-                    .setTechnicalDetails(technicalDetails(context, candidate, result))
+                    ));
+            addDetailSections(builder, context, candidate, result);
+            PluginTrustDialog dialog = builder
                     .setSecondaryButton(context.getString(R.string.plugin_trust_cancel), () -> {
                         settled.set(true);
                         future.completeExceptionally(new CancellationException());
@@ -234,24 +231,22 @@ public final class PluginTrustGate {
                     R.string.plugin_trust_title_failed,
                     R.string.plugin_trust_summary_failed,
                     context.getString(R.string.plugin_trust_failed_body),
-                    generalDetails(context, candidate, result),
-                    technicalDetails(context, candidate, result) + context.getString(
-                            R.string.plugin_trust_failed_technical_details,
-                            "APK_UNSIGNED"
-                    )
+                    candidate,
+                    result,
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_check_code, "APK_UNSIGNED")
             );
         }
         CompletableFuture<Task<List<PluginLoadAuthorization>>> future = new CompletableFuture<>();
         AtomicBoolean settled = new AtomicBoolean(false);
         Schedulers.androidUIThread().execute(() -> {
-            PluginTrustDialog dialog = new PluginTrustDialog.Builder(context)
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
                     .setSeverity(PluginTrustDialog.Severity.WARNING)
                     .setCancelable(false)
                     .setTitle(context.getString(R.string.plugin_trust_title_untrusted))
                     .setSummary(context.getString(R.string.plugin_trust_summary_unknown))
-                    .setMessage(context.getString(R.string.plugin_trust_unknown_body))
-                    .setGeneralDetails(generalDetails(context, candidate, result))
-                    .setTechnicalDetails(technicalDetails(context, candidate, result))
+                    .setMessage(context.getString(R.string.plugin_trust_unknown_body));
+            addDetailSections(builder, context, candidate, result);
+            PluginTrustDialog dialog = builder
                     .setSecondaryButton(context.getString(R.string.plugin_trust_cancel), () -> {
                         settled.set(true);
                         future.completeExceptionally(new CancellationException());
@@ -330,20 +325,22 @@ public final class PluginTrustGate {
             int title,
             int summary,
             String message,
-            String generalDetails,
-            String technicalDetails
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            PluginTrustDialog.Fact... extraFacts
     ) {
         CompletableFuture<List<PluginLoadAuthorization>> future = new CompletableFuture<>();
         AtomicBoolean settled = new AtomicBoolean(false);
         Schedulers.androidUIThread().execute(() -> {
-            PluginTrustDialog dialog = new PluginTrustDialog.Builder(context)
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
                     .setSeverity(PluginTrustDialog.Severity.ERROR)
                     .setCancelable(false)
                     .setTitle(context.getString(title))
                     .setSummary(context.getString(summary))
-                    .setMessage(message)
-                    .setGeneralDetails(generalDetails)
-                    .setTechnicalDetails(technicalDetails)
+                    .setMessage(message);
+            addDetailSections(builder, context, candidate, result);
+            builder.addSection(R.string.plugin_trust_section_diagnosis, Arrays.asList(extraFacts));
+            PluginTrustDialog dialog = builder
                     .setPrimaryButton(context.getString(R.string.plugin_trust_close), () -> {
                         settled.set(true);
                         future.completeExceptionally(new CancellationException());
@@ -403,53 +400,64 @@ public final class PluginTrustGate {
         return collapsed.length() <= maxLength ? collapsed : collapsed.substring(0, maxLength) + "…";
     }
 
-    private static String generalDetails(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
+    /**
+     * Builds the labelled sections. Plugin-supplied text can only ever become a value here, never a
+     * heading, and every value is bounded, so the dialog's shape is fixed by the launcher no matter
+     * what a plugin declares.
+     */
+    private static void addDetailSections(
+            PluginTrustDialog.Builder builder,
+            Context context,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result
+    ) {
         String label = result.getPackageInfo().getApplicationLabel();
         if (label == null || label.isBlank()) label = candidate.getPackageName();
-        String details = context.getString(
-                R.string.plugin_trust_general_details,
-                singleLine(label, 64),
-                singleLine(result.getPackageInfo().getVersionName(), 32),
-                context.getString(candidate.getTypeNameRes())
-        );
-        return result.getAuthor() == null ? details : details + authorDetails(context, result.getAuthor());
-    }
+        builder.addSection(R.string.plugin_trust_section_plugin, Arrays.asList(
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_name, singleLine(label, 64)),
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_version,
+                        singleLine(result.getPackageInfo().getVersionName(), 32)),
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_type,
+                        context.getString(candidate.getTypeNameRes()))
+        ));
 
-    private static String technicalDetails(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
+        // Present only when the signed trust list actually names a publisher, so the section's
+        // existence is itself the claim that a plugin cannot fabricate.
+        TrustedAuthorInfo author = result.getAuthor();
+        if (author != null) {
+            builder.addSection(R.string.plugin_trust_section_publisher, Arrays.asList(
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_name, singleLine(author.getName(), 128)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_type, author.getType() == AuthorType.ORG
+                            ? context.getString(R.string.plugin_trust_author_org)
+                            : context.getString(R.string.plugin_trust_author_person)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_description,
+                            singleLine(author.getDescription(), 128)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_website,
+                            singleLine(author.getWeb(), 128))
+            ));
+        }
+
         String packageName = result.getPackageInfo().getPackageName() == null
                 ? candidate.getPackageName()
                 : result.getPackageInfo().getPackageName();
-        String sha256 = result.getCurrentSignatures().isEmpty() ? "-" : result.getCurrentSignatures().get(0).getSha256();
-        return context.getString(
-                R.string.plugin_trust_technical_details,
-                singleLine(packageName, 128),
-                formatFingerprint(sha256)
-        );
+        String sha256 = result.getCurrentSignatures().isEmpty()
+                ? null
+                : result.getCurrentSignatures().get(0).getSha256();
+        builder.addSection(R.string.plugin_trust_section_signature, Arrays.asList(
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_package, singleLine(packageName, 128)),
+                PluginTrustDialog.Fact.monospace(R.string.plugin_trust_label_fingerprint, formatFingerprint(sha256))
+        ));
     }
 
+    /** Groups the fingerprint so two of them can be compared by eye without counting characters. */
     private static String formatFingerprint(String fingerprint) {
-        if (fingerprint.length() <= 16) return fingerprint;
-        StringBuilder formatted = new StringBuilder(fingerprint.length() + fingerprint.length() / 16);
-        for (int index = 0; index < fingerprint.length(); index += 16) {
-            if (index > 0) formatted.append('\n');
-            formatted.append(fingerprint, index, Math.min(index + 16, fingerprint.length()));
+        if (fingerprint == null || fingerprint.isEmpty()) return null;
+        StringBuilder formatted = new StringBuilder(fingerprint.length() + fingerprint.length() / 4);
+        for (int index = 0; index < fingerprint.length(); index += 4) {
+            if (index > 0) formatted.append(index % 32 == 0 ? '\n' : ' ');
+            formatted.append(fingerprint, index, Math.min(index + 4, fingerprint.length()));
         }
         return formatted.toString();
-    }
-
-    private static String authorDetails(Context context, TrustedAuthorInfo author) {
-        String type = author.getType() == AuthorType.ORG
-                ? context.getString(R.string.plugin_trust_author_org)
-                : context.getString(R.string.plugin_trust_author_person);
-        // Signed-list content, but sanitised on the same terms so a mis-generated list cannot forge
-        // dialog structure either.
-        return context.getString(
-                R.string.plugin_trust_author_details,
-                singleLine(author.getName(), 128),
-                type,
-                singleLine(author.getDescription(), 128),
-                singleLine(author.getWeb(), 128)
-        );
     }
 
     private static String confidenceText(Context context, TrustedAuthorInfo author) {
