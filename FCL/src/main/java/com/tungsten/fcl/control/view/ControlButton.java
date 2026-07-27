@@ -1,5 +1,7 @@
 package com.tungsten.fcl.control.view;
 
+import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -47,8 +49,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
-
 /**
  * Custom game control button.
  */
@@ -66,6 +66,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private final Paint boundaryPaint;
     private final int screenWidth;
     private final int screenHeight;
+    private int cursorMode;
 
     private BooleanProperty visibilityProperty;
 
@@ -347,11 +348,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
+                    cursorMode = menu.getCursorMode();
                     setPressedStyle();
                     downX = event.getX();
                     downY = event.getY();
-                    initialX = menu.getCursorMode() == FCLBridge.CursorEnabled ? menu.getCursorX() : menu.getPointerX();
-                    initialY = menu.getCursorMode() == FCLBridge.CursorEnabled ? menu.getCursorY() : menu.getPointerY();
+                    setInitialPosition();
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
@@ -359,6 +360,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     handler.postDelayed(runnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    if (cursorMode != menu.getCursorMode()) {
+                        cursorMode = menu.getCursorMode();
+                        setInitialPosition();
+                    }
                     handleMoveEvent(event);
                     if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
@@ -399,6 +404,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
         }
         return true;
+    }
+
+    private void setInitialPosition() {
+        initialX = cursorMode == FCLBridge.CursorEnabled ? menu.getCursorX() : menu.getPointerX();
+        initialY = cursorMode == FCLBridge.CursorEnabled ? menu.getCursorY() : menu.getPointerY();
     }
 
     private void showLine(int orientation, int pref, int self) {
