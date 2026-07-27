@@ -31,8 +31,17 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.Unzipper;
 
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class Datapack {
@@ -130,7 +139,7 @@ public class Datapack {
                 isMultiple = false;
                 try {
                     PackMcMeta pack = JsonUtils.fromNonNullJson(FileUtils.readText(mcmeta), PackMcMeta.class);
-                    info.add(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.getPackInfo().getDescription(), this));
+                    info.add(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.pack().description(), this));
                 } catch (Exception e) {
                     Logging.LOG.log(Level.WARNING, "Failed to read datapack " + path, e);
                 }
@@ -166,7 +175,7 @@ public class Datapack {
                         try {
                             PackMcMeta pack = enabled ? JsonUtils.fromNonNullJson(FileUtils.readText(mcmeta), PackMcMeta.class)
                                     : JsonUtils.fromNonNullJson(FileUtils.readText(mcmetaDisabled), PackMcMeta.class);
-                            info.add(new Pack(enabled ? mcmeta : mcmetaDisabled, FileUtils.getName(subDir), pack.getPackInfo().getDescription(), this));
+                            info.add(new Pack(enabled ? mcmeta : mcmetaDisabled, FileUtils.getName(subDir), pack.pack().description(), this));
                         } catch (IOException | JsonParseException e) {
                             Logging.LOG.log(Level.WARNING, "Failed to read datapack " + subDir, e);
                         }
@@ -186,7 +195,7 @@ public class Datapack {
                             name = StringUtils.substringBeforeLast(name, ".zip");
 
                             PackMcMeta pack = JsonUtils.fromNonNullJson(FileUtils.readText(mcmeta), PackMcMeta.class);
-                            info.add(new Pack(subDir, name, pack.getPackInfo().getDescription(), this));
+                            info.add(new Pack(subDir, name, pack.pack().description(), this));
                         } catch (IOException | JsonParseException e) {
                             Logging.LOG.log(Level.WARNING, "Failed to read datapack " + subDir, e);
                         }

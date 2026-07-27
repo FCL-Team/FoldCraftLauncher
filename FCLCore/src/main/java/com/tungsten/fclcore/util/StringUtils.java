@@ -20,7 +20,12 @@ package com.tungsten.fclcore.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * @author huangyuhui
+ */
 public final class StringUtils {
 
     private StringUtils() {
@@ -34,12 +39,75 @@ public final class StringUtils {
         return stringWriter.toString();
     }
 
+    public static String getStackTrace(StackTraceElement[] elements) {
+        StringBuilder builder = new StringBuilder();
+        for (StackTraceElement element : elements)
+            builder.append("\tat ").append(element).append(System.lineSeparator());
+        return builder.toString();
+    }
+
     public static boolean isBlank(String str) {
-        return str == null || str.trim().isEmpty();
+        return str == null || str.isBlank();
     }
 
     public static boolean isNotBlank(String str) {
         return !isBlank(str);
+    }
+
+    public static String normalizeWhitespaces(String str) {
+        if (str == null)
+            return "";
+
+        int start = 0;
+        int end = str.length();
+
+        while (start < str.length() && Character.isWhitespace(str.charAt(start))) {
+            start++;
+        }
+        while (end > start && Character.isWhitespace(str.charAt(end - 1))) {
+            end--;
+        }
+
+        if (end == start) {
+            return "";
+        }
+
+        StringBuilder builder = null;
+
+        int i = start;
+        while (i < end) {
+            char ch = str.charAt(i);
+            if (Character.isWhitespace(ch)) {
+                int whitespaceEnd = i + 1;
+                while (whitespaceEnd < end && Character.isWhitespace(str.charAt(whitespaceEnd))) {
+                    whitespaceEnd++;
+                }
+
+                if (whitespaceEnd - i > 1 || ch != ' ') {
+                    if (builder == null) {
+                        builder = new StringBuilder(end - start);
+                        builder.append(str, start, i);
+                    }
+                    builder.append(' ');
+                    i = whitespaceEnd;
+                    continue;
+                }
+            }
+
+            if (builder != null) {
+                builder.append(ch);
+            }
+            i++;
+        }
+
+        return builder != null ? builder.toString() : str.substring(start, end);
+    }
+
+    public static String capitalizeFirst(String str) {
+        if (str == null || str.isEmpty())
+            return str;
+
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 
     public static String substringBeforeLast(String str, char delimiter) {
@@ -195,12 +263,27 @@ public final class StringUtils {
         return false;
     }
 
+    public static boolean containsEmoji(String str) {
+        for (int i = 0; i < str.length(); ) {
+            int ch = str.codePointAt(i);
+
+            if (ch >= 0x1F300 && ch <= 0x1FAFF)
+                return true;
+
+            i += Character.charCount(ch);
+        }
+
+        return false;
+    }
+
     private static boolean isVarNameStart(char ch) {
         return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_';
     }
+
     private static boolean isVarNamePart(char ch) {
         return isVarNameStart(ch) || (ch >= '0' && ch <= '9');
     }
+
     private static int findVarEnd(String str, int offset) {
         if (offset < str.length() - 1 && isVarNameStart(str.charAt(offset))) {
             int end = offset + 1;
@@ -212,6 +295,7 @@ public final class StringUtils {
             }
             return end;
         }
+
         return -1;
     }
 
@@ -223,6 +307,7 @@ public final class StringUtils {
         if (isBlank(str)) {
             return new ArrayList<>();
         }
+
         if (vars == null) {
             vars = Collections.emptyMap();
         }
@@ -230,6 +315,7 @@ public final class StringUtils {
         // Split the string with ' and space cleverly.
         ArrayList<String> parts = new ArrayList<>();
         int varEnd;
+
         boolean hasValue = false;
         StringBuilder current = new StringBuilder(str.length());
         for (int i = 0; i < str.length(); ) {
@@ -242,6 +328,7 @@ public final class StringUtils {
                 }
                 current.append(str, i + 1, end);
                 i = end + 1;
+
             } else if (c == '"') {
                 hasValue = true;
                 i++;
@@ -283,6 +370,7 @@ public final class StringUtils {
                         } else {
                             current.append('$').append(key);
                         }
+
                         i = varEnd;
                     } else {
                         current.append(c);
@@ -304,6 +392,7 @@ public final class StringUtils {
                 } else {
                     current.append('$').append(key);
                 }
+
                 i = varEnd;
             } else {
                 hasValue = true;
@@ -322,13 +411,74 @@ public final class StringUtils {
         if (original.indexOf('\u00A7') < 0)
             return original;
 
-        return original.replaceAll("\u00A7[0-9a-gklmnor]", "");
+        return original.replaceAll("\u00A7[0-9a-fk-or]", "");
+    }
+
+    private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("\u00A7([0-9a-fk-or])");
+    private static final String FORMAT_CODE = "format_code";
+
+    public static List<Pair<String, String>> parseMinecraftColorCodes(String original) {
+        List<Pair<String, String>> pairs = new ArrayList<>();
+        if (isBlank(original)) {
+            return pairs;
+        }
+        Matcher matcher = COLOR_CODE_PATTERN.matcher(original);
+        String currentColor = "";
+        int lastIndex = 0;
+
+        while (matcher.find()) {
+            String text = original.substring(lastIndex, matcher.start());
+            if (!text.isEmpty()) {
+                pairs.add(new Pair<>(text, currentColor));
+            }
+
+            char code = matcher.group(1).charAt(0);
+            String newColor = switch (code) {
+                case '0' -> "black";
+                case '1' -> "dark_blue";
+                case '2' -> "dark_green";
+                case '3' -> "dark_aqua";
+                case '4' -> "dark_red";
+                case '5' -> "dark_purple";
+                case '6' -> "gold";
+                case '7' -> "gray";
+                case '8' -> "dark_gray";
+                case '9' -> "blue";
+                case 'a' -> "green";
+                case 'b' -> "aqua";
+                case 'c' -> "red";
+                case 'd' -> "light_purple";
+                case 'e' -> "yellow";
+                case 'f' -> "white";
+                case 'k', 'l', 'm', 'n', 'o' -> FORMAT_CODE;
+                case 'r' -> "";
+                default -> null;
+            };
+
+            if (newColor != null && !newColor.equals(FORMAT_CODE)) {
+                currentColor = newColor;
+            }
+
+            lastIndex = matcher.end();
+        }
+
+        if (lastIndex < original.length()) {
+            String remainingText = original.substring(lastIndex);
+            pairs.add(new Pair<>(remainingText, currentColor));
+        }
+        return pairs;
     }
 
     public static String parseEscapeSequence(String str) {
-        StringBuilder builder = new StringBuilder();
+        int idx = str.indexOf('\033');
+        if (idx < 0)
+            return str;
+
+        StringBuilder builder = new StringBuilder(str.length());
         boolean inEscape = false;
-        for (int i = 0; i < str.length(); i++) {
+
+        builder.append(str, 0, idx);
+        for (int i = idx; i < str.length(); i++) {
             char ch = str.charAt(i);
             if (ch == '\033') {
                 inEscape = true;
@@ -351,15 +501,15 @@ public final class StringUtils {
         return result.toString();
     }
 
-    public static int MAX_SHORT_STRING_LENGTH = 77;
+    public static String truncate(String str, int limit) {
+        assert limit > 5;
 
-    public static Optional<String> truncate(String str) {
-        if (str.length() <= MAX_SHORT_STRING_LENGTH) {
-            return Optional.empty();
+        if (str.length() <= limit) {
+            return str;
         }
 
-        final int halfLength = (MAX_SHORT_STRING_LENGTH - 5) / 2;
-        return Optional.of(str.substring(0, halfLength) + " ... " + str.substring(str.length() - halfLength));
+        final int halfLength = (limit - 5) / 2;
+        return str.substring(0, halfLength) + " ... " + str.substring(str.length() - halfLength);
     }
 
     public static boolean isASCII(String cs) {

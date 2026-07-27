@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2021  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,12 @@
  */
 package com.tungsten.fclcore.auth.offline;
 
-import static com.tungsten.fclcore.util.Lang.mapOf;
-import static com.tungsten.fclcore.util.Pair.pair;
-
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.util.KeyUtils;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.io.HttpServer;
@@ -39,6 +37,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Pair.pair;
+import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
 
 public class YggdrasilServer extends HttpServer {
 
@@ -234,12 +235,7 @@ public class YggdrasilServer extends HttpServer {
     // === properties ===
 
     @SafeVarargs
-    public static List<?> properties(Map.Entry<String, String>... entries) {
-        return properties(false, entries);
-    }
-
-    @SafeVarargs
-    public static List<?> properties(boolean sign, Map.Entry<String, String>... entries) {
+    public static List<?> properties(boolean sign, Pair<String, String>... entries) {
         return Stream.of(entries)
                 .map(entry -> {
                     LinkedHashMap<String, String> property = new LinkedHashMap<>();
@@ -252,5 +248,4 @@ public class YggdrasilServer extends HttpServer {
                 })
                 .collect(Collectors.toList());
     }
-
 }
