@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    A fingerprint needs the full width and a fixed-pitch face to be comparable by eye, so the label
+    sits above the value instead of beside it.
+-->
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:orientation="vertical">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/fact_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:singleLine="true"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/fact_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="monospace"
+        android:letterSpacing="0.02"
+        android:textIsSelectable="true"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

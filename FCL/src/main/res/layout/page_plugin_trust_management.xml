@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="@string/plugin_trust_management_description"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@id/refresh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:use_theme_color="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/refresh"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:contentDescription="@string/action_refresh"
+        android:src="@drawable/ic_baseline_refresh_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:use_theme_color="true" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/header_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="description,refresh" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/middle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/authors_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/bg_container_white"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:auto_linear_background_tint="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/middle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_bottom">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/authors_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/plugin_trust_management_authors"
+            android:textStyle="bold"
+            app:use_theme_color="true" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1">
+
+            <ListView
+                android:id="@+id/authors_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/authors_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/plugin_trust_management_authors_empty"
+                android:textSize="12sp"
+                app:use_theme_color="true" />
+        </FrameLayout>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/keys_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_container_white"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:auto_linear_background_tint="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/middle"
+        app:layout_constraintTop_toBottomOf="@id/header_bottom">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/keys_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/plugin_trust_management_keys"
+            android:textStyle="bold"
+            app:use_theme_color="true" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1">
+
+            <ListView
+                android:id="@+id/keys_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp" />
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/keys_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="@string/plugin_trust_management_keys_empty"
+                android:textSize="12sp"
+                app:use_theme_color="true" />
+        </FrameLayout>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

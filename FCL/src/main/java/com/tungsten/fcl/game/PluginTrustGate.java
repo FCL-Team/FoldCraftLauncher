@@ -1,0 +1,483 @@
+package com.tungsten.fcl.game;
+
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
+import com.mio.data.Renderer;
+import com.tungsten.fcl.R;
+import com.tungsten.fclauncher.plugins.PluginNativeLoadGuard;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoad;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadBlocking;
+import com.vpl.verifiedpluginload.api.VerifiedPluginLoadRegistry;
+import com.vpl.verifiedpluginload.model.AuthorType;
+import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
+import com.vpl.verifiedpluginload.model.PluginTrustStatus;
+import com.vpl.verifiedpluginload.model.PluginVerificationResult;
+import com.vpl.verifiedpluginload.model.TrustActionResult;
+import com.vpl.verifiedpluginload.model.TrustActionStatus;
+import com.vpl.verifiedpluginload.model.TrustedAuthorInfo;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+/** Presents one source-bound confirmation at a time before any native plugin path is used. */
+public final class PluginTrustGate {
+    private static final String TAG = "VerifiedPluginLoad";
+    private static final int UNKNOWN_PLUGIN_COOLDOWN_SECONDS = 6;
+    private static final AtomicReference<CooldownState> ACTIVE_COOLDOWN = new AtomicReference<>();
+
+    private PluginTrustGate() {
+    }
+
+    public static Task<List<PluginLoadAuthorization>> verifyForLaunch(Context context, Renderer renderer) {
+        return PluginTrustListSync.awaitStartupRefresh(context).thenComposeAsync(ignored -> {
+            VerifiedPluginLoad vpl = VerifiedPluginLoadRegistry.get(context);
+            return verifyNext(context, vpl, PluginCandidateRepository.forLaunch(context, renderer), 0, new ArrayList<>());
+        });
+    }
+
+    public static boolean isVerificationRequired(Context context, Renderer renderer) {
+        return !PluginCandidateRepository.forLaunch(context, renderer).isEmpty();
+    }
+
+    /** MainActivity invokes this for handled configuration changes such as screen rotation. */
+    public static void resetUnknownPluginCooldown() {
+        CooldownState state = ACTIVE_COOLDOWN.get();
+        if (state == null || !state.dialog.isShowing()) return;
+        int generation = state.generation.incrementAndGet();
+        updateCooldown(state, UNKNOWN_PLUGIN_COOLDOWN_SECONDS, generation);
+    }
+
+    private static Task<List<PluginLoadAuthorization>> verifyNext(
+            Context context,
+            VerifiedPluginLoad vpl,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
+            int index,
+            List<PluginLoadAuthorization> authorizations
+    ) {
+        if (index >= candidates.size()) {
+            return Task.completed(Collections.unmodifiableList(new ArrayList<>(authorizations)));
+        }
+        return Task.composeAsync(() -> {
+            PluginCandidateRepository.PluginCandidate candidate = candidates.get(index);
+            PluginVerificationResult result = vpl.inspectInstalledPackage(candidate.getPackageName());
+            logDecision(context, candidate, result);
+            boolean allowUntrustedPlugins = allowsUntrustedPlugins(context);
+            if (result.getStatus() == PluginTrustStatus.TRUSTED) {
+                if (!PluginNativeLoadGuard.isExplicitKeyTrustAllowed(result.getTrustSource(), allowUntrustedPlugins)) {
+                    return closeWithFailure(
+                            context,
+                            R.string.plugin_trust_title_key_trust_disabled,
+                            R.string.plugin_trust_summary_key_trust_disabled,
+                            context.getString(R.string.plugin_trust_key_trust_disabled_body),
+                            candidate,
+                            result
+                    );
+                }
+                authorizations.add(requireAuthorization(result));
+                return verifyNext(context, vpl, candidates, index + 1, authorizations);
+            }
+            if (result.getStatus() == PluginTrustStatus.PENDING_TRUST) {
+                return requestAuthorTrust(context, vpl, candidate, result, candidates, index, authorizations);
+            }
+            if (result.getStatus() == PluginTrustStatus.UNTRUSTED) {
+                if (allowUntrustedPlugins) {
+                    return requestKeyTrust(context, vpl, candidate, result, candidates, index, authorizations);
+                }
+                return closeWithFailure(
+                        context,
+                        R.string.plugin_trust_title_untrusted,
+                        R.string.plugin_trust_summary_untrusted,
+                        context.getString(R.string.plugin_trust_untrusted_body),
+                        candidate,
+                        result
+                );
+            }
+            if (result.getStatus() == PluginTrustStatus.BANNED) {
+                String reason = result.getKeyDescription() == null
+                        ? context.getString(R.string.plugin_trust_banned_reason_default)
+                        : result.getKeyDescription();
+                String warning = result.getAuthor() != null && result.getAuthor().getConfidence() == 0
+                        ? context.getString(R.string.plugin_trust_banned_confidence_0)
+                        : context.getString(R.string.plugin_trust_banned_confidence_known);
+                return closeWithFailure(
+                        context,
+                        R.string.plugin_trust_title_banned,
+                        R.string.plugin_trust_summary_banned,
+                        context.getString(R.string.plugin_trust_banned_body, warning),
+                        candidate,
+                        result,
+                        PluginTrustDialog.Fact.of(R.string.plugin_trust_label_reason, singleLine(reason, 160))
+                );
+            }
+            return closeWithFailure(
+                    context,
+                    R.string.plugin_trust_title_failed,
+                    R.string.plugin_trust_summary_failed,
+                    context.getString(R.string.plugin_trust_failed_body),
+                    candidate,
+                    result,
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_check_code, result.getDiagnostic().name())
+            );
+        });
+    }
+
+    private static Task<List<PluginLoadAuthorization>> requestAuthorTrust(
+            Context context,
+            VerifiedPluginLoad vpl,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
+            int index,
+            List<PluginLoadAuthorization> authorizations
+    ) {
+        TrustedAuthorInfo author = result.getAuthor();
+        if (author == null || author.getConfidence() == 0) {
+            return closeWithFailure(
+                    context,
+                    R.string.plugin_trust_title_registered,
+                    R.string.plugin_trust_summary_registered,
+                    context.getString(
+                            R.string.plugin_trust_registered_body,
+                            confidenceText(context, author)
+                    ),
+                    candidate,
+                    result
+            );
+        }
+        CompletableFuture<Task<List<PluginLoadAuthorization>>> future = new CompletableFuture<>();
+        AtomicBoolean settled = new AtomicBoolean(false);
+        Schedulers.androidUIThread().execute(() -> {
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
+                    .setSeverity(author.getConfidence() == 1
+                            ? PluginTrustDialog.Severity.WARNING
+                            : PluginTrustDialog.Severity.INFO)
+                    .setCancelable(false)
+                    .setTitle(context.getString(R.string.plugin_trust_title_registered))
+                    .setSummary(context.getString(R.string.plugin_trust_summary_registered))
+                    .setMessage(context.getString(
+                            R.string.plugin_trust_registered_body,
+                            confidenceText(context, author)
+                    ));
+            addDetailSections(builder, context, candidate, result);
+            PluginTrustDialog dialog = builder
+                    .setSecondaryButton(context.getString(R.string.plugin_trust_cancel), () -> {
+                        settled.set(true);
+                        future.completeExceptionally(new CancellationException());
+                    })
+                    .setPrimaryButton(context.getString(R.string.plugin_trust_author_action), () -> {
+                        settled.set(true);
+                        future.complete(trustAuthorThenContinue(context, vpl, candidate, result, candidates, index, authorizations));
+                    })
+                    .create();
+            dialog.setOnDismissListener(ignored -> {
+                if (settled.compareAndSet(false, true)) future.completeExceptionally(new CancellationException());
+            });
+            dialog.show();
+        });
+        return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+    }
+
+    private static Task<List<PluginLoadAuthorization>> trustAuthorThenContinue(
+            Context context,
+            VerifiedPluginLoad vpl,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
+            int index,
+            List<PluginLoadAuthorization> authorizations
+    ) {
+        return Task.supplyAsync(() -> {
+            TrustActionResult action = VerifiedPluginLoadBlocking.trustAuthor(vpl, result.getAuthor().getUuid());
+            if (action.getStatus() != TrustActionStatus.SUCCESS) {
+                throw new SecurityException("Could not store author trust: " + action.getStatus());
+            }
+            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.getPackageName());
+            if (refreshed.getStatus() != PluginTrustStatus.TRUSTED) {
+                throw new SecurityException("Plugin is not trusted after author confirmation: " + refreshed.getStatus());
+            }
+            return refreshed;
+        }).thenComposeAsync(refreshed -> {
+            authorizations.add(requireAuthorization(refreshed));
+            return verifyNext(context, vpl, candidates, index + 1, authorizations);
+        });
+    }
+
+    private static Task<List<PluginLoadAuthorization>> requestKeyTrust(
+            Context context,
+            VerifiedPluginLoad vpl,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
+            int index,
+            List<PluginLoadAuthorization> authorizations
+    ) {
+        if (result.getCurrentSignatures().isEmpty()) {
+            return closeWithFailure(
+                    context,
+                    R.string.plugin_trust_title_failed,
+                    R.string.plugin_trust_summary_failed,
+                    context.getString(R.string.plugin_trust_failed_body),
+                    candidate,
+                    result,
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_check_code, "APK_UNSIGNED")
+            );
+        }
+        CompletableFuture<Task<List<PluginLoadAuthorization>>> future = new CompletableFuture<>();
+        AtomicBoolean settled = new AtomicBoolean(false);
+        Schedulers.androidUIThread().execute(() -> {
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
+                    .setSeverity(PluginTrustDialog.Severity.WARNING)
+                    .setCancelable(false)
+                    .setTitle(context.getString(R.string.plugin_trust_title_untrusted))
+                    .setSummary(context.getString(R.string.plugin_trust_summary_unknown))
+                    .setMessage(context.getString(R.string.plugin_trust_unknown_body));
+            addDetailSections(builder, context, candidate, result);
+            PluginTrustDialog dialog = builder
+                    .setSecondaryButton(context.getString(R.string.plugin_trust_cancel), () -> {
+                        settled.set(true);
+                        future.completeExceptionally(new CancellationException());
+                    })
+                    .setPrimaryButton(context.getString(R.string.plugin_trust_key_wait, UNKNOWN_PLUGIN_COOLDOWN_SECONDS), () -> {
+                        settled.set(true);
+                        future.complete(trustKeyThenContinue(
+                                context,
+                                vpl,
+                                candidate,
+                                result,
+                                candidates,
+                                index,
+                                authorizations
+                        ));
+                    })
+                    .create();
+            dialog.setPrimaryButtonEnabled(false);
+            CooldownState cooldown = new CooldownState(dialog);
+            ACTIVE_COOLDOWN.set(cooldown);
+            dialog.setOnDismissListener(ignored -> {
+                ACTIVE_COOLDOWN.compareAndSet(cooldown, null);
+                if (settled.compareAndSet(false, true)) future.completeExceptionally(new CancellationException());
+            });
+            dialog.show();
+            updateCooldown(cooldown, UNKNOWN_PLUGIN_COOLDOWN_SECONDS, cooldown.generation.get());
+        });
+        return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+    }
+
+    private static Task<List<PluginLoadAuthorization>> trustKeyThenContinue(
+            Context context,
+            VerifiedPluginLoad vpl,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            List<PluginCandidateRepository.PluginCandidate> candidates,
+            int index,
+            List<PluginLoadAuthorization> authorizations
+    ) {
+        return Task.supplyAsync(() -> {
+            String keyHash = result.getCurrentSignatures().get(0).getValue();
+            TrustActionResult action = VerifiedPluginLoadBlocking.trustKeyHash(vpl, keyHash);
+            if (action.getStatus() != TrustActionStatus.SUCCESS) {
+                throw new SecurityException("Could not store key trust: " + action.getStatus());
+            }
+            PluginVerificationResult refreshed = vpl.inspectInstalledPackage(candidate.getPackageName());
+            if (refreshed.getStatus() != PluginTrustStatus.TRUSTED) {
+                throw new SecurityException("Plugin is not trusted after key confirmation: " + refreshed.getStatus());
+            }
+            return refreshed;
+        }).thenComposeAsync(refreshed -> {
+            authorizations.add(requireAuthorization(refreshed));
+            return verifyNext(context, vpl, candidates, index + 1, authorizations);
+        });
+    }
+
+    private static void updateCooldown(CooldownState state, int remainingSeconds, int generation) {
+        PluginTrustDialog dialog = state.dialog;
+        if (ACTIVE_COOLDOWN.get() != state || state.generation.get() != generation || !dialog.isShowing()) return;
+        if (remainingSeconds <= 0) {
+            dialog.setPrimaryButtonText(dialog.getContext().getString(R.string.plugin_trust_key_action));
+            dialog.setPrimaryButtonEnabled(true);
+            return;
+        }
+        // A handled configuration change may restart the timer after this button was enabled.
+        dialog.setPrimaryButtonEnabled(false);
+        dialog.setPrimaryButtonText(dialog.getContext().getString(R.string.plugin_trust_key_wait, remainingSeconds));
+        new Handler(Looper.getMainLooper()).postDelayed(
+                () -> updateCooldown(state, remainingSeconds - 1, generation),
+                1_000L
+        );
+    }
+
+    private static Task<List<PluginLoadAuthorization>> closeWithFailure(
+            Context context,
+            int title,
+            int summary,
+            String message,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result,
+            PluginTrustDialog.Fact... extraFacts
+    ) {
+        CompletableFuture<List<PluginLoadAuthorization>> future = new CompletableFuture<>();
+        AtomicBoolean settled = new AtomicBoolean(false);
+        Schedulers.androidUIThread().execute(() -> {
+            PluginTrustDialog.Builder builder = new PluginTrustDialog.Builder(context)
+                    .setSeverity(PluginTrustDialog.Severity.ERROR)
+                    .setCancelable(false)
+                    .setTitle(context.getString(title))
+                    .setSummary(context.getString(summary))
+                    .setMessage(message);
+            addDetailSections(builder, context, candidate, result);
+            builder.addSection(R.string.plugin_trust_section_diagnosis, Arrays.asList(extraFacts));
+            PluginTrustDialog dialog = builder
+                    .setPrimaryButton(context.getString(R.string.plugin_trust_close), () -> {
+                        settled.set(true);
+                        future.completeExceptionally(new CancellationException());
+                    })
+                    .create();
+            dialog.setOnDismissListener(ignored -> {
+                if (settled.compareAndSet(false, true)) future.completeExceptionally(new CancellationException());
+            });
+            dialog.show();
+        });
+        return Task.fromCompletableFuture(future);
+    }
+
+    private static boolean allowsUntrustedPlugins(Context context) {
+        return context.getSharedPreferences("launcher", MODE_PRIVATE)
+                .getBoolean("allow_untrusted_plugins", false);
+    }
+
+    private static PluginLoadAuthorization requireAuthorization(PluginVerificationResult result) {
+        PluginLoadAuthorization authorization = result.toLoadAuthorization();
+        if (authorization == null) throw new SecurityException("Trusted result does not contain a load authorization");
+        return authorization;
+    }
+
+    private static void logDecision(Context context, PluginCandidateRepository.PluginCandidate candidate, PluginVerificationResult result) {
+        String sha256 = result.getMatchedSignature() == null ? "unknown" : result.getMatchedSignature().getSha256();
+        Log.i(TAG, "Plugin verification: type=" + context.getString(candidate.getTypeNameRes())
+                + ", package=" + candidate.getPackageName()
+                + ", version=" + result.getPackageInfo().getVersionName()
+                + ", sha256=" + sha256
+                + ", status=" + result.getStatus()
+                + ", trustListVersion=" + result.getTrustListVersion());
+    }
+
+    /**
+     * The dialog body is one plain-text blob, so any line separator in a plugin-supplied string lets
+     * that plugin render text shaped exactly like the launcher's own registered-publisher block.
+     * Collapse every separator and control character, drop the bidi overrides that reorder what is
+     * displayed, and cap the length so injected padding cannot scroll the real fingerprint away.
+     */
+    public static String singleLine(String value, int maxLength) {
+        if (value == null) return "-";
+        StringBuilder sanitized = new StringBuilder(value.length());
+        value.codePoints().forEach(codePoint -> {
+            int type = Character.getType(codePoint);
+            if (type == Character.FORMAT || type == Character.CONTROL
+                    || type == Character.LINE_SEPARATOR || type == Character.PARAGRAPH_SEPARATOR
+                    || type == Character.UNASSIGNED || type == Character.PRIVATE_USE
+                    || type == Character.SURROGATE) {
+                sanitized.append(' ');
+            } else {
+                sanitized.appendCodePoint(codePoint);
+            }
+        });
+        String collapsed = sanitized.toString().replaceAll("\\s+", " ").trim();
+        if (collapsed.isEmpty()) return "-";
+        return collapsed.length() <= maxLength ? collapsed : collapsed.substring(0, maxLength) + "…";
+    }
+
+    /**
+     * Builds the labelled sections. Plugin-supplied text can only ever become a value here, never a
+     * heading, and every value is bounded, so the dialog's shape is fixed by the launcher no matter
+     * what a plugin declares.
+     */
+    private static void addDetailSections(
+            PluginTrustDialog.Builder builder,
+            Context context,
+            PluginCandidateRepository.PluginCandidate candidate,
+            PluginVerificationResult result
+    ) {
+        String label = result.getPackageInfo().getApplicationLabel();
+        if (label == null || label.isBlank()) label = candidate.getPackageName();
+        builder.addSection(R.string.plugin_trust_section_plugin, Arrays.asList(
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_name, singleLine(label, 64)),
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_version,
+                        singleLine(result.getPackageInfo().getVersionName(), 32)),
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_type,
+                        context.getString(candidate.getTypeNameRes()))
+        ));
+
+        // Present only when the signed trust list actually names a publisher, so the section's
+        // existence is itself the claim that a plugin cannot fabricate.
+        TrustedAuthorInfo author = result.getAuthor();
+        if (author != null) {
+            builder.addSection(R.string.plugin_trust_section_publisher, Arrays.asList(
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_name, singleLine(author.getName(), 128)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_type, author.getType() == AuthorType.ORG
+                            ? context.getString(R.string.plugin_trust_author_org)
+                            : context.getString(R.string.plugin_trust_author_person)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_description,
+                            singleLine(author.getDescription(), 128)),
+                    PluginTrustDialog.Fact.of(R.string.plugin_trust_label_website,
+                            singleLine(author.getWeb(), 128))
+            ));
+        }
+
+        String packageName = result.getPackageInfo().getPackageName() == null
+                ? candidate.getPackageName()
+                : result.getPackageInfo().getPackageName();
+        String sha256 = result.getCurrentSignatures().isEmpty()
+                ? null
+                : result.getCurrentSignatures().get(0).getSha256();
+        builder.addSection(R.string.plugin_trust_section_signature, Arrays.asList(
+                PluginTrustDialog.Fact.of(R.string.plugin_trust_label_package, singleLine(packageName, 128)),
+                PluginTrustDialog.Fact.monospace(R.string.plugin_trust_label_fingerprint, formatFingerprint(sha256))
+        ));
+    }
+
+    /** Groups the fingerprint so two of them can be compared by eye without counting characters. */
+    private static String formatFingerprint(String fingerprint) {
+        if (fingerprint == null || fingerprint.isEmpty()) return null;
+        StringBuilder formatted = new StringBuilder(fingerprint.length() + fingerprint.length() / 4);
+        for (int index = 0; index < fingerprint.length(); index += 4) {
+            if (index > 0) formatted.append(index % 32 == 0 ? '\n' : ' ');
+            formatted.append(fingerprint, index, Math.min(index + 4, fingerprint.length()));
+        }
+        return formatted.toString();
+    }
+
+    private static String confidenceText(Context context, TrustedAuthorInfo author) {
+        if (author == null) return context.getString(R.string.plugin_trust_confidence_0);
+        switch (author.getConfidence()) {
+            case 2:
+                return context.getString(R.string.plugin_trust_confidence_2);
+            case 1:
+                return context.getString(R.string.plugin_trust_confidence_1);
+            default:
+                return context.getString(R.string.plugin_trust_confidence_0);
+        }
+    }
+
+    private static final class CooldownState {
+        private final PluginTrustDialog dialog;
+        private final AtomicInteger generation = new AtomicInteger();
+
+        private CooldownState(PluginTrustDialog dialog) {
+            this.dialog = dialog;
+        }
+    }
+}

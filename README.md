@@ -73,6 +73,7 @@
 ### 依赖
 
 - [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher): [GLGPL]
+- [VerifiedPluginLoad](https://github.com/ZalithLauncher/VerifiedPluginLoad): [GNU LGPLv3 License](https://github.com/ZalithLauncher/VerifiedPluginLoad/blob/main/LICENSE)
 - Android Support
   Libraries: [Apache License 2.0](https://android.googlesource.com/platform/prebuilts/maven_repo/android/+/master/NOTICE.txt)
 - [GL4ES](https://github.com/AngelAuraMC/gl4es): [MIT License](https://github.com/ptitSeb/gl4es/blob/master/LICENSE)

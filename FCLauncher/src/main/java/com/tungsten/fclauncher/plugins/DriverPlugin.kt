@@ -8,7 +8,7 @@ import android.content.pm.PackageManager
 import com.tungsten.fclauncher.utils.FCLPath
 
 object DriverPlugin {
-    data class Driver(val driver: String, val path: String)
+    data class Driver(val driver: String, val path: String, val packageName: String? = null)
 
     private var isInit = false;
     private const val PACKAGE_FLAGS =
@@ -50,7 +50,8 @@ object DriverPlugin {
                 add(
                     Driver(
                         driver,
-                        nativeLibraryDir
+                        nativeLibraryDir,
+                        info.packageName
                     )
                 )
             }

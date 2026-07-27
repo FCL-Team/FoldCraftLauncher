@@ -12,6 +12,7 @@ import android.os.Build;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.oracle.dalvik.VMLauncher;
@@ -19,6 +20,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
+import com.tungsten.fclauncher.plugins.PluginNativeLoadGuard;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 
@@ -37,6 +39,22 @@ import java.util.Map;
 public class FCLauncher {
 
     private static int FCL_VERSION_CODE = -1;
+
+    /**
+     * PluginNativeLoadGuard reports every refusal by throwing, and several of its checks have no
+     * earlier counterpart in the trust dialog. Swallowing that left the user with a black screen and
+     * nothing in the log window, so surface the reason and end the process deterministically.
+     */
+    private static void abortLaunch(FCLBridge bridge, Throwable cause) {
+        String reason = cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage();
+        Log.e("FCLauncher", "Launch aborted: " + reason, cause);
+        try {
+            log(bridge, "Launch aborted: " + reason);
+        } catch (Throwable ignored) {
+            // The callback may already be gone; the exit below still has to happen.
+        }
+        bridge.onExit(1);
+    }
 
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
@@ -111,7 +129,7 @@ public class FCLauncher {
         return jvmLibDir;
     }
 
-    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
+    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath, boolean useExternalNativePlugins) throws IOException {
         StringBuilder sb = new StringBuilder();
         String split = ":";
 
@@ -133,14 +151,14 @@ public class FCLauncher {
             }
         }
 
-        return appendCommonPaths(sb, context, pluginLibPath);
+        return appendCommonPaths(sb, context, pluginLibPath, useExternalNativePlugins);
     }
 
-    private static String getLibraryPath(Context context, String pluginLibPath) {
-        return appendCommonPaths(new StringBuilder(), context, pluginLibPath);
+    private static String getLibraryPath(Context context, String pluginLibPath, boolean useExternalNativePlugins) {
+        return appendCommonPaths(new StringBuilder(), context, pluginLibPath, useExternalNativePlugins);
     }
 
-    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath) {
+    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath, boolean useExternalNativePlugins) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
@@ -151,9 +169,11 @@ public class FCLauncher {
             sb.append(pluginLibPath).append(split);
         }
 
-        String nativeLibPaths = NativeLibPlugin.getPaths(split);
-        if (!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null")) {
-            sb.append(nativeLibPaths).append(split);
+        if (useExternalNativePlugins) {
+            String nativeLibPaths = NativeLibPlugin.getPaths(split);
+            if (!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null")) {
+                sb.append(nativeLibPaths).append(split);
+            }
         }
 
         sb.append(FCLPath.MOD_RUNTIME_DIR).append(split);
@@ -172,7 +192,7 @@ public class FCLauncher {
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i);
-            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath());
+            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.isUseExternalNativePlugins());
             if (argList.get(i).contains("-Djava.library.path")) {
                 a = "-Djava.library.path=${natives_directory}";
             }
@@ -190,19 +210,23 @@ public class FCLauncher {
         envMap.put("JAVA_HOME", config.getJavaPath());
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
-        envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
+        envMap.put("DRIVER_PATH", config.isUseExternalNativePlugins()
+                ? DriverPlugin.getSelected().getPath()
+                : config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath()));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.isUseExternalNativePlugins()));
         envMap.put("FORCE_VSYNC", "false");
 
         // Native mod env var
         envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR == null ? "" : FCLPath.MOD_RUNTIME_DIR);
 
-        FFmpegPlugin.discover(config.getContext());
-        if (FFmpegPlugin.isAvailable) {
-            envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
-            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
+        if (config.isUseExternalNativePlugins()) {
+            if (FFmpegPlugin.isAvailable) {
+                FFmpegPlugin.activate();
+                envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
+                envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
+            }
         }
         if (config.isUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
@@ -251,8 +275,11 @@ public class FCLauncher {
             envList = renderer.getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
-                    String[] split = env.split("=");
-                    if (split[0].equals("DLOPEN") || split.length < 2) {
+                    // Parse exactly as PluginNativeLoadGuard does, so the value it authorized is the
+                    // value that reaches the environment. DLOPEN is consumed by
+                    // setupGraphicAndSoundEngine instead.
+                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    if (split == null || split[0].equals("DLOPEN")) {
                         return;
                     }
                     if (split[0].equals("LIB_MESA_NAME")) {
@@ -331,7 +358,7 @@ public class FCLauncher {
         for (String e : env) {
             try {
                 String[] split = e.split("=", 2);
-                if (split.length == 2) {
+                if (split.length == 2 && !PluginNativeLoadGuard.isProtectedNativeEnvironmentVariable(split[0])) {
                     envMap.put(split[0], split[1]);
                 }
             } catch (Throwable ignore) {
@@ -386,8 +413,10 @@ public class FCLauncher {
             List<String> envList = config.getRenderer().getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {
-                    String[] split = env.split("=");
-                    if (split[0].equals("DLOPEN")) {
+                    // Must parse exactly as PluginNativeLoadGuard did, or we dlopen a path it never
+                    // authorized.
+                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    if (split != null && split[0].equals("DLOPEN")) {
                         String[] libs = split[1].split(",");
                         for (String lib : libs) {
                             bridge.dlopen(config.getRenderer().getPath() + "/" + lib);
@@ -432,7 +461,7 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath()));
+        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.isUseExternalNativePlugins()));
         bridge.setupExitTrap(bridge);
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);
@@ -448,6 +477,8 @@ public class FCLauncher {
             try {
                 logStartInfo(config, bridge, "Minecraft");
                 logModList(bridge);
+
+                PluginNativeLoadGuard.verify(config);
 
                 // env
                 setEnv(config, bridge, true);
@@ -465,7 +496,7 @@ public class FCLauncher {
                 // launch game
                 launch(config, bridge, "Minecraft");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
@@ -485,6 +516,8 @@ public class FCLauncher {
 
                 logStartInfo(config, bridge, "Jar Executor");
 
+                PluginNativeLoadGuard.verify(config);
+
                 // env
                 setEnv(config, bridge, true);
 
@@ -501,7 +534,7 @@ public class FCLauncher {
                 // launch jar executor
                 launch(config, bridge, "Jar Executor");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
@@ -520,6 +553,8 @@ public class FCLauncher {
 
                 logStartInfo(config, bridge, "API Installer");
 
+                PluginNativeLoadGuard.verify(config);
+
                 // env
                 setEnv(config, bridge, false);
 
@@ -533,7 +568,7 @@ public class FCLauncher {
                 // launch api installer
                 launch(config, bridge, "API Installer");
             } catch (IOException e) {
-                e.printStackTrace();
+                abortLaunch(bridge, e);
             }
         });
 
