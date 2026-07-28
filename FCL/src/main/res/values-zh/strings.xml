@@ -74,7 +74,7 @@
     <string name="account_methods_microsoft_error_banned">你的账户可能被 Xbox Live 封禁。</string>
     <string name="account_methods_microsoft_error_unknown">登录失败</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">请在 Microsoft 账户登陆页面使用账户(非Outlook邮箱一般是手机号) + 密码登录。请不要使用验证码登录。</string>
-    <string name="account_methods_microsoft_error_no_license">未找到 Minecraft 购买记录。请点击此处（ https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj ） 购买游戏。\n若你使用 Game Pass，请在此处（ https://www.minecraft.net/msaprofile/mygames/editprofile )创建游戏档案。若已购买，请检查登录的账户是否正确。\n你可以点击右上角帮助按钮进行求助。</string>
+    <string name="account_methods_microsoft_error_no_license">未找到 Minecraft 购买记录。请点击此处（ https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj ） 购买游戏。\n若你使用 Game Pass，请在此处（ https://www.minecraft.net/msaprofile/mygames/editprofile )创建游戏档案。若已购买，请检查登录的账户是否正确。</string>
     <string name="account_methods_microsoft_error_no_character">你尚未创建游戏档案。请点击此处（ https://www.minecraft.net/msaprofile/mygames/editprofile ）创建游戏档案。</string>
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
