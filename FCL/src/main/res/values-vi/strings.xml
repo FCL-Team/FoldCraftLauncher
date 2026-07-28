@@ -1,0 +1,1255 @@
+<resources>
+    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name_import">Cài đặt Modpack</string>
+
+    <string name="splash_agreement">FCL yêu cầu quyền lưu trữ để quản lý và đọc các tệp trò chơi. FCL hoàn toàn mã nguồn mở trên GitHub, vì vậy bạn hãy yên tâm về an toàn dữ liệu của mình. Quyền này chỉ nhằm mục đích để trò chơi hoạt động bình thường và không gây ra rủi ro về bảo mật.</string>
+    <string name="splash_permission_msg">Không có quyền lưu trữ, vui lòng cấp quyền cho Fold Craft Launcher.</string>
+    <string name="splash_permission_grant">Cấp quyền</string>
+    <string name="splash_permission_title">Cần quyền lưu trữ</string>
+    <string name="splash_permission_close">Đóng ứng dụng</string>
+    <string name="splash_permission_settings">Cài đặt</string>
+    <string name="splash_permission_settings_msg">Bạn đã chọn "Không bao giờ cho phép". Vui lòng cấp quyền lưu trữ theo cách thủ công trong cài đặt.</string>
+    <string name="notification_permission">FCL yêu cầu quyền gửi thông báo để tránh các sự cố khi cài đặt hoặc khởi động trò chơi.</string>
+
+    <string name="splash_title">Chào mừng đến với Fold Craft Launcher</string>
+    <string name="splash_eula_error">Không thể lấy EULA, vui lòng kiểm tra kết nối mạng.</string>
+    <string name="splash_eula_next">Đồng ý và Tiếp tục</string>
+    <string name="splash_runtime_title">Cài đặt hoặc cập nhật thời gian chạy ứng dụng</string>
+    <string name="splash_runtime_lwjgl" translatable="false">LWJGL</string>
+    <string name="splash_runtime_cacio" translatable="false">Caciocavallo</string>
+    <string name="splash_runtime_cacio11" translatable="false">Caciocavallo 11</string>
+    <string name="splash_runtime_cacio17" translatable="false">Caciocavallo 17</string>
+    <string name="splash_runtime_java8" translatable="false">JRE 8</string>
+    <string name="splash_runtime_java17" translatable="false">JRE 17</string>
+    <string name="splash_runtime_java21" translatable="false">JRE 21</string>
+    <string name="splash_runtime_java25" translatable="false">JRE 25</string>
+    <string name="splash_runtime_jna" translatable="false">JNA</string>
+    <string name="splash_runtime_install">Cài đặt / Cập nhật</string>
+    <string name="missing_runtime_arch_files">Trình khởi chạy hiện đang cài đặt thiếu các tệp thời gian chạy cần thiết cho kiến trúc thiết bị của bạn (%s). Vui lòng tải xuống gói cài đặt cho kiến trúc tương ứng (%s) hoặc gói cài đặt đa năng (%s).</string>
+
+    <string name="account">Tài khoản</string>
+    <string name="version">Phiên bản</string>
+    <string name="launch_mode">Chế độ khởi chạy</string>
+    <string name="manage">Quản lý</string>
+    <string name="download">Tải xuống</string>
+    <string name="controller">Bộ điều khiển</string>
+    <string name="multiplayer">Nhiều người chơi</string>
+    <string name="setting">Cài đặt</string>
+    
+    <string name="about">Giới thiệu</string>
+    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
+    <string name="about_developer" translatable="false">FCL-Team</string>
+    <string name="about_sponsor">Nhà tài trợ</string>
+    <string name="about_source">Mã nguồn mở</string>
+    <string name="about_desc">Fold Craft Launcher là trình khởi chạy Minecraft dành cho Android, cho phép người dùng chạy Minecraft: Java Edition trên thiết bị Android.\n\nFold Craft Launcher được phát triển bởi FCL-Team.\n\nHầu hết các tính năng của Fold Craft Launcher được sửa đổi dựa trên HMCLCore.\n\nỨng dụng này sử dụng và trích dẫn một số mã của PojavLauncher và Boat, vì vậy nếu bạn định phân phối ứng dụng này, vui lòng tuân theo Giấy phép GPL-v3.</string>
+
+    <string name="account_add_server">Thêm máy chủ xác thực</string>
+    <string name="account_add_server_url">URL máy chủ</string>
+    <string name="account_add_server_name">Tên máy chủ</string>
+    <string name="account_cape">Áo choàng</string>
+    <string name="account_create">Tạo tài khoản</string>
+    <string name="account_create_offline">Tạo tài khoản ngoại tuyến</string>
+    <string name="account_create_microsoft">Tạo tài khoản Microsoft</string>
+    <string name="account_create_external">Tạo tài khoản bên ngoài</string>
+    <string name="account_create_username">Tên người dùng</string>
+    <string name="account_create_password">Mật khẩu</string>
+    <string name="account_create_server">Máy chủ xác thực</string>
+    <string name="account_create_server_not_select">Không có máy chủ xác thực</string>
+    <string name="account_create_home">Trang chủ</string>
+    <string name="account_create_register">Đăng ký</string>
+    <string name="account_create_alert">Vui lòng cung cấp đầy đủ thông tin tài khoản trước!</string>
+    <string name="account_injector_server">Máy chủ xác thực</string>
+    <string name="account_login">Đăng nhập</string>
+    <string name="account_methods_offline">Tài khoản ngoại tuyến</string>
+    <string name="account_methods_offline_name_invalid">Trong điều kiện bình thường, tên người dùng trò chơi chỉ có thể chứa ký tự tiếng Anh, số và dấu gạch dưới, và độ dài không được vượt quá 16 ký tự.\nMột số tên người dùng hợp lệ: Tungsten, Tungsten_123;\nMột số tên người dùng không hợp lệ: Exam ple, Exam-a_%%%, Tungsten_hello_world_hello_world.\nNếu bạn tin rằng có mod hoặc plugin tương ứng ở phía máy chủ để xóa giới hạn này, bạn có thể bỏ qua cảnh báo này.</string>
+    <string name="account_methods_yggdrasil">Tài khoản Mojang</string>
+    <string name="account_methods_authlib_injector">Tài khoản bên ngoài</string>
+    <string name="account_methods_microsoft">Tài khoản Microsoft</string>
+    <string name="account_failed">Làm mới tài khoản thất bại</string>
+    <string name="account_failed_expired">Thông tin xác thực đã hết hạn, bạn phải xóa tài khoản và đăng nhập lại.</string>
+    <string name="account_failed_no_character">Không có nhân vật nào được liên kết với tài khoản này.</string>
+    <string name="account_failed_connect_authentication_server">Không thể liên hệ với máy chủ xác thực, kết nối Internet của bạn có thể bị gián đoạn.</string>
+    <string name="account_failed_connect_injector_server">Không thể kết nối đến máy chủ xác thực. Vui lòng kiểm tra mạng của bạn và đảm bảo bạn đã nhập đúng URL.</string>
+    <string name="account_failed_server_disconnected">Không thể truy cập máy chủ xác thực. Bạn có thể đăng nhập ngoại tuyến hoặc thử đăng nhập lại.</string>
+    <string name="account_failed_server_response_malformed">Phản hồi máy chủ không hợp lệ, máy chủ xác thực có thể không hoạt động.</string>
+    <string name="account_failed_invalid_credentials">Sai mật khẩu hoặc bị giới hạn tốc độ, vui lòng thử lại sau.</string>
+    <string name="account_failed_invalid_token">Vui lòng thử đăng nhập lại.</string>
+    <string name="account_failed_invalid_password">Mật khẩu không hợp lệ</string>
+    <string name="account_failed_migration">Tài khoản của bạn cần được di chuyển sang tài khoản Microsoft. Nếu bạn đã thực hiện, bạn nên đăng nhập lại vào tài khoản Microsoft đã di chuyển của mình.</string>
+    <string name="account_failed_injector_download_failure">Không thể tải xuống authlib-injector. Vui lòng kiểm tra mạng của bạn hoặc thử chuyển sang máy nhân bản tải xuống khác.</string>
+    <string name="account_failed_character_deleted">Nhân vật đã bị xóa.</string>
+    <string name="account_failed_ssl">Đã xảy ra lỗi SSL khi kết nối đến máy chủ.</string>
+    <string name="account_failed_wrong_account">Bạn đã đăng nhập sai tài khoản.</string>
+    <string name="account_skin_invalid_skin">Tệp skin không hợp lệ</string>
+    <string name="account_methods_microsoft_error_add_family">Vì bạn chưa đủ 18 tuổi, người lớn phải thêm bạn vào một gia đình để bạn có thể chơi Minecraft.</string>
+    <string name="account_methods_microsoft_error_country_unavailable">Xbox Live không khả dụng tại quốc gia / khu vực hiện tại của bạn.</string>
+    <string name="account_methods_microsoft_error_missing_xbox_account">Vui lòng xác nhận rằng bạn đã mua Minecraft: Java Edition. Nếu có, vui lòng nhấp vào đây ( https://www.minecraft.net/msaprofile/mygames/editprofile ) để tạo hồ sơ trò chơi của bạn.</string>
+    <string name="account_methods_microsoft_error_banned">Tài khoản của bạn có thể đã bị Xbox Live cấm.\nBạn có thể nhấp vào "Tra cứu cấm" ở trên để biết thêm chi tiết.</string>
+    <string name="account_methods_microsoft_error_unknown">Đăng nhập thất bại</string>
+    <string name="account_methods_microsoft_error_wrong_verify_method">Vui lòng đăng nhập bằng tài khoản (như số điện thoại) và mật khẩu của bạn trên trang đăng nhập tài khoản Microsoft. Vui lòng không sử dụng mã xác minh để đăng nhập.</string>
+    <string name="account_methods_microsoft_error_no_license">Không tìm thấy bản ghi mua Minecraft. Vui lòng nhấp vào đây ( https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj ) để lấy trò chơi.\nNếu bạn đang sử dụng Game Pass, vui lòng tạo hồ sơ trò chơi của bạn <a href="https://www.minecraft.net/msaprofile/mygames/editprofile">tại đây</a>. Nếu bạn đã mua trò chơi, vui lòng kiểm tra xem bạn đã đăng nhập đúng tài khoản chưa.</string>
+    <string name="account_methods_microsoft_error_no_character">Bạn chưa tạo hồ sơ trò chơi. Vui lòng nhấp vào đây (https://www.minecraft.net/msaprofile/mygames/editprofile ) để tạo.</string>
+    <string name="account_methods_microsoft_error_add_family_probably">Vui lòng kiểm tra xem độ tuổi được chỉ định trong cài đặt tài khoản của bạn có ít nhất 18 tuổi không. Nếu không và bạn tin rằng đây là lỗi, bạn có thể truy cập trang web chính thức để thay đổi.</string>
+    <string name="account_methods_microsoft_close_page">Ủy quyền tài khoản Microsoft hiện đã hoàn tất.</string>
+    <string name="account_methods_microsoft_hint">Vui lòng nhấp vào nút "Đăng nhập", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
+    <string name="account_login_refresh">Đăng nhập lại</string>
+    <string name="account_login_refresh_microsoft_hint">Vì ủy quyền tài khoản không hợp lệ, bạn cần thêm lại tài khoản Microsoft của mình.\nVui lòng nhấp vào nút "OK", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
+    <string name="account_select_character">Chọn nhân vật</string>
+    <string name="account_skin">Skin</string>
+    <string name="account_skin_type_default">Mặc định</string>
+    <string name="account_skin_type_steve" translatable="false">Steve</string>
+    <string name="account_skin_type_alex" translatable="false">Alex</string>
+    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
+    <string name="account_skin_type_csl_api_location_hint">URL CustomSkinAPI</string>
+    <string name="account_skin_type_csl_api_hint">Bạn cần tạo một nhân vật có cùng tên với tài khoản ngoại tuyến của bạn trên trang web cung cấp skin. Skin của bạn sẽ là skin bạn đã tải lên trang đó.</string>
+    <string name="account_skin_type_local_file">Tệp Skin cục bộ</string>
+    <string name="account_skin_upload">Chọn tệp skin</string>
+    <string name="account_state_no_account">Không có tài khoản</string>
+    <string name="account_state_add">Nhấp để thêm</string>
+
+    <string name="action_refresh">Làm mới</string>
+    <string name="action_retry">Thử lại</string>
+    <string name="action_share">Chia sẻ</string>
+    <string name="action_upload">Tải lên nhật ký</string>
+    <string name="action_skip">Bỏ qua</string>
+
+    <string name="announcement">Thông báo: %s</string>
+    <string name="announcement_significant">Đây là thông báo quan trọng. Vui lòng xác nhận rằng bạn đã đọc thông báo này trước khi ẩn nó. Bạn có muốn tiếp tục ẩn nó không?</string>
+
+    <string name="archive_author">Tác giả</string>
+    <string name="archive_date">Ngày xuất bản</string>
+    <string name="archive_game_version">Phiên bản trò chơi</string>
+    <string name="archive_name">Tên tệp</string>
+    <string name="archive_version">Phiên bản</string>
+
+    <string name="assets_download">Đang tải xuống Assets</string>
+    <string name="assets_download_all">Đang xác minh tính toàn vẹn của assets</string>
+    <string name="assets_index_malformed">Các tệp index của assets đã tải xuống bị hỏng.</string>
+
+    <string name="button_back">Quay lại</string>
+    <string name="button_cancel">Hủy</string>
+    <string name="button_copy">Sao chép</string>
+    <string name="button_download">Tải xuống</string>
+    <string name="button_export">Xuất</string>
+    <string name="button_hide">Ẩn</string>
+    <string name="button_install">Cài đặt</string>
+    <string name="button_mouse_left">Chuột trái</string>
+    <string name="button_mouse_right">Chuột phải</string>
+    <string name="button_next">Tiếp theo</string>
+    <string name="button_paste">Dán</string>
+    <string name="button_prev">Trước</string>
+    <string name="button_remove">Xóa</string>
+    <string name="button_remove_confirm">Bạn có chắc chắn muốn xóa vĩnh viễn không? Hành động này không thể hoàn tác!</string>
+    <string name="button_save_as">Lưu thành</string>
+    <string name="button_select_all">Chọn tất cả</string>
+    <string name="button_select_invert">Đảo ngược lựa chọn</string>
+    <string name="button_set">Đặt</string>
+    <string name="button_reset">Đặt lại</string>
+    <string name="button_overwrite">Ghi đè</string>
+    <string name="button_up" translatable="false">▲</string>
+    <string name="button_down" translatable="false">▼</string>
+    <string name="button_left" translatable="false">◀</string>
+    <string name="button_right" translatable="false">▶</string>
+
+    <string name="community">Cộng đồng</string>
+    <string name="community_hint">Tham gia cộng đồng của chúng tôi để nhận phiên bản mới nhất, báo cáo lỗi, v.v. Vui lòng tuân thủ các quy tắc cộng đồng nếu bạn tham gia.</string>
+    <string name="community_discord" translatable="false">Discord</string>
+    <string name="community_qq">Nhóm QQ</string>
+
+    <string name="control_create">Tạo Bộ điều khiển</string>
+    <string name="control_delete">Bạn có chắc chắn muốn xóa bộ điều khiển này không?</string>
+    <string name="control_download">Tải xuống Bộ điều khiển</string>
+    <string name="control_download_latest">Tải xuống Phiên bản mới nhất</string>
+    <string name="control_download_history">Tải xuống Phiên bản cũ</string>
+    <string name="control_download_history_empty">Không có phiên bản cũ!</string>
+    <string name="control_download_lang_current">Ngôn ngữ hiện tại</string>
+    <string name="control_download_source_github" translatable="false">Github</string>
+    <string name="control_download_source_cn">Gitee</string>
+    <string name="control_download_device_phone">Điện thoại</string>
+    <string name="control_download_device_pad">Máy tính bảng</string>
+    <string name="control_download_device_other">Khác</string>
+    <string name="control_download_exist">Bộ điều khiển hiện tại đã tồn tại. Tải xuống sẽ ghi đè lên bộ điều khiển cục bộ. Bạn có chắc chắn muốn tiếp tục không?</string>
+    <string name="control_edit">Chỉnh sửa Bộ điều khiển</string>
+    <string name="control_import">Nhập Bộ điều khiển</string>
+    <string name="control_import_failed">Nhập bộ điều khiển thất bại!</string>
+    <string name="control_upgrade">Bộ điều khiển: %s là bộ điều khiển cũ, nó có thể gây ra một số lỗi không xác định, nhưng chúng tôi vẫn hỗ trợ nó, bạn có muốn di chuyển nó lên phiên bản mới không?</string>
+    <string name="control_incompatible">Bộ điều khiển: %s là bộ điều khiển không tương thích, có thể do phiên bản trình khởi chạy quá thấp hoặc phiên bản bộ điều khiển quá thấp, vui lòng kiểm tra.</string>
+    <string name="control_upload_requirement">Vui lòng tham gia nhóm QQ trước, sau đó nhấp vào "Chia sẻ" để chia sẻ bộ điều khiển và thông tin của nó cho quản trị viên và chờ xem xét. Vui lòng liên hệ với quản trị viên để cho họ biết loại bộ điều khiển của bạn.</string>
+    <string name="control_info_author">Tác giả: </string>
+    <string name="control_info_icon">Biểu tượng: </string>
+    <string name="control_info_lang">Ngôn ngữ: </string>
+    <string name="control_info_device">Loại thiết bị: </string>
+    <string name="control_info_screenshot">Ảnh chụp màn hình: </string>
+    <string name="control_info_intro">Giới thiệu: </string>
+    <string name="control_info_description">Mô tả: </string>
+    <string name="control_info_screenshot_max">Có thể tải lên tối đa 16 ảnh chụp màn hình!</string>
+    <string name="control_info_edit">Chỉnh sửa Thông tin Bộ điều khiển</string>
+    <string name="control_info_more">Thêm thông tin</string>
+    <string name="control_info_name">Tên: </string>
+    <string name="control_info_name_exist">Bộ điều khiển đã tồn tại, vui lòng đổi tên!</string>
+    <string name="control_info_name_invalid">Tên không hợp lệ</string>
+    <string name="control_info_version">Phiên bản: </string>
+    <string name="control_info_version_code">Mã phiên bản: </string>
+    <string name="control_list">Danh sách Bộ điều khiển</string>
+    <string name="control_select">Chọn Bộ điều khiển</string>
+    <string name="control_share">Chia sẻ Bộ điều khiển</string>
+    <string name="control_share_choose">Chọn phương thức chia sẻ</string>
+    <string name="control_share_direct">Chia sẻ trực tiếp</string>
+    <string name="control_share_zl2">Chia sẻ dưới dạng bố cục ZL2</string>
+    <string name="control_share_zl2_title">Chia sẻ bố cục ZL2</string>
+    <string name="control_converting">Đang chuyển đổi…</string>
+    <string name="control_convert_failed">Chuyển đổi thất bại!</string>
+    <string name="control_convert_unsupported">Không hỗ trợ chuyển đổi ZL2 trên thiết bị này (cần arm64)</string>
+    <string name="control_upload">Tải lên Bộ điều khiển</string>
+
+    <string name="curse_category_0">Tất cả</string>
+
+    <string name="curse_category_4474">Khoa học viễn tưởng</string>
+    <string name="curse_category_4481">Nhỏ / Nhẹ</string>
+    <string name="curse_category_4483">Chiến đấu</string>
+    <string name="curse_category_4477">Trò chơi nhỏ</string>
+    <string name="curse_category_4478">Nhiệm vụ</string>
+    <string name="curse_category_4484">Nhiều người chơi</string>
+    <string name="curse_category_4476">Khám phá</string>
+    <string name="curse_category_4736">Skyblock</string>
+    <string name="curse_category_4475">Phiêu lưu và RPG</string>
+    <string name="curse_category_4487">FTB</string>
+    <string name="curse_category_4480">Dựa trên Bản đồ</string>
+    <string name="curse_category_4479">Khó nhằn</string>
+    <string name="curse_category_4482">Cực lớn</string>
+    <string name="curse_category_4472">Công nghệ</string>
+    <string name="curse_category_4473">Phép thuật</string>
+    <string name="curse_category_5128">Vanilla+</string>
+    <string name="curse_category_7418">Kinh dị</string>
+    <string name="curse_category_9243">Chuyên gia</string>
+    <string name="curse_category_10683" translatable="false">RLCraft</string>
+
+    <string name="curse_category_5299">Giáo dục</string>
+    <string name="curse_category_5232">Galacticraft</string>
+    <string name="curse_category_5129">Vanilla+</string>
+    <string name="curse_category_5189">Tiện ích &#38; QOL</string>
+    <string name="curse_category_6814">Hiệu suất</string>
+    <string name="curse_category_6954">Tích hợp Động lực học</string>
+    <string name="curse_category_6484">Tạo</string>
+    <string name="curse_category_6821">Sửa lỗi</string>
+    <string name="curse_category_6145">Skyblock</string>
+    <string name="curse_category_5190">QoL</string>
+    <string name="curse_category_5191">Tiện ích &#38; QoL</string>
+    <string name="curse_category_5192">FancyMenu</string>
+    <string name="curse_category_423">Bản đồ và Thông tin</string>
+    <string name="curse_category_426">Tiện ích mở rộng</string>
+    <string name="curse_category_434">Áo giáp, Công cụ và Vũ khí</string>
+    <string name="curse_category_409">Cấu trúc</string>
+    <string name="curse_category_4485">Blood Magic</string>
+    <string name="curse_category_420">Lưu trữ</string>
+    <string name="curse_category_429">Industrial Craft</string>
+    <string name="curse_category_419">Phép thuật</string>
+    <string name="curse_category_412">Công nghệ</string>
+    <string name="curse_category_4557">Redstone</string>
+    <string name="curse_category_8937" translatable="false">ModJam 2025</string>
+    <string name="curse_category_9026">CreativeMode</string>
+    <string name="curse_category_10775">Kinh dị</string>
+    <string name="curse_category_428">Tinker\'s Construct</string>
+    <string name="curse_category_414">Vận chuyển Người chơi</string>
+    <string name="curse_category_4486">Lucky Blocks</string>
+    <string name="curse_category_432">Buildcraft</string>
+    <string name="curse_category_418">Di truyền học</string>
+    <string name="curse_category_4671">Tích hợp Twitch</string>
+    <string name="curse_category_5314">KubeJS</string>
+    <string name="curse_category_408">Quặng và Tài nguyên</string>
+    <string name="curse_category_4773">CraftTweaker</string>
+    <string name="curse_category_430">Thaumcraft</string>
+    <string name="curse_category_422">Phiêu lưu và RPG</string>
+    <string name="curse_category_413">Xử lý</string>
+    <string name="curse_category_417">Năng lượng</string>
+    <string name="curse_category_415">Vận chuyển Năng lượng, Chất lỏng và Vật phẩm</string>
+    <string name="curse_category_433">Forestry</string>
+    <string name="curse_category_425">Linh tinh</string>
+    <string name="curse_category_4545">Applied Energistics 2</string>
+    <string name="curse_category_416">Nông nghiệp</string>
+    <string name="curse_category_421">API và Thư viện</string>
+    <string name="curse_category_4780">Fabric</string>
+    <string name="curse_category_424">Trang trí</string>
+    <string name="curse_category_406">Tạo thế giới</string>
+    <string name="curse_category_435">Tiện ích Máy chủ</string>
+    <string name="curse_category_411">Quái vật</string>
+    <string name="curse_category_407">Quần xã</string>
+    <string name="curse_category_427">Thermal Expansion</string>
+    <string name="curse_category_410">Chiều không gian</string>
+    <string name="curse_category_436">Thức ăn</string>
+    <string name="curse_category_4558">Redstone</string>
+    <string name="curse_category_4843">Tự động hóa</string>
+    <string name="curse_category_4906">MCreator</string>
+    <string name="curse_category_7669">Twilight Forest</string>
+    <string name="curse_category_9049">Refined Storage</string>
+    <string name="curse_category_10754">Farmer\'s Delight</string>
+
+    <string name="curse_category_5244">Gói Phông chữ</string>
+    <string name="curse_category_5193">Gói Dữ liệu</string>
+    <string name="curse_category_399">Steampunk</string>
+    <string name="curse_category_396">128x</string>
+    <string name="curse_category_398">512x và cao hơn</string>
+    <string name="curse_category_397">256x</string>
+    <string name="curse_category_405">Linh tinh</string>
+    <string name="curse_category_395">64x</string>
+    <string name="curse_category_400">Ảnh thực tế</string>
+    <string name="curse_category_393">16x</string>
+    <string name="curse_category_403">Truyền thống</string>
+    <string name="curse_category_394">32x</string>
+    <string name="curse_category_404">Hoạt hình</string>
+    <string name="curse_category_4465">Hỗ trợ Mod</string>
+    <string name="curse_category_402">Thời trung cổ</string>
+    <string name="curse_category_401">Hiện đại</string>
+
+    <string name="curse_category_4464">Thế giới có Mod</string>
+    <string name="curse_category_250">Bản đồ Trò chơi</string>
+    <string name="curse_category_249">Sáng tạo</string>
+    <string name="curse_category_251">Parkour</string>
+    <string name="curse_category_253">Sinh tồn</string>
+    <string name="curse_category_248">Phiêu lưu</string>
+    <string name="curse_category_252">Câu đố</string>
+
+    <string name="curse_category_4551">Chế độ Nhiệm vụ Khó nhằn</string>
+    <string name="curse_category_4548">Lucky Blocks</string>
+    <string name="curse_category_4556">Tiến triển</string>
+    <string name="curse_category_4752">Building Gadgets</string>
+    <string name="curse_category_4553">CraftTweaker</string>
+    <string name="curse_category_4554">Công thức</string>
+    <string name="curse_category_4549">Sách hướng dẫn</string>
+    <string name="curse_category_4547">Cấu hình</string>
+    <string name="curse_category_4550">Nhiệm vụ</string>
+    <string name="curse_category_4555">Tạo thế giới</string>
+    <string name="curse_category_4552">Tập lệnh</string>
+    <string name="curse_category_6555">Vanilla</string>
+    <string name="curse_category_6554">Kỳ ảo</string>
+    <string name="curse_category_6553">Thực tế</string>
+
+    <string name="curse_sort_author">Tác giả</string>
+    <string name="curse_sort_date_created">Ngày tạo</string>
+    <string name="curse_sort_last_updated">Cập nhật lần cuối</string>
+    <string name="curse_sort_name">Tên</string>
+    <string name="curse_sort_popularity">Phổ biến</string>
+    <string name="curse_sort_total_downloads">Tổng số lượt tải xuống</string>
+
+    <string name="datapack_add">Cài đặt gói dữ liệu</string>
+    <string name="datapack_choose_datapack">Chọn gói dữ liệu để nhập</string>
+
+    <string name="download_code_404">Không tìm thấy tệp trên máy chủ từ xa: %s</string>
+    <string name="download_failed">Không thể tải xuống %1$s, mã phản hồi: %2$d</string>
+    <string name="download_failed_empty">Không có phiên bản nào khả dụng</string>
+    <string name="download_failed_refresh">Không thể tìm nạp danh sách phiên bản. Vui lòng thử lại.</string>
+
+    <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
+    <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
+    <string name="download_provider_mojang">Mojang (OptiFine được cung cấp bởi OF-302)</string>
+    <string name="download_provider_official">Từ các nguồn chính thức</string>
+    <string name="download_provider_balanced">Từ nguồn nhanh nhất có sẵn</string>
+    <string name="download_provider_mirror">Từ máy nhân bản</string>
+
+    <string name="edit_view_clone">Sao chép Chế độ xem</string>
+    <string name="edit_view_delete">Xóa Chế độ xem</string>
+    <string name="edit_view_event">Sự kiện Chế độ xem</string>
+    <string name="edit_view_info">Thông tin Chế độ xem cơ bản</string>
+    <string name="edit_view_no_group">Vui lòng thêm hoặc chọn một nhóm chế độ xem trước!</string>
+    <string name="edit_view_style">Kiểu Chế độ xem</string>
+
+    <string name="edit_button_title">Chỉnh sửa Nút</string>
+    <string name="edit_button_delete">Bạn có chắc chắn muốn xóa nút này không?</string>
+    <string name="edit_button_text">Văn bản hiển thị</string>
+    <string name="edit_button_event_follow">Con trỏ theo ngón tay</string>
+    <string name="edit_button_event_movable">Có thể di chuyển</string>
+    <string name="edit_button_event_press">Nhấn</string>
+    <string name="edit_button_event_long_press">Nhấn giữ</string>
+    <string name="edit_button_event_click">Nhấp</string>
+    <string name="edit_button_event_double_click">Nhấp đúp</string>
+    <string name="edit_button_event_auto_keep">Giữ nhấn</string>
+    <string name="edit_button_event_auto_click">Giữ nhấp</string>
+    <string name="edit_button_event_open_menu">Mở Menu</string>
+    <string name="edit_button_event_touch_mode">Chuyển đổi Chế độ cử chỉ</string>
+    <string name="edit_button_event_mouse_mode">Chuyển đổi Chế độ chuột</string>
+    <string name="edit_button_event_input">Nhập</string>
+    <string name="edit_button_event_quick_input">Mở Hộp thoại Nhập nhanh</string>
+    <string name="edit_button_event_output_text">Gửi Văn bản</string>
+    <string name="edit_button_event_keycodes">Xuất Mã phím</string>
+    <string name="edit_button_event_keycodes_keyboard">Bàn phím</string>
+    <string name="edit_button_event_keycodes_mouse">Chuột</string>
+    <string name="edit_button_event_bind_group">Chuyển đổi Khả năng hiển thị Nhóm Chế độ xem</string>
+
+    <string name="edit_direction_title">Chỉnh sửa Bộ điều khiển hướng</string>
+    <string name="edit_direction_delete">Bạn có chắc chắn muốn xóa bộ điều khiển hướng này không?</string>
+    <string name="edit_direction_event_up">Mã phím Lên</string>
+    <string name="edit_direction_event_down">Mã phím Xuống</string>
+    <string name="edit_direction_event_left">Mã phím Trái</string>
+    <string name="edit_direction_event_right">Mã phím Phải</string>
+    <string name="edit_direction_event_follow">Tùy chọn Theo dõi (Chỉ dành cho kiểu cần gạt)</string>
+    <string name="edit_direction_event_follow_fix">Cố định</string>
+    <string name="edit_direction_event_follow_center">Tâm theo ngón tay</string>
+    <string name="edit_direction_event_follow_always">Tất cả các phần theo ngón tay</string>
+    <string name="edit_direction_event_sneak">Nhấp đúp vào tâm để lén lút</string>
+    <string name="edit_direction_event_sneak_code">Mã phím Lén lút</string>
+
+    <string name="exception_access_denied">Không thể truy cập tệp %s.</string>
+    <string name="exception_artifact_malformed">Không thể xác minh tính toàn vẹn của các tệp đã tải xuống.</string>
+    <string name="exception_ssl_handshake">Không thể thiết lập kết nối SSL do thiếu chứng chỉ SSL trong bản cài đặt Java hiện tại.</string>
+
+    <string name="folder_config">Duyệt cấu hình</string>
+    <string name="folder_game">Duyệt thư mục trò chơi</string>
+    <string name="folder_log">Duyệt thư mục nhật ký</string>
+    <string name="folder_fcl_log">Duyệt nhật ký FCL</string>
+    <string name="upload_log">Tải lên Nhật ký</string>
+     <string name="log_not_found">Không tìm thấy tệp nhật ký</string>
+     <string name="log_too_large">Tệp nhật ký quá lớn</string>
+    <string name="upload_fcl_log">Tải lên nhật ký FCL</string>
+    <string name="upload_game_log">Tải lên nhật ký trò chơi</string>
+    <string name="upload_success">Tải lên thành công! URL đã được sao chép vào khay nhớ tạm: %s</string>
+    <string name="upload_failed">Tải lên thất bại: %s</string>
+    <string name="folder_mod">Duyệt mods</string>
+    <string name="folder_resourcepacks">Duyệt gói tài nguyên</string>
+    <string name="folder_saves">Duyệt bản lưu</string>
+    <string name="folder_screenshots">Duyệt ảnh chụp màn hình</string>
+    <string name="folder_shaderpacks">Duyệt gói shader</string>
+
+    <string name="game_crash_info">Thông tin sự cố</string>
+    <string name="game_crash_reason">Nguyên nhân sự cố</string>
+    <string name="game_crash_reason_multiple">Đã phát hiện nhiều nguyên nhân:\n\n</string>
+    <string name="game_crash_reason_block">Trò chơi bị sự cố do một khối.\n\nBạn có thể thử xóa khối này bằng MCEdit hoặc xóa mod đã thêm nó.\n\nLoại khối: %1$s\nVị trí: %2$s</string>
+    <string name="game_crash_reason_bootstrap_failed">Trò chơi bị sự cố do mod %1$s.\n\nBạn có thể thử xóa hoặc cập nhật nó.</string>
+    <string name="game_crash_reason_config">Trò chơi bị sự cố vì mod %1$s không thể phân tích tệp cấu hình %2$s của nó.</string>
+    <string name="game_crash_reason_debug_crash">Trò chơi bị sự cố vì bạn đã kích hoạt thủ công.\n\nVì vậy, có lẽ bạn biết tại sao.</string>
+    <string name="game_crash_reason_duplicated_mod">Trò chơi không thể khởi chạy do các mod trùng lặp: %1$s.\n\n%2$s\n\nMỗi mod chỉ có thể được cài đặt một lần, vui lòng xóa mod trùng lặp và thử lại.</string>
+    <string name="game_crash_reason_entity">Trò chơi bị sự cố do một thực thể.\n\nBạn có thể thử xóa thực thể này bằng MCEdit hoặc xóa mod đã thêm nó.\n\nLoại khối: %1$s\nVị trí: %2$s</string>
+    <string name="game_crash_reason_modmixin_failure">Trò chơi hiện tại không thể tiếp tục chạy vì một số Mod tiêm thất bại.\nĐiều này thường có nghĩa là Mod có lỗi hoặc không tương thích với môi trường hiện tại.\nBạn có thể kiểm tra nhật ký để tìm mô-đun lỗi.</string>
+    <string name="game_crash_reason_mod_repeat_installation">Vì trò chơi hiện tại đã cài đặt nhiều Mod giống nhau lặp lại, mỗi Mod chỉ có thể xuất hiện một lần. Vui lòng xóa các Mod trùng lặp và sau đó khởi động lại trò chơi.</string>
+    <string name="game_crash_reason_forge_error">Forge có thể đã cung cấp thông tin lỗi.\nBạn có thể xem nhật ký và xử lý tương ứng theo thông tin nhật ký trong báo cáo lỗi.\nNếu bạn không thấy thông báo lỗi, bạn có thể xem báo cáo lỗi để hiểu cách lỗi xảy ra.\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution0">Trò chơi hiện tại không thể tiếp tục chạy vì một số vấn đề về Mod.\nBạn có thể kiểm tra nhật ký để tìm mô-đun lỗi.</string>
+    <string name="game_crash_reason_mod_profile_causes_game_crash">Trò chơi hiện tại không thể tiếp tục chạy vì sự cố với tệp cấu hình Mod.\nBạn có thể kiểm tra nhật ký để tìm mô-đun lỗi và tệp cấu hình của nó.</string>
+    <string name="game_crash_reason_fabric_reports_an_error_and_gives_a_solution">Forge có thể đã cung cấp thông tin lỗi.\nBạn có thể xem nhật ký và xử lý tương ứng theo thông tin nhật ký trong báo cáo lỗi.\nNếu bạn không thấy thông báo lỗi, bạn có thể xem báo cáo lỗi để hiểu cách lỗi xảy ra.</string>
+    <string name="game_crash_reason_need_jdk11">Trò chơi hiện tại không thể tiếp tục chạy do phiên bản máy ảo Java không phù hợp.\nPhiên bản cần java 11.</string>
+    <string name="game_crash_reason_mod_name">Trò chơi hiện tại không thể tiếp tục chạy vì sự cố tên tệp Mod.\nTên tệp Mod chỉ nên sử dụng chữ cái viết hoa và viết thường (Aa~Zz), số (0~9), dấu gạch ngang (-), dấu gạch dưới (_) và dấu chấm (.) ở dạng tiếng Anh toàn bộ nửa chiều rộng.\nVui lòng vào thư mục Mod và đổi tên tất cả các tệp Mod không tuân thủ bằng một trong các ký tự tuân thủ ở trên.</string>
+    <string name="game_crash_reason_incomplete_forge_installation">Trò chơi hiện tại không thể tiếp tục do cài đặt Forge không đầy đủ.\nVui lòng gỡ cài đặt và cài đặt lại Forge.</string>
+    <string name="game_crash_reason_fabric_version_0_12">Fabric 0.12 trở lên không tương thích với các mod hiện đã cài đặt. Bạn cần hạ cấp xuống 0.11.7.</string>
+    <string name="game_crash_reason_fabric_warnings">Trình tải mod Fabric đã cảnh báo:\n%1$s</string>
+    <string name="game_crash_reason_file_already_exists">Trò chơi bị sự cố vì tệp %1$s đã tồn tại.\n\nBạn có thể thử sao lưu và xóa tệp đó, sau đó khởi chạy lại trò chơi.</string>
+    <string name="game_crash_reason_file_changed">Trò chơi bị sự cố vì nó không vượt qua kiểm tra tính toàn vẹn.\n\nNếu bạn đã sửa đổi tệp jar Minecraft, bạn sẽ cần hoàn nguyên các thay đổi hoặc tải xuống lại trò chơi.</string>
+    <string name="game_crash_reason_gl_operation_failure">Trò chơi bị sự cố do một số mod, gói shader và gói tài nguyên.\n\nVui lòng tắt các mod/gói shader/gói tài nguyên bạn đang sử dụng và thử lại.</string>
+    <string name="game_crash_reason_illegal_access_error">Trò chơi bị sự cố do một số mod.\nNếu bạn biết: %1$s, bạn có thể xóa mod và thử lại.</string>
+    <string name="game_crash_reason_optifine_is_not_compatible_with_forge">Trò chơi hiện tại bị sự cố vì OptiFine không tương thích với phiên bản Forge hiện tại.</string>
+    <string name="game_crash_reason_mod_files_are_decompressed">Trò chơi hiện tại không thể tiếp tục chạy vì tệp Mod đã bị giải nén.\nVui lòng đặt toàn bộ tệp Mod trực tiếp vào thư mục Mod!\nNếu giải nén sẽ gây ra lỗi trong trò chơi, vui lòng xóa Mod đã giải nén trong thư mục Mod, sau đó khởi động trò chơi.</string>
+    <string name="game_crash_reason_cannot_find_launch_target_fmlclient">Không thể tìm thấy trò chơi hiện tại vì Forge chưa được cài đặt đầy đủ.\nBạn có thể thử gỡ cài đặt Forge và cài đặt lại.</string>
+    <string name="game_crash_reason_shaders_mod">Trò chơi hiện tại không thể tiếp tục chạy vì cả OptiFine và Shaders Mod đều được cài đặt.\nVì OptiFine đã tích hợp chức năng của Shaders Mod, chỉ cần xóa Shaders Mod.</string>
+    <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">Trò chơi hiện tại không thể tiếp tục chạy vì bạn đã cài đặt quá nhiều Mod, vượt quá giới hạn ID của trò chơi.\nVui lòng thử cài đặt JEID hoặc xóa một số Mod lớn.</string>
+    <string name="game_crash_reason_night_config_fixes">Trò chơi hiện tại không thể tiếp tục chạy do một số sự cố với Night Config.\nBạn có thể thử cài đặt mod Night Config Fixes, nó có thể giúp bạn giải quyết vấn đề này.\nĐể biết thêm thông tin, hãy truy cập kho lưu trữ Github của mod.</string>
+    <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">Trò chơi hiện tại có thể không tiếp tục chạy vì OptiFine.\nSự cố này chỉ xảy ra trong một phiên bản OptiFine cụ thể. Bạn có thể thử thay đổi phiên bản OptiFine.</string>
+    <string name="game_crash_reason_jvm_32bit">Trò chơi bị sự cố vì phân bổ bộ nhớ hiện tại vượt quá giới hạn của JVM 32-bit.</string>
+    <string name="game_crash_reason_loading_crashed_forge">Trò chơi bị sự cố do mod %1$s (%2$s).\n\nBạn có thể thử xóa hoặc cập nhật nó.</string>
+    <string name="game_crash_reason_loading_crashed_fabric">Trò chơi bị sự cố do mod %1$s.\n\nBạn có thể thử xóa hoặc cập nhật nó.</string>
+    <string name="game_crash_reason_forge_repeat_installation">Trò chơi hiện tại không thể tiếp tục chạy do cài đặt Forge trùng lặp. Đây là một vấn đề đã biết.\nBạn nên tải lên nhật ký phản hồi lên Github để chúng tôi có thể tìm thêm manh mối và khắc phục vấn đề này.\nHiện tại bạn có thể gỡ cài đặt Forge và cài đặt lại.</string>
+    <string name="game_crash_reason_optifine_repeat_installation">Trò chơi hiện tại không thể tiếp tục chạy do cài đặt OptiFine trùng lặp. \nVui lòng xóa OptiFine trong thư mục Mod hoặc gỡ cài đặt OptiFine đã được cài đặt tự động.</string>
+    <string name="game_crash_reason_memory_exceeded">Trò chơi bị sự cố do phân bổ quá nhiều bộ nhớ.</string>
+    <string name="game_crash_reason_mod">Trò chơi bị sự cố do mod %1$s.\n\nBạn có thể cập nhật hoặc xóa mod và thử lại.</string>
+    <string name="game_crash_reason_mod_resolution">Trò chơi bị sự cố do lỗi phân giải mod.\n\nFabric đã cung cấp chi tiết sau:\n%1$s</string>
+    <string name="game_crash_reason_forgemod_resolution">Trò chơi bị sự cố do lỗi phân giải mod.\n\nForge đã cung cấp chi tiết sau:\n%1$s</string>
+    <string name="game_crash_reason_mod_resolution_collection">Trò chơi bị sự cố vì phiên bản mod không tương thích.\n\n%1$s yêu cầu %2$s.\n\nBạn cần nâng cấp hoặc hạ cấp %3$s trước khi tiếp tục.</string>
+    <string name="game_crash_reason_mod_resolution_conflict">Trò chơi bị sự cố do xung đột mod.\n\n%1$s không tương thích với %2$s.</string>
+    <string name="game_crash_reason_mod_resolution_missing">Trò chơi bị sự cố vì một số mod phụ thuộc chưa được cài đặt.\n\n%1$s yêu cầu mod: %2$s.\n\nĐiều này có nghĩa là bạn phải tải xuống và cài đặt %2$s trước để tiếp tục chơi.</string>
+    <string name="game_crash_reason_mod_resolution_missing_minecraft">Trò chơi bị sự cố vì mod không tương thích với phiên bản Minecraft hiện tại.\n\n%1$s yêu cầu phiên bản Minecraft %2$s.\n\nNếu bạn muốn chơi với phiên bản mod này đã cài đặt, bạn nên thay đổi phiên bản instance.\nNgược lại, bạn nên cài đặt một phiên bản tương thích với phiên bản Minecraft này.</string>
+    <string name="game_crash_reason_mod_resolution_mod_version">%1$s (Phiên bản: %2$s)</string>
+    <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (Mọi phiên bản)</string>
+    <string name="game_crash_reason_modlauncher_8">Trò chơi bị sự cố vì phiên bản Forge hiện tại của bạn không tương thích với bản cài đặt Java của bạn, vui lòng thử cập nhật Forge.</string>
+    <string name="game_crash_reason_no_class_def_found_error">Trò chơi không thể chạy vì mã không đầy đủ.\n\nInstance trò chơi của bạn thiếu %1$s, điều này có thể do thiếu mod, cài đặt mod không tương thích hoặc một số tệp bị hỏng.\n\nBạn có thể cần cài đặt lại trò chơi và tất cả các mod hoặc nhờ ai đó giúp đỡ.</string>
+    <string name="game_crash_reason_no_such_method_error">Trò chơi không thể chạy vì mã không đầy đủ.\n\nInstance trò chơi của bạn có thể thiếu mod, cài đặt mod không tương thích hoặc một số tệp bị hỏng.\n\nBạn có thể cần cài đặt lại trò chơi và tất cả các mod hoặc nhờ ai đó giúp đỡ.</string>
+    <string name="game_crash_reason_opengl_not_supported">Trò chơi bị sự cố vì OpenGL không được trình kết xuất của bạn hỗ trợ.</string>
+    <string name="game_crash_reason_out_of_memory">Trò chơi bị sự cố vì hết bộ nhớ.\n\nĐiều này có thể do không có đủ bộ nhớ khả dụng hoặc cài đặt quá nhiều mod. Bạn có thể thử khắc phục bằng cách tăng bộ nhớ được phân bổ trong cài đặt trò chơi.\n\nNếu bạn vẫn gặp những vấn đề này, thì bạn có thể cần một thiết bị tốt hơn.</string>
+    <string name="game_crash_reason_resolution_too_high">Trò chơi bị sự cố vì bạn đang sử dụng gói tài nguyên có độ phân giải kết cấu quá cao.\n\nBạn nên chuyển sang gói tài nguyên có độ phân giải thấp hơn.</string>
+    <string name="game_crash_reason_processing_of_javaagent_failed">Trò chơi hiện tại bị sự cố vì xử lý -javaagent thất bại.\nNếu bạn thêm các tham số liên quan vào tham số máy ảo Java, vui lòng kiểm tra xem chúng có hợp lệ và chính xác không.</string>
+    <string name="game_crash_reason_stacktrace">Không xác định được nguyên nhân sự cố.\n\nCó một số từ khóa có thể chứa một số ID Mod. Bạn có thể tìm kiếm chúng trực tuyến để tự tìm ra sự cố.\n\n%s</string>
+    <string name="game_crash_reason_unknown">Chúng tôi không thể tìm ra lý do trò chơi bị sự cố, vui lòng tham khảo nhật ký trò chơi.\n\nKhi nhờ người khác giúp đỡ, vui lòng chia sẻ toàn bộ nhật ký trò chơi và tệp báo cáo sự cố liên quan với họ!</string>
+    <string name="game_crash_reason_unsatisfied_link_error">Không thể khởi chạy Minecraft do thiếu thư viện: %1$s.</string>
+    <string name="game_crash_title">Trò chơi bị sự cố</string>
+    <string name="game_crash_title_add">Bạn nên gửi toàn bộ tệp nhật ký sự cố thay vì chụp ảnh màn hình</string>
+
+    <string name="help">Trợ giúp</string>
+    <string name="help_category">Danh mục</string>
+    <string name="help_website">Trang web</string>
+
+    <string name="input_hint_not_empty">Bắt buộc</string>
+    <string name="input_hint_optional">Tùy chọn</string>
+    <string name="input_not_empty">Điền vào ô nhập bắt buộc trước.</string>
+    <string name="input_number">Đầu vào phải là một số.</string>
+    <string name="input_url">Đầu vào phải là một URL hợp lệ.</string>
+
+    <string name="install_change_version">Thay đổi Phiên bản</string>
+    <string name="install_change_version_confirm">Bạn có chắc chắn muốn chuyển %s từ phiên bản %s sang %s không?</string>
+    <string name="install_failed">Cài đặt thất bại</string>
+    <string name="install_failed_downloading">Chúng tôi không thể tải xuống một số tệp cần thiết.</string>
+    <string name="install_failed_downloading_detail">Không thể tải xuống tệp: %s</string>
+    <string name="install_failed_downloading_timeout">Hết thời gian chờ tải xuống khi tìm nạp: %s</string>
+    <string name="install_failed_install_online">Không thể xác định tệp đã cung cấp. Nếu bạn đang cài đặt mod, hãy đến trang Mods.</string>
+    <string name="install_failed_malformed">Các tệp đã tải xuống bị hỏng. Bạn có thể thử khắc phục sự cố này bằng cách chuyển sang máy nhân bản tải xuống khác.</string>
+    <string name="install_failed_optifine_conflict">Không thể cài đặt đồng thời Fabric, OptiFine và Forge trên Minecraft 1.13 trở lên.</string>
+    <string name="install_failed_optifine_forge_1.17">Đối với phiên bản Minecraft 1.17.1 trở xuống, Forge chỉ hỗ trợ OptiFine H1 Pre2 hoặc mới hơn. Bạn có thể cài đặt chúng trong tab phiên bản ảnh chụp nhanh.</string>
+    <string name="install_failed_version_mismatch">Thư viện này yêu cầu phiên bản trò chơi %s, nhưng phiên bản đã cài đặt là %s.</string>
+    <string name="install_installer_change_version">Phiên bản %s không tương thích với phiên bản trò chơi hiện tại. Nhấp vào đây để thay thế bằng phiên bản khác hoặc xóa nó.</string>
+    <string name="install_installer_choose">Chọn Phiên bản %s của bạn</string>
+    <string name="install_installer_depend">Yêu cầu %s</string>
+    <string name="install_installer_fabric" translatable="false">Fabric</string>
+    <string name="install_installer_fabric_api" translatable="false">Fabric API</string>
+    <string name="install_installer_fabric_api_warning">Cảnh báo: Fabric API là một mod và sẽ được cài đặt vào thư mục mod của instance trò chơi. Vui lòng không thay đổi thư mục làm việc của trò chơi, nếu không Fabric API sẽ không hoạt động. Nếu bạn muốn thay đổi các cài đặt này, bạn nên cài đặt lại nó.</string>
+    <string name="install_installer_cleanroom" translatable="false">Cleanroom</string>
+    <string name="install_installer_forge" translatable="false">Forge</string>
+    <string name="install_installer_neoforge" translatable="false">NeoForge</string>
+    <string name="install_installer_game" translatable="false">Minecraft</string>
+    <string name="install_installer_incompatible">Không tương thích với %s</string>
+    <string name="install_installer_install">Cài đặt %s</string>
+    <string name="install_installer_install_offline">Cài đặt / Cập nhật từ Tệp Cục bộ</string>
+    <string name="install_installer_install_offline_extension">Trình cài đặt Forge/OptiFine</string>
+    <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
+    <string name="install_installer_not_installed">Chưa chọn</string>
+    <string name="install_installer_optifine" translatable="false">OptiFine</string>
+    <string name="install_installer_quilt" translatable="false">Quilt</string>
+    <string name="install_installer_quilt_api" translatable="false">QSL/QFAPI</string>
+    <string name="install_modpack">Cài đặt Modpack</string>
+    <string name="install_new_game">Thêm Instance Mới</string>
+    <string name="install_new_game_already_exists">Instance này đã tồn tại. Vui lòng sử dụng tên khác.</string>
+    <string name="install_new_game_malformed">Tên không hợp lệ</string>
+    <string name="install_success">Cài đặt thành công.</string>
+
+    <string name="jar_execute">Thực thi Jar</string>
+    <string name="jar_execute_custom_args">Thực thi với đối số tùy chỉnh</string>
+    <string name="jar_executor_crash_title">Trình thực thi Jar bị sự cố</string>
+    <string name="jar_executor_crash_reason">Hiện chưa hỗ trợ phân tích nguyên nhân sự cố Trình thực thi Jar.</string>
+
+    <string name="launch_pojav">Pojav</string>
+    <string name="launch_boat">Boat</string>
+    <string name="launch_error_java">Bạn đang sử dụng phiên bản Java đã lỗi thời, bạn có chắc chắn muốn tiếp tục không?</string>
+    <string name="launch_error_java_auto">Tự động chọn</string>
+    <string name="launch_error_java_continue">Tiếp tục</string>
+    <string name="launch_error_java_continue_disable">Tiếp tục (tắt kiểm tra)</string>
+    <string name="launch_failed">Không thể khởi chạy</string>
+    <string name="launch_failed_download_library">Không thể tải xuống thư viện %s.</string>
+
+    <string name="launch_state_dependencies">Đang phân giải các phụ thuộc</string>
+    <string name="launch_state_modpack">Đang tải xuống các phụ thuộc</string>
+    <string name="launch_state_java">Đang kiểm tra phiên bản Java</string>
+    <string name="launch_state_logging_in">Đang đăng nhập</string>
+    <string name="launch_state_waiting_launching">Đang đợi trò chơi khởi chạy</string>
+    <string name="launch_state_done">Hoàn tất khởi chạy</string>
+
+    <string name="menu_controls">Bộ điều khiển</string>
+    <string name="menu_controls_current">Bộ điều khiển hiện tại</string>
+    <string name="menu_controls_edit_mode">Chế độ Chỉnh sửa</string>
+    <string name="menu_controls_show_boundary">Hiển thị Ranh giới Chế độ xem</string>
+    <string name="menu_controls_hide_all">Ẩn Tất cả Chế độ xem</string>
+    <string name="menu_controls_auto_fit">Tự động điều chỉnh Vị trí</string>
+    <string name="menu_controls_auto_fit_dist">Khoảng cách Tự động điều chỉnh Vị trí</string>
+    <string name="menu_controls_groups">Nhóm Chế độ xem</string>
+    <string name="menu_controls_manage">Quản lý</string>
+    <string name="menu_controls_current_view_group">Nhóm Chế độ xem hiện tại</string>
+    <string name="menu_controls_add_button">Thêm Nút</string>
+    <string name="menu_controls_add_direction">Thêm Bộ điều khiển hướng</string>
+    <string name="menu_controls_add_view_button">Thêm</string>
+    <string name="menu_controls_style">Kiểu</string>
+    <string name="menu_controls_button_style">Kiểu Nút</string>
+    <string name="menu_controls_direction_style">Kiểu Bộ điều khiển hướng</string>
+
+    <string name="menu_control_base">Cài đặt Cơ bản</string>
+    <string name="menu_control_button">Nút</string>
+    <string name="menu_control_button_text">Văn bản</string>
+    <string name="menu_control_direction">Bộ điều khiển hướng</string>
+    <string name="menu_control_event">Cài đặt Sự kiện</string>
+    <string name="menu_control_select">Chọn</string>
+    <string name="menu_control_set">Đặt</string>
+    <string name="menu_control_style">Cài đặt Kiểu</string>
+    <string name="menu_control_style_add">Thêm Kiểu</string>
+    <string name="menu_control_style_edit">Chỉnh sửa Kiểu</string>
+    <string name="menu_control_view_group_add">Thêm Nhóm Chế độ xem</string>
+    <string name="menu_control_view_group_delete">Bạn có chắc chắn muốn xóa nhóm chế độ xem này không?</string>
+    <string name="menu_control_view_group_name">Tên</string>
+    <string name="menu_control_view_group_visibility">Khả năng hiển thị ban đầu</string>
+    <string name="menu_control_view_group_exist">Nhóm chế độ xem đã tồn tại</string>
+    <string name="menu_control_view_group_empty">Vui lòng điền tên nhóm chế độ xem trước</string>
+    <string name="menu_control_view_group_visible">Hiển thị</string>
+    <string name="menu_control_view_group_invisible">Ẩn</string>
+
+    <string name="menu_settings">Cài đặt</string>
+    <string name="menu_settings_debug">Gỡ lỗi</string>
+    <string name="menu_settings_disable_be_gesture">Tắt Cử chỉ Nâng cao</string>
+    <string name="menu_settings_disable_gesture">Tắt Cử chỉ</string>
+    <string name="menu_settings_disable_left_touch">Tắt cảm ứng nửa màn hình bên trái</string>
+    <string name="menu_settings_force_exit">Thoát cưỡng bức</string>
+    <string name="menu_settings_force_exit_button">Thoát</string>
+    <string name="menu_settings_force_exit_msg">Bạn có chắc chắn muốn thoát cưỡng bức không?</string>
+    <string name="menu_settings_function">Chức năng</string>
+    <string name="menu_settings_gesture">Cử chỉ</string>
+    <string name="menu_settings_gesture_mode">Chế độ Cử chỉ</string>
+    <string name="menu_settings_gesture_mode_build">Xây dựng</string>
+    <string name="menu_settings_gesture_mode_fight">Chiến đấu</string>
+    <string name="menu_settings_gesture_current">Chế độ hiện tại là %s</string>
+    <string name="menu_settings_gyro">Con quay hồi chuyển</string>
+    <string name="menu_settings_gyro_invert">Đảo ngược Con quay hồi chuyển</string>
+    <string name="menu_settings_gyro_sensitivity">Độ nhạy Con quay hồi chuyển</string>
+    <string name="menu_settings_lock_view">Khóa Chế độ xem Menu</string>
+    <string name="menu_settings_hide_view">Ẩn Chế độ xem Menu</string>
+    <string name="menu_settings_show_fps">Hiển thị FPS</string>
+    <string name="menu_settings_mouse">Chuột</string>
+    <string name="menu_settings_mouse_mode">Chế độ Chuột</string>
+    <string name="menu_settings_mouse_mode_click">Nhấp</string>
+    <string name="menu_settings_mouse_mode_slide">Trượt</string>
+    <string name="menu_settings_mouse_sensitivity">Độ nhạy Chuột</string>
+    <string name="menu_settings_mouse_cursor_sensitivity">Độ nhạy Chuột (Khi con trỏ được hiển thị)</string>
+    <string name="menu_settings_mouse_size">Kích thước Chuột</string>
+    <string name="menu_settings_mouse_offset_x">Độ lệch Chuột X</string>
+    <string name="menu_settings_mouse_offset_y">Độ lệch Chuột Y</string>
+    <string name="menu_settings_physical_mouse_mode">Chuột Vật lý</string>
+    <string name="menu_settings_gamepad">GamePad</string>
+    <string name="menu_settings_gamepad_disable_mapping">Tắt Ánh xạ Gamepad</string>
+    <string name="menu_settings_gamepad_reset_mapper">Đặt lại Mapper</string>
+    <string name="menu_settings_gamepad_button_binding">Ràng buộc nút</string>
+    <string name="menu_settings_gamepad_open_button">Mở</string>
+    <string name="menu_settings_gamepad_reset">Đặt lại</string>
+    <string name="menu_settings_gamepad_deadzone">Vùng chết</string>
+    <string name="menu_settings_multiplayer">Menu Nhiều người chơi</string>
+    <string name="menu_settings_multiplayer_button">Mở</string>
+    <string name="menu_settings_quick_input">Nhập nhanh</string>
+    <string name="menu_settings_quick_input_button">Quản lý</string>
+    <string name="menu_settings_send_key">Gửi Phím</string>
+    <string name="menu_settings_send_key_button">Gửi</string>
+    <string name="menu_settings_soft_keyboard_adjust">Tắt Tự động điều chỉnh Bàn phím Mềm</string>
+    <string name="menu_settings_item_bar_scale">Tỷ lệ Thanh Vật phẩm</string>
+    <string name="menu_settings_show_log">Hiển thị Nhật ký</string>
+    <string name="menu_settings_show_log_auto">Tự động Hiển thị Nhật ký</string>
+    <string name="menu_settings_performance_mode">Chế độ Hiệu suất Duy trì</string>
+    <string name="menu_settings_show_memory">Hiển thị Bộ nhớ</string>
+
+    <string name="message_cancelled">Thao tác đã bị hủy</string>
+    <string name="message_copy">Sao chép thành công!</string>
+    <string name="message_doing">Vui lòng đợi</string>
+    <string name="message_downloading">Đang tải xuống</string>
+    <string name="message_error">Lỗi</string>
+    <string name="message_failed">Thao tác thất bại</string>
+    <string name="message_file_exist">Tệp đã tồn tại</string>
+    <string name="message_success">Thao tác hoàn thành thành công</string>
+    <string name="message_unknown">Không xác định</string>
+    <string name="message_warning">Cảnh báo</string>
+
+    <string name="modpack">Modpack</string>
+    <string name="modpack_choose">Chọn modpack</string>
+    <string name="modpack_choose_local">Nhập từ tệp cục bộ</string>
+    <string name="modpack_choose_remote">Tải xuống từ Internet</string>
+    <string name="modpack_choose_remote_tooltip">Vui lòng nhập URL modpack của bạn</string>
+    <string name="modpack_completion">Đang tải xuống các phụ thuộc</string>
+    <string name="modpack_desc">Mô tả modpack của bạn, bao gồm phần giới thiệu và có thể là một số nhật ký thay đổi. Markdown và hình ảnh từ URL hiện được hỗ trợ.</string>
+    <string name="modpack_description">Mô tả</string>
+    <string name="modpack_download">Tải xuống Modpack</string>
+    <string name="modpack_enter_name">Nhập tên cho modpack này.</string>
+    <string name="modpack_export">Xuất Modpack</string>
+    <string name="modpack_external_detected">Đã phát hiện modpack bên ngoài: %s</string>
+    <string name="modpack_export_as">Xuất Modpack dưới dạng…</string>
+    <string name="modpack_file_api">Tiền tố URL Modpack</string>
+    <string name="modpack_files_blueprints">Bản thiết kế BuildCraft</string>
+    <string name="modpack_files_config">Cấu hình Mod</string>
+    <string name="modpack_files_dumps">Tệp đầu ra gỡ lỗi NEI</string>
+    <string name="modpack_files_fclversion_cfg">Tệp Cấu hình Trình khởi chạy</string>
+    <string name="modpack_files_liteconfig">Tệp Cấu hình Mod</string>
+    <string name="modpack_files_mods">Mods</string>
+    <string name="modpack_files_mods_voxelmods">Tùy chọn VoxelMods</string>
+    <string name="modpack_files_options_txt">Tệp Cài đặt Minecraft</string>
+    <string name="modpack_files_optionsshaders_txt">Tệp Cài đặt Shaders</string>
+    <string name="modpack_files_resourcepacks">Gói Tài nguyên / Kết cấu</string>
+    <string name="modpack_files_saves">Bản lưu Trò chơi</string>
+    <string name="modpack_files_scripts">Tệp Cấu hình MineTweaker</string>
+    <string name="modpack_files_servers_dat">Tệp Danh sách Máy chủ</string>
+    <string name="modpack_install">Cài đặt Modpack %s</string>
+    <string name="modpack_installing">Đang cài đặt Modpack</string>
+    <string name="modpack_introduction">Hiện hỗ trợ modpack CurseForge, Modrinth, MultiMC và MCBBS.</string>
+    <string name="modpack_invalid">Modpack không hợp lệ, bạn có thể thử tải xuống lại.</string>
+    <string name="modpack_mismatched_type">Loại modpack không khớp, instance hiện tại thuộc loại %s, nhưng loại được cung cấp là %s.</string>
+    <string name="modpack_name">Tên Modpack</string>
+    <string name="modpack_not_a_valid_name">Tên Modpack không hợp lệ</string>
+    <string name="modpack_origin">Nguồn</string>
+    <string name="modpack_origin_url">Trang web chính thức</string>
+    <string name="modpack_origin_mcbbs">MCBBS</string>
+    <string name="modpack_origin_mcbbs_prompt">ID Bài đăng</string>
+    <string name="modpack_scan">Đang phân tích Chỉ mục Modpack</string>
+    <string name="modpack_task_install">Cài đặt Modpack</string>
+    <string name="modpack_task_install_error">Không thể xác định modpack này. Chúng tôi hiện chỉ hỗ trợ modpack Curse, Modrinth, MultiMC và MCBBS.</string>
+    <string name="modpack_task_install_will">Bạn sẽ cài đặt modpack:</string>
+    <string name="modpack_type_curse">Curse</string>
+    <string name="modpack_type_curse_tolerable_error">Không thể tải xuống các phụ thuộc, bạn có thể thử tiếp tục tải xuống bằng cách khởi chạy instance trò chơi này.</string>
+    <string name="modpack_type_curse_error">Không thể tải xuống các phụ thuộc từ CurseForge, vui lòng thử lại hoặc sử dụng kết nối proxy.</string>
+    <string name="modpack_type_curse_not_found">Một số phụ thuộc không còn khả dụng, vui lòng thử cài đặt phiên bản modpack mới hơn.</string>
+    <string name="modpack_type_manual_warning">Modpack được nhà xuất bản đóng gói thủ công, có thể đã chứa trình khởi chạy. Bạn nên thử giải nén và chạy trò chơi bằng trình khởi chạy riêng của nó. FCL vẫn có thể nhập nó, nhưng không đảm bảo khả năng sử dụng, bạn vẫn muốn tiếp tục?</string>
+    <string name="modpack_type_mcbbs">Loại MCBBS</string>
+    <string name="modpack_type_mcbbs_export">Có thể được nhập bởi FCL, HMCL và MultiMC</string>
+    <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_multimc">MultiMC</string>
+    <string name="modpack_type_multimc_export">Có thể được nhập bởi FCL, HMCL và MultiMC</string>
+    <string name="modpack_type_server">Modpack Tự động Cập nhật từ Máy chủ</string>
+    <string name="modpack_type_server_export">Cho phép chủ sở hữu máy chủ cập nhật instance trò chơi từ xa</string>
+    <string name="modpack_type_server_malformed">Tệp kê khai modpack không hợp lệ, vui lòng tham khảo nhà sản xuất modpack máy chủ để khắc phục sự cố này.</string>
+    <string name="modpack_unsupported">Định dạng modpack không được hỗ trợ</string>
+    <string name="modpack_update">Đang cập nhật modpack</string>
+    <string name="modpack_wizard">Trình hướng dẫn Xuất Modpack</string>
+    <string name="modpack_wizard_step_1">Cài đặt Cơ bản</string>
+    <string name="modpack_wizard_step_1_title">Một số cài đặt cơ bản cho modpack.</string>
+    <string name="modpack_wizard_step_2">Chọn Tệp</string>
+    <string name="modpack_wizard_step_2_title">Chọn tệp bạn muốn thêm vào modpack.</string>
+    <string name="modpack_wizard_step_3">Loại Modpack</string>
+    <string name="modpack_wizard_step_3_title">Chọn loại modpack bạn muốn xuất.</string>
+    <string name="modpack_wizard_step_initialization_exported_version">Phiên bản trò chơi để xuất</string>
+    <string name="modpack_wizard_step_initialization_force_update">Buộc cập nhật modpack lên phiên bản mới nhất (bạn sẽ cần dịch vụ lưu trữ tệp)</string>
+    <string name="modpack_wizard_step_initialization_include_launcher">Bao gồm trình khởi chạy</string>
+    <string name="modpack_wizard_step_initialization_save">Xuất đến…</string>
+    <string name="modpack_wizard_step_initialization_warning">Trước khi tạo modpack, hãy đảm bảo trò chơi khởi chạy và đó là phiên bản phát hành thay vì phiên bản ảnh chụp nhanh.\n\nHãy nhớ rằng bạn không được phép thêm các mod và gói tài nguyên được nêu rõ là không được phân phối hoặc đưa vào modpack.</string>
+
+    <string name="modrinth_category_adventure">Phiêu lưu</string>
+    <string name="modrinth_category_bukkit">Bukkit</string>
+    <string name="modrinth_category_bungeecord">BungeeCord</string>
+    <string name="modrinth_category_challenging">Thử thách</string>
+    <string name="modrinth_category_combat">Chiến đấu</string>
+    <string name="modrinth_category_cursed">Nguyền rủa</string>
+    <string name="modrinth_category_decoration">Trang trí</string>
+    <string name="modrinth_category_economy">Kinh tế</string>
+    <string name="modrinth_category_equipment">Trang bị</string>
+    <string name="modrinth_category_fabric">Fabric</string>
+    <string name="modrinth_category_food">Thức ăn</string>
+    <string name="modrinth_category_forge">Forge</string>
+    <string name="modrinth_category_game_mechanics">Cơ chế Trò chơi</string>
+    <string name="modrinth_category_kitchen_sink">Bồn rửa bát</string>
+    <string name="modrinth_category_library">Thư viện</string>
+    <string name="modrinth_category_lightweight">Nhẹ</string>
+    <string name="modrinth_category_magic">Phép thuật</string>
+    <string name="modrinth_category_management">Quản lý</string>
+    <string name="modrinth_category_minigame">Trò chơi nhỏ</string>
+    <string name="modrinth_category_misc">Linh tinh</string>
+    <string name="modrinth_category_mobs">Quái vật</string>
+    <string name="modrinth_category_modloader">Trình tải Mod</string>
+    <string name="modrinth_category_multiplayer">Nhiều người chơi</string>
+    <string name="modrinth_category_neoforge">NeoForge</string>
+    <string name="modrinth_category_optimization">Tối ưu hóa</string>
+    <string name="modrinth_category_paper">Paper</string>
+    <string name="modrinth_category_purpur">Purpur</string>
+    <string name="modrinth_category_quests">Nhiệm vụ</string>
+    <string name="modrinth_category_quilt">Quilt</string>
+    <string name="modrinth_category_rift">Rift</string>
+    <string name="modrinth_category_social">Xã hội</string>
+    <string name="modrinth_category_spigot">Spigot</string>
+    <string name="modrinth_category_sponge">Sponge</string>
+    <string name="modrinth_category_storage">Lưu trữ</string>
+    <string name="modrinth_category_technology">Công nghệ</string>
+    <string name="modrinth_category_transportation">Vận chuyển</string>
+    <string name="modrinth_category_utility">Tiện ích</string>
+    <string name="modrinth_category_velocity">Velocity</string>
+    <string name="modrinth_category_waterfall">Waterfall</string>
+    <string name="modrinth_category_worldgen">Tạo thế giới</string>
+    <string name="modrinth_category_datapack">Gói dữ liệu</string>
+    <string name="modrinth_category_folia">Folia</string>
+    <!--  shader pack  -->
+    <string name="modrinth_category_atmosphere">Bầu không khí</string>
+    <string name="modrinth_category_bloom">Bloom</string>
+    <string name="modrinth_category_cartoon">Hoạt hình</string>
+    <string name="modrinth_category_colored_lighting">Ánh sáng màu</string>
+    <string name="modrinth_category_fantasy">Kỳ ảo</string>
+    <string name="modrinth_category_foliage">Tán lá</string>
+    <string name="modrinth_category_high">Cao</string>
+    <string name="modrinth_category_low">Thấp</string>
+    <string name="modrinth_category_medium">Trung bình</string>
+    <string name="modrinth_category_path_tracing">Dò đường</string>
+    <string name="modrinth_category_pbr" translatable="false">PBR</string>
+    <string name="modrinth_category_potato">Khoai tây</string>
+    <string name="modrinth_category_realistic">Thực tế</string>
+    <string name="modrinth_category_reflections">Phản chiếu</string>
+    <string name="modrinth_category_screenshot">Ảnh chụp màn hình</string>
+    <string name="modrinth_category_semi_realistic">Bán thực tế</string>
+    <string name="modrinth_category_shadows">Bóng</string>
+    <string name="modrinth_category_vanilla_like">Giống Vanilla</string>
+    <!--  resource pack  -->
+    <string name="modrinth_category_128x" translatable="false">128x</string>
+    <string name="modrinth_category_16x" translatable="false">16x</string>
+    <string name="modrinth_category_256x" translatable="false">256x</string>
+    <string name="modrinth_category_32x" translatable="false">32x</string>
+    <string name="modrinth_category_48x" translatable="false">48x</string>
+    <string name="modrinth_category_512x" translatable="false">512x+</string>
+    <string name="modrinth_category_64x" translatable="false">64x</string>
+    <string name="modrinth_category_8x_" translatable="false">8x</string>
+    <string name="modrinth_category_gui" translatable="false">GUI</string>
+    <string name="modrinth_category_audio">Âm thanh</string>
+    <string name="modrinth_category_blocks">Khối</string>
+    <string name="modrinth_category_core_shaders">Core-shaders</string>
+    <string name="modrinth_category_entities">Thực thể</string>
+    <string name="modrinth_category_environment">Môi trường</string>
+    <string name="modrinth_category_fonts">Phông chữ</string>
+    <string name="modrinth_category_items">Vật phẩm</string>
+    <string name="modrinth_category_locale">Ngôn ngữ</string>
+    <string name="modrinth_category_modded">Đã Mod</string>
+    <string name="modrinth_category_models">Mô hình</string>
+    <string name="modrinth_category_simplistic">Đơn giản hóa</string>
+    <string name="modrinth_category_themed">Chủ đề</string>
+    <string name="modrinth_category_tweaks">Điều chỉnh</string>
+
+    <string name="mods">Mods</string>
+    <string name="mods_add">Thêm Mods</string>
+    <string name="mods_add_failed">Không thể cài đặt mod %s.</string>
+    <string name="mods_add_success">%s đã được cài đặt thành công.</string>
+    <string name="mods_broken_dependency_title">Phụ thuộc bị hỏng</string>
+    <string name="mods_broken_dependency_desc">Phụ thuộc này đã tồn tại trước đó. Tuy nhiên, nó không tồn tại bây giờ. Hãy thử sử dụng nguồn tải xuống khác.</string>
+    <string name="mods_category">Danh mục</string>
+    <string name="mods_check_updates">Kiểm tra Cập nhật</string>
+    <string name="mods_check_updates_current_version">Phiên bản hiện tại</string>
+    <string name="mods_check_updates_empty">Không có mod nào cần cập nhật</string>
+    <string name="mods_check_updates_failed">Không thể tải xuống một số tệp.</string>
+    <string name="mods_check_updates_file">Tệp</string>
+    <string name="mods_check_updates_source">Nguồn</string>
+    <string name="mods_check_updates_target_version">Phiên bản mục tiêu</string>
+    <string name="mods_check_updates_update">Cập nhật</string>
+    <string name="mods_check_updates_update_without">Cập nhật (không giữ lại phiên bản cũ)</string>
+    <string name="mods_choose_mod">Chọn mod</string>
+    <string name="mods_curseforge">CurseForge</string>
+    <string name="mods_dependency">Phụ thuộc</string>
+    <string name="mods_dependency_embedded">pre-mod tích hợp (đã được tác giả đóng gói sẵn trong tệp mod, không cần tải xuống riêng)</string>
+    <string name="mods_dependency_optional">pre-mod tùy chọn (nếu trò chơi thiếu, nhưng chức năng mod có thể bị thiếu)</string>
+    <string name="mods_dependency_required">pre-mod bắt buộc (phải tải xuống riêng, thiếu có thể khiến trò chơi không khởi chạy được)</string>
+    <string name="mods_dependency_tool">thư viện tiền nhiệm (phải tải xuống riêng, thiếu có thể khiến trò chơi không khởi chạy được)</string>
+    <string name="mods_dependency_include">pre-mod tích hợp (đã được tác giả đóng gói sẵn trong tệp mod, không cần tải xuống riêng)</string>
+    <string name="mods_dependency_incompatible">mod không tương thích (cài đặt cả mod và mod đang tải xuống sẽ khiến trò chơi không khởi chạy được)</string>
+    <string name="mods_dependency_broken">Pre-mod bị hỏng (Pre-mod này từng tồn tại trên kho mod, nhưng hiện đã bị xóa.) Hãy thử nguồn tải xuống khác.</string>
+    <string name="mods_disable">Tắt</string>
+    <string name="mods_download">Tải xuống Mod</string>
+    <string name="mods_download_title">Tải xuống Mod - %1s</string>
+    <string name="mods_download_recommend">Phiên bản Mod được đề xuất - Minecraft %1s</string>
+    <string name="mods_enable">Bật</string>
+    <string name="mods_manage">Quản lý Mods</string>
+    <string name="mods_mcbbs">MCBBS</string>
+    <string name="mods_mcmod">MCMOD</string>
+    <string name="mods_mcmod_page">Trang MCMOD</string>
+    <string name="mods_mcmod_search">Tìm kiếm trong MCMOD</string>
+    <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_name">Tên</string>
+    <string name="mods_not_modded">Bạn phải cài đặt trình tải mod (Fabric, Forge hoặc LiteLoader) trước để quản lý mods của mình!</string>
+    <string name="mods_restore">Khôi phục</string>
+    <string name="mods_url">Trang chính thức</string>
+    <string name="mods_update_modpack_mod_warning">Việc cập nhật mods trong một modpack có thể dẫn đến kết quả không thể sửa chữa, có thể làm hỏng modpack khiến nó không thể khởi động. Bạn có chắc chắn muốn cập nhật không?</string>
+    <string name="mods_screenshot_no_result">Không có ảnh chụp màn hình nào để hiển thị</string>
+
+    <string name="profile_shared">Thư mục dùng chung</string>
+    <string name="profile_private">Thư mục riêng tư</string>
+    <string name="profile_name">Tên</string>
+    <string name="profile_path">Đường dẫn</string>
+    <string name="profile_select">Chọn Thư mục</string>
+    <string name="profile_already_exist">Tên này đã tồn tại, vui lòng sử dụng tên khác.</string>
+
+    <string name="quick_input_title">Nhập nhanh</string>
+    <string name="quick_input_add">Thêm Văn bản Mới</string>
+    <string name="quick_input_text">Văn bản Nhập nhanh</string>
+    <string name="quick_input_remarks">Ghi chú (tùy chọn)</string>
+    <string name="quick_input_exist">Văn bản đã tồn tại!</string>
+    <string name="quick_input_empty">Điền văn bản trước!</string>
+
+    <string name="resourcepack">Gói Tài nguyên</string>
+
+    <string name="search">Tìm kiếm</string>
+    <string name="search_hint_chinese">Truy vấn tìm kiếm hỗ trợ cả tiếng Trung và tiếng Anh</string>
+    <string name="search_hint_english">Chỉ hỗ trợ tiếng Anh</string>
+    <string name="search_device">Loại thiết bị</string>
+    <string name="search_sort">Sắp xếp theo</string>
+    <string name="search_first_page">Đầu</string>
+    <string name="search_previous_page" translatable="false">◀</string>
+    <string name="search_next_page" translatable="false">▶</string>
+    <string name="search_last_page">Cuối</string>
+    <string name="search_page_n" translatable="false">%d / %s</string>
+
+    <string name="settings_advanced_dont_check_game_completeness">Không kiểm tra tính toàn vẹn của trò chơi</string>
+    <string name="settings_advanced_dont_check_jvm_validity">Không kiểm tra tính tương thích của JVM</string>
+    <string name="settings_advanced_dont_check_mod">Không kiểm tra tính tương thích của Mod</string>
+    <string name="settings_advanced_debug_log">Xuất nhật ký gỡ lỗi</string>
+    <string name="settings_advanced_game_dir_default">Mặc định (.minecraft/)</string>
+    <string name="settings_advanced_game_dir_independent">Cô lập (.minecraft/versions/&#60;tên instance>/, ngoại trừ assets và thư viện)</string>
+    <string name="settings_advanced_jvm_args">Đối số máy ảo Java</string>
+    <string name="settings_advanced_env">Biến Môi trường</string>
+    <string name="settings_advanced_minecraft_arguments">Đối số Khởi chạy</string>
+    <string name="settings_advanced_minecraft_arguments_prompt">Mặc định</string>
+    <string name="settings_advanced_server_ip">Địa chỉ Máy chủ</string>
+    <string name="settings_advanced_server_ip_prompt">Tự động tham gia sau khi khởi chạy trò chơi.</string>
+    <string name="settings_advanced_custom_uuid">UUID Tùy chỉnh</string>
+    <string name="settings_advanced_force_resolution">Buộc đặt độ phân giải (tùy chọn thử nghiệm, sử dụng thận trọng)</string>
+
+    <string name="settings_fcl_controller">Bộ điều khiển</string>
+    <string name="settings_fcl_controller_injector">Cử chỉ BE</string>
+    <string name="settings_fcl_vulkan_driver_system">Sử dụng trình điều khiển Vulkan hệ thống</string>
+    <string name="settings_fcl_graphics_backend">Backend Đồ họa (chỉ có hiệu lực cho 26.2+)</string>
+    <string name="settings_fcl_renderer">Triển khai OpenGL (Trình kết xuất)</string>
+    <string name="settings_fcl_pojav_bigcore">Buộc trình kết xuất chạy trên lõi lớn</string>
+    <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
+    <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
+    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, chỉ hỗ trợ 1.17-)</string>
+    <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
+    <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, chỉ hỗ trợ GPU a616-a660)</string>
+    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, tích hợp sẵn)</string>
+
+    <string name="settings_fcl_driver">Trình điều khiển Vulkan</string>
+
+    <string name="settings_download_netdisk">Netdisk (Được đề xuất cho người dùng ở Trung Quốc)</string>
+
+    <string name="settings_game">Cài đặt Trò chơi</string>
+    <string name="settings_game_dimension">Độ phân giải</string>
+    <string name="settings_game_cursor_offset">Độ lệch Con trỏ</string>
+    <string name="settings_game_java_version">Phiên bản Java</string>
+    <string name="settings_game_java_version_auto">Tự động</string>
+    <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
+    <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
+    <string name="settings_game_working_directory">Cô lập Thư mục Làm việc</string>
+
+    <string name="settings_icon">Biểu tượng</string>
+
+    <string name="settings_launcher">Cài đặt Trình khởi chạy</string>
+    <string name="settings_launcher_request">Yêu cầu</string>
+    <string name="settings_launcher_debug">Gỡ lỗi</string>
+    <string name="settings_launcher_request_recording_permission">Yêu cầu quyền ghi âm (cho mod trò chuyện thoại)</string>
+    <string name="settings_launcher_upgrade">Cập nhật Trình khởi chạy</string>
+    <string name="settings_launcher_upgrade_check">Kiểm tra</string>
+    <string name="settings_launcher_cache">Thư mục Bộ nhớ đệm</string>
+    <string name="settings_launcher_clear_cache">Xóa bộ nhớ đệm</string>
+    <string name="settings_launcher_download">Tải xuống</string>
+    <string name="settings_launcher_download_threads">Luồng</string>
+    <string name="settings_launcher_download_threads_auto">Tự động Xác định</string>
+    <string name="settings_launcher_download_source">Nguồn Tải xuống</string>
+    <string name="settings_launcher_download_source_auto">Tự động Chọn Máy nhân bản Tải xuống</string>
+    <string name="settings_launcher_language">Ngôn ngữ</string>
+    <string name="settings_launcher_language_system">Sử dụng Ngôn ngữ Hệ thống</string>
+    <string name="settings_launcher_language_english" translatable="false">English</string>
+    <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
+    <string name="settings_launcher_language_russian" translatable="false">Русский язык</string>
+    <string name="settings_launcher_language_brazilian_portuguese" translatable="false">Português brasileiro</string>
+    <string name="settings_launcher_language_persian" translatable="false">فارسی</string>
+    <string name="settings_launcher_language_ukrainian" translatable="false">Українська Мова</string>
+    <string name="settings_launcher_language_german" translatable="false">Deutsch</string>
+    <string name="settings_launcher_language_traditional_chinese_hk" translatable="false">繁體中文（香港）</string>
+    <string name="settings_launcher_launcher_log_export">Xuất nhật ký trình khởi chạy</string>
+    <string name="settings_launcher_launcher_log_export_failed">Không thể xuất nhật ký</string>
+    <string name="settings_launcher_launcher_log_export_success">Nhật ký đã được xuất đến %s</string>
+    <string name="settings_launcher_theme_mode">Chế độ Giao diện</string>
+    <string name="settings_launcher_theme_mode_follow">Theo hệ thống</string>
+    <string name="settings_launcher_theme_mode_light">Chế độ Sáng</string>
+    <string name="settings_launcher_theme_mode_dark">Chế độ Tối</string>
+    <string name="settings_launcher_theme">Màu Giao diện Chính</string>
+    <string name="settings_launcher_theme2">Màu Giao diện Phụ (Chế độ Sáng)</string>
+    <string name="settings_launcher_theme2_dark">Màu Giao diện Phụ (Chế độ Tối)</string>
+    <string name="settings_launcher_theme_fetch_background">Trích xuất từ ảnh nền</string>
+    <string name="settings_launcher_background_lt">Nền Trình khởi chạy Chế độ Sáng (Tối đa 5120x5120)</string>
+    <string name="settings_launcher_background_dk">Nền Trình khởi chạy Chế độ Tối (Tối đa 5120x5120)</string>
+    <string name="settings_launcher_background_video">Nền Trình khởi chạy (Video .mp4)</string>
+    <string name="settings_launcher_background_video_volume">Âm lượng Nền Video</string>
+    <string name="settings_launcher_cursor">Hình ảnh Con trỏ</string>
+    <string name="settings_launcher_menu_icon">Biểu tượng Chế độ xem Menu</string>
+    <string name="settings_launcher_ignore_notch">Bỏ qua Notch</string>
+    <string name="settings_launcher_close_skin_view">Đóng Xem Mô hình Skin</string>
+    <string name="settings_launcher_animation_speed">Tốc độ Hoạt hình</string>
+    <string name="settings_launcher_vibrate_duration">Thời lượng Rung (Cho mod TouchController)</string>
+    <string name="settings_disable_fullscreen_input">Tắt nhập toàn màn hình (Cho mod TouchController)</string>
+    <string name="settings_launcher_exit_after_launching">Trình khởi chạy thoát sau khi khởi chạy</string>
+    <string name="settings_launcher_custom_launcher_name">Thông tin trình khởi chạy tùy chỉnh</string>
+    <string name="settings_launcher_allow_screenshot">Cho phép chụp màn hình/ghi hình trong hoạt động sự cố</string>
+
+    <string name="settings_memory">Bộ nhớ</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ</string>
+    <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ (%3$.1f GB Khả dụng)</string>
+    <string name="settings_memory_allocate_manual">%1$.1f GB Đã phân bổ</string>
+    <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB Đã phân bổ (%3$.1f GB Khả dụng)</string>
+    <string name="settings_memory_auto_allocate">Tự động phân bổ</string>
+    <string name="settings_memory_lower_bound">Bộ nhớ Tối thiểu</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB Đã sử dụng / %2$.1f GB Tổng</string>
+    <string name="settings_physical_memory">Kích thước Bộ nhớ Vật lý</string>
+    <string name="settings_tabs_installers">Trình tải Mod</string>
+    <string name="settings_type_global_manage">Cài đặt Trò chơi Toàn cục</string>
+    <string name="settings_type_special_enable">Bật cài đặt theo instance</string>
+
+    <string name="style_name">Tên</string>
+    <string name="style_warning_delete">Bạn có chắc chắn muốn xóa kiểu này không?</string>
+    <string name="style_warning_exist">Kiểu đã tồn tại!</string>
+    <string name="style_warning_name">Điền tên kiểu trước!</string>
+    <string name="style_button">Kiểu Nút</string>
+    <string name="style_button_normal">Bình thường</string>
+    <string name="style_button_pressed">Đã bật</string>
+    <string name="style_button_text_size">Cỡ Chữ</string>
+    <string name="style_button_text_color">Màu Chữ</string>
+    <string name="style_button_stroke_width">Độ dày Nét</string>
+    <string name="style_button_stroke_color">Màu Nét</string>
+    <string name="style_button_corner_radius">Bán kính Góc</string>
+    <string name="style_button_fill_color">Màu Tô</string>
+    <string name="style_button_interval">Khoảng cách Nút</string>
+    <string name="style_direction">Kiểu Bộ điều khiển hướng</string>
+    <string name="style_direction_button">Nút</string>
+    <string name="style_direction_rocker">Cần gạt</string>
+    <string name="style_rocker">Kiểu Cần gạt</string>
+    <string name="style_rocker_size">Kích thước Cần gạt</string>
+    <string name="style_rocker_bg_stroke_width">Độ dày Nét Nền</string>
+    <string name="style_rocker_bg_stroke_color">Màu Nét Nền</string>
+    <string name="style_rocker_bg_corner_radius">Bán kính Góc Nền</string>
+    <string name="style_rocker_bg_fill_color">Màu Tô Nền</string>
+    <string name="style_rocker_stroke_width">Độ dày Nét Cần gạt</string>
+    <string name="style_rocker_stroke_color">Màu Nét Cần gạt</string>
+    <string name="style_rocker_corner_radius">Bán kính Góc Cần gạt</string>
+    <string name="style_rocker_fill_color">Màu Tô Cần gạt</string>
+
+    <string name="terracotta">Nhiều người chơi</string>
+    <string name="terracotta_metadata">Phiên bản Terracotta: %s\nPhiên bản EasyTier: %s</string>
+    <string name="terracotta_code_hint" translatable="false">U/XXXX-XXXX-XXXX-XXXX</string>
+    <string name="terracotta_easytier">Giới thiệu về EasyTier</string>
+    <string name="terracotta_terracotta">Terracotta | Nhiều người chơi</string>
+    <string name="terracotta_back">Thoát</string>
+    <string name="terracotta_enable">Bật Nhiều người chơi</string>
+    <string name="terracotta_feedback_title">Điền Biểu mẫu Phản hồi</string>
+    <string name="terracotta_difficulty_easiest">Mạng tuyệt vời: gần như đã kết nối!</string>
+    <string name="terracotta_difficulty_simple">Mạng tốt: kết nối có thể mất một chút thời gian</string>
+    <string name="terracotta_difficulty_medium">Mạng trung bình: đang bật các tuyến đường dự phòng, mặc dù kết nối có thể thất bại</string>
+    <string name="terracotta_difficulty_tough">Mạng kém: đang bật các tuyến đường dự phòng, mặc dù kết nối có thể thất bại</string>
+    <string name="terracotta_difficulty_estimate_only">Tỷ lệ thành công là ước tính dựa trên loại NAT của máy chủ và máy khách, chỉ mang tính tham khảo!</string>
+    <string name="terracotta_export_log">Xuất nhật ký Nhiều người chơi</string>
+    <string name="terracotta_export_log_btn">Nhật ký</string>
+    <string name="terracotta_export_log_dialog_title">Nhật ký Nhiều người chơi</string>
+    <string name="terracotta_export_log_dialog_export">Xuất</string>
+    <string name="terracotta_export_log_desc">Thu thập thêm thông tin để phân tích</string>
+    <string name="terracotta_export_log_done">Đã xuất thành công nhật ký Nhiều người chơi đến thư mục nhật ký</string>
+    <string name="terracotta_export_log_failed">Xuất nhật ký thất bại</string>
+    <string name="terracotta_export_log_share">Chia sẻ nhật ký Nhiều người chơi</string>
+    <string name="terracotta_export_log_share_null">Không tìm thấy nhật ký, vui lòng xuất nhật ký Nhiều người chơi trước</string>
+    <string name="terracotta_status_uninitialized_desc">Bạn cam kết hợp pháp tuân thủ nghiêm ngặt tất cả luật pháp và quy định của quốc gia hoặc khu vực của bạn trong quá trình nhiều người chơi.</string>
+    <string name="terracotta_confirm">Thông báo Người dùng\n\nTerracotta là một phần mềm mã nguồn mở miễn phí của bên thứ ba. Vui lòng cung cấp phản hồi về bất kỳ vấn đề nào bạn gặp phải thông qua các kênh liên quan trong quá trình sử dụng.\nTerracotta sử dụng công nghệ P2P. Sau khi kết nối thành công, người dùng trong phòng sẽ kết nối trực tiếp với nhau và không có máy chủ bên thứ ba nào chuyển tiếp lưu lượng của bạn. Trải nghiệm nhiều người chơi cuối cùng phụ thuộc phần lớn vào điều kiện mạng của những người tham gia.\nTrong toàn bộ quá trình nhiều người chơi, bạn phải tuân thủ nghiêm ngặt tất cả luật pháp và quy định của quốc gia và khu vực của bạn.</string>
+    <string name="terracotta_menu">Menu Nhiều người chơi</string>
+    <string name="terracotta_menu_open">Mở</string>
+    <string name="terracotta_notification_title">Terracotta đang chạy</string>
+    <string name="terracotta_notification_desc">Danh tính: %s, Trạng thái: %s</string>
+    <string name="terracotta_status_waiting_host_title">Tôi muốn tổ chức một phiên</string>
+    <string name="terracotta_status_waiting_host_desc">Tạo một phòng và tạo mã mời để chơi cùng bạn bè</string>
+    <string name="terracotta_status_waiting_guest_title">Tôi muốn tham gia một phiên</string>
+    <string name="terracotta_status_waiting_guest_desc">Nhập mã mời từ người chơi chủ phòng để tham gia thế giới trò chơi</string>
+    <string name="terracotta_status_waiting_guest_prompt_title">Vui lòng nhập mã mời từ chủ phòng</string>
+    <string name="terracotta_status_waiting_guest_prompt_invalid">Mã mời không hợp lệ</string>
+    <string name="terracotta_status_waiting_guest_prompt_terracotta_legacy">Mã mời Terracotta cũ</string>
+    <string name="terracotta_status_waiting_guest_prompt_pcl2ce">Mã mời PCL CE cũ</string>
+    <string name="terracotta_status_waiting_guest_prompt_scaffolding">Mã mời Scaffolding</string>
+    <string name="terracotta_status_host_scanning">Đang quét thế giới LAN</string>
+    <string name="terracotta_status_host_scanning_desc">Vui lòng mở một thế giới, nhấn ESC, chọn "Mở LAN", sau đó chọn "Bắt đầu Thế giới LAN".</string>
+    <string name="terracotta_status_host_scanning_back">Thao tác này cũng sẽ dừng quét thế giới LAN.</string>
+    <string name="terracotta_status_host_starting">Đang tạo Phòng</string>
+    <string name="terracotta_status_host_starting_back">Thao tác này sẽ dừng việc tạo phòng.</string>
+    <string name="terracotta_status_host_ok">Đã tạo Phòng</string>
+    <string name="terracotta_status_host_ok_code">Mã mời (Đã sao chép): </string>
+    <string name="terracotta_status_host_ok_code_copy">Sao chép mã mời</string>
+    <string name="terracotta_status_host_ok_code_copy_toast">Mã mời đã được sao chép vào khay nhớ tạm</string>
+    <string name="terracotta_status_host_ok_code_desc">Vui lòng nhắc bạn bè của bạn chọn chế độ Khách trong FCL - Nhiều người chơi hoặc HMCL/PCL CE và nhập mã mời này.</string>
+    <string name="terracotta_status_host_ok_back">Thao tác này cũng sẽ đóng phòng, những khách khác sẽ rời đi và không thể tham gia lại.</string>
+    <string name="terracotta_status_guest_starting">Đang tham gia phòng</string>
+    <string name="terracotta_status_guest_connecting">Đang tham gia phòng</string>
+    <string name="terracotta_status_guest_starting_back">Thao tác này sẽ không ngăn những khách khác tham gia phòng.</string>
+    <string name="terracotta_status_guest_ok">Đã tham gia Phòng</string>
+    <string name="terracotta_status_guest_ok_back">Thao tác này sẽ không ngăn những khách khác tham gia phòng.</string>
+    <string name="terracotta_status_guest_ok_address">Vui lòng khởi chạy trò chơi, chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby. Địa chỉ dự phòng: </string>
+    <string name="terracotta_status_guest_ok_address_copy">Sao chép Địa chỉ dự phòng</string>
+    <string name="terracotta_status_guest_ok_address_copy_toast">Địa chỉ dự phòng đã được sao chép vào khay nhớ tạm</string>
+    <string name="terracotta_status_guest_ok_address_desc">Vui lòng không sử dụng địa chỉ này trừ khi cần thiết.</string>
+    <string name="terracotta_status_exception">Mất kết nối</string>
+    <string name="terracotta_status_exception_back">Vui lòng thử lại</string>
+    <string name="terracotta_status_exception_desc_ping_host_fail">Không thể tham gia phòng: Phòng đã đóng hoặc mạng không ổn định</string>
+    <string name="terracotta_status_exception_desc_ping_host_rst">Mất kết nối phòng: Phòng đã đóng hoặc mạng không ổn định</string>
+    <string name="terracotta_status_exception_desc_guest_et_crash">Không thể tham gia phòng: EasyTier bị sự cố, vui lòng báo cáo vấn đề này cho nhà phát triển</string>
+    <string name="terracotta_status_exception_desc_host_et_crash">Không thể tạo phòng: EasyTier bị sự cố, vui lòng báo cáo vấn đề này cho nhà phát triển</string>
+    <string name="terracotta_status_exception_desc_ping_server_rst">Phòng đã đóng: Bạn đã thoát khỏi thế giới trò chơi, phòng tự động đóng</string>
+    <string name="terracotta_status_exception_desc_scaffolding_invalid_response">Giao thức không hợp lệ: Máy chủ đã gửi phản hồi không hợp lệ, vui lòng báo cáo vấn đề này cho nhà phát triển</string>
+    <string name="terracotta_permission_vpn">Vui lòng cấp quyền VPN cho ứng dụng trước.</string>
+    <string name="terracotta_player_list">Danh sách Người chơi</string>
+    <string name="terracotta_player_anonymous">Người chơi Ẩn danh</string>
+    <string name="terracotta_player_kind_host">Chủ phòng</string>
+    <string name="terracotta_player_kind_local">Bạn</string>
+    <string name="terracotta_player_kind_guest">Khách</string>
+    <string name="terracotta_tutorial_host_btn">Hướng dẫn Chủ phòng</string>
+    <string name="terracotta_tutorial_host">Hướng dẫn Chủ phòng:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào &quot;Tôi muốn tổ chức một phiên&quot;, để quét cổng trò chơi.\n - Mở trò chơi và bật tùy chọn &quot;Mở LAN&quot; trong cài đặt trò chơi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Đợi một chút và mã mời sẽ được tự động sao chép. Nếu không được tự động sao chép, bạn cũng có thể sao chép thủ công trong menu nhiều người chơi.\n - Gửi mã mời cho bạn bè của bạn\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.</string>
+    <string name="terracotta_tutorial_guest_btn">Hướng dẫn Khách</string>
+    <string name="terracotta_tutorial_guest">Hướng dẫn Khách:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào &quot;Tôi muốn tham gia một phiên&quot;, nhập mã mời do chủ phòng cung cấp vào ô nhập và kiên nhẫn chờ đợi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Sau khi hiển thị bạn đã tham gia phòng, hãy chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby.\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.\n - Khi tham gia trò chơi bằng địa chỉ máy chủ dự phòng, tài khoản ngoại tuyến không được hỗ trợ. Vui lòng tự giải quyết vấn đề này.</string>
+
+    <string name="update">Cập nhật</string>
+    <string name="update_netdisk">Netdisk</string>
+    <string name="update_check">Kiểm tra Cập nhật</string>
+    <string name="update_checking">Đang kiểm tra Cập nhật</string>
+    <string name="update_check_failed">Kiểm tra cập nhật thất bại</string>
+    <string name="update_date">Ngày: %s</string>
+    <string name="update_description">Mô tả:\n%s</string>
+    <string name="update_exist">Đã phát hiện phiên bản có thể cập nhật</string>
+    <string name="update_failed">Không thể tải xuống phiên bản mới nhất, vui lòng thử lại hoặc tải xuống từ trang web chính thức.</string>
+    <string name="update_ignore">Bỏ qua phiên bản này</string>
+    <string name="update_launcher">Đang cập nhật trình khởi chạy</string>
+    <string name="update_not_exist">Không có bản cập nhật nào</string>
+    <string name="update_type">Loại: %s</string>
+    <string name="update_version">Phiên bản: %s</string>
+    <string name="update_version_release">Phát hành</string>
+    <string name="update_version_beta">Beta</string>
+
+    <string name="version_game">Trò chơi</string>
+    <string name="version_game_old">Lịch sử</string>
+    <string name="version_game_april_fools">Cá tháng Tư</string>
+    <string name="version_game_release">Phát hành</string>
+    <string name="version_game_releases">Phát hành</string>
+    <string name="version_game_snapshot">Ảnh chụp nhanh</string>
+    <string name="version_game_snapshots">Ảnh chụp nhanh</string>
+    <string name="version_empty_launch">Không có instance nào, vui lòng cài đặt một instance trước khi khởi chạy.</string>
+    <string name="version_launch">Khởi chạy Trò chơi</string>
+    <string name="version_no_version">Không có phiên bản</string>
+    <string name="version_manage">Nhấp để quản lý</string>
+    <string name="version_manage_clean">Xóa Tệp Nhật ký</string>
+    <string name="version_manage_duplicate">Sao chép Instance</string>
+    <string name="version_manage_duplicate_duplicate_save">Sao chép Bản lưu</string>
+    <string name="version_manage_duplicate_prompt">Tên instance</string>
+    <string name="version_manage_duplicate_confirm">Instance được sao chép sẽ có một bản sao của tất cả các tệp của instance này, với thư mục trò chơi và cài đặt được cô lập.</string>
+    <string name="version_manage_redownload_assets_index">Cập nhật Assets Trò chơi</string>
+    <string name="version_manage_remove_confirm">Bạn có chắc chắn muốn xóa vĩnh viễn phiên bản %s không? Hành động này không thể hoàn tác!</string>
+    <string name="version_manage_remove_confirm_independent">Vì instance này được lưu trữ trong một thư mục được cô lập, việc xóa nó cũng sẽ xóa các bản lưu và dữ liệu khác của nó. Bạn vẫn muốn xóa instance %s?</string>
+    <string name="version_manage_remove_libraries">Xóa Tất cả Thư viện</string>
+    <string name="version_manage_rename">Đổi tên Instance</string>
+    <string name="version_manage_rename_message">Đổi tên phiên bản</string>
+    <string name="version_manage_rename_new">Tên mới</string>
+    <string name="version_manage_rename_fail">Đổi tên thất bại</string>
+    <string name="version_new_profile">Thư mục Mới</string>
+    <string name="version_update">Cập nhật Modpack</string>
+
+    <string name="view_info_visibility">Tùy chọn Khả năng hiển thị</string>
+    <string name="view_info_visibility_always">Luôn hiển thị</string>
+    <string name="view_info_visibility_game">Hiển thị trong Trò chơi</string>
+    <string name="view_info_visibility_menu">Hiển thị ngoài Trò chơi</string>
+    <string name="view_info_x">Vị trí X</string>
+    <string name="view_info_y">Vị trí Y</string>
+    <string name="view_info_size_type">Đo lường Kích thước</string>
+    <string name="view_info_size_type_percentage">Kích thước Phần trăm</string>
+    <string name="view_info_size_type_absolute">Kích thước Tuyệt đối</string>
+    <string name="view_info_width">Chiều rộng</string>
+    <string name="view_info_height">Chiều cao</string>
+    <string name="view_info_width_reference">Tham chiếu Chiều rộng</string>
+    <string name="view_info_height_reference">Tham chiếu Chiều cao</string>
+    <string name="view_info_size">Kích thước</string>
+    <string name="view_info_reference">Tham chiếu Kích thước</string>
+    <string name="view_info_reference_width">Chiều rộng Màn hình</string>
+    <string name="view_info_reference_height">Chiều cao Màn hình</string>
+
+    <string name="world">Thế giới</string>
+    <string name="world_permission_fix">Sửa Quyền Tệp Thế giới</string>
+    <string name="world_add">Thêm Thế giới (.zip)</string>
+    <string name="world_datapack">Quản lý Gói Dữ liệu</string>
+    <string name="world_datapack_1_13">Chỉ Minecraft 1.13 trở lên hỗ trợ gói dữ liệu.</string>
+    <string name="world_description">%s. Chơi lần cuối vào %s. Phiên bản Trò chơi: %s.</string>
+    <string name="world_download">Tải xuống Thế giới</string>
+    <string name="world_export">Xuất Thế giới</string>
+    <string name="world_export_title">Chọn một thư mục cho thế giới đã xuất này</string>
+    <string name="world_export_location">Xuất đến</string>
+    <string name="world_export_wizard">Xuất Thế giới %s</string>
+    <string name="world_extension">Kho lưu trữ Thế giới</string>
+    <string name="world_game_version">Phiên bản Trò chơi</string>
+    <string name="world_import_already_exists">Thế giới này đã tồn tại.</string>
+    <string name="world_import_choose">Chọn kho lưu trữ bản lưu bạn muốn nhập</string>
+    <string name="world_import_failed">Không thể nhập thế giới này: %s</string>
+    <string name="world_import_invalid">Không thể phân tích bản lưu.</string>
+    <string name="world_info_title">Thế giới %s - Thông tin</string>
+    <string name="world_info_basic">Thông tin Cơ bản</string>
+    <string name="world_info_allow_cheats">Cho phép Gian lận</string>
+    <string name="world_info_dimension_the_nether">Nether</string>
+    <string name="world_info_dimension_the_end">The End</string>
+    <string name="world_info_difficulty">Độ khó</string>
+    <string name="world_info_difficulty_peaceful">Hòa bình</string>
+    <string name="world_info_difficulty_easy">Dễ</string>
+    <string name="world_info_difficulty_normal">Thường</string>
+    <string name="world_info_difficulty_hard">Khó</string>
+    <string name="world_info_game_version">Phiên bản Trò chơi</string>
+    <string name="world_info_last_played">Chơi lần cuối</string>
+    <string name="world_info_generate_features">Tạo cấu trúc</string>
+    <string name="world_info_player">Thông tin Người chơi</string>
+    <string name="world_info_player_food_level">Mức Đói</string>
+    <string name="world_info_player_game_type">Chế độ Trò chơi</string>
+    <string name="world_info_player_game_type_adventure">Phiêu lưu</string>
+    <string name="world_info_player_game_type_creative">Sáng tạo</string>
+    <string name="world_info_player_game_type_spectator">Khán giả</string>
+    <string name="world_info_player_game_type_survival">Sinh tồn</string>
+    <string name="world_info_player_health">Máu</string>
+    <string name="world_info_player_last_death_location">Vị trí Chết lần cuối</string>
+    <string name="world_info_player_location">Vị trí</string>
+    <string name="world_info_player_spawn">Vị trí Hồi sinh</string>
+    <string name="world_info_player_xp_level">Cấp độ Kinh nghiệm</string>
+    <string name="world_info_random_seed">Hạt giống</string>
+    <string name="world_info_time">Thời gian Trò chơi</string>
+    <string name="world_info_time_format">%s ngày</string>
+    <string name="world_manage">Thế giới / Gói Dữ liệu</string>
+    <string name="world_name">Tên Thế giới</string>
+    <string name="world_name_enter">Nhập tên thế giới</string>
+    <string name="world_reveal">Hiển thị trong Trình duyệt</string>
+    <string name="world_show_all">Hiển thị Tất cả</string>
+    <string name="world_time">EEE, d MMM yyyy HH:mm:ss</string>
+
+    <string name="install_apk">Cài đặt .apk</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="modpack_download_warn_title">Thông báo</string>
+    <string name="modpack_download_warn_msg">Trước khi cài đặt, bạn nên hiểu rằng hầu hết các modpack được thiết kế cho PC, vì vậy rất có thể bạn sẽ gặp sự cố hoặc các vấn đề khác khi cố gắng khởi chạy. Đây thường không phải là vấn đề có thể giải quyết ở cấp độ trình khởi chạy. Do đó, bạn cần hiểu kiến thức liên quan và tự giải quyết vấn đề hoặc tìm kiếm sự trợ giúp từ người khác (không hỏi nhà phát triển trình khởi chạy!).</string>
+    <string name="guide_theme2">Nếu bạn thấy màu của văn bản ở bên phải không rõ ràng, bạn có thể nhấp vào đây, sau đó nhấp vào "Cài đặt Trình khởi chạy" và chọn "Màu Giao diện Phụ"</string>
+    <string name="guide_share_log">Nhấn giữ ở đây để chia sẻ nhật ký trò chơi (latest_game.log).</string>
+    <string name="joystick_l">Cần điều khiển trái</string>
+    <string name="gamepad_dpad">DPAD</string>
+    <string name="gamepad_button_binding">Ràng buộc nút Gamepad</string>
+    <string name="joystick_r">Cần điều khiển phải</string>
+    <string name="message_vulkan_driver_system">Cảnh báo: Sử dụng trình điều khiển Vulkan hệ thống có thể mang lại hiệu suất tốt hơn, nhưng cũng có thể gây ra sự cố do các vấn đề tương thích!</string>
+    <string name="message_loading_controllers">Đang tải bộ điều khiển, vui lòng đợi...</string>
+
+    <string name="mcmod" translatable="false">
+        <u>MC百科</u>
+    </string>
+    <string name="wiki_game">https://minecraft.wiki/w/Special:Search?search=%s</string>
+    <string name="wiki_game_search">Java_Edition_%s</string>
+    <string name="installed">Đã cài đặt</string>
+    <string name="message_install_plugin">Bạn có thể nhận plugin thông qua các cách sau.</string>
+    <string name="message_install_java">Bạn có thể nhận Java thông qua các cách sau.</string>
+
+    <string name="shaderpack">Gói Shader</string>
+    <string name="recommend_version">Phiên bản được đề xuất</string>
+
+    <string name="mod_check_continue">Tiếp tục</string>
+    <string name="mod_check_physics">Mod Physics (%s) hiện đang sử dụng chưa được vá (thay thế libPhysXJniBindings_64.so từ Linux x86_64 sang Android arm64/x86_64), nó sẽ gây ra sự cố.</string>
+    <string name="mod_check_mcef">Mod MCEF (%s) không thể hoạt động trên Android. Nó thường được sử dụng như một phụ thuộc của WebDisplays/In-game Browser.</string>
+    <string name="mod_check_valkyrienskies">Mod Valkyrien Skies/Valkyrien Warfare (%s) không thể hoạt động trực tiếp ở chế độ một người chơi. Bạn phải sử dụng máy chủ, nếu không nó sẽ làm trò chơi bị sự cố.</string>
+    <string name="mod_check_yes_steve_model">Mod Yes Steve Model (%s) 2.2.2+ không thể hoạt động trên Android.</string>
+    <string name="mod_check_imblocker">IMBlocker/In-GameIME (%s) không dành cho Android. Nó chắc chắn sẽ làm trò chơi bị sự cố.</string>
+    <string name="mod_check_replay">Cần plugin FFmpeg cho Replay (%s). Có vẻ như bạn chưa cài đặt nó. Bạn có thể tải xuống từ Cửa hàng Google Play hoặc tại đây ( %s hoặc %s ) (Nhấn giữ để sao chép).</string>
+    <string name="mod_check_borderlesswindow">BorderlessWindow (%s) không dành cho Android. Nó chắc chắn sẽ làm trò chơi bị sự cố.</string>
+    <string name="mod_check_axiom">Axiom (%s) hiện đang sử dụng chưa được vá, nó sẽ gây ra sự cố.</string>
+    <string name="mod_check_sodium">Trình kết xuất GL4ES hiện đang sử dụng có thể không hỗ trợ các mod Sodium/Embeddium (%s). Tiếp tục khởi chạy có thể gây ra sự cố trò chơi. Bạn nên tải xuống và sử dụng trình kết xuất MobileGlues thay thế (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
+    <string name="mod_check_flashback">Mod Flashback (%s) không thể hoạt động trên Android.</string>
+    <string name="mod_check_ixeris">Mod Ixeris (%s) không thể hoạt động đúng trên FCL.</string>
+
+    <string name="internal">Nội bộ</string>
+    <string name="import_java">Nhập Java</string>
+    <string name="import_java_wrong_file">Chỉ hỗ trợ nhập tệp tar.xz.</string>
+    <string name="import_java_error">Đã phát hiện Java bạn nhập có thể không dành cho thiết bị hiện tại. Khởi chạy với nó có thể khiến chương trình bị sự cố. Bạn có muốn tiếp tục nhập không?</string>
+    <string name="import_java_error_not_valid">Đã phát hiện cấu trúc tệp Java hiện đang nhập không hợp lệ và không thể sử dụng!</string>
+    <string name="import_java_overwrite_wrong">Phiên bản Java này đã được nhập. Ghi đè phiên bản hiện tại?</string>
+
+    <string name="ingame_folder_browse">Duyệt Thư mục</string>
+    <string name="ingame_folder_import">Nhập</string>
+    <string name="ingame_folder_import_failed">Đã xảy ra lỗi khi nhập tệp %1$s!\n%2$s</string>
+
+    <string name="manage_version">Quản lý Phiên bản</string>
+    <string name="select_renderer">Chọn Trình kết xuất</string>
+    <string name="open_link_failed">Không thể tự động chuyển hướng đến trình duyệt. Liên kết đã được tự động sao chép. Vui lòng mở trình duyệt theo cách thủ công và dán vào.</string>
+
+    <string name="launch">Khởi chạy</string>
+    <string name="tip_hide_menu_view">Chế độ xem menu đã bị ẩn. Nhấn phím âm lượng để mở menu.</string>
+    <string name="modloader">Trình tải Mod</string>
+    <string name="message_warn_renderer_global_setting">Phiên bản bạn đã chọn hiện tại đã bật cài đặt theo instance, vì vậy trình kết xuất được chọn ở đây không thể áp dụng cho phiên bản hiện tại. Đề xuất nhấn giữ nút "Khởi chạy" để chọn trình kết xuất.</string>
+    <string name="message_select_url">Vui lòng chọn một liên kết để tải xuống (nó sẽ mở trong trình duyệt của bạn).</string>
+    <string name="supported_mc_version">Phiên bản MC được hỗ trợ:</string>
+    <string name="message_check_renderer">Trình kết xuất hiện tại %s không hỗ trợ phiên bản trò chơi này. Tiếp tục sử dụng nó có thể gây ra lỗi kết xuất hoặc sự cố trò chơi! Bạn có muốn tiếp tục không?</string>
+    <string name="message_check_plugin">Plugin hiện tại %s không hỗ trợ phiên bản trò chơi này. Tiếp tục sử dụng nó có thể khiến trò chơi bị sự cố! Bạn có muốn tiếp tục không?</string>
+    <string name="enabled">Đã bật</string>
+    <string name="disabled">Đã tắt</string>
+    <string name="message_warn_restart_after_change">Các thay đổi sẽ có hiệu lực sau khi khởi động lại.</string>
+    <string name="message_check_path_valid">Đường dẫn tệp trò chơi đã chọn hiện tại (%s) có thể chứa các ký tự không hợp lệ, có thể khiến trò chơi bị sự cố khi khởi chạy. Bạn nên kiểm tra thư mục trò chơi hoặc đổi tên phiên bản. Bạn có muốn tiếp tục khởi chạy không?</string>
+    <string name="message_check_has_modloader">Đã phát hiện phiên bản trò chơi đang khởi chạy có cài đặt mods, nhưng có vẻ như trình tải mod tương ứng chưa được cài đặt. Các mods có thể không hoạt động bình thường sau khi khởi chạy. Bạn có muốn tiếp tục khởi chạy không?</string>
+    <string name="message_data_is_loading">Dữ liệu vẫn đang tải và không thể sửa đổi.</string>
+    <string name="exception_no_suitable_java">Không tìm thấy Java phù hợp!</string>
+    <string name="slide_selection">Lựa chọn Trượt</string>
+    <string name="swap_hands">Nhấp đúp để Đổi Tay</string>
+    <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong "Quản lý Mods".</string>
+</resources>
