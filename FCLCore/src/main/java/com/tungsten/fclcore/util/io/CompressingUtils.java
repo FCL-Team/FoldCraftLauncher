@@ -28,9 +28,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.*;
@@ -47,6 +47,10 @@ import java.util.zip.ZipException;
 public final class CompressingUtils {
 
     private static final FileSystemProvider ZIPFS_PROVIDER = new ZipFileSystemProvider();
+    /** Shared RAR extractor keeps validation identical for direct extraction and ZIP conversion. */
+    private static final RarExtractor RAR_EXTRACTOR = new RarExtractorImpl();
+    /** Converts RAR modpacks before they enter providers whose contract requires a ZIP file. */
+    private static final RarToZipConverter RAR_TO_ZIP_CONVERTER = new RarToZipConverterImpl(RAR_EXTRACTOR);
 
     private CompressingUtils() {
     }
@@ -306,7 +310,7 @@ public final class CompressingUtils {
     }
 
     /**
-     * Extract a compressed file (zip or 7z) to destination directory.
+     * Extract a compressed file (zip, 7z or RAR) to destination directory.
      *
      * @param archive the compressed file
      * @param destination the destination directory
@@ -318,6 +322,8 @@ public final class CompressingUtils {
             extractZip(archive, destination);
         } else if (name.endsWith(".7z")) {
             extract7z(archive, destination);
+        } else if (name.endsWith(".rar")) {
+            extractRar(archive, destination);
         } else {
             throw new IOException("Unsupported archive format: " + archive.getName());
         }
@@ -331,17 +337,20 @@ public final class CompressingUtils {
      * @throws IOException if an I/O error occurs
      */
     public static void extractZip(File zipFile, File destination) throws IOException {
+        Path root = ArchiveExtractionPath.prepareDestination(destination.toPath());
         try (ZipFile zf = new ZipFile(zipFile)) {
             Enumeration<ZipArchiveEntry> entries = zf.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
-                File out = new File(destination, entry.getName());
+                if (entry.isUnixSymlink()) {
+                    throw new IOException("ZIP symbolic links are not supported: " + entry.getName());
+                }
+                Path out = ArchiveExtractionPath.resolve(root, entry.getName());
                 if (entry.isDirectory()) {
-                    out.mkdirs();
+                    ArchiveExtractionPath.createDirectories(root, out);
                 } else {
-                    out.getParentFile().mkdirs();
                     try (InputStream is = zf.getInputStream(entry);
-                         FileOutputStream os = new FileOutputStream(out)) {
+                         OutputStream os = ArchiveExtractionPath.newOutputStream(root, out)) {
                         IOUtils.copyTo(is, os);
                     }
                 }
@@ -357,15 +366,15 @@ public final class CompressingUtils {
      * @throws IOException if an I/O error occurs
      */
     public static void extract7z(File sevenZFile, File destination) throws IOException {
+        Path root = ArchiveExtractionPath.prepareDestination(destination.toPath());
         try (SevenZFile zf = new SevenZFile(sevenZFile)) {
             SevenZArchiveEntry entry;
             while ((entry = zf.getNextEntry()) != null) {
-                File out = new File(destination, entry.getName());
+                Path out = ArchiveExtractionPath.resolve(root, entry.getName());
                 if (entry.isDirectory()) {
-                    out.mkdirs();
+                    ArchiveExtractionPath.createDirectories(root, out);
                 } else {
-                    out.getParentFile().mkdirs();
-                    try (FileOutputStream os = new FileOutputStream(out)) {
+                    try (OutputStream os = ArchiveExtractionPath.newOutputStream(root, out)) {
                         byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
                         int len;
                         while ((len = zf.read(buffer)) > 0) {
@@ -375,5 +384,27 @@ public final class CompressingUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Extract an unencrypted, single-volume RAR4 or RAR5 file to a destination directory.
+     *
+     * @param rarFile the RAR file
+     * @param destination the destination directory
+     * @throws IOException if the archive is invalid, unsupported, or cannot be extracted
+     */
+    public static void extractRar(File rarFile, File destination) throws IOException {
+        RAR_EXTRACTOR.extract(rarFile, destination);
+    }
+
+    /**
+     * Convert a RAR modpack to a temporary ZIP for the existing ZIP-based modpack pipeline.
+     *
+     * @param rarFile the RAR modpack
+     * @return temporary ZIP file owned by the caller
+     * @throws IOException if the RAR cannot be converted safely
+     */
+    public static File convertRarToZip(File rarFile) throws IOException {
+        return RAR_TO_ZIP_CONVERTER.convert(rarFile);
     }
 }

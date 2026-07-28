@@ -75,6 +75,9 @@
                 <data android:mimeType="application/zip" />
                 <data android:mimeType="application/x-zip-compressed" />
                 <data android:mimeType="application/x-7z-compressed" />
+                <data android:mimeType="application/vnd.rar" />
+                <data android:mimeType="application/x-rar-compressed" />
+                <data android:mimeType="application/x-rar" />
                 <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <intent-filter>
@@ -89,6 +92,7 @@
                 <data android:pathPattern=".*\\.zip" />
                 <data android:pathPattern=".*\\.mrpack" />
                 <data android:pathPattern=".*\\.7z" />
+                <data android:pathPattern=".*\\.rar" />
             </intent-filter>
         </activity-alias>
         <activity

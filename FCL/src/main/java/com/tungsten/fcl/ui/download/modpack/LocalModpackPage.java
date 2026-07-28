@@ -27,13 +27,18 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Locale;
 import java.util.logging.Level;
 
 public class LocalModpackPage extends ModpackPage implements View.OnClickListener {
 
     private final String updateVersion;
     private final File modpackFile;
+    /** ZIP-equivalent input used while parsing and installing a selected RAR modpack. */
+    private File preparedModpackFile;
 
     private final BooleanProperty installAsVersion = new SimpleBooleanProperty(true);
     private boolean isManuallyCreated = false;
@@ -44,6 +49,7 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         super(context, id, parent, resId, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
+        this.preparedModpackFile = modpackFile;
     }
 
     @Override
@@ -58,10 +64,14 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         progressBar.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
 
-        Task.supplyAsync(() -> CompressingUtils.findSuitableEncoding(modpackFile.toPath()))
+        Task.supplyAsync(() -> prepareModpackFile(modpackFile))
+                .thenApplyAsync(preparedFile -> {
+                    preparedModpackFile = preparedFile;
+                    return CompressingUtils.findSuitableEncoding(preparedFile.toPath());
+                })
                 .thenApplyAsync(encoding -> {
                     charset = encoding;
-                    manifest = ModpackHelper.readModpackManifest(modpackFile.toPath(), encoding);
+                    manifest = ModpackHelper.readModpackManifest(preparedModpackFile.toPath(), encoding);
                     return manifest;
                 })
                 .whenComplete(Schedulers.androidUIThread(), (manifest, exception) -> {
@@ -157,16 +167,18 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         }
         Task<?> task;
         if (isManuallyCreated) {
-            task = ModpackInstaller.getModpackInstallTask(profile, modpackFile, name, charset);
+            task = ModpackInstaller.getModpackInstallTask(profile, preparedModpackFile, name, charset);
         } else {
             if (updateVersion == null) {
-                task = ModpackInstaller.getModpackInstallTask(getContext(), profile, modpackFile, manifest, name);
+                task = ModpackInstaller.getModpackInstallTask(getContext(), profile, preparedModpackFile, manifest, name);
             } else {
-                task = ModpackInstaller.getModpackInstallTask(getContext(), profile, updateVersion, modpackFile, manifest, name);
+                task = ModpackInstaller.getModpackInstallTask(getContext(), profile, updateVersion, preparedModpackFile, manifest, name);
             }
         }
-        if (task != null)
+        if (task != null) {
+            task = appendPreparedFileCleanup(task);
             ModpackInstaller.installModpack(getContext(), task, updateVersion != null);
+        }
     }
 
     @Override
@@ -180,6 +192,50 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
             builder.setMessage(charSequence);
             builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
             builder.create().show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        deletePreparedModpackFile();
+        super.onDestroy();
+    }
+
+    private static File prepareModpackFile(File file) throws IOException {
+        String extension = FileUtils.getExtension(file).toLowerCase(Locale.ROOT);
+        if ("rar".equals(extension)) {
+            return CompressingUtils.convertRarToZip(file);
+        }
+        return file;
+    }
+
+    private Task<?> appendPreparedFileCleanup(Task<?> task) {
+        File preparedFile = preparedModpackFile;
+        if (preparedFile == null || preparedFile.equals(modpackFile)) {
+            return task;
+        }
+        preparedModpackFile = modpackFile;
+        return task.whenComplete(Schedulers.defaultScheduler(), exception -> {
+            try {
+                Files.deleteIfExists(preparedFile.toPath());
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, "Failed to delete prepared modpack file: " + preparedFile, e);
+                throw e;
+            }
+        });
+    }
+
+    private void deletePreparedModpackFile() {
+        File preparedFile = preparedModpackFile;
+        if (preparedFile == null || preparedFile.equals(modpackFile)) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(preparedFile.toPath());
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Failed to delete prepared modpack file: " + preparedFile, e);
+        } finally {
+            preparedModpackFile = modpackFile;
         }
     }
 }

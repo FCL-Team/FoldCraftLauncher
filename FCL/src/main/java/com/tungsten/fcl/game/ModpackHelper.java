@@ -65,6 +65,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -87,8 +88,8 @@ public final class ModpackHelper {
     }
 
     public static boolean isFileModpackByExtension(File file) {
-        String ext = FileUtils.getExtension(file);
-        return "zip".equals(ext) || "mrpack".equals(ext) || "7z".equals(ext);
+        String ext = FileUtils.getExtension(file).toLowerCase(Locale.ROOT);
+        return "zip".equals(ext) || "mrpack".equals(ext) || "7z".equals(ext) || "rar".equals(ext);
     }
 
     public static Modpack readModpackManifest(Path file, Charset charset) throws UnsupportedModpackException, ManuallyCreatedModpackException {
