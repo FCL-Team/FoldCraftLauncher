@@ -234,14 +234,14 @@ class MenuSetting {
             mouseSizeProperty.set(mouseSize)
         }
 
-    val mouseOffsetXProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetX", 15)
+    val mouseOffsetXProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetX", 0)
     var mouseOffsetX: Int
         get() = mouseOffsetXProperty.get()
         set(v) {
             mouseOffsetXProperty.set(v)
         }
 
-    val mouseOffsetYProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetY", 15)
+    val mouseOffsetYProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetY", 0)
     var mouseOffsetY: Int
         get() = mouseOffsetYProperty.get()
         set(v) {
