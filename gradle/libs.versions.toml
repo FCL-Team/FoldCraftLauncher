@@ -29,6 +29,7 @@ asyncLayoutInflater = "1.0.0"
 jelf = "0.9.0"
 bytehook = "1.0.10"
 chardet = "2.5.0"
+junrar = "7.5.5"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
@@ -56,6 +57,7 @@ async-layout-inflater = { group = "androidx.asynclayoutinflater", name = "asyncl
 jelf = { group = "net.fornwall", name = "jelf", version.ref = "jelf" }
 bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook" }
 chardet = { module = "org.glavo:chardet", version.ref = "chardet" }
+junrar = { group = "com.github.junrar", name = "junrar", version.ref = "junrar" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

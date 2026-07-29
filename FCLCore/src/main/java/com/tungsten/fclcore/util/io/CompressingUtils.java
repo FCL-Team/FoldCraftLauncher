@@ -17,6 +17,9 @@
  */
 package com.tungsten.fclcore.util.io;
 
+import com.github.junrar.Archive;
+import com.github.junrar.exception.RarException;
+import com.github.junrar.rarfile.FileHeader;
 import com.sun.nio.zipfs.ZipFileSystemProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
@@ -317,7 +320,7 @@ public final class CompressingUtils {
     }
 
     /**
-     * Extract a compressed file (zip or 7z) to destination directory.
+     * Extract a compressed file (zip, 7z or rar) to destination directory.
      *
      * @param archive     the compressed file
      * @param destination the destination directory
@@ -329,6 +332,8 @@ public final class CompressingUtils {
             extractZip(archive, destination);
         } else if (name.endsWith(".7z")) {
             extract7z(archive, destination);
+        } else if (name.endsWith(".rar")) {
+            extractRar(archive, destination);
         } else {
             throw new IOException("Unsupported archive format: " + archive.getName());
         }
@@ -342,7 +347,6 @@ public final class CompressingUtils {
      * @throws IOException if an I/O error occurs
      */
     public static void extractZip(File zipFile, File destination) throws IOException {
-
         try (ZipFile zf = ZipFile.builder().setFile(zipFile).get()) {
             Enumeration<ZipArchiveEntry> entries = zf.getEntries();
             while (entries.hasMoreElements()) {
@@ -386,6 +390,34 @@ public final class CompressingUtils {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Extract a RAR file to destination directory.
+     *
+     * @param rarFile     the RAR file
+     * @param destination the destination directory
+     * @throws IOException if an I/O error occurs
+     */
+    public static void extractRar(File rarFile, File destination) throws IOException {
+        try (Archive archive = new Archive(rarFile)) {
+            FileHeader fh;
+            while ((fh = archive.nextFileHeader()) != null) {
+                String fileName = fh.getFileName();
+                // Some RAR archives may encode file names with backslashes
+                File out = new File(destination, fileName.replace('\\', '/'));
+                if (fh.isDirectory()) {
+                    out.mkdirs();
+                } else {
+                    out.getParentFile().mkdirs();
+                    try (FileOutputStream os = new FileOutputStream(out)) {
+                        archive.extractFile(fh, os);
+                    }
+                }
+            }
+        } catch (RarException e) {
+            throw new IOException("Failed to extract RAR file: " + rarFile.getAbsolutePath(), e);
         }
     }
 }

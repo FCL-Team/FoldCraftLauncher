@@ -28,6 +28,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 public class LocalModpackPage extends ModpackPage implements View.OnClickListener {
@@ -58,7 +59,12 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         progressBar.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
 
-        Task.supplyAsync(() -> CompressingUtils.findSuitableEncoding(modpackFile.toPath()))
+        Task.supplyAsync(() -> {
+                    if (!ModpackHelper.isFileModpackByExtension(modpackFile)) {
+                        return StandardCharsets.UTF_8;
+                    }
+                    return CompressingUtils.findSuitableEncoding(modpackFile.toPath());
+                })
                 .thenApplyAsync(encoding -> {
                     charset = encoding;
                     manifest = ModpackHelper.readModpackManifest(modpackFile.toPath(), encoding);

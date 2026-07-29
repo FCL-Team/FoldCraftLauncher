@@ -65,12 +65,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public final class ModpackHelper {
-    private ModpackHelper() {}
+    private ModpackHelper() {
+    }
 
     private static final Map<String, ModpackProvider> providers = mapOf(
             pair(CurseModpackProvider.INSTANCE.getName(), CurseModpackProvider.INSTANCE),
@@ -87,12 +89,13 @@ public final class ModpackHelper {
     }
 
     public static boolean isFileModpackByExtension(File file) {
-        String ext = FileUtils.getExtension(file);
-        return "zip".equals(ext) || "mrpack".equals(ext) || "7z".equals(ext);
+        String ext = FileUtils.getExtension(file).toLowerCase(Locale.ROOT);
+        return "zip".equals(ext) || "mrpack".equals(ext);
     }
 
     public static Modpack readModpackManifest(Path file, Charset charset) throws UnsupportedModpackException, ManuallyCreatedModpackException {
-        if (file.getFileName().toString().toLowerCase().endsWith(".7z")) {
+        String fileName = file.getFileName().toString().toLowerCase();
+        if (fileName.endsWith(".7z") || fileName.endsWith(".rar")) {
             throw new ManuallyCreatedModpackException(file);
         }
 

@@ -54,4 +54,5 @@ dependencies {
     implementation(libs.material)
     implementation(libs.jsoup)
     implementation(libs.chardet)
+    implementation(libs.junrar)
 }
