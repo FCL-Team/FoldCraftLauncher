@@ -33,10 +33,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.*;
-import java.nio.file.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.zip.ZipException;
 
 /**
@@ -308,7 +319,7 @@ public final class CompressingUtils {
     /**
      * Extract a compressed file (zip or 7z) to destination directory.
      *
-     * @param archive the compressed file
+     * @param archive     the compressed file
      * @param destination the destination directory
      * @throws IOException if an I/O error occurs
      */
@@ -326,12 +337,13 @@ public final class CompressingUtils {
     /**
      * Extract a zip file to destination directory.
      *
-     * @param zipFile the zip file
+     * @param zipFile     the zip file
      * @param destination the destination directory
      * @throws IOException if an I/O error occurs
      */
     public static void extractZip(File zipFile, File destination) throws IOException {
-        try (ZipFile zf = new ZipFile(zipFile)) {
+
+        try (ZipFile zf = ZipFile.builder().setFile(zipFile).get()) {
             Enumeration<ZipArchiveEntry> entries = zf.getEntries();
             while (entries.hasMoreElements()) {
                 ZipArchiveEntry entry = entries.nextElement();
@@ -352,12 +364,12 @@ public final class CompressingUtils {
     /**
      * Extract a 7z file to destination directory.
      *
-     * @param sevenZFile the 7z file
+     * @param sevenZFile  the 7z file
      * @param destination the destination directory
      * @throws IOException if an I/O error occurs
      */
     public static void extract7z(File sevenZFile, File destination) throws IOException {
-        try (SevenZFile zf = new SevenZFile(sevenZFile)) {
+        try (SevenZFile zf = SevenZFile.builder().setFile(sevenZFile).get()) {
             SevenZArchiveEntry entry;
             while ((entry = zf.getNextEntry()) != null) {
                 File out = new File(destination, entry.getName());
