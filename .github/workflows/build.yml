@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload apk
         if: startsWith(github.ref, 'refs/heads/')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v6
         with:
           name: app-${{matrix.arch}}
           path: FCL/build/outputs/apk/release/*
@@ -97,7 +97,7 @@ jobs:
           ./gradlew assemblefordebug -Darch=${{ matrix.arch }} --no-daemon
 
       - name: Upload apk
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v6
         with:
           name: app-${{matrix.arch}}
           path: FCL/build/outputs/apk/fordebug/*
