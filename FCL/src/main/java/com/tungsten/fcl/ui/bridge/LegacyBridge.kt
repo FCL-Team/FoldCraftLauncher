@@ -2,15 +2,20 @@ package com.tungsten.fcl.ui.bridge
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
@@ -19,7 +24,10 @@ import com.tungsten.fcl.FCLApplication
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.theme.FCLTheme
+import com.tungsten.fcl.ui.theme.FCLThemeMode
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI
 import com.tungsten.fcllibrary.component.ui.FCLTempPage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -177,6 +185,12 @@ object LegacyBridge {
      *   跟随宿主 Activity 的 ViewTree 生命周期，页面 View 被移除/销毁时组合自动释放，
      *   与 FCLCommonPage 的 View 体系生命周期对齐。
      *
+     * 主题接入（小步骤 3.1，落实 FCLTheme.kt 的 ThemeEngine 对接 TODO）：
+     * - Light/Dark/FollowSystem 读 SharedPreferences "launcher" 的 themeMode
+     *   （与 FCLActivity.applySavedNightMode 同一数据源），并监听变更即时重组；
+     * - 主色/内容色经 fakefx 属性桥（[collectAsState]）观察 ThemeEngine 当前主题，
+     *   取色器修改主题色后 Compose 侧实时联动。
+     *
      * 用法：
      * ```kotlin
      * val view = LegacyBridge.createComposeView(context) { MyMigratedPage() }
@@ -189,7 +203,36 @@ object LegacyBridge {
         content: @Composable () -> Unit,
     ): ComposeView = ComposeView(context).apply {
         setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        setContent { FCLTheme(content = content) }
+        setContent {
+            // 主题模式：与遗留 FCLActivity.applySavedNightMode 同源（SP "launcher"/"themeMode"）
+            val launcherPrefs = remember {
+                context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+            }
+            val themeMode = remember { mutableIntStateOf(launcherPrefs.getInt("themeMode", 0)) }
+            DisposableEffect(launcherPrefs) {
+                val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
+                    if (key == "themeMode") themeMode.intValue = sp.getInt("themeMode", 0)
+                }
+                launcherPrefs.registerOnSharedPreferenceChangeListener(listener)
+                onDispose { launcherPrefs.unregisterOnSharedPreferenceChangeListener(listener) }
+            }
+            val mode = when (themeMode.intValue) {
+                1 -> FCLThemeMode.Light
+                2 -> FCLThemeMode.Dark
+                else -> FCLThemeMode.FollowSystem
+            }
+
+            // ThemeEngine 主题色：fakefx 属性 → Compose State（引擎未初始化时回落默认 token）
+            val engineTheme = remember { ThemeEngine.getInstance().theme }
+            val primary = engineTheme?.colorProperty()?.collectAsState()?.value?.toInt()
+                ?.let { Color(it) } ?: FCLThemeTokens.BrandPrimary
+            val color2 = engineTheme?.color2Property()?.collectAsState()?.value?.toInt()
+                ?.let { Color(it) } ?: FCLThemeTokens.Color2LightDefault
+            val color2Dark = engineTheme?.color2DarkProperty()?.collectAsState()?.value?.toInt()
+                ?.let { Color(it) } ?: FCLThemeTokens.Color2DarkDefault
+
+            FCLTheme(mode = mode, primary = primary, color2 = color2, color2Dark = color2Dark, content = content)
+        }
     }
 
     /**
